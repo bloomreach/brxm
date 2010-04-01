@@ -19,10 +19,10 @@ import org.apache.jackrabbit.core.NodeId;
 
 public class ArgumentNodeId extends NodeId
 {
-    private static final long serialVersionUID = 1L;
-
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    private static final long serialVersionUID = 1L;
 
     private NodeId original;
     private String argument;
@@ -37,7 +37,8 @@ public class ArgumentNodeId extends NodeId
         return argument;
     }
 
+    @Override
     public String toString() {
-        return "ArgumentNodeId[uuid="+original.getUUID()+",hash="+hashCode()+"]";
+        return "ArgumentNodeId[uuid="+original.getUUID()+",hash="+hashCode()+",argument=\""+argument+"\"]";
     }
 }

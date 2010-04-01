@@ -54,7 +54,7 @@ public class FacetSelectProvider extends ViewVirtualProvider
         String[] newValues = getProperty(state.getNodeId(), valuesName);
         String[] newModes  = getProperty(state.getNodeId(), modesName);
 
-        return super.populate(subNodesProvider, state, docbase, newFacets, newValues, newModes, true);
+        return super.populate(context, subNodesProvider, state, docbase, newFacets, newValues, newModes, true);
         
     }
 

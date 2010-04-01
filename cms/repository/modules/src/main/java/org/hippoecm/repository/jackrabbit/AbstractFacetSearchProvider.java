@@ -58,8 +58,8 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
         String[] search;
         long count;
 
-        FacetSearchNodeId(HippoVirtualProvider provider, NodeId parent, Name name) {
-            super(provider, parent, name);
+        FacetSearchNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name) {
+            super(provider, parent, context, name);
         }
     }
 
@@ -221,10 +221,8 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                             + facetValue + "'" + facets[0].substring(facets[0].indexOf("#"));
                 }
                 try {
-                    
                     Name childName = resolveName(NodeNameCodec.encode(facetValue, true));
-                    FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(),
-                            childName);
+                    FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(), context, childName);
                     state.addChildNodeEntry(childName, childNodeId);
                     childNodeId.queryname = queryname;
                     childNodeId.docbase = docbase;
@@ -240,7 +238,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
 
         FacetResultSetProvider.FacetResultSetNodeId childNodeId;
         Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
-        childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, queryname,
+        childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, queryname,
                 docbase, search, count);
         state.addChildNodeEntry(resultSetChildName, childNodeId);
 

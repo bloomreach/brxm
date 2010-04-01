@@ -173,7 +173,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     }
                     
                     Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
-                    FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
+                    FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), context, childName);
                     childNodeId.availableFacets = facets;
                     
                     childNodeId.facetedFiltersString  = facetedFiltersString;

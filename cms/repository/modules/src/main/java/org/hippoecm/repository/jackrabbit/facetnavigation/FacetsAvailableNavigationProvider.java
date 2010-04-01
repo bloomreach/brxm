@@ -141,7 +141,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     start   = System.currentTimeMillis();
                 }
                 
-                facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
+                facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, (context != null && context.getArgument() != null ? facetedEngine.parse(context.getArgument()) : null),
                     facetSearchResultMap, filters, hitsRequested);
                 
                 if(FacetedNavigationModulesTimer.log.isDebugEnabled()) {
@@ -243,8 +243,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 try {
                     // use forceSimpleName = true in encode because value may contain ":" but this is not related to a namespace prefix
                     Name childName = resolveName(NodeNameCodec.encode(entry.facetValue, true));
-                    FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsSubNavigationProvider, state
-                            .getNodeId(), childName);
+                    FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsSubNavigationProvider, state.getNodeId(), context, childName);
                     state.addChildNodeEntry(childName, childNodeId);
                     childNodeId.docbase = docbase;
                     childNodeId.availableFacets = availableFacets;
@@ -287,7 +286,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             resultSetSearch.add(new FacetKeyValue(parsedFacet.getNamespacedProperty(), null));
 
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
-            childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
+            childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
                     docbase, resultSetSearch, currentRanges, count, facetedFiltersString);
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
@@ -307,7 +306,4 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
         return populate(context, state);
     }
-    
-    
-   
 }

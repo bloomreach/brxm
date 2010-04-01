@@ -42,13 +42,13 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 
         NodeId upstream;
 
-        protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, Name name, NodeId upstream) {
-            super(provider, parent, name);
+        protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name, NodeId upstream) {
+            super(provider, parent, context, name);
             this.upstream = upstream;
         }
 
-        MirrorNodeId(NodeId parent, NodeId upstream, Name name) {
-            super(MirrorVirtualProvider.this, parent, name);
+        MirrorNodeId(NodeId parent, NodeId upstream, StateProviderContext context, Name name) {
+            super(MirrorVirtualProvider.this, parent, context, name);
             this.upstream = upstream;
         }
     }

@@ -129,8 +129,8 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         // the limt of the resultset: default is 1000
         int limit = 1000;
         
-        FacetNavigationNodeId(HippoVirtualProvider provider, NodeId parent, Name name) {
-            super(provider, parent, name);
+        FacetNavigationNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name) {
+            super(provider, parent, context, name);
         }
 
         public LinkedHashMap<Name, String> getOrder() {

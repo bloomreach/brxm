@@ -37,7 +37,6 @@ import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.state.ChangeLog;
-import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
@@ -286,6 +285,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         virtualStates.add(state);
                         if(id instanceof ArgumentNodeId) {
                             state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(((ArgumentNodeId)id).getArgument()), nodeState);
+                        } else if(id instanceof HippoNodeId) {
+                            state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
                         } else {
                             state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
                         }
@@ -493,9 +494,13 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     try {
                         if(state.getId() instanceof ArgumentNodeId) {
                             virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(((ArgumentNodeId)state.getId()).getArgument()), (NodeState)state);
+                        } else if(state.getId() instanceof HippoNodeId) {
+                            ((HippoNodeId)state.getId()).populate(virtualNodeNames.get(((NodeState)state).getNodeTypeName()), (NodeState)state);
                         } else {
                             virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(), (NodeState)state);
                         }
+                    } catch(ItemStateException ex) {
+                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                     } catch(RepositoryException ex) {
                         log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                     }

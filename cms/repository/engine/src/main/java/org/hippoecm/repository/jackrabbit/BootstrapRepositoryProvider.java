@@ -40,13 +40,13 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
     protected class BootstrapNodeId extends HippoNodeId {
         NodeId upstream;
 
-        protected BootstrapNodeId(HippoVirtualProvider provider, NodeId parent, Name name, NodeId upstream) {
-            super(provider, parent, name);
+        protected BootstrapNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name, NodeId upstream) {
+            super(provider, parent, context, name);
             this.upstream = upstream;
         }
 
-        BootstrapNodeId(NodeId parent, NodeId upstream, Name name) {
-            super(BootstrapRepositoryProvider.this, parent, name);
+        BootstrapNodeId(NodeId parent, NodeId upstream, StateProviderContext context, Name name) {
+            super(BootstrapRepositoryProvider.this, parent, context, name);
             this.upstream = upstream;
         }
     }
@@ -66,13 +66,13 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
         super();
     }
 
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String docbase = getProperty(nodeId, docbaseName)[0];
         NodeState upstream = getNodeState(new NodeId(new UUID(docbase)));
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             ChildNodeEntry entry = (ChildNodeEntry) iter.next();
-            NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), entry.getName());
+            NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), context, entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }
         return state;
@@ -117,7 +117,7 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
     protected void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) {
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             ChildNodeEntry entry = (ChildNodeEntry) iter.next();
-            BootstrapNodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), entry.getName());
+            BootstrapNodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), context, entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }
     }
