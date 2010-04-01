@@ -21,6 +21,7 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImage;
 import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.slf4j.Logger;
@@ -34,8 +35,6 @@ public class XinhaImageService implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(XinhaImageService.class);
 
-    final static String BINARIES_PREFIX = "binaries";
-
     private String editorId;
     private IRichTextImageFactory factory;
 
@@ -47,8 +46,8 @@ public class XinhaImageService implements IDetachable {
     //Attach an image with only a JcrNodeModel. Method return json object wich 
     public String attach(JcrNodeModel model) {
         //TODO: fix drag-drop replacing
-        RichTextImage item = createImageItem(model);
-        if (item != null) {
+        try {
+            RichTextImage item = createImageItem(model);
             StringBuilder sb = new StringBuilder(80);
             sb.append("xinha_editors.").append(editorId).append(".plugins.InsertImage.instance.insertImage(");
             sb.append("{ ");
@@ -56,13 +55,15 @@ public class XinhaImageService implements IDetachable {
             sb.append(", ").append(XinhaImage.FACET_SELECT).append(": '").append(item.getFacetSelectPath()).append("'");
             sb.append(" }, false)");
             return sb.toString();
+        } catch (RichTextException e) {
+            log.error("Could not attach model ", e);
         }
         return null;
     }
 
     public XinhaImage createXinhaImage(Map<String, String> p) {
         RichTextImage rti = loadImageItem(p);
-        return new XinhaImage(p, rti != null ? rti.getNodeModel() : null) {
+        return new XinhaImage(p, rti != null ? rti.getTarget() : null) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -78,19 +79,23 @@ public class XinhaImageService implements IDetachable {
                             factory.delete(remove);
                         }
                     }
-                    RichTextImage item = createImageItem(getLinkTarget());
-                    if (item != null) {
+                    try {
+                        RichTextImage item = createImageItem(getLinkTarget());
                         setFacetSelectPath(item.getFacetSelectPath());
                         setUrl(item.getUrl());
+                    } catch (RichTextException e) {
+                        log.error("Could not create link");
                     }
                 }
             }
 
             public void delete() {
                 RichTextImage item = loadImageItem(this);
-                factory.delete(item);
-                setFacetSelectPath("");
-                setUrl("");
+                if (item != null) {
+                    factory.delete(item);
+                    setFacetSelectPath("");
+                    setUrl("");
+                }
             }
 
         };
@@ -99,22 +104,21 @@ public class XinhaImageService implements IDetachable {
     public void detach() {
         factory.detach();
     }
-    
+
     private RichTextImage loadImageItem(Map<String, String> values) {
         String path = values.get(XinhaImage.FACET_SELECT);
         if (!Strings.isEmpty(path)) {
             path = RichTextUtil.decode(path);
-        } else { 
-            path = values.get(XinhaImage.URL);
-            if (!Strings.isEmpty(path) && path.startsWith(BINARIES_PREFIX)) {
-                path = RichTextUtil.decode(path.substring(BINARIES_PREFIX.length()));
+            try {
+                return factory.loadImageItem(path);
+            } catch (RichTextException e) {
+                log.warn("Could not load rich text image " + path);
             }
         }
-
-        return factory.loadImageItem(path);
+        return null;
     }
 
-    private RichTextImage createImageItem(IDetachable nodeModel) {
+    private RichTextImage createImageItem(IDetachable nodeModel) throws RichTextException {
         return factory.createImageItem(nodeModel);
     }
 }

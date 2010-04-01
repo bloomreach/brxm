@@ -38,16 +38,11 @@ public class RichTextProcessor {
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
 
-    @Deprecated
-    public static String prefixImageLinks(String text, final String prefix) {
-        return prefixImageLinks(text, new PrefixingImageDecorator(prefix));
-    }
-
     /**
      * Decorate the targets of relative image links in a text.  Text and decorator may
      * neither be null.
      */
-    public static String prefixImageLinks(String text, IImageDecorator decorator) {
+    public static String prefixImageLinks(String text, IImageURLProvider decorator) {
         StringBuffer processed = new StringBuffer();
         Matcher m = IMG_PATTERN.matcher(text);
 
@@ -61,7 +56,7 @@ public class RichTextProcessor {
                 String link = s.group(1);
 
                 if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                    s.appendReplacement(newImg, ("src=\"" + decorator.srcFromSrc(link) + "\"").replace("\\", "\\\\")
+                    s.appendReplacement(newImg, ("src=\"" + decorator.getURL(link) + "\"").replace("\\", "\\\\")
                             .replace("$", "\\$"));
                     newImg.append(' ');
                     newImg.append("facetselect=\"");

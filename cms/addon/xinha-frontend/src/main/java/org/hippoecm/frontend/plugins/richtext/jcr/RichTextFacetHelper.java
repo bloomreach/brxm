@@ -38,9 +38,9 @@ public class RichTextFacetHelper {
     private RichTextFacetHelper() {
     }
     
-    static String createFacet(Node node, String link, String uuid) throws ItemExistsException, PathNotFoundException,
+    static String createFacet(Node node, String link, Node target) throws ItemExistsException, PathNotFoundException,
             NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
-        if (uuid == null) {
+        if (target == null || !target.isNodeType("mix:referenceable")) {
             log.error("uuid is null. Should never be possible for facet");
             return "";
         }
@@ -48,7 +48,7 @@ public class RichTextFacetHelper {
         String linkName = newLinkName(node, link);
 
         Node facetselect = node.addNode(linkName, HippoNodeType.NT_FACETSELECT);
-        facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
+        facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, target.getUUID());
         facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
         facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});

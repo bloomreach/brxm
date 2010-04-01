@@ -27,6 +27,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,7 +58,7 @@ public class JcrRichTextLinkFactoryTest extends PluginTest {
     }
 
     @Test
-    public void linkLifecycleTest() throws RepositoryException {
+    public void linkLifecycleTest() throws RichTextException, RepositoryException {
         Node html = root.getNode("test/source/source/xinhatest:html");
         JcrRichTextLinkFactory factory = new JcrRichTextLinkFactory(new JcrNodeModel(html));
         Node target = root.getNode("test/target");

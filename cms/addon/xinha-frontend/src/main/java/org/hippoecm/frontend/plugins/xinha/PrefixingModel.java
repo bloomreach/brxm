@@ -16,26 +16,24 @@
 package org.hippoecm.frontend.plugins.xinha;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.richtext.IImageDecorator;
-import org.hippoecm.frontend.plugins.richtext.PrefixingImageDecorator;
+import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrefixingModel implements IModel<String> {
     private static final long serialVersionUID = 1L;
 
-    private IImageDecorator decorator;
+    static final Logger log = LoggerFactory.getLogger(PrefixingModel.class);
+
+    private IImageURLProvider decorator;
     private IModel<String> bare;
 
-    public PrefixingModel(IModel<String> bare, String prefix) {
-        this.bare = bare;
-        this.decorator = new PrefixingImageDecorator(prefix);
-    }
-
-    public PrefixingModel(IModel<String> bare, IImageDecorator decorator) {
+    public PrefixingModel(IModel<String> bare, IImageURLProvider decorator) {
         this.bare = bare;
         this.decorator = decorator;
     }
-    
+
     public String getObject() {
         String text = bare.getObject();
         if (text != null) {
@@ -47,7 +45,7 @@ public class PrefixingModel implements IModel<String> {
     public void setObject(String object) {
         bare.setObject(RichTextProcessor.restoreFacets(object));
     }
-    
+
     public void detach() {
         bare.detach();
     }

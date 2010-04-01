@@ -15,15 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
+import java.util.List;
+
 import org.apache.wicket.model.IDetachable;
 
 public interface IRichTextImageFactory extends IDetachable {
 
     boolean isValid(IDetachable targetId);
 
-    RichTextImage loadImageItem(String path);
+    RichTextImage loadImageItem(String path) throws RichTextException;
 
-    RichTextImage createImageItem(IDetachable model);
+    RichTextImage createImageItem(IDetachable model) throws RichTextException;
 
     void delete(RichTextImage link);
 

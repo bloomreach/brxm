@@ -15,22 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
-import java.util.Set;
+public class RichTextException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-import org.apache.wicket.model.IDetachable;
+    public RichTextException(String message) {
+        super(message);
+    }
 
-public interface IRichTextLinkFactory extends IDetachable {
-
-    Set<String> getLinks();
-
-    void cleanup(Set<String> references);
-
-    boolean isValid(IDetachable targetId);
-    
-    RichTextLink createLink(IDetachable targetId) throws RichTextException;
-
-    RichTextLink loadLink(String relPath) throws RichTextException;
-
-    void delete(RichTextLink link);
+    public RichTextException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }
