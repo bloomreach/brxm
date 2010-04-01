@@ -50,7 +50,9 @@ public class LocationMapResolver {
     private boolean canonical;
     private boolean isSubResolver;
     
-    // the resolved sitemap item of the current request
+    /**
+     *  the resolved sitemap item of the current request. Note that this variable is allowed to be <code>null</code>
+     */
     private ResolvedSiteMapItem resolvedSiteMapItem;
 
     private Set<LocationMapTreeItem> checkedLocationMapTreeItems = new HashSet<LocationMapTreeItem>();
