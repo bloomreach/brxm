@@ -17,8 +17,8 @@ package org.hippoecm.frontend.plugins.richtext;
 
 import org.apache.wicket.IClusterable;
 
-public interface IImageDecorator extends IClusterable {
+public interface IImageURLProvider extends IClusterable {
 
-    String srcFromSrc(String link);
+    String getURL(String link);
 
 }

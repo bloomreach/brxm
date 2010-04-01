@@ -63,7 +63,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(AbstractXinhaPlugin.class);
 
     public static final String XINHA_PARAM_PREFIX = "xinha-param-prefix-";
-    static final String BINARIES_PREFIX = "binaries";
 
     private static final String[] defaultFormatBlock = { "h1", "h2", "h3", "h4", "h5", "h6", "p", "address", "pre" };
 

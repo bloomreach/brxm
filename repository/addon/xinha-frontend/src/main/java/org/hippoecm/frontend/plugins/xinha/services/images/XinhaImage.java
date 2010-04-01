@@ -29,8 +29,6 @@ public abstract class XinhaImage extends DocumentLink {
 
     static final Logger log = LoggerFactory.getLogger(XinhaImage.class);
 
-    final static String BINARIES_PREFIX = "binaries";
-
     public static final String BASE = "f_base";
     public static final String URL = "f_url";
     public static final String FACET_SELECT = "f_facetselect";

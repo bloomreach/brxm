@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class XinhaLinkService implements IDetachable {
 
     private String editorId;
     private IRichTextLinkFactory factory;
-    
+
     public XinhaLinkService(IRichTextLinkFactory factory, String editorId) {
         this.factory = factory;
         this.editorId = editorId;
@@ -44,17 +45,26 @@ public class XinhaLinkService implements IDetachable {
 
     public InternalXinhaLink create(Map<String, String> p) {
         String relPath = p.get(XinhaLink.HREF);
-        RichTextLink rtl = factory.loadLink(RichTextUtil.decode(relPath));
-        return new InternalLink(p, rtl != null ? rtl.getTargetId() : null);
+        if (factory.getLinks().contains(relPath)) {
+            try {
+                RichTextLink rtl = factory.loadLink(RichTextUtil.decode(relPath));
+                return new InternalLink(p, rtl.getTargetId());
+            } catch (RichTextException e) {
+                log.error("Could not load link", e);
+            }
+        }
+        return new InternalLink(p, null);
     }
 
     public String attach(JcrNodeModel model) {
-        RichTextLink rtl = factory.createLink(model);
-        if (rtl != null) {
+        try {
+            RichTextLink rtl = factory.createLink(model);
             String href = RichTextUtil.encode(rtl.getName());
-            String script = "xinha_editors." + editorId + ".plugins.CreateLink.instance.createLink({"
-                    + XinhaLink.HREF + ": '" + href + "', " + XinhaLink.TARGET + ": ''}, false);";
+            String script = "xinha_editors." + editorId + ".plugins.CreateLink.instance.createLink({" + XinhaLink.HREF
+                    + ": '" + href + "', " + XinhaLink.TARGET + ": ''}, false);";
             return script;
+        } catch (RichTextException e) {
+            log.error("Could not attach model");
         }
         return null;
     }
@@ -74,18 +84,24 @@ public class XinhaLinkService implements IDetachable {
         public boolean isValid() {
             return super.isValid() && factory.isValid(getLinkTarget());
         }
-        
+
         public void save() {
             if (isAttacheable()) {
                 if (isReplacing()) {
                     Map<String, String> values = getInitialValues();
                     String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
-                    RichTextLink rtl = factory.loadLink(relPath);
-                    factory.delete(rtl);
+                    try {
+                        RichTextLink rtl = factory.loadLink(relPath);
+                        factory.delete(rtl);
+                    } catch (RichTextException e) {
+                        log.error("Error removing existing link");
+                    }
                 }
-                RichTextLink rtl = factory.createLink(getLinkTarget());
-                if (rtl != null) {
+                try {
+                    RichTextLink rtl = factory.createLink(getLinkTarget());
                     setHref(RichTextUtil.encode(rtl.getName()));
+                } catch (RichTextException e) {
+                    log.error("Error creating link", e);
                 }
             }
         }
@@ -93,8 +109,12 @@ public class XinhaLinkService implements IDetachable {
         public void delete() {
             Map<String, String> values = getInitialValues();
             String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
-            RichTextLink rtl = factory.loadLink(relPath);
-            factory.delete(rtl);
+            try {
+                RichTextLink rtl = factory.loadLink(relPath);
+                factory.delete(rtl);
+            } catch (RichTextException e) {
+                log.error("Could not delete link");
+            }
             setHref(null);
         }
 

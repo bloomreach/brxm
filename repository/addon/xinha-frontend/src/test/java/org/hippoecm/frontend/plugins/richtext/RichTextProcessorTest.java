@@ -29,7 +29,11 @@ public class RichTextProcessorTest {
     @Test
     public void testPrefixInternalImage() {
         String text = "testing 1 2 3 <img src=\"link\"/>";
-        String processed = RichTextProcessor.prefixImageLinks(text, new PrefixingImageDecorator("test-prefix/"));
+        String processed = RichTextProcessor.prefixImageLinks(text, new IImageURLProvider() {
+            public String getURL(String name) {
+                return "test-prefix/" + name;
+            }
+        });
         assertEquals("testing 1 2 3 <img src=\"test-prefix/?_path=link\" facetselect=\"link\" />", processed);
     }
 
@@ -37,7 +41,11 @@ public class RichTextProcessorTest {
     @Test
     public void testPrefixExternalImage() {
         String text = "testing 1 2 3 <img src=\"http://link\"/>";
-        String processed = RichTextProcessor.prefixImageLinks(text, new PrefixingImageDecorator("test-prefix/"));
+        String processed = RichTextProcessor.prefixImageLinks(text, new IImageURLProvider() {
+            public String getURL(String name) {
+                return "test-prefix/" + name;
+            }
+        });
         assertEquals("testing 1 2 3 <img src=\"http://link\"/>", processed);
     }
 
@@ -53,7 +61,7 @@ public class RichTextProcessorTest {
     }
 
     @Test
-    public void testMultilineGetInternalLinks() {
+    public void testMultilineGetInternalLinks() throws Exception {
         String text="testing 1 2 3 <a\nhref=\"link\">link</a>";
         Set<String> links = RichTextProcessor.getInternalLinks(text);
         assertEquals(1, links.size());
@@ -61,7 +69,7 @@ public class RichTextProcessorTest {
     }
 
     @Test
-    public void testEncodedLink() {
+    public void testEncodedLink() throws Exception {
         String text="<a href=\"link%20je\">link</a>";
         Set<String> links = RichTextProcessor.getInternalLinks(text);
         assertEquals(1, links.size());

@@ -47,13 +47,14 @@ public class RichTextModel implements IModel<String> {
             valueModel.setObject(cleanedValue);
         } catch (Exception e) {
             log.warn("Exception caught during editor creation while cleaning value: " + value, e);
-            valueModel.setObject(value);
         }
     }
 
     public void detach() {
         valueModel.detach();
-        linkFactory.detach();
+        if (linkFactory != null) {
+            linkFactory.detach();
+        }
     }
 
     public void setCleaner(IHtmlCleanerService cleaner) {
@@ -80,7 +81,7 @@ public class RichTextModel implements IModel<String> {
     }
 
     private void removeLinks(String text) {
-        if (getLinkFactory() != null) {
+        if (linkFactory != null) {
             Set<String> linkNames = RichTextProcessor.getInternalLinks(text);
             linkFactory.cleanup(linkNames);
         }

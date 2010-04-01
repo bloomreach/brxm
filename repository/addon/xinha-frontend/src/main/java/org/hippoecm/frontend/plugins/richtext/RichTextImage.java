@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 /**
@@ -30,41 +31,28 @@ public class RichTextImage implements IClusterable {
 
     private String parentPath;
     private String path;
-    private String uuid;
-    private String nodeName;
-    private String facetName;
-    private String primaryItemName;
+    private String name;
     private List<String> resourceDefinitions;
     private String selectedResourceDefinition;
 
-    public RichTextImage(String path, String uuid, String primaryItemName, String nodeName,
-            List<String> resourceDefinitions, String nodePath) {
-        this.path = path;
-        this.uuid = uuid;
-        this.primaryItemName = primaryItemName;
-        this.facetName = nodeName;
-        this.nodeName = nodeName;
+    public RichTextImage(String targetPath, String name, String nodePath) {
+        this.path = targetPath;
+        this.name = name;
         this.parentPath = nodePath;
-        this.resourceDefinitions = resourceDefinitions != null ? resourceDefinitions : new ArrayList<String>();
-        if (this.resourceDefinitions.size() == 1) {
-            selectedResourceDefinition = this.resourceDefinitions.get(0);
-        }
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public String getPrimaryUrl() {
-        return RichTextUtil.encode("binaries" + path + "/" + primaryItemName);
+        this.resourceDefinitions = new ArrayList<String>();
     }
 
     public List<String> getResourceDefinitions() {
         return resourceDefinitions;
     }
 
-    public String getNodeName() {
-        return nodeName;
+    public void setResourceDefinitions(List<String> resourceDefinitions) {
+        this.resourceDefinitions = resourceDefinitions;
+        if (resourceDefinitions.size() == 0) {
+            this.selectedResourceDefinition = null;
+        } else if (!resourceDefinitions.contains(selectedResourceDefinition)) {
+            selectedResourceDefinition = resourceDefinitions.get(0);
+        }
     }
 
     public String getSelectedResourceDefinition() {
@@ -74,52 +62,47 @@ public class RichTextImage implements IClusterable {
     public void setSelectedResourceDefinition(String selectedResourceDefinition) {
         this.selectedResourceDefinition = selectedResourceDefinition;
     }
-    
-    public void setFacetName(String facet) {
-        this.facetName = facet;
+
+    public void setName(String facet) {
+        this.name = facet;
     }
-    
-    public String getFacetName() {
-        return facetName;
+
+    public String getName() {
+        return name;
     }
-    
+
     public String getFacetSelectPath() {
         if (selectedResourceDefinition != null) {
-            return facetName + "/{_document}/" + selectedResourceDefinition;
+            return name + "/{_document}/" + selectedResourceDefinition;
         } else {
-            return facetName;
+            return name;
         }
     }
-    
+
     public String getUrl() {
         String url = null;
         String parentUrl = "binaries" + parentPath + "/";
 
         if (!RichTextUtil.isPortletContext()) {
             if (selectedResourceDefinition != null) {
-                url = RichTextUtil.encode(parentUrl + facetName + "/{_document}/" + selectedResourceDefinition);
+                url = RichTextUtil.encode(parentUrl + name + "/{_document}/" + selectedResourceDefinition);
             } else {
-                url = RichTextUtil.encode(parentUrl + facetName);
+                url = RichTextUtil.encode(parentUrl + name);
             }
         } else {
             parentUrl = RichTextUtil.encodeResourceURL(RichTextUtil.encode(parentUrl));
-            url = 
-                new StringBuilder(80).append(parentUrl)
-                .append(parentUrl.indexOf('?') == -1 ? '?' : '&')
-                .append("_path=")
-                .append(getFacetSelectPath())
-                .toString();
+            url = new StringBuilder(80).append(parentUrl).append(parentUrl.indexOf('?') == -1 ? '?' : '&').append(
+                    "_path=").append(getFacetSelectPath()).toString();
         }
-        
+
         return url;
     }
 
     public boolean isValid() {
-        return path != null && uuid != null
-                && !(resourceDefinitions.size() > 1 && selectedResourceDefinition == null);
+        return path != null && !(getResourceDefinitions().size() > 1 && selectedResourceDefinition == null);
     }
 
-    public JcrNodeModel getNodeModel() {
+    public IDetachable getTarget() {
         return new JcrNodeModel(path).getParentModel();
     }
 

@@ -25,8 +25,10 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -49,46 +51,50 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         this.nodeModel = nodeModel;
     }
 
-    public RichTextLink loadLink(String relPath) {
-        if (relPath != null && !"".equals(relPath)) {
-            relPath = RichTextUtil.decode(relPath);
-            try {
-                Node node = nodeModel.getNode();
-                if (node.hasNode(relPath)) {
-                    Node linkNode = node.getNode(relPath);
-                    if (linkNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                        String uuid = linkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue().getString();
-                        Item item = node.getSession().getNodeByUUID(uuid);
-                        if (item != null) {
-                            JcrNodeModel model = new JcrNodeModel(item.getPath());
-                            return new RichTextLink(model, relPath);
-                        }
-                    }
-                }
-            } catch (PathNotFoundException e) {
-                log.error("Error finding facet node for relative path " + relPath, e);
-            } catch (RepositoryException e) {
-                log.error("Error finding facet node for relative path " + relPath, e);
-            }
+    public RichTextLink loadLink(String relPath) throws RichTextException {
+        if (Strings.isEmpty(relPath)) {
+            throw new IllegalArgumentException("Link path is empty");
         }
-        return null;
+        relPath = RichTextUtil.decode(relPath);
+        try {
+            Node node = nodeModel.getNode();
+            Node linkNode = node.getNode(relPath);
+            if (linkNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                String uuid = linkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue().getString();
+                Item item = node.getSession().getNodeByUUID(uuid);
+                if (item != null) {
+                    JcrNodeModel model = new JcrNodeModel(item.getPath());
+                    return new RichTextLink(model, relPath);
+                } else {
+                    throw new RichTextException("Facetselect points to non-existing uuid" + uuid);
+                }
+            } else {
+                throw new RichTextException("Found node is not a facetselect");
+            }
+        } catch (PathNotFoundException e) {
+            throw new RichTextException("Error finding facet node for relative path " + relPath, e);
+        } catch (RepositoryException e) {
+            throw new RichTextException("Error finding facet node for relative path " + relPath, e);
+        }
     }
 
-    public RichTextLink createLink(IDetachable targetId) {
+    public RichTextLink createLink(IDetachable targetId) throws RichTextException {
         JcrNodeModel targetModel = (JcrNodeModel) targetId;
-        if (targetModel != null && targetModel.getNode() != null) {
-            try {
-                Node targetNode = targetModel.getNode();
-                String name = NodeNameCodec.encode(targetNode.getName());
-                Node node = nodeModel.getNode();
-                String uuid = targetNode.getUUID();
-                name = RichTextFacetHelper.createFacet(node, name, uuid);
-                return new RichTextLink(targetModel, name);
-            } catch (RepositoryException e) {
-                log.error("could not create link", e);
-            }
+        if (targetModel == null) {
+            throw new IllegalArgumentException("Target is null");
         }
-        return null;
+        try {
+            Node targetNode = targetModel.getNode();
+            if (targetNode == null) {
+                throw new RichTextException("Node does not exist at " + targetModel.getItemModel().getPath());
+            }
+            String name = NodeNameCodec.encode(targetNode.getName());
+            Node node = nodeModel.getNode();
+            name = RichTextFacetHelper.createFacet(node, name, targetNode);
+            return new RichTextLink(targetModel, name);
+        } catch (RepositoryException e) {
+            throw new RichTextException("could not create link", e);
+        }
     }
 
     public void delete(RichTextLink link) {
@@ -132,7 +138,7 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
                     }
                 }
             } catch (RepositoryException ex) {
-                log.error("Error removing unused links", ex);
+                log.error("Error retrieving links", ex);
             }
         }
         return links;

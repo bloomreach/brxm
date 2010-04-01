@@ -19,7 +19,7 @@ package org.hippoecm.frontend.plugins.richtext;
  * Decorator for image src attributes; prefixes them, leaving the original
  * link name in the _path request parameter in a portal environment.
  */
-public class PrefixingImageDecorator implements IImageDecorator {
+public class PrefixingImageDecorator implements IImageURLProvider {
     private static final long serialVersionUID = 1L;
 
     private String prefix;
@@ -28,7 +28,7 @@ public class PrefixingImageDecorator implements IImageDecorator {
         this.prefix = prefix;
     }
 
-    public String srcFromSrc(String link) {
+    public String getURL(String link) {
         return prefix + "?_path=" + link;
     }
 
