@@ -106,7 +106,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                 }
                 
                 Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
-                FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
+                FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), context, childName);
                 for(String value : facetNavigationNodeId.ancestorAndSelfUsedCombinations) {
                     KeyValue<String,String> facetValueCombi = new FacetKeyValue(facetNodeView.facet, value);
                     if(usedFacetValueCombis.indexOf(facetValueCombi) > -1) {
@@ -141,7 +141,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             // add child node resultset:
             Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
-            childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
+            childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
                     docbase, currentSearch, currentRanges, facetNavigationNodeId.count, facetNavigationNodeId.facetedFiltersString);
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);

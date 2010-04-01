@@ -73,20 +73,20 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         // default limit = 1000
         int limit = 1000;
         
-        FacetResultSetNodeId(NodeId parent, Name name) {
-            super(FacetResultSetProvider.this, parent, name);
+        FacetResultSetNodeId(NodeId parent, StateProviderContext context, Name name) {
+            super(FacetResultSetProvider.this, parent, context, name);
         }
-        public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, String[] search, long count) {
-            super(FacetResultSetProvider.this, parent, name);
+        public FacetResultSetNodeId(NodeId parent, StateProviderContext context, Name name, String queryname, String docbase, String[] search, long count) {
+            super(FacetResultSetProvider.this, parent, context, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.search = search;
             this.count = count;
         }
         
-        public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase,
+        public FacetResultSetNodeId(NodeId parent, StateProviderContext context, Name name, String queryname, String docbase,
                 List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, int count, String facetedFiltersString) {
-            super(FacetResultSetProvider.this, parent, name);
+            super(FacetResultSetProvider.this, parent, context, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.preparedSearch = currentSearch;
@@ -254,7 +254,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
              *  
              *  from parent NodeId, which is NOT a ViewNodeId, nor a MirrorNodeId
              */
-            state.addChildNodeEntry(name, subNodesProvider . new ViewNodeId(state.getNodeId(), upstream, name, view, order , singledView));
+            state.addChildNodeEntry(name, subNodesProvider . new ViewNodeId(state.getNodeId(), upstream, context, name, view, order , singledView));
         }
 
         return state;

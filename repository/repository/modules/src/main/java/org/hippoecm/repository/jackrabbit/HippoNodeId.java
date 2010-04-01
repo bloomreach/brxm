@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,55 +26,78 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
 
+/**
+ * THIS CLASS IS NOT PART OF THE PUBLIC API.  DO NOT USE.
+ */
 public class HippoNodeId extends NodeId
 {
-    private static final long serialVersionUID = 1L;
-
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    private static final long serialVersionUID = 1L;
 
     private final static Logger log = LoggerFactory.getLogger(HippoNodeId.class);
 
     public NodeId parentId;
     public Name name;
-
     private final HippoVirtualProvider provider;
+    private StateProviderContext context;
 
-    public HippoNodeId(HippoVirtualProvider provider, NodeId parent, Name name) {
+    public HippoNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name) {
         super(UUID.randomUUID());
         this.provider = provider;
+        if(context != null) {
+            this.context = context;
+        } else if (parent instanceof HippoNodeId && ((HippoNodeId)parent).context != null) {
+            this.context = ((HippoNodeId)parent).context;
+        } else {
+            this.context = null;
+        }
         parentId = parent;
         this.name = name;
     }
 
     public NodeState populate(StateProviderContext context) {
+        if (context == null) {
+            context = this.context;
+        } else if (this.context == null) {
+            this.context = context;
+        }
+        if (context == null) {
+            context = new StateProviderContext();
+        }
         try {
             NodeState nodeState = provider.populate(context, this, parentId);
             return nodeState;
-        } catch(RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (RepositoryException ex) {
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             return null;
         }
     }
 
     public final NodeState populate(StateProviderContext context, NodeState state) {
+        if (context == null) {
+            context = this.context;
+        } else if (this.context == null) {
+            this.context = context;
+        }
+        if (context == null) {
+            context = new StateProviderContext();
+        }
         try {
-            if (context == null) {
-                context = new StateProviderContext();
-            }
             return provider.populate(context, state);
-        } catch(RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (RepositoryException ex) {
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             return null;
         }
     }
 
     public final NodeState populate(HippoVirtualProvider provider, NodeState state) throws ItemStateException {
         try {
-            if(provider != null) {
-                provider.populate(new StateProviderContext(), state);
+            if (provider != null) {
+                provider.populate((context != null ? context : new StateProviderContext()), state);
             } else {
-                state = populate((StateProviderContext)null, state);
+                state = populate(context, state);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);

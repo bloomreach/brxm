@@ -53,7 +53,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         translationName = resolveName(HippoNodeType.NT_TRANSLATION);
     }
 
-    protected NodeState populate(ViewVirtualProvider subProvider, NodeState state, String[] docbase, String[] newFacets, String[] newValues, String[] newModes, boolean newCriteria) throws RepositoryException {
+    protected NodeState populate(StateProviderContext context, ViewVirtualProvider subProvider, NodeState state, String[] docbase, String[] newFacets, String[] newValues, String[] newModes, boolean newCriteria) throws RepositoryException {
         if (docbase == null || docbase.length == 0) {
             return state;
         }
@@ -136,7 +136,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                 Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
                 for (Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext();) {
                     ChildNodeEntry entry = (ChildNodeEntry)iter.next();
-                    ViewNodeId childNodeId = subProvider.new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
+                    ViewNodeId childNodeId = subProvider.new ViewNodeId(state.getNodeId(), entry.getId(), context, entry.getName(), view, order, singledView);
                     children.add(childNodeId.new Child(entry.getName(), childNodeId));
                 }
                 childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
@@ -150,7 +150,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                         if (isHandle && singledView && (entry.getName().equals(requestName) || entry.getName().equals(translationName))) {
                             continue;
                         } else {
-                            ViewNodeId childNodeId = subProvider.new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
+                            ViewNodeId childNodeId = subProvider.new ViewNodeId(state.getNodeId(), entry.getId(), context, entry.getName(), view, order, singledView);
                             children.add(childNodeId.new Child(entry.getName(), childNodeId));
                         }
                     }
@@ -177,7 +177,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         String[] docbase = getProperty(state.getNodeId(), docbaseName);
-        return populate(this, state, docbase, null, null, null, false);
+        return populate(context, this, state, docbase, null, null, null, false);
     }
 
     protected boolean match(Map<Name, String> view, NodeId candidate) {
@@ -219,7 +219,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     if (entry.getName().equals(requestName) || entry.getName().equals(translationName)) {
                         continue;
                     } else {
-                        ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.order, viewId.singledView);
+                        ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
                         children.add(childNodeId.new Child(entry.getName(), childNodeId));
                         // stop after first match because single hippo document view, and not using sorted set
                         if (viewId.order == null) {
@@ -227,7 +227,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                         }
                     }
                 } else {
-                    ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.order, viewId.singledView);
+                    ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
                     children.add(childNodeId.new Child(entry.getName(), childNodeId));
                 }
             }
@@ -250,8 +250,8 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         LinkedHashMap<Name, String> view;
         LinkedHashMap<Name, String> order;
 
-        ViewNodeId(NodeId parent, NodeId upstream, Name name, LinkedHashMap<Name, String> view, LinkedHashMap<Name, String> order, boolean singledView) {
-            super(ViewVirtualProvider.this, parent, name, upstream);
+        ViewNodeId(NodeId parent, NodeId upstream, StateProviderContext context, Name name, LinkedHashMap<Name, String> view, LinkedHashMap<Name, String> order, boolean singledView) {
+            super(ViewVirtualProvider.this, parent, context, name, upstream);
             this.view = view;
             this.order = order;
             this.singledView = singledView;
