@@ -108,7 +108,7 @@ public class RepositoryTemplateLoader implements TemplateLoader{
         }
         
         if (HstServices.isAvailable()) {
-            this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default");
+            this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
             this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
         }
         // do not log out observerSession!
