@@ -47,7 +47,6 @@ class HippoCachingPathResolver implements PathResolver {
     /**
      * {@inheritDoc}
      */
-    @Override
     public Path getQPath(String path) throws MalformedPathException, IllegalNameException, NamespaceException {
         Path qpath = cache.get(path);
         if (qpath == null) {
@@ -64,7 +63,6 @@ class HippoCachingPathResolver implements PathResolver {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getJCRPath(Path qpath) throws NamespaceException {
         for(Path.Element element: qpath.getElements()) {
             if(element instanceof HippoPathParser.SmartElement)
