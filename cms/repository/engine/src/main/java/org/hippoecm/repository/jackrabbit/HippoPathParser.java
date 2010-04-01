@@ -199,17 +199,6 @@ public class HippoPathParser {
                     break;
 
                 case '[':
-                    if (state == STATE_INDEX) {
-                        lastPos = pos;
-                        while(jcrPath.charAt(pos) != ']')
-                            ++pos;
-                        if(jcrPath.charAt(++pos) != ']')
-                            throw new MalformedPathException("");
-                        index = Path.INDEX_DEFAULT;
-                        argument = jcrPath.substring(lastPos, pos - 1);
-                        ++pos;
-                        state = STATE_INDEX_END;
-                    } else
                     if (state == STATE_PREFIX || state == STATE_NAME) {
                         if (wasSlash) {
                             throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Trailing slashes not allowed in prefixes and names.");
@@ -217,6 +206,30 @@ public class HippoPathParser {
                         state = STATE_INDEX;
                         name = jcrPath.substring(lastPos, pos - 1);
                         lastPos = pos;
+                        if (jcrPath.charAt(pos) == '{' || jcrPath.charAt(pos) == '\'') {
+                            char matchingChar = jcrPath.charAt(pos) == '{' ? '}' : '\'';
+                            lastPos = ++pos;
+                            while(pos <= len && jcrPath.charAt(pos) != matchingChar)
+                                ++pos;
+                            index = Path.INDEX_DEFAULT;
+                            argument = jcrPath.substring(lastPos, pos);
+                            if(pos+1 > len)
+                                throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
+                            if(jcrPath.charAt(++pos) != ']')
+                                throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
+                            pos += 1;
+                            state = STATE_INDEX_END;
+                        }
+                    } else if (state == STATE_INDEX) {
+                        lastPos = pos;
+                        while(pos <= len && jcrPath.charAt(pos) != ']')
+                            ++pos;
+                        if(pos > len || jcrPath.charAt(++pos) != ']')
+                            throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
+                        index = Path.INDEX_DEFAULT;
+                        argument = jcrPath.substring(lastPos, pos - 1);
+                        ++pos;
+                        state = STATE_INDEX_END;
                     } else {
                         throw new MalformedPathException("'" + jcrPath + "' is not a valid path. '" + c + "' not a valid name character."+state+".");
                     }
