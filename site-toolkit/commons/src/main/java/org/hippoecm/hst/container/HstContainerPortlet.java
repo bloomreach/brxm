@@ -76,6 +76,11 @@ public class HstContainerPortlet extends GenericPortlet {
     public static final String HST_PATH_INFO_EDIT_MODE_PARAM = "hstPathInfoEditMode";
     
     /**
+     * Name of portlet preference for the target component path
+     */
+    public static final String HST_TARGET_COMPONENT_PATH_PARAM = "hstTargetComponentPath";
+    
+    /**
      * Name of portlet preference for the portlet title
      */
     public static final String HST_PORTLET_TITLE_PARAM_NAME = "hstPortletTitle";
@@ -101,6 +106,7 @@ public class HstContainerPortlet extends GenericPortlet {
     protected String defaultHstPathInfo;
     protected String defaultFallbackHstPathInfo;
     protected String defaultHstPathInfoEditMode;
+    protected String defaultHstComponentTargetPath;
     protected String defaultPortletTitle;
     protected String defaultHeaderPage;
     protected String defaultHelpPage;
@@ -136,6 +142,8 @@ public class HstContainerPortlet extends GenericPortlet {
         defaultFallbackHstPathInfo = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), DEFAULT_HST_PATH_INFO_PARAM, defaultFallbackHstPathInfo);
         
         defaultHstPathInfoEditMode = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PATH_INFO_EDIT_MODE_PARAM, defaultHstPathInfoEditMode);
+        
+        defaultHstComponentTargetPath = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_TARGET_COMPONENT_PATH_PARAM, defaultHstComponentTargetPath);
         
         defaultPortletTitle = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PORTLET_TITLE_PARAM_NAME, defaultPortletTitle);
         
@@ -241,6 +249,7 @@ public class HstContainerPortlet extends GenericPortlet {
         }
         
         String hstServletPath = hstPortletRequestDispatcherPathProvider.getServletPath(request);
+        String targetComponentPath = null;
         
         if (allowPreferences) {
             PortletPreferences prefs = request.getPreferences();
@@ -282,6 +291,12 @@ public class HstContainerPortlet extends GenericPortlet {
                     if (!PortletConfigUtils.isEmpty(prefValue)) {
                         defaultFallbackHstPathInfo = prefValue;
                     }
+                    
+                    prefValue = prefs.getValue(HST_TARGET_COMPONENT_PATH_PARAM, defaultHstComponentTargetPath);
+                    
+                    if (prefValue != null) {
+                        targetComponentPath = prefValue;
+                    }
                 }
             }
         }
@@ -298,6 +313,10 @@ public class HstContainerPortlet extends GenericPortlet {
         
         if (PortletConfigUtils.isEmpty(hstPathInfo)) {
             hstPathInfo = defaultFallbackHstPathInfo;
+        }
+        
+        if (targetComponentPath != null) {
+            request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT_TARGET_COMPONENT_PATH, targetComponentPath);
         }
         
         boolean readDispPathParam = PortletConfigUtils.isEmpty(containerHstPathInfo);

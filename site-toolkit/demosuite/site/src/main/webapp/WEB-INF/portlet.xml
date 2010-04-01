@@ -63,6 +63,16 @@
                 <name>hstPathInfo</name>
                 <value>/news</value>
             </preference>
+            <!--
+            You can optionally configure the target child component path for the portlet 
+            instead of configuring hst:portletcomponentconfigurationid in a sitemap item.
+            -->
+            <!--
+            <preference>
+                <name>hstTargetComponentPath</name>
+                <value>body/content</value>
+            </preference>
+            -->
             <preference>
                 <name>hstPathInfoEditMode</name>
                 <value>/portletprefseditor</value>

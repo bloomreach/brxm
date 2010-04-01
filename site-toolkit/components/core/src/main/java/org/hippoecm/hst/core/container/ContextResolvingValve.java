@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -130,8 +131,14 @@ public class ContextResolvingValve extends AbstractValve
             }
         }
             
-        if(rootComponentConfig == null) {
+        if (rootComponentConfig == null) {
             throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved." + baseURL.getPathInfo());
+        }
+        
+        String targetComponentPath = (String) context.getServletRequest().getAttribute(ContainerConstants.HST_REQUEST_CONTEXT_TARGET_COMPONENT_PATH);
+        
+        if (targetComponentPath != null) {
+            rootComponentConfig = findTargetComponentConfiguration(rootComponentConfig, targetComponentPath);
         }
         
         if (log.isDebugEnabled()) {
@@ -153,5 +160,37 @@ public class ContextResolvingValve extends AbstractValve
         
         // continue
         context.invokeNext();
-    }    
+    }
+    
+    protected HstComponentConfiguration findTargetComponentConfiguration(HstComponentConfiguration rootComponentConfig, String targetComponentPath) {
+        HstComponentConfiguration targetComponentConfig = null;
+        
+        try {
+            String [] childComponentNames = StringUtils.splitPreserveAllTokens(StringUtils.removeEnd(StringUtils.removeStart(targetComponentPath, "/"), "/"), '/');
+            
+            targetComponentConfig = rootComponentConfig;
+            
+            for (String childComponentName : childComponentNames) {
+                targetComponentConfig = targetComponentConfig.getChildByName(childComponentName);
+                
+                if (targetComponentConfig == null) {
+                    throw new IllegalArgumentException("Invalid child component name: " + childComponentName);
+                }
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to find child component configuration: {}", e.toString(), e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Failed to find child component configuration: {}", e.toString());
+            }
+        }
+        
+        if (targetComponentConfig == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to find target component configuration by " + targetComponentPath + ". The default root component configuration will be used.");
+            }
+        }
+        
+        return (targetComponentConfig != null ? targetComponentConfig : rootComponentConfig);
+    }
 }

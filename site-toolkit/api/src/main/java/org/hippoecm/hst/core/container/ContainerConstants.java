@@ -66,6 +66,11 @@ public interface ContainerConstants {
     String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.container.context.namespace";
     
     /**
+     * The attribute name used to set the target component configuration path into the servlet/portlet request for the current request context.
+     */
+    String HST_REQUEST_CONTEXT_TARGET_COMPONENT_PATH = "org.hippoecm.hst.core.request.HstRequestContext.target.component.path";
+    
+    /**
      * The key used to set forward path.
      */
     String HST_FORWARD_PATH_INFO = "org.hippoecm.hst.container.forward.path_info";
