@@ -21,8 +21,10 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
@@ -103,6 +105,31 @@ public interface HstLinkCreator {
     HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem);
     
     
+    /**
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>hstSite</code>. Note that this HstLink creation does only take into account the
+     * <code>hstSite</code>.
+     * This might be a different one then the one of the current request context, reflected in the {@link ResolvedSiteMapItem}, 
+     * for example in the method {@link #create(Node, ResolvedSiteMapItem)}. 
+     * If the <code>hstSite</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
+     * to a different (sub)site, <code>null</code> is returned. </p>
+     * <p>note: if an link is returned, this is always the canonical link, also see {@link #createCanonical(Node, ResolvedSiteMapItem)}</p>
+     * @param node the jcr node for that should be translated into a HstLink
+     * @param hstSite the (sub)site for which the hstLink should be created for
+     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>hstSite</code> or <code>null</code> when no link for the node can be made in the <code>hstSite</code>
+     */
+    HstLink create(Node node, HstSite hstSite);
+
+
+    /**
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} wrt the the {@link #HstSites} <code>hstSites</code>: the (sub)site to which the 
+     * jcr <code>node</code> belongs is not known on beforehand. The  {@link HstSite} belonging to the resulting {@link HstLink} can be different than the {@link HstSite} from the current request. 
+     * This means, that the final url being created from this {@link HstLink} even can have a different host name, depending on the {@link VirtualHosts}</p> configuration
+     * <p>note: if an link is returned, this is always the canonical link, also see {@link #createCanonical(Node, ResolvedSiteMapItem)}</p>
+     * @param node the jcr node for that should be translated into a {@link HstLink} 
+     * @param hstSites the {@link HstSites} that are being tried to create a {@link HstLink} for
+     * @return the {@link HstLink}  for this jcr <code>node</code> and <code>hstSites</code> or <code>null</code> when no link can be created
+     */
+    HstLink create(Node node, HstSites hstSites);
     
     /**
      * 

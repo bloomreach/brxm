@@ -129,6 +129,23 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         linkResolver.fallback = true;
         return linkResolver.resolve();
     }
+    
+
+    public HstLink create(Node node, HstSite hstSite) {
+        if(!(hstSite instanceof HstSiteService)) {
+            throw new IllegalArgumentException("hstSite must be an instance of HstSiteService");
+        }
+        HstLinkResolver linkResolver = new HstLinkResolver(node, (HstSiteService)hstSite);
+        return linkResolver.resolve();
+    }
+
+    /**
+     * TODO we still need to implement this method. Currently, we throw an UnsupportedOperationException, see HSTTWO-1054
+     * {@inheritDoc} 
+     */
+    public HstLink create(Node node, HstSites hstSites) {
+        throw new UnsupportedOperationException("This method is not yet supported. See HSTTWO-1054");
+    }
 
 
     public HstLink create(String path, HstSite hstSite) {
@@ -252,20 +269,41 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         
         Node node;
         String nodePath;
+       
         ResolvedSiteMapItem resolvedSiteMapItem;
+        HstSiteService hstSite;
+        
         HstSiteMapItem preferredItem;
         boolean onlyVirtual;
         boolean canonicalLink;
         boolean representsDocument;
         boolean fallback;
         
+        
+        /**
+         * Create a HstLinkResolver instance with the current context <code>resolvedSiteMapItem</code>. The {@link HstSite} is taken from this context
+         * @param node
+         * @param resolvedSiteMapItem
+         */
         HstLinkResolver(Node node, ResolvedSiteMapItem resolvedSiteMapItem){
             this.node = node;
             this.resolvedSiteMapItem = resolvedSiteMapItem;
+            HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
+            hstSite =  (HstSiteService)hstSiteMap.getSite(); 
+        }
+        
+        /**
+         * Create a HstLinkResolver instance for creating a link in this <code>hstSite</code>. We do not take into account the current context from {@link ResolvedSiteMapItem}
+         * when creating a {@link HstLinkResolver} through this constructor
+         * @param node
+         * @param hstSite
+         */
+        HstLinkResolver(Node node, HstSiteService hstSite){
+            this.node = node;
+            this.hstSite = hstSite;
         }
         
         HstLink resolve(){
-            HstSiteService hstSite = getHstSite();
             if(node == null) {
                 log.warn("Cannot create link for bean. Return page not found link");
                 return pageNotFoundLink(hstSite);
@@ -284,7 +322,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     for(LocationResolver resolver : DefaultHstLinkCreator.this.locationResolvers) {
                         if(node.isNodeType(resolver.getNodeType())) {
                             resolver.setLocationMapTree(hstSite.getLocationMapTree());
-                            HstLink link = resolver.resolve(node, getHstSite());
+                            HstLink link = resolver.resolve(node, hstSite);
                             if(link != null) {
                                return link; 
                             } else {
@@ -325,7 +363,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
                         pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
                         containerResource = true;
-                        return new HstLinkImpl(pathInfo, getHstSite(), containerResource);
+                        return new HstLinkImpl(pathInfo, hstSite, containerResource);
                         
                     } else {
                         if(!onlyVirtual && nodePath.startsWith(hstSite.getCanonicalContentPath())) {
@@ -383,7 +421,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return pageNotFoundLink(hstSite);
             }
             
-            HstLink link = new HstLinkImpl(pathInfo, getHstSite(), containerResource);
+            HstLink link = new HstLinkImpl(pathInfo, hstSite, containerResource);
             if(postProcess) {
                 link = postProcess(link);
             }
@@ -398,10 +436,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return link;
         }
 
-        private HstSiteService getHstSite() {
-            HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
-            return (HstSiteService)hstSiteMap.getSite(); 
-        }
 
     }
+
+
 }
