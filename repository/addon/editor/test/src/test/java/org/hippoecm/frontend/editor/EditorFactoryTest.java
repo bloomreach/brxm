@@ -30,6 +30,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -48,6 +49,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.reviewedactions.PublishableDocument;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 
 public class EditorFactoryTest extends PluginTest {
@@ -93,6 +95,11 @@ public class EditorFactoryTest extends PluginTest {
             super(context, config);
 
             context.registerService(this, COMPARERS);
+        }
+
+        public IModel getCompareToModel() {
+            return getPluginContext().getService(getPluginConfig().getString("model.compareTo"), IModelReference.class)
+                    .getModel();
         }
     }
 
@@ -202,7 +209,7 @@ public class EditorFactoryTest extends PluginTest {
                     "model.compareTo", "${model.compareTo}",
     };
 
-    final static String[] testdocument = new String[] {
+    final static String[] cmstestdocument = new String[] {
             "/${name}", "hippo:handle",
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/${name}/${name}", "cmstest:document",
@@ -213,6 +220,14 @@ public class EditorFactoryTest extends PluginTest {
                     "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
                     "hippostdpubwf:lastModifiedBy", "admin",
                     "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00"
+            
+    };
+
+    final static String[] plaintestdocument = new String[] {
+            "/${name}", "hippo:handle",
+                "jcr:mixinTypes", "hippo:hardhandle",
+                "/${name}/${name}", "hippo:document",
+                    "jcr:mixinTypes", "hippo:harddocument",
             
     };
 
@@ -233,7 +248,7 @@ public class EditorFactoryTest extends PluginTest {
     protected void createDocument(String name) throws RepositoryException {
         Map<String, String> pars = new MiniMap(1);
         pars.put("name", name);
-        build(session, mount("/test/content", instantiate(testdocument, pars)));
+        build(session, mount("/test/content", instantiate(cmstestdocument, pars)));
     }
 
     @Test
@@ -358,8 +373,11 @@ public class EditorFactoryTest extends PluginTest {
     }
 
     @Test
-    public void testVersionedDocument() throws Exception {
-        createDocument("document");
+    public void testVersionedDocumentCanOnlyBeOpenedInCompareMode() throws Exception {
+        Map<String, String> pars = new MiniMap<String, String>(1);
+        pars.put("name", "document");
+        build(session, mount("/test/content", instantiate(plaintestdocument, pars)));
+
         session.save();
         start(config);
 
@@ -368,11 +386,66 @@ public class EditorFactoryTest extends PluginTest {
         EditorFactory factory = new EditorFactory(context, config);
         try {
             factory.newEditor(new TestEditorContext(), new JcrNodeModel(version), Mode.EDIT);
-            fail("Could open editor for Version");
+            fail("Could open Version in edit mode");
         } catch (EditorException e) {
             // ignore, this is OK
         }
-        factory.newEditor(new TestEditorContext(), new JcrNodeModel(version), Mode.VIEW);
+        try {
+            factory.newEditor(new TestEditorContext(), new JcrNodeModel(version), Mode.VIEW);
+            fail("Could open Version in view mode");
+        } catch (EditorException e) {
+            // ignore, this is OK
+        }
+        factory.newEditor(new TestEditorContext(), new JcrNodeModel(version), Mode.COMPARE);
+    }
+
+    @Test
+    public void testVersionedDocument() throws Exception {
+        Map<String, String> pars = new MiniMap<String, String>(1);
+        pars.put("name", "document");
+        build(session, mount("/test/content", instantiate(plaintestdocument, pars)));
+
+        session.save();
+        start(config);
+
+        Version version = root.getNode("test/content/document").checkin();
+
+        EditorFactory factory = new EditorFactory(context, config);
+        IEditor editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel(version), Mode.COMPARE);
+        List<IRenderService> comparers = getComparers();
+        assertEquals(1, comparers.size());
+        Comparer comparer = (Comparer) comparers.get(0);
+        JcrNodeModel current = (JcrNodeModel) comparer.getModel();
+        JcrNodeModel base = (JcrNodeModel) comparer.getCompareToModel();
+        assertEquals(new JcrNodeModel("/test/content/document/document"), current);
+        assertEquals(new JcrNodeModel(version.getNode("jcr:frozenNode")), base);
+    }
+
+    @Test
+    public void testVersionedPublishableDocument() throws Exception {
+        createDocument("document");
+        session.save();
+        start(config);
+
+        Node handle = root.getNode("test/content/document");
+        Node document = handle.getNode("document");
+        Version docVersion = document.checkin();
+        Version handleVersion = handle.checkin();
+
+        handle.checkout();
+        Node copy = ((HippoSession) handle.getSession()).copy(handle.getNode("document"), handle.getPath() + "/document");
+        copy.setProperty("hippostd:state", "unpublished");
+        session.save();
+
+        EditorFactory factory = new EditorFactory(context, config);
+        IEditor editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel(handleVersion), Mode.COMPARE);
+        List<IRenderService> comparers = getComparers();
+        assertEquals(1, comparers.size());
+        Comparer comparer = (Comparer) comparers.get(0);
+        JcrNodeModel current = (JcrNodeModel) comparer.getModel();
+        JcrNodeModel base = (JcrNodeModel) comparer.getCompareToModel();
+        assertEquals(new JcrNodeModel(copy), current);
+        assertEquals(new JcrNodeModel(docVersion.getNode("jcr:frozenNode")), base);
     }
 
     @Test

@@ -42,7 +42,7 @@ public class RevisionDocumentAttributeModifier implements IListAttributeModifier
         Revision revision = model.getObject();
         if (revision != null) {
             try {
-                Node node = revision.getRevisionNodeModel().getNode();
+                Node node = revision.getDocument().getObject();
                 if (node != null) {
                     return getCellAttributeModifiers(node);
                 } else {

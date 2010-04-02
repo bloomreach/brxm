@@ -58,13 +58,13 @@ public class HistoryDialog extends AbstractDialog implements ITitleDecorator {
                 @Override
                 public void onSelect(IModel model) {
                     Revision revision = (Revision) model.getObject();
-                    JcrNodeModel versionModel = revision.getRevisionNodeModel();
-                    IEditor editor = editorMgr.getEditor(versionModel);
+                    JcrNodeModel handleModel = revision.getHandle();
+                    IEditor editor = editorMgr.getEditor(handleModel);
                     if (editor == null) {
                         try {
-                            editorMgr.openPreview(versionModel);
+                            editorMgr.openPreview(handleModel);
                         } catch (ServiceException ex) {
-                            log.error("Could not open editor for " + versionModel.getItemModel().getPath(), ex);
+                            log.error("Could not open editor for " + handleModel.getItemModel().getPath(), ex);
                             error("Could not open editor");
                             return;  // don't close dialog
                         }
