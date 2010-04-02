@@ -25,6 +25,7 @@ import javax.jcr.observation.EventListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Concurrent modification tests to test for regressions of data corruption due
