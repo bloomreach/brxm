@@ -15,7 +15,8 @@
  */
 package org.hippoecm.hst.core.jcr;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Credentials;
@@ -34,6 +35,11 @@ import org.hippoecm.hst.logging.LoggerFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 
+/**
+ * EventListenersContainerImpl
+ * 
+ * @version $Id$
+ */
 public class EventListenersContainerImpl implements EventListenersContainer {
 
     private static final String LOGGER_CATEGORY_NAME = EventListenersContainerImpl.class.getName();
@@ -46,7 +52,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected long sessionLiveCheckInterval = 60000L;
     protected Workspace workspace;
     protected ObservationManager observationManager;
-    protected List<EventListenerItem> eventListenerItems = new ArrayList<EventListenerItem>();
+    protected List<EventListenerItem> eventListenerItems;
 
     protected boolean firstInitializationDone;
     protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
@@ -62,17 +68,39 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     }
 
     public List<EventListenerItem> getEventListenerItems() {
-        return this.eventListenerItems;
+        if (eventListenerItems == null) {
+            return Collections.emptyList();
+        }
+        
+        List<EventListenerItem> copiedEventListenerItems = null;
+        
+        synchronized (eventListenerItems) {
+            copiedEventListenerItems = new LinkedList<EventListenerItem>(eventListenerItems);
+        }
+        
+        return copiedEventListenerItems;
     }
 
     public void setEventListenerItems(List<EventListenerItem> eventListenerItems) {
-        this.eventListenerItems = eventListenerItems;
+        this.eventListenerItems = Collections.synchronizedList(new LinkedList<EventListenerItem>(eventListenerItems));
     }
     
     public void addEventListenerItem(EventListenerItem eventListenerItem) {
-        this.eventListenerItems.add(eventListenerItem);
+        if (eventListenerItems == null) {
+            eventListenerItems = Collections.synchronizedList(new LinkedList<EventListenerItem>());
+        }
+        
+        eventListenerItems.add(eventListenerItem);
     }
-
+    
+    public boolean removeEventListenerItem(EventListenerItem eventListenerItem) {
+        if (eventListenerItems == null) {
+            return false;
+        }
+        
+        return eventListenerItems.remove(eventListenerItem);
+    }
+    
     public void setSessionLiveCheck(boolean sessionLiveCheck) {
         this.sessionLiveCheck = sessionLiveCheck;
     }
@@ -98,13 +126,32 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     }
     
     public void start() {
-        this.stopped = false;
-        
         if (!this.sessionLiveCheck) {
+            this.stopped = false;
+            doDeinit();
             doInit();
         } else {
-            this.eventListenersContainerSessionChecker = new EventListenersContainerSessionChecker();
-            this.eventListenersContainerSessionChecker.start();
+            this.stopped = true;
+            if (eventListenersContainerSessionChecker != null) {
+                if (eventListenersContainerSessionChecker.isAlive()) {
+                    try {
+                        this.eventListenersContainerSessionChecker.interrupt();
+                    } catch (Exception e) {
+                        Logger log = getLogger();
+                        
+                        if (log.isDebugEnabled()) {
+                            log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread", e);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread. {}", e.toString());
+                        }
+                    }
+                }
+                eventListenersContainerSessionChecker = null;
+            }
+            doDeinit();
+            this.stopped = false;
+            eventListenersContainerSessionChecker = new EventListenersContainerSessionChecker();
+            eventListenersContainerSessionChecker.start();
         }
     }
 
@@ -114,8 +161,6 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         if (log.isDebugEnabled())
             log.debug("EventListenersContainer will initialize itself.");
 
-        doDeinit();
-
         try {
             if (this.credentials == null) {
                 session = this.repository.login();
@@ -124,8 +169,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             }
             this.workspace = session.getWorkspace();
             this.observationManager = this.workspace.getObservationManager();
-
-            for (EventListenerItem item : this.eventListenerItems) {
+            
+            for (EventListenerItem item : getEventListenerItems()) {
 
                 EventListener eventListener = item.getEventListener();
                 int eventTypes = item.getEventTypes();
@@ -211,25 +256,27 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         
         doDeinit();
         
-        if (this.eventListenersContainerSessionChecker != null) {
-            try {
-                this.eventListenersContainerSessionChecker.interrupt();
-            } catch (Exception e) {
-                Logger log = getLogger();
-                
-                if (log.isDebugEnabled()) {
-                    log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread", e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread. {}", e.toString());
+        if (eventListenersContainerSessionChecker != null) {
+            if (eventListenersContainerSessionChecker.isAlive()) {
+                try {
+                    this.eventListenersContainerSessionChecker.interrupt();
+                } catch (Exception e) {
+                    Logger log = getLogger();
+                    
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread. {}", e.toString());
+                    }
                 }
             }
-            this.eventListenersContainerSessionChecker = null;
+            eventListenersContainerSessionChecker = null;
         }
     }
     
     protected void doDeinit() {
-        if (this.observationManager != null && this.eventListenerItems != null) {
-            for (EventListenerItem item : this.eventListenerItems) {
+        if (this.observationManager != null) {
+            for (EventListenerItem item : getEventListenerItems()) {
                 try {
                     this.observationManager.removeEventListener(item.getEventListener());
                 } catch (Exception e) {
@@ -257,12 +304,21 @@ public class EventListenersContainerImpl implements EventListenersContainer {
 
         private EventListenersContainerSessionChecker() {
             super("EventListenersContainerSessionChecker");
+            setDaemon(true);
         }
 
         public void run() {
             while (!EventListenersContainerImpl.this.stopped) {
-                if (EventListenersContainerImpl.this.session == null
-                        || !EventListenersContainerImpl.this.session.isLive()) {
+                boolean isSessionLive = false;
+                
+                try {
+                    isSessionLive = EventListenersContainerImpl.this.session.isLive();
+                } catch (Exception e) {
+                    
+                }
+                
+                if (EventListenersContainerImpl.this.session == null || !isSessionLive) {
+                    doDeinit();
                     doInit();
                 }
 
@@ -271,6 +327,9 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                         wait(firstInitializationDone ? EventListenersContainerImpl.this.sessionLiveCheckInterval
                                 : EventListenersContainerImpl.this.sessionLiveCheckIntervalOnStartup);
                     } catch (InterruptedException e) {
+                        if (EventListenersContainerImpl.this.stopped) {
+                            break;
+                        }
                     }
                 }
             }

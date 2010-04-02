@@ -27,6 +27,10 @@ public interface EventListenersContainer {
 
     /**
      * Sets event listener items.
+     * <P>
+     * <EM>Note: Implementations could store the event listener items into a copied list.
+     *           So, the argument should not be assumed as a mutable list.</EM>
+     * </P>
      * 
      * @param eventListenerItems
      */
@@ -40,7 +44,18 @@ public interface EventListenersContainer {
     void addEventListenerItem(EventListenerItem eventListenerItem);
     
     /**
-     * Returns the event listener items.
+     * Removes an event listener item.
+     * @param eventListenerItem
+     * @return Returns true if removed.
+     */
+    boolean removeEventListenerItem(EventListenerItem eventListenerItem);
+    
+    /**
+     * Returns a list of the event listener items.
+     * <P>
+     * <EM>Note: Implementations could return a copied list of the event listener items.
+     *           So, the return should not be assumed as a mutable list.</EM>
+     * </P>
      * @return
      */
     List<EventListenerItem> getEventListenerItems();
