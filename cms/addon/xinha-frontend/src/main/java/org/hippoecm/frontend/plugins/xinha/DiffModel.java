@@ -87,5 +87,6 @@ public class DiffModel extends LoadableDetachableModel<String> {
     public void detach() {
         original.detach();
         current.detach();
+        super.detach();
     }
 }
