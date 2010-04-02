@@ -59,9 +59,11 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     private static final Logger log = LoggerFactory.getLogger(JcrSessionModel.class);
 
     private final IValueMap credentials;
+    private String remoteAddress;
 
     public JcrSessionModel(IValueMap credentials) {
         this.credentials = credentials;
+        this.remoteAddress = ((WebRequestCycle) RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
     }
 
     protected void flush() {
@@ -213,6 +215,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
      * @return ip address of client
      */
     private String getRemoteAddr() {
-        return ((WebRequestCycle) RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
+        return remoteAddress;
     }
+
 }
