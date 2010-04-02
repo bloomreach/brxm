@@ -231,7 +231,6 @@ public class UserSession extends WebSession {
 
         doLogin(DEFAULT_CREDENTIALS, new JcrSessionModel(DEFAULT_CREDENTIALS));
 
-        ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getSession(false).invalidate();
         dirty();
         throw new RestartResponseException(WebApplication.get().getHomePage());
     }
