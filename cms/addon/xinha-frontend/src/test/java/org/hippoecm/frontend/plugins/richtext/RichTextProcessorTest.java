@@ -34,7 +34,7 @@ public class RichTextProcessorTest {
                 return "test-prefix/" + name;
             }
         });
-        assertEquals("testing 1 2 3 <img src=\"test-prefix/?_path=link\" facetselect=\"link\" />", processed);
+        assertEquals("testing 1 2 3 <img src=\"test-prefix/link\" facetselect=\"link\" />", processed);
     }
 
 
