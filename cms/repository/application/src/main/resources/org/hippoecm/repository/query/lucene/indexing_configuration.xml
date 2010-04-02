@@ -28,6 +28,8 @@
         <nodetype>hippostd:state</nodetype>
         <nodetype>hippostd:stateSummary</nodetype>
         <nodetype>hippostd:holder</nodetype>
+        <nodetype>hippostdpubwf:createdBy</nodetype>
+        <nodetype>hippostdpubwf:lastModifiedBy</nodetype>
     </excludefromnodescope>
     
     <nosingleindexterm>
