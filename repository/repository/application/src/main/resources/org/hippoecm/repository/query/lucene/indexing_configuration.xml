@@ -15,7 +15,7 @@
     limitations under the License.
 -->
 <!DOCTYPE configuration SYSTEM "http://jackrabbit.apache.org/dtd/indexing-configuration-1.0.dtd">
-<configuration xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0">
+<configuration xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0" xmlns:hippostdpubwf="http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0">
     <!-- hippo aggregates -->
     <aggregates>
         <nodetype>hippostd:html</nodetype>
