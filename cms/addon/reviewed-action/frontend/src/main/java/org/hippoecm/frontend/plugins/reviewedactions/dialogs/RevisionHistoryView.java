@@ -160,7 +160,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
             public Component getRenderer(String id, IModel model) {
                 Revision revision = (Revision) model.getObject();
-                Node node = revision.getRevisionNodeModel().getNode();
+                Node node = revision.getDocument().getObject();
                 IModel nameModel;
                 try {
                     nameModel = new NodeTranslator(new JcrNodeModel(node.getNode("jcr:frozenNode"))).getNodeName();
@@ -211,7 +211,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
             public AttributeModifier[] getCellAttributeModifiers(IModel model) {
                 Revision revision = (Revision) model.getObject();
-                StateIconAttributes attrs = new StateIconAttributes(revision.getRevisionNodeModel());
+                StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
                 AttributeModifier[] attributes = new AttributeModifier[2];
                 attributes[0] = new CssClassAppender(new PropertyModel(attrs, "cssClass"));
                 attributes[1] = new AttributeAppender("title", new PropertyModel(attrs, "summary"), " ");

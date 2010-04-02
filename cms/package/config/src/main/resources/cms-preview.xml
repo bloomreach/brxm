@@ -102,9 +102,6 @@
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>${editor.id}</sv:value>
     </sv:property>
-    <sv:property sv:name="model.id" sv:type="String">
-      <sv:value>${wicket.model}</sv:value>
-    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.addon.workflow.WorkflowsPlugin</sv:value>
     </sv:property>

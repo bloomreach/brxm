@@ -133,7 +133,16 @@ public class RevisionHistory extends JcrObject {
                 }
 
                 if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    SortedMap<Calendar, Version> versions = new TreeMap<Calendar, Version>();
+                    class RevisionEntry {
+                        Version document;
+                        Version handle;
+
+                        RevisionEntry(Version document, Version handle) {
+                            this.document = document;
+                            this.handle = handle;
+                        }
+                    }
+                    SortedMap<Calendar, RevisionEntry> versions = new TreeMap<Calendar, RevisionEntry>();
                     VariantHistoryIterator iter = new VariantHistoryIterator(handle, Collections.EMPTY_MAP);
                     while (iter.hasNext()) {
                         Version variant = iter.next();
@@ -146,17 +155,18 @@ public class RevisionHistory extends JcrObject {
                             continue;
                         }
 
-                        versions.put(variant.getCreated(), variant);
+                        versions.put(variant.getCreated(), new RevisionEntry(variant, iter.getHandleVersion()));
                     }
                     int index = 0;
-                    for (Map.Entry<Calendar, Version> entry : versions.entrySet()) {
+                    for (Map.Entry<Calendar, RevisionEntry> entry : versions.entrySet()) {
                         Set<String> labels = new TreeSet<String>();
-                        Version variant = entry.getValue();
+                        Version variant = entry.getValue().document;
                         String[] versionLabels = variant.getContainingHistory().getVersionLabels(variant);
                         for (String label : versionLabels) {
                             labels.add(label);
                         }
-                        list.add(new Revision(this, entry.getKey(), labels, index++, new JcrNodeModel(variant)));
+                        list.add(new Revision(this, entry.getKey(), labels, index++, new JcrNodeModel(variant),
+                                new JcrNodeModel(entry.getValue().handle)));
                     }
                 } else {
                     VersionWorkflow workflow = getWorkflow();

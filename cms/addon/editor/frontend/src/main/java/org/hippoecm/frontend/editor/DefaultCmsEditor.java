@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -42,8 +43,8 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
         Node node = model.getObject();
         if (node != null) {
             try {
-                if (node.isNodeType("nt:version") && Mode.EDIT == mode) {
-                    throw new EditorException("Cannot edit version");
+                if (node.isNodeType("nt:version") && (Mode.EDIT == mode || Mode.VIEW == mode)) {
+                    throw new EditorException("Invalid mode " + mode + " for version node");
                 }
             } catch (RepositoryException e) {
                 throw new EditorException("Error determining node type", e);
@@ -56,20 +57,40 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
         IModel<Node> model = super.getEditorModel();
         try {
             Node node = model.getObject();
+            if (node.isNodeType("nt:version")) {
+                Node frozen = node.getNode("jcr:frozenNode");
+                String uuid = frozen.getProperty("jcr:frozenUuid").getString();
+                try {
+                    node = frozen.getSession().getNodeByUUID(uuid);
+                } catch (ItemNotFoundException ex) {
+                    return new JcrNodeModel(frozen);
+                }
+            }
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if (node.hasNode(node.getName())) {
                     return new JcrNodeModel(node.getNode(node.getName()));
                 } else {
-                    return null;
+                    throw new EditorException("Document has been deleted");
                 }
-            } else if (node.isNodeType("nt:version")) {
+            } 
+            return new JcrNodeModel(node);
+        } catch (RepositoryException ex) {
+            throw new EditorException("cannot obtain proper editable document from handle", ex);
+        }
+    }
+
+    @Override
+    protected IModel<Node> getBaseModel() throws EditorException {
+        IModel<Node> model = super.getEditorModel();
+        try {
+            Node node = model.getObject();
+            if (node.isNodeType("nt:version")) {
                 return new JcrNodeModel(node.getNode("jcr:frozenNode"));
-            } else {
-                return model;
             }
         } catch (RepositoryException ex) {
             throw new EditorException("cannot obtain proper editable document from handle", ex);
         }
+        throw new EditorException("Compare not supported");
     }
 
     @Override

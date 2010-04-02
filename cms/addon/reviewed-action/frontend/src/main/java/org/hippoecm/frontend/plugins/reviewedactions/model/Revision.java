@@ -22,9 +22,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -45,6 +47,7 @@ public class Revision extends JcrObject {
     static final Logger log = LoggerFactory.getLogger(Revision.class);
 
     JcrNodeModel versionModel;
+    private JcrNodeModel handleModel;
     RevisionHistory history;
     Calendar date;
     Set<String> labels;
@@ -59,7 +62,8 @@ public class Revision extends JcrObject {
         this.index = index;
     }
 
-    public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel versionModel) {
+    public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel versionModel,
+            JcrNodeModel handleModel) {
         super(history.getNodeModel());
 
         this.history = history;
@@ -67,13 +71,15 @@ public class Revision extends JcrObject {
         this.labels = labels;
         this.index = index;
         this.versionModel = versionModel;
+        this.handleModel = handleModel;
     }
 
     /**
      * The node model for the nt:version node that corresponds to this revision.
      */
-    public JcrNodeModel getRevisionNodeModel() {
+    public IModel<Node> getDocument() {
         if (versionModel == null) {
+            versionModel = new JcrNodeModel((Node) null);
             VersionWorkflow workflow = history.getWorkflow();
             if (workflow != null) {
                 try {
@@ -94,6 +100,10 @@ public class Revision extends JcrObject {
             }
         }
         return versionModel;
+    }
+
+    public JcrNodeModel getHandle() {
+        return handleModel;
     }
 
     public int getRevisionNumber() {
