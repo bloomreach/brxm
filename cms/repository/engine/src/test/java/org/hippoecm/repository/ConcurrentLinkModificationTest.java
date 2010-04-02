@@ -111,8 +111,11 @@ public class ConcurrentLinkModificationTest extends TestCase {
         super.tearDown();
     }
 
+    @Test
+    public void dummy() {
+    }
+
     @Ignore
-//    @Test
     public void testConcurrency() throws Exception {
         // maak virtuele nodes aan / verwijder, multi-session met observers
         session.getWorkspace().getObservationManager().addEventListener(
