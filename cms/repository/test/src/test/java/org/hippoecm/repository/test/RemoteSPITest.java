@@ -47,6 +47,7 @@ import org.junit.runners.Suite;
     //org.hippoecm.repository.HREPTWO283IssueTest.class,
     org.hippoecm.repository.HREPTWO690Test.class,
     org.hippoecm.repository.HREPTWO1493Test.class,
+    org.hippoecm.repository.HREPTWO650Test.class,
     org.hippoecm.repository.HREPTWO3402IssueTest.class,
     org.hippoecm.repository.decorating.FacetedReferenceTest.class,
     org.hippoecm.repository.decorating.MirrorTest.class,
