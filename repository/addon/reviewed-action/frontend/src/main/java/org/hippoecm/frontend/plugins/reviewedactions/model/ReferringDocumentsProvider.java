@@ -36,8 +36,10 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,25 +162,24 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         }
         String uuid = handle.getUUID();
         QueryManager queryManager = document.getSession().getWorkspace().getQueryManager();
-        String statement = "//*[@hippo:docbase='" + uuid + "']";
-        Query query = queryManager.createQuery(statement, Query.XPATH);
+        String statement;
+        if (retrieveUnpublished) {
+            statement = "//element(*,hippostd:publishable)[@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed')]//*[@hippo:docbase='" + uuid + "']";
+        } else {
+            statement = "//element(*,hippostd:publishable)[@hippostd:state='published']//*[@hippo:docbase='" + uuid + "']";
+        }
+        HippoQuery query = (HippoQuery) queryManager.createQuery(statement, Query.XPATH);
         QueryResult result = query.execute();
         numResults = (int) result.getNodes().getSize();
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
             Node node = iter.nextNode();
-            while (node != null && !node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            while (!node.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
                 node = (node.getDepth() > 0 ? node.getParent() : null);
             }
-            if (node != null) {
-                if (node.isNodeType("hippostd:publishable") && node.hasProperty("hippostd:state")) {
-                    String state = node.getProperty("hippostd:state").getString();
-                    if ("published".equals(state) || (retrieveUnpublished && "unpublished".equals(state))) {
-                        referrers.add(node);
-                        if (referrers.size() >= getLimit()) {
-                            break;
-                        }
-                    }
-                }
+            if (referrers.size() < getLimit()) {
+                referrers.add(node);
+            } else {
+                break;
             }
         }
         return referrers;
