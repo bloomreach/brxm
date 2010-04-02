@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.math.BigDecimal;
+
 /**
  * This is a base interface for all beans that represent a hippo resource should implement. 
  */
@@ -33,4 +35,19 @@ public interface HippoResourceBean extends HippoBean{
      * @return the number of bytes of binary stored in this resource
      */
      long getLength();
+     
+     /**
+      * Return size in kilobytes
+      *
+      * @return kilobytes
+      */
+     public BigDecimal getLengthKB();
+     
+     /**
+      * Return size in kilobytes
+      *
+      * @return megabytes
+      */
+     public BigDecimal getLengthMB();
+
 }
