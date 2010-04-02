@@ -319,7 +319,7 @@
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
             <description>
-              The path of the preferred sitemap item to use for linkrewriting
+              The path of the preferred sitemap item to use for linkrewriting. If the path starts with a /, the / is removed and ignored.
             </description>
         </attribute>
         <attribute>
