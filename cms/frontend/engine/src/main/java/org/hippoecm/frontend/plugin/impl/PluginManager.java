@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugin.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +68,7 @@ public class PluginManager implements IClusterable {
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker>> listeners;
     private Map<Integer, RefCount> referenced;
+    private Map<IClusterable, Integer> lookupMap;
     private int nextReferenceId;
 
     public PluginManager(Home page) {
@@ -75,6 +77,7 @@ public class PluginManager implements IClusterable {
         services = new HashMap<String, List<IClusterable>>();
         listeners = new HashMap<String, List<IServiceTracker>>();
         referenced = new HashMap<Integer, RefCount>();
+        lookupMap = new IdentityHashMap<IClusterable, Integer>();
         nextReferenceId = 0;
     }
 
@@ -133,6 +136,7 @@ public class PluginManager implements IClusterable {
         if (entry == null) {
             Integer id = new Integer(nextReferenceId++);
             referenced.put(id, new RefCount(service));
+            lookupMap.put(service, id);
             if (log.isDebugEnabled()) {
                 log.debug("assigning id " + id + " to service " + service + " (hash: " + service.hashCode() + ")");
             }
@@ -152,6 +156,7 @@ public class PluginManager implements IClusterable {
         Map.Entry<Integer, RefCount> entry = internalGetReference(service);
         if (entry != null) {
             referenced.remove(entry.getKey());
+            lookupMap.remove(service);
         }
     }
 
@@ -179,6 +184,7 @@ public class PluginManager implements IClusterable {
                 }
                 internalUnregisterService(service, serviceId);
                 referenced.remove(id);
+                lookupMap.remove(service);
             }
         } else {
             log.error("unregistering a service that wasn't registered.");
@@ -296,12 +302,25 @@ public class PluginManager implements IClusterable {
     }
 
     <T extends IClusterable> Map.Entry<Integer, RefCount> internalGetReference(T service) {
-        for (Map.Entry<Integer, RefCount> entry : referenced.entrySet()) {
-            if (entry.getValue().service == service) {
-                return entry;
-            }
+        final Integer ref = lookupMap.get(service);
+        final RefCount refCount = referenced.get(ref);
+        if (refCount == null) {
+            return null;
         }
-        return null;
+        return new Map.Entry<Integer, RefCount>() {
+
+            public Integer getKey() {
+                return ref;
+            }
+
+            public RefCount getValue() {
+                return refCount;
+            }
+
+            public RefCount setValue(RefCount value) {
+                return null;
+            }
+        };
     }
 
 }
