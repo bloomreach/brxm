@@ -24,7 +24,7 @@ import javax.jcr.observation.EventListener;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 
 /**
  * Concurrent modification tests to test for regressions of data corruption due
@@ -111,7 +111,8 @@ public class ConcurrentLinkModificationTest extends TestCase {
         super.tearDown();
     }
 
-    @Test
+    @Ignore
+//    @Test
     public void testConcurrency() throws Exception {
         // maak virtuele nodes aan / verwijder, multi-session met observers
         session.getWorkspace().getObservationManager().addEventListener(
