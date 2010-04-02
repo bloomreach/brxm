@@ -75,9 +75,6 @@ InsertImage.prototype.insertImage = function(values, openModal) {
     }
 }
 
-InsertImage.prototype.isPortletContext = function() {
-    return (this.editor.config.isPortletContext);
-}
 
 //Workaround for method not found error
 InsertImage.prototype.stripBaseURL = function(url) {
