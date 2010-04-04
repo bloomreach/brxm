@@ -29,16 +29,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.plugins.xinha.XinhaTest;
 import org.hippoecm.frontend.plugins.xinha.XinhaPage;
-import org.junit.Ignore;
+import org.hippoecm.frontend.plugins.xinha.XinhaTest;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlInlineFrame;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-@Ignore
 public class EditorManagerTest extends XinhaTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -119,13 +117,13 @@ public class EditorManagerTest extends XinhaTest {
     @Test
     public void testAutoSaveProduction() throws Exception {
         setDeployed(true);
-        //testAutoSave();
+        testAutoSave();
     }
 
     @Test
     public void testAutoSaveDevelopment() throws Exception {
         setDeployed(false);
-        //testAutoSave();
+        testAutoSave();
     }
 
     /**
@@ -146,7 +144,7 @@ public class EditorManagerTest extends XinhaTest {
         int nretries = 0;
         List<HtmlElement> elements = null;
         do {
-            assertTrue(nretries++ < 20);
+//            assertTrue(nretries++ < 20);
             Thread.sleep(500);
             elements = page.getElementsByTagName("iframe");
         } while (elements.size() < 2);
