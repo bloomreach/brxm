@@ -202,8 +202,10 @@ public class ImageUtils implements GalleryProcessor {
         try {
             if(className != null && !className.trim().equals("")) {
                 Object instance = Class.forName(className).getConstructor(new Class[] { IPluginConfig.class }).newInstance(pluginConfig);
-                if (instance != null || !(instance instanceof GalleryProcessor)) {
+                if (instance instanceof GalleryProcessor) {
                     postProcessor = (GalleryProcessor) instance;
+                } else {
+                    log.warn("Incompatible image postprocessor specified "+className);
                 }
             }
         } catch (NoSuchMethodException ex) {
