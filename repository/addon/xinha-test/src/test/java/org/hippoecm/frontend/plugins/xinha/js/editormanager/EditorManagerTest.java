@@ -144,7 +144,7 @@ public class EditorManagerTest extends XinhaTest {
         int nretries = 0;
         List<HtmlElement> elements = null;
         do {
-//            assertTrue(nretries++ < 20);
+            assertTrue(nretries++ < 20);
             Thread.sleep(500);
             elements = page.getElementsByTagName("iframe");
         } while (elements.size() < 2);
