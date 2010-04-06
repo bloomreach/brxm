@@ -220,6 +220,11 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
 
         try {
             session = (Session) this.sessionPool.borrowObject();
+            
+            // If client retrieves a session, then register it as a disposable. 
+            if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
+                pooledSessionLifecycleManagement.registerResource(session);
+            }
         } catch (NoSuchElementException e) {
             throw new NoAvailableSessionException("No session is available now. Probably the session pool was exhasuted.");
         } catch (Exception e) {
@@ -895,11 +900,6 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
                         session.refresh(keepChangesOnRefresh);
                     }
                 }
-            }
-            
-            // If client retrieves a session, then register it as a disposable. 
-            if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
-                pooledSessionLifecycleManagement.registerResource(object);
             }
         }
 

@@ -108,7 +108,7 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 ret = invocation.proceed();
                 lastRefreshed = System.currentTimeMillis();
             } else if ("toString".equals(methodName)) {
-                ret = "PooledSessionInterceptor:" + invocation.proceed().toString();
+                ret = super.toString() + " (" + invocation.proceed().toString() + ")";
             } else if ("hashCode".equals(methodName)) {
                 ret = invocation.proceed();
             } else {
