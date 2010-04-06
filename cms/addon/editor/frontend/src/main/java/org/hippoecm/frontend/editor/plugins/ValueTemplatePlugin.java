@@ -41,8 +41,7 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
         StringConverter stringModel = new StringConverter((JcrPropertyValueModel) getModel());
         IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
         if (IEditor.Mode.EDIT == mode) {
-            IModel<String> encodedStringModel  = new EncodedStringModel(stringModel);
-            TextFieldWidget widget = new TextFieldWidget("value", encodedStringModel);
+            TextFieldWidget widget = new TextFieldWidget("value", stringModel);
             if (config.getString("size") != null) {
                 widget.setSize(config.getString("size"));
             }
