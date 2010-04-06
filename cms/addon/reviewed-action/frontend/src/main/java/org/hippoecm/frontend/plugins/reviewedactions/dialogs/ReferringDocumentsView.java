@@ -75,7 +75,10 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
             public Object getObject() {
                 ReferringDocumentsProvider provider = ReferringDocumentsView.this.provider;
-                if (provider.getNumResults() > provider.getLimit()) {
+                if (provider.getNumResults() < 0) {
+                    return new StringResourceModel("message-thousands", ReferringDocumentsView.this, new Model(provider))
+                            .getObject();
+                } else if (provider.getNumResults() > provider.getLimit()) {
                     return new StringResourceModel("message-many", ReferringDocumentsView.this, new Model(provider))
                             .getObject();
                 } else if (provider.size() > 1) {
