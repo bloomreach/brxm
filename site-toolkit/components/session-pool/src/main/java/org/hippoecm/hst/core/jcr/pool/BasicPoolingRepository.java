@@ -932,34 +932,38 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         }
 
         public void passivateObject(Object object) throws Exception {
-            PooledSession session = (PooledSession) object;
+            Session session = (Session) object;
             
-            if (refreshOnPassivate) {
-                if (maxRefreshIntervalOnPassivate > 0L) {
-                    if (System.currentTimeMillis() - session.lastRefreshed() > maxRefreshIntervalOnPassivate) {
-                        session.refresh(keepChangesOnRefresh);
+            if (session instanceof PooledSession) {
+                PooledSession pooledSession = (PooledSession) object;
+                
+                if (refreshOnPassivate) {
+                    if (maxRefreshIntervalOnPassivate > 0L) {
+                        if (System.currentTimeMillis() - pooledSession.lastRefreshed() > maxRefreshIntervalOnPassivate) {
+                            pooledSession.refresh(keepChangesOnRefresh);
+                        }
+                    } else {
+                        pooledSession.refresh(keepChangesOnRefresh);
                     }
-                } else {
-                    session.refresh(keepChangesOnRefresh);
                 }
-            }
-            
-            session.passivate();
-            
-            // If client returns the session he used, then unregister it 
-            if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
-                pooledSessionLifecycleManagement.unregisterResource(object);
+                
+                pooledSession.passivate();
             }
         }
 
         public boolean validateObject(Object object) {
             Session session = (Session) object;
-            boolean validated = session.isLive();
-
+            boolean validated = false;
+            
+            try {
+                validated = session.isLive();
+            } catch (Exception ignore) {
+            }
+            
             if (!validated) {
                 return validated;
             }
-
+            
             String validationQuery = getValidationQuery();
 
             if (validationQuery != null) {

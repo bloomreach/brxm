@@ -74,15 +74,7 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
     public void disposeResource(Object sessionObject) {
         try {
             Session session = (Session) sessionObject;
-            
-            if (session instanceof PooledSession) {
-                session.logout();
-            } else {
-                // for impersonated non-pooled session 
-                if (session.isLive()) {
-                    session.logout();
-                }
-            }
+            session.logout();
         } catch (Exception ignore) {
             // just ignore on pooled session which is already returned to the pool.
         }
@@ -99,14 +91,7 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
             
             for (Session session : sessionArray) {
                 try {
-                    if (session instanceof PooledSession) {
-                        session.logout();
-                    } else {
-                        // for impersonated non-pooled session 
-                        if (session.isLive()) {
-                            session.logout();
-                        }
-                    }
+                    session.logout();
                 } catch (Exception ignore) {
                     // just ignore on pooled session which is already returned to the pool.
                 }

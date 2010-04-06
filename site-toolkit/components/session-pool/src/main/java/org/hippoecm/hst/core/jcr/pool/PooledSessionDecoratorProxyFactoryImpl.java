@@ -93,8 +93,12 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 this.passivated = true;
             } else if ("logoutSession".equals(methodName)) {
                 Session session = (Session) invocation.getProxy();
-                // temporary, in fact unneeded fix, to reduce memory kept by repo. This is fixed in repo trunk already, not in the ecm 2.06.07 and 2.07.00 versions
+                
+                // Temporary fix for hippo ecm 2.06.07 and 2.07.00 versions only
+                // as a workaround to reduce memory kept by repo. 
+                // This problem has been fixed in hippo repo trunk already. 
                 session.refresh(false);
+                
                 session.logout();
             } else if ("lastRefreshed".equals(methodName)) {
                 ret = new Long(lastRefreshed);
@@ -104,9 +108,6 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 } else {
                     ret = invocation.proceed();
                 }
-            } else if ("refresh".equals(methodName)) {
-                ret = invocation.proceed();
-                lastRefreshed = System.currentTimeMillis();
             } else if ("toString".equals(methodName)) {
                 ret = super.toString() + " (" + invocation.proceed().toString() + ")";
             } else if ("hashCode".equals(methodName)) {
@@ -117,17 +118,22 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 } else {
                     if ("logout".equals(methodName)) {
                         /*
-                         * when logout(), it actually returns the session to the pool.
-                         * If this session is already returned, do nothing. 
-                         * Sessions can be cleaned up (returned to the pool) by the PooledSessionDecoratorFactory#disposeAllResources() 
-                         * at the end of the request.
-                         * A call to poolingRepository.returnSession(pooledSessionProxy); would end up in a double call in 
-                         * GenericObjectPool returnObject(session) for one and the same session, resulting in negative numActives and 
-                         * a broken pool, retaining in the end far more open sessions then configured in the pool config
+                         * When logout(), it actually returns the session to the pool.
+                         * If this session is already returned, it should not do anything
+                         * because commons-pool's GenericObjectPool does not have a guard
+                         * on multiple returning the object to the pool,
+                         * which would result in negative numActives and a broken pool.
                          */ 
+                        poolingRepository.returnSession(pooledSessionProxy);
                         
-                         poolingRepository.returnSession(pooledSessionProxy);
-                        
+                        ResourceLifecycleManagement pooledSessionLifecycleManagement = poolingRepository.getResourceLifecycleManagement();
+                        // If client returns the session he used, then unregister it 
+                        if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
+                            pooledSessionLifecycleManagement.unregisterResource(pooledSessionProxy);
+                        }
+                    } else if ("refresh".equals(methodName)) {
+                        ret = invocation.proceed();
+                        lastRefreshed = System.currentTimeMillis();
                     } else if ("getRepository".equals(methodName)) {
                         // when getRepository(), it actually returns the session pooling repository
                         ret = poolingRepository;
