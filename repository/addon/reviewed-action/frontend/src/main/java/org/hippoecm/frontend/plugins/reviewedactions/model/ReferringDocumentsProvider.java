@@ -74,6 +74,11 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         return (IModel) object;
     }
 
+    /**
+     * An estimate of the total number of results; when this number is unknown or equal to
+     * the hard limit of 1000, -1 is returned.  This should be interpreted as "thousands
+     * of hits".
+     */
     public int getNumResults() {
         load();
         return numResults;
@@ -133,9 +138,6 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-            if (numResults < 0) {
-                numResults = entries.size();
-            }
         }
     }
 
@@ -169,14 +171,22 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
             statement = "//element(*,hippostd:publishable)[@hippostd:state='published']//*[@hippo:docbase='" + uuid + "']";
         }
         HippoQuery query = (HippoQuery) queryManager.createQuery(statement, Query.XPATH);
+        query.setLimit(1000);
         QueryResult result = query.execute();
         numResults = (int) result.getNodes().getSize();
+        if (numResults == 1000) {
+            numResults = -1;
+        }
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
             Node node = iter.nextNode();
             while (!node.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
                 node = (node.getDepth() > 0 ? node.getParent() : null);
             }
             if (referrers.size() < getLimit()) {
+                if (!node.isNodeType("mix:referenceable")) {
+                    log.warn("Node " + node.getPath() + " is not referenceable.");
+                    continue;
+                }
                 referrers.add(node);
             } else {
                 break;
