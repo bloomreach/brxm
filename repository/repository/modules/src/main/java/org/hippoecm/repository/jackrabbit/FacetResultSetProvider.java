@@ -245,7 +245,10 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             NodeId parentId = upstreamState.getParentId();
             if(parentId == null)
                 continue;
-            Name name = getNodeState(parentId).getChildNodeEntry(upstream).getName();
+	    NodeState parentNodeState = getNodeState(parentId);
+            if(parentNodeState == null || !parentNodeState.hasChildNodeEntry(upstream))
+                continue;
+            Name name = parentNodeState.getChildNodeEntry(upstream).getName();
             /*
              *  TODO : inherit all the 
              *  this.view = view;
