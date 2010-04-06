@@ -117,7 +117,7 @@ public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
                         log.info("item " + itemModel.getPath() + " does not exist");
                     }
                 } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 }
             } else {
                 currentModel.detach();
