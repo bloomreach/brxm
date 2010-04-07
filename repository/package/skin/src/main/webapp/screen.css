@@ -1000,6 +1000,7 @@ border-bottom: 1px solid #afafaf; border-left: none; border-right: 1px solid #af
 .hippo-controlpanel-table-default tr.navigation td a:hover{background: #afafaf; color: white}
 .hippo-controlpanel-table-default tr.navigation td em{color: #cccccc}
 
+.hippo-controlpanel-table-default tr td a {color: #0467B4}
 .hippo-controlpanel-table-default tr td:hover{cursor: default}
 .hippo-controlpanel-table-default tr.odd td{background: #f4f4f4; border-right: 1px solid #afafaf}
 .hippo-controlpanel-table-default tr.even td{background: white; border-right: 1px solid #afafaf}
