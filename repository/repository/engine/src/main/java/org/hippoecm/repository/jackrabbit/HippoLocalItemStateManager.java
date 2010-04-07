@@ -250,6 +250,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     @Override
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         ItemState state = super.getItemState(id);
+        if(deletedExternals.containsKey(id))
+            return state;
         if(id instanceof HippoNodeId) {
             if(!virtualNodes.containsKey((NodeId)id)) {
                 edit();
@@ -273,16 +275,16 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 return nodeState;
             }
         } else if(state instanceof NodeState) {
-                NodeState nodeState = (NodeState) state;
-                Name nodeTypeName = nodeState.getNodeTypeName();
-                if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
-                    edit();
-                    int type = isVirtual(nodeState);
-                    if ((type & ITEM_TYPE_EXTERNAL) != 0) {
-                        nodeState.removeAllChildNodeEntries();
-                    }
-                    try {
-                        virtualStates.add(state);
+            NodeState nodeState = (NodeState) state;
+            Name nodeTypeName = nodeState.getNodeTypeName();
+            if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                edit();
+                int type = isVirtual(nodeState);
+                if ((type & ITEM_TYPE_EXTERNAL) != 0) {
+                    nodeState.removeAllChildNodeEntries();
+                }
+                try {
+                    if (virtualLayerEnabled) {
                         if(id instanceof ArgumentNodeId) {
                             state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(((ArgumentNodeId)id).getArgument()), nodeState);
                         } else if(id instanceof HippoNodeId) {
@@ -290,12 +292,16 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         } else {
                             state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
                         }
-                        store(state);
-                        return nodeState;
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                        throw new ItemStateException("Failed to populate node state", ex);
+                    } else {
+                        log.error("Populating while virtual layer disabled", new Exception());
                     }
+                    virtualStates.add(state);
+                    store(state);
+                    return nodeState;
+                } catch (RepositoryException ex) {
+                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                    throw new ItemStateException("Failed to populate node state", ex);
+                }
             }
         }
         return state;
@@ -427,6 +433,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
         private ChangeLog upstream;
         Map<ItemId,Object> deletedExternals = new HashMap<ItemId,Object>();
+        Set<ItemId> modifiedExternals = new HashSet<ItemId>();
 
         FilteredChangeLog(ChangeLog changelog) {
             upstream = changelog;
@@ -436,20 +443,36 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             if (!virtualLayerRefreshing) {
                 return;
             }
+            Set<ItemId> changedParents = new HashSet<ItemId>();
             List<ItemState> deletedStates = new LinkedList<ItemState>();
-            for(Iterator iter = upstream.deletedStates(); iter.hasNext(); )
-                deletedStates.add((ItemState)iter.next());
+            for(Iterator iter = upstream.deletedStates(); iter.hasNext(); ) {
+                ItemState state = (ItemState)iter.next();
+                deletedStates.add(state);
+                if (!state.isNode()) {
+                    changedParents.add(state.getParentId());
+                }
+            }
             List<ItemState> addedStates = new LinkedList<ItemState>();
-            for(Iterator iter = upstream.addedStates(); iter.hasNext(); )
-                addedStates.add((ItemState)iter.next());
+            for(Iterator iter = upstream.addedStates(); iter.hasNext(); ) {
+                ItemState state = (ItemState)iter.next();
+                addedStates.add(state);
+                if (!state.isNode()) {
+                    changedParents.add(state.getParentId());
+                }
+            }
             List<ItemState> modifiedStates = new LinkedList<ItemState>();
-            for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); )
-                modifiedStates.add((ItemState)iter.next());
+            for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
+                ItemState state = (ItemState)iter.next();
+                modifiedStates.add(state);
+                if (!state.isNode()) {
+                    changedParents.add(state.getParentId());
+                }
+            }
             for(ItemState state : deletedStates) {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     deletedExternals.put(state.getId(), null);
                     ((NodeState)state).removeAllChildNodeEntries();
-                    stateDestroyed(state);
+                    stateDiscarded(state);
                 }
             }
             for(ItemState state : addedStates) {
@@ -460,25 +483,31 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                             NodeState parentNodeState = (NodeState) get(nodeState.getParentId());
                             if(parentNodeState != null) {
                                 parentNodeState.removeChildNodeEntry(nodeState.getNodeId());
-                                stateDestroyed(nodeState);
+                                stateDiscarded(nodeState);
                             }
                         } catch(NoSuchItemStateException ex) {
                         }
                     } else {
-                        stateDestroyed(state);
+                        stateDiscarded(state);
                     }
                 } else if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     if(!deletedExternals.containsKey(state.getId()) &&
                        !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                         ((NodeState)state).removeAllChildNodeEntries();
-                        stateDestroyed((NodeState)state);
+                        stateDiscarded((NodeState)state);
                     }
                 }
             }
-            for(ItemState state : modifiedStates) {
-                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    stateDestroyed((NodeState)state);
-                    ((NodeState)state).removeAllChildNodeEntries();
+            for (ItemState state : modifiedStates) {
+                if ((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                    if (!deletedExternals.containsKey(state.getId()) &&
+                            !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
+                        stateDiscarded((NodeState)state);
+                        ((NodeState)state).removeAllChildNodeEntries();
+                        if(changedParents.contains(state.getId())) {
+                            modifiedExternals.add(state.getId());
+                        }
+                    }
                 }
             }
         }
@@ -546,13 +575,13 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             return upstream.get(id);
         }
         @Override public Iterator addedStates() {
-            return new FilteredStateIterator(upstream.addedStates());
+            return new FilteredStateIterator(upstream.addedStates(), false);
         }
         @Override public Iterator modifiedStates() {
-            return new FilteredStateIterator(upstream.modifiedStates());
+            return new FilteredStateIterator(upstream.modifiedStates(), true);
         }
         @Override public Iterator deletedStates() {
-            return new FilteredStateIterator(upstream.deletedStates());
+            return new FilteredStateIterator(upstream.deletedStates(), false);
         }
         @Override public Iterator modifiedRefs() {
             return new FilteredReferencesIterator(upstream.modifiedRefs());
@@ -582,9 +611,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         class FilteredStateIterator implements Iterator {
             Iterator actualIterator;
             ItemState current;
-            FilteredStateIterator(Iterator actualIterator) {
+            boolean modified;
+            FilteredStateIterator(Iterator actualIterator, boolean modified) {
                 this.actualIterator = actualIterator;
                 current = null;
+                this.modified = modified;
             }
             public boolean hasNext() {
                 while(current == null) {
@@ -603,6 +634,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 }
                 if ((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
                     return true;
+                }
+                if (modified) {
+                    if ((isVirtual(current) & ITEM_TYPE_EXTERNAL) != 0) {
+                        return !modifiedExternals.contains(current.getId());
+                    }
                 }
                 return false;
             }

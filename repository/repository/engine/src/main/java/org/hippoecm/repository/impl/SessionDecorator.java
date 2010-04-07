@@ -174,7 +174,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                 throw ex;
             }
         }
-        super.save();
+        try {
+            postMountEnabled(false);
+            super.save();
+        } finally {
+             postMountEnabled(true);
+        }
     }
 
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,

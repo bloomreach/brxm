@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,20 @@
  */
 package org.hippoecm.repository;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-
 import org.junit.After;
 import org.junit.Test;
 
@@ -280,5 +284,35 @@ public class FacetSelectTest extends TestCase {
         assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/two").getNodes().hasNext());
         assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/three").getNodes().hasNext());
         assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/four").getNodes().hasNext());
+    }
+
+    @Test
+    public void testMultiSessionObservation() throws RepositoryException {
+        String[] content = {
+            "/test", "nt:unstructured",
+            "jcr:mixinTypes", "mix:referenceable",
+            "/test/nav", "hippo:facetselect",
+            "hippo:docbase", "/test",
+            "hippo:facets", null,
+            "hippo:modes", null,
+            "hippo:values", null
+        };
+
+        Session session2 = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        session2.getWorkspace().getObservationManager().addEventListener(new EventListener() {
+            public void onEvent(EventIterator events) {
+            }
+        }, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED, "/", true, null, null, false);
+        session.getWorkspace().getObservationManager().addEventListener(new EventListener() {
+            public void onEvent(EventIterator events) {
+            }
+        }, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED, "/", true, null, null, false);
+        build(session, content);
+        session.save();
+        traverse(session, "/test/nav").remove();
+        traverse(session2, "/test").setProperty("x", "x");
+        session2.save();
+        session.save();
+        session2.logout();
     }
 }

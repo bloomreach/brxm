@@ -39,6 +39,8 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
         IModel<String> valueModel = getModel();
         IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
         if (IEditor.Mode.EDIT == mode) {
+            // IModel<String> encodedStringModel  = new EncodedStringModel(valueModel);
+            // TextAreaWidget widget = new TextAreaWidget("value", encodedStringModel);
             TextAreaWidget widget = new TextAreaWidget("value", valueModel);
             if (config.getString("rows") != null) {
                 widget.setRows(config.getString("rows"));
