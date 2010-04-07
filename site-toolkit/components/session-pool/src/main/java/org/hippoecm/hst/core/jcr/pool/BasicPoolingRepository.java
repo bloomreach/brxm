@@ -908,7 +908,12 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
 
             try {
                 if (session instanceof PooledSession) {
-                    ((PooledSession) session).logoutSession();
+                    PooledSession pooledSession = (PooledSession) session;
+                    // passivate session first, not to return session multiple times
+                    // because GenericObjectPool does not invoke passivate()
+                    // when validation fails during returning object.
+                    pooledSession.passivate();
+                    pooledSession.logoutSession();
                 } else {
                     session.logout();
                 }
