@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +27,6 @@ import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,23 +34,12 @@ public class JcrResourceRequestTarget implements IRequestTarget {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(JcrResourceRequestTarget.class);
 
     private Node node;
 
     public JcrResourceRequestTarget(Node node) {
         this.node = node;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-       if (node != null) {
-           log.warn(getClass() + " was not detached");
-           detach(null);
-       }
-       super.finalize();
     }
 
     /*
@@ -78,28 +65,6 @@ public class JcrResourceRequestTarget implements IRequestTarget {
                 return;
             }
 
-            // if node is facetselect, check the referenced node
-            // TODO now by default return primary item. If facetselect has filter, there might be no
-            // primary item visible and another resource needs to be shown
-            if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                log.debug("binary links to facetselect");
-                if(node.hasNodes()){
-                    Node firstChild = node.getNodes().nextNode();
-                    try {
-                        if(firstChild.getPrimaryItem().isNode() && ((Node)firstChild.getPrimaryItem()).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                            log.debug("fetching hippo:resource from: " +  firstChild.getPrimaryItem().getPath());
-                            node = (Node)firstChild.getPrimaryItem();
-                        } else {
-                            log.error("Primary item is not of type " + HippoNodeType.NT_RESOURCE + " : " + firstChild.getPrimaryItem().getPath());
-                        }
-                    } catch (ItemNotFoundException e) {
-                        // TODO if there is no primary type, look for the first property of type HippoNodeType.NT_RESOURCE
-                        // to display. Normally, the facetselect has logic to display the correct image
-                        log.error("No primary item found for : " + firstChild.getPath());
-                        throw (e);
-                    }
-                }
-            }
             // Determine encoding
             String encoding = null;
             if (node.hasProperty("jcr:encoding")) {
@@ -147,17 +112,7 @@ public class JcrResourceRequestTarget implements IRequestTarget {
      * @see org.apache.wicket.IRequestTarget#detach(org.apache.wicket.RequestCycle)
      */
     public void detach(RequestCycle requestCycle) {
-        if (node != null) {
-            try {
-                Node stackNode = node;
-                node = null;
-                stackNode.getSession().logout();
-            } catch(NullPointerException ex) {
-                // deliberate ignore
-            } catch(RepositoryException ex) {
-                // deliberate ignore
-            }
-        }
+        node = null;
     }
 
 }

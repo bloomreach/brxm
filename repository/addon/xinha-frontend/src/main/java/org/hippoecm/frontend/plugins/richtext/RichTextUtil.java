@@ -40,17 +40,14 @@ public class RichTextUtil {
         }
         return StringUtils.join(elements, '/');
     }
-    
+
     public static final String encodeResourceURL(String url) {
-        return encodeResourceURL(url, true);
-    }
-    
-    public static final String encodeResourceURL(String url, boolean useRelativeURL) {
         // if it is in portlet environment, just wrap the url in portlet resource url.
         RequestContext requestContext = RequestContext.get();
         if (requestContext.isPortletRequest()) {
             url = ((PortletRequestContext) requestContext).encodeResourceURL(url).toString();
-            if (useRelativeURL && (url.startsWith("http:") || url.startsWith("https:"))) {
+            // use relative url (FIXME: why?)
+            if (url.startsWith("http:") || url.startsWith("https:")) {
                 int offset = url.indexOf('/', 8);
                 if (offset != -1) {
                     url = url.substring(offset);
@@ -59,8 +56,5 @@ public class RichTextUtil {
         }
         return url;
     }
-    
-    public static final boolean isPortletContext() {
-        return RequestContext.get().isPortletRequest();
-    }
+
 }

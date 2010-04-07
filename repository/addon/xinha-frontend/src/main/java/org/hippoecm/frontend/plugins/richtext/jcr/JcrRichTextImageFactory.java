@@ -67,26 +67,23 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         }
         try {
             String name = path;
+            String relPath = null;
             if (path.indexOf('/') > 0) {
                 name = path.substring(0, path.indexOf('/'));
+                relPath = path.substring(path.indexOf('/') + 1);
             }
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
             Node root = nodeModel.getNode();
-            Node node = ((HippoNode) workspace.getHierarchyResolver().getNode(root, path)).getCanonicalNode();
-            if (node != null) {
-                PrependingStringBuffer relativePathBuilder = new PrependingStringBuffer();
-                while (!node.equals(root) && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    node = node.getParent();
-                    if (relativePathBuilder.length() > 0) {
-                        relativePathBuilder.prepend('/');
-                    }
-                    relativePathBuilder.prepend(path.substring(path.lastIndexOf('/') + 1));
-                    path = path.substring(0, path.lastIndexOf('/'));
+            if (root.hasNode(name)) {
+                Node link = root.getNode(name);
+                if (link.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    String uuid = link.getProperty("hippo:docbase").getString();
+                    Node node = session.getNodeByUUID(uuid);
+                    return createImageItem(node, name, relPath);
                 }
-                return createImageItem(node, name, relativePathBuilder.toString());
             }
-            throw new RichTextException("Canonical node is null");
+            throw new RichTextException("Canonical node is null at relative path " + path);
         } catch (RepositoryException e) {
             throw new RichTextException("Error retrieving canonical node for imageNode[" + path + "]", e);
         }
@@ -169,7 +166,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
                 }
             }
 
-            RichTextImage rti = new RichTextImage(node.getPath(), name, nodeModel.getNode().getPath());
+            RichTextImage rti = new RichTextImage(node.getPath(), name);
 
             String primaryItemDefinition = node.getPrimaryItem().getName();
             List<String> resourceDefinitions = new LinkedList<String>();
