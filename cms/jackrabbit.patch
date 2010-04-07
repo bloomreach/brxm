@@ -1,0 +1,20 @@
+Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/EventConsumer.java
+===================================================================
+*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/EventConsumer.java	(revision 923523)
+--- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/EventConsumer.java	(working copy)
+***************
+*** 292,298 ****
+       * @throws RepositoryException
+       */
+      private boolean canRead(EventState eventState) throws RepositoryException {
+!         Path targetPath = pathFactory.create(eventState.getParentPath(), eventState.getChildRelPath().getName(), eventState.getChildRelPath().getNormalizedIndex(), true);
+!         return session.getAccessManager().canRead(targetPath);
+      }
+  }
+--- 292,297 ----
+       * @throws RepositoryException
+       */
+      private boolean canRead(EventState eventState) throws RepositoryException {
+!         return true;
+      }
+  }

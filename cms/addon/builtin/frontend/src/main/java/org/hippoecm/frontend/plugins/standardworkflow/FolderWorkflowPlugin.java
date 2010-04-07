@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -43,6 +44,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
@@ -395,7 +397,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             nameComponent = new TextField<String>("name", nameModel);
             nameComponent.setRequired(true);
             nameComponent.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
-            nameComponent.add(new OnChangeAjaxBehavior() {
+            AjaxEventBehavior behavior;
+            nameComponent.add(behavior = new OnChangeAjaxBehavior() {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
@@ -404,6 +407,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     }
                 }
             });
+            behavior.setThrottleDelay(Duration.seconds(3));
             nameComponent.setOutputMarkupId(true);
             setFocus(nameComponent);
             add(nameComponent);

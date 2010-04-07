@@ -397,6 +397,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 } else {
                     log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
                 }
+                rootSession.save();
             } else {
                 log.info("Initial configuration content already present");
             }
@@ -422,6 +423,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                  *     }
                  * TODO: Use merge behavior from dereferenced import? [BvdS] [BvH] No not a operation which can be supported by project export
                  */
+                rootSession.save();
                 for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
                     URL configurationURL = (URL) iter.next();
                     log.info("Initializing additional configuration content from "+configurationURL);
@@ -850,7 +852,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             }
             ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                     ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
-            session.save();
         } catch (IOException ex) {
             if (log.isDebugEnabled()) {
                 log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
@@ -898,12 +899,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
                 log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } finally {
-            try {
-                session.refresh(false);
-            } catch (RepositoryException ex) {
-                log.error("Error refreshing session while initilizing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
             }
         }
     }

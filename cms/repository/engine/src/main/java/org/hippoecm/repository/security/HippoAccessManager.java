@@ -414,14 +414,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
 
         // find the id
-        NodeId id;
-        try {
-            id = getNodeId(absPath);
-        } catch (PathNotFoundException e) {
+        NodeId id = getNodeId(absPath);
+        if (id == null) {
             // this usually happens in clustered environments when the node has been 
             // deleted before the cluster addnode event is received.
-            log.info("Unable to find node id, allowing read permissions: {}", e.getMessage());
-            log.debug("Stacktrace: ", e);
+            log.debug("Unable to find node id, allowing read permissions: {}", absPath);
             return true;
         }
 
@@ -872,17 +869,17 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
 
     /**
      * Get the <code>NodeId</code> for the absolute path. If the absolute path points
-     * to a property return the NodeId of the parent.
+     * to a property return the NodeId of the parent. This method return null instead of 
+     * throwing a <code>PathNotFoundException</code> for performance reasons.
      * @param absPath the absolute Path
-     * @return the NodeId of the node (holding the property)
-     * @throws PathNotFoundException
+     * @return the NodeId of the node (holding the property) or null when the node not found
      * @throws RepositoryException
      */
-    private NodeId getNodeId(Path absPath) throws PathNotFoundException, RepositoryException {
+    private NodeId getNodeId(Path absPath) throws RepositoryException {
         checkInitialized();
         
         if (!absPath.isAbsolute()) {
-            throw new RepositoryException("Absolute path expected, got " + npRes.getJCRPath(absPath));
+            throw new RepositoryException("Absolute path expected, got " + absPath);
         }
 
         if (absPath.denotesRoot()) {
@@ -904,7 +901,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         } catch (RepositoryException e) {
             // fall thru and try zombie hierMgr
             if (log.isDebugEnabled()) {
-                log.debug("Error while resolving node id of: " + npRes.getJCRPath(absPath), e);
+                log.debug("Error while resolving node id of: " + absPath, e);
             }
         }
 
@@ -915,7 +912,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                 NodeId id = pId.getParentId();
                 return id;
             }
-
+        
             // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
             NodeId id = zombieHierMgr.resolveNodePath(absPath);
             if (id != null) {
@@ -924,10 +921,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         } catch (RepositoryException e) {
             // fall thru and throw a path not found exception
             if (log.isDebugEnabled()) {
-                log.debug("Error while resolving node id of: " + npRes.getJCRPath(absPath), e);
+                log.debug("Error while resolving node id of: " + absPath, e);
             }
         }
-        throw new PathNotFoundException("Unable to resolve the node id from the path " + npRes.getJCRPath(absPath));
+        if (log.isDebugEnabled()) {
+            log.debug("Unable to resolve the node id from the path " + absPath);
+        }
+        return null;
     }
 
     /**
@@ -1228,6 +1228,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
 
         // get the id of the node or of the parent node if absPath points to a property
         NodeId id = getNodeId(absPath);
+        if (id == null) {
+            throw new PathNotFoundException("Node id not found for path: " + absPath);
+        }
         
         // fast track read check
         if (privileges.length == 1 && "jcr:read".equals(privileges[0].getName())) {
@@ -1294,11 +1297,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         checkInitialized();
         
         NodeId id = getNodeId(npRes.getQPath(absPath));
+        if (id == null) {
+            throw new PathNotFoundException("Node id not found for path: " + absPath);
+        }
         NodeState nodeState;
         try {
             nodeState = (NodeState) getItemState(id);
         } catch (NoSuchItemStateException e) {
-            throw new PathNotFoundException("Path not found " + absPath);
+            throw new PathNotFoundException("NodeState not found for id " + id + " path: "+ absPath);
         }
         
         Set<Privilege> privileges = new HashSet<Privilege>();
