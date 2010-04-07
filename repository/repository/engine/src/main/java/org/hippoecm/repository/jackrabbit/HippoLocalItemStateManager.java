@@ -258,20 +258,19 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 NodeState nodeState = (NodeState) state;
                 if(isEnabled()) {
                     nodeState = ((HippoNodeId)id).populate((StateProviderContext)null, nodeState);
+                    Name nodeTypeName = nodeState.getNodeTypeName();
+                    if (virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                        int type = isVirtual(nodeState);
+                        if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
+                            nodeState.removeAllChildNodeEntries();
+                        }
+                        nodeState = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                    }
+                    virtualNodes.put((HippoNodeId)id, nodeState);
+                    store(nodeState);
                 } else {
                     // keep nodestate as is
                 }
-
-                Name nodeTypeName = nodeState.getNodeTypeName();
-                if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
-                    int type =  isVirtual(nodeState);
-                    if( (type & ITEM_TYPE_EXTERNAL) != 0  && (type & ITEM_TYPE_VIRTUAL) != 0) {
-                        nodeState.removeAllChildNodeEntries();
-                    }
-                    nodeState = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
-                }
-                virtualNodes.put((HippoNodeId)id, nodeState);
-                store(nodeState);
                 return nodeState;
             }
         } else if(state instanceof NodeState) {
