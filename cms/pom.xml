@@ -590,7 +590,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-        <version>1.5.7</version>
+        <version>1.5.7-h4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wicket</groupId>
