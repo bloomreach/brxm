@@ -56,6 +56,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     protected String defaultCredentialsUserID;
     protected String defaultCredentialsUserIDSeparator = "@";
     protected char [] defaultCredentailsPassword;
+    protected String defaultWorkspaceName;
     
     protected boolean refreshOnPassivate = true;
     protected long maxRefreshIntervalOnPassivate;
@@ -128,6 +129,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     public char [] getDefaultCredentialsPassword() {
         return this.defaultCredentailsPassword;
+    }
+    
+    public void setDefaultWorkspaceName(String defaultWorkspaceName) {
+        this.defaultWorkspaceName = defaultWorkspaceName;
+    }
+    
+    public String getDefaultWorkspaceName() {
+        return defaultWorkspaceName;
     }
     
     public void setRefreshOnPassivate(boolean refreshOnPassivate) {
@@ -927,7 +936,17 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         }
 
         public Object makeObject() throws Exception {
-            Session session = getRepository().login(internalDefaultCredentials);
+            Session session = null;
+            
+            if (internalDefaultCredentials == null && defaultWorkspaceName == null) {
+                session = getRepository().login();
+            } else if (internalDefaultCredentials != null && defaultWorkspaceName == null) {
+                session = getRepository().login(internalDefaultCredentials);
+            } else if (internalDefaultCredentials != null && defaultWorkspaceName != null) {
+                session = getRepository().login(internalDefaultCredentials, defaultWorkspaceName);
+            } else if (internalDefaultCredentials == null && defaultWorkspaceName != null) {
+                session = getRepository().login(defaultWorkspaceName);
+            }
             
             if (session != null && sessionDecorator != null) {
                 session = sessionDecorator.decorate(session, getDefaultCredentialsUserID());

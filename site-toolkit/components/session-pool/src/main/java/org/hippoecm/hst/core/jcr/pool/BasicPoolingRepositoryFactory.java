@@ -115,6 +115,8 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setDefaultCredentialsUserID(value);
             } else if (type.equals("defaultCredentialsPassword")) {
                 poolingRepository.setDefaultCredentialsPassword(value.toCharArray());
+            } else if (type.equals("defaultWorkspaceName")) {
+                poolingRepository.setDefaultWorkspaceName(value);
             } else if (type.equals("maxActive")) {
                 poolingRepository.setMaxActive(Integer.parseInt(value));
             } else if (type.equals("maxIdle")) {
@@ -139,6 +141,12 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setMinEvictableIdleTimeMillis(Long.parseLong(value));
             } else if (type.equals("refreshOnPassivate")) {
                 poolingRepository.setRefreshOnPassivate(Boolean.parseBoolean(value));
+            } else if (type.equals("keepChangesOnRefresh")) {
+                poolingRepository.setKeepChangesOnRefresh(Boolean.parseBoolean(value));
+            } else if (type.equals("maxRefreshIntervalOnPassivate")) {
+                poolingRepository.setMaxRefreshIntervalOnPassivate(Long.parseLong(value));
+            } else if (type.equals("whenExhaustedAction")) {
+                poolingRepository.setWhenExhaustedAction(value);
             }
         }
         
