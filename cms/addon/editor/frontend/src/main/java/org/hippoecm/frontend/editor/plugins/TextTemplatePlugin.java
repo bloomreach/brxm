@@ -50,7 +50,7 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else {
-            add(new Label("value", valueModel).setEscapeModelStrings(false));
+            add(new Label("value", valueModel));
         }
     }
 
