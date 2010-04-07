@@ -53,23 +53,6 @@ public class RichTextFacetHelper {
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
         facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
 
-        // save the document (the draft so no problem)
-        Node document = node.getParent();
-        while (document.getDepth() > 0) {
-            if (document.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                if (document.isNew()) {
-                    log.warn("Document is new, saving session");
-                    document.getSession().save();
-                    document.getSession().refresh(false);
-                } else {
-                    document.save();
-                    document.refresh(false);
-                }
-                break;
-            }
-            document = document.getParent();
-        }
-
         return linkName;
     }
 

@@ -29,16 +29,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 public class RichTextImage implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    private String parentPath;
     private String path;
     private String name;
     private List<String> resourceDefinitions;
     private String selectedResourceDefinition;
 
-    public RichTextImage(String targetPath, String name, String nodePath) {
+    public RichTextImage(String targetPath, String name) {
         this.path = targetPath;
         this.name = name;
-        this.parentPath = nodePath;
         this.resourceDefinitions = new ArrayList<String>();
     }
 
@@ -80,22 +78,15 @@ public class RichTextImage implements IClusterable {
     }
 
     public String getUrl() {
-        String url = null;
-        String parentUrl = "binaries" + parentPath + "/";
+        String docUrl = "binaries" + path;
 
-        if (!RichTextUtil.isPortletContext()) {
-            if (selectedResourceDefinition != null) {
-                url = RichTextUtil.encode(parentUrl + name + "/{_document}/" + selectedResourceDefinition);
-            } else {
-                url = RichTextUtil.encode(parentUrl + name);
-            }
+        String url;
+        if (selectedResourceDefinition != null) {
+            url = RichTextUtil.encode(docUrl + "/" + selectedResourceDefinition);
         } else {
-            parentUrl = RichTextUtil.encodeResourceURL(RichTextUtil.encode(parentUrl));
-            url = new StringBuilder(80).append(parentUrl).append(parentUrl.indexOf('?') == -1 ? '?' : '&').append(
-                    "_path=").append(getFacetSelectPath()).toString();
+            url = RichTextUtil.encode(docUrl);
         }
-
-        return url;
+        return RichTextUtil.encodeResourceURL(url);
     }
 
     public boolean isValid() {

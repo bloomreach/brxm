@@ -33,8 +33,6 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
@@ -59,7 +57,6 @@ import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.string.StringValueConversionException;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
@@ -223,26 +220,21 @@ public class Main extends WebApplication {
         mount(new AbstractRequestTargetUrlCodingStrategy("binaries") {
 
             public IRequestTarget decode(RequestParameters requestParameters) {
-                String pathInfo = StringUtils.removeEnd(requestParameters.getPath().substring("binaries/".length()), "/");
-                String pathInParams = StringUtils.removeStart(getRequestParameter(requestParameters, "_path", true), "/");
-                String path = null;
-                if (!StringUtils.isEmpty(pathInfo)) {
-                    path = StringUtils.join(new String [] { pathInfo, pathInParams }, '/');
-                } else {
-                    path = pathInParams;
-                }
-                path = urlDecodePathComponent(StringUtils.removeStart(path, "/"));
-                // FIXME: workaround use a subsession because we can't refresh the session
-                // the logout is actually performed by the JcrResourceRequestTarget
-                UserSession session = (UserSession) Session.get();
-                IValueMap credentials = session.getCredentials();
+                String path = requestParameters.getPath().substring("binaries/".length());
+                path = urlDecodePathComponent(path);
                 try {
-                    javax.jcr.Session subSession = session.getJcrSession().impersonate(
-                            new javax.jcr.SimpleCredentials(credentials.getString("username"), credentials.getString(
-                                    "password").toCharArray()));
+                    javax.jcr.Session subSession = ((UserSession) Session.get()).getJcrSession();
                     Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
                             subSession.getRootNode(), path);
-                    return new JcrResourceRequestTarget(node);
+                    // YUCK: no exception!
+                    if (node == null) {
+                        log.info("no binary found at " + path);
+                    } else {
+                        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                            node = (Node) node.getPrimaryItem();
+                        }
+                        return new JcrResourceRequestTarget(node);
+                    }
                 } catch (PathNotFoundException e) {
                     log.info("binary not found " + e.getMessage());
                 } catch (javax.jcr.LoginException ex) {
@@ -259,25 +251,6 @@ public class Main extends WebApplication {
 
             public boolean matches(IRequestTarget requestTarget) {
                 return false;
-            }
-            
-            private String getRequestParameter(RequestParameters requestParameters, String paramName, boolean concatenateAll) {
-                String paramValue = null;
-                Object param = requestParameters.getParameters().get(paramName);
-                
-                if (param != null) {
-                    if (param.getClass().isArray() && ArrayUtils.getLength(param) > 0) {
-                        if (concatenateAll) {
-                            paramValue = StringUtils.join((String []) param);
-                        } else {
-                            paramValue = ((String []) param)[0];
-                        }
-                    } else {
-                        paramValue = param.toString();
-                    }
-                }
-                
-                return paramValue;
             }
         });
 
