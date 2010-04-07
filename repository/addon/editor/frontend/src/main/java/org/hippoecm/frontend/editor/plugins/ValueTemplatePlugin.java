@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.editor.plugins;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -49,7 +48,7 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else {
-            add(new Label("value", stringModel).setEscapeModelStrings(false));
+            add(new Label("value", stringModel));
         }
     }
 
