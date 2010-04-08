@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.gallery;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -27,14 +26,14 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifier  {
+public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(GalleryFolderAttributeModifier.class);
-    
+
     static class GalleryFolderAttributeModel extends LoadableDetachableModel {
         private static final long serialVersionUID = 1L;
 
@@ -49,9 +48,15 @@ public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifie
             Node node = nodeModel.getNode();
             if (node != null) {
                 try {
+
                     if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")) {
-                        return "folder-48";
+                        return "folder-16";
                     }
+                    if (node.isNodeType("hippo:handle")) {
+                        //FIXME is it better to check if the child node is image too ?
+                        return "image-16";
+                    }
+
                 } catch (RepositoryException ex) {
                     log.error("Unable to determine whether node is a folder", ex);
                 }
@@ -73,7 +78,7 @@ public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifie
 
     @Override
     protected AttributeModifier getColumnAttributeModifier(Node node) {
-        return new CssClassAppender(new Model("icon-48"));
+        return new CssClassAppender(new Model("icon-16"));
     }
 
 }

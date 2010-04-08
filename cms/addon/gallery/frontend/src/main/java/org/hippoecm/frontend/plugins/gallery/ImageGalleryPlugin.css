@@ -1,0 +1,23 @@
+ul.gallery-list {
+    padding-top: 25px;
+}
+
+ul.gallery-list li {
+    list-style: none outside;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+}
+
+.folder-icon, ul.gallery-list li div img {
+    vertical-align: middle;
+    padding: 5px;
+    border: 1px solid #eee;    
+    width: 60px;
+    height: 60px;
+}
+

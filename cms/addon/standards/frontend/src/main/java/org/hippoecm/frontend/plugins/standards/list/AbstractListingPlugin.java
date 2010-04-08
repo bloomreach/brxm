@@ -16,10 +16,8 @@
 package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.Iterator;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -31,8 +29,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +42,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
     private static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
     private final IModelReference<Node> documentReference;
-    private ListDataTable<Node> dataTable;
+    protected ListDataTable<Node> dataTable;
     private ListPagingDefinition pagingDefinition;
     private ISortableDataProvider<Node> provider;
     private IObserver<?> providerObserver;
@@ -92,8 +90,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
     }
 
     protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, final boolean triState,
-            ListPagingDefinition pagingDefinition) {
+                                                   ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, final boolean triState,
+                                                   ListPagingDefinition pagingDefinition) {
         return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
