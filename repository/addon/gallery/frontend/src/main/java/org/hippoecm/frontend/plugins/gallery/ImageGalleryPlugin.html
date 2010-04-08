@@ -16,22 +16,27 @@
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
 
-    <div style="float:right;margin-bottom:3px;padding-top:2px;padding-right:2px;">
+    <div class="toggle-button">
         <a wicket:id="toggle"><img wicket:id="toggleimg"/></a>
     </div>
 
     <table class="hippo-gallery-images hippo-list-details" cellspacing="0" wicket:id="table" width="100%">[table]
     </table>
 
-    <ul wicket:id="gallery-list" class="gallery-list">
-        <li wicket:id="gallery-item" class="gallery-item">
-            <a wicket:id="itemLink">
-                <div wicket:id="thumbnail" class="img-wrapper"></div>
-                <div><img wicket:id="folder-icon" class="folder-icon"/></div>
-                <br/><span wicket:id="title" class="title">Image Title</span>
-            </a>
-        </li>
-    </ul>
+    <br style="clear:both;"/>
+    
+    <div class="gallery-wrapper">
+        <ul wicket:id="gallery-list" class="gallery-list">
 
+            <li wicket:id="gallery-item" class="gallery-item">
+                <a wicket:id="itemLink">
+                    <div wicket:id="thumbnail" class="img-wrapper"></div>
+                    <div><img wicket:id="folder-icon" class="folder-icon"/></div>
+                    <br/><span wicket:id="title" class="title">Image Title</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
 </wicket:panel>
 </html>
