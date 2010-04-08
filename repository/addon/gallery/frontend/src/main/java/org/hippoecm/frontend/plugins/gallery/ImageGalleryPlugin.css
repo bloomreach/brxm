@@ -1,3 +1,7 @@
+ul.gallery-list li a {
+    text-decoration: none;
+}
+
 ul.gallery-list {
     padding-top: 25px;
 }
@@ -19,5 +23,9 @@ ul.gallery-list li {
     border: 1px solid #eee;    
     width: 60px;
     height: 60px;
+}
+
+.title {
+    margin-top: 10px;
 }
 
