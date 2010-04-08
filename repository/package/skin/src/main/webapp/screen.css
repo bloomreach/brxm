@@ -259,7 +259,7 @@ padding-right: 9px;
 .hippo-list-details td.icon-48 {background: url("images/hippo-gallery-folder.png") no-repeat 4px center;}
 .hippo-list-details td.icon-48 span.folder-48 {background: transparent}
 .hippo-list-details td.icon-48 span.folder-48 span{background: transparent}
-.hippo-list-details td.icon-48 span span{display: block; height: 55px; width: 55px; background: white; margin-left: 2px; overflow: hidden}
+.hippo-list-details td.icon-48 span span{display: block; height: 15px; width: 15px; background: white; margin-left: 2px; overflow: hidden}
 .hippo-list-details td.icon-48 span span img{height: 60px; width: auto}
 
 /* Wicket Table Paging */
@@ -571,7 +571,8 @@ body .hippo-picker-properties div.text-input input{border: 1px solid #afafaf; pa
 /* ================================================ */
 .hippo-browser-documents-small .hippo-perspective-title{color: white; padding: 2px; padding-left: 4px; float: left; padding-top: 5px;}
 .hippo-browser-documents-small{background: transparent}
-.hippo-browser-documents-small .hippo-browser-documents-small-folders h3{background: transparent url(images/filelistHeaderback.png) repeat-x; font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
+.hippo-browser-documents-small .hippo-browser-docum
+ents-small-folders h3{background: transparent url(images/filelistHeaderback.png) repeat-x; font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
  
 .hippo-browser-documents-small .hippo-browser-documents-small-files{border-left: 1px solid #afafaf; border-right: 1px solid #afafaf; background: white;}
 .hippo-browser-documents-small .hippo-browser-documents-small-folders{background: #f4f4f4; border-left: 1px solid #afafaf; border-bottom: 0px; border-top: 0px }
@@ -647,6 +648,7 @@ body .hippo-picker-properties div.text-input input{border: 1px solid #afafaf; pa
 
 /* mimetypes icons */
 table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.image-16, .image-16{background-image:url("images/icons/image-16.png")}
 table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
 table tr.selected span.folder-open-16, .folder-open-16{background-image:url("images/icons/folder-open-16.png")}
 
