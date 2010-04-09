@@ -783,12 +783,12 @@ public class UpdaterEngine {
             NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
             NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
             for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                NodeTypeDef ntd = (NodeTypeDef)iter.next();
                 try {
-                    NodeTypeDef ntd = (NodeTypeDef)iter.next();
                     log.info("upgrade registering new nodetype " + ntd.getName());
                     /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
                 } catch (InvalidNodeTypeDefException ex) {
-                    // deliberate ignore
+                    log.error("upgrade failed to register new nodetype " + ntd.getName(), ex);
                 }
             }
         }
