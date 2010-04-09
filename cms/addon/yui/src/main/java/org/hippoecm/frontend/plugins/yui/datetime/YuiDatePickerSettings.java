@@ -16,45 +16,44 @@
 
 package org.hippoecm.frontend.plugins.yui.datetime;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.form.AbstractTextComponent;
-import org.apache.wicket.util.convert.IConverter;
-import org.apache.wicket.util.convert.converters.DateConverter;
-import org.joda.time.DateTime;
-
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.Session;
+import org.apache.wicket.datetime.DateConverter;
+import org.apache.wicket.util.convert.IConverter;
+import org.joda.time.DateTime;
+
 public class YuiDatePickerSettings implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private static String resolveDatePattern() {
+        Application app = Application.get();
+        if (app != null) {
+            IConverter converter = app.getConverterLocator().getConverter(DateTime.class);
+            if (!(converter instanceof DateConverter)) {
+                converter = app.getConverterLocator().getConverter(Date.class);
+            }
+            Session session = Session.get();
+            if (session != null) {
+                return ((SimpleDateFormat) ((org.apache.wicket.util.convert.converters.DateConverter) converter)
+                        .getDateFormat(session.getLocale())).toPattern();
+            }
+        }
+        return "d-M-yy";
+    }
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private String datePattern;
+    private String datePattern = resolveDatePattern();
     private boolean hideOnSelect = true;
     private boolean fireChangeEvent = true;
     private boolean close = true;
 
     public String getDatePattern() {
-        if(datePattern == null) {
-            Application app = Application.get();
-            if(app != null) {
-                IConverter converter = app.getConverterLocator().getConverter(DateTime.class);
-                if (!(converter instanceof DateConverter)) {
-                    converter = app.getConverterLocator().getConverter(Date.class);
-                }
-                Session session = Session.get();
-                if(session != null) {
-                    datePattern = ((SimpleDateFormat) ((DateConverter) converter).getDateFormat(session.getLocale())).toPattern();
-                }
-            }
-            if(datePattern == null) {
-                datePattern = "d-M-yy"; //fallback date pattern
-            }
-        }
         return datePattern;
     }
 
