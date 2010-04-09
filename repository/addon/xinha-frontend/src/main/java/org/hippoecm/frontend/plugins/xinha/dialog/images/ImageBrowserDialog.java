@@ -118,6 +118,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
         uploadForm.setOutputMarkupId(true);
         final FileUploadField uploadField = new FileUploadField("uploadField");
+        uploadField.setOutputMarkupId(true);
         uploadForm.add(uploadField);
 
 
@@ -141,12 +142,12 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                             Node folderNode = ((JcrNodeModel)folderReference.getModel()).getNode();
 
 
-                            //TODO shortcuts must be configured under workflow.categories
+                            //TODO replace shortcuts with custom workflow category(?)
                             GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", folderNode);
                             String nodeName = getNodeNameCodec().encode(filename);
                             String localName = getLocalizeCodec().encode(filename);
-                            //TODO : Hard coded Gallery Type - need to get it from WorkflowDescriptor Model
-                            Document document = workflow.createGalleryItem(nodeName, "hippogallery:exampleImageSet");
+                            List<String> galleryTypes = workflow.getGalleryTypes();
+                            Document document = workflow.createGalleryItem(nodeName, galleryTypes.get(0));
                             node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                             if (!node.getLocalizedName().equals(localName)) {
@@ -166,6 +167,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                             try {
                                 ImageUtils.galleryProcessor(config).makeImage(node, istream, mimetype, filename);
                                 node.getSession().save();
+                                uploadField.setModel(null);
+                                target.addComponent(uploadField);
                             } catch (RepositoryException ex) {
                                 LOGGER.error(ex.getMessage());
                                 error(ex);
