@@ -46,7 +46,6 @@ import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.util.MaxLengthNodeNameFormatter;
-import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,7 @@ public class FolderTreePlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
-    protected final JcrTree tree;
+    protected final CmsJcrTree tree;
     protected JcrTreeModel treeModel;
     protected JcrTreeNode rootNode;
     private JcrNodeModel rootModel;

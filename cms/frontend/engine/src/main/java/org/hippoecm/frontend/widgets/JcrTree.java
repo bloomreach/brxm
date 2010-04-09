@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.widgets;
 
-import java.util.Collection;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -25,12 +23,11 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.ILabelTreeNode;
-import org.hippoecm.frontend.wicket1985.Tree;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -40,6 +37,9 @@ public abstract class JcrTree extends Tree {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+
+    /** use own styling */
+    private static final ResourceReference TREE_STYLE = new ResourceReference(JcrTree.class, "res/tree.css");
 
     /** Reference to the icon of open tree folder */
     private static final ResourceReference VIRTUAL_FOLDER_OPEN = new ResourceReference(JcrTree.class,
@@ -60,26 +60,19 @@ public abstract class JcrTree extends Tree {
         ITreeState treeState = getTreeState();
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
-        treeState.expandNode((TreeNode) treeModel.getRoot());
+        treeState.expandNode(treeModel.getRoot());
     }
 
     @Override
-    public void onDetach() {
-        ITreeState treeState = getTreeState();
-        Collection<Object> collection = treeState.getSelectedNodes();
-        for (Object object : collection) {
-            if (object instanceof IDetachable) {
-                ((IDetachable) object).detach();
-            }
-        }
-        super.onDetach();
+    protected ResourceReference getCSS() {
+        return TREE_STYLE;
     }
-    
+
     @Override
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode);
 
     @Override
-    public String renderNode(TreeNode treeNode, int level) {
+    public String renderNode(TreeNode treeNode) {
         String result = "unknown";
         if (treeNode instanceof IJcrTreeNode) {
             Node node = ((IJcrTreeNode) treeNode).getNodeModel().getObject();

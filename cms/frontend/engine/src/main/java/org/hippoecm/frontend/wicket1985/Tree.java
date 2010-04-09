@@ -17,143 +17,17 @@
 package org.hippoecm.frontend.wicket1985;
 
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.IModel;
-
+import org.hippoecm.frontend.widgets.ContextMenuTree;
 
 /**
- * A complete tree implementation where three item consists of junction link, icon and label.
- * 
- * @author Matej Knopp
+ * Use either JcrTree or the ContextMenuTree directly.
  */
-public class Tree extends DefaultAbstractTree
-{
-	private static final long serialVersionUID = 1L;
+@Deprecated
+public class Tree extends ContextMenuTree {
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Tree constructor.
-	 * 
-	 * @param id
-	 *            The component id
-	 */
-	public Tree(String id)
-	{
-		super(id);
-	}
-
-	/**
-	 * Tree constructor.
-	 * 
-	 * @param id
-	 *            The component id
-	 * @param model
-	 *            The tree model
-	 */
-	public Tree(String id, IModel model)
-	{
-		super(id, model);
-	}
-
-	/**
-	 * Tree constructor.
-	 * 
-	 * @param id
-	 *            The component id
-	 * @param model
-	 *            The tree model
-	 */
-	public Tree(String id, TreeModel model)
-	{
-		super(id, model);
-	}
-
-	/**
-	 * Populates the tree item. It creates all necesary components for the tree to work properly.
-	 * 
-	 * @param item
-	 * @param level
-	 */
-	protected void populateTreeItem(WebMarkupContainer item, final int level)
-	{
-		final TreeNode node = (TreeNode)item.getDefaultModelObject();
-
-		item.add(newIndentation(item, "indent", (TreeNode)item.getDefaultModelObject(), level));
-
-		item.add(newJunctionLink(item, "link", "image", node));
-
-		MarkupContainer nodeLink = newNodeLink(item, "nodeLink", node);
-		item.add(nodeLink);
-
-		nodeLink.add(newNodeIcon(nodeLink, "icon", node));
-
-		nodeLink.add(new Label("label", new AbstractReadOnlyModel()
-		{
-			private static final long serialVersionUID = 1L;
-
-			public Object getObject()
-			{
-				return renderNode(node, level);
-			}
-		}));
-		
-        decorateNodeLink(nodeLink, node, level);
-                
-                MarkupContainer contextContent = newContextContent(item, "contextContent", node);
-                item.add(contextContent);
-                MarkupContainer contextLink = newContextLink(item, "contextLink", node, contextContent);
-                if(contextLink != null) {
-                    item.add(contextLink);
-                }
-
-		// do distinguish between selected and unselected rows we add an
-		// behavior
-		// that modifies row css class.
-		item.add(new AbstractBehavior()
-		{
-			private static final long serialVersionUID = 1L;
-
-			/**
-			 * @see org.apache.wicket.behavior.AbstractBehavior#onComponentTag(org.apache.wicket.Component,
-			 *      org.apache.wicket.markup.ComponentTag)
-			 */
-			public void onComponentTag(Component component, ComponentTag tag)
-			{
-				super.onComponentTag(component, tag);
-				if (getTreeState().isNodeSelected(node))
-				{
-					tag.put("class", "row-selected");
-				}
-				else
-				{
-					tag.put("class", "row");
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Override this method to decorate the nodeLink
-	 */
-	protected void decorateNodeLink(MarkupContainer nodeLink, TreeNode node, int level) {
+    public Tree(String id, TreeModel model) {
+        super(id, model);
     }
-
-    /**
-	 * This method is called for every node to get it's string representation.
-	 * 
-	 * @param node
-	 *            The tree node to get the string representation of
-	 * @return The string representation
-	 */
-	protected String renderNode(TreeNode node, int level)
-	{
-		return node.toString();
-	}
 }
