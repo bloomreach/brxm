@@ -15,19 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.wicket.markup.html.form.AbstractTextComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.IConverter;
-import org.apache.wicket.util.convert.converters.DateConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.util.MappingException;
 import org.hippoecm.frontend.util.PluginConfigMapper;
-import org.joda.time.DateTime;
 
 public class DateFieldWidget extends Panel {
     @SuppressWarnings("unused")
@@ -36,24 +31,21 @@ public class DateFieldWidget extends Panel {
     private static final long serialVersionUID = 1L;
 
     public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) {
-        this(id, model, config.getAsBoolean("show.today.button", true), context, config);
-    }
-    
-    public DateFieldWidget(String id, IModel<Date> model, boolean todayLinkVisible, IPluginContext context, IPluginConfig config) {
         super(id, model);
-
+        
         YuiDatePickerSettings settings = new YuiDatePickerSettings();
-        if(config.containsKey("datepicker")) {
+        if (config.containsKey("datepicker")) {
             try {
                 PluginConfigMapper.populate(settings, config.getPluginConfig("datepicker"));
             } catch (MappingException e) {
                 throw new RuntimeException(e);
             }
         }
+
         YuiDateTimeField dateTimeField = new YuiDateTimeField("widget", model, settings);
+        boolean todayLinkVisible = config.getAsBoolean("show.today.button", true);
         dateTimeField.setTodayLinkVisible(todayLinkVisible);
         add(dateTimeField);
-        
     }
 
 }

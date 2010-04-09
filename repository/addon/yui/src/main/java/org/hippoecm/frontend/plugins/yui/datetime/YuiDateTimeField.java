@@ -15,23 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
+import java.util.Date;
+import java.util.TimeZone;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.datetime.StyleDateConverter;
+import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
+import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
-
-import java.util.Date;
-import java.util.TimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Semi-fork of YUI DateTimeField from Wicket extensions. Replaces Wicket extensions YUI behaviors with a {@link YuiDatePicker}
@@ -50,6 +55,8 @@ public class YuiDateTimeField extends DateTimeField {
 
     private boolean todayLinkVisible = true;
 
+    private YuiDatePickerSettings settings;
+
     public YuiDateTimeField(String id, IModel<Date> model) {
         this(id, model, new YuiDatePickerSettings());
     }
@@ -57,14 +64,37 @@ public class YuiDateTimeField extends DateTimeField {
     public YuiDateTimeField(String id, IModel<Date> model, YuiDatePickerSettings settings) {
         super(id, model);
 
+        this.settings = settings;
+
         setOutputMarkupId(true);
 
         //replace Wicket extensions YUI picker with our own
         DateTextField dateField = (DateTextField) get("date");
-        for(IBehavior b : dateField.getBehaviors()) {
+        for (IBehavior b : dateField.getBehaviors()) {
             dateField.remove(b);
         }
         dateField.add(new YuiDatePicker(settings));
+        IModel<String> sizeModel = new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                return Integer.valueOf(YuiDateTimeField.this.settings.getDatePattern().length() + 2).toString();
+            }
+
+        };
+        dateField.add(new AttributeModifier("size", sizeModel));
+        dateField.add(new AttributeModifier("maxlength", sizeModel));
+        dateField.add(new AttributeModifier("style", new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                int size = YuiDateTimeField.this.settings.getDatePattern().length() + 2;
+                return "width: " + (size * 6 + 7) + "px;";
+            }
+
+        }));
 
         //add "Now" link
         AjaxLink<Date> today;
@@ -90,11 +120,13 @@ public class YuiDateTimeField extends DateTimeField {
             }
         });
 
-        today.add(new Image("current-date-img", new ResourceReference(YuiDateTimeField.class, "resources/set-now-16.png")));
+        today.add(new Image("current-date-img", new ResourceReference(YuiDateTimeField.class,
+                "resources/set-now-16.png")));
 
         //Add change behavior to super fields
-        for(String name : new String[] {"date", "hours", "minutes", "amOrPmChoice"}) {
+        for (String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
             get(name).add(new AjaxFormComponentUpdatingBehavior("onChange") {
+                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
@@ -144,9 +176,39 @@ public class YuiDateTimeField extends DateTimeField {
         this.todayLinkVisible = todayLinkVisible;
     }
 
+    protected String getDatePattern() {
+        return settings.getDatePattern();
+    }
+
+    @Override
+    protected DatePicker newDatePicker() {
+        return new DatePicker() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String getDatePattern() {
+                return "This string is non-null to please the base class.  Please ignore it."
+                        + "  The date-picker behavior is overridden later in the construction phase by the YuiDatePicker.";
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
     protected DateTextField newDateTextField(String id, PropertyModel dateFieldModel) {
-        return new DateTextField(id, dateFieldModel, new StyleDateConverter(false));
+        return new DateTextField(id, dateFieldModel, new DateConverter(false) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getDatePattern() {
+                return YuiDateTimeField.this.getDatePattern();
+            }
+
+            @Override
+            protected DateTimeFormatter getFormat() {
+                return DateTimeFormat.forPattern(getDatePattern()).withLocale(getLocale());
+            }
+        });
     }
 
 }
