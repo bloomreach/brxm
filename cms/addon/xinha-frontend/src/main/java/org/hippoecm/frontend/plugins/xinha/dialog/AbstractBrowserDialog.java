@@ -58,6 +58,7 @@ public abstract class AbstractBrowserDialog<T extends DocumentLink> extends Abst
     protected final IPluginContext context;
     protected final IPluginConfig config;
     private IModelReference<Node> modelReference;
+    protected IModelReference<Node> folderReference;
     private IObserver modelRefObserver;
     private IClusterControl control;
     protected IRenderService dialogRenderer;
@@ -97,6 +98,10 @@ public abstract class AbstractBrowserDialog<T extends DocumentLink> extends Abst
         lastModelVisited = model;
 
         control.start();
+        //Get the folder reference so that it can be used for upload
+        folderReference = context
+                .getService(control.getClusterConfig().getString("model.folder"), IModelReference.class);
+
 
         modelReference = context
                 .getService(control.getClusterConfig().getString("wicket.model"), IModelReference.class);
