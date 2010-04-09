@@ -20,6 +20,8 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
+import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,4 +54,10 @@ public class XinhaPlugin extends AbstractXinhaPlugin {
         return (JcrPropertyValueModel) modelRef.getModel();
     }
 
+    @Override
+    protected IModel<String> newEditModel() {
+        RichTextModel model = (RichTextModel) super.newEditModel();
+        model.setCleaner(getPluginContext().getService(IHtmlCleanerService.class.getName(), IHtmlCleanerService.class));
+        return model;
+    }
 }
