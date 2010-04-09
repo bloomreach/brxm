@@ -80,8 +80,6 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                         .getDefaultModel();
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
                         .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
-
-                System.out.println(workflowDescriptorModel.getNode().getPath());
                 if (workflow == null) {
                     GalleryWorkflowPlugin.log.error("No gallery workflow accessible");
                 } else {
@@ -143,7 +141,6 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                                 .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
                         String nodeName = getNodeNameCodec().encode(filename);
                         String localName = getLocalizeCodec().encode(filename);
-                        System.out.println("type = " + type);
                         Document document = workflow.createGalleryItem(nodeName, type);
                         node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
