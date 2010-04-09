@@ -164,40 +164,57 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             @Override
             protected Dialog createRequestDialog() {
-                StringResourceModel messageModel;
+                Node folderNode = null;
                 try {
-                    final IModel folderName = new NodeTranslator(new JcrNodeModel(
-                            ((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getDefaultModel()).getNode())).getNodeName();
-                    // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
-                    messageModel = new StringResourceModel("delete-message-extended", FolderWorkflowPlugin.this, null,
-                            new Object[] { folderName }) {
-                        @Override
-                        public void detach() {
-                            folderName.detach();
-                            super.detach();
-                        }
-                    };
-                } catch (RepositoryException ex) {
-                    messageModel = new StringResourceModel("delete-message", FolderWorkflowPlugin.this, null);
+                    folderNode = ((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getDefaultModel()).getNode();
+                } catch (RepositoryException e) {
+                    log.error("Unable to retrieve node from WorkflowDescriptorModel, folder delete cancelled", e);
                 }
-                return new WorkflowAction.WorkflowDialog(messageModel) {
 
-                    @Override
-                    public IModel getTitle() {
-                        return new StringResourceModel("delete-title", FolderWorkflowPlugin.this, null);
+                if(folderNode != null) {
+                    final IModel folderName = new NodeTranslator(new JcrNodeModel(folderNode)).getNodeName();
+                    try {
+                        boolean deleteAllowed = folderNode.getNodes().getSize() == 0;
+                        StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
+                                FolderWorkflowPlugin.this, null, new Object[]{folderName}) {
+
+                            @Override
+                            public void detach() {
+                                folderName.detach();
+                                super.detach();
+                            }
+                        };
+                        return new DeleteDialog(messageModel, deleteAllowed);
+
+                    } catch (RepositoryException e) {
+                        log.error("Unable to retrieve number of child nodes from node, folder delete cancelled", e);
                     }
+                }
+                return new DeleteDialog(new StringResourceModel("delete-message-error", FolderWorkflowPlugin.this, null), false);
+            }
 
-                    @Override
-                    public IValueMap getProperties() {
-                        return SMALL;
-                    }
+            class DeleteDialog extends WorkflowAction.WorkflowDialog {
 
-                    @Override
-                    protected void init() {
+                public DeleteDialog(IModel messageModel, boolean deleteAllowed) {
+                    super(messageModel);
+
+                    if(deleteAllowed) {
+                        setFocusOnOk();
+                    } else {
+                        setOkEnabled(false);
                         setFocusOnCancel();
                     }
+                }
 
-                };
+                @Override
+                public IModel getTitle() {
+                    return new StringResourceModel("delete-title", FolderWorkflowPlugin.this, null);
+                }
+
+                @Override
+                public IValueMap getProperties() {
+                    return SMALL;
+                }
             }
 
             @Override
