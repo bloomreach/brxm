@@ -26,6 +26,7 @@
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
       <sv:value>wicket.model</sv:value>
+      <sv:value>model.folder</sv:value>
     </sv:property>
 
     <sv:node sv:name="navigator">
@@ -57,7 +58,7 @@
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${cluster.id}.model.folder</sv:value>
+        <sv:value>${model.folder}</sv:value>
       </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content/gallery</sv:value>
@@ -156,6 +157,7 @@
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
       <sv:value>wicket.model</sv:value>
+      <sv:value>model.folder</sv:value>
     </sv:property>
 
     <sv:node sv:name="navigator">
@@ -195,7 +197,7 @@
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${cluster.id}.model.folder</sv:value>
+        <sv:value>${model.folder}</sv:value>
       </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content</sv:value>

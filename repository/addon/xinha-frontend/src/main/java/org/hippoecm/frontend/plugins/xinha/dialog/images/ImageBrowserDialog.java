@@ -41,7 +41,6 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
@@ -73,13 +72,48 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<XinhaImage> model) {
         super(context, config, model);
 
-        //FIXME Refactor GalleryWorkFlowPlugin related methods into a seperate class, and use it here.
-        // This is a temporary measure.
-        final GalleryWorkflowPlugin galleryWorkflowPlugin = new GalleryWorkflowPlugin(context, config);
-        //Upload Form
+        createUploadForm(config);
 
+        add(new TextFieldWidget("alt", new StringPropertyModel(model, XinhaImage.ALT)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                checkState();
+            }
+        });
+
+        DropDownChoice<String> align = new DropDownChoice<String>("align", new StringPropertyModel(model,
+                XinhaImage.ALIGN), ALIGN_OPTIONS, new IChoiceRenderer<String>() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getDisplayValue(String object) {
+                return new StringResourceModel(object, ImageBrowserDialog.this, null).getString();
+            }
+
+            public String getIdValue(String object, int index) {
+                return object;
+            }
+
+        });
+        align.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                checkState();
+            }
+        });
+
+        align.setOutputMarkupId(true);
+        align.setNullValid(false);
+        add(align);
+
+        checkState();
+    }
+
+    private void createUploadForm(final IPluginConfig config) {
         Form uploadForm = new Form("uploadForm");
-
 
 
         uploadForm.setOutputMarkupId(true);
@@ -90,7 +124,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         uploadForm.add(new AjaxButton("uploadButton", uploadForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                System.out.println("Submitting ajax form");
+
                 final FileUpload upload = uploadField.getFileUpload();
                 if (upload != null) {
                     try {
@@ -103,19 +137,15 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                         HippoNode node = null;
                         try {
+                            //Get the selected folder from the folderReference Service
+                            Node folderNode = ((JcrNodeModel)folderReference.getModel()).getNode();
 
-                            //FIXME shortcuts must be configured under workflow.categories
 
-                            Node selecteNode = ((JcrNodeModel)ImageBrowserDialog.this.getModelObject().getLinkTarget()).getNode();
-                            if(!selecteNode.isNodeType("hippogallery:stdImageGallery")) {
-                                //Get the parent folder
-                                selecteNode = selecteNode.getParent();
-                            }
-                            System.out.println("folderNode : " + selecteNode.getPath());
-                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", selecteNode);
+                            //TODO shortcuts must be configured under workflow.categories
+                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", folderNode);
                             String nodeName = getNodeNameCodec().encode(filename);
                             String localName = getLocalizeCodec().encode(filename);
-                            //FIXME : Hard coded Gallery Type - need to get it from WorkflowDescriptor Model
+                            //TODO : Hard coded Gallery Type - need to get it from WorkflowDescriptor Model
                             Document document = workflow.createGalleryItem(nodeName, "hippogallery:exampleImageSet");
                             node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
@@ -161,50 +191,12 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                         error("Unable to read the uploaded image");
                     }
                 } else {
-                    error("Un expected error, please try again!!");
+                    error("Please select a file to upload");
                 }
             }
         });
 
         add(uploadForm);
-
-
-        add(new TextFieldWidget("alt", new StringPropertyModel(model, XinhaImage.ALT)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                checkState();
-            }
-        });
-
-        DropDownChoice<String> align = new DropDownChoice<String>("align", new StringPropertyModel(model,
-                XinhaImage.ALIGN), ALIGN_OPTIONS, new IChoiceRenderer<String>() {
-            private static final long serialVersionUID = 1L;
-
-            public Object getDisplayValue(String object) {
-                return new StringResourceModel(object, ImageBrowserDialog.this, null).getString();
-            }
-
-            public String getIdValue(String object, int index) {
-                return object;
-            }
-
-        });
-        align.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                checkState();
-            }
-        });
-
-        align.setOutputMarkupId(true);
-        align.setNullValid(false);
-        add(align);
-
-        checkState();
     }
 
     @Override
