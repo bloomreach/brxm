@@ -60,6 +60,26 @@ public class Upgrader13a implements UpdaterModule {
                 }
             }
         });
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:nodetype") {
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                context.setName(node, "hipposysedit_1_2:nodetype");
+                context.setPrimaryNodeType(node, "hipposysedit_1_2:nodetype");
+                for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+                    Node field = iter.nextNode();
+                    context.setPrimaryNodeType(field, "hipposysedit_1_2:field");
+                    if(field.hasProperty("hipposysedit_1_2:name")) {
+                        Property nameProperty = field.getProperty("hipposysedit_1_2:name");
+                        if(field.getName().equals("hipposysedit:field")) {
+                            context.setName(field, nameProperty.getString());
+                        }
+                        nameProperty.remove();
+                    }
+                }
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
+                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
 
         context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.node]", Query.XPATH) {
             @Override
