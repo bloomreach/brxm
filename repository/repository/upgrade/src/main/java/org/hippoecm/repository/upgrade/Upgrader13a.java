@@ -15,13 +15,21 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.InputStreamReader;
+import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
+
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
-import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,26 +60,26 @@ public class Upgrader13a implements UpdaterModule {
                 }
             }
         });
-//        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit_1_1:nodetype") {
-//            @Override
-//            public void leaving(final Node node, int level) throws RepositoryException {
-//                context.setName(node, "hipposysedit_1_2:nodetype");
-//                context.setPrimaryNodeType(node, "hipposysedit_1_2:nodetype");
-//                for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
-//                    Node field = iter.nextNode();
-//                    context.setPrimaryNodeType(field, "hipposysedit_1_2:field");
-//                    if(field.hasProperty("hipposysedit_1_2:name")) {
-//                        Property nameProperty = field.getProperty("hipposysedit_1_2:name");
-//                        if(field.getName().equals("hipposysedit:field")) {
-//                            context.setName(field, nameProperty.getString());
-//                        }
-//                        nameProperty.remove();
-//                    }
-//                }
-//            }
-//        });
-//        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
-//                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:nodetype") {
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                context.setName(node, "hipposysedit_1_2:nodetype");
+                context.setPrimaryNodeType(node, "hipposysedit_1_2:nodetype");
+                for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+                    Node field = iter.nextNode();
+                    context.setPrimaryNodeType(field, "hipposysedit_1_2:field");
+                    if(field.hasProperty("hipposysedit_1_2:name")) {
+                        Property nameProperty = field.getProperty("hipposysedit_1_2:name");
+                        if(field.getName().equals("hipposysedit:field")) {
+                            context.setName(field, nameProperty.getString());
+                        }
+                        nameProperty.remove();
+                    }
+                }
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
+                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
 
         context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.node]", Query.XPATH) {
             @Override
@@ -85,25 +93,6 @@ public class Upgrader13a implements UpdaterModule {
             protected void leaving(Node node, int level) throws RepositoryException {
                 log.error("encoding.dos[;ay property on "+node.getPath()+" no longer supported, please set /hippo:configuration/hippo:frontend/cms/cms-services/settingsService/codecs/@encoding.display property instead");
             } 
-        });
-
-        //Picker Update
-        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:initialize") {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                log.info("Removing the cms-pickers node from " + node.getPath());
-                node.getNode("cms-pickers").remove();
-            }
-        });
-
-        context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:frontend/cms") {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                if (node.hasNode("cms-pickers")) {
-                    log.info("Removing the cms-pickers node from " + node.getPath());
-                    node.getNode("cms-pickers").remove();
-                }
-            }
         });
     }
 }
