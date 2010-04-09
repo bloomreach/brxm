@@ -15,16 +15,33 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-  <wicket:extend>
-    <div wicket:id="content" />
-    <div class="hippo-picker-properties ">
-        <label><wicket:message key="align-label">Align:</wicket:message> </label>
-        <div style="width: 100px; float: left; padding-top: 4px;">
-          <select wicket:id="align">[ Align dropdown ]</select>
+    <wicket:extend>
+
+        <form wicket:id="uploadForm">
+            <div class="upload-wrapper">
+                <label for="upload">
+                    Select File to Upload
+                </label>
+                <input wicket:id="uploadField" class="hippo-select-file" size="50" id="upload" type="file"/>
+                <input wicket:id="uploadButton" type="submit" value="Upload"/>
+            </div>
+        </form>
+
+        <div wicket:id="content"/>
+        <div class="hippo-picker-properties ">
+            <label>
+                <wicket:message key="align-label">Align:</wicket:message>
+            </label>
+
+            <div style="width: 100px; float: left; padding-top: 4px;">
+                <select wicket:id="align">[ Align dropdown ]</select>
+            </div>
+            <label>
+                <wicket:message key="alt-text-label">Alternative text:</wicket:message>
+            </label>
+
+            <div wicket:id="alt" class="text-input">[Alt text box]</div>
         </div>
-        <label><wicket:message key="alt-text-label">Alternative text:</wicket:message> </label>
-        <div wicket:id="alt" class="text-input">[Alt text box]</div>
-     </div>
-  </wicket:extend>
+    </wicket:extend>
 </wicket:panel>
 </html>

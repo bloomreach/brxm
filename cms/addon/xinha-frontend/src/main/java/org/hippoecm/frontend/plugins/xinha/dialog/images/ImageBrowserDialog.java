@@ -16,36 +16,158 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin;
+import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
+import org.hippoecm.frontend.service.ISettingsService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.gallery.GalleryWorkflow;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> {
+public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implements IHeaderContributor {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
-    public final static List<String> ALIGN_OPTIONS = Arrays.asList(new String[] { "top", "middle", "bottom", "left",
-            "right" });
+    public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
 
-    public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel<XinhaImage> model) {
+    public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<XinhaImage> model) {
         super(context, config, model);
+
+        //FIXME Refactor GalleryWorkFlowPlugin related methods into a seperate class, and use it here.
+        // This is a temporary measure.
+        final GalleryWorkflowPlugin galleryWorkflowPlugin = new GalleryWorkflowPlugin(context, config);
+        //Upload Form
+
+        Form uploadForm = new Form("uploadForm");
+
+
+
+        uploadForm.setOutputMarkupId(true);
+        final FileUploadField uploadField = new FileUploadField("uploadField");
+        uploadForm.add(uploadField);
+
+
+        uploadForm.add(new AjaxButton("uploadButton", uploadForm) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                System.out.println("Submitting ajax form");
+                final FileUpload upload = uploadField.getFileUpload();
+                if (upload != null) {
+                    try {
+                        String filename = upload.getClientFileName();
+                        String mimetype;
+
+
+                        mimetype = upload.getContentType();
+                        InputStream istream = upload.getInputStream();
+                        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                        HippoNode node = null;
+                        try {
+
+                            //FIXME shortcuts must be configured under workflow.categories
+
+                            Node selecteNode = ((JcrNodeModel)ImageBrowserDialog.this.getModelObject().getLinkTarget()).getNode();
+                            if(!selecteNode.isNodeType("hippogallery:stdImageGallery")) {
+                                //Get the parent folder
+                                selecteNode = selecteNode.getParent();
+                            }
+                            System.out.println("folderNode : " + selecteNode.getPath());
+                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", selecteNode);
+                            String nodeName = getNodeNameCodec().encode(filename);
+                            String localName = getLocalizeCodec().encode(filename);
+                            //FIXME : Hard coded Gallery Type - need to get it from WorkflowDescriptor Model
+                            Document document = workflow.createGalleryItem(nodeName, "hippogallery:exampleImageSet");
+                            node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                            if (!node.getLocalizedName().equals(localName)) {
+                                defaultWorkflow.localizeName(localName);
+                            }
+                        } catch (WorkflowException ex) {
+                            LOGGER.error(ex.getMessage());
+                            error(ex);
+                        } catch (MappingException ex) {
+                            LOGGER.error(ex.getMessage());
+                            error(ex);
+                        } catch (RepositoryException ex) {
+                            LOGGER.error(ex.getMessage());
+                            error(ex);
+                        }
+                        if (node != null) {
+                            try {
+                                ImageUtils.galleryProcessor(config).makeImage(node, istream, mimetype, filename);
+                                node.getSession().save();
+                            } catch (RepositoryException ex) {
+                                LOGGER.error(ex.getMessage());
+                                error(ex);
+                                try {
+                                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                                    defaultWorkflow.delete();
+                                } catch (WorkflowException e) {
+                                    LOGGER.error(e.getMessage());
+                                } catch (MappingException e) {
+                                    LOGGER.error(e.getMessage());
+                                } catch (RepositoryException e) {
+                                    LOGGER.error(e.getMessage());
+                                }
+                                try {
+                                    node.getSession().refresh(false);
+                                } catch (RepositoryException e) {
+                                    // deliberate ignore
+                                }
+                            }
+                        }
+                    } catch (IOException ex) {
+                        LOGGER.info("upload of image truncated");
+                        error("Unable to read the uploaded image");
+                    }
+                } else {
+                    error("Un expected error, please try again!!");
+                }
+            }
+        });
+
+        add(uploadForm);
+
 
         add(new TextFieldWidget("alt", new StringPropertyModel(model, XinhaImage.ALT)) {
             private static final long serialVersionUID = 1L;
@@ -94,4 +216,26 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> {
         }
     }
 
+    public void renderHead(IHeaderResponse response) {
+        final String IMAGE_BROWSER_DIALOG_CSS = "ImageBrowserDialog.css";
+        ResourceReference dialogCSS = new ResourceReference(ImageBrowserDialog.class, IMAGE_BROWSER_DIALOG_CSS);
+        response.renderCSSReference(dialogCSS);
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return new ValueMap("width=845,height=525");
+    }
+
+    private StringCodec getNodeNameCodec() {
+        ISettingsService settingsService = this.context.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.node");
+    }
+
+     private StringCodec getLocalizeCodec() {
+        ISettingsService settingsService = context.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.display");
+    }
 }
