@@ -163,7 +163,13 @@ public class JCRHtmlCleanerTemplateBuilder {
                 if (elMap.containsKey(key)) {
                     forceNonBreakingSpace = (Boolean) elMap.get(key);
                 }
-                template.addAllowedSingleWhitespaceElement(name, forceNonBreakingSpace);
+                boolean ignoreTrailingNewLineCharacter = true;
+                key = HTMLCLEANER_PREFIX + "ignoreTrailingNewLineCharacter";
+                if (elMap.containsKey(key)) {
+                    ignoreTrailingNewLineCharacter = (Boolean) elMap.get(key);
+                }
+
+                template.addAllowedSingleWhitespaceElement(name, forceNonBreakingSpace, ignoreTrailingNewLineCharacter);
             }
         }
     }
