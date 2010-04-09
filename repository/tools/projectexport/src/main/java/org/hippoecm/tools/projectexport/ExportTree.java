@@ -29,10 +29,11 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.hippoecm.frontend.widgets.ContextMenuTree;
 
-import org.hippoecm.frontend.wicket1985.Tree;
+class ExportTree extends ContextMenuTree implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-class ExportTree extends Tree implements Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -47,6 +48,7 @@ class ExportTree extends Tree implements Serializable {
         this.listeners = listeners;
     }
 
+    @Override
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
         super.onNodeLinkClicked(target, node);
         for(Component c : listeners) {

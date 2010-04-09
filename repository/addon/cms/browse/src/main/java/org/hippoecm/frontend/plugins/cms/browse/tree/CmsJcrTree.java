@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
@@ -24,15 +27,17 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
-import org.hippoecm.frontend.widgets.JcrTree;
+import org.hippoecm.frontend.widgets.ContextMenuTree;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class CmsJcrTree extends JcrTree {
+public abstract class CmsJcrTree extends ContextMenuTree {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(CmsJcrTree.class);
@@ -116,6 +121,35 @@ public abstract class CmsJcrTree extends JcrTree {
             return css;
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Checks if the wrapped jcr node is a virtual node
+     * @return true if the node is virtual else false
+     */
+    public boolean isVirtual(IJcrTreeNode node) {
+        IModel<Node> nodeModel = node.getNodeModel();
+        if (nodeModel == null) {
+            return false;
+        }
+        Node jcrNode = nodeModel.getObject();
+        if (jcrNode == null || !(jcrNode instanceof HippoNode)) {
+            return false;
+        }
+        try {
+            HippoNode hippoNode = (HippoNode) jcrNode;
+            Node canonical = hippoNode.getCanonicalNode();
+            if (canonical == null) {
+                return true;
+            }
+            return !canonical.isSame(hippoNode);
+        } catch (ItemNotFoundException e) {
+            // canonical node no longer exists
+            return true;
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return false;
         }
     }
 

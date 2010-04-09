@@ -15,22 +15,17 @@
  */
 package org.hippoecm.frontend.model.tree;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.model.IModel;
 
 public interface IJcrTreeNode extends TreeNode, IDetachable {
     final static String SVN_ID = "$Id$";
 
-    /**
-     * @deprecated
-     * 
-     * Clients of this interface should only expect IModel<Node> as the return
-     * type.
-     */
-    JcrNodeModel getNodeModel();
+    IModel<Node> getNodeModel();
     
     IJcrTreeNode getChild(String name) throws RepositoryException;
 }
