@@ -12,7 +12,9 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -29,7 +31,8 @@
 
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</developerConnection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend
+    </developerConnection>
     <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</url>
   </scm>
 
@@ -59,6 +62,18 @@
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>2.13.00-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-workflow</artifactId>
+      <version>2.13.00-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-gallery-frontend</artifactId>
+      <version>2.13.00-SNAPSHOT</version>
+    </dependency>
+
+
     <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
@@ -91,30 +106,30 @@
       <artifactId>runtime</artifactId>
       <version>3.3.100-v20070530</version>
       <exclusions>
-        <exclusion> 
-          <groupId>org.eclipse</groupId> 
-          <artifactId>osgi</artifactId> 
-        </exclusion> 
-        <exclusion> 
-          <groupId>org.eclipse.core</groupId> 
-          <artifactId>jobs</artifactId> 
-        </exclusion> 
-        <exclusion> 
-          <groupId>org.eclipse.equinox</groupId> 
-          <artifactId>registry</artifactId> 
-        </exclusion> 
-        <exclusion> 
-          <groupId>org.eclipse.equinox</groupId> 
-          <artifactId>preferences</artifactId> 
-        </exclusion> 
-        <exclusion> 
-          <groupId>org.eclipse.core</groupId> 
-          <artifactId>contenttype</artifactId> 
-        </exclusion> 
-        <exclusion> 
-          <groupId>org.eclipse.equinox</groupId> 
-          <artifactId>app</artifactId> 
-        </exclusion> 
+        <exclusion>
+          <groupId>org.eclipse</groupId>
+          <artifactId>osgi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.core</groupId>
+          <artifactId>jobs</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.equinox</groupId>
+          <artifactId>registry</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.equinox</groupId>
+          <artifactId>preferences</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.core</groupId>
+          <artifactId>contenttype</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.equinox</groupId>
+          <artifactId>app</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -219,7 +234,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-   </plugins>
+    </plugins>
   </build>
 
   <profiles>
