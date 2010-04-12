@@ -26,18 +26,15 @@ import java.util.TreeSet;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
-
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-
 import org.junit.Ignore;
 import org.junit.Test;
+
+
 import static org.junit.Assert.assertTrue;
 
 public class UpgradeIntegrationTest
@@ -93,7 +90,7 @@ public class UpgradeIntegrationTest
         for(Value value : session.getRootNode().getProperty("hippo:configuration/hippo:initialize/hippo:version").getValues()) {
             versionTags.add(value.getString());
         }
-        assertTrue(versionTags.contains("v12a"));
+        assertTrue(versionTags.contains("v13a"));
         assertTrue(versionTags.contains(MAGIC));
     }
 
