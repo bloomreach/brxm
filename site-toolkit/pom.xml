@@ -87,7 +87,7 @@
 
     <jackrabbit.version>1.5.0</jackrabbit.version>
 
-    <hippoecm.version>2.12.08</hippoecm.version>
+    <hippoecm.version>2.12.09</hippoecm.version>
     <hst-configuration-editor.version>1.03.02</hst-configuration-editor.version>
     
     <jdo.version>2.0</jdo.version>
