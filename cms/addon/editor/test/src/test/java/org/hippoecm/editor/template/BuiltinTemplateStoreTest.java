@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.util.collections.MiniMap;
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -120,6 +121,29 @@ public class BuiltinTemplateStoreTest {
         IClusterConfig cluster = clusters.next();
         List<IPluginConfig> plugins = cluster.getPlugins();
         assertEquals(1, plugins.size());
+    }
+
+    @Test
+    public void testCreatedTemplateIsComparable() {
+        // generate a template for "string" as well
+        BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeLocator);
+        builtinStore.setTemplateLocator(new TemplateLocator(new IStore[] { builtinStore }));
+        types.put("String", new JavaTypeDescriptor("String", "String", null));
+
+        Map<String, Object> criteria = new MiniMap(1);
+        criteria.put("type", types.get("a"));
+
+        Iterator<IClusterConfig> clusters = builtinStore.find(criteria);
+        assertTrue(clusters.hasNext());
+
+        IClusterConfig cluster = clusters.next();
+        assertTrue(cluster.getReferences().contains("model.compareTo"));
+
+        List<IPluginConfig> plugins = cluster.getPlugins();
+        assertEquals(2, plugins.size());
+        IPluginConfig fieldPlugin = plugins.get(1);
+        assertTrue(fieldPlugin.containsKey("model.compareTo"));
+        assertEquals("${model.compareTo}", fieldPlugin.get("model.compareTo"));
     }
 
 }

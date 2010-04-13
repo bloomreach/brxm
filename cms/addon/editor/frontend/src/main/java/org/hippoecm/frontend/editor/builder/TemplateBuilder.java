@@ -581,7 +581,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         this.context = context;
         this.selectedExtPtModel = extPtModel;
 
-        JcrTypeStore jcrTypeStore = new JcrTypeStore();
+        jcrTypeStore = new JcrTypeStore();
         String prefix;
         if (type.indexOf(':') > 0) {
             prefix = type.substring(0, type.indexOf(':'));
@@ -823,6 +823,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             pluginConfig.put("wicket.id", getSelectedExtensionPoint());
             pluginConfig.put("wicket.model", "${wicket.model}");
+            if (clusterConfig.getReferences().contains("model.compareTo")) {
+                pluginConfig.put("model.compareTo", "${model.compareTo}");
+            }
             pluginConfig.put("validator.id", "${validator.id}");
             pluginConfig.put("mode", "${mode}");
             pluginConfig.put("engine", "${engine}");

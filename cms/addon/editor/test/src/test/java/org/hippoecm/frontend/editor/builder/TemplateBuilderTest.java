@@ -137,6 +137,25 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     /**
+     * verify that an added plugin will get the model.compareTo reference
+     */
+    public void testAddWithCompare() throws Exception {
+        TemplateBuilder builder = new TemplateBuilder("test:comparable", false, context, new ExtPtModel());
+
+        IClusterConfig config = builder.getTemplate();
+
+        BuiltinTypeStore builtinTypes = new BuiltinTypeStore();
+        ITypeDescriptor type = builder.getTypeDescriptor();
+        type.addField(new JavaFieldDescriptor("test", builtinTypes.load("nt:unstructured")));
+
+        assertEquals(2, config.getPlugins().size());
+        IPluginConfig pluginConfig = config.getPlugins().get(1);
+        assertTrue(pluginConfig.containsKey("model.compareTo"));
+        assertEquals("${model.compareTo}", pluginConfig.get("model.compareTo"));
+    }
+
+    @Test
+    /**
      * verify that a field is removed from the type when a plugin is removed from the cluster
      */
     public void testRemovePlugin() throws Exception {
