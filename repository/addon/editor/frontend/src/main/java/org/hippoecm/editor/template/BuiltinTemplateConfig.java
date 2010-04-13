@@ -72,6 +72,7 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
     public List<String> getReferences() {
         List<String> result = new LinkedList<String>();
         result.add("wicket.model");
+        result.add("model.compareTo");
         result.add("engine");
         return result;
     }
@@ -142,6 +143,7 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
             }
             config.put("wicket.id", "${cluster.id}.field");
             config.put("wicket.model", "${wicket.model}");
+            config.put("model.compareTo", "${model.compareTo}");
             config.put("engine", "${engine}");
             config.put("mode", "${mode}");
             config.put("caption", entry.getKey());

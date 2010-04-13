@@ -43,6 +43,7 @@ public class TemplateFactory implements IClusterable {
         clusterConfig.addService("wicket.id");
         clusterConfig.addService("validator.id");
         clusterConfig.addReference("wicket.model");
+        clusterConfig.addReference("model.compareTo");
         clusterConfig.addReference("engine");
         clusterConfig.addReference("validator.id");
 
