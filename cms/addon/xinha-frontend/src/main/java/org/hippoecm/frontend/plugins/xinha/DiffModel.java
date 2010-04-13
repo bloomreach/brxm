@@ -74,9 +74,9 @@ public class DiffModel extends LoadableDetachableModel<String> {
 
             return baos.toString();
         } catch (TransformerConfigurationException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         } catch (SAXException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage(), e);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
