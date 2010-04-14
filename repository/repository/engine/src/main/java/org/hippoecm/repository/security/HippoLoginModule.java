@@ -334,7 +334,7 @@ public class HippoLoginModule implements LoginModule {
             }
             log.info("User {} has privileges {} for domain {} ", new Object[] { userId, privileges, domain.getName() });
 
-            if (privileges.size() > 0) {
+            if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
                 // create and add facet auth principal
                 FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, privileges);
                 principals.add(fap);
