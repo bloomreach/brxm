@@ -109,7 +109,7 @@
       <version>${hippoecm.version}</version>
     </dependency>
     
-    <!-- TODO this dependency should not be needed. When fixed in ecm, remove it here -->
+    <!-- TODO this dependency should not be needed. When fixed in ecm, remove it here: From ecm 2.14.00 and higher, this dep can be removed, see HREPTWO-4103 -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
