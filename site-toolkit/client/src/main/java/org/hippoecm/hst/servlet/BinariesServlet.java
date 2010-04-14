@@ -18,6 +18,7 @@ package org.hippoecm.hst.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -57,6 +58,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
+import org.hippoecm.hst.utils.EncodingUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,11 +97,22 @@ import org.slf4j.LoggerFactory;
  * &lt;/init-param&gt;
  * </pre>
  * 
+ * The contentDispositionFilenameProperty is being encoded.  By default, we try to do this user-agent-agnostic. This is preferrable when using 
+ * caching reverse proxies in front of your application. In user-agent-agnostic mode, we try to convert filenames consisting non ascii chars to their
+ * base form, in other words, replace diacritics. However for for example a language like Chinese this won't work. Then, you might want to opt for the 
+ * user-agent-specific mode. You then have to take care of your reverse proxies taking care of the user-agent. They thus should take the user-agent into account.
+ * Also see {@link #encodeContentDispositionFileName(HttpServletRequest, HttpServletResponse, String)}. 
+ * Changing the default user-agent-agnostic mode to user-agent-specific mode can be done by adding the init-param:
+ * 
+ * <pre>
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;contentDispositionFilenameEncoding&lt;/param-name&gt;
+ *     &lt;param-value&gt;user-agent-specific&lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * </pre>
+ * 
  * You can also configure multiple JCR property names in the above init parameter by comma-separated value. 
  * 
- * @author Ard Schrijvers
- * @author Woonsan Ko
- * @author Tom van Zummeren
  * @version $Id$
  */
 public class BinariesServlet extends HttpServlet {
@@ -111,6 +124,20 @@ public class BinariesServlet extends HttpServlet {
     public static final String CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM = "contentDispositionContentTypes";
     
     public static final String CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM = "contentDispositionFilenameProperty";
+
+    /**
+     * The init param indicating whether the fileName for the content disposition can be encoded 'user-agent-specific' or 
+     * 'user-agent-agnostic', also see {@link #encodeContentDispositionFileName(HttpServletRequest, HttpServletResponse, String)}
+     */
+    public static final String CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM = "contentDispositionFilenameEncoding";
+    
+    /**
+     * The default encoding for content disposition fileName is 'user-agent-agnostic', also see 
+     * {@link #encodeContentDispositionFileName(HttpServletRequest, HttpServletResponse, String)}
+     */
+    public static final String USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING = "user-agent-agnostic";
+
+    public static final String USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING = "user-agent-specific";
     
     public static final String BINARY_RESOURCE_NODE_TYPE_INIT_PARAM = "binaryResourceNodeType";
     
@@ -156,6 +183,8 @@ public class BinariesServlet extends HttpServlet {
     
     private String binaryLastModifiedPropName = DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
     
+    protected  String contentDispositionFileNameEncoding = USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING;
+    
     /**
      * {@inheritDoc}
      */
@@ -176,6 +205,10 @@ public class BinariesServlet extends HttpServlet {
         binaryDataPropName = ServletConfigUtils.getInitParameter(config, null, BINARY_DATA_PROP_NAME_INIT_PARAM, binaryDataPropName);
         binaryMimeTypePropName = ServletConfigUtils.getInitParameter(config, null, BINARY_MIME_TYPE_PROP_NAME_INIT_PARAM, binaryMimeTypePropName);
         binaryLastModifiedPropName = ServletConfigUtils.getInitParameter(config, null, BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM, binaryLastModifiedPropName);
+        contentDispositionFileNameEncoding = ServletConfigUtils.getInitParameter(config, null, CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM , contentDispositionFileNameEncoding);
+        if(!USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding) && !USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding)) {
+            throw new ServletException("Invalid init-param: the only allowed values for contentDispositionFilenameEncoding are '"+USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"' or '"+USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"'");
+        }
     }
 
     @Override
@@ -260,8 +293,8 @@ public class BinariesServlet extends HttpServlet {
             }
             
             if (ifModifiedSince != -1 && ifModifiedSince / 1000 >= lastModifiedDate.getTimeInMillis() / 1000) {
-                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                return;
+            //    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            //    return;
             }
             
             InputStream input = null;
@@ -475,16 +508,77 @@ public class BinariesServlet extends HttpServlet {
         }
     }
     
+    
+    /**
+     * <p>When the <code>fileName</code> consists only of US-ASCII chars, we can safely return the <code>fileName</code> <b>as is</b>. However, when the  <code>fileName</code>
+     * does contains non-ascii-chars there is a problem because of different browsers expect different encoding: there is no uniform version that works for 
+     * all browsers. So, we are either stuck to user-agent sniffing to return the correct encoding, or try to return a US-ASCII form as best as we can.</p>
+     *  
+     * <p>The problem with user-agent sniffing is that in general, when you use reverse proxies, you do not want to cache pages <b>per</b> browser type. If one version
+     * is demanded for all different user agents, the best we can do is trying to bring the fileName back to its base form, thus, replacing diacritics by their
+     * base form. This will work fine for most Latin alphabets.</p> 
+     * 
+     * <p>However, a language like Chinese won't be applicable for this approach. The only way to have it correct in such languages, is to return 
+     * a different version for different browsers</p>
+     * 
+     * <p>To be able to serve both usecases, we make it optional <b>how</b> you'd like your encoding strategy to be. The default strategy, is assuming
+     * Latin alphabets and try to get the non-diacritical version of a fileName: The default strategy is thus (browser) user-agent-agnostic.</p>
+     * 
+     * <p>For languages like Chinese, you can if you do want all browser version to display the correct fileName for the Content-Disposition, tell the 
+     * binaries servlet to do so with the following init-param. Note that in this case, you might have to account for the user-agent in your reverse proxy setup</p>
+     * 
+     * <pre>
+     * &lt;init-param&gt;
+     *     &lt;param-name&gt;contentDispositionFilenameEncoding&lt;/param-name&gt;
+     *     &lt;param-value&gt;user-agent-specific&lt;/param-value&gt;
+     * &lt;/init-param&gt;
+     * </pre>
+     * 
+     * @param request
+     * @param response
+     * @param fileName the un-encoded filename
+     * @return
+     */
     protected String encodeContentDispositionFileName(HttpServletRequest request, HttpServletResponse response, String fileName) {
-        String userAgent = request.getHeader("User-Agent");
         
         try {
-            if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
-                String responseEncoding = response.getCharacterEncoding();
-                return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
-            } else {
-                return EncoderUtil.encodeEncodedWord(fileName, EncoderUtil.Usage.WORD_ENTITY, 0, Charset.forName("UTF-8"), EncoderUtil.Encoding.B);
+            String responseEncoding = response.getCharacterEncoding();
+            String encodedFileName =  URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
+            
+            if(encodedFileName.equals(fileName)) {
+                log.debug("The filename did not contains non-ascii chars: we can safely return an un-encoded version");
+                return fileName;
             }
+            
+            if(USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding)){
+                // let's try to bring the filename to it's baseform by replacing diacritics: if then still there are non-ascii chars, we log an info 
+                // message that you might need user-agent-specific mode, and return a utf-8 encoded version. 
+                
+                String asciiFileName = EncodingUtils.isoLatin1AccentReplacer(fileName); 
+                
+                // now check whether the asciiFileName really only contains ascii chars:
+                String encodedAsciiFileName = URLEncoder.encode(asciiFileName, responseEncoding != null ? responseEncoding : "UTF-8");
+                if(encodedAsciiFileName.equals(asciiFileName)) {
+                    log.debug("Replaced fileName '{}' with its un-accented equivalent '{}'", fileName, asciiFileName);
+                    return asciiFileName;
+                } else {
+                    log.info("Filename '{}' consists of non latin chars. We have to utf-8 encode the filename, which might be shown with unencoded in some browsers." +
+                    		" If you want to avoid this, use '{}'. However, this influences reverse proxies.", fileName, USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING);
+                    return encodedAsciiFileName;
+                }
+                
+            } else if(USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding)) {
+                String userAgent = request.getHeader("User-Agent");
+                if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
+                    return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
+                } else {
+                    return EncoderUtil.encodeEncodedWord(fileName, EncoderUtil.Usage.WORD_ENTITY, 0, Charset.forName("UTF-8"), EncoderUtil.Encoding.B);
+                }
+            } else {
+                log.warn("Invalid encoding strategy: only allowed is '"+USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"' or '"+USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"'. Return utf-8 encoded version.");
+                return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
+            }
+           
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to encode filename.", e);

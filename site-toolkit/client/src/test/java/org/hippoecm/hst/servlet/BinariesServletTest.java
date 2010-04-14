@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -67,6 +68,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
+        expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn(null);
     
         replay(servletConfig);
         binariesServlet.init(servletConfig);
@@ -97,6 +99,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
+        expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn(null);
        
         replay(servletConfig);
         binariesServlet.init(servletConfig);
@@ -139,7 +142,82 @@ public class BinariesServletTest {
         
         Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
         assertEquals("attachment", headerParams.get(""));
-        assertEquals("filename.pdf", DecoderUtil.decodeEncodedWords(headerParams.get("filename")));
+        assertEquals("filename.pdf", headerParams.get("filename"));
+    }
+    
+    /**
+     * By default, the binaries servlet is user-agent-agnostic. In this mode, we try to replace iso latin 1 chars.
+     * 
+     * Therefore, when we have filename filenam\u00EB.pdf, we expect back filename.pdf
+     * @throws Exception
+     */
+    @Test
+    public void testSetContentDispositionHeaderAccentedChars() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
+                "application/pdf", "application/rtf", "application/excel"));
+
+        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
+        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
+
+        Property filenameProperty = createMock(Property.class);
+        // add accented filename: 
+        expect(filenameProperty.getString()).andReturn("filenam\u00EB.pdf");
+
+        Node binaryFileNode = createMock(Node.class);
+        expect(binaryFileNode.hasProperty(filenamePropertyName)).andReturn(true);
+        expect(binaryFileNode.getProperty(filenamePropertyName)).andReturn(filenameProperty);
+
+        replay(binaryFileNode, filenameProperty);
+        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
+        verify(binaryFileNode, filenameProperty);
+        
+        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
+        assertEquals("attachment", headerParams.get(""));
+        // we expect the returned name to have the accented char replaced
+        assertEquals("filename.pdf", headerParams.get("filename"));
+    }
+    
+    /**
+     * By default, the binaries servlet is user-agent-agnostic. Now, we set it to be user agent specific, 
+     * and drop in a filename with accents: The returned header param now will be encoded dependent on the 
+     * user-agent
+     * @throws Exception
+     */
+    @Test
+    public void testSetContentDispositionHeaderAccentedCharsUserAgentSpecific() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
+                "application/pdf", "application/rtf", "application/excel"));
+
+        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
+        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
+
+        binariesServlet.contentDispositionFileNameEncoding = BinariesServlet.USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING;
+        
+        Property filenameProperty = createMock(Property.class);
+        // add accented filename: 
+        expect(filenameProperty.getString()).andReturn("filenam\u00EB.pdf");
+
+        Node binaryFileNode = createMock(Node.class);
+        expect(binaryFileNode.hasProperty(filenamePropertyName)).andReturn(true);
+        expect(binaryFileNode.getProperty(filenamePropertyName)).andReturn(filenameProperty);
+
+        replay(binaryFileNode, filenameProperty);
+        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
+        verify(binaryFileNode, filenameProperty);
+        
+        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
+        assertEquals("attachment", headerParams.get(""));
+        // we expect the returned name to be encoded now
+        assertNotSame("filename.pdf", headerParams.get("filename"));
+        
+        // and again, the decoded version, we expect to be filenam\u00EB.pdf
+        assertEquals("filenam\u00EB.pdf",DecoderUtil.decodeEncodedWords(headerParams.get("filename")));
     }
 
     /**
