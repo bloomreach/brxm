@@ -181,7 +181,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     }
 
-    protected final JcrNodeModel nodeModel;
+    protected JcrNodeModel nodeModel;
     private IObservationContext<IPluginConfig> obContext;
     private JcrEventListener listener;
     private JcrMap map;
