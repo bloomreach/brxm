@@ -139,10 +139,12 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         if (!rememberme) {
                             Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest()
                                     .getCookies();
-                            for (int i = 0; i < cookies.length; i++) {
-                                if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())
-                                        || getClass().getName().equals(cookies[i].getName())) {
-                                    ((WebResponse) RequestCycle.get().getResponse()).clearCookie(cookies[i]);
+                            if (cookies != null) {
+                                for (int i = 0; i < cookies.length; i++) {
+                                    if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())
+                                            || getClass().getName().equals(cookies[i].getName())) {
+                                        ((WebResponse) RequestCycle.get().getResponse()).clearCookie(cookies[i]);
+                                    }
                                 }
                             }
                             return super.load();
