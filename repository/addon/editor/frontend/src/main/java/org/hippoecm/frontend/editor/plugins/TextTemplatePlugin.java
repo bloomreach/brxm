@@ -15,8 +15,12 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.editor.compare.TextDiffer;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
@@ -36,11 +40,9 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
     public TextTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IModel<String> valueModel = getModel();
+        final IModel<String> valueModel = getModel();
         IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
         if (IEditor.Mode.EDIT == mode) {
-            // IModel<String> encodedStringModel  = new EncodedStringModel(valueModel);
-            // TextAreaWidget widget = new TextAreaWidget("value", encodedStringModel);
             TextAreaWidget widget = new TextAreaWidget("value", valueModel);
             if (config.getString("rows") != null) {
                 widget.setRows(config.getString("rows"));
@@ -49,9 +51,22 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
                 widget.setCols(config.getString("cols"));
             }
             add(widget);
+        } else if (IEditor.Mode.COMPARE == mode) {
+            final TextDiffer differ = new TextDiffer();
+            final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
+                    IModelReference.class).getModel();
+            IModel<String> compareModel = new LoadableDetachableModel<String>() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected String load() {
+                    return differ.diffText(baseModel.getObject(), valueModel.getObject());
+                }
+
+            };
+            add(new Label("value", compareModel).setEscapeModelStrings(false));
         } else {
             add(new Label("value", valueModel));
         }
     }
-
 }
