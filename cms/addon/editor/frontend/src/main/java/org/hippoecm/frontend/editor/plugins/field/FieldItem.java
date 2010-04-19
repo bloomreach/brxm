@@ -104,8 +104,10 @@ public class FieldItem<C extends IModel> implements IDetachable {
 
     public void destroy() {
         String validationServiceId = clusterControl.getClusterConfig().getString(IValidationService.VALIDATE_ID);
-        if (validationServiceId != null) {
-            context.unregisterService(validationObserver, IObserver.class.getName());
+        if (validationService != null) {
+            if (validationObserver != null) {
+                context.unregisterService(validationObserver, IObserver.class.getName());
+            }
             context.unregisterService(validationService, validationServiceId);
             validationService = null;
         }
