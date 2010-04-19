@@ -27,7 +27,7 @@ public class TextDiffer implements Serializable {
 
     private final static Pattern WHITESPACE = Pattern.compile("[ \t\r\n]");
 
-    private String addedClass = "hipo-diff-added";
+    private String addedClass = "hippo-diff-added";
     private String removedClass = "hippo-diff-removed";
 
     public void setAddedClass(String addedClass) {
