@@ -297,7 +297,7 @@
             <sv:value>d1847bd1-78da-4491-beab-e0e6d2fee3e0</sv:value>
           </sv:property>
           <sv:property sv:name="defaultcontent:introduction" sv:type="String">
-            <sv:value>introduction</sv:value>
+            <sv:value><![CDATA[<html><body>introduction</body></html>]]></sv:value>
           </sv:property>
           <sv:property sv:name="defaultcontent:title" sv:type="String">
             <sv:value>title</sv:value>
@@ -386,7 +386,7 @@
             <sv:value>24c54e63-78d3-452f-a9f0-f216cc60c276</sv:value>
           </sv:property>
           <sv:property sv:name="defaultcontent:introduction" sv:type="String">
-            <sv:value>introduction</sv:value>
+            <sv:value><![CDATA[<html><body>introduction</body></html>]]></sv:value>
           </sv:property>
           <sv:property sv:name="defaultcontent:title" sv:type="String">
             <sv:value>title</sv:value>
