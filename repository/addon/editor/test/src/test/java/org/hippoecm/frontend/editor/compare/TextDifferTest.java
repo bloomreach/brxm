@@ -24,11 +24,11 @@ public class TextDifferTest {
     @Test
     public void testDiffer() {
         TextDiffer differ = new TextDiffer();
-        assertEquals("aap <span class=\"diff-added\">noot</span>", differ.diffText("aap", "aap noot"));
-        assertEquals("<span class=\"diff-added\">aap</span> noot", differ.diffText("noot", "aap noot"));
-        assertEquals("<span class=\"diff-removed\">aap</span> noot", differ.diffText("aap noot", "noot"));
-        assertEquals("aap <span class=\"diff-removed\">noot</span>", differ.diffText("aap noot", "aap"));
-        assertEquals("<span class=\"diff-removed\">aap</span> <span class=\"diff-added\">noot</span>", differ.diffText(
+        assertEquals("aap <span class=\"hippo-diff-added\">noot</span>", differ.diffText("aap", "aap noot"));
+        assertEquals("<span class=\"hippo-diff-added\">aap</span> noot", differ.diffText("noot", "aap noot"));
+        assertEquals("<span class=\"hippo-diff-removed\">aap</span> noot", differ.diffText("aap noot", "noot"));
+        assertEquals("aap <span class=\"hippo-diff-removed\">noot</span>", differ.diffText("aap noot", "aap"));
+        assertEquals("<span class=\"hippo-diff-removed\">aap</span> <span class=\"hippo-diff-added\">noot</span>", differ.diffText(
                 "aap", "noot"));
         assertEquals("n&lt;ot", differ.diffText("n<ot", "n<ot"));
     }
