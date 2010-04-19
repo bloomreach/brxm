@@ -20,7 +20,30 @@ import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.constructs.web.filter.SimplePageCachingFilter;
 
-
+/**
+ * TODO this is a work in progress HST Page Cache filter, which is an HST optimization for high traffic / large concurrency environments, where
+ * throughput must be extremely large. A cached valid page won't hit the hst2 application at all, and will be served from cache. Easily thousands to tens of
+ * of thousands page request per second can be handled by this filter. 
+ * 
+ * in the web.xml you can use this filter with 
+ * 
+ * <dispatchet>FORWARD</dispatcher> 
+ * 
+ * as the request will be forwarded from the HstVirtualHostsFilter
+ * 
+ * TODO 
+ * <UL>
+ *    <LI> Configure the cache characteristics in the repository / web.xml / hst config properties </LI>
+ *    <LI> Add correct headers to response</LI>
+ *    <LI> Repository invalidation when a change happens</LI>
+ *    <LI> Seperate caches for preview / live </LI>
+ *    <LI> Allow for exclusions (for example everything below /bar)</LI>
+ *    <LI> Do not cache actions (can be set on the HstResponse to not cache)</LI>
+ *    <LI> Send a 304 for not changed pages, and handle a ctrl-refresh</LI>
+ *    <LI> Make concurrent calls for the exact same page wait until the first request returns, and serve the other requests from cache</LI>
+ *    <LI> Investigate a clustered cache where all HST instances share their cache</LI>
+ * </UL>
+ */
 public class PageCachingFilter extends SimplePageCachingFilter {
 
     
