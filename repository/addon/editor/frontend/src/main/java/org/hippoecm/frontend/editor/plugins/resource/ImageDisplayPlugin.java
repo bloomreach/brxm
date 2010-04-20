@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -31,7 +29,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -62,28 +60,18 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             boolean doCompare = false;
             if (baseModelRef != null) {
                 IModel<Node> baseModel = baseModelRef.getModel();
-                JcrResourceStream baseResStream= null;
-                JcrResourceStream currentResStream = null;
-                try {
-                    baseResStream = new JcrResourceStream(baseModel);
-                    currentResStream = new JcrResourceStream(getModel());
-                    InputStream baseStream = baseResStream.getInputStream();
-                    InputStream currentStream = currentResStream.getInputStream();
-                    if (baseStream != null && currentStream != null) {
-                        if (!areIdentical(baseStream, currentStream)) {
+                Node baseNode = baseModel.getObject();
+                Node currentNode = getModel().getObject();
+                if (baseNode != null && currentNode != null) {
+                    try {
+                        InputStream baseStream = baseNode.getProperty("jcr:data").getStream();
+                        InputStream currentStream = currentNode.getProperty("jcr:data").getStream();
+                        StreamComparer comparer = new StreamComparer();
+                        if (!comparer.areEqual(baseStream, currentStream)) {
                             doCompare = true;
                         }
-                    }
-                } catch (ResourceStreamNotFoundException e) {
-                    log.warn(e.getMessage(), e);
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                } finally {
-                    if (baseResStream != null) {
-                        baseResStream.detach();
-                    }
-                    if (currentResStream != null) {
-                        currentResStream.detach();
+                    } catch (RepositoryException e) {
+                        log.error("Could not compare streams", e);
                     }
                 }
             }
@@ -103,25 +91,6 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         } else {
             add(createResourceFragment("fragment", getModel()));
         }
-    }
-
-    private boolean areIdentical(InputStream baseStream, InputStream currentStream) throws IOException {
-        byte[] baseBytes = new byte[32 * 1024];
-        byte[] currentBytes = new byte[32 * 1024];
-        while (baseStream.available() > 0 && currentStream.available() > 0) {
-            int baseRead = baseStream.read(baseBytes);
-            int currentRead = currentStream.read(currentBytes);
-            if (baseRead != currentRead) {
-                return false;
-            }
-            if (baseRead == -1) {
-                break;
-            }
-            if (!Arrays.equals(baseBytes, currentBytes)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private Fragment createResourceFragment(String id, IModel<Node> model) {

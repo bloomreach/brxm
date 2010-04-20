@@ -68,14 +68,14 @@ public class LCS {
      * The execution time and memory usage are linear for typical inputs, but will be quadratic in
      * the worst case.
      */
-    public static List<String> getLongestCommonSubsequence(String[] a, String[] b) {
+    public static <T> List<T> getLongestCommonSubsequence(T[] a, T[] b) {
         if (b.length < a.length) {
             return getLongestCommonSubsequence(b, a);
         }
 
         // prepare index and list of sequences
 
-        Map<String, List<Integer>> index = new HashMap<String, List<Integer>>();
+        Map<T, List<Integer>> index = new HashMap<T, List<Integer>>();
         for (int i = 0; i < a.length; i++) {
             List<Integer> positions = index.get(a[i]);
             if (positions == null) {
@@ -111,7 +111,7 @@ public class LCS {
         // read out
 
         Sequence sequence = sequences[a.length];
-        LinkedList<String> result = new LinkedList<String>();
+        LinkedList<T> result = new LinkedList<T>();
         while (sequence != Sequence.NULL) {
             result.addFirst(a[sequence.position]);
             sequence = sequence.predecessor;
