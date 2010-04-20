@@ -15,7 +15,7 @@
  */
 
 <nt='http://www.jcp.org/jcr/nt/1.0'>
-<hst='http://www.hippoecm.org/hst/nt/1.4'>
+<hst='http://www.hippoecm.org/hst/nt/2.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 
 [hst:descriptive] mixin
