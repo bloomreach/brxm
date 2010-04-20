@@ -736,10 +736,10 @@ font-weight: bold;
 
 /* override some editors styling in preview mode */
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield{border: none; padding: 0px}
-.hippo-editor .hippo-preview-document .hippo-editor-field{font-size: 12px; line-height: 18px; font-family: arial,sans-serif,helvetica; background: white}
+.hippo-editor .hippo-preview-document .hippo-editor-field{font-size: 12px; line-height: 18px; font-family: arial,sans-serif,helvetica;}
 .hippo-preview-document .hippo-editor-field h3.hippo-editor-field-title span{font-size: 11px;}
-.hippo-preview-document div.odd  .hippo-editor-field {background: white; border-bottom: 1px dotted #afafaf}
-.hippo-preview-document div.even .hippo-editor-field {background: white; border-bottom: 1px dotted #afafaf}
+.hippo-preview-document div.odd  .hippo-editor-field {border-bottom: 1px dotted #afafaf}
+.hippo-preview-document div.even .hippo-editor-field {border-bottom: 1px dotted #afafaf}
 .hippo-preview-document .hippo-editor-field-textarea{min-height: 150px}
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield{background-image: none}
 

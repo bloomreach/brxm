@@ -123,14 +123,14 @@ public class ComparingController<C extends IModel> implements IDetachable {
                 addExtensionPoint("old");
                 addExtensionPoint("new");
 
-                if (oldModel != null) {
-                    IClusterControl template = factory.newTemplate(config.getString("old"), IEditor.Mode.VIEW);
-                    oldFir = new FieldItem<C>(sc, oldModel, null, template, null);
-                }
-                if (newModel != null) {
-                    IClusterControl template = factory.newTemplate(config.getString("new"), IEditor.Mode.VIEW);
-                    newFir = new FieldItem<C>(sc, newModel, null, template, null);
-                }
+                IClusterControl oldTemplate = factory.newTemplate(config.getString("old"), IEditor.Mode.VIEW);
+                oldFir = new FieldItem<C>(sc, oldModel, null, oldTemplate, null);
+
+                IClusterControl newTemplate = factory.newTemplate(config.getString("new"), IEditor.Mode.VIEW);
+                newFir = new FieldItem<C>(sc, newModel, null, newTemplate, null);
+
+                get("old").add(new AttributeAppender("class", new Model("hippo-diff-removed"), " "));
+                get("new").add(new AttributeAppender("class", new Model("hippo-diff-added"), " "));
 
             } else {
                 addExtensionPoint("cmp");
