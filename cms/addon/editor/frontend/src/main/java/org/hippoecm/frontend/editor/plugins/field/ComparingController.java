@@ -17,12 +17,18 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.editor.compare.Comparer;
+import org.hippoecm.frontend.editor.compare.IComparer;
+import org.hippoecm.frontend.editor.compare.LCS;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -45,6 +51,18 @@ public class ComparingController<C extends IModel> implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(TemplateController.class);
 
+    public enum Orientation {
+        HORIZONTAL, VERTICAL;
+    };
+
+    static IPluginConfig wrapConfig(IPluginConfig config, int cnt) {
+        JavaPluginConfig wrapped = new JavaPluginConfig(config);
+        wrapped.put("cmp", config.get("cmp") + "." + cnt);
+        wrapped.put("old", config.get("old") + "." + cnt);
+        wrapped.put("new", config.get("new") + "." + cnt);
+        return wrapped;
+    }
+
     class ItemEntry extends RenderService {
         private static final long serialVersionUID = 1L;
 
@@ -56,12 +74,14 @@ public class ComparingController<C extends IModel> implements IDetachable {
 
         IClusterControl cmpTpl;
 
-        ItemEntry(ServiceContext sc, C model) throws TemplateEngineException {
-            super(sc, itemConfig);
+        ItemEntry(ServiceContext sc, C model, int id) throws TemplateEngineException {
+            super(sc, wrapConfig(itemConfig, id));
 
             oldModel = model;
 
-            cmpTpl = factory.newTemplate(itemConfig.getString("cmp"), IEditor.Mode.VIEW);
+            IPluginConfig config = getPluginConfig();
+
+            cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.VIEW);
             addExtensionPoint("cmp");
 
             String oldModelId = cmpTpl.getClusterConfig().getString(RenderService.MODEL_ID);
@@ -71,14 +91,22 @@ public class ComparingController<C extends IModel> implements IDetachable {
             cmpTpl.start();
         }
 
-        ItemEntry(ServiceContext sc, C oldModel, C newModel) throws TemplateEngineException {
-            super(sc, itemConfig);
+        ItemEntry(ServiceContext sc, C oldModel, C newModel, int id) throws TemplateEngineException {
+            super(sc, wrapConfig(itemConfig, id));
 
             this.oldModel = oldModel;
             this.newModel = newModel;
 
-            cmpTpl = factory.newTemplate(itemConfig.getString("cmp"), IEditor.Mode.COMPARE);
-            if (cmpTpl.getClusterConfig().getReferences().contains("model.compareTo")) {
+            IPluginConfig config = getPluginConfig();
+
+            if (useCompareWhenPossible && oldModel != null && newModel != null) {
+                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.COMPARE);
+                if (!cmpTpl.getClusterConfig().getReferences().contains("model.compareTo")) {
+                    cmpTpl = null;
+                }
+            }
+
+            if (cmpTpl != null) {
                 addExtensionPoint("cmp");
 
                 String oldModelId = cmpTpl.getClusterConfig().getString("model.compareTo");
@@ -91,27 +119,51 @@ public class ComparingController<C extends IModel> implements IDetachable {
 
                 cmpTpl.start();
 
-            } else {
-                cmpTpl = null;
-
+            } else if (oldModel != null && newModel != null) {
                 addExtensionPoint("old");
                 addExtensionPoint("new");
 
                 if (oldModel != null) {
-                    IClusterControl template = factory.newTemplate(itemConfig.getString("old"), IEditor.Mode.VIEW);
+                    IClusterControl template = factory.newTemplate(config.getString("old"), IEditor.Mode.VIEW);
                     oldFir = new FieldItem<C>(sc, oldModel, null, template, null);
                 }
                 if (newModel != null) {
-                    IClusterControl template = factory.newTemplate(itemConfig.getString("new"), IEditor.Mode.VIEW);
+                    IClusterControl template = factory.newTemplate(config.getString("new"), IEditor.Mode.VIEW);
                     newFir = new FieldItem<C>(sc, newModel, null, template, null);
                 }
+
+            } else {
+                addExtensionPoint("cmp");
+
+                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.VIEW);
+
+                String modelId = cmpTpl.getClusterConfig().getString(RenderService.MODEL_ID);
+                ModelReference modelRef;
+                String cssClass;
+                if (oldModel != null) {
+                    cssClass = "hippo-diff-removed";
+                    modelRef = new ModelReference(modelId, oldModel);
+                } else {
+                    cssClass = "hippo-diff-added";
+                    modelRef = new ModelReference(modelId, newModel);
+                }
+                modelRef.init(sc);
+
+                cmpTpl.start();
+
+                Component component = get("cmp");
+                component.add(new AttributeAppender("class", new Model(cssClass), " "));
             }
         }
 
         @Override
         public String getVariation() {
             if (oldFir != null || newFir != null) {
-                return "compat";
+                if (orientation == Orientation.HORIZONTAL) {
+                    return "leftright";
+                } else {
+                    return "compat";
+                }
             }
             return super.getVariation();
         }
@@ -141,22 +193,57 @@ public class ComparingController<C extends IModel> implements IDetachable {
         }
     }
 
+    static class ItemValue<T extends IModel> {
+
+        private IComparer comparer;
+        private T value;
+        private int hash;
+
+        ItemValue(IComparer comparer, T value) {
+            this.value = value;
+            this.comparer = comparer;
+            this.hash = comparer.getHashCode(value.getObject());
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (obj instanceof ItemValue<?>) {
+                ItemValue<?> that = (ItemValue<?>) obj;
+                if (hash == that.hash) {
+                    return comparer.areEqual(value.getObject(), ((ItemValue<?>) obj).value.getObject());
+                }
+            }
+            return false;
+        }
+
+    }
+
     private IPluginContext context;
     @SuppressWarnings("unused")
     private IPluginConfig config;
     private ITemplateFactory<C> factory;
     private Set<ItemEntry> childTemplates;
     private JavaPluginConfig itemConfig;
-    private Comparer comparer;
+    private IComparer comparer;
+    private boolean useCompareWhenPossible = true;
+    private Orientation orientation = Orientation.VERTICAL;
 
     public ComparingController(IPluginContext context, IPluginConfig config, ITemplateFactory<C> factory,
-            Comparer comparer, String itemId) {
+            IComparer comparer, String itemId) {
         this.context = context;
         this.config = config;
         this.factory = factory;
         this.comparer = comparer;
 
-        this.itemConfig = new JavaPluginConfig();
+        this.itemConfig = new JavaPluginConfig(itemId);
         itemConfig.put("wicket.id", itemId);
         itemConfig.put("cmp", itemId + ".cmp");
         itemConfig.put("old", itemId + ".old");
@@ -165,46 +252,98 @@ public class ComparingController<C extends IModel> implements IDetachable {
         childTemplates = new HashSet<ItemEntry>();
     }
 
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
+    }
+
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
+    public void setUseCompareWhenPossible(boolean useCompareWhenPossible) {
+        this.useCompareWhenPossible = useCompareWhenPossible;
+    }
+
+    public boolean isUseCompareWhenPossible() {
+        return useCompareWhenPossible;
+    }
+
     public void start(AbstractProvider<C> oldProvider, AbstractProvider<C> newProvider, ITypeDescriptor type) {
-        boolean identical = false;
-        if (oldProvider.size() == newProvider.size()) {
-            identical = true;
-            Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
-            Iterator<C> newIter = newProvider.iterator(0, newProvider.size());
-            while (oldIter.hasNext()) {
-                C oldModel = oldIter.next();
-                if (!newIter.hasNext()) {
-                    identical = false;
+        List<ItemValue<C>> oldItems = new LinkedList<ItemValue<C>>();
+        Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
+        while (oldIter.hasNext()) {
+            oldItems.add(new ItemValue<C>(comparer, oldIter.next()));
+        }
+
+        List<ItemValue<C>> newItems = new LinkedList<ItemValue<C>>();
+        Iterator<C> newIter = newProvider.iterator(0, newProvider.size());
+        while (newIter.hasNext()) {
+            newItems.add(new ItemValue<C>(comparer, newIter.next()));
+        }
+
+        List<ItemValue> common = LCS.getLongestCommonSubsequence(oldItems.toArray(new ItemValue[oldItems.size()]),
+                newItems.toArray(new ItemValue[newItems.size()]));
+
+        Iterator<ItemValue> commonIter = common.iterator();
+        Iterator<ItemValue<C>> oldValueIter = oldItems.iterator();
+        Iterator<ItemValue<C>> newValueIter = newItems.iterator();
+        ItemValue<C> nextNewValue = null;
+        if (newValueIter.hasNext()) {
+            nextNewValue = newValueIter.next();
+        }
+        int cnt = 0;
+        while (commonIter.hasNext()) {
+            ItemValue nextValue = commonIter.next();
+            while (oldValueIter.hasNext()) {
+                ItemValue<C> oldValue = oldValueIter.next();
+                if (oldValue.equals(nextValue)) {
                     break;
-                }
-                C newModel = newIter.next();
-                if (!comparer.areEqual(oldModel, newModel)) {
-                    identical = false;
-                    break;
+                } else {
+                    if (useCompareWhenPossible && nextNewValue != null && !nextNewValue.equals(nextValue)) {
+                        addModelComparison(oldValue.value, nextNewValue.value, cnt++);
+                        if (newValueIter.hasNext()) {
+                            nextNewValue = newValueIter.next();
+                        } else {
+                            nextNewValue = null;
+                        }
+                    } else {
+                        addModelComparison(oldValue.value, null, cnt++);
+                    }
                 }
             }
-            if (newIter.hasNext()) {
-                identical = false;
+            while (nextNewValue != null && !nextNewValue.equals(nextValue)) {
+                addModelComparison(null, nextNewValue.value, cnt++);
+                if (newValueIter.hasNext()) {
+                    nextNewValue = newValueIter.next();
+                } else {
+                    nextNewValue = null;
+                }
+            }
+            addModelView((C) nextValue.value, cnt++);
+            nextNewValue = null;
+            if (newValueIter.hasNext()) {
+                nextNewValue = newValueIter.next();
             }
         }
-        if (!identical) {
-            Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
-            Iterator<C> newIter = newProvider.iterator(0, newProvider.size());
-            while (oldIter.hasNext()) {
-                C model = oldIter.next();
-                if (newIter.hasNext()) {
-                    addModelComparison(model, newIter.next());
+        while (oldValueIter.hasNext()) {
+            ItemValue<C> oldValue = oldValueIter.next();
+            if (useCompareWhenPossible && nextNewValue != null) {
+                addModelComparison(oldValue.value, nextNewValue.value, cnt++);
+                if (newValueIter.hasNext()) {
+                    nextNewValue = newValueIter.next();
                 } else {
-                    addModelComparison(model, null);
+                    nextNewValue = null;
                 }
+            } else {
+                addModelComparison(oldValue.value, null, cnt++);
             }
-            while (newIter.hasNext()) {
-                addModelComparison(null, newIter.next());
-            }
-        } else {
-            Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
-            while (oldIter.hasNext()) {
-                addModelView(oldIter.next());
+        }
+        while (nextNewValue != null) {
+            addModelComparison(null, nextNewValue.value, cnt++);
+            if (newValueIter.hasNext()) {
+                nextNewValue = newValueIter.next();
+            } else {
+                nextNewValue = null;
             }
         }
     }
@@ -220,19 +359,19 @@ public class ComparingController<C extends IModel> implements IDetachable {
         return (ItemEntry) renderer;
     }
 
-    private void addModelView(C model) {
+    private void addModelView(C model, int id) {
         try {
             ServiceContext serviceContext = new ServiceContext(context);
-            childTemplates.add(new ItemEntry(serviceContext, model));
+            childTemplates.add(new ItemEntry(serviceContext, model, id));
         } catch (TemplateEngineException ex) {
             log.error("Failed to open editor for new model", ex);
         }
     }
 
-    private void addModelComparison(C oldModel, C newModel) {
+    private void addModelComparison(C oldModel, C newModel, int id) {
         try {
             ServiceContext serviceContext = new ServiceContext(context);
-            childTemplates.add(new ItemEntry(serviceContext, oldModel, newModel));
+            childTemplates.add(new ItemEntry(serviceContext, oldModel, newModel, id));
         } catch (TemplateEngineException ex) {
             log.error("Failed to open editor for new model", ex);
         }

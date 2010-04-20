@@ -23,14 +23,13 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeComparer extends Comparer {
+public class NodeComparer extends TypedComparer<Node> {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NodeComparer.class);
@@ -38,14 +37,11 @@ public class NodeComparer extends Comparer {
     public NodeComparer(ITypeDescriptor type) {
         super(type);
         if (!type.isNode()) {
-            throw new RuntimeException("type does not correpond to a node type");
+            throw new RuntimeException("type does not correspond to a node type");
         }
     }
 
-    @Override
-    public boolean areEqual(IModel<?> base, IModel<?> target) {
-        Node baseNode = (Node) base.getObject();
-        Node targetNode = (Node) target.getObject();
+    public boolean areEqual(Node baseNode, Node targetNode) {
         if (baseNode == null && targetNode == null) {
             return true;
         } else if (baseNode == null || targetNode == null) {
@@ -71,8 +67,8 @@ public class NodeComparer extends Comparer {
                             if (!targetIter.hasNext()) {
                                 return false;
                             }
-                            if (!comparer.areEqual(new JcrNodeModel(baseIter.nextNode()), new JcrNodeModel(targetIter
-                                    .nextNode()))) {
+                            if (!comparer.areEqual(baseIter.nextNode(), targetIter
+                                    .nextNode())) {
                                 return false;
                             }
                         }
@@ -84,8 +80,8 @@ public class NodeComparer extends Comparer {
                             continue;
                         }
                         if (baseNode.hasNode(path) && targetNode.hasNode(path)) {
-                            if (!comparer.areEqual(new JcrNodeModel(baseNode.getNode(path)), new JcrNodeModel(
-                                    targetNode.getNode(path)))) {
+                            if (!comparer.areEqual(baseNode.getNode(path), 
+                                    targetNode.getNode(path))) {
                                 return false;
                             }
                         } else {
@@ -98,6 +94,7 @@ public class NodeComparer extends Comparer {
                     }
                     if (baseNode.hasProperty(path) && targetNode.hasProperty(path)) {
                         Property baseProp = baseNode.getProperty(path);
+                        ValueComparer comparer = new ValueComparer(field.getTypeDescriptor());
                         Property targetProp = targetNode.getProperty(path);
                         if (field.isMultiple()) {
                             Value[] baseValues = baseProp.getValues();
@@ -106,12 +103,12 @@ public class NodeComparer extends Comparer {
                                 return false;
                             }
                             for (int i = 0; i < baseValues.length; i++) {
-                                if (!baseValues[i].equals(targetValues[i])) {
+                                if (!comparer.areEqual(baseValues[i], targetValues[i])) {
                                     return false;
                                 }
                             }
                         } else {
-                            if (!baseProp.getValue().equals(targetProp.getValue())) {
+                            if (!comparer.areEqual(baseProp.getValue(), targetProp.getValue())) {
                                 return false;
                             }
                         }
@@ -126,4 +123,55 @@ public class NodeComparer extends Comparer {
         }
         return true;
     }
+
+    public int getHashCode(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        HashCodeBuilder hcb = new HashCodeBuilder();
+        try {
+            for (Map.Entry<String, IFieldDescriptor> entry : getType().getFields().entrySet()) {
+                IFieldDescriptor field = entry.getValue();
+                String path = field.getPath();
+                if ("*".equals(path)) {
+                    log.debug("Path * not supported");
+                    continue;
+                }
+                if (field.getTypeDescriptor().isNode()) {
+                    NodeComparer comparer = new NodeComparer(field.getTypeDescriptor());
+                    if (field.isMultiple()) {
+                        NodeIterator childIter = node.getNodes(path);
+                        while (childIter.hasNext()) {
+                            Node child = childIter.nextNode();
+                            hcb.append(child.getName());
+                            hcb.append(comparer.getHashCode(child));
+                        }
+                    } else {
+                        if (node.hasNode(path)) {
+                            Node child = node.getNode(path);
+                            hcb.append(child.getName());
+                            hcb.append(comparer.getHashCode(child));
+                        }
+                    }
+                } else {
+                    if (node.hasProperty(path)) {
+                        Property prop = node.getProperty(path);
+                        ValueComparer comparer = new ValueComparer(field.getTypeDescriptor());
+                        hcb.append(prop.getName());
+                        if (field.isMultiple()) {
+                            for (Value value : prop.getValues()) {
+                                hcb.append(comparer.getHashCode(value));
+                            }
+                        } else {
+                            hcb.append(comparer.getHashCode(prop.getValue()));
+                        }
+                    }
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage(), ex);
+        }
+        return hcb.toHashCode();
+    }
+
 }

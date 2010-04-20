@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.compare;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -26,7 +27,6 @@ import java.util.TreeMap;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
@@ -56,7 +56,7 @@ public class NodeComparerTest extends PluginTest {
 
         final Map<String, ITypeDescriptor> types = new TreeMap<String, ITypeDescriptor>();
         ITypeLocator typeLocator = new ITypeLocator() {
-            
+
             public List<ITypeDescriptor> getSubTypes(String type) throws StoreException {
                 return Collections.EMPTY_LIST;
             }
@@ -67,7 +67,7 @@ public class NodeComparerTest extends PluginTest {
 
             public void detach() {
             }
-            
+
         };
         ITypeDescriptor stringDescriptor = new JavaTypeDescriptor("String", "string", null);
         stringDescriptor.setIsNode(false);
@@ -83,7 +83,11 @@ public class NodeComparerTest extends PluginTest {
         descriptor.addField(field);
 
         NodeComparer comparer = new NodeComparer(descriptor);
-        assertFalse(comparer.areEqual(new JcrNodeModel("/test/a"), new JcrNodeModel("/test/b")));
-        assertTrue(comparer.areEqual(new JcrNodeModel("/test/a"), new JcrNodeModel("/test/c")));
+        assertFalse(comparer.areEqual(root.getNode("test/a"), root.getNode("test/b")));
+        assertFalse(comparer.getHashCode(root.getNode("test/a")) == comparer.getHashCode(root.getNode("test/b")));
+
+        assertTrue(comparer.areEqual(root.getNode("test/a"), root.getNode("test/c")));
+        assertEquals(comparer.getHashCode(root.getNode("test/a")), comparer.getHashCode(root.getNode("test/c")));
     }
+
 }

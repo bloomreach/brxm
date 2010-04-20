@@ -15,27 +15,25 @@
  */
 package org.hippoecm.frontend.editor.compare;
 
-import java.io.Serializable;
+public class ObjectComparer implements IComparer<Object> {
+    private static final long serialVersionUID = 9007990171845097749L;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.types.ITypeDescriptor;
-
-/**
- * Compares two models for equality based on their content.
- */
-public abstract class Comparer implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    ITypeDescriptor type;
-    
-    protected Comparer(ITypeDescriptor type) {
-        this.type = type;
-    }
-    
-    protected ITypeDescriptor getType() {
-        return type;
+    public boolean areEqual(Object oldValue, Object newValue) {
+        if (oldValue != null && newValue != null) {
+            if (!oldValue.equals(newValue)) {
+                return false;
+            }
+        } else if (oldValue != newValue) {
+            return false;
+        }
+        return true;
     }
 
-    public abstract boolean areEqual(IModel<?> base, IModel<?> target);
+    public int getHashCode(Object value) {
+        if (value != null) {
+            return value.hashCode();
+        }
+        return 0;
+    }
 
 }

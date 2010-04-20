@@ -15,31 +15,72 @@
  */
 package org.hippoecm.frontend.editor.compare;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.types.ITypeDescriptor;
+import java.io.InputStream;
 
-public class ValueComparer extends Comparer {
-    private static final long serialVersionUID = 9007990171845097749L;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ValueComparer extends TypedComparer<Value> {
+    private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(ValueComparer.class);
+
+    private StreamComparer streamComparer;
     
-    public ValueComparer(ITypeDescriptor type) {
+    protected ValueComparer(ITypeDescriptor type) {
         super(type);
         if (type.isNode()) {
-            throw new RuntimeException("type does not correpond to a value type");
+            throw new RuntimeException("type corresponds to a node type");
         }
     }
+
+    protected IComparer<InputStream> getStreamComparer() {
+        if (streamComparer == null) {
+            streamComparer = new StreamComparer();
+        }
+        return streamComparer;
+    }
     
-    @Override
-    public boolean areEqual(IModel<?> base, IModel<?> target) {
-        Object oldValue = base.getObject();
-        Object newValue = target.getObject();
-        if (oldValue != null && newValue != null) {
-            if (!oldValue.equals(newValue)) {
-                return false;
-            }
-        } else if (oldValue != newValue) {
+    public boolean areEqual(Value base, Value target) {
+        if (base.getType() != target.getType()) {
             return false;
         }
-        return true;
+        try {
+            switch (base.getType()) {
+            case PropertyType.BOOLEAN:
+                return base.getBoolean() == target.getBoolean();
+            case PropertyType.LONG:
+                return base.getLong() == target.getLong();
+            case PropertyType.BINARY:
+                return getStreamComparer().areEqual(base.getStream(), target.getStream());
+            }
+            return base.getString().equals(target.getString());
+        } catch (RepositoryException e) {
+            log.error("Could not compare values", e);
+            return false;
+        }
+    }
+
+    public int getHashCode(Value value) {
+        try {
+            switch (value.getType()) {
+            case PropertyType.BOOLEAN:
+                return Boolean.valueOf(value.getBoolean()).hashCode();
+            case PropertyType.LONG:
+                return Long.valueOf(value.getLong()).hashCode();
+            case PropertyType.BINARY:
+                return getStreamComparer().getHashCode(value.getStream());
+            }
+            return value.getString().hashCode();
+        } catch (RepositoryException e) {
+            log.error("Could not calculate hash code", e);
+            return 0;
+        }
     }
 
 }

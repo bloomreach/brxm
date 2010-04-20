@@ -740,7 +740,6 @@ font-weight: bold;
 .hippo-preview-document .hippo-editor-field h3.hippo-editor-field-title span{font-size: 11px;}
 .hippo-preview-document div.odd  .hippo-editor-field {background: white; border-bottom: 1px dotted #afafaf}
 .hippo-preview-document div.even .hippo-editor-field {background: white; border-bottom: 1px dotted #afafaf}
-.hippo-preview-document .hippo-template-default-title span{font-size: 18px}
 .hippo-preview-document .hippo-editor-field-textarea{min-height: 150px}
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield{background-image: none}
 
@@ -1400,4 +1399,28 @@ div.rte-preview-style table{ visibility: hidden; }
 /* Workflow reject request dialog: textarea styling */
 .hippo-window-form textarea.text-dialog-textarea { width: 420px; height: 150px; }
 
+span.hippo-diff-removed {
+  text-decoration: line-through;
+  background-color: #fdc6c6; /* light red */
+}
 
+div.hippo-diff-removed {
+  text-decoration: line-through;
+  background-color: #fdc6c6; /* light red */
+}
+
+span.hippo-diff-removed img {
+  border: 5px solid #fdc6c6;
+}
+
+span.hippo-diff-added {
+  background-color: #ccffcc; /* light green */
+}
+
+div.hippo-diff-added {
+  background-color: #ccffcc; /* light green */
+}
+
+span.hippo-diff-added img {
+  border: 5px solid #ccffcc;
+}

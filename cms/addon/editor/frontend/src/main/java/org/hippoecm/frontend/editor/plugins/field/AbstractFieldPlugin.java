@@ -29,9 +29,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.editor.compare.Comparer;
+import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
-import org.hippoecm.frontend.editor.compare.ValueComparer;
+import org.hippoecm.frontend.editor.compare.ObjectComparer;
+import org.hippoecm.frontend.editor.plugins.field.ComparingController.Orientation;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -136,15 +137,20 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 compareTo = compareToModelRef.getModel();
             }
 
-            Comparer comparer;
+            IComparer comparer;
             ITypeDescriptor type = helper.getField().getTypeDescriptor();
             if (type.isNode()) {
                 comparer = new NodeComparer(type);
             } else {
-                comparer = new ValueComparer(type);
+                comparer = new ObjectComparer();
             }
 
             comparingController = new ComparingController<C>(context, config, this, comparer, getItemId());
+
+            if (helper.getField().isMultiple()) {
+                // always use managed compare for multi-valued properties
+                comparingController.setUseCompareWhenPossible(false);
+            }
 
         } else {
             templateController = new TemplateController<C>(context, config, helper.getValidationModel(), this,
