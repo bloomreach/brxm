@@ -36,7 +36,7 @@ import org.junit.Test;
  * no relativecontentpaths containing ${1}/${2} kind of constructions
  *
  */
-public class SimpleLinks extends AbstractSpringTestCase {
+public class TestSimpleLinks extends AbstractSpringTestCase {
 
     private static final String TESTPROJECT_NAME = "testproject";
 

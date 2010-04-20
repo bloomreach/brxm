@@ -24,13 +24,14 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
+    
+    <import resource="classpath:/org/hippoecm/hst/core/TestConfigurations.xml" />
     <import resource="classpath:/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml" />
     
     <bean id="org.hippoecm.hst.core.hosting.VirtualHostsManager" class="org.hippoecm.hst.core.hosting.VirtualHostsManagerImpl">
         <constructor-arg value="testproject"/>
         <constructor-arg value="/hst:testvirtualhosts"/>
         <property name="repository" ref="javax.jcr.Repository" />
-        <property name="credentials" ref="javax.jcr.Credentials.default" />  
     </bean>  
     
 </beans>

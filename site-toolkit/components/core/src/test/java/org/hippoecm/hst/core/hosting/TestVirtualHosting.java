@@ -16,10 +16,8 @@
 package org.hippoecm.hst.core.hosting;
 
 import org.hippoecm.hst.test.AbstractSpringTestCase;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class TestVirtualHosting extends AbstractSpringTestCase {
 
         private VirtualHostsManager virtualHostsManager;
@@ -33,7 +31,6 @@ public class TestVirtualHosting extends AbstractSpringTestCase {
      
         @Test
         public void testHosts(){
-             
         }
         
          

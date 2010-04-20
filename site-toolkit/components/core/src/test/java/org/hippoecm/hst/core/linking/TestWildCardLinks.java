@@ -34,7 +34,7 @@ import org.junit.Test;
  * This test tests whether the linkcreation of items (jcr Nodes) which involve SiteMap wildcard matching are being created correctly
  *
  */
-public class WildCardLinks extends AbstractSpringTestCase{
+public class TestWildCardLinks extends AbstractSpringTestCase{
     
         private static final String TESTPROJECT_NAME = "testproject";
 
