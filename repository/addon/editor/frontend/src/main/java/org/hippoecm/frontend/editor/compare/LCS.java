@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.editor.compare;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -56,6 +58,88 @@ public class LCS {
             sb.append(')');
             return sb.toString();
         }
+    }
+
+    public enum ChangeType {
+        ADDED, REMOVED, INVARIANT
+    }
+
+    static public class Change<T> {
+
+        private ChangeType type;
+        private T value;
+
+        public Change(T value, ChangeType type) {
+            this.value = value;
+            this.type = type;
+        }
+
+        public T getValue() {
+            return value;
+        }
+
+        public ChangeType getType() {
+            return type;
+        }
+    }
+
+    /**
+     * Construct the minimal changeset to turn an array into an other one.
+     * 
+     * @param <T>
+     * @param a
+     * @param b
+     * @return
+     */
+    public static <T> List<Change<T>> getChangeSet(T[] a, T[] b) {
+        List<T> lcs = getLongestCommonSubsequence(a, b);
+
+        LinkedList<Change<T>> operations = new LinkedList<Change<T>>();
+
+        Iterator<T> commonIter = lcs.iterator();
+        Iterator<T> oldValueIter = Arrays.asList(a).iterator();
+        Iterator<T> newValueIter = Arrays.asList(b).iterator();
+        T nextNewValue = null;
+        if (newValueIter.hasNext()) {
+            nextNewValue = newValueIter.next();
+        }
+        while (commonIter.hasNext()) {
+            T nextValue = commonIter.next();
+            while (oldValueIter.hasNext()) {
+                T oldValue = oldValueIter.next();
+                if (oldValue.equals(nextValue)) {
+                    break;
+                } else {
+                    operations.add(new Change<T>(oldValue, ChangeType.REMOVED));
+                }
+            }
+            while (nextNewValue != null && !nextNewValue.equals(nextValue)) {
+                operations.add(new Change<T>(nextNewValue, ChangeType.ADDED));
+                if (newValueIter.hasNext()) {
+                    nextNewValue = newValueIter.next();
+                } else {
+                    nextNewValue = null;
+                }
+            }
+            operations.add(new Change<T>(nextValue, ChangeType.INVARIANT));
+            nextNewValue = null;
+            if (newValueIter.hasNext()) {
+                nextNewValue = newValueIter.next();
+            }
+        }
+        while (oldValueIter.hasNext()) {
+            T oldValue = oldValueIter.next();
+            operations.add(new Change<T>(oldValue, ChangeType.REMOVED));
+        }
+        while (nextNewValue != null) {
+            operations.add(new Change<T>(nextNewValue, ChangeType.ADDED));
+            if (newValueIter.hasNext()) {
+                nextNewValue = newValueIter.next();
+            } else {
+                nextNewValue = null;
+            }
+        }
+        return operations;
     }
 
     /**
