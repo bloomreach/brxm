@@ -18,6 +18,7 @@ package org.hippoecm.repository.security;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.security.group.RepositoryGroupManager;
+import org.hippoecm.repository.security.user.AbstractUserManager;
 import org.hippoecm.repository.security.user.RepositoryUserManager;
 
 public class RepositorySecurityProvider extends AbstractSecurityProvider {
@@ -31,7 +32,7 @@ public class RepositorySecurityProvider extends AbstractSecurityProvider {
 
         mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getUsersPath());
         userManager = new RepositoryUserManager();
-        userManager.init(mgrContext);
+        ((AbstractUserManager)userManager).init(mgrContext);
 
         mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getGroupsPath());
         groupManager = new RepositoryGroupManager();

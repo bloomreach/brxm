@@ -42,6 +42,7 @@ import org.apache.jackrabbit.core.journal.JournalException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
+import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -176,6 +177,10 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return super.getNamespaceRegistry();
     }
 
+    public JackrabbitSecurityManager getSecurityManager() throws RepositoryException {
+        return super.getSecurityManager();
+    }
+
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
         return ((HippoWorkspaceInfo) getWorkspaceInfo(workspaceName)).getSearchManager();
     }
@@ -280,66 +285,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         protected Session getRootSession() throws RepositoryException {
             return super.getSystemSession();
         }
-    }
-
-    /**
-     * Wrapper for login, adds rootSession to credentials if credentials are of SimpleCredentials.
-     * @return session the authenticated session
-     */
-    @Override
-    public Session login(Credentials credentials, String workspaceName) throws LoginException,
-            NoSuchWorkspaceException, RepositoryException {
-        char[] empty = {};
-        SimpleCredentials sc = new SimpleCredentials(null, empty);
-        Session rootSession = getRootSession(workspaceName);
-        if (rootSession == null) {
-            throw new RepositoryException("Unable to get the rootSession for workspace: " + workspaceName);
-        }
-
-        // non anonymous logins
-        if (credentials != null) {
-            if (credentials instanceof SimpleCredentials) {
-                sc = (SimpleCredentials) credentials;
-            }
-        }
-
-        sc.setAttribute("rootSession", rootSession);
-        Session session = super.login(sc, workspaceName);
-
-        return session;
-    }
-
-    /**
-     * Calls <code>login(credentials, null)</code>.
-     *
-     * @return session
-     * @see #login(Credentials, String)
-     */
-    @Override
-    public Session login(Credentials credentials) throws LoginException, RepositoryException {
-        return login(credentials, null);
-    }
-
-    /**
-     * Calls <code>login(null, workspaceName)</code>.
-     *
-     * @return session
-     * @see #login(Credentials, String)
-     */
-    @Override
-    public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
-        return login(null, workspaceName);
-    }
-
-    /**
-     * Calls <code>login(null, null)</code>.
-     *
-     * @return session
-     * @see #login(Credentials, String)
-     */
-    @Override
-    public Session login() throws LoginException, RepositoryException {
-        return login(null, null);
     }
 
     /**

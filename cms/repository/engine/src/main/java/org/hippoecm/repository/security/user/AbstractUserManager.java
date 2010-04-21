@@ -15,16 +15,24 @@
  */
 package org.hippoecm.repository.security.user;
 
+import java.security.Principal;
 import java.util.Calendar;
 
+import java.util.Iterator;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.transaction.NotSupportedException;
 
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.ManagerContext;
@@ -104,6 +112,7 @@ public abstract class AbstractUserManager implements UserManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
+        session.refresh(false);
         if (useQueries) {
             String userId = sanitizeId(rawUserId);
             StringBuilder statement = new StringBuilder();
@@ -356,5 +365,74 @@ public abstract class AbstractUserManager implements UserManager {
 
     public void backendSetProperty(String userId, String key, String value) throws NotSupportedException, RepositoryException {
         throw new NotSupportedException("setProperty not supported");
+    }
+
+    /**
+     * Default initialize the UserManager with the given {@link ManagerContext}.
+     * Calls initManager after the general init which is handled by the
+     * {@link AbstractUserManager}.
+     * @param context The {@link ManagerContext} with params for the backend
+     * @throws RepositoryException
+     * @See ManagerContext
+     */
+    public abstract void initManager(ManagerContext context) throws RepositoryException;
+
+    /**
+     * Checks if the backend is case aware (ie, ldap usually isn't, the internal provider is)
+     * @return
+     */
+    public abstract boolean isCaseSensitive();
+
+    /**
+     * Get the node type for new user nodes
+     * @return the node type
+     */
+    public abstract String getNodeType();
+
+    /**
+     * Authenticate the user with the current provider's user manager
+     * @param creds SimpleCredentials
+     * @return true when successfully authenticate
+     * @throws RepositoryException
+     */
+    public abstract boolean authenticate(SimpleCredentials creds) throws RepositoryException;
+
+    /**
+     * Hook for the provider to sync from the backend with the repository.
+     * Called just after authenticate.
+     * @param userId
+     */
+    public abstract void syncUserInfo(String userId);
+
+    public Authorizable getAuthorizable(String id) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Authorizable getAuthorizable(Principal principal) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Iterator findAuthorizables(String propertyName, String value) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Iterator findAuthorizables(String propertyName, String value, int searchType) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public User createUser(String userID, String password) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public User createUser(String userID, String password, Principal principal, String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Group createGroup(Principal principal) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Group createGroup(Principal principal, String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
