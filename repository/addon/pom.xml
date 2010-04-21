@@ -51,8 +51,8 @@
     <module>defaultcontent</module>
     <module>versioning</module>
     <module>ldap</module>
-    <module>eavesdrop</module>
     <module>faceteddate</module>
     <module>workflow</module>
   </modules>
 </project>
+
