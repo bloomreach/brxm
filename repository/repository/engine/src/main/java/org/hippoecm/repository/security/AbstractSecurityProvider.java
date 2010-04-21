@@ -15,12 +15,12 @@
  */
 package org.hippoecm.repository.security;
 
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
-import org.hippoecm.repository.security.user.UserManager;
 
 public abstract class AbstractSecurityProvider implements SecurityProvider {
 

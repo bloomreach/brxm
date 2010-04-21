@@ -17,12 +17,12 @@ package org.hippoecm.repository.security;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
-import org.hippoecm.repository.security.user.UserManager;
 
 public interface SecurityProvider {
 
@@ -53,20 +53,20 @@ public interface SecurityProvider {
      * @see DummyUserManager
      * @return the implemented manager or a dummy manager
      */
-    UserManager getUserManager();
+    UserManager getUserManager() throws RepositoryException;
 
     /**
      * Get the {@link GroupManager} from the provider
      * @see DummyGroupManager
      * @return the implemented manager or a dummy manager
      */
-    GroupManager getGroupManager();
+    GroupManager getGroupManager() throws RepositoryException;
 
     /**
      * Get the {@link RoleManager} from the provider
      * @see DummyRoleManager
      * @return the implemented manager or a dummy manager
      */
-    RoleManager getRoleManager();
+    RoleManager getRoleManager() throws RepositoryException;
 
 }

@@ -78,6 +78,7 @@ import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.security.SecurityManager;
 import org.hippoecm.repository.updater.UpdaterEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +125,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     protected static final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
 
-    private JackrabbitRepository jackrabbitRepository = null;
+    private LocalRepositoryImpl jackrabbitRepository = null;
     private DecoratorFactoryImpl hippoRepositoryFactory;
 
     /** Whether to generate a dump.xml file of the /hippo:configuration node at shutdown */
@@ -273,6 +274,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private void initialize() throws RepositoryException {
         initializeStartup();
+        ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
         if(needsRestart) {
             log.warn("restarting repository after upgrade cycle");
             close();
