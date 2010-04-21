@@ -27,15 +27,14 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class ImpersonateTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-
     private static final String TEST_USER_ID = "testuser";
     private static final String TEST_USER_PASS = "password";
-
 
     public void cleanup() throws RepositoryException  {
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
@@ -79,6 +78,27 @@ public class ImpersonateTest extends TestCase {
         }
     }
 
+    @Test
+    public void testIssueRootSessionOnCredentials() throws RepositoryException {
+        SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
+        try {
+            Session session = server.login(creds);
+            fail("this should have failed");
+            session.logout();
+        } catch (LoginException ex) {
+            Object object = creds.getAttribute("rootSession");
+            assertFalse(object instanceof Session);
+        }
+    }
 
-
+    @Test
+    public void testIssueAnyoneCanImpersonateAsWorkflowUser() throws RepositoryException {
+        SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
+        Session anonymousSession = server.login();
+        assertEquals("anonymous", anonymousSession.getUserID());
+        Session workflowSession = session.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
+        anonymousSession.logout();
+        assertEquals("workflowuser", workflowSession.getUserID());
+        workflowSession.logout();
+    }
 }
