@@ -155,13 +155,13 @@ public class SecurityManager implements JackrabbitSecurityManager {
     }
 
     class HippoJAASAuthContext extends JAASAuthContext {
-        public MyJAASAuthContext(String appName, CallbackHandler cbHandler, Subject subject) {
+        public HippoJAASAuthContext(String appName, CallbackHandler cbHandler, Subject subject) {
             super(appName, cbHandler, subject);
         }
     }
 
     class HippoLocalAuthContext extends LocalAuthContext {
-        public MyLocalAuthContext(LoginModuleConfig config, CallbackHandler cbHandler, Subject subject) {
+        public HippoLocalAuthContext(LoginModuleConfig config, CallbackHandler cbHandler, Subject subject) {
             super(config, cbHandler, subject);
         }
     }
