@@ -28,6 +28,7 @@
       security configuration
   -->
   <Security appName="Jackrabbit">
+    <SecurityManager class="org.hippoecm.repository.security.SecurityManager"/>
     <!--
         access manager:
         class: FQN of class implementing the AccessManager interface
