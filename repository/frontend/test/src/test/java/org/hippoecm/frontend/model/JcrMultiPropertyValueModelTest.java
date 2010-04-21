@@ -18,6 +18,7 @@ package org.hippoecm.frontend.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -62,6 +63,22 @@ public class JcrMultiPropertyValueModelTest extends PluginTest {
         Value[] values = prop.getValues();
         assertEquals(2, values.length);
         assertEquals("y", values[1].getString());
+    }
+
+    @Test
+    public void testNonExistingPropertyIsCreated() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:model");
+
+        JcrPropertyModel propModel = new JcrPropertyModel(new JcrItemModel("/test/frontendtest:strings"));
+        JcrMultiPropertyValueModel valueModel = new JcrMultiPropertyValueModel<String>(propModel.getItemModel());
+        List<String> list = new ArrayList<String>(1);
+        list.add("y");
+        valueModel.setObject(list);
+
+        Property prop = test.getProperty("frontendtest:strings");
+        Value[] values = prop.getValues();
+        assertEquals(1, values.length);
+        assertEquals("y", values[0].getString());
     }
 
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {

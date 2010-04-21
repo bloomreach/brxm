@@ -95,9 +95,8 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     }
 
     public void setObject(final List<T> objects) {
-        if (!loaded) {
-            getObject();
-        }
+        // make sure type is set
+        getObject();
 
         if (objects == null) {
             setValues(new ArrayList<Value>(0));
@@ -146,9 +145,14 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
                 if (values.size() > 0) {
                     type = values.get(0).getType();
                 } else {
-                    PropertyDefinition def = getProperty().getDefinition();
-                    if (def != null) {
-                        type = def.getRequiredType();
+                    Property property = getProperty();
+                    if (property != null) {
+                        PropertyDefinition def = property.getDefinition();
+                        if (def != null) {
+                            type = def.getRequiredType();
+                        } else {
+                            type = PropertyType.UNDEFINED;
+                        }
                     } else {
                         type = PropertyType.UNDEFINED;
                     }
@@ -198,30 +202,20 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
 
     private void setValues(List<Value> values) {
         try {
-            Property prop = getProperty();
-            if (prop.getDefinition() == null) {
-                throw new IllegalStateException("property " + prop.getName() + " has no definition");
-            }
-            if (!prop.getDefinition().isMultiple()) {
-                throw new IllegalStateException("definition of property " + prop.getName() + " is not multiple");
-            }
-
             Value[] jcrValues = values.toArray(new Value[values.size()]);
             if (itemModel.exists()) {
+                Property prop = getProperty();
+                if (!prop.getDefinition().isMultiple()) {
+                    throw new IllegalStateException("definition of property " + prop.getName() + " is not multiple");
+                }
 
                 // set new values
                 prop.setValue(jcrValues);
             } else {
                 // create new property and set new values
                 Node node = itemModel.getParentModel().getObject();
-                String name;
-                if (prop.getDefinition().getName().equals("*")) {
-                    String path = itemModel.getPath();
-                    name = path.substring(path.lastIndexOf('/') + 1);
-                } else {
-                    name = prop.getDefinition().getName();
-                }
-
+                String path = itemModel.getPath();
+                String name = path.substring(path.lastIndexOf('/') + 1);
                 node.setProperty(name, jcrValues);
             }
         } catch (RepositoryException e) {
