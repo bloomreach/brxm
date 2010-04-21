@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -39,16 +40,19 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     private HstSiteMapItem hstSiteMapItem;
     private Properties resolvedParameters;
     private Properties localResolvedParameters;
+    private ResolvedSiteMount resolvedSiteMount;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
     
-    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo) {
-       HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
+    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedSiteMount resolvedSiteMount) {
+      
        this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
+       this.resolvedSiteMount = resolvedSiteMount;
        
+       HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
        if (hstSiteMapItem.getComponentConfigurationId() == null && hstSiteMapItem.getPortletComponentConfigurationId() == null) {
            log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the sitemap item '{}' does not have a component configuration id.", hstSiteMapItem.getId());
        } else {
@@ -133,8 +137,6 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 		return this.localResolvedParameters;
 	}
 
-
-
     public String getRelativeContentPath() {
         return relativeContentPath;
     }
@@ -149,6 +151,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 
     public boolean isSecured() {
         return hstSiteMapItem.isSecured();
+    }
+
+    public ResolvedSiteMount getResolvedSiteMount() {
+       return resolvedSiteMount;
     }
 
 }

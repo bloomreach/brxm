@@ -31,6 +31,7 @@ import org.hippoecm.hst.core.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -66,7 +67,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         this.cache.clear();
     }
     
-    public ResolvedSiteMapItem match(String pathInfo, HstSite hstSite) {
+    public ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) {
+        HstSite hstSite = resolvedSiteMount.getSiteMount().getHstSite();
         String key = hstSite.getContentPath() + "_" + pathInfo;
         ResolvedSiteMapItem cached = cache.get(key);
         if(cached != null) {
@@ -168,7 +170,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             log.debug("Params for resolved sitemap item: '{}'", params);
         }
         
-        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo);
+        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo, resolvedSiteMount);
         cache.put(key, r);
         return r;
     
@@ -324,6 +326,10 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         }
         
         public String getPathInfo() {
+            return null;
+        }
+
+        public ResolvedSiteMount getResolvedSiteMount() {
             return null;
         }
 

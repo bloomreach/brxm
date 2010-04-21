@@ -19,10 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
@@ -79,14 +79,14 @@ public class SiteMapItemTag extends TagSupport {
             return SKIP_BODY;
         }
         
-        HstSite site = hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite();
+        ResolvedSiteMount resolvedSiteMount = hstRequest.getRequestContext().getResolvedSiteMapItem().getResolvedSiteMount();
         if(preferItemId != null) {
             if(siteMapItem != null) {
                 log.warn("preferItemId attr is added, but also 'preferItemByPath' or 'siteMapItem'. This is double. Skipping preferItemId attr");
             } else {
                 siteMapItem =  hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItemById(preferItemId);
                 if(siteMapItem == null) {
-                    log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, site.getName());
+                    log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedSiteMount.getSiteMount().getName());
                 }
             }
         }
@@ -95,9 +95,9 @@ public class SiteMapItemTag extends TagSupport {
             if(siteMapItem != null) {
                 log.warn("preferPath attr is added, but also 'preferItemByPath', 'siteMapItem' or 'preferItemId'. This is double. Skipping preferItemId attr");
             } else {
-                ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, site);
+                ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedSiteMount);
                 if(resolvedItem == null) {
-                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, site.getName());
+                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedSiteMount.getSiteMount().getName());
                 } else {
                     siteMapItem = resolvedItem.getHstSiteMapItem();  
                 }

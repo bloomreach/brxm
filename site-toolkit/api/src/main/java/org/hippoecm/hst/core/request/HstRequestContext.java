@@ -64,13 +64,6 @@ public interface HstRequestContext {
     String getContextNamespace();
     
     /**
-     * the <code>{@link MatchedMapping}</code> that belongs to this <code>HstRequestContext</code> or <code>null</code> when there is no
-     * MatchedMapping set. 
-     * @return the <code>{@link MatchedMapping}</code> that belongs to this <code>HstRequestContext</code> or <code>null</code>
-     */ 
-    MatchedMapping getMatchedMapping();
-    
-    /**
      * Returns the base container URL ({@link HstContainerURL} ) of the current request lifecycle.
      * 
      * @return HstContainerURL

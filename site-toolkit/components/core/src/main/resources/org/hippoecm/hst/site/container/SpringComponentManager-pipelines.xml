@@ -41,12 +41,6 @@
   <bean id="abstractValve" abstract="true"
         init-method="initialize" destroy-method="destroy">
     <property name="containerConfiguration" ref="containerConfiguration" />
-    <property name="sitesManagers">
-      <map>
-        <entry key="${preview.servlet.path}" value-ref="org.hippoecm.hst.configuration.HstSitesManager.preview" />
-        <entry key="${live.servlet.path}" value-ref="org.hippoecm.hst.configuration.HstSitesManager.live" />
-      </map>
-    </property>
     <property name="virtualHostsManager" ref="org.hippoecm.hst.core.hosting.VirtualHostsManager" />
     <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="requestContextComponent" ref="org.hippoecm.hst.core.request.HstRequestContextComponent" />
@@ -71,10 +65,7 @@
     
   <bean id="urlValve" parent="abstractValve" class="org.hippoecm.hst.core.container.HstURLValve">
   </bean>
-  
-  <bean id="siteResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SiteResolvingValve">
-  </bean>
-  
+ 
   <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
   </bean>
   
@@ -118,7 +109,6 @@
             <property name="invokingValves">
               <list>
                 <ref bean="urlValve" />
-                <ref bean="siteResolvingValve" />
                 <ref bean="contextResolvingValve" />
                 <ref bean="securityValve" />
                 <ref bean="siteMenusResolvingValve" />

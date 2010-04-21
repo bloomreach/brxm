@@ -33,7 +33,6 @@ import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
@@ -154,17 +153,9 @@ public class MockHstRequestContext implements HstRequestContext {
         this.containerConfiguration = containerConfiguration;
     }
 
-    public MatchedMapping getMatchedMapping() {
-        return null;
-    }
 
     public VirtualHost getVirtualHost() {
-        MatchedMapping matchedMapping = getMatchedMapping();
-        
-        if (matchedMapping.getMapping() != null) {
-            return matchedMapping.getMapping().getVirtualHost();
-        }
-        
+     
         return null;
     }
 

@@ -33,6 +33,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
+import org.hippoecm.hst.core.hosting.SiteMount;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
 import org.hippoecm.hst.service.AbstractJCRService;
@@ -55,56 +56,52 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     private String configurationPath;
     private LocationMapTree locationMapTree;
     
-    private HstSites hstSites;
+    private SiteMount siteMount;
     
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     
     
-    public HstSiteService(Node site, HstSites hstSites) throws ServiceException{
+    public HstSiteService(Node site, SiteMount siteMount) throws ServiceException{
         super(site);
         try {
             this.name = site.getName();
-            this.hstSites = hstSites;
+            this.siteMount = siteMount;
             if(site.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && site.hasNode(HstNodeTypes.NODEPATH_HST_CONFIGURATION) ) {
-                if(hstSites.getSites().get(name) != null) {
-                    throw new ServiceException("Duplicate subsite with same name for '"+name+"'. Skipping this one");
-                } else {
-                    Node contentNode = site.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                    contentPath = contentNode.getPath();
+                Node contentNode = site.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+                contentPath = contentNode.getPath();
+                
+                // fetch the mandatory hippo:docbase property to retrieve the canonical node
+                if(contentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    String docbaseUuid = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                     
-                    // fetch the mandatory hippo:docbase property to retrieve the canonical node
-                    if(contentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                        String docbaseUuid = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                        
-                        try {
-                                // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
-                                
-                                UUID.fromString(docbaseUuid);
-                                Item item =  contentNode.getSession().getNodeByUUID(docbaseUuid); 
-                                if(item instanceof Node) {
-                                    // set the canonical content path
-                                    this.canonicalcontentPath = ((Node)item).getPath();
-                                } else {
-                                    log.warn("Docbase from '{}' does contain a uuid that points to a property instead of a 'root content node'. Content mirror is broken", contentNode.getPath());
-                                }
-                        } catch (IllegalArgumentException e) {
-                            log.warn("Docbase from '{}' does not contain a valid uuid. Content mirror is broken", contentNode.getPath());
-                        } catch (ItemNotFoundException e) {
-                            log.warn("ItemNotFoundException: Content mirror is broken. ", e.getMessage());
-                        } catch (RepositoryException e) {
-                            log.error("RepositoryException: Content mirror is broken. ", e);
-                        }
-                    } else {
-                        // contentNode is not a mirror. Take the canonical path to be the same
-                        this.canonicalcontentPath = this.contentPath;
+                    try {
+                            // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
+                            
+                            UUID.fromString(docbaseUuid);
+                            Item item =  contentNode.getSession().getNodeByUUID(docbaseUuid); 
+                            if(item instanceof Node) {
+                                // set the canonical content path
+                                this.canonicalcontentPath = ((Node)item).getPath();
+                            } else {
+                                log.warn("Docbase from '{}' does contain a uuid that points to a property instead of a 'root content node'. Content mirror is broken", contentNode.getPath());
+                            }
+                    } catch (IllegalArgumentException e) {
+                        log.warn("Docbase from '{}' does not contain a valid uuid. Content mirror is broken", contentNode.getPath());
+                    } catch (ItemNotFoundException e) {
+                        log.warn("ItemNotFoundException: Content mirror is broken. ", e.getMessage());
+                    } catch (RepositoryException e) {
+                        log.error("RepositoryException: Content mirror is broken. ", e);
                     }
-                    
-                    Node configurationNode = site.getNode(HstNodeTypes.NODEPATH_HST_CONFIGURATION);
-                    configurationPath = configurationNode.getPath();
-                    
-                    init(configurationNode);
-                    
+                } else {
+                    // contentNode is not a mirror. Take the canonical path to be the same
+                    this.canonicalcontentPath = this.contentPath;
                 }
+                
+                Node configurationNode = site.getNode(HstNodeTypes.NODEPATH_HST_CONFIGURATION);
+                configurationPath = configurationNode.getPath();
+                
+                init(configurationNode);
+              
             } else {
                 throw new ServiceException("Subsite '"+name+"' cannot be instantiated because it does not contain the mandatory nodes. Skipping this one");
             } 
@@ -114,10 +111,6 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
         
     }
 
-    public Service[] getChildServices() {
-       Service[] services = {siteMapService,componentsConfigurationService};
-       return services;
-    }
     
     private void init(Node configurationNode) throws  RepositoryException, ServiceException {
        Map<String, String> templateRenderMap = new HashMap<String,String>();
@@ -159,6 +152,15 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
        }
     }
    
+    public SiteMount getSiteMount(){
+        return this.siteMount;
+    }
+
+    public Service[] getChildServices() {
+       Service[] services = {siteMapService,componentsConfigurationService};
+       return services;
+    }
+    
     /*
      * meant to check all accessible root components from the sitemap space, and check whether every component has at least a template 
      * (jsp/freemarker/etc) configured. If not, we log a warning about this
@@ -213,10 +215,6 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
 
     public String getName() {
         return name;
-    }
-
-    public HstSites getHstSites(){
-        return this.hstSites;
     }
     
     public LocationMapTree getLocationMapTree() {

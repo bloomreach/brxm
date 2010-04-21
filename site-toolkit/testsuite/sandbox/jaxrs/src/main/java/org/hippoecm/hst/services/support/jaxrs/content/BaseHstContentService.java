@@ -54,7 +54,6 @@ import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,23 +187,29 @@ public class BaseHstContentService {
         return virtualizedContextPath;
     }
     
+    /**
+     * We should be able to remove getVirtualizedServletPath after HSTTWO-1067
+     * @param servletRequest
+     * @return
+     */
+    @Deprecated
     protected String getVirtualizedServletPath(HttpServletRequest servletRequest) {
         String virtualizedServletPath = servletRequest.getServletPath();
         HstRequestContext requestContext = getHstRequestContext(servletRequest);
-        
-        if (requestContext != null) {
-            MatchedMapping matchedMapping = requestContext.getMatchedMapping();
-            
-            if (matchedMapping != null) {
-                virtualizedServletPath = matchedMapping.getMapping().getUriPrefix();
-                
-                if (virtualizedServletPath == null) {
-                    virtualizedServletPath = "";
-                } else if (virtualizedServletPath.endsWith("/")) {
-                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
-                }
-            }
-        }
+      
+// TODO is the part below still needed after HSTTWO-1067??
+//        if (requestContext != null) {
+//            MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+//            if (matchedMapping != null) {
+//                virtualizedServletPath = matchedMapping.getMapping().getUriPrefix();
+//                
+//                if (virtualizedServletPath == null) {
+//                    virtualizedServletPath = "";
+//                } else if (virtualizedServletPath.endsWith("/")) {
+//                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
+//                }
+//            }
+//        }
         
         return virtualizedServletPath;
     }

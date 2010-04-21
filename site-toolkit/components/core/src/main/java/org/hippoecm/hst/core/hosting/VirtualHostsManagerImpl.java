@@ -35,11 +35,9 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
     protected Repository repository;
     protected Credentials credentials;
     protected VirtualHosts virtualHosts;
-    private String defaultSiteName;
     private String virtualHostsPath;
     
-    public VirtualHostsManagerImpl(String defaultSiteName, String virtualHostsPath) {
-        this.defaultSiteName = defaultSiteName;
+    public VirtualHostsManagerImpl(String virtualHostsPath) {
         this.virtualHostsPath = virtualHostsPath;
     }
     
@@ -93,8 +91,8 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
                 }
                 this.virtualHosts = new VirtualHostsService(virtualHostsNode);
             } else {
-                log.debug("No correct virtualhosts configured at {}. Use the default site for any request regardless the hostname.", virtualHostsPath);
-                this.virtualHosts = new VirtualHostsService(defaultSiteName);
+                log.error("No correct virtualhosts configured at {}. We cannot build virtual hosts configuration", virtualHostsPath);
+                return;
             }
             
         } catch (LoginException e) {

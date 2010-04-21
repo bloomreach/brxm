@@ -15,11 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
-
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -42,13 +38,7 @@ public class ContextResolvingValve extends AbstractValve
         HstContainerURL baseURL = requestContext.getBaseURL();
         HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
         
-        String siteName = requestContext.getMatchedMapping().getSiteName();
-        
         if (erc != null) {
-            // DEBUG check we actually have a matching site...
-            if (!siteName.equals(erc.getSiteName())) {
-                throw new ContainerException("Site doesn't match up with Embedded HST request context site");
-            }
             // we will use the embedded request context provided ResolvedSiteMapItem and root HstComponentConfiguration
             requestContext.setResolvedSiteMapItem(erc.getResolvedSiteMapItem());
             rootComponentConfig = (HstComponentConfiguration)context.getServletRequest().getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT_TARGET);
@@ -71,64 +61,23 @@ public class ContextResolvingValve extends AbstractValve
         }
         else {
             
-            HstSitesManager mngr = getSitesManager(context.getServletRequest().getServletPath());
-            
-            if(mngr == null) {
-                throw new ContainerException("No site manager found for " + context.getServletRequest().getServletPath() + ". Make sure you sitesManagers in your Spring " +
-                		"configuration contains an entry for '"+context.getServletRequest().getServletPath()+"'");
-            }
-            
-            HstSite hstSite = mngr.getSites().getSite(siteName);
-            
-            if (hstSite == null) {
-                throw new ContainerException("No site found for " + siteName);
-            }
-            
-            String pathInfo = baseURL.getPathInfo();
-            
-            ResolvedSiteMapItem resolvedSiteMapItem = null;
-            
-            try {
-                resolvedSiteMapItem = this.siteMapMatcher.match(pathInfo, hstSite);
-            } catch (Exception e) {
-                throw new ContainerNotFoundException("No match for " + pathInfo, e);
-            }
-            
+            ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
             if (resolvedSiteMapItem == null) {
-                throw new ContainerNotFoundException("No match for " + pathInfo);
+                throw new ContainerException("At this point the requestContext must contain a resolvedSiteMapItem");
             }
-            if (resolvedSiteMapItem.getErrorCode() > 0) {
-                
-                try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("The resolved sitemap item for {} has error status: {}", pathInfo, Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
-                    }           
-                    context.getServletResponse().sendError(resolvedSiteMapItem.getErrorCode());
-                    
-                } catch (IOException e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Exception invocation on sendError().", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Exception invocation on sendError().");
-                    }
-                }
-                // we're done: jump out pipeline processing
-                return;
-                
+
+            requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+
+            if (!requestContext.isPortletContext()) {
+                rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
             } else {
-                
-                requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-                
-                if (!requestContext.isPortletContext()) {
+                rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
+
+                if (rootComponentConfig == null) {
                     rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
-                } else {
-                    rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
-                    
-                    if (rootComponentConfig == null) {
-                        rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
-                    }
                 }
             }
+         
         }
             
         if (rootComponentConfig == null) {

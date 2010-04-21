@@ -119,27 +119,6 @@ public interface HstLinkCreator {
      */
     HstLink create(Node node, HstSite hstSite);
 
-
-    /**
-     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} wrt the the {@link #HstSites} <code>hstSites</code>: the (sub)site to which the 
-     * jcr <code>node</code> belongs is not known on beforehand. The  {@link HstSite} belonging to the resulting {@link HstLink} can be different than the {@link HstSite} from the current request. 
-     * This means, that the final url being created from this {@link HstLink} even can have a different host name, depending on the {@link VirtualHosts}</p> configuration
-     * <p>note: if an link is returned, this is always the canonical link, also see {@link #createCanonical(Node, ResolvedSiteMapItem)}</p>
-     * @param node the jcr node for that should be translated into a {@link HstLink} 
-     * @param hstSites the {@link HstSites} that are being tried to create a {@link HstLink} for
-     * @return the {@link HstLink}  for this jcr <code>node</code> and <code>hstSites</code> or <code>null</code> when no link can be created
-     */
-    HstLink create(Node node, HstSites hstSites);
-    
-    /**
-     * 
-     * @param node
-     * @param hstRequestContext
-     * @return
-     * @deprecated  Use {@link  #create(Node, ResolvedSiteMapItem)} 
-     */
-    HstLink create(Node node, HstRequestContext hstRequestContext);
-    
     /**
      * 
      * @param bean
@@ -147,16 +126,7 @@ public interface HstLinkCreator {
      * @return
      */
     HstLink create(HippoBean bean, HstRequestContext hstRequestContext);
-    
-    
-    /**
-     * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId
-     * @param toSiteMapItemId
-     * @param resolvedSiteMapItem
-     * @return an <code>HstLink</code> instance or <code>null<code> 
-     */
-    HstLink create(String toSiteMapItemId, ResolvedSiteMapItem resolvedSiteMapItem);
-    
+   
     /**
      * Regardless the current context, create a HstLink to the HstSiteMapItem that you use as argument. This is only possible if the sitemap item does not
      * contain any ancestor including itself with a wildcard, because the link is ambiguous in that case. 

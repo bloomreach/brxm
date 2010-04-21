@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+
+import static org.junit.Assert.assertTrue;
+
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
@@ -31,6 +35,14 @@ public class TestVirtualHosting extends AbstractSpringTestCase {
      
         @Test
         public void testHosts(){
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                assertTrue("Expected from the hst testcontents default hostname to be 127.0.0.1. ", "127.0.0.1".equals(vhosts.getDefaultHostName()));
+                
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+            
         }
         
          

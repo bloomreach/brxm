@@ -21,7 +21,6 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.hosting.VirtualHost;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,15 +93,8 @@ public class HstLinkImpl implements HstLink{
         }
         
         if(external) {
-            MatchedMapping mapping = request.getRequestContext().getMatchedMapping();
-            
-            if( mapping != null && mapping.getMapping() != null) {
-                
-                VirtualHost vhost = mapping.getMapping().getVirtualHost();
-                urlString = vhost.getBaseURL(request) + urlString;
-            } else {
-                log.warn("Cannot create external link because there is no virtual host to use");
-            }
+           VirtualHost vhost =  request.getRequestContext().getResolvedSiteMapItem().getResolvedSiteMount().getSiteMount().getVirtualHost();
+           urlString = vhost.getBaseURL(request) + urlString;
         }
         
         return urlString;

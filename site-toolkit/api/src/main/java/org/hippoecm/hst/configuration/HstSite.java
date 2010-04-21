@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
+import org.hippoecm.hst.core.hosting.SiteMount;
 
 /**
  * The <code>HstSite</code> object is the object representing a site. It contains a reference to the site content base
@@ -68,8 +69,8 @@ public interface HstSite {
     HstSiteMenusConfiguration getSiteMenusConfiguration();
 
     /**
-     * @return the hstSites object that is the container for this <code>HstSite</code>
+     * @return the {@link SiteMount} object through which this <code>hstSite</code> is accessible
      */
-    HstSites getHstSites();
+    SiteMount getSiteMount();
     
 }

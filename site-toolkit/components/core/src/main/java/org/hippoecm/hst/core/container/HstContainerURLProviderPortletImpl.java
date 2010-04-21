@@ -74,8 +74,9 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                     ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
                 }
                 
-                path.append(contextPath != null ? contextPath : getVirtualizedContextPath(containerURL, requestContext, pathInfo));
-                path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
+                if(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl()) {
+                    path.append(contextPath);
+                }
                 path.append(pathInfo);
                 urlString = path.toString();
                 

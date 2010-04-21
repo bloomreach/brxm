@@ -21,13 +21,14 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.request.MatchedMapping;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.hst.site.request.MatchedMappingImpl;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,6 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     public final static String DEFAULT_PROTOCOL = "http";
     
     private Map<String, VirtualHostService> rootVirtualHosts = new HashMap<String, VirtualHostService>();
-    private String defaultSiteName;
     private String defaultHostName;
     private boolean virtualHostsConfigured;
     private String jcrPath;
@@ -53,15 +53,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     private String[] prefixExclusions;
     private String[] suffixExclusions;
 
-    /*
-     * Constructor when running without configured virtual hosts
-     */
-    public VirtualHostsService(String defaultSiteName){
-        super(null);
-        this.defaultSiteName = defaultSiteName;
-        this.virtualHostsConfigured = false;
-    }
-    
+  
     public VirtualHostsService(Node virtualHostsNode) {
         super(virtualHostsNode);
         this.virtualHostsConfigured = true;
@@ -109,67 +101,67 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return false;
     }
     
-    public MatchedMapping findMapping(String hostName,String pathInfo) {
+    
+    public ResolvedSiteMapItem match(HttpServletRequest request) {
         if(!virtualHostsConfigured) {
-            // return the default site + dummy MatchedMapping
-            return getDefaultSiteNameMapping();
-        }
-        Mapping mapping = null;
-        if(hostName == null || "".equals(hostName)) {
-            log.warn("Cannot get a mapping for hostName '{}' which is empty", hostName);
-            return null;
+            throw new MatchException("No correct virtual hosts configured. Cannot continue request");
         }
         
-        if(rootVirtualHosts != null) {
-            String[] hostNameSegments = hostName.split("\\.");
-            int position = hostNameSegments.length - 1;
-           
-            for(VirtualHostService virtualHost : rootVirtualHosts.values()) {
-                // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
-                // with their id, hence, we cannot get them directly, but have to test them all
-                if(hostNameSegments[position].equals(virtualHost.getName())) {
-                    VirtualHost host = traverseInToHost(virtualHost, hostNameSegments, position);
-                    if(host == null) {
-                        // try next root virtual host where the name matches
-                        continue;
+        String requestServerName = HstRequestUtils.getRequestServerName(request);
+        VirtualHost host = null;
+        
+        host = getMatchedHost(requestServerName, host);
+        
+        // no host found. Let's try the default host, if there is one configured:
+        if(host == null && this.getDefaultHostName() != null) {
+            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", requestServerName, this.getDefaultHostName());
+            host = getMatchedHost(this.getDefaultHostName(), host);
+        }
+        
+        if(host == null) {
+           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", requestServerName, this.getDefaultHostName());
+           return null;
+        }
+        
+        // delegate the matching to the found host:
+        return host.match(request);
+        
+    }
+
+    /**
+     * Override this method if you want a different algorithm to resolve requestServerName
+     * @param requestServerName
+     * @param host
+     * @return the matched virtual host
+     */
+    protected VirtualHost getMatchedHost(String requestServerName, VirtualHost host) {
+        for(VirtualHostService virtualHost : rootVirtualHosts.values()) {
+            // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
+            // with their id, hence, we cannot get them directly, but have to test them all
+            String[] requestServerNameSegments = requestServerName.split("\\.");
+            int position = requestServerNameSegments.length - 1;
+            if(requestServerNameSegments[position].equals(virtualHost.getName())) {
+                host = traverseInToHost(virtualHost, requestServerNameSegments, position);
+                if(host != null) {
+                    if(host.getRootSiteMount() !=  null) {
+                        break;
+                    } else {
+                        log.debug("Found a host for '{}' but this host cannot be used as it does not have a root SiteMount", requestServerName);
                     }
-                    // now we have the matched host, try to find the mapping associated with it.
-                    
-                    mapping = host.getMapping(pathInfo);
-                    if(mapping == null) {
-                        // try another host
-                        continue;
-                    }
-                    return new MatchedMappingImpl(mapping);
-                    
                 }
             }
         }
-        log.warn("The host hostName '{}' and pathInfo '{}' cannot be matched for the configured virtual hosts", hostName, pathInfo);
-        return null;
+        return host;
     }
-    
-    
-    private MatchedMapping getDefaultSiteNameMapping() {
-        MatchedMapping m = new MatchedMapping(){
-            public String getSiteName() {
-                return VirtualHostsService.this.defaultSiteName;
-            }
-            public Mapping getMapping() {
-                return null;
-            }
-            public boolean isURIMapped() {
-                return false;
-            }
-            
-            public String mapToInternalURI(String pathInfo) {
-                return pathInfo;
-            }
-        };
-        return m;
-    }
-
-    private VirtualHost traverseInToHost(VirtualHost matchedHost, String[] hostNameSegments, int position) {
+  
+    /**
+     * Override this method if you want a different algorithm to resolve requestServerName
+     * @param matchedHost
+     * @param hostNameSegments
+     * @param position
+     * @return
+     */
+    protected VirtualHost traverseInToHost(VirtualHost matchedHost, String[] hostNameSegments, int position) {
         if(position == 0) {
             return matchedHost;
         }

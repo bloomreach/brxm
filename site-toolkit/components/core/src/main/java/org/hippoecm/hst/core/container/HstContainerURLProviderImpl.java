@@ -55,8 +55,7 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
         }
         
         return new StringBuilder(100)
-        .append(contextPath != null ? contextPath : getVirtualizedContextPath(containerURL, requestContext, path))
-        .append(getVirtualizedServletPath(containerURL, requestContext, path))
+        .append(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl() ? contextPath : "")
         .append(path)
         .toString();
     }

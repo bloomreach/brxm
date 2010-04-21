@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.hosting;
 
-import org.hippoecm.hst.core.request.MatchedMapping;
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 
 /**
@@ -36,13 +38,19 @@ public interface VirtualHosts {
     boolean isExcluded(String pathInfo);
     
     /**
+     * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the 
+     * correct {@link VirtualHost}. If it does find a {@link VirtualHost}, the match is delegated to
+     * {@link VirtualHost#match(HttpServletRequest)}</p>. If no {@link VirtualHost} matches the request, then, if configured, we try
+     * to match to the default virtual host {@link #getDefaultHostName()}.
      * 
-     * @param hostName
-     * @param pathInfo
-     * @return the <code>MatchedMapping</code> or <code>null</code>
+     * @see {@link VirtualHost#match(HttpServletRequest)} and  {@link SiteMount#match(HttpServletRequest)}
+     *
+     * @param request the HttpServletRequest
+     * @return the resolvedSiteMapItem for this request or <code>null</code> when it can not be matched
+     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured
      */
-    MatchedMapping findMapping(String hostName,String pathInfo);
-  
+    ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
+ 
     /**
      * 
      * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.

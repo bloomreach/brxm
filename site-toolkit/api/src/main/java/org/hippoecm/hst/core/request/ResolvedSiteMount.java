@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,18 @@
  */
 package org.hippoecm.hst.core.request;
 
-import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.hosting.SiteMount;
 
 /**
- * @version $Id$
- *
+ * This is a request flyweight instance of a {@link SiteMount} object, where possible wildcard property placeholders have been filled in, similar
+ * to the {@link ResolvedSiteMapItem}
+ * 
  */
-public interface HstEmbeddedRequestContext {
+public interface ResolvedSiteMount {
 
-    String getSitesContentPath();
-    String getContentPath();
-    String getSiteName();
-    HstSite getHstSite();
-    ResolvedSiteMapItem getResolvedSiteMapItem();
-    HstComponentConfiguration getRootComponentConfig();
+    /**
+     * @return the backing request independent {@link SiteMount} item for this resolvedSiteMount instance
+     */
+    SiteMount getSiteMount();
+    
 }

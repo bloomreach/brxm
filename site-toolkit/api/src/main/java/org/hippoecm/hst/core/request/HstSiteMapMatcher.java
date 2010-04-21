@@ -35,10 +35,10 @@ public interface HstSiteMapMatcher {
      * method to match the pathInfo for the hstSite to a <code>HstSiteMapItem</code> if possible.
      * 
      * @param pathInfo the pathInfo that should be matched in the <code>HstSiteMapItem</code> tree
-     * @param hstSite the current <code>HstSite</code> that must match the pathInfo
+     * @param resolvedSiteMount the current <code>ResolvedSiteMount</code> that must matches the request serverName and pathInfo
      * @return a ResolvedSiteMapItem and <code>null</code> if non matched
      */
-    ResolvedSiteMapItem match(String pathInfo,HstSite hstSite);
+    ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount);
   
     /**
      * method that can be called if some event is triggered. For example if the <code>HstSiteMapMatcher</code> implementing class

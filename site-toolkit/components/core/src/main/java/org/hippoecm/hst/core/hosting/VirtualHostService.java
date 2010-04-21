@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -47,15 +48,13 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private String id;
     private String name;
     private VirtualHosts virtualHosts;
+    private SiteMount rootSiteMount;
     
     private String jcrPath;
     private boolean portVisible;
     private int portNumber;
     private boolean contextPathInUrl;
     private String protocol;
-    private String[] hstMappings;
-    private Mapping[] mappings;
-    
 
     public VirtualHostService(VirtualHostsService virtualHosts,Node virtualHostNode, VirtualHostService parentHost) throws ServiceException{
         super(virtualHostNode);
@@ -90,6 +89,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 this.portVisible = virtualHosts.isPortVisible();
             }
         }
+        
         if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
         } else {
@@ -99,17 +99,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             } else {
                 this.contextPathInUrl = virtualHosts.isContextPathInUrl();
             }
-        }
-        
-        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_MAPPING)) {
-            this.hstMappings = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOST_PROPERTY_MAPPING);
-            this.mappings = createMappings();
-        } else {
-         // try to get the one from the parent
-            if(parentHost != null) {
-                this.hstMappings = parentHost.hstMappings;
-                this.mappings = createMappings();
-            }  
         }
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_PROTOCOL)) {
@@ -167,8 +156,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.protocol = virtualHostService.protocol;
         this.portVisible = virtualHostService.portVisible;
         this.contextPathInUrl = virtualHostService.contextPathInUrl;
-        this.hstMappings = virtualHostService.hstMappings;
-        this.mappings = createMappings();
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
@@ -178,33 +165,14 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
       
     }
 
-    private Mapping[] createMappings() {
-        if(hstMappings == null) {
-            return new Mapping[0];
-        }
-        List<Mapping> mappingsList = new ArrayList<Mapping>();
-        for(String mapping : hstMappings) {
-            try {
-                mappingsList.add(new MappingImpl(mapping, this));
-            } catch(MappingException e) {
-               log.warn("Ignoring mapping {} : {}", mapping, e.toString()); 
-            }
-        }
-        Mapping[] tmpMappings = mappingsList.toArray(new Mapping[mappingsList.size()]);
-        Arrays.sort(tmpMappings);
-        return tmpMappings;
-    }
-
-    public Mapping getMapping(String pathInfo) {
-        if(pathInfo == null) {return null;}
-        for(Mapping mapping : mappings) {
-            if(pathInfo.startsWith(mapping.getUriPrefix())){
-                return mapping;
-            }
-        }
-        return null;
+    public ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException {
+        throw new MatchException("Not yet implemented");
     }
     
+    public SiteMount getRootSiteMount(){
+        return this.rootSiteMount;
+    }
+ 
     public String getId(){
         return this.id;
     }
@@ -280,5 +248,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         }
         return builder.toString();
     }
+
+
 
 }

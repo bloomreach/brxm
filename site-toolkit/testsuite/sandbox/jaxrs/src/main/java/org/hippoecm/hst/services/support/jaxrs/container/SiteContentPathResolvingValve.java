@@ -15,37 +15,24 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.container;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.Valve;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.services.support.jaxrs.content.BaseHstContentService;
 
 public class SiteContentPathResolvingValve implements Valve {
-    
-    protected Map<String, HstSitesManager> sitesManagers;
-    
-    public void setSitesManagers(Map<String, HstSitesManager> sitesManagers) {
-        this.sitesManagers = sitesManagers;
-    }
-    
+  
     public void initialize() throws ContainerException {
     }
     
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        MatchedMapping matchedMapping = requestContext.getMatchedMapping();
-        HstSite hstSite = sitesManagers.get(context.getServletRequest().getServletPath()).getSites().getSite(matchedMapping.getSiteName());
-        servletRequest.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, hstSite.getContentPath());
+        servletRequest.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getSiteMount().getHstSite().getContentPath());
         
         // continue
         context.invokeNext();

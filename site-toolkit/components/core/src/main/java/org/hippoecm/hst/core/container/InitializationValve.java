@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
-import org.hippoecm.hst.core.request.MatchedMapping;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 /**
@@ -53,12 +53,14 @@ public class InitializationValve extends AbstractValve
             requestContext.setEmbeddedRequestContext(erc);
         }
         
-        // if there is a Mapping on the request, it is set on the HstRequestContext.
-        MatchedMapping matchedMapping = (MatchedMapping) servletRequest.getAttribute(ContainerConstants.MATCHED_MAPPING);
         
-        if (matchedMapping != null) {
-            requestContext.setMatchedMapping(matchedMapping);
+        ResolvedSiteMapItem resolvedSiteMapItem = (ResolvedSiteMapItem)servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM);
+        if(resolvedSiteMapItem == null) {
+         // if there is no ResolvedSiteMapItem on the request we cannot continue
+         throw new ContainerException("During the initialization valve, there must be a resolved sitemap item on the request. Cannot continue request processing");
         }
+        
+        requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {

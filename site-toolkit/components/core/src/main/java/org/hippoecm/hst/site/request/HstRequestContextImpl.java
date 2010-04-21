@@ -37,7 +37,6 @@ import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
@@ -52,7 +51,6 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
-    protected MatchedMapping matchedMapping;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
@@ -95,15 +93,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     public void setSession(Session session) {
         this.session = session;
     }
-    
-    public void setMatchedMapping(MatchedMapping matchedMapping) {
-        this.matchedMapping = matchedMapping;
-    }
-    
-    public MatchedMapping getMatchedMapping(){
-        return this.matchedMapping;
-    }
-    
+ 
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
@@ -227,13 +217,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
 
     public VirtualHost getVirtualHost() {
-        MatchedMapping matchedMapping = getMatchedMapping();
-        
-        if (matchedMapping != null && matchedMapping.getMapping() != null) {
-            return matchedMapping.getMapping().getVirtualHost();
-        }
-        
-        return null;
+       return resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().getVirtualHost();
     }
     
     public HstEmbeddedRequestContext getEmbeddedRequestContext() {

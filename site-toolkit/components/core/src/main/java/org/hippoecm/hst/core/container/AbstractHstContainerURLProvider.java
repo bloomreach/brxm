@@ -297,54 +297,54 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         return url.toString();
     }
     
-    protected String getVirtualizedContextPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
-        String virtualizedContextPath = containerURL.getContextPath();
-        
-        HstContainerURL baseURL = requestContext.getBaseURL();
-        if (baseURL != null) {
-            
-            VirtualHost virtualHost = requestContext.getVirtualHost();
-            
-            if (virtualHost != null && path != null) {
-                if (virtualHost.isContextPathInUrl()) {
-                    virtualizedContextPath = baseURL.getContextPath();
-                } else {
-                    virtualizedContextPath = "";
-                }
-            }
-        }
-        
-        return virtualizedContextPath;
-    }
-    
-    protected String getVirtualizedServletPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
-        String virtualizedServletPath = containerURL.getServletPath();
-        
-        HstContainerURL baseURL = requestContext.getBaseURL();
-
-        if (baseURL != null) {
-            VirtualHost virtualHost = requestContext.getVirtualHost();
-            
-            if (virtualHost != null && path != null) {
-                if (virtualHost.getVirtualHosts().isExcluded(path)) {
-                    // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
-                    // a servletpath in the url
-                    virtualizedServletPath = "";
-                } else {
-                    // as the external url is mapped, get the external 'fake' servletpath
-                    virtualizedServletPath = requestContext.getMatchedMapping().getMapping().getUriPrefix();
-                    if (virtualizedServletPath == null) {
-                        virtualizedServletPath = "";
-                    }
-                }
-                if (virtualizedServletPath.endsWith("/")) {
-                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
-                }
-            }
-        }
-        
-        return virtualizedServletPath;
-    }
+//    protected String getVirtualizedContextPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
+//        String virtualizedContextPath = containerURL.getContextPath();
+//        
+//        HstContainerURL baseURL = requestContext.getBaseURL();
+//        if (baseURL != null) {
+//            
+//            VirtualHost virtualHost = requestContext.getVirtualHost();
+//            
+//            if (virtualHost != null && path != null) {
+//                if (virtualHost.isContextPathInUrl()) {
+//                    virtualizedContextPath = baseURL.getContextPath();
+//                } else {
+//                    virtualizedContextPath = "";
+//                }
+//            }
+//        }
+//        
+//        return virtualizedContextPath;
+//    }
+//    
+//    protected String getVirtualizedServletPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
+//        String virtualizedServletPath = containerURL.getServletPath();
+//        
+//        HstContainerURL baseURL = requestContext.getBaseURL();
+//
+//        if (baseURL != null) {
+//            VirtualHost virtualHost = requestContext.getVirtualHost();
+//            
+//            if (virtualHost != null && path != null) {
+//                if (virtualHost.getVirtualHosts().isExcluded(path)) {
+//                    // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
+//                    // a servletpath in the url
+//                    virtualizedServletPath = "";
+//                } else {
+//                    // as the external url is mapped, get the external 'fake' servletpath
+//                    virtualizedServletPath = requestContext.getMatchedMapping().getMapping().getUriPrefix();
+//                    if (virtualizedServletPath == null) {
+//                        virtualizedServletPath = "";
+//                    }
+//                }
+//                if (virtualizedServletPath.endsWith("/")) {
+//                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
+//                }
+//            }
+//        }
+//        
+//        return virtualizedServletPath;
+//    }
     
     /*
      * Splits path info to an array of namespaced path part and remainder. 

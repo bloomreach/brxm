@@ -80,8 +80,7 @@ public interface HstNodeTypes {
     public final static String VIRTUALHOST_PROPERTY_PROTOCOL = "hst:protocol";
     public final static String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
     public final static String VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
-    public final static String VIRTUALHOST_PROPERTY_MAPPING = "hst:mapping";
-   
+    
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";
     public final static String NODENAME_HST_CONTENTNODE = "hst:content";
     public final static String NODENAME_HST_SITEMAP = "hst:sitemap";

@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.hosting;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+
 /**
  * VirtualHost which holds the mapping between host (server name) and site name.
  * 
@@ -37,13 +39,24 @@ public interface VirtualHost {
      */
     VirtualHost getChildHost(String name);
     
-    
     /**
-     * 
-     * @param pathInfo
-     * @return return the best <code>{@link Mapping}</code> within this VirtualHost for the pathInfo
+     * A virtual host has to have at least a root {@link SiteMount}, otherwise it is not a valid VirtualHost and cannot be used.
+     * @return the root {@link SiteMount} for this virtual host
      */
-    Mapping getMapping(String pathInfo);
+    SiteMount getRootSiteMount();
+    
+   /** 
+    * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMapItem}. It starts from the <code>root</code> {@link SiteMount} for
+    * this virtualHost, and delegates the match to this siteMount item</p>
+    *
+    * 
+    * @see {@link SiteMount#match(HttpServletRequest)} and {@link VirtualHosts#match(HttpServletRequest)} 
+    * 
+    * @param request the HttpServletRequest
+    * @return the resolvedSiteMapItem for this request or <code>null</code> when it can not be matched
+    * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured
+    */
+   ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
     
     /**
      * 
@@ -97,6 +110,10 @@ public interface VirtualHost {
      * @return the <code>URL</code> until the context path, thus <code>protocol + hostname + portnumber</code>, for example 'http://www.hippoecm.org:8081' 
      */
     
+    /**
+     * TODO see where it is all used
+     * @deprecated
+     */
     String getBaseURL(HttpServletRequest request);
 
 }

@@ -77,7 +77,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
             return null;
         }
         HstRequestContext ctx = request.getRequestContext();
-        resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite()));
+        resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getResolvedSiteMount()));
         return resolvedSiteMapItem.resolvedItem;
     }
 

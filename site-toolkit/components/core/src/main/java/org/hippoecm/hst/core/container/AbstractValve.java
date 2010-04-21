@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
@@ -37,7 +36,6 @@ public abstract class AbstractValve implements Valve {
     protected final static Logger log = LoggerFactory.getLogger(AbstractValve.class);
     
     protected ContainerConfiguration containerConfiguration;
-    protected Map<String, HstSitesManager> sitesManagers;
     protected VirtualHostsManager virtualHostsManager;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstRequestContextComponent requestContextComponent;
@@ -62,15 +60,7 @@ public abstract class AbstractValve implements Valve {
     public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
         this.containerConfiguration = containerConfiguration;
     }
-    
-    public HstSitesManager getSitesManager(String name) {
-        return sitesManagers.get(name);
-    }
-
-    public void setSitesManagers(Map<String, HstSitesManager> sitesManagers) {
-        this.sitesManagers = sitesManagers;
-    }
-
+ 
     public VirtualHostsManager getVirtualHostsManager() {
         return virtualHostsManager;
     }

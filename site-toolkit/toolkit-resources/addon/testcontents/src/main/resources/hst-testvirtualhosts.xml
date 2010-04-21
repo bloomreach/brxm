@@ -59,32 +59,39 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:mapping" sv:type="String">
-            <sv:value>/preview/services/* --> /preview/services/${1}</sv:value>
-            <sv:value>/services/* --> /live/services/${1}</sv:value>
-            <sv:value>/preview/* --> /preview/${1}</sv:value>
-            <sv:value>/* --> /live/${1}</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitename" sv:type="String">
-            <sv:value>testproject</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:protocol" sv:type="String">
-            <sv:value>http</sv:value>
-        </sv:property>
+        <sv:node sv:name="root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpath" sv:type="String">
+            <sv:value>/testlive/testpreview</sv:value>
+          </sv:property>
+          <sv:node sv:name="preview">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpath" sv:type="String">
+            <sv:value>/testpreview/testpreview</sv:value>
+          </sv:property>
+          <sv:node sv:name="services">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            
+            <!-- mountpath inherited here from parent  -->
+            
+            <sv:property sv:name="hst:namedpipeline" sv:type="String">
+              <sv:value>JaxrsPipeline</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        </sv:node>
+        
     </sv:node>
     
     <sv:node sv:name="localhost">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:mapping" sv:type="String">
-            <sv:value>/preview/services/* --> /preview/services/${1}</sv:value>
-            <sv:value>/services/* --> /live/services/${1}</sv:value>
-            <sv:value>/preview/* --> /preview/${1}</sv:value>
-            <sv:value>/* --> /live/${1}</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitename" sv:type="String">
-            <sv:value>testproject</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

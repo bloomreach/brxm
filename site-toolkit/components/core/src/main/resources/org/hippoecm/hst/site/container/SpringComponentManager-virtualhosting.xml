@@ -25,7 +25,6 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
    
     <bean id="org.hippoecm.hst.core.hosting.VirtualHostsManager" class="org.hippoecm.hst.core.hosting.VirtualHostsManagerImpl">
-        <constructor-arg value="${default.sites.name}"/>
         <constructor-arg value="${virtualhosts.repository.path}"/>
         <property name="repository" ref="javax.jcr.Repository" />
         <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />

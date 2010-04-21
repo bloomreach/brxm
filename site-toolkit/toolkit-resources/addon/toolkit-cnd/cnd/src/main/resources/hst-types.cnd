@@ -97,10 +97,22 @@
 [hst:redirectdomain] mixin
 - hst:redirect (string)
 
+
+[hst:sitemount]
++ * (hst:sitemount)
+- hst:mountpath (string)
+// if you do not want to sitemount to run with the default hst pipeline, you can configure the pipeline to be used here
+- hst:namedpipeline (string)
+- hst:port (long)
+- hst:showcontextpath (boolean)
+- hst:ispreview (boolean)
+- hst:showport(boolean)
+- hst:protocol (string)
+
+
 [hst:virtualhost]
 + * (hst:virtualhost)
-- hst:mapping (string) multiple
-- hst:sitename (string)
++ root (hst:sitemount)
 - hst:port (long)
 - hst:showcontextpath (boolean)
 - hst:showport(boolean)

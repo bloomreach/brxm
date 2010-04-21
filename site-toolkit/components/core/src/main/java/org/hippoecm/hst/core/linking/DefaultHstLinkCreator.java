@@ -94,10 +94,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         } 
         return null;
     }
-   
-    public HstLink create(Node node, HstRequestContext hstRequestContext) {
-        return this.create(node, hstRequestContext.getResolvedSiteMapItem());
-    }
 
     public HstLink create(HippoBean bean, HstRequestContext hstRequestContext) {
         return create(bean.getNode(), hstRequestContext.getResolvedSiteMapItem());
@@ -139,14 +135,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return linkResolver.resolve();
     }
 
-    /**
-     * TODO we still need to implement this method. Currently, we throw an UnsupportedOperationException, see HSTTWO-1054
-     * {@inheritDoc} 
-     */
-    public HstLink create(Node node, HstSites hstSites) {
-        throw new UnsupportedOperationException("This method is not yet supported. See HSTTWO-1054");
-    }
-
 
     public HstLink create(String path, HstSite hstSite) {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite));
@@ -156,30 +144,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite, containerResource));
     }
 
-    public HstLink create(String toSiteMapItemId, ResolvedSiteMapItem currentSiteMapItem) {
-        HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMapItem().getHstSiteMap();
-        HstSiteMapItem toSiteMapItem = hstSiteMap.getSiteMapItemById(toSiteMapItemId);
-        if (toSiteMapItem == null) {
-            // search in different sites
-            HstSites hstSites = hstSiteMap.getSite().getHstSites();
-            for (HstSite site : hstSites.getSites().values()) {
-                toSiteMapItem = site.getSiteMap().getSiteMapItemById(toSiteMapItemId);
-                if (toSiteMapItem != null) {
-                    log.debug("SiteMapItemId found in different Site. Create link to different site");
-                    break;
-                }
-            }
-        }
-        if (toSiteMapItem == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("No site found with a siteMap containing id '{}'. Cannot create link.", toSiteMapItemId);
-            }
-            return null;
-        }
-        String path = getPath(toSiteMapItem);
-        return postProcess(new HstLinkImpl(path, hstSiteMap.getSite()));
-    }
-    
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
         return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite()));
     }

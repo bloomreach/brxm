@@ -37,6 +37,11 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 public interface ResolvedSiteMapItem {
     
     /**
+     * @return the {@link ResolvedSiteMount} for this resolvedSiteMapItem instance
+     */
+    ResolvedSiteMount getResolvedSiteMount();
+    
+    /**
      * This method returns a content path, relative to the {@link org.hippoecm.hst.configuration.HstSite#getContentPath()}. This value should 
      * have resolved property placeholders, like ${1}/${2}. If a property placeholder cannot be resolved, the implementation may return <code>null</code>
      * @return the content path relative to the {@link org.hippoecm.hst.configuration.HstSite#getContentPath()} or <code>null</code> if not present or has unresolvable property placeholders
@@ -116,4 +121,5 @@ public interface ResolvedSiteMapItem {
      */
     HstComponentConfiguration getPortletHstComponentConfiguration();
   
+    
 }

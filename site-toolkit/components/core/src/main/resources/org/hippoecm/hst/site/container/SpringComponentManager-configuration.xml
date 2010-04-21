@@ -24,18 +24,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-  <bean id="org.hippoecm.hst.configuration.HstSitesManager.preview" class="org.hippoecm.hst.configuration.HstSitesManagerImpl">
-    <property name="repository" ref="javax.jcr.Repository" />
-    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
-    <property name="sitesContentPath" value="${preview.repository.entry.path}" />
-  </bean>
-  
-  <bean id="org.hippoecm.hst.configuration.HstSitesManager.live" class="org.hippoecm.hst.configuration.HstSitesManagerImpl">
-    <property name="repository" ref="javax.jcr.Repository" />
-    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
-    <property name="sitesContentPath" value="${live.repository.entry.path}" />
-  </bean>
-  
   <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
   	  <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
   </bean>

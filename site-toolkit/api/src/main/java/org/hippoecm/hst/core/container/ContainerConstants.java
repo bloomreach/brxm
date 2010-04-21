@@ -51,9 +51,9 @@ public interface ContainerConstants {
     String HST_EMBEDDED_REQUEST_CONTEXT_TARGET = "org.hippoecm.hst.core.request.HstEmbeddedRequestContext.target";
     
     /**
-     * The attribute name used to set a pre-determined Matched Mapping object into the servlet request.
+     * The attribute name used to set a matched resolved sitemap item object into the servlet request.
      */
-    String MATCHED_MAPPING = "org.hippoecm.hst.core.request.MatchedMapping";
+    String RESOLVED_SITEMAP_ITEM = "org.hippoecm.hst.core.request.ResolvedSiteMapItem";
     
     /**
      * The reference namespace for container managed resource url.

@@ -30,7 +30,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
-import org.hippoecm.hst.core.request.MatchedMapping;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -113,22 +113,36 @@ public class HstVirtualHostsFilter implements Filter {
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 
-                MatchedMapping matchedMapping = vHosts.findMapping(HstRequestUtils.getRequestServerName(req), pathInfo);
-                if(matchedMapping == null) {
-                    if(vHosts.getDefaultHostName() != null) {
-                        matchedMapping = vHosts.findMapping(vHosts.getDefaultHostName(), pathInfo);
-                    }
-                }
-                if(matchedMapping != null) {
+                ResolvedSiteMapItem resolvedSiteMapItem = vHosts.match((HttpServletRequest)request);
+                
+                if(resolvedSiteMapItem != null) {
+                    if (resolvedSiteMapItem.getErrorCode() > 0) {
+                        try {
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("The resolved sitemap item for {} has error status: {}", pathInfo, Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
+                            }           
+                            ((HttpServletResponse)response).sendError(resolvedSiteMapItem.getErrorCode());
+                            
+                        } catch (IOException e) {
+                            if (logger.isDebugEnabled()) {
+                                logger.warn("Exception invocation on sendError().", e);
+                            } else if (logger.isWarnEnabled()) {
+                                logger.warn("Exception invocation on sendError().");
+                            }
+                        }
+                        // we're done:
+                        return;
+                    } 
                     /*
-                     * put the matched Mapping temporarily on the request, as we do not yet have a HstRequestContext. When the
-                     * HstRequestContext is created, and there is a Mapping on the request, we put it on the HstRequestContext.
+                     * put the matched RESOLVED_SITEMAP_ITEM temporarily on the request, as we do not yet have a HstRequestContext. When the
+                     * HstRequestContext is created, and there is a RESOLVED_SITEMAP_ITEM on the request, we put it on the HstRequestContext.
                      */  
-                    request.setAttribute(ContainerConstants.MATCHED_MAPPING, matchedMapping);
-                    String mappedPath = matchedMapping.mapToInternalURI(pathInfo);
-                    filterConfig.getServletContext().getRequestDispatcher(mappedPath).forward(request, response);
-                   
+                    request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
+                    
+                    // TODO  NOW, INVOKE THE HstRequestProcessor !!!
+                    
                 } else {
+                    
                     chain.doFilter(request, response);
                 }
                 

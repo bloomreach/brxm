@@ -29,7 +29,6 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +40,6 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     private Credentials writableCredentials;
     private ContextCredentialsProvider ccp;
     private HstRequestContext requestContext;
-    private MatchedMapping matchedMapping;
     
     @Before
     public void setUp() throws Exception {
@@ -50,18 +48,14 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         writableCredentials = new SimpleCredentials("admin@writable", "password@writable".toCharArray());
         ccp = new SiteNameDecoratedContextCredentialsProvider(defaultCredentials, defaultCredentialsForPreviewMode, writableCredentials);
         requestContext = createMock(HstRequestContext.class);
-        matchedMapping = createMock(MatchedMapping.class);
     }
     
     @Test
     public void testDefaultCredentials() throws Exception {
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
-        expect(matchedMapping.getSiteName()).andReturn("site1");
         
         replay(requestContext);
-        replay(matchedMapping);
         
         Credentials creds = ccp.getDefaultCredentials(requestContext);
         
@@ -70,31 +64,21 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         assertEquals("password@default", new String(((SimpleCredentials) creds).getPassword()));
         
         reset(requestContext);
-        reset(matchedMapping);
-
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
+    
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
-        expect(matchedMapping.getSiteName()).andReturn("site1");
-        
+      
         replay(requestContext);
-        replay(matchedMapping);
-
         Credentials creds2 = ccp.getDefaultCredentials(requestContext);
         
         assertTrue(creds == creds2);
         
         reset(requestContext);
-        reset(matchedMapping);
-
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
+      
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
-        expect(matchedMapping.getSiteName()).andReturn("site2");
-        
         replay(requestContext);
-        replay(matchedMapping);
-
+      
         Credentials creds3 = ccp.getDefaultCredentials(requestContext);
         assertTrue(creds3 instanceof SimpleCredentials);
         assertFalse(creds == creds3);
@@ -104,13 +88,11 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
 
     @Test
     public void testPreviewCredentials() throws Exception {
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
+        
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
-        expect(matchedMapping.getSiteName()).andReturn("site1");
         
         replay(requestContext);
-        replay(matchedMapping);
         
         Credentials creds = ccp.getDefaultCredentials(requestContext);
         
@@ -119,31 +101,23 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         assertEquals("password@preview", new String(((SimpleCredentials) creds).getPassword()));
         
         reset(requestContext);
-        reset(matchedMapping);
-
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
+        
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
-        expect(matchedMapping.getSiteName()).andReturn("site1");
         
         replay(requestContext);
-        replay(matchedMapping);
 
         Credentials creds2 = ccp.getDefaultCredentials(requestContext);
         
         assertTrue(creds == creds2);
         
         reset(requestContext);
-        reset(matchedMapping);
 
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
         expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
-        expect(matchedMapping.getSiteName()).andReturn("site2");
-        
+       
         replay(requestContext);
-        replay(matchedMapping);
-
+      
         Credentials creds3 = ccp.getDefaultCredentials(requestContext);
         assertTrue(creds3 instanceof SimpleCredentials);
         assertFalse(creds == creds3);
@@ -153,11 +127,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     
     @Test
     public void testWritableCredentials() throws Exception {
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
-        expect(matchedMapping.getSiteName()).andReturn("site1");
-        
+       
         replay(requestContext);
-        replay(matchedMapping);
         
         Credentials creds = ccp.getWritableCredentials(requestContext);
         
@@ -166,27 +137,18 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         assertEquals("password@writable", new String(((SimpleCredentials) creds).getPassword()));
         
         reset(requestContext);
-        reset(matchedMapping);
-
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
-        expect(matchedMapping.getSiteName()).andReturn("site1");
-        
+      
         replay(requestContext);
-        replay(matchedMapping);
-
+     
         Credentials creds2 = ccp.getWritableCredentials(requestContext);
         
         assertTrue(creds == creds2);
         
         reset(requestContext);
-        reset(matchedMapping);
-
-        expect(requestContext.getMatchedMapping()).andReturn(matchedMapping);
-        expect(matchedMapping.getSiteName()).andReturn("site2");
-        
+    
+       
         replay(requestContext);
-        replay(matchedMapping);
-
+     
         Credentials creds3 = ccp.getWritableCredentials(requestContext);
         assertTrue(creds3 instanceof SimpleCredentials);
         assertFalse(creds == creds3);

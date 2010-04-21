@@ -18,7 +18,6 @@ package org.hippoecm.hst.site.request;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
@@ -30,7 +29,6 @@ public class HstEmbeddedRequestContextImpl implements HstEmbeddedRequestContext
     private String sitesContentPath;
     private String contentPath;
     private HstSite hstSite;
-    private MatchedMapping matchedMapping;
     private ResolvedSiteMapItem resolvedSiteMapItem;
     private HstComponentConfiguration rootComponentConfig;
     
@@ -58,14 +56,6 @@ public class HstEmbeddedRequestContextImpl implements HstEmbeddedRequestContext
     {
         this.hstSite = hstSite;
     }
-    public MatchedMapping getMatchedMapping()
-    {
-        return matchedMapping;
-    }
-    public void setMatchedMapping(MatchedMapping matchedMapping)
-    {
-        this.matchedMapping = matchedMapping;
-    }
     public ResolvedSiteMapItem getResolvedSiteMapItem()
     {
         return resolvedSiteMapItem;
@@ -85,6 +75,6 @@ public class HstEmbeddedRequestContextImpl implements HstEmbeddedRequestContext
     
     public String getSiteName()
     {
-        return matchedMapping != null ? matchedMapping.getSiteName() : null;
+        return resolvedSiteMapItem != null ? resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite().getName() : null;
     }
 }

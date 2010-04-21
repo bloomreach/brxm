@@ -39,9 +39,6 @@ public class HstEmbeddedPortletContainerURLProviderImpl extends HstContainerURLP
     public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
         HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
-        String uriPrefix = erc.getMatchedMapping().getMapping().getUriPrefix();
-        // need to strip trailing /                
-        url.append(uriPrefix.substring(0, uriPrefix.length()-1));
         String pathInfo = buildHstURLPath(containerURL);
         url.append(pathInfo);
         return url.toString();
@@ -80,22 +77,15 @@ public class HstEmbeddedPortletContainerURLProviderImpl extends HstContainerURLP
                 }
                 
                 if (!portletResourceURLEnabled) {
-                    path.append(contextPath != null ? contextPath : getVirtualizedContextPath(containerURL, requestContext, pathInfo));
+                    if(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl()) {
+                        path.append(contextPath);
+                    }      
                 }
             }
             else {
                 pathInfo = buildHstURLPath(containerURL);
             }
             
-            if (resourceWindowReferenceNamespace == null && actionWindowReferenceNamespace == null) {
-                HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
-                String uriPrefix = erc.getMatchedMapping().getMapping().getUriPrefix();
-                // need to strip trailing /                
-                path.append(uriPrefix.substring(0, uriPrefix.length()-1));
-            }
-            else {
-                path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
-            }
             path.append(pathInfo);
 
             if (actionWindowReferenceNamespace != null) {
