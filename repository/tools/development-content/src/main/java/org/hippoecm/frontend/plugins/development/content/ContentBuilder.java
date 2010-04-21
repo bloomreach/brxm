@@ -16,20 +16,6 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugins.development.content.names.Names;
 import org.hippoecm.frontend.plugins.development.content.names.NamesFactory;
@@ -41,9 +27,23 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class ContentBuilder implements IClusterable {
     @SuppressWarnings("unused")
@@ -181,7 +181,11 @@ public class ContentBuilder implements IClusterable {
         String targetName = generateName(settings.minLength, settings.maxLength);
         try {
             String name = NodeNameCodec.encode(targetName, true);
-            folderWorkflow.add(category, prototype, name);
+            String path = folderWorkflow.add(category, prototype, name);
+            Session jcrSession = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+            Node newNode = jcrSession.getRootNode().getNode(path.substring(1));
+            WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
+            ((EditableWorkflow) manager.getWorkflow("default", newNode)).commitEditableInstance();
             return name;
         } catch (MappingException e) {
             log.error("Error creating new node of category " + category, e);
