@@ -411,7 +411,25 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
             final PropertyModel<String> prototypeModel = new PropertyModel<String>(action, "prototype");
 
-            nameComponent = new TextField<String>("name", nameModel);
+            nameComponent = new TextField<String>("name", new IModel<String>() {
+                private static final long serialVersionUID = 1L;
+
+                public String getObject() {
+                    return nameModel.getObject();
+                }
+
+                public void setObject(String object) {
+                    nameModel.setObject(object);
+                    if (!uriModified) {
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+                    }
+                }
+
+                public void detach() {
+                    nameModel.detach();
+                }
+                
+            });
             nameComponent.setRequired(true);
             nameComponent.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
             AjaxEventBehavior behavior;
@@ -419,7 +437,6 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
-                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                         target.addComponent(uriComponent);
                     }
                 }
