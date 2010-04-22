@@ -94,6 +94,9 @@ public class JcrValueList<T> extends AbstractList<T> implements IDetachable {
             JcrItemModel parentModel = property.getItemModel().getParentModel();
             Node node = (Node) parentModel.getObject();
             node.setProperty(property.getItemModel().getPath().substring(parentModel.getPath().length() + 1), newValues);
+            if (!property.getItemModel().exists()) {
+                property.detach();
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
