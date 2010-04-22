@@ -281,6 +281,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             log.warn("post migration cycle forced reindexing");
             initializeReindex();
             initializeStartup();
+            ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
             log.warn("post migration cycle validating content");
             ((SessionDecorator)rootSession).postValidation();
         }
