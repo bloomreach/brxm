@@ -30,19 +30,8 @@
   -->
   <Security appName="Jackrabbit">
     <SecurityManager class="org.hippoecm.repository.security.SecurityManager"/>
-    <!--
-        access manager:
-        class: FQN of class implementing the AccessManager interface
-    -->
-    <AccessManager
-        class="org.hippoecm.repository.security.SimpleAccessManager">
-      <!-- <param name="config" value="${rep.home}/access.xml"/> -->
-    </AccessManager>
-
-    <LoginModule class="org.apache.jackrabbit.core.security.SimpleLoginModule">
-      <!-- anonymous user name ('anonymous' is the default value) -->
-      <param name="anonymousId" value="anonymous"/>
-    </LoginModule>
+    <AccessManager class="org.hippoecm.repository.security.HippoAccessManager"/>
+    <LoginModule class="org.hippoecm.repository.security.HippoLoginModule"/>
   </Security>
 
 
@@ -61,7 +50,7 @@
       <param name="path" value="${wsp.home}"/>
     </FileSystem>
 
-    <PersistenceManager class="org.apache.jackrabbit.core.state.db.DerbyPersistenceManager">
+    <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
       <param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>
       <param name="schemaObjectPrefix" value="${wsp.name}_"/>
     </PersistenceManager>
@@ -156,7 +145,7 @@
       <param name="path" value="${rep.home}/version"/>
     </FileSystem>
 
-    <PersistenceManager class="org.apache.jackrabbit.core.state.db.DerbyPersistenceManager">
+    <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
       <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true"/>
       <param name="schemaObjectPrefix" value="version_"/>
     </PersistenceManager>

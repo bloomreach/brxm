@@ -125,7 +125,7 @@ public class SampleWorkflowTest {
             InvocationTargetException {
         SampleWorkflowSetup.commonStart(server);
         try {
-            Session session = server.login("dummy","dummy".toCharArray());
+            Session session = server.login("admin","admin".toCharArray());
             Node root = session.getRootNode();
 
             Node node = root.getNode("files/myarticle");

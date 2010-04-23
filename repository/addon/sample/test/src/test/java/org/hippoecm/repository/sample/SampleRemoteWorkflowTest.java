@@ -72,7 +72,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         SampleWorkflowSetup.commonStart(backgroundServer);
         try {
 
-            Session session = server.login("dummy", "dummy".toCharArray());
+            Session session = server.login("admin", "admin".toCharArray());
 
             // UserTransaction ut = server.getUserTransaction(getTransactionManager(), session);
             // ut.begin();
@@ -122,7 +122,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         SampleWorkflowSetup.commonStart(backgroundServer);
         try {
 
-            Session session = server.login("dummy", "dummy".toCharArray());
+            Session session = server.login("admin", "admin".toCharArray());
 
             Node root = session.getRootNode();
 
