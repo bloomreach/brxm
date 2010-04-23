@@ -186,8 +186,15 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 Map<String, String> details = new HashMap<String, String>();
                 details.put("type", ex.getClass().getName());
                 details.put("message", ex.getMessage());
-                ExceptionLabel label = new ExceptionLabel(id, new StringResourceModel("exception,${type},${message}",
-                        AbstractDialog.this, new Model<Serializable>((Serializable) details), ex.getLocalizedMessage()), ex,
+                StackTraceElement[] elements = ex.getStackTrace();
+                if (elements.length > 0) {
+                    StackTraceElement top = elements[0];
+                    details.put("clazz", top.getClassName());
+                }
+                ExceptionLabel label = new ExceptionLabel(id, new StringResourceModel(
+                        "exception,type=${type},message=${message}"
+                                + (details.containsKey("clazz") ? ",class=${clazz}" : ""), AbstractDialog.this,
+                        new Model<Serializable>((Serializable) details), ex.getLocalizedMessage()), ex,
                         ExceptionFeedbackPanel.this.getEscapeModelStrings());
                 return label;
             } else {
