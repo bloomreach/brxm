@@ -97,7 +97,7 @@ abstract class SampleWorkflowSetup
     }
 
     static void commonEnd(HippoRepository server) throws RepositoryException {
-        Session session = server.login("dummy","dummy".toCharArray());
+        Session session = server.login("admin","admin".toCharArray());
         Node root = session.getRootNode();
         root.getNode("files").remove();
 

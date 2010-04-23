@@ -49,7 +49,7 @@ public class SamplePersistencyTest {
 
     @Test
     public void testAuthorDocument() throws RepositoryException {
-        Session session = server.login("dummy","dummy".toCharArray());
+        Session session = server.login("admin","admin".toCharArray());
 
         DocumentManager manager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
         Document document = manager.getDocument("authors","Jan Smit");
