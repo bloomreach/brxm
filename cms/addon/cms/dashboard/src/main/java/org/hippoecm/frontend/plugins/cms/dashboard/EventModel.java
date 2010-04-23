@@ -32,7 +32,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventModel implements IComponentAssignedModel {
+public class EventModel implements IComponentAssignedModel<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -72,7 +72,9 @@ public class EventModel implements IComponentAssignedModel {
             }
 
             this.time = timestamp;
-            this.method = node.getProperty("hippolog:eventMethod").getString();
+            // add eventClass to resolve workflow resource bundle
+            this.method = node.getProperty("hippolog:eventMethod").getString() + ",class="
+                    + node.getProperty("hippolog:eventClass").getString();
             this.user = node.getProperty("hippolog:eventUser").getString();
             this.nameModel = nameModel;
         } catch (RepositoryException ex) {
@@ -84,11 +86,11 @@ public class EventModel implements IComponentAssignedModel {
         return new AssignmentWrapper(component);
     }
 
-    public Object getObject() {
+    public String getObject() {
         throw new UnsupportedOperationException("Model " + getClass() + " does not support getObject(Object)");
     }
 
-    public void setObject(Object object) {
+    public void setObject(String object) {
         throw new UnsupportedOperationException("Model " + getClass() + " does not support setObject(Object)");
     }
 
@@ -167,7 +169,7 @@ public class EventModel implements IComponentAssignedModel {
         return df.format(nodeCal);
     }
 
-    private class AssignmentWrapper implements IWrapModel {
+    private class AssignmentWrapper implements IWrapModel<String> {
         private static final long serialVersionUID = 1L;
 
         private final Component component;
@@ -179,19 +181,21 @@ public class EventModel implements IComponentAssignedModel {
         /**
          * @see org.apache.wicket.model.IWrapModel#getWrappedModel()
          */
-        public IModel getWrappedModel() {
+        public IModel<String> getWrappedModel() {
             return EventModel.this;
         }
 
-        public Object getObject() {
+        public String getObject() {
             if (nameModel != null) {
                 String name = nameModel.getObject();
                 name = StringEscapeUtils.escapeHtml(name);
-                return new StringResourceModel(time, component, null, "").getString()
-                        + new StringResourceModel(method, component, null, new Object[] { user, name }).getString();
+                StringResourceModel operationModel = new StringResourceModel(method, component, null, new Object[] {
+                        user, name });
+                return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
             } else {
-                return new StringResourceModel(time, component, null, "").getString()
-                        + new StringResourceModel(method, component, null, new Object[] { user }).getString();
+                StringResourceModel operationModel = new StringResourceModel(method, component, null,
+                        new Object[] { user });
+                return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
             }
         }
 
@@ -202,7 +206,7 @@ public class EventModel implements IComponentAssignedModel {
         /**
          * @see org.apache.wicket.model.AbstractReadOnlyModel#setObject()
          */
-        public void setObject(Object object) {
+        public void setObject(String object) {
             throw new UnsupportedOperationException("Model " + getClass() + " does not support setObject(Object)");
         }
 

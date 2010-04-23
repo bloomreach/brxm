@@ -39,10 +39,10 @@ public class BrowseLink extends Panel {
     static final Logger log = LoggerFactory.getLogger(BrowseLink.class);
 
     public BrowseLink(final IPluginContext context, final IPluginConfig config, String id,
-            IModel/*<BrowseTarget>*/model, IModel/*<String>*/labelModel) {
+            IModel<BrowseLinkTarget> model, IModel<String> labelModel) {
         super(id, model);
 
-        AjaxLink link = new AjaxLink("link") {
+        AjaxLink<Void> link = new AjaxLink<Void>("link") {
             private static final long serialVersionUID = 1L;
 
             @SuppressWarnings("unchecked")

@@ -15,12 +15,15 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.MissingResourceException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
 import org.apache.wicket.model.IModel;
 
+/**
+ * A Localizer implementation that interprets keys as criteria of descending
+ * importance.  Different criteria are separated by a "," (comma).  Criteria
+ * are dropped until a match is found.
+ */
 public class StagedLocalizer extends Localizer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
@@ -29,17 +32,15 @@ public class StagedLocalizer extends Localizer {
     }
 
     @Override
-    public String getString(String key, final Component component, final IModel model,
-                            final String defaultValue) throws MissingResourceException {
+    public String getStringIgnoreSettings(String key, final Component component, final IModel<?> model,
+            final String defaultValue) {
         while (key.contains(",")) {
-            try {
-                String string = super.getString(key, component, model, "       ");
-                if(!string.equals("       "))
-                    return string;
-            } catch (MissingResourceException ex) {
+            String value = super.getStringIgnoreSettings(key, component, model, null);
+            if (value != null) {
+                return value;
             }
             key = key.substring(0, key.lastIndexOf(','));
         }
-        return super.getString(key, component, model, defaultValue);
+        return super.getStringIgnoreSettings(key, component, model, defaultValue);
     }
 }

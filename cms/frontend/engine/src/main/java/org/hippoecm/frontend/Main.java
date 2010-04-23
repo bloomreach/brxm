@@ -23,8 +23,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -34,7 +32,6 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
@@ -50,7 +47,6 @@ import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
-import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
@@ -168,51 +164,8 @@ public class Main extends WebApplication {
         // replace current loaders with own list, starting with component-specific
         List<IStringResourceLoader> loaders = new ArrayList<IStringResourceLoader>(resourceSettings
                 .getStringResourceLoaders());
-        resourceSettings.addStringResourceLoader(new IStringResourceLoader() {
-
-            public String loadStringResource(Component component, String key) {
-                IStringResourceProvider provider;
-                if (component instanceof IStringResourceProvider) {
-                    provider = (IStringResourceProvider) component;
-                } else if (component != null) {
-                    provider = component.findParent(IStringResourceProvider.class);
-                } else {
-                    return null;
-                }
-                if (provider != null) {
-                    Map<String, String> keys = new MiniMap<String, String>(5);
-                    keys.put(HippoNodeType.HIPPO_KEY, key);
-
-                    Locale locale = component.getLocale();
-                    keys.put(HippoNodeType.HIPPO_LANGUAGE, locale.getLanguage());
-
-                    String value = locale.getCountry();
-                    if (value != null) {
-                        keys.put("country", locale.getCountry());
-                    }
-
-                    value = locale.getVariant();
-                    if (value != null) {
-                        keys.put("variant", locale.getVariant());
-                    }
-
-                    value = component.getStyle();
-                    if (value != null) {
-                        keys.put("style", value);
-                    }
-
-                    String result = provider.getString(keys);
-                    if (result != null) {
-                        return result;
-                    }
-                }
-                return null;
-            }
-
-            public String loadStringResource(Class clazz, String key, Locale locale, String style) {
-                return null;
-            }
-        });
+        resourceSettings.addStringResourceLoader(new StringResourceProviderConsumer());
+        resourceSettings.addStringResourceLoader(new ClassFromKeyStringResourceLoader());
         for (IStringResourceLoader loader : loaders) {
             resourceSettings.addStringResourceLoader(loader);
         }
