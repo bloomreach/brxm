@@ -26,13 +26,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 public interface VirtualHost {
 
     /**
-     * Returns the site name for the host if one is configured. If there is no siteName configured, the siteName must be part of the requestUri.
-     * 
-     * @return the siteName belonging to this virtual host, or <code>null</code>
-     */
-    String getSiteName();
-    
-    /**
      * 
      * @param name the name segment of the hostname
      * @return the child <code>VirtualHost</code> or <code>null</code> if none found
@@ -59,19 +52,16 @@ public interface VirtualHost {
    ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
     
     /**
-     * 
      * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>
      */
     VirtualHosts getVirtualHosts();
     
     /**
-     * 
      * @return <code>true</code> when the created url should have the contextpath in it
      */
     boolean isContextPathInUrl();
     
     /**
-     * 
      * @return <code>true</code> when an externalized (starting with http/https) should contain a port number
      */
     boolean isPortVisible();

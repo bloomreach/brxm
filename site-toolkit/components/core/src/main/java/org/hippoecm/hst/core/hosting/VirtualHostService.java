@@ -15,10 +15,7 @@
  */
 package org.hippoecm.hst.core.hosting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -40,11 +37,8 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
     
-    
-    
     private Map<String, VirtualHostService> childVirtualHosts = new HashMap<String, VirtualHostService>();
    
-    private String siteName;
     private String id;
     private String name;
     private VirtualHosts virtualHosts;
@@ -62,13 +56,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.id = this.getValueProvider().getPath();
         this.jcrPath = this.id;
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SITENAME)) {
-            this.siteName = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_SITENAME);
-        } else {
-            if(parentHost != null) {
-                this.siteName = parentHost.siteName;
-            } 
-        }
         if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_PORT)) {
             this.portNumber = this.getValueProvider().getLong(HstNodeTypes.VIRTUALHOST_PROPERTY_PORT).intValue();
         } else {
@@ -115,6 +102,19 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             }
         }
         
+        try {
+            if(virtualHostNode.hasNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME)) {
+                // we have a configured root sitemount node. Let's populate this sitemount for this host
+                Node siteMount = virtualHostNode.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
+                this.rootSiteMount = new SiteMountService(siteMount, null, this);
+            } else {
+                // if the parent host has a root sitemount not equal to null, we inherit that one
+                this.rootSiteMount = parentHost != null ? parentHost.rootSiteMount : null;
+            }
+        } catch (RepositoryException e) {
+            throw new ServiceException("Error during creating sitemounts: ", e);
+        }
+        
         String fullName = this.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
         if(nameSegments.length > 1) {
@@ -122,9 +122,9 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             // the last child is 'www'
             this.name = nameSegments[nameSegments.length - 1];
             // add child host services
-            int position = nameSegments.length - 2;
-            if(position > -1 ) {
-                VirtualHostService childHost = new VirtualHostService(this, nameSegments, position);
+            int depth = nameSegments.length - 2;
+            if(depth > -1 ) {
+                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth);
                 this.childVirtualHosts.put(childHost.getName(), childHost);
             }
         } else {
@@ -140,7 +140,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 this.childVirtualHosts.put(childHost.getName(), childHost);
             }
         } catch (RepositoryException e) {
-            throw new ServiceException("Error during initializing hosts: {}", e);
+            throw new ServiceException("Error during initializing hosts", e);
         }
         
     }
@@ -151,7 +151,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.virtualHosts = virtualHostService.virtualHosts;
         this.id = virtualHostService.id+"_";
         this.jcrPath = virtualHostService.jcrPath;
-        this.siteName = virtualHostService.siteName;
         this.portNumber = virtualHostService.portNumber;
         this.protocol = virtualHostService.protocol;
         this.portVisible = virtualHostService.portVisible;
@@ -184,10 +183,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     public String getJcrPath(){
         return this.jcrPath;
     }
-   
-    public String getSiteName() {
-        return this.siteName;
-    }
 
     public boolean isPortVisible() {
         return portVisible;
@@ -210,7 +205,16 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     }
 
     public Service[] getChildServices() {
-        return childVirtualHosts.values().toArray(new Service[childVirtualHosts.values().size()]);
+        // the services are the child host AND the root sitemount if this one is not null
+        Service[] childServices = childVirtualHosts.values().toArray(new Service[childVirtualHosts.values().size()]);
+        if(this.rootSiteMount != null) {
+            Service[] servicesPlusSiteMount = new Service[childServices.length + 1];
+            System.arraycopy(childServices, 0, servicesPlusSiteMount, 0, childServices.length);
+            // and add to the end the sitemount
+            servicesPlusSiteMount[childServices.length] = (Service)rootSiteMount;
+            return servicesPlusSiteMount;
+        } 
+        return childServices;
     }
 
 

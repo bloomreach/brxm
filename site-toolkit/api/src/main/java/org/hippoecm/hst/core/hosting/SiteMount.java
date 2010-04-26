@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.core.hosting;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstSite;
@@ -126,7 +124,8 @@ public interface SiteMount {
     /**
      * @return the List of child SiteMount's. If there are no child SiteMount's, and empty List must be returned
      */
-    List<SiteMount> getSiteMountChilds();
+    // TODO Do we need this one?
+    //List<SiteMount> getSiteMountChilds();
     
     /**
      * @return the virtualHost where this SiteMount belongs to
@@ -175,5 +174,10 @@ public interface SiteMount {
      * @return <code>true</code> when this SiteMount is configured to be a preview site mount
      */
     boolean isPreview();
+    
+    /**
+     * @return the named pipeline to be used for this SiteMount or <code>null</code> when the default pipeline is to be used
+     */
+    String getNamedPipeline();
     
 }

@@ -139,9 +139,9 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
             // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
             // with their id, hence, we cannot get them directly, but have to test them all
             String[] requestServerNameSegments = requestServerName.split("\\.");
-            int position = requestServerNameSegments.length - 1;
-            if(requestServerNameSegments[position].equals(virtualHost.getName())) {
-                host = traverseInToHost(virtualHost, requestServerNameSegments, position);
+            int depth = requestServerNameSegments.length - 1;
+            if(requestServerNameSegments[depth].equals(virtualHost.getName())) {
+                host = traverseInToHost(virtualHost, requestServerNameSegments, depth);
                 if(host != null) {
                     if(host.getRootSiteMount() !=  null) {
                         break;
@@ -158,23 +158,23 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
      * Override this method if you want a different algorithm to resolve requestServerName
      * @param matchedHost
      * @param hostNameSegments
-     * @param position
+     * @param depth
      * @return
      */
-    protected VirtualHost traverseInToHost(VirtualHost matchedHost, String[] hostNameSegments, int position) {
-        if(position == 0) {
+    protected VirtualHost traverseInToHost(VirtualHost matchedHost, String[] hostNameSegments, int depth) {
+        if(depth == 0) {
             return matchedHost;
         }
         
-        --position;
+        --depth;
         
-        VirtualHost vhost = matchedHost.getChildHost(hostNameSegments[position]);
+        VirtualHost vhost = matchedHost.getChildHost(hostNameSegments[depth]);
         if(vhost == null) {
             if( (vhost = matchedHost.getChildHost(WILDCARD)) != null) {
                 return vhost;
             }
         } else {
-            return traverseInToHost(vhost, hostNameSegments, position);
+            return traverseInToHost(vhost, hostNameSegments, depth);
         }
         return null;
     }

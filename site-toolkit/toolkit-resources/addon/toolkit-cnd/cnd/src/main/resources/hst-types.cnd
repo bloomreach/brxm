@@ -112,7 +112,7 @@
 
 [hst:virtualhost]
 + * (hst:virtualhost)
-+ root (hst:sitemount)
++ hst:root (hst:sitemount)
 - hst:port (long)
 - hst:showcontextpath (boolean)
 - hst:showport(boolean)

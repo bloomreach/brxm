@@ -59,19 +59,19 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
-        <sv:node sv:name="root">
+        <sv:node sv:name="hst:root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:sitemount</sv:value>
           </sv:property>
           <sv:property sv:name="hst:mountpath" sv:type="String">
-            <sv:value>/testlive/testpreview</sv:value>
+            <sv:value>/testlive/testproject</sv:value>
           </sv:property>
           <sv:node sv:name="preview">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:sitemount</sv:value>
           </sv:property>
           <sv:property sv:name="hst:mountpath" sv:type="String">
-            <sv:value>/testpreview/testpreview</sv:value>
+            <sv:value>/testpreview/testproject</sv:value>
           </sv:property>
           <sv:node sv:name="services">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
