@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BasicPoolingRepository implements PoolingRepository, MultipleRepositoryAware {
     
-    private static Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
+    protected static Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
     
     protected Repository repository;
     protected Credentials defaultCredentials;           // credentials provided by the configuration or the user
@@ -225,10 +225,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @return a read-only session
      */
     public Session login() throws LoginException, RepositoryException {
+        if (sessionPool == null) {
+            throw new RepositoryException("The session pool of the pooling repository has not been initialized yet.");
+        }
+        
         Session session = null;
-
+        
         try {
-            session = (Session) this.sessionPool.borrowObject();
+            session = (Session) sessionPool.borrowObject();
             
             // If client retrieves a session, then register it as a disposable. 
             if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
@@ -282,6 +286,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
     
     public void returnSession(Session session) {
+        if (sessionPool == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("The session pool of the pooling repository has not been initialized yet.");
+            }
+            
+            return;
+        }
+        
         try {
             this.sessionPool.returnObject(session);
         } catch (Exception e) {
