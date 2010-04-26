@@ -17,22 +17,18 @@ package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImage;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
@@ -140,7 +136,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
             return false;
         }
         try {
-            return node.isNodeType("mix:referenceable");
+            return !node.isNodeType("hippostd:folder");
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             return false;
