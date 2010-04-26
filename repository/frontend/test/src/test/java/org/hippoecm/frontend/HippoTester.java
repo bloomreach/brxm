@@ -293,7 +293,7 @@ public class HippoTester extends WicketTester {
         if (appFactory != null) {
             home = (Home) super.startPage(new Home(appFactory));
         } else {
-            home = (Home) super.startPage(new Home(new TestApplicationFactory()));
+            home = (Home) super.startPage(Home.class);
         }
         rc.detach();
         return home;
