@@ -35,30 +35,14 @@ public class PluginConfigFactory implements IPluginConfigService {
     private IPluginConfigService pluginConfigService;
 
     public PluginConfigFactory(UserSession userSession, IApplicationFactory defaultFactory) {
-        IApplicationFactory builtinFactory = new BuiltinApplicationFactory();
-
         String appName = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
                 Main.PLUGIN_APPLICATION_NAME, null);
-        IValueMap credentials = userSession.getCredentials();
-        if (UserSession.DEFAULT_CREDENTIALS.equals(credentials)) {
-            appName = "login";
-        }
-
-        IPluginConfigService baseService;
-        try {
-            if (appName == null) {
-                baseService = defaultFactory.getDefaultApplication();
-                if (baseService == null) {
-                    baseService = builtinFactory.getDefaultApplication();
-                }
-            } else {
-                baseService = defaultFactory.getApplication(appName);
-                if (baseService == null) {
-                    baseService = builtinFactory.getDefaultApplication();
-                }
-            }
-        } catch (Exception e) {
-            baseService = builtinFactory.getApplication("login");
+        appName = userSession.getApplicationName(appName);
+        IPluginConfigService baseService = null;
+        if (appName == null) {
+            baseService = defaultFactory.getDefaultApplication();
+        } else {
+            baseService = defaultFactory.getApplication(appName);
         }
         pluginConfigService = baseService;
     }

@@ -15,16 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
@@ -42,8 +50,10 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.InvalidLoginPage;
+import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -61,11 +71,11 @@ public class LoginPlugin extends RenderPlugin {
 
     private static final String LOCALE_COOKIE = "loc";
 
-    protected ValueMap credentials = new ValueMap();
+    protected String username;
+    protected String password;
 
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
         add(createSignInForm("signInForm"));
         add(new Label("pinger"));
     }
@@ -80,7 +90,7 @@ public class LoginPlugin extends RenderPlugin {
         container.getHeaderResponse().renderOnLoadJavascript("document.forms.signInForm.username.focus();");
     }
 
-    protected class SignInForm extends Form {
+    protected class SignInForm extends Form implements CallbackHandler {
         private static final long serialVersionUID = 1L;
 
         protected final DropDownChoice locale;
@@ -115,8 +125,8 @@ public class LoginPlugin extends RenderPlugin {
                 }
             }
 
-            add(usernameTextField = new RequiredTextField("username", new StringPropertyModel(credentials, "username")));
-            add(passwordTextField = new PasswordTextField("password", new StringPropertyModel(credentials, "password")));
+            add(usernameTextField = new RequiredTextField("username", new PropertyModel<String>(LoginPlugin.this, "username")));
+            add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this, "password")));
             add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales));
 
             passwordTextField.setResetPassword(false);
@@ -148,7 +158,7 @@ public class LoginPlugin extends RenderPlugin {
                         userLabel.setDefaultModel(new Model(""));
                     }
                     target.addComponent(userLabel);
-                    credentials.put("username", username);
+                    LoginPlugin.this.username = username;
                 }
             });
 
@@ -156,7 +166,7 @@ public class LoginPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
-                    credentials.put("password", this.getComponent().getDefaultModelObjectAsString());
+                    LoginPlugin.this.password = password;
                 }
             });
 
@@ -181,33 +191,35 @@ public class LoginPlugin extends RenderPlugin {
             UserSession userSession = (UserSession) getSession();
             String username = usernameTextField.getDefaultModelObjectAsString();
             HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
+            boolean success = userSession.login(new UserCredentials(this));
             ConcurrentLoginFilter.validateSession(session, username, false);
-            userSession.login(credentials);
             userSession.setLocale(new Locale(selectedLocale));
-            userSession.getJcrSession();
-            redirect();
+            redirect(success);
         }
 
-        protected void redirect() {
+        protected void redirect(boolean success) {
+            if (success == false) {
+                Main main = (Main) Application.get();
+                main.resetConnection();
+                throw new RestartResponseException(InvalidLoginPage.class);
+            }
             if (parameters != null) {
                 setResponsePage(Home.class, new PageParameters(parameters));
             } else {
                 setResponsePage(Home.class);
             }
         }
-    }
 
-    protected static class StringPropertyModel extends PropertyModel<String> {
-        private static final long serialVersionUID = 1L;
-
-        public StringPropertyModel(Object modelObject, String expression) {
-            super(modelObject, expression);
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public Class getObjectClass() {
-            return String.class;
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            for(Callback callback : callbacks) {
+                if(callback instanceof NameCallback) {
+                    NameCallback nameCallback = (NameCallback) callback;
+                    nameCallback.setName(username);
+                } else if(callback instanceof PasswordCallback) {
+                    PasswordCallback passwordCallback = (PasswordCallback) callback;
+                    passwordCallback.setPassword(password.toCharArray());
+                }
+            }
         }
     }
 }

@@ -53,6 +53,7 @@ import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.string.StringValueConversionException;
+import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
@@ -71,6 +72,8 @@ public class Main extends WebApplication {
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
+    public final static String REPOSITORY_USERNAME_PARAM = "repository-username";
+    public final static String REPOSITORY_PASSWORD_PARAM = "repository-password";
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static String PLUGIN_APPLICATION_NAME = "config";
@@ -302,6 +305,9 @@ public class Main extends WebApplication {
             } else {
                 repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
             }
+            String repositoryUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
+            String repositoryPassword = getConfigurationParameter(REPOSITORY_PASSWORD_PARAM, null);
+            UserSession.setCredentials(new UserCredentials(repositoryUsername, repositoryPassword));
         }
         return repository;
     }
