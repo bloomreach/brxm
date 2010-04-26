@@ -361,6 +361,13 @@
       <version>2.13.01-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- upgrade modules -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-upgrade</artifactId>
+      <version>2.13.01-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
