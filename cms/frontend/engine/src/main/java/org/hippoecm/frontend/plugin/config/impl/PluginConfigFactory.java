@@ -39,10 +39,19 @@ public class PluginConfigFactory implements IPluginConfigService {
                 Main.PLUGIN_APPLICATION_NAME, null);
         appName = userSession.getApplicationName(appName);
         IPluginConfigService baseService = null;
-        if (appName == null) {
-            baseService = defaultFactory.getDefaultApplication();
-        } else {
-            baseService = defaultFactory.getApplication(appName);
+        try {
+            if (appName == null) {
+                baseService = defaultFactory.getDefaultApplication();
+            } else {
+                baseService = defaultFactory.getApplication(appName);
+            }
+        } catch(Exception ex) {
+        }
+        if (baseService == null) {
+            JavaConfigService fallbackService = new JavaConfigService("test");
+            JavaClusterConfig plugins = new JavaClusterConfig();
+            fallbackService.addClusterConfig("test", plugins);
+            baseService = fallbackService;
         }
         pluginConfigService = baseService;
     }

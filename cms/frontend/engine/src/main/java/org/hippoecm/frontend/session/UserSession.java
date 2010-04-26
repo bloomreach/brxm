@@ -126,6 +126,29 @@ public class UserSession extends WebSession {
         dirty();
     }
 
+    @Deprecated
+    public UserSession(Request request, LoadableDetachableModel<Session> jcrSessionModel) {
+        super(request);
+        classLoader = new LoadableDetachableModel<ClassLoader>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected ClassLoader load() {
+                return null;
+            }
+        };
+        workflowManager = new LoadableDetachableModel<WorkflowManager>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected WorkflowManager load() {
+                return null;
+            }
+        };
+        login((UserCredentials)null, jcrSessionModel);
+        //Calling the dirty() method causes this wicket session to be reset in the http session
+        //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
+        dirty();
+    }
+
     private IModel<Session> getJcrSessionModel() {
         synchronized (jcrSessions) {
             JcrSessionReference ref = jcrSessions.get(this);
