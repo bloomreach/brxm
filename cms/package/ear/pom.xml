@@ -264,6 +264,13 @@
       <version>2.13.01-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+
+    <!-- upgrade modules -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-upgrade</artifactId>
+      <version>2.13.01-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
