@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-frontend</artifactId>
-    <version>2.13.01-SNAPSHOT</version>
+    <version>2.14.00-SNAPSHOT</version>
   </parent>
 
   <name>Frontend plugins</name>
@@ -50,22 +50,22 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.13.01-SNAPSHOT</version>
+      <version>2.14.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.13.01-SNAPSHOT</version>
+      <version>2.14.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-projectexport</artifactId>
-      <version>2.13.01-SNAPSHOT</version>
+      <version>2.14.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
-      <version>2.13.01-SNAPSHOT</version>
+      <version>2.14.00-SNAPSHOT</version>
     </dependency>
 
     <dependency>
