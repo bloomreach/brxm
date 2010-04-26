@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.model;
 
 import java.rmi.RemoteException;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -30,7 +29,6 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -58,10 +56,10 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     private static final Logger log = LoggerFactory.getLogger(JcrSessionModel.class);
 
-    private final IValueMap credentials;
+    private UserCredentials credentials;
     private String remoteAddress;
 
-    public JcrSessionModel(IValueMap credentials) {
+    public JcrSessionModel(UserCredentials credentials) {
         this.credentials = credentials;
         this.remoteAddress = ((WebRequestCycle) RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
     }
@@ -114,12 +112,12 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     @Override
     public void detach() {
         if (log.isInfoEnabled()) {
-            String username = credentials.getStringValue("username").toString();
+            String username = credentials.getUsername();
             if (username != null && username.length() > 0) {
                 // don't log logouts from anonymous (eg login screen)
                 log.info("[" + getRemoteAddr() + "] Logout as " + username + " from Hippo CMS 7");
             }
-        }
+            }
         if (isAttached()) {
             flush();
         }
@@ -130,31 +128,29 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     protected Session load() {
         javax.jcr.Session session = null;
         boolean fatalError = false;
+        String username = (credentials != null ? credentials.getUsername() : null);
         try {
-            Main main = (Main) Application.get();
-            HippoRepository repository = main.getRepository();
-            String username = credentials.getString("username");
-            String password = credentials.getString("password");
-            if (repository != null && username != null && password != null) {
-                session = repository.login(username, password.toCharArray());
-                try {
-                    logLogin(session);
-                    if (isSystemUser(session)) {
-                        session = null;
-                        log.warn("[" + getRemoteAddr() + "] Login not allowed for system user: " + credentials.getString("username"));
-                    } else {
-                        log.info("[" + getRemoteAddr() + "] Login by: " + credentials.getString("username"));
-                    }
-                } catch (AccessDeniedException e) {
-                    log.debug("Unable to log login event (maybe trying as Anonymous?): " + e.getMessage());
-                } catch (RepositoryException e) {
-                    log.error("RepositoryException while logging login event", e);
-                } catch (RemoteException e) {
-                    log.error("RemoteException while logging login event", e);
+            session = login(credentials);
+            if (session == null) {
+                return null;
+            }
+            try {
+                logLogin(session);
+                if (isSystemUser(session)) {
+                    session = null;
+                    log.warn("[" + getRemoteAddr() + "] Login not allowed for system user: " + username);
+                } else {
+                    log.info("[" + getRemoteAddr() + "] Login by: " + username);
                 }
+            } catch (AccessDeniedException e) {
+                log.debug("Unable to log login event (maybe trying as Anonymous?): " + e.getMessage());
+            } catch (RepositoryException e) {
+                log.error("RepositoryException while logging login event", e);
+            } catch (RemoteException e) {
+                log.error("RemoteException while logging login event", e);
             }
         } catch (LoginException e) {
-            log.info("[" + getRemoteAddr() + "] Invalid login as user: " + credentials.getString("username"));
+            log.info("[" + getRemoteAddr() + "] Invalid login as user: " + username);
         } catch (RepositoryException e) {
             fatalError = true;
             log.error("Unable to obtain repository instance, aborting.", e);
@@ -167,8 +163,17 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
         return session;
     }
 
+    public static Session login(UserCredentials credentials) throws LoginException, RepositoryException {
+        Main main = (Main)Application.get();
+        HippoRepository repository = main.getRepository();
+        if (credentials != null) {
+            return repository.getRepository().login(credentials.getJcrCredentials());
+        } else
+            return null;
+    }
+
     private void logLogin(Session session) throws RepositoryException, RemoteException {
-        if (session.getRootNode().hasNode(HippoNodeType.LOG_PATH)
+        if (session != null && session.getRootNode().hasNode(HippoNodeType.LOG_PATH)
                 && session.getRootNode().getNode(HippoNodeType.LOG_PATH).getProperty("hippolog:enabled")
                         .getBoolean()) {
             Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(

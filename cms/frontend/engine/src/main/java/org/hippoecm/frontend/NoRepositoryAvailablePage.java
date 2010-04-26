@@ -16,14 +16,24 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.frontend.plugin.config.impl.BuiltinApplicationFactory;
+import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 
 public class NoRepositoryAvailablePage extends Home {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     public NoRepositoryAvailablePage() {
-        super(new BuiltinApplicationFactory());
+        super(new IApplicationFactory() {
+
+            public IPluginConfigService getDefaultApplication() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public IPluginConfigService getApplication(String name) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
 
         error(new ResourceModel("repository.not.available").getObject());
     }

@@ -261,15 +261,7 @@ public class HippoTester extends WicketTester {
 
             @Override
             public UserSession newSession(Request request, Response response) {
-                return new UserSession(request, new LoadableDetachableModel<javax.jcr.Session>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected javax.jcr.Session load() {
-                        return new DummySession();
-                    }
-                    
-                });
+                return new UserSession(request);
             }
         }, factory);
     }

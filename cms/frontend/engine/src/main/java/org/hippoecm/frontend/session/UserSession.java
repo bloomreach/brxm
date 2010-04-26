@@ -23,25 +23,24 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.QueryManager;
 
+import javax.security.auth.callback.CallbackHandler;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebSession;
-import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.FacetSearchObserver;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -65,25 +64,22 @@ public class UserSession extends WebSession {
 
     static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
-    public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
+    private static Session fallbackSession = null;
+    private static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
 
-    static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
-
-    private IValueMap credentials;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
     private FacetSearchObserver facetSearchObserver;
 
-    public UserSession(Request request) {
-        this(request, new JcrSessionModel(DEFAULT_CREDENTIALS));
+    public static void setCredentials(UserCredentials credentials) throws RepositoryException {
+        fallbackSession = JcrSessionModel.login(credentials);
     }
 
-    @Deprecated
-    public UserSession(Request request, JcrSessionModel sessionModel) {
-        this(request, (IModel<Session>) sessionModel);
+    public UserSession(Request request) {
+        this(request, (UserCredentials)null);
     }
-    
-    public UserSession(Request request, IModel<Session> sessionModel) {
+
+    public UserSession(Request request, UserCredentials credentials) {
         super(request);
 
         classLoader = new LoadableDetachableModel<ClassLoader>() {
@@ -123,14 +119,14 @@ public class UserSession extends WebSession {
 
         };
 
-        doLogin(DEFAULT_CREDENTIALS, sessionModel);
+        login(credentials);
 
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
         dirty();
     }
 
-    protected IModel<Session> getJcrSessionModel() {
+    private IModel<Session> getJcrSessionModel() {
         synchronized (jcrSessions) {
             JcrSessionReference ref = jcrSessions.get(this);
             if (ref != null) {
@@ -146,15 +142,18 @@ public class UserSession extends WebSession {
      */
     public Session getJcrSession() {
         Session session = getJcrSessionInternal();
-        if (session != null) {
-            return session;
+        if (session == null) {
+            session = fallbackSession;
+            if (session == null) {
+                Main main = (Main) Application.get();
+                main.resetConnection();
+                throw new RestartResponseException(NoRepositoryAvailablePage.class);
+            }
         }
-        Main main = (Main) Application.get();
-        main.resetConnection();
-        throw new RestartResponseException(NoRepositoryAvailablePage.class);
+        return session;
     }
 
-    protected final Session getJcrSessionInternal() {
+    private Session getJcrSessionInternal() {
         IModel<Session> sessionModel = getJcrSessionModel();
         if (sessionModel != null) {
             Session result = getJcrSessionModel().getObject();
@@ -179,32 +178,25 @@ public class UserSession extends WebSession {
         facetSearchObserver = null;
     }
 
-    /**
-     * The credentials that were used to login, or DEFAULT_CREDENTIALS if no login has taken place yet.
-     * <p>
-     * Use of this method is deprecated; use getJcrSession().getUserID() instead to obtain the user name.
-     */
     @Deprecated
-    public IValueMap getCredentials() {
-        return credentials;
+    public boolean login(ValueMap credentials, LoadableDetachableModel<Session> jcrSessionModel) {
+        return login(new UserCredentials(credentials.getString("username"), credentials.getString("password")), jcrSessionModel);
     }
 
-    public void login(IValueMap credentials) {
-        login(credentials, new JcrSessionModel(credentials));
+    @Deprecated
+    public boolean login(ValueMap credentials) {
+        return login(credentials, null);
     }
 
-    public void login(IValueMap credentials, IModel<Session> sessionModel) {
-        if (sessionModel.getObject() == null) {
-            Main main = (Main) Application.get();
-            main.resetConnection();
-            throw new RestartResponseException(InvalidLoginPage.class);
+    public boolean login(UserCredentials credentials) {
+        return login(credentials, null);
+    }
+
+    @Deprecated
+    public boolean login(UserCredentials credentials, LoadableDetachableModel<Session> sessionModel) {
+        if (sessionModel == null) {
+            sessionModel = new JcrSessionModel(credentials);
         }
-
-        doLogin(credentials, sessionModel);
-    }
-
-    void doLogin(IValueMap credentials, IModel<Session> sessionModel) {
-        this.credentials = credentials;
         classLoader.detach();
         workflowManager.detach();
         facetSearchObserver = null;
@@ -222,6 +214,11 @@ public class UserSession extends WebSession {
         if (oldModel != null) {
             oldModel.detach();
         }
+        if (sessionModel.getObject() == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public void logout() {
@@ -229,7 +226,17 @@ public class UserSession extends WebSession {
         workflowManager.detach();
         facetSearchObserver = null;
 
-        doLogin(DEFAULT_CREDENTIALS, new JcrSessionModel(DEFAULT_CREDENTIALS));
+        IModel<Session> oldModel = null;
+        synchronized (jcrSessions) {
+            JcrSessionReference sessionRef = jcrSessions.get(this);
+            if (sessionRef != null) {
+                oldModel = sessionRef.jcrSession;
+                jcrSessions.remove(this);
+            }
+        }
+        if (oldModel != null) {
+            oldModel.detach();
+        }
 
         dirty();
         throw new RestartResponseException(WebApplication.get().getHomePage());
@@ -329,5 +336,13 @@ public class UserSession extends WebSession {
         ++componentNum;
         pluginComponentCounters.put(markupId, new Integer(componentNum));
         return markupId + "_" + componentNum;
+    }
+
+    public String getApplicationName(String defaultApplication) {
+        String userID = getJcrSession().getUserID();
+        if(userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous"))
+            return "login";
+        else
+            return defaultApplication;
     }
 }

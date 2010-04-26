@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import java.rmi.RemoteException;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
@@ -23,9 +23,13 @@ import java.util.Locale;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.Cookie;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,16 +38,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,16 +72,14 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     @Override
     protected LoginPlugin.SignInForm createSignInForm(String id) {
         boolean rememberme = false;
-        ;
         Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
                 if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
                     String passphrase = cookies[i].getValue();
                     if (passphrase != null && passphrase.contains("$")) {
-                        String username = Base64.decode(passphrase.split("\\$")[1]);
-                        credentials.put("username", username);
-                        credentials.put("password", "********");
+                        username = Base64.decode(passphrase.split("\\$")[1]);
+                        password = "********";
                         rememberme = true;
                     }
                     break;
@@ -124,88 +121,76 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         }
 
         @Override
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            String username = RememberMeLoginPlugin.this.username;
+            String password = RememberMeLoginPlugin.this.password;
+            if (rememberme) {
+                if (password == null || password.equals("") || password.replaceAll("\\*", "").equals("")) {
+                    Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+                    for (int i = 0; i < cookies.length; i++) {
+                        if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
+                            String passphrase = cookies[i].getValue();
+                            String strings[] = passphrase.split("\\$");
+                            if (strings.length == 3) {
+                                username = Base64.decode(strings[1]);
+                                password = strings[0] + "$" + strings[2];
+                            }
+                            break;
+                        }
+                    }
+                    for (Callback callback : callbacks) {
+                        if (callback instanceof NameCallback) {
+                            ((NameCallback)callback).setName(username);
+                        } else if (callback instanceof PasswordCallback) {
+                            ((PasswordCallback)callback).setPassword(password.toCharArray());
+                        }
+                    }
+                    return;
+                }
+            }
+            super.handle(callbacks);
+        }
+
+        @Override
         public final void onSubmit() {
             UserSession userSession = (UserSession) getSession();
-            JcrSessionModel sessionModel = new JcrSessionModel(credentials) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected javax.jcr.Session load() {
-                    javax.jcr.Session result = null;
+            if (!rememberme) {
+                Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+                if (cookies != null) {
+                    for (int i = 0; i < cookies.length; i++) {
+                        if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName()) || getClass().getName().equals(cookies[i].getName())) {
+                            ((WebResponse)RequestCycle.get().getResponse()).clearCookie(cookies[i]);
+                        }
+                    }
+                }
+            }
+            boolean success = userSession.login(new UserCredentials(this));
+            if(success) {
+                Session jcrSession = userSession.getJcrSession();
+                if (jcrSession.getUserID().equals(username)) {
                     try {
-                        Main main = (Main) Application.get();
-                        HippoRepository repository = main.getRepository();
-
-                        if (!rememberme) {
-                            Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest()
-                                    .getCookies();
-                            if (cookies != null) {
-                                for (int i = 0; i < cookies.length; i++) {
-                                    if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())
-                                            || getClass().getName().equals(cookies[i].getName())) {
-                                        ((WebResponse) RequestCycle.get().getResponse()).clearCookie(cookies[i]);
-                                    }
-                                }
-                            }
-                            return super.load();
-                        }
-
-                        String username = credentials.getString("username");
-                        String password = credentials.getString("password");
-                        if (password == null || password.equals("") || password.replaceAll("\\*", "").equals("")) {
-                            Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest()
-                                    .getCookies();
-                            for (int i = 0; i < cookies.length; i++) {
-                                if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
-                                    String passphrase = cookies[i].getValue();
-                                    String strings[] = passphrase.split("\\$");
-                                    if (strings.length == 3) {
-                                        username = Base64.decode(strings[1]);
-                                        password = strings[0] + "$" + strings[2];
-                                    }
-                                    break;
-                                }
-                            }
-                            result = repository.login(username, password.toCharArray());
-                        } else {
-                            result = repository.login(username, password.toCharArray());
-                            MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
-                            digest.update(username.getBytes());
-                            digest.update(password.getBytes());
-                            String passphrase = digest.getAlgorithm() + "$" + Base64.encode(username) + "$"
-                                    + Base64.encode(new String(digest.digest()));
-                            ((WebResponse) RequestCycle.get().getResponse()).addCookie(new Cookie(
-                                    RememberMeLoginPlugin.class.getName(), passphrase));
-                            Node userinfo = result.getRootNode().getNode(
-                                    HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
-                            String[] strings = passphrase.split("\\$");
-                            userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
-                            userinfo.save();
-                        }
-                        if (result.getRootNode().hasNode("hippo:log")) {
-                            Workflow workflow = ((HippoWorkspace) result.getWorkspace()).getWorkflowManager()
-                                    .getWorkflow("internal", result.getRootNode().getNode("hippo:log"));
-                            if (workflow instanceof EventLoggerWorkflow) {
-                                ((EventLoggerWorkflow) workflow).logEvent(result.getUserID(), "Repository", "login");
-                            }
-                        }
+                        MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+                        digest.update(username.getBytes());
+                        digest.update(password.getBytes());
+                        String passphrase = digest.getAlgorithm() + "$" + Base64.encode(username) + "$" + Base64.encode(new String(digest.digest()));
+                        ((WebResponse)RequestCycle.get().getResponse()).addCookie(new Cookie(
+                                RememberMeLoginPlugin.class.getName(), passphrase));
+                        Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
+                        String[] strings = passphrase.split("\\$");
+                        userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
+                        userinfo.save();
                     } catch (NoSuchAlgorithmException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage());
                     } catch (LoginException ex) {
-                        log.info("Invalid login as user: " + credentials.getString("username"));
+                        log.info("Invalid login as user: " + username);
                     } catch (RepositoryException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                    } catch (RemoteException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage());
                     }
-                    return result;
                 }
-            };
-            userSession.login(credentials, sessionModel);
-            ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest()
-                    .getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
+            }
+            ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
             userSession.setLocale(new Locale(selectedLocale));
-            redirect();
+            redirect(success);
         }
     }
 
