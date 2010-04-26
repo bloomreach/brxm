@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
@@ -43,7 +44,7 @@ public interface PooledSession extends Session {
     /**
      * Invokes logout() of the underlying session.
      */
-    void logoutSession();
+    void logoutSession() throws RepositoryException;
     
     /**
      * Returns the last refreshed time millis.
