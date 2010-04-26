@@ -48,7 +48,12 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.tester.WicketTester;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
+import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaConfigService;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
@@ -261,15 +266,23 @@ public class HippoTester extends WicketTester {
 
             @Override
             public UserSession newSession(Request request, Response response) {
-                return new UserSession(request);
+                return new UserSession(request, new LoadableDetachableModel<javax.jcr.Session>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected javax.jcr.Session load() {
+                        return new DummySession();
+                    }
+                    
+                });
             }
         }, factory);
     }
 
-    public HippoTester(Main main, IApplicationFactory jcrAppFactory) {
+    public HippoTester(Main main, IApplicationFactory appFactory) {
         super(main);
 
-        this.appFactory = jcrAppFactory;
+        this.appFactory = appFactory;
     }
 
     public Home startPluginPage() {
@@ -280,10 +293,21 @@ public class HippoTester extends WicketTester {
         if (appFactory != null) {
             home = (Home) super.startPage(new Home(appFactory));
         } else {
-            home = (Home) super.startPage(Home.class);
+            home = (Home) super.startPage(new Home(new TestApplicationFactory()));
         }
         rc.detach();
         return home;
     }
-    
+
+    static class TestApplicationFactory implements IApplicationFactory {
+        public IPluginConfigService getDefaultApplication() {
+            return getApplication(null);
+        }
+        public IPluginConfigService getApplication(String name) {
+            JavaConfigService configService = new JavaConfigService("test");
+            JavaClusterConfig plugins = new JavaClusterConfig();
+            configService.addClusterConfig("test", plugins);
+            return configService;
+        }
+    }
 }
