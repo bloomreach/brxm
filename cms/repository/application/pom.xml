@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-repository</artifactId>
-    <version>2.13.01-SNAPSHOT</version>
+    <version>2.14.00-SNAPSHOT</version>
   </parent>
 
   <name>Minimal repository app</name>
@@ -46,12 +46,12 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.13.01-SNAPSHOT</version>
+      <version>2.14.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.13.01-SNAPSHOT</version>
+      <version>2.14.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -66,7 +66,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.13.01-SNAPSHOT</version>
+      <version>2.14.00-SNAPSHOT</version>
       <type>jar</type>
       <scope>test</scope>
     </dependency>
