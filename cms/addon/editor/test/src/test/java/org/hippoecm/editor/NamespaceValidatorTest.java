@@ -46,7 +46,6 @@ public class NamespaceValidatorTest {
     public void testAcceptableNames() throws Exception {
         NamespaceValidator.checkName("abc");
         NamespaceValidator.checkName("Abc");
-        NamespaceValidator.checkName("A-c");
     }
 
     @Test
@@ -56,6 +55,8 @@ public class NamespaceValidatorTest {
         checkName("abc1");
         checkName("x+y");
         checkName("d:f");
+        NamespaceValidator.checkName("A_c");
+        checkName("d-f");
     }
 
     @Test
