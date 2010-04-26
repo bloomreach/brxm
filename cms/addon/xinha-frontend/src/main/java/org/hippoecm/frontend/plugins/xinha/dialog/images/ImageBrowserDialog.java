@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -119,10 +120,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         uploadForm.setOutputMarkupId(true);
         final FileUploadField uploadField = new FileUploadField("uploadField");
         uploadField.setOutputMarkupId(true);
-        uploadForm.add(uploadField);
 
-
-        uploadForm.add(new AjaxButton("uploadButton", uploadForm) {
+        final AjaxButton uploadButton = new AjaxButton("uploadButton", uploadForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 
@@ -139,7 +138,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                         HippoNode node = null;
                         try {
                             //Get the selected folder from the folderReference Service
-                            Node folderNode = ((JcrNodeModel)folderReference.getModel()).getNode();
+                            Node folderNode = ((JcrNodeModel) folderReference.getModel()).getNode();
 
 
                             //TODO replace shortcuts with custom workflow category(?)
@@ -197,7 +196,19 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                     error("Please select a file to upload");
                 }
             }
+        };
+
+        uploadButton.setOutputMarkupId(true);
+        uploadField.add(new AjaxEventBehavior("onchange") {
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                uploadButton.setEnabled(true);
+                target.addComponent(uploadButton);
+            }
         });
+        uploadButton.setEnabled(false);
+        uploadForm.add(uploadField);
+        uploadForm.add(uploadButton);
 
         add(uploadForm);
     }
@@ -228,7 +239,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         return stringCodecFactory.getStringCodec("encoding.node");
     }
 
-     private StringCodec getLocalizeCodec() {
+    private StringCodec getLocalizeCodec() {
         ISettingsService settingsService = context.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.display");
