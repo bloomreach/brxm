@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -36,6 +31,11 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModi
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Definition of a column in a {@link ListDataTable}.  Can be used to define sorting,
  * cell renderers and attribute modifiers that will be applied to the repeater {@link Item}.
@@ -51,11 +51,21 @@ public class ListColumn<T> extends AbstractColumn<T> {
     private Comparator<T> comparator;
     private IListCellRenderer<T> renderer;
     private IListAttributeModifier<T> attributeModifier;
+    private String cssClass;
+
     private IPluginContext context;
     private List<IObserver> observers;
 
     public ListColumn(IModel<String> displayModel, String sortProperty) {
         super(displayModel, sortProperty);
+    }
+
+    public String getCssClass() {
+        return cssClass;
+    }
+
+    public void setCssClass(String cssClass) {
+        this.cssClass = cssClass;
     }
 
     public void setComparator(Comparator<T> comparator) {
