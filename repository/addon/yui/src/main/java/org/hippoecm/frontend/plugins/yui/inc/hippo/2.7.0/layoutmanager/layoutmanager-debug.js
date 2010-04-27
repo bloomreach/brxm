@@ -136,7 +136,19 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 };
                 this._w.put(id, o);
             },
-            
+
+            expandUnit : function(id, position) {
+                if(this.wireframes.containsKey(id)) {
+                    this.wireframes.get(id).expandUnit(position);
+                }
+            },
+
+            collapseUnit : function(id, position) {
+                if(this.wireframes.containsKey(id)) {
+                    this.wireframes.get(id).collapseUnit(position);
+                }
+            },
+
             addToRenderQueue : function(wireframe) {
                 this.renderQueue.registerFunction(function() {
                     wireframe.render();
@@ -209,6 +221,18 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 this.registerEventListener(layoutUnit.get('parent'), layoutUnit, 'render', obj, func, executeNow);
             },
 
+            /**
+             * Because we use the Wicket.Throttler we loose our context, so never store your function like 'this.update'
+             * but rather fallback to the super-ugly "var me = this; var func = function() {me.update()};" construct..
+             *
+             * @param target
+             * @param unit
+             * @param evt
+             * @param obj
+             * @param func
+             * @param executeNow
+             * @param timeoutLength
+             */
             registerEventListener : function(target, unit, evt, obj, func, executeNow, timeoutLength) {
                 var oid = Lang.isUndefined(obj.id) ? Dom.generateId() : obj.id;
                 
@@ -505,6 +529,30 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         }
                         HippoDom.enhance(unitEl, uid);
                         this.config.units[i].bId = unitEl.id;
+                    }
+                }
+            },
+
+            expandUnit : function(position) {
+                var unit = this.layout.getUnitByPosition(position);
+                if (unit != null) {
+                    var sizes = this.layout.getSizes();
+                    unit.set('width', sizes.doc.w);
+                }
+            },
+
+            collapseUnit : function(position) {
+                var unit = this.layout.getUnitByPosition(position);
+                if (unit != null) {
+                    var conf = null;
+                    for(var i=0; i<this.config.units.length; ++i) {
+                        if(this.config.units[i].position == position) {
+                            conf = this.config.units[i];
+                            break;
+                        }
+                    }
+                    if(conf != null) {
+                        unit.set('width', Number(conf.width));
                     }
                 }
             }

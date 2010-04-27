@@ -25,11 +25,14 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.editor" sv:type="String">
+    <sv:property sv:name="center" sv:type="String">
       <sv:value>service.browse.editor</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.navigator" sv:type="String">
+    <sv:property sv:name="left" sv:type="String">
       <sv:value>service.browse.navigator</sv:value>
+    </sv:property>
+    <sv:property sv:name="top" sv:type="String">
+      <sv:value>service.browse.tabscontainer</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>browse-perspective-title</sv:value>
@@ -40,25 +43,27 @@
     <sv:property sv:name="translator.id" sv:type="String">
       <sv:value>service.translator.config</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.navigator</sv:value>
-      <sv:value>extension.editor</sv:value>
-    </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>service.browse</sv:value>
     </sv:property>
+    <sv:property sv:name="model.document" sv:type="String">
+      <sv:value>model.browse.document</sv:value>
+    </sv:property>
     <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="top" sv:type="String">
+        <sv:value>id=browse-perspective-top,height=25</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
         <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,minWidth=400,scroll=false,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,resize=true,scroll=false,minWidth=300,width=400,gutter=0px 0px 0px 0px,useShim=true</sv:value>
+        <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,minWidth=300,width=400,gutter=0px 0px 0px 0px,useShim=true</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
@@ -138,11 +143,8 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=navigator-top,height=25px,resize=false</sv:value>
-      </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=navigator-left,body=navigator-left-body,width=200,zindex=2,resize=true</sv:value>
+        <sv:value>id=navigator-left,body=navigator-left-body,width=200,zindex=2</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
         <sv:value>id=navigator-center,body=navigator-center-body,width=250</sv:value>
@@ -189,7 +191,6 @@
       <sv:property sv:name="workflow.enabled" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
-
     </sv:node>
   </sv:node>
   <sv:node sv:name="imagesTreeLoader">
@@ -215,7 +216,7 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.browse.tree.images</sv:value>
       </sv:property>
-      
+
       <!-- Wicket tree helper properties -->
       <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
         <sv:value>true</sv:value>
@@ -223,7 +224,6 @@
       <sv:property sv:name="workflow.enabled" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
-      
     </sv:node>
   </sv:node>
   <sv:node sv:name="assetsTreeLoader">
@@ -249,7 +249,7 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.browse.tree.files</sv:value>
       </sv:property>
-      
+
       <!-- Wicket tree helper properties -->
       <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
         <sv:value>true</sv:value>
@@ -257,7 +257,6 @@
       <sv:property sv:name="workflow.enabled" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
-      
     </sv:node>
   </sv:node>
   <sv:node sv:name="configurationTreeLoader">
@@ -294,72 +293,6 @@
 
     </sv:node>
   </sv:node>
-  
-  <sv:node sv:name="tabbedEditorLayout">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.editor.tabs</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.path" sv:type="String">
-      <sv:value>tabs</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
-    </sv:property>
-    <sv:node sv:name="yui.config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-top,height=25,gutter=0px 0px 0px 0px</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-center,gutter=0px 0px 0px 0px</sv:value>
-      </sv:property>
-      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>tabbed-panel-layout</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="editorTabUnit">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.editor.tabs</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.path" sv:type="String">
-      <sv:value>tabs:panel-container</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="position" sv:type="String">
-      <sv:value>center</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="editorTabTopUnit">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.editor.tabs</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.path" sv:type="String">
-      <sv:value>tabs:tabs-container</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="position" sv:type="String">
-      <sv:value>top</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="tabbedEditorTabs">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -367,17 +300,14 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="tabbedpanel.behavior" sv:type="String">
-      <sv:value>service.behavior.editor.tabs.center</sv:value>
-    </sv:property>
     <sv:property sv:name="tabbedpanel.openleft" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.editor.tab</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.behavior" sv:type="String">
-      <sv:value>service.behavior.editor.tabs</sv:value>
+    <sv:property sv:name="tabs.container.id" sv:type="String">
+      <sv:value>service.browse.tabscontainer</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.css" sv:type="String">
       <sv:value>document</sv:value>

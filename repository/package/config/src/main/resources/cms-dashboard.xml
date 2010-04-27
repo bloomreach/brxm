@@ -65,23 +65,23 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=top,height=23px</sv:value>
-      </sv:property>
       <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=1px 1px 1px 0px</sv:value>
+        <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=0px 1px 1px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="client.class.name" sv:type="String">
         <sv:value>YAHOO.hippo.RelativeWireframe</sv:value>
       </sv:property>
+      <sv:property sv:name="top" sv:type="String">
+        <sv:value>id=top,height=24</sv:value>
+      </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=left,width=33%,body=left-body,resize=false,gutter=1px 1px 1px 1px</sv:value>
+        <sv:value>id=left,width=33%,body=left-body,gutter=0px 1px 1px 1px</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="right" sv:type="String">
-        <sv:value>id=right,width=33%,body=right-body,resize=false,scroll=true,gutter=1px 1px 1px 0px</sv:value>
+        <sv:value>id=right,width=33%,body=right-body,scroll=true,gutter=0px 1px 1px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>dashboard-perspective-wrapper</sv:value>

@@ -178,6 +178,8 @@ padding-top: 8px;
 
 /* TabsPlugin Document switcher */
 /* ================================================ */
+.hippo-tabs-documents-top .tab-row {margin-left:400px;}
+
 .hippo-tabs-documents-top {width: auto; position: relative; text-align :left;}
 .hippo-tabs-documents-top ul{margin-top: 3px; height: 25px;margin-left: 5px;}
 .hippo-tabs-documents-top ul li{display: block; float: left; position: relative;}
@@ -241,7 +243,7 @@ padding-right: 9px;
 .hippo-list-details tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
 .hippo-list-details tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
 .hippo-list-details tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
-.hippo-list-details tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border-left: 1px solid #afafaf; background: url("images/hippo-list-details-th-back.png") repeat-x;}
+.hippo-list-details tr th{padding: 1px; padding-left: 4px; padding-bottom: 1px; border-left: 1px solid #afafaf; background: url("images/hippo-list-details-th-back.png") repeat-x;}
 .hippo-list-details tr th span{padding-left: 3px; padding-right: 3px;}
 .hippo-list-details tr td{border-bottom: 1px solid #f4f4f4; padding: 4px 2px 5px 4px; border-right: none;}
 .hippo-list-details tr td:hover{cursor: pointer}
