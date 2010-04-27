@@ -43,7 +43,7 @@ public class SimpleHtmlExtractor {
     private SimpleHtmlExtractor() {
     }
     
-    static synchronized void initCleaner() {
+    private static synchronized void initCleaner() {
         if (!htmlCleanerInitialized) {
             cleaner = new HtmlCleaner();
             CleanerProperties props = cleaner.getProperties();
@@ -51,6 +51,14 @@ public class SimpleHtmlExtractor {
             props.setOmitXmlDeclaration(true);
             htmlCleanerInitialized = true;
         }
+    }
+    
+    protected static HtmlCleaner getHtmlCleaner() {
+        if (!htmlCleanerInitialized) {
+            initCleaner();
+        }
+        
+        return cleaner;
     }
     
     /**
@@ -193,17 +201,13 @@ public class SimpleHtmlExtractor {
     }
     
     private static String getInnerHtmlByCleaner(String html, String tagName) {
-        if (!htmlCleanerInitialized) {
-            initCleaner();
-        }
-        
         String tagInnerHtml = null;
         
         if (html != null) {
             TagNode targetNode = getTargetTagNode(html, tagName);
             
             if (targetNode != null) {
-                tagInnerHtml = cleaner.getInnerHtml(targetNode);
+                tagInnerHtml = getHtmlCleaner().getInnerHtml(targetNode);
             }
         }
         
@@ -214,7 +218,7 @@ public class SimpleHtmlExtractor {
         TagNode targetNode = null;
         
         try {
-            TagNode rootNode = cleaner.clean(html);
+            TagNode rootNode = getHtmlCleaner().clean(html);
             
             if (tagName == null || "".equals(tagName) || tagName.equalsIgnoreCase(rootNode.getName())) {
                 return rootNode;
