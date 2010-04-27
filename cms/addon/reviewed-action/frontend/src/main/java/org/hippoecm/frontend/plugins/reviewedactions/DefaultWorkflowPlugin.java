@@ -184,7 +184,9 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                ((DefaultWorkflow) wf).rename(nodeName);
+                if (!((WorkflowDescriptorModel)getDefaultModel()).getNode().getName().equals(nodeName)) {
+                    ((DefaultWorkflow) wf).rename(nodeName);
+                }
                 if (!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
                 }

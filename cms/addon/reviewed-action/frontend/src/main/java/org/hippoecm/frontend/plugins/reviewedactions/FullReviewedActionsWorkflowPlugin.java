@@ -305,7 +305,9 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                ((FullReviewedActionsWorkflow) wf).rename(nodeName);
+                if (!((WorkflowDescriptorModel)getDefaultModel()).getNode().getName().equals(nodeName)) {
+                    ((FullReviewedActionsWorkflow) wf).rename(nodeName);
+                }
                 if (!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
                 }
