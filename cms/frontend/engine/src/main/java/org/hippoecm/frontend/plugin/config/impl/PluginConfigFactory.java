@@ -17,11 +17,6 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.List;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.WebApplicationHelper;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.session.UserSession;
@@ -35,9 +30,7 @@ public class PluginConfigFactory implements IPluginConfigService {
     private IPluginConfigService pluginConfigService;
 
     public PluginConfigFactory(UserSession userSession, IApplicationFactory defaultFactory) {
-        String appName = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
-                Main.PLUGIN_APPLICATION_NAME, null);
-        appName = userSession.getApplicationName(appName);
+        String appName = userSession.getApplicationName();
         IPluginConfigService baseService = null;
         try {
             if (appName == null) {

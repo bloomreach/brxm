@@ -67,7 +67,7 @@
         </init-param>
         <init-param>
             <param-name>config</param-name>
-            <param-value>builtin</param-value>
+            <param-value>console</param-value>
         </init-param>
         <init-param>
             <param-name>wicket.configuration</param-name>
