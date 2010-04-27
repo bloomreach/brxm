@@ -165,7 +165,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 }
             }
             boolean success = userSession.login(new UserCredentials(this));
-            if(success) {
+            if (success && rememberme) {
                 Session jcrSession = userSession.getJcrSession();
                 if (jcrSession.getUserID().equals(username)) {
                     try {
