@@ -155,7 +155,7 @@ public class ActionValve extends AbstractValve {
                                 }
                                 
                                 /* 
-                                 * We will redirect to a URL containing the protocol + hostname + portnumber to avoid problems
+                                 * We will redirect to a URL containing the scheme + hostname + portnumber to avoid problems
                                  * when redirecting behind a proxy by default.
                                  */
                                 if (isAlwaysRedirectLocationToAbsoluteUrl()) {

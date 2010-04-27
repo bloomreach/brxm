@@ -113,7 +113,7 @@ public class HstVirtualHostsFilter implements Filter {
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 
-                ResolvedSiteMapItem resolvedSiteMapItem = vHosts.match((HttpServletRequest)request);
+                ResolvedSiteMapItem resolvedSiteMapItem = null; // vHosts.match((HttpServletRequest)request);
                 
                 if(resolvedSiteMapItem != null) {
                     if (resolvedSiteMapItem.getErrorCode() > 0) {

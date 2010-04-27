@@ -15,18 +15,35 @@
  */
 package org.hippoecm.hst.core.request;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.hosting.MatchException;
 import org.hippoecm.hst.core.hosting.SiteMount;
 
 /**
- * This is a request flyweight instance of a {@link SiteMount} object, where possible wildcard property placeholders have been filled in, similar
- * to the {@link ResolvedSiteMapItem}
- * 
+ * Implementations of this interface are a request flyweight instance of the {@link SiteMount} object, where possible wildcard property placeholders have been filled in, similar
+ * to the {@link ResolvedSiteMapItem} and {@link HstSiteMapItem}
  */
 public interface ResolvedSiteMount {
 
     /**
+     * @return the {@link ResolvedVirtualHost} for this ResolvedSiteMount
+     */
+    ResolvedVirtualHost getResolvedVirtualHost();
+    
+    /**
      * @return the backing request independent {@link SiteMount} item for this resolvedSiteMount instance
      */
     SiteMount getSiteMount();
+
+    /**
+     * matches the current request, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or <code>null</code> when
+     * it cannot be matched
+     * @param request
+     * @return the ResolvedSiteMapItem for the current request
+     * @throws MatchException 
+     */
+    ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException;
     
 }

@@ -107,7 +107,7 @@
 - hst:showcontextpath (boolean)
 - hst:ispreview (boolean)
 - hst:showport(boolean)
-- hst:protocol (string)
+- hst:scheme (string)
 
 
 [hst:virtualhost]
@@ -116,7 +116,7 @@
 - hst:port (long)
 - hst:showcontextpath (boolean)
 - hst:showport(boolean)
-- hst:protocol (string)
+- hst:scheme (string)
 
 [hst:virtualhosts]
 - hst:port (long)
@@ -124,7 +124,7 @@
 - hst:showport(boolean)
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
-- hst:protocol (string)
+- hst:scheme (string)
 - hst:defaulthostname (string)
 + * (hst:virtualhost)
 

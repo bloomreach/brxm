@@ -62,7 +62,7 @@
   <bean id="javax.servlet.http.HttpServletRequest" scope="prototype"
         class="org.springframework.mock.web.MockHttpServletRequest">
      <constructor-arg ref="javax.servlet.ServletContext" />
-     <property name="protocol" value="http" />
+     <property name="scheme" value="http" />
      <property name="serverName" value="localhost" />
      <property name="serverPort" value="8085" />
      <property name="method" value="GET" />

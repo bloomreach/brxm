@@ -48,7 +48,7 @@
         <sv:value>.png</sv:value>
         <sv:value>.PNG</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:protocol" sv:type="String">
+    <sv:property sv:name="hst:scheme" sv:type="String">
         <sv:value>http</sv:value>
     </sv:property>
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
@@ -70,6 +70,9 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:sitemount</sv:value>
           </sv:property>
+          <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+              <sv:value>true</sv:value>
+          </sv:property>
           <sv:property sv:name="hst:mountpath" sv:type="String">
             <sv:value>/testpreview/testproject</sv:value>
           </sv:property>
@@ -84,14 +87,84 @@
               <sv:value>JaxrsPipeline</sv:value>
             </sv:property>
           </sv:node>
+         </sv:node>
         </sv:node>
-        </sv:node>
-        
     </sv:node>
     
     <sv:node sv:name="localhost">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
+        <sv:node sv:name="hst:root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpath" sv:type="String">
+            <sv:value>/testlive/testproject</sv:value>
+          </sv:property>
+          <sv:node sv:name="preview">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpath" sv:type="String">
+              <sv:value>/testpreview/testproject</sv:value>
+            </sv:property>
+            <sv:node sv:name="services">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              
+              <!-- mountpath inherited here from parent  -->
+              
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>JaxrsPipeline</sv:value>
+              </sv:property>
+            </sv:node>
+         </sv:node>
+        </sv:node>
     </sv:node>
+    
+    <sv:node sv:name="org">
+         <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:virtualhost</sv:value>
+        </sv:property>
+        <sv:node sv:name="onehippo">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:virtualhost</sv:value>
+            </sv:property>
+            <sv:node sv:name="www">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                 <sv:value>hst:virtualhost</sv:value>
+              </sv:property>
+              <sv:node sv:name="hst:root">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountpath" sv:type="String">
+                   <sv:value>/testlive/testproject</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+            <sv:node sv:name="preview">
+               <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                 <sv:value>hst:virtualhost</sv:value>
+               </sv:property>
+               <sv:node sv:name="hst:root">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                      <sv:value>hst:sitemount</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:mountpath" sv:type="String">
+                     <sv:value>/testpreview/testproject</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+                    <sv:value>true</sv:value>
+                  </sv:property>
+              </sv:node>
+            </sv:node>
+        </sv:node>
+     </sv:node>
+    
 </sv:node>

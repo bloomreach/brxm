@@ -15,8 +15,11 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
@@ -25,12 +28,32 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
  */
 public interface VirtualHost {
 
+    
     /**
+     * The hostName of this VirtualHost
+     * @return The composite hostName of this VirtualHost, thus including parent VirtualHosts if present
+     */
+    String getHostName();
+    
+    /**
+     * Returns the <code>name</code> of this VirtualHost. Note, this is not the hostName, but only part of it. If the hostName 
+     * is www.apache.org, then the name of this VirtualHost might be 'www' or 'apache' or 'org'. It is thus one segment of the entire hostName.
      * 
+     * @see #getHostName()
+     * @return The <code>name</code> of this VirtualHost. Note, this is only part of the entire hostName
+     */
+    String getName();
+    
+    /**
      * @param name the name segment of the hostname
      * @return the child <code>VirtualHost</code> or <code>null</code> if none found
      */
     VirtualHost getChildHost(String name);
+    
+    /**
+     * @return the list of all VirtualHost childs of this VirtualHost
+     */
+    List<VirtualHost> getChildHosts();
     
     /**
      * A virtual host has to have at least a root {@link SiteMount}, otherwise it is not a valid VirtualHost and cannot be used.
@@ -43,7 +66,7 @@ public interface VirtualHost {
     * this virtualHost, and delegates the match to this siteMount item</p>
     *
     * 
-    * @see {@link SiteMount#match(HttpServletRequest)} and {@link VirtualHosts#match(HttpServletRequest)} 
+    * @see {@link SiteMount#match(HttpServletRequest)} and {@link VirtualHosts#matchSiteMapItem(HttpServletRequest)} 
     * 
     * @param request the HttpServletRequest
     * @return the resolvedSiteMapItem for this request or <code>null</code> when it can not be matched
@@ -51,6 +74,13 @@ public interface VirtualHost {
     */
    ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
     
+   /**
+    * When there are no  {@link SiteMount}'s for this VirtualHost, or, when there are  {@link SiteMount} but they do not have a <code>mountPath</code>, or a 
+    * <code>mountPath</code> that does not point to an existing {@link HstSite}, then <code>false</code> will be returned.
+    * @return <code>true</code> when this VirtualHost has a correctly mounted {@link SiteMount} to an existing {@link HstSite} and <code>false</code> otherways
+    */
+   boolean isMounted();
+   
     /**
      * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>
      */
@@ -73,16 +103,16 @@ public interface VirtualHost {
     int getPortNumber();
     
     /**
-     * @return the protocol to use for creating external urls, for example http / https
+     * @return the scheme to use for creating external urls, for example http / https
      */
-    String getProtocol();
+    String getScheme();
     
     
     /**
-     * Returns the base of the <code>URL</code> as seen by for example a browser. The base URL is consists of <code>protocol + hostname + portnumber</code>
+     * Returns the base of the <code>URL</code> as seen by for example a browser. The base URL is consists of <code>scheme + hostname + portnumber</code>
      * for example 'http://www.hippoecm.org:8081' 
      * 
-     * The protocol is 'http' by default, unless {@link # getProtocol()} returns something else 
+     * The scheme is 'http' by default, unless {@link # getScheme()} returns something else 
      * The hostname is the HttpServeltRequest request.getServerName() (proxies must have <code>ProxyPreserveHost On</code>)
      * The portnumber is as follows: 
      * <ul>
@@ -91,13 +121,13 @@ public interface VirtualHost {
      *       <ul>
      *          <li><code>port = {@link #getPortNumber()}</code></li>
      *          <li><code>if (port == 0) {port = request.getServerPort()}</code></li>
-     *          <li>if(port == 80 && "http".equals(protocol)) || (port == 443 && "https".equals(protocol)): no portnumber will be in baseUrl
+     *          <li>if(port == 80 && "http".equals(scheme)) || (port == 443 && "https".equals(scheme)): no portnumber will be in baseUrl
      *       </ul>
      *   </li>
      * </ul>  
      * 
      * @param request the HttpServletRequest
-     * @return the <code>URL</code> until the context path, thus <code>protocol + hostname + portnumber</code>, for example 'http://www.hippoecm.org:8081' 
+     * @return the <code>URL</code> until the context path, thus <code>scheme + hostname + portnumber</code>, for example 'http://www.hippoecm.org:8081' 
      */
     
     /**

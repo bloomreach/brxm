@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -25,9 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +45,16 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
 
     private final static String WILDCARD = "_default_";
     
-    public final static String DEFAULT_PROTOCOL = "http";
-    
+    public final static String DEFAULT_SCHEME = "http";
+
     private Map<String, VirtualHostService> rootVirtualHosts = new HashMap<String, VirtualHostService>();
+    private List<VirtualHost> allVirtualHosts = new ArrayList<VirtualHost>();
     private String defaultHostName;
     private boolean virtualHostsConfigured;
     private String jcrPath;
     private boolean portVisible;
     private int portNumber;
-    private String protocol;
+    private String scheme;
     private boolean contextPathInUrl;
     private String[] prefixExclusions;
     private String[] suffixExclusions;
@@ -63,10 +69,10 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         this.prefixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
-        this.protocol = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PROTOCOL);
+        this.scheme = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
         this.defaultHostName  = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
-        if(protocol == null || "".equals(protocol)) {
-            this.protocol = DEFAULT_PROTOCOL;
+        if(scheme == null || "".equals(scheme)) {
+            this.scheme = DEFAULT_SCHEME;
         }
         try {
             init(virtualHostsNode);
@@ -102,58 +108,70 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     }
     
     
-    public ResolvedSiteMapItem match(HttpServletRequest request) {
+    public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request)  throws MatchException{
+        
+        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
+        ResolvedSiteMount resolvedSiteMount = null;
+        if(resolvedVirtualHost != null) {
+            resolvedSiteMount  = resolvedVirtualHost.matchSiteMountItem(request);
+        }
+        if(resolvedSiteMount != null) {
+            return resolvedSiteMount.matchSiteMapItem(request);
+        }
+        return null;
+        
+    }
+
+    public ResolvedSiteMount matchSiteMountItem(HttpServletRequest request) throws MatchException {
+        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
+        ResolvedSiteMount resolvedSiteMount = null;
+        if(resolvedVirtualHost != null) {
+            resolvedSiteMount  = resolvedVirtualHost.matchSiteMountItem(request);
+        }
+        return resolvedSiteMount;
+    }
+    
+    public ResolvedVirtualHost matchVirtualHost(HttpServletRequest request) throws MatchException {
         if(!virtualHostsConfigured) {
             throw new MatchException("No correct virtual hosts configured. Cannot continue request");
         }
         
         String requestServerName = HstRequestUtils.getRequestServerName(request);
-        VirtualHost host = null;
-        
-        host = getMatchedHost(requestServerName, host);
+        ResolvedVirtualHost host = matchVirtualHost(requestServerName);
         
         // no host found. Let's try the default host, if there is one configured:
         if(host == null && this.getDefaultHostName() != null) {
             log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", requestServerName, this.getDefaultHostName());
-            host = getMatchedHost(this.getDefaultHostName(), host);
+            host = matchVirtualHost(this.getDefaultHostName());
         }
-        
         if(host == null) {
            log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", requestServerName, this.getDefaultHostName());
-           return null;
+          
         }
-        
-        // delegate the matching to the found host:
-        return host.match(request);
-        
+        return host;
     }
-
+    
+    
     /**
      * Override this method if you want a different algorithm to resolve requestServerName
      * @param requestServerName
      * @param host
      * @return the matched virtual host
      */
-    protected VirtualHost getMatchedHost(String requestServerName, VirtualHost host) {
+    protected ResolvedVirtualHost matchVirtualHost(String requestServerName) {
         for(VirtualHostService virtualHost : rootVirtualHosts.values()) {
             // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
             // with their id, hence, we cannot get them directly, but have to test them all
             String[] requestServerNameSegments = requestServerName.split("\\.");
             int depth = requestServerNameSegments.length - 1;
             if(requestServerNameSegments[depth].equals(virtualHost.getName())) {
-                host = traverseInToHost(virtualHost, requestServerNameSegments, depth);
-                if(host != null) {
-                    if(host.getRootSiteMount() !=  null) {
-                        break;
-                    } else {
-                        log.debug("Found a host for '{}' but this host cannot be used as it does not have a root SiteMount", requestServerName);
-                    }
-                }
+               return traverseInToHost(virtualHost, requestServerNameSegments, depth);
+               
             }
         }
-        return host;
+        return null;
     }
-  
+    
     /**
      * Override this method if you want a different algorithm to resolve requestServerName
      * @param matchedHost
@@ -161,9 +179,9 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
      * @param depth
      * @return
      */
-    protected VirtualHost traverseInToHost(VirtualHost matchedHost, String[] hostNameSegments, int depth) {
+    protected ResolvedVirtualHost traverseInToHost(VirtualHost matchedHost, String[] hostNameSegments, int depth) {
         if(depth == 0) {
-            return matchedHost;
+            return new ResolvedVirtualHostImpl(matchedHost);
         }
         
         --depth;
@@ -171,7 +189,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         VirtualHost vhost = matchedHost.getChildHost(hostNameSegments[depth]);
         if(vhost == null) {
             if( (vhost = matchedHost.getChildHost(WILDCARD)) != null) {
-                return vhost;
+                return new ResolvedVirtualHostImpl(vhost);
             }
         } else {
             return traverseInToHost(vhost, hostNameSegments, depth);
@@ -192,6 +210,18 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
            }
        }
        
+       // populate the allVirtualHosts 
+       for(VirtualHost host : rootVirtualHosts.values()) {
+           populateAllVHosts(host);
+       }
+       
+    }
+
+    private void populateAllVHosts(VirtualHost host) {
+        allVirtualHosts.add(host);
+        for(VirtualHost childHost : host.getChildHosts()) {
+            populateAllVHosts(childHost);
+        }
     }
 
     public Service[] getChildServices() {
@@ -212,11 +242,27 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return contextPathInUrl;
     }
 
-    public String getProtocol(){
-        return this.protocol;
+    public String getScheme(){
+        return this.scheme;
     }
 
     public String getDefaultHostName() {
         return this.defaultHostName;
     }
+
+    public List<VirtualHost> getVirtualHosts(boolean mountedOnly) {
+        if(mountedOnly) {
+            List<VirtualHost> mountedHosts = new ArrayList<VirtualHost>();
+            for(VirtualHost host :allVirtualHosts) {
+                if(host.isMounted()){
+                    mountedHosts.add(host);
+                }
+            }
+            return mountedHosts;
+        } else {
+            return allVirtualHosts;
+        }
+    }
+
+    
 }

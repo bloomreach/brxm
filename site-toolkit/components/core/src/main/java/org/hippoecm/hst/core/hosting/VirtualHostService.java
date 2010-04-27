@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -42,16 +44,21 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private String id;
     private String name;
     private VirtualHosts virtualHosts;
+    private VirtualHostService parentHost;
     private SiteMount rootSiteMount;
     
     private String jcrPath;
     private boolean portVisible;
+    // default mounted is false
+    private boolean mounted = false;
     private int portNumber;
     private boolean contextPathInUrl;
-    private String protocol;
+    private String scheme;
 
-    public VirtualHostService(VirtualHostsService virtualHosts,Node virtualHostNode, VirtualHostService parentHost) throws ServiceException{
+    public VirtualHostService(VirtualHostsService virtualHosts,Node virtualHostNode, VirtualHostService parentHost) throws ServiceException {
         super(virtualHostNode);
+
+        this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
         this.id = this.getValueProvider().getPath();
         this.jcrPath = this.id;
@@ -88,35 +95,25 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             }
         }
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_PROTOCOL)) {
-            this.protocol = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_PROTOCOL);
-            if(this.protocol == null || "".equals(this.protocol)) {
-                this.protocol = VirtualHostsService.DEFAULT_PROTOCOL;
+        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME)) {
+            this.scheme = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME);
+            if(this.scheme == null || "".equals(this.scheme)) {
+                this.scheme = VirtualHostsService.DEFAULT_SCHEME;
             }
         } else {
            // try to get the one from the parent
             if(parentHost != null) {
-                this.protocol = parentHost.protocol;
+                this.scheme = parentHost.scheme;
             } else {
-                this.protocol = virtualHosts.getProtocol();
+                this.scheme = virtualHosts.getScheme();
             }
-        }
-        
-        try {
-            if(virtualHostNode.hasNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME)) {
-                // we have a configured root sitemount node. Let's populate this sitemount for this host
-                Node siteMount = virtualHostNode.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
-                this.rootSiteMount = new SiteMountService(siteMount, null, this);
-            } else {
-                // if the parent host has a root sitemount not equal to null, we inherit that one
-                this.rootSiteMount = parentHost != null ? parentHost.rootSiteMount : null;
-            }
-        } catch (RepositoryException e) {
-            throw new ServiceException("Error during creating sitemounts: ", e);
         }
         
         String fullName = this.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
+        
+        VirtualHostService attachSiteMountToHost = this;
+        
         if(nameSegments.length > 1) {
             // if the fullName is for example www.hippoecm.org, then this items name is 'org', its child is hippoecm, and
             // the last child is 'www'
@@ -125,19 +122,48 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
                 VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth);
-                this.childVirtualHosts.put(childHost.getName(), childHost);
+                this.childVirtualHosts.put(childHost.name, childHost);
+                // we need to switch the attachSiteMountToHost to the last host
+            }
+            while(depth > -1) {
+                if(attachSiteMountToHost == null) {
+                    throw new ServiceException("Something went wrong because attachSiteMountToHost should never be possible to be null");
+                }
+                attachSiteMountToHost = (VirtualHostService)attachSiteMountToHost.getChildHost(nameSegments[depth]);
+                depth--;
             }
         } else {
             this.name = this.getValueProvider().getName();
         }
         
         try {
+            if(virtualHostNode.hasNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME)) {
+                // we have a configured root sitemount node. Let's populate this sitemount for this host
+                Node siteMount = virtualHostNode.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
+                if(siteMount.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMOUNT)) {
+                    attachSiteMountToHost.rootSiteMount = new SiteMountService(siteMount, null, attachSiteMountToHost);
+                }
+            } 
+        } catch (ServiceException e) {
+            log.warn("The host '{}' contains an incorrect configured SiteMount. The hist cannot be used for hst request processing:", name, e);
+        } catch (RepositoryException e) {
+            throw new ServiceException("Error during creating sitemounts: ", e);
+        }
+        
+        // check whether this Host is correctly mounted
+        if(attachSiteMountToHost.rootSiteMount != null && attachSiteMountToHost.rootSiteMount.getHstSite() != null) {
+            attachSiteMountToHost.mounted = true;
+        }
+        
+        try {
             NodeIterator childHosts = virtualHostNode.getNodes();
             while(childHosts.hasNext()) {
                 Node childHostNode = childHosts.nextNode();
-                if(childHostNode == null) {continue;}
+                if (childHostNode == null || !childHostNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
+                    continue;
+                }
                 VirtualHostService childHost = new VirtualHostService(virtualHosts, childHostNode, this);
-                this.childVirtualHosts.put(childHost.getName(), childHost);
+                this.childVirtualHosts.put(childHost.name, childHost);
             }
         } catch (RepositoryException e) {
             throw new ServiceException("Error during initializing hosts", e);
@@ -146,23 +172,47 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     }
 
     
-    public VirtualHostService(VirtualHostService virtualHostService, String[] nameSegments, int position) {
+    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position) {
         super(null);
-        this.virtualHosts = virtualHostService.virtualHosts;
-        this.id = virtualHostService.id+"_";
-        this.jcrPath = virtualHostService.jcrPath;
-        this.portNumber = virtualHostService.portNumber;
-        this.protocol = virtualHostService.protocol;
-        this.portVisible = virtualHostService.portVisible;
-        this.contextPathInUrl = virtualHostService.contextPathInUrl;
+        this.parentHost = parent;
+        this.virtualHosts = parent.virtualHosts;
+        this.id = parent.id+"_";
+        this.jcrPath = parent.jcrPath;
+        this.portNumber = parent.portNumber;
+        this.scheme = parent.scheme;
+        this.portVisible = parent.portVisible;
+        this.contextPathInUrl = parent.contextPathInUrl;
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
             VirtualHostService childHost = new VirtualHostService(this,nameSegments, position);
-            this.childVirtualHosts.put(childHost.getName(), childHost);
+            this.childVirtualHosts.put(childHost.name, childHost);
         }
       
     }
+    
+    public String getName(){
+        return name;
+    }
+    
+    public String getHostName(){
+        StringBuilder builder = new StringBuilder(name);
+        VirtualHostService ancestor = parentHost;
+        while(ancestor != null) {
+            builder.append(".").append(ancestor.name);
+            ancestor = ancestor.parentHost;
+        }
+        return builder.toString();
+    }
+    
+    public String getId(){
+        return id;
+    }
+    
+    public boolean isMounted() {
+        return mounted;
+    }
+
 
     public ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException {
         throw new MatchException("Not yet implemented");
@@ -170,18 +220,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     
     public SiteMount getRootSiteMount(){
         return this.rootSiteMount;
-    }
- 
-    public String getId(){
-        return this.id;
-    }
-    
-    public String getName(){
-        return this.name;
-    }
-    
-    public String getJcrPath(){
-        return this.jcrPath;
     }
 
     public boolean isPortVisible() {
@@ -196,8 +234,8 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         return contextPathInUrl;
     }
     
-    public String getProtocol(){
-        return this.protocol;
+    public String getScheme(){
+        return this.scheme;
     }
     
     public VirtualHosts getVirtualHosts() {
@@ -226,10 +264,10 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     public String getBaseURL(HttpServletRequest request) {
         StringBuilder builder = new StringBuilder();
         
-        String protocol = this.getProtocol();
+        String scheme = this.getScheme();
         
-        if (protocol == null) {
-            protocol = "http";
+        if (scheme == null) {
+            scheme = "http";
         }
         
         String serverName = HstRequestUtils.getRequestServerName(request);
@@ -240,11 +278,11 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             port = HstRequestUtils.getRequestServerPort(request);
         }
         
-        if ((port == 80 && "http".equals(protocol)) || (port == 443 && "https".equals(protocol))) {
+        if ((port == 80 && "http".equals(scheme)) || (port == 443 && "https".equals(scheme))) {
             port = 0;
         }
         
-        builder.append(protocol);
+        builder.append(scheme);
         builder.append("://").append(serverName);
         
         if (this.isPortVisible() && port != 0) {
@@ -253,6 +291,12 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         return builder.toString();
     }
 
+
+    public List<VirtualHost> getChildHosts() {
+        return new ArrayList<VirtualHost>(childVirtualHosts.values());
+    }
+
+   
 
 
 }

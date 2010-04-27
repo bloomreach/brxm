@@ -48,7 +48,7 @@
         <sv:value>.png</sv:value>
         <sv:value>.PNG</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:protocol" sv:type="String">
+    <sv:property sv:name="hst:scheme" sv:type="String">
         <sv:value>http</sv:value>
     </sv:property>
     <sv:property sv:name="hst:defaulthostname" sv:type="String">

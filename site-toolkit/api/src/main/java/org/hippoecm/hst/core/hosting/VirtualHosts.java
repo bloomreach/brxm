@@ -15,9 +15,15 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 
 
 /**
@@ -39,18 +45,57 @@ public interface VirtualHosts {
     
     /**
      * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the 
-     * correct {@link VirtualHost}. If it does find a {@link VirtualHost}, the match is delegated to
-     * {@link VirtualHost#match(HttpServletRequest)}</p>. If no {@link VirtualHost} matches the request, then, if configured, we try
-     * to match to the default virtual host {@link #getDefaultHostName()}.
+     * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
+     * {@link ResolvedVirtualHost#matchSiteMountItem(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. This object
+     * delegates to {@link ResolvedSiteMount#matchSiteMapItem(HttpServletRequest)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
+     * in the chain a match cannot be made, <code>null</code> will be returned. 
+     * </p>
      * 
-     * @see {@link VirtualHost#match(HttpServletRequest)} and  {@link SiteMount#match(HttpServletRequest)}
-     *
      * @param request the HttpServletRequest
-     * @return the resolvedSiteMapItem for this request or <code>null</code> when it can not be matched
+     * @return the resolvedSiteMapItem for this request or <code>null</code> when it can not be matched to a sitemap item
      * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured
      */
-    ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
+    ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException;
+    
+    /**
+     * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 
+     * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
+     * {@link ResolvedVirtualHost#matchSiteMountItem(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. If somewhere
+     * in the chain a match cannot be made, <code>null</code> will be returned. 
+     * </p>
+     * @param request the HttpServletRequest
+     * @return the resolvedSiteMount for this request or <code>null</code> when it can not be matched to a siteMount
+     * @throws MatchException
+     */
+    ResolvedSiteMount matchSiteMountItem(HttpServletRequest request) throws MatchException;
+    
+    /**
+     * <p>
+     *  This method tries to match a request to a flyweight {@link ResolvedVirtualHost}
+     * </p>
+     * @param request
+     * @return the resolvedVirtualHost for this request or <code>null</code> when it can not be matched to a virtualHost
+     * @throws MatchException
+     */
+    ResolvedVirtualHost matchVirtualHost(HttpServletRequest request) throws MatchException;
  
+    /**
+     * Returns the list of all available hosts managed by this VirtualHosts object. When <code>mountableOnly</code> is <code>false</code>, you might get
+     * hosts back your are not interested in: For example, when the host, www.onehippo.org is added, then the cleanest way to configure this is:
+     * <pre>
+     * org
+     *  ` onehippo
+     *        ` www
+     * </pre>
+     * Now, quite likely, only the 'www' host segment has a {@link SiteMount} attached to it. However, this does not mean that by itself, 'org' and 'onehippo.org' are 
+     * as well hosts. When <code>mountedOnly</code> is <code>false</code>, you get back three hosts. When however <code>mountedOnly</code> is <code>true</code>,
+     * only those hosts that have a {@link SiteMount} attached <b>and</b> for which at least <code>1</code> SiteMount points to a correct mountPath, in other words, have 
+     * an existing {@link HstSite} they point to  
+     * @param mountedOnly when <code>true</code>, only the list of virtual hosts are returned that have a {@link SiteMount} that have a correct <code>mountPath</code>
+     * @return the list of VirtualHosts, and an empty list when no hosts apply
+     */
+    List<VirtualHost> getVirtualHosts(boolean mountedOnly);
+    
     /**
      * 
      * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.

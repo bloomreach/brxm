@@ -49,7 +49,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
  *  <li>hst:port (long)</li>
  *  <li>hst:showcontextpath (boolean)</li>
  *  <li>hst:showport(boolean)</li>
- *  <li>hst:protocol (string)</li>
+ *  <li>hst:scheme (string)</li>
  *  </ul>
  * 
  * <p>One extra is possible, <code>hst:namedpipeline</code>, see below for an example.</p> 
@@ -165,9 +165,9 @@ public interface SiteMount {
     int getPortNumber();
     
     /**
-     * @return the protocol to use for creating external urls, for example http / https
+     * @return the scheme to use for creating external urls, for example http / https
      */
-    String getProtocol();
+    String getScheme();
     
     /**
      * 
