@@ -37,6 +37,7 @@ import org.hippoecm.frontend.FacetSearchObserver;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
+import org.hippoecm.frontend.WebApplicationHelper;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -361,11 +362,15 @@ public class UserSession extends WebSession {
         return markupId + "_" + componentNum;
     }
 
-    public String getApplicationName(String defaultApplication) {
+    public String getApplicationName() {
+        String applicationName;
         String userID = getJcrSession().getUserID();
-        if(userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous"))
-            return "login";
-        else
-            return defaultApplication;
+        if (userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous")) {
+            applicationName = "login";
+        } else {
+            applicationName = WebApplicationHelper.getConfigurationParameter((WebApplication)Application.get(),
+                    Main.PLUGIN_APPLICATION_NAME, null);
+        }
+        return applicationName;
     }
 }
