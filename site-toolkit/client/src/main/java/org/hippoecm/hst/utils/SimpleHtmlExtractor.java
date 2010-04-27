@@ -65,15 +65,19 @@ public class SimpleHtmlExtractor {
      * If the html input is more complex and you need more correct result, then you need to set
      * <CODE>byHtmlCleaner</CODE> to true with more operational cost.
      * </P>
+     * <P>
+     * If tagName is null or empty, then the root element is used.
+     * </P>
      * @param html
-     * @param tagName
+     * @param tagName child tag name or null/empty for root tag
      * @param byHtmlCleaner
      * @return String innerHTML of the tag or <code>null</code> when the tag is not found
      */
     public static String getInnerHtml(String html, String tagName, boolean byHtmlCleaner) {
-        if(html == null) {
+        if (html == null) {
             return null;
         }
+        
         if (byHtmlCleaner) {
             return getInnerHtmlByCleaner(html, tagName);
         } else {
@@ -83,8 +87,11 @@ public class SimpleHtmlExtractor {
     
     /**
      * Extracts inner text of the tag which is first found by the <CODE>tagName</CODE>.
+     * <P>
+     * If tagName is null or empty, then the root element is used.
+     * </P>
      * @param html
-     * @param tagName
+     * @param tagName child tag name or null/empty for root tag
      * @return
      */
     public static String getInnerText(String html, String tagName) {
@@ -103,7 +110,11 @@ public class SimpleHtmlExtractor {
     }
     
     private static String getInnerHtmlSimply(String html, String tagName) {
-      tagName = tagName.toUpperCase();
+        if (tagName == null || "".equals(tagName)) {
+            tagName = "html";
+        }
+        
+        tagName = tagName.toUpperCase();
         String startTag = "<" + tagName;
         int startTagLen = startTag.length();
         String endTag = "</" + tagName + ">";
@@ -174,7 +185,9 @@ public class SimpleHtmlExtractor {
             if (out != null) try { out.close(); } catch (Exception ce) { }
             if (sw != null) try { sw.close(); } catch (Exception ce) { }
         }
+        
         log.debug("Tag '{}' not found. Return null", tagName);
+        
         return null;
     }
     
@@ -201,11 +214,13 @@ public class SimpleHtmlExtractor {
         
         try {
             TagNode rootNode = cleaner.clean(html);
-            if(rootNode.getName().equalsIgnoreCase(tagName)) {
+            
+            if (tagName == null || "".equals(tagName)) {
                 return rootNode;
             }
             
             TagNode [] targetNodes = rootNode.getElementsByName(tagName, true);
+            
             if (targetNodes.length > 0) {
                 targetNode = targetNodes[0];
             }
