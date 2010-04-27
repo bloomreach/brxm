@@ -69,7 +69,7 @@ public class SimpleHtmlExtractor {
      * If tagName is null or empty, then the root element is used.
      * </P>
      * @param html
-     * @param tagName child tag name or null/empty for root tag
+     * @param tagName the name of the tag including the root or null/empty for root tag
      * @param byHtmlCleaner
      * @return String innerHTML of the tag or <code>null</code> when the tag is not found
      */
@@ -91,13 +91,14 @@ public class SimpleHtmlExtractor {
      * If tagName is null or empty, then the root element is used.
      * </P>
      * @param html
-     * @param tagName child tag name or null/empty for root tag
+     * @param tagName the name of the tag including the root or null/empty for root tag
      * @return
      */
     public static String getInnerText(String html, String tagName) {
-        if(html == null) {
+        if (html == null) {
             return null;
         }
+        
         String innerText = "";
         
         TagNode targetNode = getTargetTagNode(html, tagName);
@@ -215,7 +216,7 @@ public class SimpleHtmlExtractor {
         try {
             TagNode rootNode = cleaner.clean(html);
             
-            if (tagName == null || "".equals(tagName)) {
+            if (tagName == null || "".equals(tagName) || tagName.equalsIgnoreCase(rootNode.getName())) {
                 return rootNode;
             }
             
