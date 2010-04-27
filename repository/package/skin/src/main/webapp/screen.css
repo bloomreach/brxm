@@ -1385,7 +1385,6 @@ div.rte-preview-area div.hippo-editor-field-html-preview:hover {background-color
 div.rte-preview-area:hover a{ color: #333;}
 
 div.rte-preview-style { overflow: auto; min-height: 175px; }
-div.rte-preview-style table{ visibility: hidden; }
 
 /* Tooltip styling without skin-sam*/
 .hippo-root .yui-tt .bd { position: relative; top: 0; left: 0; z-index: 1; color: #000; border-color: #D4C237 #A6982B #A6982B #A6982B; border-width: 1px; border-style: solid; background-color: #FFEE69; font-size: 13px; padding-left: 4px; padding-right: 4px; padding-top: 3px; padding-bottom: 3px; }
