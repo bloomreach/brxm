@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
-
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -34,6 +29,20 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
+import java.util.Calendar;
+
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 
 /**
  * Standard attributes of a hippostd:publishable document.  Figures out what css classes
@@ -50,9 +59,16 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private JcrNodeModel nodeModel;
     private Observable observable;
+    private transient boolean loaded = false;
+
     private transient String cssClass;
     private transient String summary;
-    private transient boolean loaded = false;
+
+    private transient String createdBy;
+    private transient Calendar creationDate;
+    private transient String lastModifiedBy;
+    private transient Calendar lastModifiedDate;
+    private transient Calendar publicationDate;
 
     public StateIconAttributes(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
@@ -69,10 +85,44 @@ public class StateIconAttributes implements IObservable, IDetachable {
         return cssClass;
     }
 
+    public String getCreatedBy() {
+        load();
+        return createdBy;
+    }
+
+    public Calendar getCreationDate() {
+        load();
+        return creationDate;
+    }
+
+    public String getLastModifiedBy() {
+        load();
+        return lastModifiedBy;
+    }
+
+    public Calendar getLastModifiedDate() {
+        load();
+        return lastModifiedDate;
+    }
+
+    public Calendar getPublicationDate() {
+        load();
+        return publicationDate;
+    }
+
+
     public void detach() {
         loaded = false;
+
         summary = null;
         cssClass = null;
+
+        createdBy = null;
+        creationDate = null;
+        lastModifiedBy = null;
+        lastModifiedDate = null;
+        publicationDate = null;
+
         nodeModel.detach();
         observable.detach();
     }
@@ -87,8 +137,17 @@ public class StateIconAttributes implements IObservable, IDetachable {
                     NodeType primaryType = null;
                     boolean isHistoric = false;
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        document = node.getNode(node.getName());
-                        primaryType = document.getPrimaryNodeType();
+                        NodeIterator docs = node.getNodes(node.getName());
+                        while (docs.hasNext()) {
+                            document = docs.nextNode();
+                            primaryType = document.getPrimaryNodeType();
+                            if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                                String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                                if ("unpublished".equals(state)) {
+                                    break;
+                                }
+                            }
+                        }
                     } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         document = node;
                         primaryType = document.getPrimaryNodeType();
@@ -114,8 +173,26 @@ public class StateIconAttributes implements IObservable, IDetachable {
                             summary = (String) new TypeTranslator(new JcrNodeTypeModel(
                                     HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
                                     HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
-                            JcrNodeModel model = new JcrNodeModel(document);
-                            observable.setTarget(model);
+
+                            if (primaryType.isNodeType(HIPPOSTDPUBWF_DOCUMENT) || document.isNodeType(HIPPOSTDPUBWF_DOCUMENT)) {
+                                if (document.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
+                                    publicationDate = document.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getDate();
+                                }
+                                if(document.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE)) {
+                                    lastModifiedDate = document.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getDate();
+                                }
+                                if(document.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY)) {
+                                    lastModifiedBy = document.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString();
+                                }
+                                if(document.hasProperty(HIPPOSTDPUBWF_CREATION_DATE)) {
+                                    creationDate = document.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getDate();
+                                }
+                                if(document.hasProperty(HIPPOSTDPUBWF_CREATED_BY)) {
+                                    createdBy = document.getProperty(HIPPOSTDPUBWF_CREATED_BY).getString();
+                                }
+                            }
+
+                            observable.setTarget(new JcrNodeModel(document));
                         }
                     }
                 }

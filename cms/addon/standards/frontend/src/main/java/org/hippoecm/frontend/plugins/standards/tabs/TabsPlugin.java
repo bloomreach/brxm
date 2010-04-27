@@ -15,14 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -40,6 +38,10 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class TabsPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -75,9 +77,21 @@ public class TabsPlugin extends RenderPlugin {
         emptyPanel = new RenderService(context, panelConfig);
         context.registerService(emptyPanel, properties.getString(TAB_ID));
 
+        MarkupContainer tabsContainer = new TabsContainer();
+        tabsContainer.setOutputMarkupId(true);
+
         tabs = new ArrayList<Tab>();
-        add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
+        add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs, tabsContainer));
         tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
+
+        if (properties.containsKey("tabs.container.id")) {
+            JavaPluginConfig containerConfig = new JavaPluginConfig();
+            containerConfig.put("wicket.id", properties.getString("tabs.container.id"));
+            RenderService containerService = new TabsContainerService(context, containerConfig);
+            containerService.add(tabsContainer);
+        } else {
+            tabbedPanel.add(tabsContainer);
+        }
 
         selectCount = 0;
         tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
@@ -146,6 +160,17 @@ public class TabsPlugin extends RenderPlugin {
             tabbie.detach();
         }
         super.onDetach();
+    }
+
+    @Override
+    public String getVariation() {
+        String variation = super.getVariation();
+        if (Strings.isEmpty(variation)) {
+            if (getPluginConfig().containsKey("tabs.container.id")) {
+                return "split";
+            }
+        }
+        return variation;
     }
 
     Panel getEmptyPanel() {
@@ -314,4 +339,5 @@ public class TabsPlugin extends RenderPlugin {
             return true;
         }
     }
+
 }

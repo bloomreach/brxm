@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
@@ -40,6 +38,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 
+import java.util.List;
+
 public class TabbedPanel extends WebMarkupContainer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -53,9 +53,10 @@ public class TabbedPanel extends WebMarkupContainer {
     private int maxTabLength = 12;
     private final List<TabsPlugin.Tab> tabs;
     private MarkupContainer panelContainer;
+    private MarkupContainer tabsContainer;
     private transient boolean redraw = false;
 
-    public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
+    public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
         super(id, new Model<Integer>(Integer.valueOf(-1)));
 
         if (tabs == null) {
@@ -64,6 +65,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
         this.plugin = plugin;
         this.tabs = tabs;
+        this.tabsContainer = tabsContainer;
 
         setOutputMarkupId(true);
 
@@ -75,18 +77,6 @@ public class TabbedPanel extends WebMarkupContainer {
                 return Integer.valueOf(TabbedPanel.this.tabs.size());
             }
         };
-
-        WebMarkupContainer tabsContainer = new WebMarkupContainer("tabs-container") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("class", "tab-row");
-            }
-        };
-        tabsContainer.setOutputMarkupId(true);
-        add(tabsContainer);
 
         // add the loop used to generate tab names
         tabsContainer.add(new Loop("tabs", tabCount) {
@@ -231,7 +221,7 @@ public class TabbedPanel extends WebMarkupContainer {
     public void render(PluginRequestTarget target) {
         if (redraw) {
             if (target != null) {
-                target.addComponent(get("tabs-container"));
+                target.addComponent(tabsContainer);
                 target.addComponent(get("panel-container"));
             }
             redraw = false;

@@ -71,6 +71,10 @@ import org.slf4j.LoggerFactory;
  *   <li>
  *   Z_INDEX: z-index for this unit. 
  *   </li>
+ *   <li>
+ *   EXPANDED: wether or not this unit is expanded, meaning it will take up all available space inside the wireframe, hiding
+ *   all other active units.
+ *   </li>
  * </ul>
  */
 public class UnitSettings implements Serializable {
@@ -97,6 +101,8 @@ public class UnitSettings implements Serializable {
     private boolean useShim;
 
     private int zIndex;
+
+    private boolean expanded;
     
     public static final String TOP = "top";
     public static final String RIGHT = "right";
@@ -203,4 +209,11 @@ public class UnitSettings implements Serializable {
         return zIndex;
     }
 
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
 }
