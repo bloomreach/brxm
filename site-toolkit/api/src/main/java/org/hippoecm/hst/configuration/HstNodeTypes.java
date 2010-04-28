@@ -57,6 +57,7 @@ public interface HstNodeTypes {
     public final static String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH =  "hst:relativecontentpath";
     public final static String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID =  "hst:componentconfigurationid";
     public final static String SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID =  "hst:portletcomponentconfigurationid";
+    public final static String SITEMAPITEM_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
 
     public final static String SITEMAPITEM_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
     public final static String SITEMAPITEM_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";

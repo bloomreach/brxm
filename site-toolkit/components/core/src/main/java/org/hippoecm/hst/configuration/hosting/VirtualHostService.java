@@ -43,14 +43,13 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
    
     private String id;
     private String name;
+    private String hostName;
     private VirtualHosts virtualHosts;
     private VirtualHostService parentHost;
     private SiteMount rootSiteMount;
     
     private String jcrPath;
     private boolean portVisible;
-    // default mounted is false
-    private boolean mounted = false;
     private int portNumber;
     private boolean contextPathInUrl;
     private String scheme;
@@ -150,11 +149,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             throw new ServiceException("Error during creating sitemounts: ", e);
         }
         
-        // check whether this Host is correctly mounted
-        if(attachSiteMountToHost.rootSiteMount != null && attachSiteMountToHost.rootSiteMount.getHstSite() != null) {
-            attachSiteMountToHost.mounted = true;
-        }
-        
         try {
             NodeIterator childHosts = virtualHostNode.getNodes();
             while(childHosts.hasNext()) {
@@ -168,8 +162,10 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         } catch (RepositoryException e) {
             throw new ServiceException("Error during initializing hosts", e);
         }
-        
+     
+        hostName = buildHostName();
     }
+
 
     
     public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position) {
@@ -188,32 +184,22 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             VirtualHostService childHost = new VirtualHostService(this,nameSegments, position);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
-      
+        hostName = buildHostName();
     }
+    
     
     public String getName(){
         return name;
     }
     
     public String getHostName(){
-        StringBuilder builder = new StringBuilder(name);
-        VirtualHostService ancestor = parentHost;
-        while(ancestor != null) {
-            builder.append(".").append(ancestor.name);
-            ancestor = ancestor.parentHost;
-        }
-        return builder.toString();
+        return hostName;
     }
     
     public String getId(){
         return id;
     }
     
-    public boolean isMounted() {
-        return mounted;
-    }
-
-
     public ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException {
         throw new MatchException("Not yet implemented");
     }
@@ -294,6 +280,17 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
 
     public List<VirtualHost> getChildHosts() {
         return new ArrayList<VirtualHost>(childVirtualHosts.values());
+    }
+
+
+    private String buildHostName() {
+        StringBuilder builder = new StringBuilder(name);
+        VirtualHostService ancestor = this.parentHost;
+        while(ancestor != null) {
+            builder.append(".").append(ancestor.name);
+            ancestor = ancestor.parentHost;
+        }
+        return builder.toString();
     }
 
    

@@ -52,6 +52,7 @@
 - hst:portletcomponentconfigurationid (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:namedpipeline (string)
 - hst:statuscode (long)
 - hst:errorcode (long)
 - hst:secured (boolean)
@@ -67,6 +68,8 @@
 - hst:foldersonly (boolean)
 - hst:repobased (boolean)
 - hst:depth (long)
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
 + * (hst:sitemenuitem)
 
 [hst:sitemenu] orderable
@@ -108,6 +111,8 @@
 - hst:ispreview (boolean)
 - hst:showport(boolean)
 - hst:scheme (string)
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
 
 
 [hst:virtualhost]
@@ -117,6 +122,8 @@
 - hst:showcontextpath (boolean)
 - hst:showport(boolean)
 - hst:scheme (string)
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
 
 [hst:virtualhosts]
 - hst:port (long)
@@ -126,6 +133,8 @@
 - hst:suffixexclusions (string) multiple
 - hst:scheme (string)
 - hst:defaulthostname (string)
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
 + * (hst:virtualhost)
 
 

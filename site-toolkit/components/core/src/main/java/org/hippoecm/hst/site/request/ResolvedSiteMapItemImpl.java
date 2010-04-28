@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @version $Id$
  */
-public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
+public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
     private final static Logger log = LoggerFactory.getLogger(ResolvedSiteMapItemImpl.class);
     private HstSiteMapItem hstSiteMapItem;
@@ -155,6 +155,15 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 
     public ResolvedSiteMount getResolvedSiteMount() {
        return resolvedSiteMount;
+    }
+
+    public String getNamedPipeline() {
+        String namedPipeline = hstSiteMapItem.getNamedPipeline();
+        if(namedPipeline == null) {
+            // perhaps the backing ResolvedSiteMount does contain one
+            namedPipeline = resolvedSiteMount.getNamedPipeline();
+        }
+        return namedPipeline;
     }
 
 }

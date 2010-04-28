@@ -36,6 +36,18 @@ public interface ResolvedSiteMount {
      * @return the backing request independent {@link SiteMount} item for this resolvedSiteMount instance
      */
     SiteMount getSiteMount();
+    
+    /**
+     * @return the named pipeline to be used for this SiteMount or <code>null</code> when the default pipeline is to be used
+     */
+    String getNamedPipeline();
+    
+    /**
+     * Returns the pathInfoPrefix from the backing {@link SiteMount} where possible wildcard values might have been replaced
+     * @see SiteMount#getPathInfoPrefix()
+     * @return the resolved pathInfo prefix for this ResolvedSiteMount
+     */
+    String getResolvedPathInfoPrefix();
 
     /**
      * matches the current request, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or <code>null</code> when
@@ -45,5 +57,6 @@ public interface ResolvedSiteMount {
      * @throws MatchException 
      */
     ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException;
+
     
 }

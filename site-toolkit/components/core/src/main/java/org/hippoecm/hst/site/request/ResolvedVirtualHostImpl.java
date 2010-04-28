@@ -17,17 +17,25 @@ package org.hippoecm.hst.site.request;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
 
+    private final static Logger log = LoggerFactory.getLogger(ResolvedVirtualHostImpl.class);
+    
     private VirtualHost virtualHost;
     
-    public ResolvedVirtualHostImpl(VirtualHost virtualHost) {
+    private String hostName;
+    
+    public ResolvedVirtualHostImpl(VirtualHost virtualHost, String hostName) {
         this.virtualHost = virtualHost;
+        this.hostName = hostName;
     }
 
     public VirtualHost getVirtualHost() {
@@ -35,8 +43,39 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     }
 
     public ResolvedSiteMount matchSiteMountItem(HttpServletRequest request) {
+        SiteMount siteMount = virtualHost.getRootSiteMount();
+        if(siteMount == null) {
+            log.debug("Virtual Host '{}' is not mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());
+        }
         String pathInfo = HstRequestUtils.getPathInfo(request);
-        return null;
+        String[] pathInfoSegments = pathInfo.split("\\.");
+        int position = 0;
+        while(position < pathInfoSegments.length) {
+            if(siteMount.getChildMount(pathInfoSegments[position]) != null) {
+                siteMount = siteMount.getChildMount(pathInfoSegments[position]);
+            } else {
+                // we're done: we have the deepest site mount
+                break;
+            }
+            position++;
+        }
+        
+        // reconstruct the prefix that needs to be stripped of from the request because it belongs to the site mount
+        StringBuilder builder = new StringBuilder();
+        while(position > 0) {
+            builder.append("/").append(pathInfoSegments[position]);
+            position--;
+        }
+        
+        String resolvedPathInfoPrefix = builder.toString();
+        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedPathInfoPrefix);
+        log.debug("Found ResolvedSiteMount is '{}' and the prefix path for it is :", resolvedSiteMount.getResolvedPathInfoPrefix());
+        
+        return resolvedSiteMount;
+    }
+
+    public String getResolvedHostName() {
+        return hostName;
     }
 
 }

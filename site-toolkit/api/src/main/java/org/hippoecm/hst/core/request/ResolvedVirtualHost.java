@@ -30,6 +30,14 @@ public interface ResolvedVirtualHost {
      * @return the backing virtual host of this ResolvedVirtualHost
      */
     VirtualHost getVirtualHost();
+    
+    /**
+     * the hostName that resolved to this ResolvedVirtualHost. Note that this might be different then the one in {@link VirtualHost#getHostName()} as this
+     * hostName might contain not yet filled in wildcards. 
+     * @see VirtualHost#getHostName()
+     * @return the hostName that resolved to this ResolvedVirtualHost
+     */
+    String getResolvedHostName();
 
     /**
      * matches the current request and resolved virtual host to a {@link ResolvedSiteMount} item

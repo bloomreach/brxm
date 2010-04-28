@@ -52,7 +52,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private int statusCode; 
     
     private int errorCode; 
-    
+        
     private String parameterizedPath;
     
     private int occurences;
@@ -70,6 +70,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private boolean isWildCard;
     
     private boolean isAny;
+    
+    private String namedPipeline;
     
     /*
      * Internal only: used for linkrewriting: when true, it indicates, that this HstSiteMapItem can only be used in linkrewriting
@@ -205,6 +207,12 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         } else if(this.parentItem != null){
             this.secured = parentItem.isSecured();
         } 
+        
+        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
+            this.namedPipeline = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
+        } else if(this.parentItem != null) {
+            this.namedPipeline = parentItem.getNamedPipeline();
+        }
         
         init(jcrNode);
     }
@@ -404,6 +412,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return null;
     }
 
+
+    public String getNamedPipeline() {
+        return this.namedPipeline;
+    }
+    
     public String getPostfix(){
         return this.postfix;
     }
@@ -443,4 +456,5 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public int getDepth() {
         return this.depth;
     }
+
 }

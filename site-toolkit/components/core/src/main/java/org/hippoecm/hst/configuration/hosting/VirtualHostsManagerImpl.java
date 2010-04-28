@@ -25,10 +25,11 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VirtualHostsManagerImpl implements VirtualHostsManager{
+public class VirtualHostsManagerImpl implements VirtualHostsManager {
 
     private static final Logger log = LoggerFactory.getLogger(VirtualHostsManagerImpl.class);
     
@@ -36,6 +37,7 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
     protected Credentials credentials;
     protected VirtualHosts virtualHosts;
     private String virtualHostsPath;
+    private HstSiteMapMatcher hstSiteMapMatcher;
     
     public VirtualHostsManagerImpl(String virtualHostsPath) {
         this.virtualHostsPath = virtualHostsPath;
@@ -49,6 +51,13 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
         this.credentials = credentials;
     }
 
+    public void setHstSiteMapMatcher(HstSiteMapMatcher hstSiteMapMatcher) {
+        this.hstSiteMapMatcher = hstSiteMapMatcher;
+    }
+    
+    public HstSiteMapMatcher getHstSiteMapMatcher() {
+        return hstSiteMapMatcher;
+    }
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException{
         VirtualHosts vHosts = this.virtualHosts;
@@ -89,7 +98,7 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
                     log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node of type '{}'", virtualHostsPath, HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS);
                     return;
                 }
-                this.virtualHosts = new VirtualHostsService(virtualHostsNode);
+                this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
             } else {
                 log.error("No correct virtualhosts configured at {}. We cannot build virtual hosts configuration", virtualHostsPath);
                 return;
@@ -117,5 +126,6 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
     public synchronized void invalidate(String path) {
         this.virtualHosts = null;
     }
+
 
 }

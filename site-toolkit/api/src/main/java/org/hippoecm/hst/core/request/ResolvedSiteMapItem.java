@@ -90,6 +90,15 @@ public interface ResolvedSiteMapItem {
     HstSiteMapItem getHstSiteMapItem();
     
     /**
+     * Returns the <code>namedPipeline</code> to be used for the Hst Request Processing. When the backing {@link HstSiteMapItem} does not contain one,
+     * possibly, when present, it is inherited from its backing {@link SiteMount}. If this one does not have it either, <code>null</code> is returned
+     * implying the default pipeline will be called
+     * 
+     * @return the <code>namedPipeline</code> for this ResolvedSiteMapItem or <code>null</code> implying the default should be used
+     */
+    String getNamedPipeline();
+    
+    /**
      * 
      * @return the statusCode specified by <code>{@link HstSiteMapItem#getStatusCode()}</code> 
      */

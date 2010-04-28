@@ -33,6 +33,12 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 public interface VirtualHosts {
 
     /**
+     * @return the {@link VirtualHostsManager} for this VirtualHosts object
+     */
+    VirtualHostsManager getVirtualHostsManager();
+    
+    /**
+     * 
      * Typically, some paths we do not want to be handle by the hst framework request processing. Typically, this would
      * be for example paths starting with /binaries/, or paths ending with some extension, like .pdf
      * 

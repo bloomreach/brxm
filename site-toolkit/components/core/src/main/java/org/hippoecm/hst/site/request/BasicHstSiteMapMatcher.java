@@ -16,13 +16,9 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.collections.map.LRUMap;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
@@ -32,7 +28,6 @@ import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,34 +46,17 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     
     // the equivalence for **
     public final static String ANY = "_any_";
-    
-    /*
-     * Global cached map for *all subsites*
-     */
-    private Map<String, ResolvedSiteMapItem> cache = Collections.synchronizedMap(new LRUMap(10000));
-    
+     
     private HstLinkProcessor linkProcessor;
     
     public void setlinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
     }
-    
-    public void invalidate(){
-        this.cache.clear();
-    }
+
     
     public ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) {
         HstSite hstSite = resolvedSiteMount.getSiteMount().getHstSite();
-        String key = hstSite.getContentPath() + "_" + pathInfo;
-        ResolvedSiteMapItem cached = cache.get(key);
-        if(cached != null) {
-            if(cached instanceof NullResolvedSiteMapItem) {
-                log.warn("For path '{}' no sitemap item can be matched", key);
-                return null;
-            }
-            return cached;
-        }
-        
+       
         Properties params = new Properties();
         
         pathInfo = PathUtils.normalizePath(pathInfo);
@@ -90,8 +68,6 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         }
         
         String[] elements = pathInfo.split("/"); 
-        
-       
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
         
@@ -152,7 +128,6 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
                 log.warn("Did not find a matching sitemap item and there is no catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null");
-                cache.put(key, new NullResolvedSiteMapItem());
                 return null;
             } else {
                 // The ** has the value of the entire pathInfo
@@ -171,7 +146,6 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         }
         
         ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo, resolvedSiteMount);
-        cache.put(key, r);
         return r;
     
     }
@@ -267,71 +241,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         return parameter;
     }
     
-    
-    /*
-     * Placeholder for a null cached version
-     */
-    private class NullResolvedSiteMapItem implements ResolvedSiteMapItem{
 
-        public HstComponentConfiguration getHstComponentConfiguration() {
-            return null;
-        }
-
-        public HstComponentConfiguration getPortletHstComponentConfiguration() {
-            return null;
-        }
-        
-        public HstSiteMapItem getHstSiteMapItem() {
-            return null;
-        }
-
-        public String getParameter(String name) {
-            return null;
-        }
-
-        public Properties getParameters() {
-            return null;
-        }
-        
-        public String getLocalParameter(String name) {
-            return null;
-        }
-
-        public Properties getLocalParameters() {
-            return null;
-        }
-
-        public String getRelativeContentPath() {
-            return null;
-        }
-
-        public HstSiteMenus getSiteMenus() {
-            return null;
-        }
-        
-        public int getStatusCode(){
-            return 0;
-        }
-
-        public int getErrorCode() {
-            return 0;
-        }
-
-        public List<String> getRoles() {
-            return new ArrayList<String>() ;
-        }
-
-        public boolean isSecured() {
-            return false;
-        }
-        
-        public String getPathInfo() {
-            return null;
-        }
-
-        public ResolvedSiteMount getResolvedSiteMount() {
-            return null;
-        }
-
+    public void invalidate() {
+        // currently nothing to invalidate
     }
 }

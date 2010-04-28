@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
@@ -28,6 +29,11 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      * The name of this sitemount. If it is the root, it is called hst:root
      */
     private String name;
+    
+    /**
+     * The pathInfoPrefix of this sitemount. Note that it can contain wildcards
+     */
+    private String pathInfoPrefix;
     
     /**
      * The virtual host of where this SiteMount belongs to
@@ -77,6 +83,12 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         this.parent = parent;
         
         this.name = getValueProvider().getName();
+        
+        if(parent == null) {
+            pathInfoPrefix = "";
+        } else {
+            pathInfoPrefix = parent.getPathInfoPrefix() + "/" + name;
+        }
         
         // the portnumber
         if(getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_PORT)) {
@@ -208,6 +220,12 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         return name;
     }
 
+
+    public String getPathInfoPrefix() {
+        return pathInfoPrefix;
+    }
+
+    
     public SiteMount getParent() {
         return parent;
     }
@@ -252,6 +270,10 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     
     public String getNamedPipeline(){
         return namedPipeline;
+    }
+
+    public HstSiteMapMatcher getHstSiteMapMatcher() {
+        return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getHstSiteMapMatcher();
     }
 
 }

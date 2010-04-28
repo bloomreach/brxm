@@ -196,5 +196,12 @@ public interface HstSiteMapItem {
      * @return if an error code is set, return this, otherwise <code>0</code>
      */
     int getErrorCode();
+
+    /**
+     * the namedPipeline for this sitemapItem or <code>null</code> when it does not contain one. Note that if an ancestor sitemapItem contains a 
+     * namedPipeline, this value is inherited unless this sitemapItem explicitly defines its own
+     * @return the namedPipeline for this sitemapItem or <code>null</code> when it does not contain one. 
+     */
+    String getNamedPipeline();
     
 }

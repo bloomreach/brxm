@@ -30,7 +30,7 @@ public interface VirtualHost {
 
     
     /**
-     * The hostName of this VirtualHost
+     * The hostName of this VirtualHost. <b>Note</b> that this hostName might contain wildcards, for example www.onehippo.*
      * @return The composite hostName of this VirtualHost, thus including parent VirtualHosts if present
      */
     String getHostName();
@@ -73,13 +73,6 @@ public interface VirtualHost {
     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured
     */
    ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
-    
-   /**
-    * When there are no  {@link SiteMount}'s for this VirtualHost, or, when there are  {@link SiteMount} but they do not have a <code>mountPath</code>, or a 
-    * <code>mountPath</code> that does not point to an existing {@link HstSite}, then <code>false</code> will be returned.
-    * @return <code>true</code> when this VirtualHost has a correctly mounted {@link SiteMount} to an existing {@link HstSite} and <code>false</code> otherways
-    */
-   boolean isMounted();
    
     /**
      * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>

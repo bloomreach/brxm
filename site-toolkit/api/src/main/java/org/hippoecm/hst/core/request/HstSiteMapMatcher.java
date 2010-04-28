@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.request;
 
+import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
@@ -38,7 +39,7 @@ public interface HstSiteMapMatcher {
      * @param resolvedSiteMount the current <code>ResolvedSiteMount</code> that must matches the request serverName and pathInfo
      * @return a ResolvedSiteMapItem and <code>null</code> if non matched
      */
-    ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount);
+    ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) throws MatchException;
   
     /**
      * method that can be called if some event is triggered. For example if the <code>HstSiteMapMatcher</code> implementing class

@@ -21,6 +21,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
  * <p>A SiteMount object is the mount from a prefix to some (sub)site. SiteMount is a Composite pattern: Each SiteMount can contain any descendant
@@ -115,6 +116,17 @@ public interface SiteMount {
     SiteMount getParent();
     
     /**
+     * <p>
+     * Returns the path info prefix for this SiteMount object. The root SiteMount has an empty pathInfoPrefix. A pathInfoPrefix for a 
+     * SiteMount is its own {@link #getName()} plus all ancestors up to the root. It can contain wildcards, for example /preview/*.
+     * Typically, these wildcards are replaced by their actual values in the {@link ResolvedSiteMount}
+     * </p>
+     * @see ResolvedSiteMount#getResolvedPathInfoPrefix()
+     * @return the path info prefix for this siteMount
+     */
+    String getPathInfoPrefix();
+    
+    /**
      * 
      * @param name of the child SiteMount
      * @return a SiteMount with {@link #getName()} equal to <code>name</code> or <code>null</code> when there is no such item
@@ -122,18 +134,12 @@ public interface SiteMount {
     SiteMount getChildMount(String name);
     
     /**
-     * @return the List of child SiteMount's. If there are no child SiteMount's, and empty List must be returned
-     */
-    // TODO Do we need this one?
-    //List<SiteMount> getSiteMountChilds();
-    
-    /**
      * @return the virtualHost where this SiteMount belongs to
      */
     VirtualHost getVirtualHost();
     
     /**
-     * @return the <code>HstSite</code> this <code>SiteMount</code> is pointing to or <code>null</code> when none found
+     * @return the {@link HstSite} this <code>SiteMount</code> is pointing to or <code>null</code> when none found
      */
     HstSite getHstSite();
     
@@ -176,8 +182,15 @@ public interface SiteMount {
     boolean isPreview();
     
     /**
+     * Note that if an ancestor siteMount contains a namedPipeline, this value is inherited unless this siteMount explicitly defines its own
      * @return the named pipeline to be used for this SiteMount or <code>null</code> when the default pipeline is to be used
      */
     String getNamedPipeline();
+
+    /**
+     * This is a shortcut method fetching the HstSiteMapMatcher from the backing {@link VirtualHostsManager}
+     * @return the HstSiteMapMatcher implementation
+     */
+    HstSiteMapMatcher getHstSiteMapMatcher();
     
 }
