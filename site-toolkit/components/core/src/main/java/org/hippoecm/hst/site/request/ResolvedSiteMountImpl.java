@@ -17,15 +17,14 @@ package org.hippoecm.hst.site.request;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.hosting.MatchException;
-import org.hippoecm.hst.core.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 
 public class ResolvedSiteMountImpl implements ResolvedSiteMount{
 
-    
     
     public SiteMount getSiteMount() {
         

@@ -17,8 +17,8 @@ package org.hippoecm.hst.core.configuration;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSites;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.site.HstSites;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Ignore;

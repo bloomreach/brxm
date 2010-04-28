@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.site.request;
 
-import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 

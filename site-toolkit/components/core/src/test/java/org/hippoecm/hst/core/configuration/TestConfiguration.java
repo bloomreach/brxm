@@ -17,7 +17,7 @@ package org.hippoecm.hst.core.configuration;
 
 import static org.junit.Assert.assertTrue;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.BasicHstSiteMapMatcher;

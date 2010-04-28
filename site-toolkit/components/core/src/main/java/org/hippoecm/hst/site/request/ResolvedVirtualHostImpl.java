@@ -17,9 +17,10 @@ package org.hippoecm.hst.site.request;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
 
@@ -34,7 +35,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     }
 
     public ResolvedSiteMount matchSiteMountItem(HttpServletRequest request) {
-        
+        String pathInfo = HstRequestUtils.getPathInfo(request);
         return null;
     }
 

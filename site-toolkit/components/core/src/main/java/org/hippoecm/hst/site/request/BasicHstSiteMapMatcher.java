@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.collections.map.LRUMap;
-import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.linking.HstLink;

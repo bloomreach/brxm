@@ -20,6 +20,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
@@ -115,7 +118,7 @@ public class TestVirtualHosting extends AbstractSpringTestCase {
             request.setPathInfo("/news/2009");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-             //   ResolvedSiteMapItem resolvedSiteMapItem = vhosts.match(request);
+                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
                 
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
