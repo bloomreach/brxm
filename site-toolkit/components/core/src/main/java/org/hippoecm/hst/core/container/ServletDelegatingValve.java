@@ -58,7 +58,7 @@ public class ServletDelegatingValve extends AbstractValve
                 synchronized (servlet) {
                     if (!servletInitialized) {
                         if (config instanceof ServletContextAware) {
-                            ((ServletContextAware) config).setServletContext(context.getRequestContainerConfig().getServletConfig().getServletContext());
+                            ((ServletContextAware) config).setServletContext(context.getRequestContainerConfig().getServletContext());
                         }
                         servlet.init(config);
                         servletInitialized = true;

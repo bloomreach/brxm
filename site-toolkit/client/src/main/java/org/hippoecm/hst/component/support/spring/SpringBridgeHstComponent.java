@@ -15,9 +15,9 @@
  */
 package org.hippoecm.hst.component.support.spring;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
-import org.hippoecm.hst.container.HstContainerServlet;
+import org.hippoecm.hst.container.HstVirtualHostsFilter;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -42,26 +42,23 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * This bridge component will retrieve the bean from the spring web application context by the
  * bean name.
  * If you want to change the default parameter name, then you can achieve that 
- * by configuring the parameter name in the web.xml.
+ * by configuring the parameter name with an added "hst-" prefix in the web.xml.
  * For example, if you want to change the default parameter name to 'my-bean-param', then
  * you can configure this like the following:
  * 
  * <xmp>
- *  <servlet>
- *    <servlet-name>HstContainerServlet</servlet-name>
- *    <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
+ *  <webapp ...>
  *    <!--
  *    ...
  *    -->
  *    <init-param>
- *      <param-name>spring-delegated-bean-param-name</param-name>
+ *      <param-name>hst-spring-delegated-bean-param-name</param-name>
  *      <param-value>my-bean-param</param-value>
  *    </init-param>
  *    <!--
  *    ...
  *    -->
- *    <load-on-startup>2</load-on-startup>
- *  </servlet>
+ *  </webapp>
  * </xmp>
  * 
  * With the above setting, you need to set the parameters with name, 'my-bean-param' in the
@@ -79,8 +76,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * The bean factory paths can be multiple to represent the hierarchy
  * like 'com.mycompany.myapp::crm::contactBean'.
  * <br/>
- * The separator for hierarchical bean factory path can be changed by setting the servlet
- * init parameter, 'spring-context-name-separator-param-name'.
+ * The separator for hierarchical bean factory path can be changed by setting the webapp
+ * init parameter, 'hst-spring-context-name-separator-param-name'.
  * </p>
  * 
  * @version $Id$
@@ -94,16 +91,16 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
     protected HstComponent delegatedBean;
     
     @Override
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        super.init(servletConfig, componentConfig);
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletContext, componentConfig);
         
-        String param = servletConfig.getInitParameter("spring-delegated-bean-param-name");
+        String param = servletContext.getInitParameter("hst-spring-delegated-bean-param-name");
         
         if (param != null) {
             delegatedBeanNameParamName = param;
         }
         
-        param = servletConfig.getInitParameter("spring-context-name-separator-param-name");
+        param = servletContext.getInitParameter("hst-spring-context-name-separator-param-name");
         
         if (param != null) {
             contextNameSeparator = param;
@@ -166,7 +163,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
             }
             
             boolean beanFoundFromBeanFactory = false;
-            BeanFactory beanFactory = WebApplicationContextUtils.getWebApplicationContext(getServletConfig().getServletContext());
+            BeanFactory beanFactory = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
             
             if (beanFactory != null) {
                 String contextName = null;
@@ -196,7 +193,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
             ComponentManager componentManager = null;
             
             if (delegatedBean == null) {
-                componentManager = HstContainerServlet.getClientComponentManager(getServletConfig());
+                componentManager = HstVirtualHostsFilter.getClientComponentManager(getServletContext());
                 
                 if (componentManager != null) {
                     delegatedBean = componentManager.getComponent(beanName);
@@ -215,7 +212,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
                 }
             }
 
-            delegatedBean.init(getServletConfig(), getComponentConfiguration());
+            delegatedBean.init(getServletContext(), getComponentConfiguration());
             
             if (beanFoundFromBeanFactory && beanFactory instanceof AbstractApplicationContext) {
                 delegatedBeanApplicationContext = (AbstractApplicationContext) beanFactory;

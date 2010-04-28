@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Session;
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
@@ -50,13 +50,10 @@ public class Detail extends BaseHstComponent {
     private String cmsApplicationUrl = "/cms/";
 
     @Override
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        super.init(servletConfig, componentConfig);
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletContext, componentConfig);
         
-        String param = servletConfig.getInitParameter("cmsApplicationUrl");
-        if (param == null) {
-            param = servletConfig.getServletContext().getInitParameter("cmsApplicationUrl");
-        }
+        String param = servletContext.getInitParameter("cmsApplicationUrl");
         if (param != null) {
             cmsApplicationUrl = param;
         }

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.component;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 
@@ -36,7 +36,7 @@ public interface HstComponent {
      * @param componentConfig the componentConfigBean configuration
      * @throws HstComponentException
      */
-    void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException;
+    void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException;
     
     /**
      * Allows the component to do some business logic processing before rendering
@@ -72,4 +72,8 @@ public interface HstComponent {
      */
     void destroy() throws HstComponentException;
     
+    /**
+     * @return Retrieves the servletContext to which this HstComponent is bound
+     */
+    ServletContext getServletContext();
 }

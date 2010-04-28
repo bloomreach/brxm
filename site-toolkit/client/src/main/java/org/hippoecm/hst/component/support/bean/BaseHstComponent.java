@@ -27,12 +27,12 @@ import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.container.HstContainerServlet;
+import org.hippoecm.hst.container.HstVirtualHostsFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -106,7 +106,7 @@ public class BaseHstComponent extends GenericHstComponent {
 
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
 
-    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "beans-annotated-classes";
+    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
     
     /**
@@ -124,8 +124,8 @@ public class BaseHstComponent extends GenericHstComponent {
     protected ObjectConverter objectConverter;
     protected HstQueryManager queryManager;
 
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        super.init(servletConfig, componentConfig);
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletContext, componentConfig);
         if (!this.beansInitialized) {
             initBeansObjects() ;
         }
@@ -389,9 +389,9 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return the client ComponentManager or <code>null</code> if none configured 
      */
     public ComponentManager getDefaultClientComponentManager(){
-        ComponentManager clientComponentManager = HstContainerServlet.getClientComponentManager(getServletConfig());
+        ComponentManager clientComponentManager = HstVirtualHostsFilter.getClientComponentManager(getServletContext());
         if(clientComponentManager == null) {
-            log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstContainerServlet.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
+            log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstVirtualHostsFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
         }
         return  clientComponentManager;
     }
@@ -584,12 +584,12 @@ public class BaseHstComponent extends GenericHstComponent {
         List<String> classNames = new ArrayList<String>();
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
 
-        String param = getServletConfig().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
+        String param = getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
         String ocmAnnotatedClassesResourcePath = (param != null ? param : DEFAULT_BEANS_ANNOTATED_CLASSES_CONF);
         InputStream in = null;
 
         try {
-            in = new BufferedInputStream(getServletConfig().getServletContext().getResourceAsStream(
+            in = new BufferedInputStream(getServletContext().getResourceAsStream(
                     ocmAnnotatedClassesResourcePath));
 
             Digester digester = new Digester();

@@ -15,22 +15,22 @@
  */
 package org.hippoecm.hst.container;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.container.HstContainerConfig;
 
 public class HstContainerConfigImpl implements HstContainerConfig {
     
-    private final ServletConfig servletConfig;
+    private final ServletContext servletContext;
     private final ClassLoader contextClassLoader;
     
-    public HstContainerConfigImpl(final ServletConfig servletConfig, final ClassLoader contextClassLoader) {
-        this.servletConfig = servletConfig;
+    public HstContainerConfigImpl(final ServletContext servletContext, final ClassLoader contextClassLoader) {
+        this.servletContext = servletContext;
         this.contextClassLoader = contextClassLoader;
     }
     
-    public ServletConfig getServletConfig() {
-        return this.servletConfig;
+    public ServletContext getServletContext() {
+        return this.servletContext;
     }
     
     public ClassLoader getContextClassLoader() {

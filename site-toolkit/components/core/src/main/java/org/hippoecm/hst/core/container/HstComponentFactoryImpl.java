@@ -56,7 +56,7 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
                
                 ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig); 
                 
-                component.init(requestContainerConfig.getServletConfig(), compConfigImpl);
+                component.init(requestContainerConfig.getServletContext(), compConfigImpl);
                 
                 initialized = true;
             } catch (ClassNotFoundException e) {

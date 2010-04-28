@@ -206,7 +206,7 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
     protected void doDispatch(String dispatchPath, HstRequest request, HstResponse response) throws HstComponentException {
         if (dispatchPath != null) {
             try {
-                getServletConfig().getServletContext().getRequestDispatcher(dispatchPath).include(request, response);
+                getServletContext().getRequestDispatcher(dispatchPath).include(request, response);
             } catch (ServletException e) {
                 throw new HstComponentException(e);
             } catch (IOException e) {

@@ -51,38 +51,6 @@
             <param-name>welcome-page</param-name>
             <param-value>home</param-value>
         </init-param>
-        <init-param>
-            <param-name>preview-prefix</param-name>
-            <param-value>/preview</param-value>
-        </init-param>   
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>HstVirtualHostsFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-    
-	<!-- Spring Log4j Configuring Listener -->
-	<listener>
-		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-	</listener>
-
-	<servlet>
-		<servlet-name>HstSiteConfigServlet</servlet-name>
-		<servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet>
-		<servlet-name>HstContainerServlet</servlet-name>
-		<servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
         <!--
         HST Application Context Namespace Prefix.
         This should be unique among multiple HST-based application contexts.
@@ -107,18 +75,30 @@
           <param-value>/META-INF/client-assembly/*.xml</param-value>
         </init-param>
         -->
-		<load-on-startup>2</load-on-startup>
-	</servlet>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>HstVirtualHostsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    
+	<!-- Spring Log4j Configuring Listener -->
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
 
-    <servlet>
-        <servlet-name>HstJaxrsContainerServlet</servlet-name>
-        <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
-        <init-param>
-            <param-name>hstDefaultPipeline</param-name>
-            <param-value>JaxrsPipeline</param-value>
-        </init-param>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
+	<servlet>
+		<servlet-name>HstSiteConfigServlet</servlet-name>
+		<servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 
     <servlet>
         <servlet-name>BinariesServlet</servlet-name>
@@ -201,26 +181,6 @@
         <load-on-startup>200</load-on-startup>
     </servlet>
     
-	<servlet-mapping>
-        <servlet-name>HstJaxrsContainerServlet</servlet-name>
-        <url-pattern>/live/services/*</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>HstJaxrsContainerServlet</servlet-name>
-        <url-pattern>/preview/services/*</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>HstContainerServlet</servlet-name>
-        <url-pattern>/preview/*</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>HstContainerServlet</servlet-name>
-        <url-pattern>/live/*</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>BinariesServlet</servlet-name>
         <url-pattern>/binaries/*</url-pattern>

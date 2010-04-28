@@ -53,6 +53,37 @@
   </context-param>
   
   <filter>
+    <filter-name>HstVirtualHostsFilter</filter-name>
+    <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
+    <init-param>
+      <param-name>welcome-page</param-name>
+      <param-value>news</param-value>
+    </init-param>
+    <!--
+    HST Application Context Namespace Prefix.
+    This should be unique among multiple HST-based application contexts.
+    -->
+    <!--
+    <init-param>
+      <param-name>hstContextNamespace</param-name>
+      <param-value>news</param-value>
+    </init-param>
+    -->
+    <!--
+    HST-2 based SITE application can define and assemble its own components by uncommenting the following two init parameters 
+    and set the spring configuration files properly. The spring configuration resources are loaded by the context classloader.
+    -->
+    <init-param>
+      <param-name>clientComponentManagerClass</param-name>
+      <param-value>org.hippoecm.hst.component.support.ClientComponentManager</param-value>
+    </init-param>
+    <init-param>
+      <param-name>clientComponentManagerConfigurations</param-name>
+      <param-value>/META-INF/client-assembly/*.xml</param-value>
+    </init-param>
+  </filter>
+  
+  <filter>
     <filter-name>WicketContentBrowser</filter-name>
     <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
     <init-param>
@@ -83,6 +114,13 @@
   </filter>
   
   <filter-mapping>
+    <filter-name>HstVirtualHostsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+  </filter-mapping>
+  
+  <filter-mapping>
     <filter-name>WicketContentBrowser</filter-name>
     <url-pattern>/exapps/contentbrowser/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
@@ -105,46 +143,6 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-  
-  <servlet>
-    <servlet-name>HstContainerServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
-    <!--
-    HST Application Context Namespace Prefix.
-    This should be unique among multiple HST-based application contexts.
-    -->
-    <!--
-    <init-param>
-      <param-name>hstContextNamespace</param-name>
-      <param-value>news</param-value>
-    </init-param>
-    -->
-    <!--
-    HST-2 based SITE application can define and assemble its own components by uncommenting the following two init parameters 
-    and set the spring configuration files properly. The spring configuration resources are loaded by the context classloader.
-    -->
-    <!--
-    <init-param>
-      <param-name>clientComponentManagerClass</param-name>
-      <param-value>org.hippoecm.hst.component.support.ClientComponentManager</param-value>
-    </init-param>
-    <init-param>
-      <param-name>clientComponentManagerConfigurations</param-name>
-      <param-value>/META-INF/client-assembly/*.xml</param-value>
-    </init-param>
-    -->
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-  
-  <servlet>
-    <servlet-name>HstJaxrsContainerServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
-    <init-param>
-      <param-name>hstDefaultPipeline</param-name>
-      <param-value>JaxrsPipeline</param-value>
-    </init-param>
-    <load-on-startup>3</load-on-startup>
-  </servlet>
   
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
@@ -205,26 +203,6 @@
     <servlet-name>DojoResourceServlet</servlet-name>
     <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
   </servlet>
-
-  <servlet-mapping>
-    <servlet-name>HstJaxrsContainerServlet</servlet-name>
-    <url-pattern>/live/services/*</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-    <servlet-name>HstJaxrsContainerServlet</servlet-name>
-    <url-pattern>/preview/services/*</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-    <servlet-name>HstContainerServlet</servlet-name>
-    <url-pattern>/preview/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>HstContainerServlet</servlet-name>
-    <url-pattern>/live/*</url-pattern>
-  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>

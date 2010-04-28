@@ -1,6 +1,6 @@
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 /**
  * The HstComponent container configuration.
@@ -14,10 +14,10 @@ import javax.servlet.ServletConfig;
 public interface HstContainerConfig {
 
     /**
-     * Returns the servletConfig of the web application where the HstComponents are located.
+     * Returns the servletContext of the web application where the HstComponents are located.
      * @return
      */
-    ServletConfig getServletConfig();
+    ServletContext getServletContext();
     
     /**
      * Returns the classloader of the web application where the HstComponents are located.

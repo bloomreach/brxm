@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.components;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -28,16 +28,16 @@ public class GenericResourceServingHstComponent extends BaseHstComponent {
     protected String staticResourceServePath = "/staticresource";
     protected String repositoryResourceServePath = "/binaries";
     
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        super.init(servletConfig, componentConfig);
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletContext, componentConfig);
         
-        String param = servletConfig.getInitParameter("staticResourceServePath");
+        String param = servletContext.getInitParameter("staticResourceServePath");
         
         if (param != null) {
             this.staticResourceServePath = param;
         }
         
-        param = servletConfig.getInitParameter("repositoryResourceServePath");
+        param = servletContext.getInitParameter("repositoryResourceServePath");
         
         if (param != null) {
             this.repositoryResourceServePath = param;

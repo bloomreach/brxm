@@ -38,14 +38,9 @@
 		<param-value>site.webapp.root</param-value>
 	</context-param>
 
-	<!-- Spring Log4j Configuring Listener -->
-	<listener>
-		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-	</listener>
-
-	<servlet>
-		<servlet-name>HstContainerServlet</servlet-name>
-		<servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
+    <filter>
+        <filter-name>HstVirtualHostsFilter</filter-name>
+        <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>
         <!--
         HST Application Context Namespace Prefix.
         This should be unique among multiple HST-based application contexts.
@@ -70,19 +65,20 @@
           <param-value>/META-INF/client-assembly/*.xml</param-value>
         </init-param>
         -->
-		<load-on-startup>2</load-on-startup>
-	</servlet>
+    </filter>
     
-    <servlet>
-        <servlet-name>HstJaxrsContainerServlet</servlet-name>
-        <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
-        <init-param>
-            <param-name>hstDefaultPipeline</param-name>
-            <param-value>JaxrsPipeline</param-value>
-        </init-param>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
+    <filter-mapping>
+        <filter-name>HstVirtualHostsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
     
+	<!-- Spring Log4j Configuring Listener -->
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
     <servlet>
         <servlet-name>BinariesServlet</servlet-name>
         <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
@@ -162,26 +158,6 @@
         <load-on-startup>200</load-on-startup>
     </servlet>
     
-    <servlet-mapping>
-        <servlet-name>HstJaxrsContainerServlet</servlet-name>
-        <url-pattern>/live/services/*</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>HstJaxrsContainerServlet</servlet-name>
-        <url-pattern>/preview/services/*</url-pattern>
-    </servlet-mapping>
-    
-	<servlet-mapping>
-	    <servlet-name>HstContainerServlet</servlet-name>
-	    <url-pattern>/preview/*</url-pattern>
-	</servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>HstContainerServlet</servlet-name>
-        <url-pattern>/live/*</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>BinariesServlet</servlet-name>
         <url-pattern>/binaries/*</url-pattern>

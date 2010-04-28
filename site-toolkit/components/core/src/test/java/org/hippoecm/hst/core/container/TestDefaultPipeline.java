@@ -58,7 +58,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         this.pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         this.defaultPipeline = this.pipelines.getDefaultPipeline();
         this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
-        this.requestContainerConfig = new HstContainerConfigImpl(this.servletConfig, getClass().getClassLoader());
+        this.requestContainerConfig = new HstContainerConfigImpl(this.servletConfig.getServletContext(), getClass().getClassLoader());
         this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
      

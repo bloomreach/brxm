@@ -305,9 +305,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
             
             if (dispatchUrl.startsWith("/")) {
-                disp = requestContainerConfig.getServletConfig().getServletContext().getRequestDispatcher(dispatchUrl);
+                disp = requestContainerConfig.getServletContext().getRequestDispatcher(dispatchUrl);
             } else {
-                disp = requestContainerConfig.getServletConfig().getServletContext().getNamedDispatcher(dispatchUrl);
+                disp = requestContainerConfig.getServletContext().getNamedDispatcher(dispatchUrl);
             }
         }
         

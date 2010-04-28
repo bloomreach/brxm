@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.component;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 
@@ -45,11 +45,11 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
  */
 public class GenericHstComponent implements HstComponent {
     
-    private ServletConfig servletConfig;
+    private ServletContext servletContext;
     private ComponentConfiguration componentConfig;
 
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        this.servletConfig = servletConfig;
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        this.servletContext = servletContext;
         this.componentConfig = componentConfig;
     }
     
@@ -71,12 +71,11 @@ public class GenericHstComponent implements HstComponent {
         }
     }
     
-    protected ServletConfig getServletConfig() {
-        return this.servletConfig;
+    public ServletContext getServletContext() {
+        return this.servletContext;
     }
     
     protected ComponentConfiguration getComponentConfiguration() {
         return this.componentConfig;
     }
-
 }

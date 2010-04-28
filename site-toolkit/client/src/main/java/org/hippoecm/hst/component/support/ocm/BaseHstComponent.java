@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.digester.Digester;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
@@ -71,7 +71,7 @@ public class BaseHstComponent extends GenericHstComponent {
     
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
 
-    public static final String OCM_ANNOTATED_CLASSES_CONF_PARAM = "ocm-annotated-classes";
+    public static final String OCM_ANNOTATED_CLASSES_CONF_PARAM = "hst-ocm-annotated-classes";
     public static final String DEFAULT_OCM_ANNOTATED_CLASSES_CONF = "/WEB-INF/ocm-annotated-classes.xml";
     public static final String OCM_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".ocm";
     public static final String QUERY_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".query";
@@ -82,8 +82,8 @@ public class BaseHstComponent extends GenericHstComponent {
     private ObjectCache ocmRequestObjectCache;
     private Map ocmAtomicTypeConverters;
 
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        super.init(servletConfig, componentConfig);
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletContext, componentConfig);
 
         if (!this.ocmInitialized) {
             initOCMObjects();
@@ -214,13 +214,13 @@ public class BaseHstComponent extends GenericHstComponent {
     private List<String> loadAnnotatedClassNames() {
         List<String> classNames = new LinkedList<String>();
 
-        String param = getServletConfig().getInitParameter(OCM_ANNOTATED_CLASSES_CONF_PARAM);
+        String param = getServletContext().getInitParameter(OCM_ANNOTATED_CLASSES_CONF_PARAM);
         String ocmAnnotatedClassesResourcePath = (param != null ? param : DEFAULT_OCM_ANNOTATED_CLASSES_CONF);
 
         InputStream in = null;
         
         try {
-            in = new BufferedInputStream(getServletConfig().getServletContext().getResourceAsStream(ocmAnnotatedClassesResourcePath));
+            in = new BufferedInputStream(getServletContext().getResourceAsStream(ocmAnnotatedClassesResourcePath));
             
             Digester digester = new Digester();
             digester.setValidating(false);

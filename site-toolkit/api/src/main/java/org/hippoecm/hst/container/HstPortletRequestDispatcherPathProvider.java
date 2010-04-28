@@ -21,12 +21,6 @@ import javax.portlet.PortletRequest;
 
 /**
  * Path provider interface for <CODE>HstContainerPortlet</CODE>.
- * <P>
- * <CODE>HstContainerPortlet</CODE> should dispatch to some url paths of <CODE>HstContainerServlet</CODE>.
- * The url paths consist of servlet path and path info. Because the servlet path could be used to decide
- * whether the request is preview site or live site, <CODE>HstContainerPortlet</CODE> should invoke {@link #getServletPath(PortletRequest)}
- * method to find the servlet path. 
- * </P>
  * 
  * @version $Id$
  */

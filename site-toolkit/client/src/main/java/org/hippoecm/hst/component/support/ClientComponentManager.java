@@ -19,14 +19,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.ServletConfigAware;
+import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.ServletContextAwareProcessor;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-public class ClientComponentManager implements ComponentManager, ServletConfigAware, BeanPostProcessor {
+public class ClientComponentManager implements ComponentManager, ServletContextAware, BeanPostProcessor {
     
     Logger logger = LoggerFactory.getLogger(ClientComponentManager.class);
     
@@ -51,7 +51,7 @@ public class ClientComponentManager implements ComponentManager, ServletConfigAw
     protected AbstractRefreshableConfigApplicationContext applicationContext;
     protected String [] configurationResources;
     protected Configuration configuration;
-    protected ServletConfig servletConfig;
+    protected ServletContext servletContext;
     
     public ClientComponentManager() {
         this(null);
@@ -61,8 +61,8 @@ public class ClientComponentManager implements ComponentManager, ServletConfigAw
         this.configuration = configuration;
     }
     
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.servletConfig = servletConfig;
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     public void initialize() {
@@ -74,8 +74,8 @@ public class ClientComponentManager implements ComponentManager, ServletConfigAw
             protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
                 beanFactory.addBeanPostProcessor(ClientComponentManager.this);
                 
-                if (servletConfig != null) {
-                    beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(servletConfig));
+                if (servletContext != null) {
+                    beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(servletContext));
                 }
             }
         };
@@ -140,8 +140,8 @@ public class ClientComponentManager implements ComponentManager, ServletConfigAw
         } catch (Exception ignore) {
         }
         
-        if (bean == null && servletConfig != null) {
-            WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletConfig.getServletContext());
+        if (bean == null && servletContext != null) {
+            WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
             
             if (rootWebAppContext != null) {
                 try {

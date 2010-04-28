@@ -27,7 +27,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
-import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -79,7 +78,7 @@ public class Action extends GenericResourceServingHstComponent {
                 
                 String caption = fields.get("caption");
                 
-                String fileStoreDirPath = getServletConfig().getServletContext().getRealPath("/WEB-INF/file-storage");
+                String fileStoreDirPath = getServletContext().getRealPath("/WEB-INF/file-storage");
                 File fileStoreDir = new File(fileStoreDirPath);
                 
                 if (!fileStoreDir.isDirectory()) {

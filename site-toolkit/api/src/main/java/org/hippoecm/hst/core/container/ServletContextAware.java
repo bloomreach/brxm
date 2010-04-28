@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,17 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 /**
- * Interface to be implemented by a {@link ComponentManager} object that wishes to be notified of the ServletConfig that it runs in.
- * @deprecated replaced by ServletContextAware as initialization is not longer done using servlets
+ * Interface to be implemented by a {@link ComponentManager} object that wishes to be notified of the ServletContext that it runs in.
  * @version $Id$
  */
-public interface ServletConfigAware {
+public interface ServletContextAware {
     
     /**
-     * Set the ServletConfig that this object runs in.
-     * @param servletConfig
+     * Set the ServletContext that this object runs in.
+     * @param servletContext
      */
-    void setServletConfig(ServletConfig servletConfig); 
-    
+    void setServletContext(ServletContext servletContext);     
 }

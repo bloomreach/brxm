@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.component.support.tool;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -27,10 +27,10 @@ public class HstTraceToolComponent extends GenericHstComponent {
     
     protected String renderPath = "/WEB-INF/jsp/tracetool.jsp";
     
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        super.init(servletConfig, componentConfig);
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletContext, componentConfig);
      
-        String param = servletConfig.getInitParameter("hst.tracetool.render.path");
+        String param = servletContext.getInitParameter("hst.tracetool.render.path");
         
         if (param != null) {
             this.renderPath = param;
