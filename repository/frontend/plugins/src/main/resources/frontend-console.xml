@@ -252,7 +252,7 @@
       </sv:property>
       <sv:node sv:name="yui.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
+          <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="root.id" sv:type="String">
           <sv:value>navigator-wrapper</sv:value>
