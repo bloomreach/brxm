@@ -96,11 +96,6 @@
       <version>${pom.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-ocm</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>

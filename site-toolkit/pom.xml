@@ -663,12 +663,6 @@
         <version>${jackrabbit.version}</version>
       </dependency>
       
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-ocm</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      
       <!-- HTML Cleaner -->
       
       <dependency>
@@ -895,7 +889,6 @@
         <module>commons</module>
         <module>test</module>
         <module>content-beans</module>
-        <module>ocm</module>
         <module>toolkit-resources</module>
         <module>components</module>
         <module>client</module>
