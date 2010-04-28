@@ -77,16 +77,16 @@
             <sv:value>/testpreview/testproject</sv:value>
           </sv:property>
           <sv:node sv:name="services">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
-            </sv:property>
-            
-            <!-- mountpath inherited here from parent  -->
-            
-            <sv:property sv:name="hst:namedpipeline" sv:type="String">
-              <sv:value>JaxrsPipeline</sv:value>
-            </sv:property>
-          </sv:node>
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                
+                <!-- mountpath inherited here from parent  -->
+                
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsPipeline</sv:value>
+                </sv:property>
+            </sv:node>
          </sv:node>
         </sv:node>
     </sv:node>
@@ -113,15 +113,15 @@
               <sv:value>/testpreview/testproject</sv:value>
             </sv:property>
             <sv:node sv:name="services">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
-              </sv:property>
-              
-              <!-- mountpath inherited here from parent  -->
-              
-              <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>JaxrsPipeline</sv:value>
-              </sv:property>
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                
+                <!-- mountpath inherited here from parent  -->
+                
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsPipeline</sv:value>
+                </sv:property>
             </sv:node>
          </sv:node>
         </sv:node>
@@ -146,6 +146,17 @@
                 <sv:property sv:name="hst:mountpath" sv:type="String">
                    <sv:value>/testlive/testproject</sv:value>
                 </sv:property>
+                <sv:node sv:name="services">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                      <sv:value>hst:sitemount</sv:value>
+                  </sv:property>
+                  
+                  <!-- mountpath inherited here from parent  -->
+                  
+                  <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                    <sv:value>JaxrsPipeline</sv:value>
+                  </sv:property>
+                </sv:node>
               </sv:node>
             </sv:node>
             <sv:node sv:name="preview">
@@ -162,6 +173,17 @@
                   <sv:property sv:name="hst:ispreview" sv:type="Boolean">
                     <sv:value>true</sv:value>
                   </sv:property>
+                  <sv:node sv:name="services">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:sitemount</sv:value>
+                    </sv:property>
+                    
+                    <!-- mountpath inherited here from parent  -->
+                    
+                    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                      <sv:value>JaxrsPipeline</sv:value>
+                    </sv:property>
+                 </sv:node>
               </sv:node>
             </sv:node>
         </sv:node>

@@ -19,12 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 
 public class ResolvedSiteMountImpl implements ResolvedSiteMount{

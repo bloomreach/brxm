@@ -91,6 +91,26 @@
         </sv:node>
     </sv:node>
     
+    <sv:node sv:name="pipelines">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:node sv:name="custom">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>myCustomPipeLine</sv:value>
+            </sv:property>
+       </sv:node>
+       <sv:node sv:name="_default_">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <!-- default pipeline, possibly inherited from SiteMount -->
+       </sv:node>
+    </sv:node>
+    
     <sv:node sv:name="contact-spring">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>

@@ -22,6 +22,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,9 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             log.debug("Virtual Host '{}' is not mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());
         }
         String pathInfo = HstRequestUtils.getPathInfo(request);
-        String[] pathInfoSegments = pathInfo.split("\\.");
+        // strip leading and trailing slashes
+        pathInfo = PathUtils.normalizePath(pathInfo);
+        String[] pathInfoSegments = pathInfo.split("/");
         int position = 0;
         while(position < pathInfoSegments.length) {
             if(siteMount.getChildMount(pathInfoSegments[position]) != null) {
@@ -61,10 +64,11 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         }
         
         // reconstruct the prefix that needs to be stripped of from the request because it belongs to the site mount
+        // we thus create the resolvedPathInfoPrefix
         StringBuilder builder = new StringBuilder();
         while(position > 0) {
-            builder.append("/").append(pathInfoSegments[position]);
-            position--;
+            builder.insert(0,pathInfoSegments[--position]).insert(0,"/");
+           
         }
         
         String resolvedPathInfoPrefix = builder.toString();

@@ -54,7 +54,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
        
        HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
        if (hstSiteMapItem.getComponentConfigurationId() == null && hstSiteMapItem.getPortletComponentConfigurationId() == null) {
-           log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the sitemap item '{}' does not have a component configuration id.", hstSiteMapItem.getId());
+           log.debug("The ResolvedSiteMapItemImpl does not have a component configuration id because the sitemap item '{}' does not have one", hstSiteMapItem.getId());
        } else {
            String componentConfigurationId = hstSiteMapItem.getComponentConfigurationId();
            

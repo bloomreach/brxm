@@ -127,7 +127,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             // check for a wildcard (**) matcher :
             HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
-                log.warn("Did not find a matching sitemap item and there is no catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null");
+                log.warn("Did not find a matching sitemap item for path '{}' and SiteMount '{}' and there is no " +
+                		"catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null", pathInfo, resolvedSiteMount.getSiteMount().getPathInfoPrefix());
                 return null;
             } else {
                 // The ** has the value of the entire pathInfo
