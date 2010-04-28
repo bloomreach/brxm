@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 
 public class HstVirtualHostsFilter implements Filter {
@@ -76,11 +77,13 @@ public class HstVirtualHostsFilter implements Filter {
         this.filterConfig = filterConfig;
         String customWelcomePage = filterConfig.getInitParameter(WELCOME_PAGE_INIT_PARAM);
         if(customWelcomePage != null) {
-            welcome_page = stripSlashes(customWelcomePage);
+            // strip trailing and leading slashes
+            welcome_page = PathUtils.normalizePath(customWelcomePage);
         }
         String customPreviewPrefix = filterConfig.getInitParameter(PREVIEW_PREFIX_INIT_PARAM);
         if(customPreviewPrefix != null) {
-            preview_prefix = "/" + stripSlashes(customPreviewPrefix);
+            // strip trailing and leading slashes
+            preview_prefix = "/" + PathUtils.normalizePath(customPreviewPrefix);
         }
         
         /* HST and ClientComponentManager initialization */
@@ -310,17 +313,7 @@ public class HstVirtualHostsFilter implements Filter {
         String value = getInitParameter(filterConfig, filterConfig.getServletContext(), paramName, defaultValue);
         return (value != null ? value.trim() : null);
     }
-
-    private static String stripSlashes(String value) {
-        if(value.startsWith("/")) {
-            value = value.substring(1);
-        }
-        if(value.endsWith("/")) {
-            value = value.substring(0, value.length() - 1);
-        }
-        return value;
-    }
-
+    
     /**
      * Retrieves the init parameter from the filterConfig or servletContext.
      * If the init parameter is not found in filterConfig, then it will look up the init parameter from the servletContext.
