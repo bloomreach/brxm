@@ -1000,25 +1000,28 @@ public class JcrObservationManager implements ObservationManager {
                 listener.getChanges(paths);
             }
 
-            try {
-                if (paths.contains("")) {
-                    session.getRootNode().refresh(true);
-                } else {
-                    prune(paths);
+            Node root = session.getRootNode();
+            if (root != null) {
+                try {
+                    if (paths.contains("")) {
+                        root.refresh(true);
+                    } else {
+                        prune(paths);
 
-                    // do the refresh
-                    for (String path : paths) {
-                        log.info("Refreshing {}, keeping changes", path);
-                        try {
-                            session.getRootNode().getNode(path.substring(1)).refresh(true);
-                        } catch (PathNotFoundException ex) {
-                            log.info("Could not find path " + path + " for event, discarding event and continue: "
-                                    + ex.getMessage());
+                        // do the refresh
+                        for (String path : paths) {
+                            log.info("Refreshing {}, keeping changes", path);
+                            try {
+                                root.getNode(path.substring(1)).refresh(true);
+                            } catch (PathNotFoundException ex) {
+                                log.info("Could not find path " + path + " for event, discarding event and continue: "
+                                        + ex.getMessage());
+                            }
                         }
                     }
+                } catch (RepositoryException ex) {
+                    log.error("Failed to refresh session", ex);
                 }
-            } catch (RepositoryException ex) {
-                log.error("Failed to refresh session", ex);
             }
         } else {
             log.error("No session found");
@@ -1098,8 +1101,8 @@ public class JcrObservationManager implements ObservationManager {
 
             // cleanup gc'ed listeners
             while ((ref = listenerQueue.poll()) != null) {
-                if(ref.get() != null) {
-                    ((JcrListener)ref.get()).dispose();
+                if (ref.get() != null) {
+                    ((JcrListener) ref.get()).dispose();
                 }
             }
         }
