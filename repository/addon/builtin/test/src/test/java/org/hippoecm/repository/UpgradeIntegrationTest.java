@@ -57,9 +57,11 @@ public class UpgradeIntegrationTest
         }
     }
 
+/*
     @Test
     public void dummy() {
     }
+*/
 
     @Ignore
     public void dump() throws RepositoryException, IOException {
@@ -79,7 +81,7 @@ public class UpgradeIntegrationTest
         ostream.close();
     }
 
-    @Ignore
+    @Test
     public void migrate() throws RepositoryException, IOException {
         delete(new File("storage"));
         FileInputStream istream = new FileInputStream("../src/test/fixtures/dump.zip");
