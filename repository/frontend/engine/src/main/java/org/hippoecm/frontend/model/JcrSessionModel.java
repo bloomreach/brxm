@@ -112,7 +112,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     @Override
     public void detach() {
         if (log.isInfoEnabled()) {
-            String username = credentials.getUsername();
+            String username = (credentials != null ? credentials.getUsername() : null);
             if (username != null && username.length() > 0) {
                 // don't log logouts from anonymous (eg login screen)
                 log.info("[" + getRemoteAddr() + "] Logout as " + username + " from Hippo CMS 7");
