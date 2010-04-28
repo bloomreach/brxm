@@ -85,8 +85,8 @@
             <bean parent="baseDelegatingEventListener" class="org.hippoecm.hst.core.jcr.DelegatingEventListener">
               <constructor-arg>
                 <list>
-                  <bean parent="baseEventListener" class="org.hippoecm.hst.core.hosting.VirtualHostsConfigurationEventListener">
-                    <property name="virtualHostsManager" ref="org.hippoecm.hst.core.hosting.VirtualHostsManager"/>
+                  <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.hosting.VirtualHostsConfigurationEventListener">
+                    <property name="virtualHostsManager" ref="org.hippoecm.hst.configuration.hosting.VirtualHostsManager"/>
                   </bean>
                   <ref bean="hstconfigreaderSessionPoolRefresher" />
                 </list>
