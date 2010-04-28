@@ -449,7 +449,6 @@ public class UpdaterEngine {
                 }
             }
         }
-
         for(ModuleRegistration moduleRegistration : modules) {
             for (Iterator<ItemVisitor> iter = moduleRegistration.visitors.iterator(); iter.hasNext();) {
                 ItemVisitor visitor = iter.next();
@@ -465,6 +464,7 @@ public class UpdaterEngine {
                 }
             }
         }
+
         return true;
     }
 
@@ -642,6 +642,22 @@ public class UpdaterEngine {
         }
         Collection<SortedMap<String, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch, false);
         log.info("upgrade cycle iterated process breath first iteration");
+        if(log.isDebugEnabled()) {
+            log.debug("update batch plan breath first iteration");
+            int batchCount = 0;
+            for(SortedMap<String,List<UpdaterItemVisitor>> partition : partitionedBatch) {
+                log.debug("  update batch "+(++batchCount));
+                for(Map.Entry<String,List<UpdaterItemVisitor>> visit : partition.entrySet()) {
+                    StringBuffer visitors = new StringBuffer();
+                    for(UpdaterItemVisitor visitor : visit.getValue()) {
+                        if(visitors.length() > 0)
+                            visitors.append(", ");
+                        visitors.append(visitor.toString());
+                    }
+                    log.debug("    "+visit.getKey()+"\t"+new String(visitors));
+                }
+            }
+        }
         for (Map<String, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
             for (Map.Entry<String, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
                 String path = entry.getKey();
@@ -674,6 +690,22 @@ public class UpdaterEngine {
         }
         partitionedBatch = partition(totalBatch, true);
         log.info("upgrade cycle iterated process depth first iteration");
+        if(log.isDebugEnabled()) {
+            log.debug("update batch plan depth first iteration");
+            int batchCount = 0;
+            for(SortedMap<String,List<UpdaterItemVisitor>> partition : partitionedBatch) {
+                log.debug("  update batch "+(++batchCount));
+                for(Map.Entry<String,List<UpdaterItemVisitor>> visit : partition.entrySet()) {
+                    StringBuffer visitors = new StringBuffer();
+                    for(UpdaterItemVisitor visitor : visit.getValue()) {
+                        if(visitors.length() > 0)
+                            visitors.append(", ");
+                        visitors.append(visitor.toString());
+                    }
+                    log.debug("    "+visit.getKey()+"\t"+new String(visitors));
+                }
+            }
+        }
         for (Map<String, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
             for (Map.Entry<String, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
                 String path = entry.getKey();
@@ -682,7 +714,9 @@ public class UpdaterEngine {
                     if (!path.equals("/")) {
                         node = node.getNode(path.substring(1));
                     }
+                    log.debug("visiting "+path);
                     for (UpdaterItemVisitor visitor : entry.getValue()) {
+                        log.debug("visiting "+path+" by visitor "+visitor.toString());
                         visitor.visit(node, 0, true);
                     }
                 } catch (UpdaterException ex) {
@@ -905,6 +939,7 @@ public class UpdaterEngine {
             newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');
         }
 
+        @Override
         public String toString() {
             return "NamespaceVisitor["+namespace+"]";
         }
@@ -1070,6 +1105,9 @@ public class UpdaterEngine {
                     node.setProperty("jcr:mixinTypes", mixins);
                 }
                 node.removeMixin("hipposys:unstructured");
+            }
+            if (node.getName().startsWith(namespace + ":")) {
+                context.setName(node, newPrefix + ":" + node.getName().substring(node.getName().indexOf(":") + 1));
             }
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
