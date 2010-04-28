@@ -102,9 +102,9 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
-            <manifestEntries>
+            <!-- manifestEntries>
               <Hippo-Modules>org.hippoecm.repository.defaultcontent.upgrade.DefaultcontentUpgrader12a</Hippo-Modules>
-            </manifestEntries>
+            </manifestEntries -->
           </archive>
         </configuration>
       </plugin>
