@@ -76,7 +76,7 @@
     <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
-      <version>1.02.00</version>
+      <version>1.02.01</version>
       <exclusions>
         <exclusion>
           <groupId>xml-apis</groupId>
