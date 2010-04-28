@@ -17,7 +17,7 @@ package org.hippoecm.hst.configuration.sitemap;
 
 import java.util.List;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstComponent;
 
 /**

@@ -63,9 +63,9 @@ public interface HstSiteMapItem {
     boolean isAny();
     
     /**
-     * This method returns a content path, relative to the {@link org.hippoecm.hst.configuration.HstSite#getContentPath()}. This value can 
+     * This method returns a content path, relative to the {@link org.hippoecm.hst.configuration.site.HstSite#getContentPath()}. This value can 
      * contain property placeholders, like ${1}/${2}, which should be resolved in the {@link org.hippoecm.hst.core.request.ResolvedSiteMapItem#getRelativeContentPath()}  
-     * @return the content path relative to the {@link org.hippoecm.hst.configuration.HstSite#getContentPath()}
+     * @return the content path relative to the {@link org.hippoecm.hst.configuration.site.HstSite#getContentPath()}
      */
     String getRelativeContentPath();
     

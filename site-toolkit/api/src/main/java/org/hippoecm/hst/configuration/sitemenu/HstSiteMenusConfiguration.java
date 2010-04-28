@@ -18,7 +18,7 @@ package org.hippoecm.hst.configuration.sitemenu;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
  * Implementations should return an unmodifiable map for {@link #getSiteMenuConfiguration()} because clients should not
