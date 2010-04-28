@@ -17,9 +17,9 @@ package org.hippoecm.hst.core.request;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.hosting.MatchException;
-import org.hippoecm.hst.core.hosting.SiteMount;
 
 /**
  * Implementations of this interface are a request flyweight instance of the {@link SiteMount} object, where possible wildcard property placeholders have been filled in, similar

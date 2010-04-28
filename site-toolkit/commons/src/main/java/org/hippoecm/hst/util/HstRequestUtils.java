@@ -81,11 +81,16 @@ public class HstRequestUtils {
     }
     
     /**
+     * <p>
      * Returns any extra path information associated with the URL the client sent when it made this request.
      * The extra path information follows the servlet path but precedes the query string 
      * and will start with a "/" character.
      * This method extracts and decodes the path information by the specified character encoding parameter
      * from the request URI.
+     * </p>
+     * <p> <b>Note</b> that this method can return a different value then {@link HttpServletRequest#getPathInfo()} as there it is the 
+     * pathInfo decoded by the web container, and here we use the {@link URLDecoder} with the request character encoding
+     * </p> 
      * @param request
      * @param characterEncoding
      * @return

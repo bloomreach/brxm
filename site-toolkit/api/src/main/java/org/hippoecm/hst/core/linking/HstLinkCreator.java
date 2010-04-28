@@ -20,11 +20,9 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSites;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 

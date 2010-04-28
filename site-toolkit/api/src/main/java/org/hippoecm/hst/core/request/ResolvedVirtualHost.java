@@ -17,8 +17,8 @@ package org.hippoecm.hst.core.request;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.hosting.SiteMount;
-import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 
 /**
  * Implementations of this interface are a request flyweight instance of the {@link VirtualHost} object, where possible wildcard property placeholders have been filled in, similar

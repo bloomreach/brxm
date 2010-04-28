@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
  * Implementations that know how to rewrite a link for a nodetype containing resources, 

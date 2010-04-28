@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.request;
 
-import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
  * @version $Id$

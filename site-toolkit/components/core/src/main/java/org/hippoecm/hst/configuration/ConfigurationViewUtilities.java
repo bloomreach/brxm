@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -25,21 +26,6 @@ public class ConfigurationViewUtilities {
 
     public static final String SMALL_INDENT = "  ";
     public static final String INDENT = "\t";
-    
-    public static final void view(StringBuffer buf, HstSites sites) {
-        view(buf, "", sites); 
-    }
-    
-    public static final void view(StringBuffer buf, String indent,  HstSites sites) {
-        buf.append("\n\n***** HstSites ("+sites.hashCode()+") *******");
-        buf.append("\n").append(indent).append("-Content path: ").append(sites.getSitesContentPath());
-        buf.append("\n").append(indent).append("+Sites: ");
-        for(HstSite site : sites.getSites().values()) {
-            view(buf,indent+SMALL_INDENT, site);
-        }
-        buf.append("\n\n***** End HstSites *******");
-    }
-
     
     public static final void view(StringBuffer buf, HstSite site) {
         view(buf, "", site);

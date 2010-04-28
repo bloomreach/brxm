@@ -30,7 +30,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletConfig;
 
 import org.apache.commons.digester.Digester;
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.HstContainerServlet;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;

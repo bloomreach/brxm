@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.linking;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 
@@ -25,7 +25,7 @@ import org.hippoecm.hst.core.component.HstResponse;
  * also encodes slashes. 
  * 
  * Furthermore, the {@link HstSite} that the link is meant for is accessible through this HstLink, because it is needed if the link is
- * out of the scope of the current HstSite. The HstSite can access the {@link org.hippoecm.hst.core.hosting.VirtualHost} through which
+ * out of the scope of the current HstSite. The HstSite can access the {@link org.hippoecm.hst.configuration.hosting.VirtualHost} through which
  * in turn even links to different hosts can be created. 
  *
  */
@@ -68,7 +68,7 @@ public interface HstLink {
     /**
      * @return the HstSite that can represent this link. This might be an HstSite which is a different one then the
      * HstSite the link was created in. This could result in a cross-domain (different hostname) link being created, depending
-     * on the backing {@link org.hippoecm.hst.core.hosting.VirtualHost}. If no HstSite is set, <code>null</code> can be returned
+     * on the backing {@link org.hippoecm.hst.configuration.hosting.VirtualHost}. If no HstSite is set, <code>null</code> can be returned
      */
     HstSite getHstSite();
     

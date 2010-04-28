@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.request;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
  * Implementations should be able to match a path (pathInfo) in combination with a <code>{@link HstSite}</code> object to a

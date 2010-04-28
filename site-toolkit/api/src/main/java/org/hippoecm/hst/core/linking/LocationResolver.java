@@ -17,7 +17,7 @@ package org.hippoecm.hst.core.linking;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 
 public interface LocationResolver {
 
