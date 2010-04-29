@@ -41,14 +41,14 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 
-public class HstVirtualHostsFilter implements Filter {
+public class HstFilter implements Filter {
 
     private static final long serialVersionUID = 1L;
     
-    private static final String LOGGER_CATEGORY_NAME = HstVirtualHostsFilter.class.getName();
+    private static final String LOGGER_CATEGORY_NAME = HstFilter.class.getName();
 
-    private final static String FILTER_DONE_KEY = "filter.done_"+HstVirtualHostsFilter.class.getName();
-    private final static String REQUEST_START_TICK_KEY = "request.start_"+HstVirtualHostsFilter.class.getName();
+    private final static String FILTER_DONE_KEY = "filter.done_"+HstFilter.class.getName();
+    private final static String REQUEST_START_TICK_KEY = "request.start_"+HstFilter.class.getName();
     private final static String DEFAULT_WELCOME_PAGE = "home";
     private final static String DEFAULT_PREVIEW_PREFIX = "/preview";
     private final static String WELCOME_PAGE_INIT_PARAM = "welcome-page";
@@ -63,7 +63,7 @@ public class HstVirtualHostsFilter implements Filter {
     public static final String CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM = "clientComponentManagerClass";
     public static final String CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM = "clientComponentManagerConfigurations";
     public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
-    public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstVirtualHostsFilter.class.getName() + ".clientComponentManager";
+    public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstFilter.class.getName() + ".clientComponentManager";
     
     protected String contextNamespace;
     protected String clientComponentManagerClassName;

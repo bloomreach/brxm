@@ -29,7 +29,7 @@ import net.sf.ehcache.constructs.web.filter.SimplePageCachingFilter;
  * 
  * <dispatchet>FORWARD</dispatcher> 
  * 
- * as the request will be forwarded from the HstVirtualHostsFilter
+ * as the request will be forwarded from the HstFilter
  * 
  * TODO 
  * <UL>

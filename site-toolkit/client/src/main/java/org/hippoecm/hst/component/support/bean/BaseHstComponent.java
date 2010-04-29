@@ -31,7 +31,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.HstVirtualHostsFilter;
+import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -361,9 +361,9 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return the client ComponentManager or <code>null</code> if none configured 
      */
     public ComponentManager getDefaultClientComponentManager(){
-        ComponentManager clientComponentManager = HstVirtualHostsFilter.getClientComponentManager(getServletContext());
+        ComponentManager clientComponentManager = HstFilter.getClientComponentManager(getServletContext());
         if(clientComponentManager == null) {
-            log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstVirtualHostsFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
+            log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
         }
         return  clientComponentManager;
     }

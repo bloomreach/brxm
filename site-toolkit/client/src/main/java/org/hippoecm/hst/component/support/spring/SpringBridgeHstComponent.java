@@ -17,7 +17,7 @@ package org.hippoecm.hst.component.support.spring;
 
 import javax.servlet.ServletContext;
 
-import org.hippoecm.hst.container.HstVirtualHostsFilter;
+import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -193,7 +193,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
             ComponentManager componentManager = null;
             
             if (delegatedBean == null) {
-                componentManager = HstVirtualHostsFilter.getClientComponentManager(getServletContext());
+                componentManager = HstFilter.getClientComponentManager(getServletContext());
                 
                 if (componentManager != null) {
                     delegatedBean = componentManager.getComponent(beanName);

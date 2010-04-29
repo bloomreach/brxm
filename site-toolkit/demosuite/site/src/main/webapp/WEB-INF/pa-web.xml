@@ -39,8 +39,8 @@
 	</context-param>
 
     <filter>
-        <filter-name>HstVirtualHostsFilter</filter-name>
-        <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>
+        <filter-name>HstFilter</filter-name>
+        <filter-class>org.hippoecm.hst.container.HstFilter</filter-class>
         <!--
         HST Application Context Namespace Prefix.
         This should be unique among multiple HST-based application contexts.
@@ -68,7 +68,7 @@
     </filter>
     
     <filter-mapping>
-        <filter-name>HstVirtualHostsFilter</filter-name>
+        <filter-name>HstFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
