@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class FilterImpl implements Filter{
 
@@ -39,13 +38,6 @@ public class FilterImpl implements Filter{
      * @see #getJcrExpression()
      */
     private List<FilterTypeWrapper> childFilters = new ArrayList<FilterTypeWrapper>();
-    
-    /**
-     * @deprecated use {@link FilterImpl()}
-     */
-    @Deprecated 
-    public FilterImpl(HstRequestContext hstRequestContext){
-    }
     
     public FilterImpl(){
     }

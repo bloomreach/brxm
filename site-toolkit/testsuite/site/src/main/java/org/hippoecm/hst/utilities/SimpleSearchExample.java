@@ -29,7 +29,7 @@ public class SimpleSearchExample {
         if(query != null && !"".equals(query)) {
             // do the search
             try {
-                HstQuery hstQuery = base.getQueryManager().createQuery(request.getRequestContext(), base.getSiteContentBaseBean(request), NewsPage.class);
+                HstQuery hstQuery = base.getQueryManager().createQuery(base.getSiteContentBaseBean(request), NewsPage.class);
                
                 hstQuery.addOrderByDescending("testproject:title");
                 hstQuery.addOrderByAscending("testproject:date");

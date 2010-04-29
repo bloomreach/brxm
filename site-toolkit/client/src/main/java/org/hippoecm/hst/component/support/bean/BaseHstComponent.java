@@ -31,7 +31,6 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.HstVirtualHostsFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.Node;
@@ -70,8 +69,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -109,17 +106,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
     
-    /**
-     * @deprecated
-     */
-    public static final String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
-    
-    /**
-     * @deprecated
-     */
-    public static final String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
-    
-
+   
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
     protected HstQueryManager queryManager;
@@ -245,14 +232,6 @@ public class BaseHstComponent extends GenericHstComponent {
         return Boolean.TRUE == request.getRequestContext().getAttribute(ContainerConstants.IS_PREVIEW);
     }
     
-    /**
-     * Use {@link BaseHstComponent#getContentBean(HstRequest)}
-     */
-    @Deprecated
-    public HippoBean getContentNode(HstRequest request) {
-        return this.getContentBean(request);
-    }
-    
     
     /**
      * When the <code>{@link ResolvedSiteMapItem}</code> belonging to the current requestUri has a relativeContentPath that points to an
@@ -286,14 +265,7 @@ public class BaseHstComponent extends GenericHstComponent {
         return (T)bean;
     }
     
-    /**
-     * Use {@link BaseHstComponent#getSiteContentBaseBean(HstRequest)}
-     */
-    @Deprecated
-    public HippoBean getSiteContentBaseNode(HstRequest request) {
-        return this.getSiteContentBaseBean(request);
-    }
-    
+  
     public HippoBean getSiteContentBaseBean(HstRequest request) {
         String base = getSiteContentBasePath(request);
         try {
@@ -397,46 +369,12 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
-     * 
-     * Facility method for sending a redirect to a SiteMapItemId.  
-     * 
-     * @param request the HstRequest
-     * @param response the HstResponse
-     * @param redirectToSiteMapItemId the sitemap item id to redirect to
-     */
-     /**
-     * Use {@link sendRedirect(String, HstRequest, HstResponse) }
-     */
-    @Deprecated
-    public void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
-        HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
-        HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
-        HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId));
-
-        if(link == null) {
-            throw new HstComponentException("Can not redirect.");
-        }
-        String urlString = null;
-        urlString = link.toUrlForm(request, response, false);
-        
-        if(urlString == null) {
-            throw new HstComponentException("Can not redirect.");
-        }
-        
-        try {
-            response.sendRedirect(urlString);
-        } catch (IOException e) {
-            throw new HstComponentException("Could not redirect. ",e);
-        }
-    }
-    
-    /**
      * <p>
      * Facility method for sending a redirect to a SiteMapItemId.  
      * </p>
      * <p>
      * <b>note</b> A sendRedirect is only honored in action phase, thus from {@link HstComponent#doAction(HstRequest, HstResponse)}. 
-     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} a 
+     * During {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} a 
      * sendRedirect is ignored, even when called directly on the {@link HstResponse#sendRedirect(String)}. You can use an internal forward instead
      * by {@link HstResponse#forward(String)}
      * </p>

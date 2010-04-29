@@ -51,7 +51,7 @@ public class HstResponseUtils {
     }
     
     /**
-     * Facility method for sending a redirect to a SiteMapItemId.  
+     * Facility method for sending a redirect to a sitemap path.  
      * 
      * @param request the HstRequest
      * @param response the HstResponse

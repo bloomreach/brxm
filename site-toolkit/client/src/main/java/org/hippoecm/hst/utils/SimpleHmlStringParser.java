@@ -16,7 +16,6 @@
 package org.hippoecm.hst.utils;
 
 import javax.jcr.Node;
-import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -26,14 +25,6 @@ import org.hippoecm.hst.core.linking.HstLink;
 public class SimpleHmlStringParser {
     
     private static final SimpleHmlStringRewriter simpleHmlStringRewriter = new SimpleHmlStringRewriter();
-    
-    /**
-     * @deprecated
-     * @see {@link #parse(Node, String, HstRequest, HstResponse)}
-     */
-    public static String parse(Node node, String html, HttpServletRequest request, HstResponse response) {
-        return parse(node, html, (HstRequest) request, response);
-    }
     
     public static String parse(Node node, String html, HstRequest request, HstResponse response) {
         return simpleHmlStringRewriter.rewrite(html, node, request, response);

@@ -26,7 +26,6 @@ import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.LoggerFactory;
 
 
@@ -41,17 +40,9 @@ public class HstQueryManagerImpl implements HstQueryManager{
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
     
-    @Deprecated
-    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope) throws QueryException {
-        return createQuery(scope);
-    }
+   
     public HstQuery createQuery(Node scope) throws QueryException {
         return createQuery(scope, (NodeTypeFilter)null);
-    }
-    
-    @Deprecated
-    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
-        return createQuery(scope, filterBean, includeSubTypes);
     }
     
     /**
@@ -73,14 +64,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
         return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
     }
     
-    @Deprecated
-    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException{
-        if(scope.getNode() == null) {
-            return createQuery((Node)null);
-        }
-        return createQuery(scope.getNode());
-    }
-    
+   
     /**
      * Creates a empty query, with the scope HippoBean
      */
@@ -91,10 +75,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
         return createQuery(scope.getNode());
     }
     
-    @Deprecated
-    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
-        return createQuery(scope, filterBean, includeSubTypes);
-    }
+ 
     
     /**
      * Creates a query, with scope HippoBean and Filter for types of filterBean. If includeSubTypes is <code>true</code>,
@@ -108,22 +89,13 @@ public class HstQueryManagerImpl implements HstQueryManager{
         return createQuery(scope.getNode(), filterBean, includeSubTypes);
     }
     
-    @Deprecated
-    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
-        return createQuery(scope, filterBeans);
-    }
-    
     public HstQuery createQuery(HippoBean scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
         if(scope.getNode() == null) {
             return createQuery((Node)null, filterBeans);
         }
         return createQuery(scope.getNode(), filterBeans);
     }
-    
-    @Deprecated
-    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
-       return createQuery(scope, filterBeans);
-    }
+
     /**
      * Creates a query, with the scope HippoBean and with a Filter that filters to only return HippoBeans of the types that are 
      * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans.

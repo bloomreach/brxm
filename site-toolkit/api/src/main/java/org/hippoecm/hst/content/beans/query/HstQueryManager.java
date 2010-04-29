@@ -85,41 +85,5 @@ public interface HstQueryManager {
      */
     HstQuery createQuery(HippoBean scope, Class<? extends HippoBean>... filterBean) throws QueryException;
     
-    /**
-     * @Deprecated Use {@link #createQuery(Node)}
-     */
-    @Deprecated
-    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope) throws QueryException;
-    
-    /**
-     * @deprecated  Use {@link #createQuery(Node,HippoBean ,boolean)}
-     */
-    @Deprecated
-    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
-
-    /**
-     * @deprecated Use {@link #createQuery(HippoBean)}
-     */ 
-    @Deprecated 
-    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException;
-    
-    /**
-     * @Deprecated Use {@link #createQuery(HippoBean, HippoBean , boolean)}
-     */
-    @Deprecated
-    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
-    
-    /**
-     * @Deprecated Use {@link #createQuery(Node, HippoBean... )}
-     */
-    @Deprecated
-    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException;
-    
-    /**
-     * @Deprecated Use {@link #createQuery(HippoBean, HippoBean... )}
-     */
-    @Deprecated
-    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean>... filterBean) throws QueryException;
-    
 
 }

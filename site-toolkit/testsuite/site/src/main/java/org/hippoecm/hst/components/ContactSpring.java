@@ -74,7 +74,7 @@ public class ContactSpring extends BaseFormHstComponent {
                 HstSiteMapItem item = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getChild("thankyou");
                 
                 if (item != null) {
-                    this.sendRedirect(request, response, item.getId());
+                    this.sendRedirect("/thankyou",request, response);
                 } else {
                     log.warn("Cannot redirect because siteMapItem not found. ");
                 }
