@@ -166,7 +166,6 @@ public class SecurityManager implements JackrabbitSecurityManager {
         }
     }
 
-    @Override
     public void init(Repository repository, Session session) throws RepositoryException {
         systemSession = session;
         config = ((RepositoryImpl) repository).getConfig().getSecurityConfig();
@@ -691,7 +690,6 @@ public class SecurityManager implements JackrabbitSecurityManager {
         }
     }
 
-    @Override
     public String getUserID(Subject subject) {
         String uid = null;
         // if SimpleCredentials are present, the UserID can easily be retrieved.
@@ -710,7 +708,6 @@ public class SecurityManager implements JackrabbitSecurityManager {
         return uid;
     }
 
-    @Override
     public org.apache.jackrabbit.api.security.user.UserManager getUserManager(Session session) throws RepositoryException {
         return providers.get(INTERNAL_PROVIDER).getUserManager();
     }
