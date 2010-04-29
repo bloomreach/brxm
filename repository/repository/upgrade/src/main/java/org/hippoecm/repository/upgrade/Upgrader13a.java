@@ -16,15 +16,18 @@
 package org.hippoecm.repository.upgrade;
 
 import java.io.InputStreamReader;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
+
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
-import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +77,67 @@ public class Upgrader13a implements UpdaterModule {
         });
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
                 new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
+
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("editor:editable") {
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                if (node.hasNode("editor:templates")) {
+                    Value compareToValue = node.getSession().getValueFactory().createValue("model.compareTo");
+                    NodeIterator templates = node.getNode("editor:templates").getNodes();
+                    while (templates.hasNext()) {
+                        Node template = templates.nextNode();
+                        if (!template.isNodeType("frontend:plugincluster")) {
+                            continue;
+                        }
+                        // expect at the least a wicket.model reference
+                        if (!template.hasProperty("frontend:references")) {
+                            continue;
+                        }
+
+                        boolean handle = false;
+                        NodeIterator plugins = template.getNodes();
+                        while (plugins.hasNext()) {
+                            Node plugin = plugins.nextNode();
+                            if (!plugin.isNodeType("frontend:plugin")) {
+                                continue;
+                            }
+                            if (plugin.hasProperty("plugin.class")) {
+                                String clazz = plugin.getProperty("plugin.class").getString();
+                                if ("org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin".equals(clazz)
+                                        || "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin"
+                                                .equals(clazz)) {
+                                    handle = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (handle) {
+                            Value[] references = template.getProperty("frontend:references").getValues();
+                            Value[] newRefs = new Value[references.length + 1];
+                            System.arraycopy(references, 0, newRefs, 0, references.length);
+                            newRefs[references.length] = compareToValue;
+                            template.setProperty("frontend:references", newRefs);
+
+                            plugins = template.getNodes();
+                            while (plugins.hasNext()) {
+                                Node plugin = plugins.nextNode();
+                                if (!plugin.isNodeType("frontend:plugin")) {
+                                    continue;
+                                }
+                                if (plugin.hasProperty("plugin.class")) {
+                                    String clazz = plugin.getProperty("plugin.class").getString();
+                                    if ("org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin".equals(clazz)
+                                            || "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin"
+                                                    .equals(clazz)) {
+                                        plugin.setProperty("model.compareTo", "${model.compareTo}");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.node]", Query.XPATH) {
             @Override
