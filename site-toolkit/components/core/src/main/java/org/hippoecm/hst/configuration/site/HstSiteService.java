@@ -175,7 +175,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     private void sanitizeSiteMapItem(HstSiteMapItem hstSiteMapItem) {
         HstComponentConfiguration hstComponentConfiguration = this.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
         if(hstComponentConfiguration == null) {
-            log.info("HST Configuration info: The sitemap item '{}' does not point to an existing HST Component.", hstSiteMapItem.getId());
+            log.info("HST Configuration info: The sitemap item '{}' does not point to a HST Component.", hstSiteMapItem.getId());
         } else {
             sanitizeHstComponentConfiguration(hstComponentConfiguration);
         }
