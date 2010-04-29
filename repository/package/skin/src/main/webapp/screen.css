@@ -835,6 +835,7 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 .hippo-editor-field-html .htmlarea .toolbar div{margin-bottom:0px;padding:0px;margin: 0px;}
 .hippo-editor-field-html .htmlarea .xinha_iframe {margin: 0;}
 .hippo-editor-field-html .htmlarea .xinha_fullscreen {margin-top: 0px; border: 1px solid #e3e3e3;}
+.hippo-editor-field-html .xinha_textarea {background: white;}
 
 .hippo-editor-field-html-preview a { text-decoration: underline; }
 
