@@ -23,8 +23,11 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.IPageMap;
+import org.apache.wicket.PageMap;
 import org.apache.wicket.Request;
 import org.apache.wicket.Session;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.protocol.http.HttpSessionStore;
 import org.apache.wicket.protocol.http.WebRequest;
 
@@ -43,6 +46,16 @@ public class UnbindingHttpSessionStore extends HttpSessionStore {
         super(application);
     }
 
+    // only one page map is supported - wicket sychronizes request on pagemaps.
+    // Since we dispatch events to all pages, they need to share a pagemap.
+    @Override
+    public IPageMap createPageMap(String name) {
+        if ((PageMap.DEFAULT_NAME == null && name != null) || (PageMap.DEFAULT_NAME != null && !PageMap.DEFAULT_NAME.equals(name))) {
+            throw new WicketRuntimeException("Only page maps with name " + PageMap.DEFAULT_NAME + " are allowed");
+        }
+        return super.createPageMap(name);
+    }
+    
     @Override
     protected void onBind(Request request, Session newSession) {
         super.onBind(request, newSession);
