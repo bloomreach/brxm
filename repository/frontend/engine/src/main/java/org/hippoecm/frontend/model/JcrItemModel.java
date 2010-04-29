@@ -139,7 +139,11 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     protected T load() {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            if (uuid != null && session.isLive()) {
+            if (!session.isLive()) {
+                log.warn("session no longer exists");
+                return null;
+            }
+            if (uuid != null) {
                 Node node = null;
                 try {
                     node = session.getNodeByUUID(uuid);
