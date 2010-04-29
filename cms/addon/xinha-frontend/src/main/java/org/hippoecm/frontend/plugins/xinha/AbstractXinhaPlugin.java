@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
-import java.util.*;
-
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
@@ -53,6 +51,15 @@ import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractXinhaPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -372,7 +379,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             skin = config.getString(XINHA_SKIN);
             getHtmlMethod = config.getString(XINHA_GET_HTML_METHOD, "TransformInnerHTML");
             convertUrlsToLinks = config.getAsBoolean(XINHA_CONVERT_URLS_TO_LINKS, false);
-            flowToolbars = config.getAsBoolean(XINHA_FLOW_TOOLBARS, false);
+            flowToolbars = config.getAsBoolean(XINHA_FLOW_TOOLBARS, true);
             killWordOnPaste = config.getAsBoolean(XINHA_KILL_WORD_ON_PASTE, true);
             showLoading = config.getAsBoolean(XINHA_SHOW_LOADING, false);
             statusBar = config.getAsBoolean(XINHA_STATUS_BAR, false);
