@@ -70,6 +70,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
             log.debug("Flushing session of {}", session.getUserID());
             if (session.isLive()) {
                 try {
+                    session.refresh(true);
                     session.save();
                     if (session.getRootNode().hasNode("hippo:log")) {
                         try {
