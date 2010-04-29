@@ -175,7 +175,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     private void sanitizeSiteMapItem(HstSiteMapItem hstSiteMapItem) {
         HstComponentConfiguration hstComponentConfiguration = this.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
         if(hstComponentConfiguration == null) {
-            log.info("HST Configuration info: The sitemap item '{}' does not point to an existing HST Component and cannot be used for generating a page.", hstSiteMapItem.getId());
+            log.info("HST Configuration info: The sitemap item '{}' does not point to an existing HST Component.", hstSiteMapItem.getId());
         } else {
             sanitizeHstComponentConfiguration(hstComponentConfiguration);
         }
@@ -187,7 +187,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     private void sanitizeHstComponentConfiguration(HstComponentConfiguration hstComponentConfiguration) {
         String renderPath = hstComponentConfiguration.getRenderPath();
         if(renderPath == null) {
-            log.warn("HST Configuration Error: the component '{}' does not have a render path. Component id = '{}' ",hstComponentConfiguration.getName(),  hstComponentConfiguration.getId());
+            log.info("HST Configuration info: the component '{}' does not have a render path. Component id = '{}'",hstComponentConfiguration.getName(),  hstComponentConfiguration.getId());
         }
         for(HstComponentConfiguration child : hstComponentConfiguration.getChildren().values()) {
             sanitizeHstComponentConfiguration(child);
