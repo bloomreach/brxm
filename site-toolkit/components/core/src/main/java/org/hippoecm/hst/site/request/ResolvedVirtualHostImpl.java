@@ -43,7 +43,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         return virtualHost;
     }
 
-    public ResolvedSiteMount matchSiteMountItem(HttpServletRequest request) {
+    public ResolvedSiteMount matchSiteMount(HttpServletRequest request) {
         SiteMount siteMount = virtualHost.getRootSiteMount();
         if(siteMount == null) {
             log.debug("Virtual Host '{}' is not mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());

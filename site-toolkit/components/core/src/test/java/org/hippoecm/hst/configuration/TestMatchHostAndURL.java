@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -274,6 +276,27 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // from the SiteMount /preview/services
                 assertTrue("Expected pipeline name is 'JaxrsPipeline' ", "JaxrsPipeline".equals(generalResolvedSiteMapItem.getNamedPipeline()));
                 
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        /*
+         * We now make a request uri to a sitemap item that can not be matched 
+         */
+        @Test
+        public void testNonMatchingSiteMapItem(){
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("127.0.0.1");
+            request.setRequestURI("/preview/x/y/z/a/b/c");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
+                assertNull("resolvedSiteMapItem must be null for non matching URI", resolvedSiteMapItem);
+                // there should be though a sitemount, namely 'preview'
+                ResolvedSiteMount resolvedSiteMount =  vhosts.matchSiteMount(request);
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }

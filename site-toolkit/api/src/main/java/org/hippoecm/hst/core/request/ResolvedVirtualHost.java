@@ -44,6 +44,6 @@ public interface ResolvedVirtualHost {
      * @param request
      * @return a {@link ResolvedSiteMount} or <code>null</code> when none matches
      */
-    ResolvedSiteMount matchSiteMountItem(HttpServletRequest request);
+    ResolvedSiteMount matchSiteMount(HttpServletRequest request);
     
 }

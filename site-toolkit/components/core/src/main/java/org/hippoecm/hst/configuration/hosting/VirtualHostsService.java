@@ -125,7 +125,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
             // logging is already done when it is null
             return null;
         }
-        ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMountItem(request);
+        ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(request);
         if(resolvedSiteMount == null) {
             // logging is already done when it is null
             return null;
@@ -133,11 +133,11 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return resolvedSiteMount.matchSiteMapItem(request);
     }
 
-    public ResolvedSiteMount matchSiteMountItem(HttpServletRequest request) throws MatchException {
+    public ResolvedSiteMount matchSiteMount(HttpServletRequest request) throws MatchException {
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
         ResolvedSiteMount resolvedSiteMount = null;
         if(resolvedVirtualHost != null) {
-            resolvedSiteMount  = resolvedVirtualHost.matchSiteMountItem(request);
+            resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(request);
         }
         return resolvedSiteMount;
     }

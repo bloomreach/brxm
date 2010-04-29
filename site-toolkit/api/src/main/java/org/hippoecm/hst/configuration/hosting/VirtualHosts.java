@@ -52,7 +52,7 @@ public interface VirtualHosts {
     /**
      * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMountItem(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. This object
+     * {@link ResolvedVirtualHost#matchSiteMount(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. This object
      * delegates to {@link ResolvedSiteMount#matchSiteMapItem(HttpServletRequest)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
      * in the chain a match cannot be made, <code>null</code> will be returned. 
      * </p>
@@ -66,14 +66,14 @@ public interface VirtualHosts {
     /**
      * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMountItem(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. If somewhere
+     * {@link ResolvedVirtualHost#matchSiteMount(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. If somewhere
      * in the chain a match cannot be made, <code>null</code> will be returned. 
      * </p>
      * @param request the HttpServletRequest
      * @return the resolvedSiteMount for this request or <code>null</code> when it can not be matched to a siteMount
      * @throws MatchException
      */
-    ResolvedSiteMount matchSiteMountItem(HttpServletRequest request) throws MatchException;
+    ResolvedSiteMount matchSiteMount(HttpServletRequest request) throws MatchException;
     
     /**
      * <p>
