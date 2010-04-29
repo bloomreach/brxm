@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.hosting;
+package org.hippoecm.hst.configuration;
 
 
 import static org.junit.Assert.assertTrue;
@@ -21,13 +21,16 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-public class TestVirtualHosting extends AbstractSpringTestCase {
+public class TestMatchHostAndURL extends AbstractSpringTestCase {
 
         private VirtualHostsManager virtualHostsManager;
 
