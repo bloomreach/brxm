@@ -125,6 +125,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the pathInfo from the requestURI did not match the preview SiteMount, so our siteMount must be live:
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The live SiteMount must have an empty string \"\" as pathInfoPrefix", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedPathInfoPrefix()));
@@ -149,6 +150,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the pathInfo from the requestURI should match the preview SiteMount, so our siteMount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The preview SiteMount must have '/preview' as pathInfoPrefix", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedPathInfoPrefix()));
@@ -174,6 +176,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The live SiteMount must have an empty string \"\" as pathInfoPrefix", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedPathInfoPrefix()));
             } catch (RepositoryNotAvailableException e) {
@@ -198,6 +201,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the pathInfo from the requestURI should match the preview SiteMount, so our siteMount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The preview SiteMount must have '/preview' as pathInfoPrefix", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedPathInfoPrefix()));
@@ -224,6 +228,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the pathInfo from the requestURI should match the preview SiteMount, so our siteMount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The preview SiteMount must have '/preview/services' as pathInfoPrefix", "/preview/services".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedPathInfoPrefix()));
