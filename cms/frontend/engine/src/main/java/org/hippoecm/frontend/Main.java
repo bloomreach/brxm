@@ -85,6 +85,7 @@ public class Main extends WebApplication {
         super.init();
 
         getPageSettings().setVersionPagesByDefault(false);
+        getPageSettings().setAutomaticMultiWindowSupport(false);
 
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {

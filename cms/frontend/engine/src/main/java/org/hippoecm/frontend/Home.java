@@ -17,6 +17,7 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
@@ -187,6 +188,11 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         response.setHeader("Pragma", "no-cache");
         // FF3 bug: no-store shouldn't be necessary
         response.setHeader("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate"); // no-store
+    }
+
+    @Override
+    public final void onNewBrowserWindow() {
+        setResponsePage(getClass());
     }
 
     public void addService(IRenderService service, String name) {
