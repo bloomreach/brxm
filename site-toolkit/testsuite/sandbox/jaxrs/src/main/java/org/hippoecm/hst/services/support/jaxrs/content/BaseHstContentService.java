@@ -54,6 +54,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +134,8 @@ public class BaseHstContentService {
     }
     
     protected String getSiteContentPath(HttpServletRequest servletRequest) {
-        return (String) servletRequest.getAttribute(BaseHstContentService.SITE_CONTENT_PATH);
+        ResolvedSiteMapItem resolvedSiteMapItem = (ResolvedSiteMapItem)servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM);
+        return resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().getHstSite().getContentPath();
     }
     
     protected String getRelativeItemContentPath(HttpServletRequest servletRequest, final ItemContent itemContent) {
