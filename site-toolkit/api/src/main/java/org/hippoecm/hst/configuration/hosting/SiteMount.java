@@ -119,8 +119,9 @@ public interface SiteMount {
      * <p>
      * Returns the path info prefix for this SiteMount object. The root SiteMount has an empty pathInfoPrefix. A pathInfoPrefix for a 
      * SiteMount is its own {@link #getName()} plus all ancestors up to the root. It can contain wildcards, for example /preview/*.
-     * Typically, these wildcards are replaced by their actual values in the {@link ResolvedSiteMount}
+     * Typically, these wildcards are replaced by their actual values in the {@link ResolvedSiteMount}.
      * </p>
+     * 
      * @see ResolvedSiteMount#getResolvedPathInfoPrefix()
      * @return the path info prefix for this siteMount
      */
@@ -169,6 +170,11 @@ public interface SiteMount {
      * @return when {@link #isPortVisible()} returns <code>true</code> this method returns the port number of the externalized url
      */
     int getPortNumber();
+    
+    /**
+     * @return the homepage for this SiteMount or <code>null</code> when not present
+     */
+    String getHomePage();
     
     /**
      * @return the scheme to use for creating external urls, for example http / https

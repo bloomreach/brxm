@@ -32,6 +32,9 @@
         <sv:value>/staticresource/</sv:value>
         <sv:value>/exapps/</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:homepage" sv:type="String">
+        <sv:value>home</sv:value>
+    </sv:property>
     <sv:property sv:name="hst:suffixexclusions" sv:type="String">
         <sv:value>.do</sv:value>
         <sv:value>.jsp</sv:value>
@@ -53,6 +56,9 @@
     </sv:property>
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
         <sv:value>127.0.0.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:homepage" sv:type="String">
+        <sv:value>/home</sv:value>
     </sv:property>
     
     <sv:node sv:name="127.0.0.1">
@@ -127,7 +133,7 @@
         </sv:node>
     </sv:node>
     
-    <sv:node sv:name="org">
+    <sv:node sv:name="test">
          <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
@@ -135,9 +141,15 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:virtualhost</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:homepage" sv:type="String">
+                <sv:value>myhometest1</sv:value>
+            </sv:property>
             <sv:node sv:name="www">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                  <sv:value>hst:virtualhost</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:homepage" sv:type="String">
+                <sv:value>myhometest2</sv:value>
               </sv:property>
               <sv:node sv:name="hst:root">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -149,6 +161,9 @@
                 <sv:node sv:name="services">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
                       <sv:value>hst:sitemount</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:homepage" sv:type="String">
+                    <sv:value>myhometest3</sv:value>
                   </sv:property>
                   
                   <!-- mountpath inherited here from parent  -->

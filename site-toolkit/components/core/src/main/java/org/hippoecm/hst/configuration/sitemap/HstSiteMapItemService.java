@@ -166,8 +166,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             parameterizedPath = parameterizedPath + value;
         }
         
-        String[] parameterNames = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_PARAMETER_NAMES);
-        String[] parameterValues = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_PARAMETER_VALUES);
+        String[] parameterNames = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
         
         if(parameterNames != null && parameterValues != null){
            if(parameterNames.length != parameterValues.length) {

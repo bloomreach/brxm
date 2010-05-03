@@ -19,6 +19,7 @@ package org.hippoecm.hst.configuration;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          *  
          *  127.0.0.1
          *  localhost
-         *  org
+         *  test
          *    ` onehippo
          *            |- www
          *            `- preview
@@ -80,10 +81,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                  * 0.0.1
                  * 127.0.0.1
                  * localhost
-                 * org
-                 * onehippo.org
-                 * www.onehippo.org
-                 * preview.onehippo.org
+                 * test
+                 * onehippo.test
+                 * www.onehippo.test
+                 * preview.onehippo.test
                  */
                 
                  assertTrue("We expect 9 hosts in total", allHosts.size() == 9);
@@ -276,6 +277,29 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // from the SiteMount /preview/services
                 assertTrue("Expected pipeline name is 'JaxrsPipeline' ", "JaxrsPipeline".equals(generalResolvedSiteMapItem.getNamedPipeline()));
                 
+                
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        
+        /*
+         * On the general virtualhosts, we have set a property hst:homepage = 'home'. All virtual hosts and sitemount's which do not specify a homepage
+         * theirselves must inherit this value. 
+         */
+        @Test 
+        public void testHomePage(){
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("127.0.0.1");
+            request.setRequestURI("");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                // since the requestURI is empty, we expect a fallback to the configured homepage:
+                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
+                assertTrue("The expected id of the resolved sitemap item is 'home'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }
@@ -297,8 +321,63 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertNull("resolvedSiteMapItem must be null for non matching URI", resolvedSiteMapItem);
                 // there should be though a sitemount, namely 'preview'
                 ResolvedSiteMount resolvedSiteMount =  vhosts.matchSiteMount(request);
+                assertNotNull("The sitemount should be there still", resolvedSiteMount);
+                assertTrue("The preview SiteMount must have '/preview' as pathInfoPrefix", "/preview".equals(resolvedSiteMount.getResolvedPathInfoPrefix()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }
         }
+
+       
+        /*
+         * We also have a test host, that has configuration like this:
+         * 
+         * test  (host)
+         *    `onehippo (host, homepage = myhometest1)
+         *        |-www  (host, homepage = myhometest2) 
+         *        |   `hst:root (sitemount)
+         *        |        ` services (sitemount, homepage = myhometest3)
+         *        `preview
+         *             `hst:root  (sitemount)
+         *                  ` services (sitemount)
+         *                  
+         */
+        @Test 
+        public void testOtherHosts(){
+            
+            // first test
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("www.onehippo.test");
+            request.setRequestURI("/news/2009");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
+                assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
+                
+                // second test: change request uri to "" : the expected resolvedSiteMapItem is now the homepage from the www.onehippo.test, thus myhometest2
+                // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest2 = _default_ , we should have myparam='myhometest2'
+                request.setRequestURI("");
+                resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
+                assertTrue("We expect the parameter 'testparam to resolve to 'myhometest2' ","myhometest2".equals(resolvedSiteMapItem.getParameter("testparam")));
+                
+                // third test: change request uri to "/preview" : the expected resolvedSiteMapItem is now the homepage from the preview.onehippo.test, thus myhometest1 from the host onehippo.org
+                // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest1 = _default_ , we should have myparam='myhometest1'
+                request.setRequestURI("/preview");
+                resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
+                assertTrue("We expect the parameter 'testparam to resolve to 'myhometest1' ","myhometest1".equals(resolvedSiteMapItem.getParameter("testparam")));
+                
+                // fourth test: change request uri to "/services" : the expected resolvedSiteMapItem is now the homepage from the www.onehippo.test/services, thus myhometest3
+                // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest3 = _default_ , we should have myparam='myhometest3'
+                request.setRequestURI("/services");
+                resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
+                assertTrue("We expect the parameter 'testparam to resolve to 'myhometest3' ","myhometest3".equals(resolvedSiteMapItem.getParameter("testparam")));
+                
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
 }

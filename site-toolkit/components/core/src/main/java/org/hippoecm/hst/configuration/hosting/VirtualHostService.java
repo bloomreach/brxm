@@ -44,6 +44,11 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private String id;
     private String name;
     private String hostName;
+    /**
+     * The homepage for this VirtualHost. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHosts} is 
+     * taken (which still might be <code>null</code> though)
+     */
+    private String homepage;
     private VirtualHosts virtualHosts;
     private VirtualHostService parentHost;
     private SiteMount rootSiteMount;
@@ -105,6 +110,17 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 this.scheme = parentHost.scheme;
             } else {
                 this.scheme = virtualHosts.getScheme();
+            }
+        }
+        
+        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
+            this.homepage = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        } else {
+           // try to get the one from the parent
+            if(parentHost != null) {
+                this.homepage = parentHost.homepage;
+            } else {
+                this.homepage = virtualHosts.getHomePage();
             }
         }
         
@@ -176,6 +192,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.jcrPath = parent.jcrPath;
         this.portNumber = parent.portNumber;
         this.scheme = parent.scheme;
+        this.homepage = parent.homepage;
         this.portVisible = parent.portVisible;
         this.contextPathInUrl = parent.contextPathInUrl;
         this.name = nameSegments[position];
@@ -223,6 +240,11 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     public String getScheme(){
         return this.scheme;
     }
+    
+    public String getHomePage() {
+        return homepage;
+    }
+
     
     public VirtualHosts getVirtualHosts() {
         return this.virtualHosts;
@@ -293,7 +315,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         return builder.toString();
     }
 
-   
 
 
 }

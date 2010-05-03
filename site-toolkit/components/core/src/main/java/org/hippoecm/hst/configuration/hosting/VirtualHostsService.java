@@ -51,6 +51,10 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     private Map<String, VirtualHostService> rootVirtualHosts = new HashMap<String, VirtualHostService>();
     private List<VirtualHost> allVirtualHosts = new ArrayList<VirtualHost>();
     private String defaultHostName;
+    /**
+     * The homepage for this VirtualHosts. When the backing configuration does not contain a homepage, the value is <code>null
+     */
+    private String homepage;
     private boolean virtualHostsConfigured;
     private String jcrPath;
     private boolean portVisible;
@@ -72,6 +76,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         this.prefixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
         this.scheme = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
+        this.homepage = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
         this.defaultHostName  = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if(scheme == null || "".equals(scheme)) {
             this.scheme = DEFAULT_SCHEME;
@@ -264,6 +269,10 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return this.defaultHostName;
     }
 
+    public String getHomePage() {
+        return homepage;
+    }
+
     public List<VirtualHost> getVirtualHosts(boolean mountedOnly) {
         if(mountedOnly) {
             List<VirtualHost> mountedHosts = new ArrayList<VirtualHost>();
@@ -277,4 +286,6 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
             return allVirtualHosts;
         }
     }
+
+
 }

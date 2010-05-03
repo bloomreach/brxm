@@ -20,7 +20,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -107,4 +106,5 @@ public interface VirtualHosts {
      * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.
      */
     String getDefaultHostName();
+    
 }

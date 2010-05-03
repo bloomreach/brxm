@@ -113,6 +113,7 @@
 - hst:scheme (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:homepage (string)
 
 
 [hst:virtualhost]
@@ -124,6 +125,7 @@
 - hst:scheme (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:homepage (string)
 
 [hst:virtualhosts]
 - hst:port (long)
@@ -135,6 +137,7 @@
 - hst:defaulthostname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:homepage (string)
 + * (hst:virtualhost)
 
 

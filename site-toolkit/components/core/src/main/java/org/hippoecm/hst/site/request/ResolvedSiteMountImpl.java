@@ -24,9 +24,14 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResolvedSiteMountImpl implements ResolvedSiteMount{
 
+
+    private final static Logger log = LoggerFactory.getLogger(ResolvedSiteMountImpl.class);
+    
     private SiteMount siteMount;
     private ResolvedVirtualHost resolvedVirtualHost;
     private String resolvedPathInfoPrefix;
@@ -61,6 +66,17 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
             throw new MatchException("It is not allowed that the pathInfo from the request is different then the resolvedPathInfoPrefix from the ResolvedSiteMount");
         }
         String siteMapPathInfo = pathInfo.substring(getResolvedPathInfoPrefix().length());
+        
+        if("".equals(siteMapPathInfo)) {
+           log.debug("Empty siteMapPathInfo. If there is a homepage path configured, we try to map this path to the sitemap");
+           siteMapPathInfo = siteMount.getHomePage();
+           if(siteMapPathInfo == null || "".equals(siteMapPathInfo)) {
+               log.warn("SiteMount '{}' for host '{}' does not have a homepage configured and the pathInfo is empty. Cannot map to sitemap item. Return null", getSiteMount().getName(), getResolvedVirtualHost().getResolvedHostName());
+               return null;
+           } else {
+               log.debug("Trying to map homepage '{}' to the sitemap for SiteMount '{}'", siteMapPathInfo, getSiteMount().getName());
+           }
+        }
         
         HstSiteMapMatcher matcher = getSiteMount().getHstSiteMapMatcher();
         if(matcher == null) {

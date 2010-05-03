@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
@@ -100,6 +99,11 @@ public interface VirtualHost {
      */
     String getScheme();
     
+
+    /**
+     * @return the homepage for this virtual host or <code>null</code> when not present
+     */
+    String getHomePage();
     
     /**
      * Returns the base of the <code>URL</code> as seen by for example a browser. The base URL is consists of <code>scheme + hostname + portnumber</code>

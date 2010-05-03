@@ -18,6 +18,31 @@
         <sv:value>hst:sitemap</sv:value>
     </sv:property>
 
+    <sv:node sv:name="_default_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/homepage</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parameternames" sv:type="String">
+            <sv:value>testparam</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parametervalues" sv:type="String">
+            <sv:value>${1}</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="home">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/homepage</sv:value>
+        </sv:property>
+    </sv:node>
+
+ 
     <sv:node sv:name="news">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>

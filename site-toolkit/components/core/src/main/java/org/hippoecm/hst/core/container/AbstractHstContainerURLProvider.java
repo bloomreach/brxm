@@ -226,6 +226,8 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
     }
     
+    
+    // TODO deze mag niet weg: portal
     public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
         url.append(containerURL.getServletPath());

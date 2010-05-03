@@ -34,6 +34,11 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_SITEMOUNT = "hst:sitemount";
     public final static String NODETYPE_HST_SCRIPT = "hst:script";
 
+    
+    public final static String GENERAL_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
+    public final static String GENERAL_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
+    public final static String GENERAL_PROPERTY_HOMEPAGE = "hst:homepage";
+    
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
     public final static String COMPONENT_PROPERTY_TEMPLATE_ = "hst:template";
@@ -41,10 +46,6 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";
-
-    public final static String COMPONENT_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
-    public final static String COMPONENT_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
-    
 
     public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
     public final static String SCRIPT_PROPERTY_TEMPLATE =  "hst:template";
@@ -58,10 +59,6 @@ public interface HstNodeTypes {
     public final static String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID =  "hst:componentconfigurationid";
     public final static String SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID =  "hst:portletcomponentconfigurationid";
     public final static String SITEMAPITEM_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
-
-    public final static String SITEMAPITEM_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
-    public final static String SITEMAPITEM_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
-    
 
     public final static String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     public final static String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";

@@ -71,6 +71,12 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      */
     private String mountPath;
     
+    /**
+     * The homepage for this SiteMount. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHost} is 
+     * taken (which still might be <code>null</code> though)
+     */
+    private String homepage;
+    
     private boolean portVisible;
     private int portNumber;
     private boolean contextPathInUrl;
@@ -132,6 +138,18 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
                 this.scheme = virtualHost.getScheme();
             }
         }
+        
+        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
+            this.homepage = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        } else {
+           // try to get the one from the parent
+            if(parent != null) {
+                this.homepage = parent.getHomePage();
+            } else {
+                this.homepage = virtualHost.getHomePage();
+            }
+        }
+        
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW)) {
             this.preview = this.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW);
@@ -238,6 +256,9 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         return scheme;
     }
 
+    public String getHomePage() {
+        return homepage;
+    }
 
     public VirtualHost getVirtualHost() {
         return virtualHost;
@@ -275,5 +296,6 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     public HstSiteMapMatcher getHstSiteMapMatcher() {
         return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getHstSiteMapMatcher();
     }
+
 
 }
