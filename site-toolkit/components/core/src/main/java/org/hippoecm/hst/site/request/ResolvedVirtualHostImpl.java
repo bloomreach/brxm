@@ -48,7 +48,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         if(siteMount == null) {
             log.debug("Virtual Host '{}' is not mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());
         }
-        String pathInfo = HstRequestUtils.getPathInfo(request);
+        String pathInfo = HstRequestUtils.getDecodedPath(request);
         // strip leading and trailing slashes
         pathInfo = PathUtils.normalizePath(pathInfo);
         String[] pathInfoSegments = pathInfo.split("/");

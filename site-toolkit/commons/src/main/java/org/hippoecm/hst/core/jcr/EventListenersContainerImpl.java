@@ -185,7 +185,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                         log.warn("event listener object is null. Just ignored.");
                     continue;
                 }
-
+                
                 if (eventTypes <= 0) {
                     if (log.isWarnEnabled())
                         log.warn("event listener's event types is invalid: {}. Just ignored.", eventTypes);

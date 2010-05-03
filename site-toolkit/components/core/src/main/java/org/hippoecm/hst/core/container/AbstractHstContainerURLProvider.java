@@ -352,13 +352,8 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
      * Splits path info to an array of namespaced path part and remainder. 
      */
     protected String [] splitPathInfo(HttpServletRequest request, String characterEncoding) {
-        /*
-         * Do not use request.getPathInfo() as this path is already decoded by the 
-         * the web container making it impossible for us to distuinguish between a space and 
-         * a plus as both are represented by a '+' in the getPathInfo
-         */ 
-        
-        String pathInfo = HstRequestUtils.getPathInfo(request, characterEncoding);
+       
+        String pathInfo = HstRequestUtils.getDecodedPath(request, characterEncoding);
         
         if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
             return new String [] { null, pathInfo };

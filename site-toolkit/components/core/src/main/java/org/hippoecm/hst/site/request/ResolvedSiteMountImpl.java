@@ -61,7 +61,7 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
 
 
     public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException {
-        String pathInfo = HstRequestUtils.getPathInfo(request);
+        String pathInfo = HstRequestUtils.getDecodedPath(request);
         if(!pathInfo.startsWith(getResolvedPathInfoPrefix())) {
             throw new MatchException("It is not allowed that the pathInfo from the request is different then the resolvedPathInfoPrefix from the ResolvedSiteMount");
         }

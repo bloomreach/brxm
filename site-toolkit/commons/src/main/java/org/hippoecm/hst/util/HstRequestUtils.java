@@ -67,36 +67,50 @@ public class HstRequestUtils {
         return hstResponse;
     }
     
+    
+    /**
+     * This method has been deprecated as we moved from Servlets to Filters: the pathInfo is misleading, as wrt {@link HttpServletRequest#getPathInfo}: this
+     * returns the path after the servlet path. In case of a Filter listing to /*, this is always an empty string "". Therefor, use getDecodedPath instead
+     * @deprecated use {@link #getDecodedPath(HttpServletRequest)} instead
+     */
+    public static String getPathInfo(HttpServletRequest request){
+        return getDecodedPath(request);
+    }
+    
+    /**
+     * This method has been deprecated as we moved from Servlets to Filters: the pathInfo is misleading, as wrt {@link HttpServletRequest#getPathInfo}: this
+     * returns the path after the servlet path. In case of a Filter listing to /*, this is always an empty string "". Therefor, use getDecodedPath instead
+     * @deprecated use {@link #getDecodedPath(HttpServletRequest, String)} instead
+     */
+    public static String getPathInfo(HttpServletRequest request, String characterEncoding){
+        return getDecodedPath(request);
+    }
+    
     /**
      * Returns any extra path information associated with the URL the client sent when it made this request.
-     * The extra path information follows the servlet path but precedes the query string 
-     * and will start with a "/" character.
+     * The extra path information follows the context path but precedes the query string and will start with a "/" character.
      * This method extracts and decodes the path information from the request URI returned from
      * <CODE>HttpServletRequest#getRequestURI()</CODE>.
      * @param request
-     * @return
+     * @return the decoded getRequestURI after the context path
      */
-    public static String getPathInfo(HttpServletRequest request) {
-        return getPathInfo(request, null);
+    public static String getDecodedPath(HttpServletRequest request) {
+        return getDecodedPath(request, null);
     }
     
     /**
      * <p>
      * Returns any extra path information associated with the URL the client sent when it made this request.
-     * The extra path information follows the servlet path but precedes the query string 
-     * and will start with a "/" character.
+     * The extra path information follows the context path and will start with a "/" character.
      * This method extracts and decodes the path information by the specified character encoding parameter
      * from the request URI.
      * </p>
-     * <p> <b>Note</b> that this method can return a different value then {@link HttpServletRequest#getPathInfo()} as there it is the 
-     * pathInfo decoded by the web container, and here we use the {@link URLDecoder} with the request character encoding
-     * </p> 
      * @param request
      * @param characterEncoding
-     * @return
+     * @return the decoded getRequestURI after the context path
      */
-    public static String getPathInfo(HttpServletRequest request, String characterEncoding) {
-        String encodePathInfo = request.getRequestURI().substring(request.getContextPath().length() + request.getServletPath().length());
+    public static String getDecodedPath(HttpServletRequest request, String characterEncoding) {
+        String encodePathInfo = request.getRequestURI().substring(request.getContextPath().length());
         
         if (characterEncoding == null) {
             characterEncoding = request.getCharacterEncoding();
