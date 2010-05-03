@@ -94,34 +94,7 @@
             </bean>
           </property>
         </bean>
-
-        <!-- Site manager refreshing event listener on site configuration node path -->
-        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-          <property name="nodeAddedEnabled" value="true"/>
-          <property name="nodeRemovedEnabled" value="true"/>
-          <property name="propertyAddedEnabled" value="true"/>
-          <property name="propertyChangedEnabled" value="true"/>
-          <property name="propertyRemovedEnabled" value="true"/>
-          <property name="absolutePath" value="${observation.sites.config.node.path}"/>
-          <property name="deep" value="true"/>
-          <property name="uuids">
-            <null/>
-          </property>
-          <property name="nodeTypeNames">
-            <null/>
-          </property>
-          <property name="noLocal" value="false"/>
-          <property name="eventListener">
-            <bean parent="baseDelegatingEventListener" class="org.hippoecm.hst.core.jcr.DelegatingEventListener">
-              <constructor-arg>
-                <list>
-                  <ref bean="hstconfigreaderSessionPoolRefresher" />
-                </list>
-              </constructor-arg>
-            </bean>
-          </property>
-        </bean>
-        
+                
         <!-- session pools refreshing event listener -->
         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>
