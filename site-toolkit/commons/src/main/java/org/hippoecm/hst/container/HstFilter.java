@@ -38,7 +38,6 @@ import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 
 public class HstFilter implements Filter {
@@ -49,13 +48,7 @@ public class HstFilter implements Filter {
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstFilter.class.getName();
     private final static String REQUEST_START_TICK_KEY = "request.start_"+HstFilter.class.getName();
-    private final static String DEFAULT_WELCOME_PAGE = "home";
-    private final static String DEFAULT_PREVIEW_PREFIX = "/preview";
-    private final static String WELCOME_PAGE_INIT_PARAM = "welcome-page";
-    private final static String PREVIEW_PREFIX_INIT_PARAM = "preview-prefix";
-    
-    private String welcome_page = DEFAULT_WELCOME_PAGE;
-    private String preview_prefix  = DEFAULT_PREVIEW_PREFIX;
+  
     private FilterConfig filterConfig;
 
     /* moved here from HstContainerServlet initialization */
@@ -75,17 +68,7 @@ public class HstFilter implements Filter {
     
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
-        String customWelcomePage = filterConfig.getInitParameter(WELCOME_PAGE_INIT_PARAM);
-        if(customWelcomePage != null) {
-            // strip trailing and leading slashes
-            welcome_page = PathUtils.normalizePath(customWelcomePage);
-        }
-        String customPreviewPrefix = filterConfig.getInitParameter(PREVIEW_PREFIX_INIT_PARAM);
-        if(customPreviewPrefix != null) {
-            // strip trailing and leading slashes
-            preview_prefix = "/" + PathUtils.normalizePath(customPreviewPrefix);
-        }
-        
+       
         /* HST and ClientComponentManager initialization */
 
         contextNamespace = getConfigOrContextInitParameter(CONTEXT_NAMESPACE_INIT_PARAM, contextNamespace);
@@ -195,18 +178,6 @@ public class HstFilter implements Filter {
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
             
             String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
-            
-            if(pathInfo.equals("")) {
-                pathInfo += "/"+welcome_page;
-            }
-            else if(pathInfo.equals("/")) {
-                pathInfo += welcome_page;
-            } else if (pathInfo.equals(preview_prefix)) {
-                pathInfo += "/"+welcome_page; 
-            }
-            else if (pathInfo.equals(preview_prefix+"/")) {
-                pathInfo += welcome_page; 
-            }
             
             VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
             VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
