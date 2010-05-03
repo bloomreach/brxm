@@ -620,6 +620,9 @@ public class SecurityManager implements JackrabbitSecurityManager {
 
     public void assignPrincipals(Set<Principal>principals, String userId) {
         String providerId = null;
+        if (userId != null && userId.equals("system")) {
+            userId = null;
+        }
         try {
            assignUserPrincipals(principals, userId);
            assignGroupPrincipals(principals, userId, providerId);

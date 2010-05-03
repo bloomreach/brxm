@@ -167,9 +167,15 @@ public class UserSession extends WebSession {
     public Session getJcrSession() {
         Session session = getJcrSessionInternal();
         if (session == null) {
+            Main main = (Main) Application.get();
+            if (fallbackSession == null) {
+                try {
+                    main.getRepository(); // side effect of reinitializing fallback session
+                } catch(RepositoryException ex) {
+                }
+            }
             session = fallbackSession;
             if (session == null) {
-                Main main = (Main) Application.get();
                 main.resetConnection();
                 throw new RestartResponseException(NoRepositoryAvailablePage.class);
             }
@@ -364,7 +370,8 @@ public class UserSession extends WebSession {
 
     public String getApplicationName() {
         String applicationName;
-        String userID = getJcrSession().getUserID();
+        Session session = getJcrSession();
+        String userID = (session != null ? session.getUserID() : null);
         if (userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous")) {
             applicationName = "login";
         } else {
