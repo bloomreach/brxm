@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Enumeration;
 import javax.jcr.Credentials;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -47,10 +48,13 @@ public class WebCredentials implements Credentials, CallbackHandler {
             }
         }
         for(Enumeration e=request.getHeaderNames(); e.hasMoreElements(); ) {
-            String headerName = (String) e.nextElement();
-            parameters.put(headerName, request.getHeader(headerName));
+            String key = (String) e.nextElement();
+            parameters.put(key, request.getHeader(key));
         }
-        parameters.putAll(request.getParameterMap());
+        for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
+            String key = (String) e.nextElement();
+            parameters.put(key, request.getParameter(key));
+        }
     }
 
     public WebCredentials(String username, Map<String, String> parameters) {
@@ -78,6 +82,11 @@ public class WebCredentials implements Credentials, CallbackHandler {
                     passwordCallback.setPassword(password);
                 } else if(parameters.containsKey("j_password") && parameters.get("j_password")!=null) {
                     passwordCallback.setPassword(parameters.get("j_password").toCharArray());
+                }
+            } else if(callback instanceof ParameterCallback) {
+                ParameterCallback parameterCallback = (ParameterCallback) callback;
+                if (parameters.containsKey(parameterCallback.getName())) {
+                    parameterCallback.setValue(parameters.get(parameterCallback.getName()));
                 }
             }
         }

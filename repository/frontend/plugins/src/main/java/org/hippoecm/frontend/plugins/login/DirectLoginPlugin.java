@@ -30,9 +30,12 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
-import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,14 +44,20 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
+
+import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
+
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.hippoecm.repository.WebCredentials;
 
 public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
     @SuppressWarnings("unused")
@@ -65,9 +74,14 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
     public String selectedLocale;
     private Label userLabel;
     private Map<String,String[]> parameters;
+    protected boolean allowParameterBased = true;
+    private boolean rendered = false;
 
     public DirectLoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        if (config.containsKey("allowParameterBased")) {
+            allowParameterBased = config.getBoolean("allowParameterBased");
+        }
 
         parameters = RequestCycle.get().getRequest().getParameterMap();
 
@@ -106,39 +120,53 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
         });
 
         add(new FeedbackPanel("feedback").setEscapeModelStrings(false));
-        add(userLabel = new Label("infouserlogin", ""));
-        userLabel.setOutputMarkupId(true);
         add(new Label("pinger"));
-    }
+
+        login();
+}
 
     protected void login() {
         UserSession userSession = (UserSession)getSession();
-        //String username = (String)((WebRequest)getRequest()).getHttpServletRequest().getAttribute("username");
-        String username = (String)((WebRequest)getRequest()).getHttpServletRequest().getParameter("username");
         HttpSession session = ((WebRequest)getRequest()).getHttpServletRequest().getSession(true);
-        ConcurrentLoginFilter.validateSession(session, username, false);
+        String username = username();
+        if (username != null) {
+            ConcurrentLoginFilter.validateSession(session, username, false);
+        }
         userSession.login(new UserCredentials(this));
         userSession.setLocale(new Locale(selectedLocale));
         userSession.getJcrSession();
+        /* FIXME: this would be a much better solution than a refresh,
+         * but the YUI framework is broken for the first request
         if (parameters != null) {
             setResponsePage(Home.class, new PageParameters(parameters));
+            throw new RestartResponseException(Home.class, new PageParameters(parameters));
         } else {
             setResponsePage(Home.class);
+            throw new RestartResponseException(Home.class);
         }
+        */
+    }
+
+    protected String username() {
+        String username = (String)((WebRequest)getRequest()).getHttpServletRequest().getAttribute("id");
+        if (allowParameterBased && username == null) {
+            username = (String)((WebRequest)getRequest()).getHttpServletRequest().getParameter("id");   
+        }
+        return username;
     }
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (Callback callback : callbacks) {
             if (callback instanceof NameCallback) {
                 NameCallback nameCallback = (NameCallback)callback;
-                String username = (String)((WebRequest) getRequest()).getHttpServletRequest().getAttribute("username");
-                nameCallback.setName(username);
+                String username = username();
+                if (username != null) {
+                    nameCallback.setName(username);
+                }
             } else if (callback instanceof PasswordCallback) {
             } else if (callback instanceof CredentialsCallback) {
                 CredentialsCallback credentialsCallback = (CredentialsCallback) callback;
-                String username = (String)((WebRequest) getRequest()).getHttpServletRequest().getAttribute("username");
-                credentialsCallback.setCredentials(new SimpleCredentials(username, new char[0]));
-                //credentialsCallback.setCredentials(new WebCredentials(((WebRequest)getRequest()).getHttpServletRequest()));
+                credentialsCallback.setCredentials(new WebCredentials(((WebRequest)getRequest()).getHttpServletRequest()));
             }
         }
     }
