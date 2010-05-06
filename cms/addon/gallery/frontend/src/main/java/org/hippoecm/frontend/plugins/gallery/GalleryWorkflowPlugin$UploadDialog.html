@@ -14,18 +14,20 @@
   limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
+<wicket:extend>
     <div class="hippo-dialog-container">
-      <label for="upload">
-        <wicket:message key="select-file-label"/>
-      </label>
-      <input class="hippo-select-file" size="50" wicket:id="input" id="upload" type="file"/>
-      <wicket:enclosure child="type">
-        <label for="typeselect">
-          <wicket:message key="file-type-label"/>
+        <label>
+            <wicket:message key="select-file-label"/>
         </label>
-        <select wicket:id="type" id="typeselect"/>
-      </wicket:enclosure>
-    </div>  
-  </wicket:extend>
+
+        <div wicket:id="uploadWidget">Upload widget</div>
+
+        <wicket:enclosure child="type">
+            <label for="typeselect">
+                <wicket:message key="file-type-label"/>
+            </label>
+            <select wicket:id="type" id="typeselect"/>
+        </wicket:enclosure>
+    </div>
+</wicket:extend>
 </html>
