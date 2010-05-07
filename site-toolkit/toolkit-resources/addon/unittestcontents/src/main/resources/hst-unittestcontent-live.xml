@@ -15,12 +15,12 @@
   limitations under the License. -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
 
-  sv:name="testlive">
+  sv:name="unittestlive">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sites</sv:value>
   </sv:property>
   
-  <sv:node sv:name="testproject">
+  <sv:node sv:name="unittestproject">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
