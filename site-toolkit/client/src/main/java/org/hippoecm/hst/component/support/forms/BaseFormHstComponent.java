@@ -44,6 +44,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
     
     public final static String DEFAULT_UUID_NAME = "u_u_i_d";
     public final static String DEFAULT_STORED_FORMS_LOCATION = "formdata";
+    public final static String DEFAULT_FORMDATA_CONTAINER = "hst:formdatacontainer";
     public final static String DEFAULT_FORMDATA_TYPE = "hst:formdata";
 
     public final static String HST_PARAMETERNAMES = "hst:parameternames";
@@ -153,7 +154,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
                 Node rootNode = impersonated.getRootNode();
                 Node formData = null;
                 if(!rootNode.hasNode(getFormDataNodeName())) {
-                    formData = rootNode.addNode(getFormDataNodeName(), "nt:unstructured");
+                    formData = rootNode.addNode(getFormDataNodeName(), DEFAULT_FORMDATA_CONTAINER);
                     addInitialStructure(formData);
                 } else {
                     formData = rootNode.getNode(getFormDataNodeName());
@@ -233,9 +234,9 @@ public class BaseFormHstComponent extends BaseHstComponent{
     private void addInitialStructure(Node formData) throws RepositoryException {
         char a = 'a';
         for(int i = 0; i < 26 ; i ++) {
-          Node letter =  formData.addNode(Character.toString((char)(a+i)), "nt:unstructured");
+          Node letter =  formData.addNode(Character.toString((char)(a+i)), DEFAULT_FORMDATA_CONTAINER);
           for(int j = 0; j < 26 ; j ++) {
-              letter.addNode(Character.toString((char)(a+j)), "nt:unstructured");
+              letter.addNode(Character.toString((char)(a+j)), DEFAULT_FORMDATA_CONTAINER);
             }
         }
     }

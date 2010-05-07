@@ -140,6 +140,9 @@
 - hst:homepage (string)
 + * (hst:virtualhost)
 
+[hst:formdatacontainer] 
++ * (hst:formdatacontainer)
++ * (hst:formdata)
 
 [hst:formdata]
 - hst:creationtime (date) mandatory
