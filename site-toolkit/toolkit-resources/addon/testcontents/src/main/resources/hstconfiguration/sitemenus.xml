@@ -24,7 +24,7 @@
         </sv:property>
         <sv:node sv:name="News">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>testproject:sitemenuitem</sv:value>
+                <sv:value>unittestproject:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:depth" sv:type="Long">
                 <sv:value>3</sv:value>
@@ -35,13 +35,13 @@
             <sv:property sv:name="hst:repobased" sv:type="Boolean">
                 <sv:value>true</sv:value>
             </sv:property>
-            <sv:property sv:name="testproject:title" sv:type="String">
+            <sv:property sv:name="unittestproject:title" sv:type="String">
                 <sv:value>news title</sv:value>
             </sv:property>
         </sv:node>
         <sv:node sv:name="Contact">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>testproject:sitemenuitem</sv:value>
+                <sv:value>unittestproject:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
                 <sv:value>contact</sv:value>
@@ -49,7 +49,7 @@
         </sv:node>
         <sv:node sv:name="Contact-Spring">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>testproject:sitemenuitem</sv:value>
+                <sv:value>unittestproject:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
                 <sv:value>contact-spring</sv:value>
@@ -57,7 +57,7 @@
         </sv:node>
         <sv:node sv:name="Contact-Dispatch">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>testproject:sitemenuitem</sv:value>
+                <sv:value>unittestproject:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
                 <sv:value>contact-dispatch</sv:value>
@@ -65,7 +65,7 @@
         </sv:node>
         <sv:node sv:name="Contact-SpringMVC">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>testproject:sitemenuitem</sv:value>
+                <sv:value>unittestproject:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
                 <sv:value>contact-springmvc</sv:value>
@@ -73,7 +73,7 @@
         </sv:node>
         <sv:node sv:name="Search">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>testproject:sitemenuitem</sv:value>
+                <sv:value>unittestproject:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
                 <sv:value>search</sv:value>
@@ -81,7 +81,7 @@
         </sv:node>
         <sv:node sv:name="UniqueLinks">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>testproject:sitemenuitem</sv:value>
+                <sv:value>unittestproject:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
                 <sv:value>uniquelinks</sv:value>

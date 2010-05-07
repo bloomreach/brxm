@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="testproject" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="unittestproject" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposysedit:namespace</sv:value>
     </sv:property>
@@ -57,7 +57,7 @@
                     <sv:value>hippostd:publishableSummary</sv:value>
                 </sv:property>
                 <sv:property sv:name="hipposysedit:uri" sv:type="String">
-                    <sv:value>http://www.hippoecm.org/hst/nt/testproject/1.0</sv:value>
+                    <sv:value>http://www.hippoecm.org/hst/nt/unittestproject/1.0</sv:value>
                 </sv:property>
             </sv:node>
         </sv:node>
@@ -107,10 +107,10 @@
                     <sv:value>true</sv:value>
                 </sv:property>
                 <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-                    <sv:value>testproject:basedocument</sv:value>
+                    <sv:value>unittestproject:basedocument</sv:value>
                 </sv:property>
                 <sv:property sv:name="hipposysedit:uri" sv:type="String">
-                    <sv:value>http://www.hippoecm.org/hst/nt/testproject/1.0</sv:value>
+                    <sv:value>http://www.hippoecm.org/hst/nt/unittestproject/1.0</sv:value>
                 </sv:property>
                 <sv:node sv:name="hipposysedit:field">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -129,7 +129,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:title</sv:value>
+                        <sv:value>unittestproject:title</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -155,7 +155,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:summary</sv:value>
+                        <sv:value>unittestproject:summary</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -181,7 +181,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:body</sv:value>
+                        <sv:value>unittestproject:body</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -207,7 +207,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:date</sv:value>
+                        <sv:value>unittestproject:date</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -224,7 +224,7 @@
             </sv:property>
             <sv:node sv:name="hipposysedit:prototype">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>testproject:textpage</sv:value>
+                    <sv:value>unittestproject:textpage</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:harddocument</sv:value>
@@ -232,13 +232,13 @@
                 <sv:property sv:name="jcr:uuid" sv:type="String">
                     <sv:value>f99f9955-bdfa-43ac-83e9-e5b1e43be410</sv:value>
                 </sv:property>
-                <sv:property sv:name="testproject:date" sv:type="Date">
+                <sv:property sv:name="unittestproject:date" sv:type="Date">
                     <sv:value>2009-10-23T12:44:11.055+02:00</sv:value>
                 </sv:property>
-                <sv:property sv:name="testproject:summary" sv:type="String">
+                <sv:property sv:name="unittestproject:summary" sv:type="String">
                     <sv:value/>
                 </sv:property>
-                <sv:property sv:name="testproject:title" sv:type="String">
+                <sv:property sv:name="unittestproject:title" sv:type="String">
                     <sv:value/>
                 </sv:property>
                 <sv:property sv:name="hippo:paths" sv:type="String">
@@ -267,7 +267,7 @@
                 <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                     <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
                 </sv:property>
-                <sv:node sv:name="testproject:body">
+                <sv:node sv:name="unittestproject:body">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hippostd:html</sv:value>
                     </sv:property>
@@ -298,7 +298,7 @@
                     <sv:value>wicket.id</sv:value>
                 </sv:property>
                 <sv:property sv:name="type" sv:type="String">
-                    <sv:value>testproject:textpage</sv:value>
+                    <sv:value>unittestproject:textpage</sv:value>
                 </sv:property>
                 <sv:node sv:name="28ab04e7-69e0-4319-9dca-807f5034281f">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -486,10 +486,10 @@
                     <sv:value>true</sv:value>
                 </sv:property>
                 <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-                    <sv:value>testproject:basedocument</sv:value>
+                    <sv:value>unittestproject:basedocument</sv:value>
                 </sv:property>
                 <sv:property sv:name="hipposysedit:uri" sv:type="String">
-                    <sv:value>http://www.hippoecm.org/hst/nt/testproject/1.0</sv:value>
+                    <sv:value>http://www.hippoecm.org/hst/nt/unittestproject/1.0</sv:value>
                 </sv:property>
                 <sv:node sv:name="hipposysedit:field">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -508,7 +508,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:title</sv:value>
+                        <sv:value>unittestproject:title</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -534,7 +534,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:summary</sv:value>
+                        <sv:value>unittestproject:summary</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -560,7 +560,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:body</sv:value>
+                        <sv:value>unittestproject:body</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -586,7 +586,7 @@
                         <sv:value>false</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:path" sv:type="String">
-                        <sv:value>testproject:date</sv:value>
+                        <sv:value>unittestproject:date</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -603,7 +603,7 @@
             </sv:property>
             <sv:node sv:name="hipposysedit:prototype">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>testproject:newspage</sv:value>
+                    <sv:value>unittestproject:newspage</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:harddocument</sv:value>
@@ -611,13 +611,13 @@
                 <sv:property sv:name="jcr:uuid" sv:type="String">
                     <sv:value>b7c4ea75-7c8d-4ac8-9ff7-775b2a900927</sv:value>
                 </sv:property>
-                <sv:property sv:name="testproject:date" sv:type="Date">
+                <sv:property sv:name="unittestproject:date" sv:type="Date">
                     <sv:value>2009-10-23T12:44:11.055+02:00</sv:value>
                 </sv:property>
-                <sv:property sv:name="testproject:summary" sv:type="String">
+                <sv:property sv:name="unittestproject:summary" sv:type="String">
                     <sv:value/>
                 </sv:property>
-                <sv:property sv:name="testproject:title" sv:type="String">
+                <sv:property sv:name="unittestproject:title" sv:type="String">
                     <sv:value/>
                 </sv:property>
                 <sv:property sv:name="hippo:paths" sv:type="String">
@@ -646,7 +646,7 @@
                 <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                     <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
                 </sv:property>
-                <sv:node sv:name="testproject:body">
+                <sv:node sv:name="unittestproject:body">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hippostd:html</sv:value>
                     </sv:property>
@@ -677,7 +677,7 @@
                     <sv:value>wicket.id</sv:value>
                 </sv:property>
                 <sv:property sv:name="type" sv:type="String">
-                    <sv:value>testproject:newspage</sv:value>
+                    <sv:value>unittestproject:newspage</sv:value>
                 </sv:property>
                 <sv:node sv:name="12941660-89b0-4d61-89b5-92aee25c7d03">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">

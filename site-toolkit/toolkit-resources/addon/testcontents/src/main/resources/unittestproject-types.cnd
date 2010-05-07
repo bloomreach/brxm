@@ -14,27 +14,27 @@
  * limitations under the License.
  */
  
-<'testproject'='http://www.hippoecm.org/hst/nt/testproject/1.0'>
+<'unittestproject'='http://www.hippoecm.org/hst/nt/unittestproject/1.0'>
 <'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <'hst'='http://www.hippoecm.org/hst/nt/2.0'>
 <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
-[testproject:sitemenuitem] > hst:sitemenuitem
-- testproject:title 
+[unittestproject:sitemenuitem] > hst:sitemenuitem
+- unittestproject:title 
 
-[testproject:basedocument] > hippostdpubwf:document, hippostd:publishableSummary, hippo:document
+[unittestproject:basedocument] > hippostdpubwf:document, hippostd:publishableSummary, hippo:document
 
-[testproject:textpage] > testproject:basedocument
-+ testproject:body (hippostd:html)
-- testproject:summary (string)
-- testproject:title (string)
-- testproject:date (date)
+[unittestproject:textpage] > unittestproject:basedocument
++ unittestproject:body (hippostd:html)
+- unittestproject:summary (string)
+- unittestproject:title (string)
+- unittestproject:date (date)
 
-[testproject:newspage] > testproject:basedocument
-+ testproject:body (hippostd:html)
-- testproject:summary (string)
-- testproject:title (string)
-- testproject:date (date)
+[unittestproject:newspage] > unittestproject:basedocument
++ unittestproject:body (hippostd:html)
+- unittestproject:summary (string)
+- unittestproject:title (string)
+- unittestproject:date (date)
 
