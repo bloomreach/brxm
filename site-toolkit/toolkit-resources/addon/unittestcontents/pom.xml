@@ -26,7 +26,7 @@
   <name>Hippo Site Toolkit Addon Resources to the Repository for Unit Tests</name>
   <description>Hippo Site Toolkit Addon Resources to the Repository for Unit Tests</description>
   <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-  <artifactId>hst-addon-testcontents</artifactId>
+  <artifactId>hst-addon-unittestcontents</artifactId>
   <packaging>jar</packaging>
 
   <build>
