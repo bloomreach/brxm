@@ -140,12 +140,14 @@
 - hst:homepage (string)
 + * (hst:virtualhost)
 
-[hst:formdatacontainer] 
-+ * (hst:formdatacontainer)
-+ * (hst:formdata)
 
 [hst:formdata]
 - hst:creationtime (date) mandatory
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:predecessor (string)
+
+
+[hst:formdatacontainer] 
++ * (hst:formdatacontainer)
++ * (hst:formdata)
