@@ -36,6 +36,10 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
     }
     
     public void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String pathInfo) throws ContainerException {
+        processRequest(requestContainerConfig, servletRequest, servletResponse, pathInfo, null);
+    }
+    
+    public void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String pathInfo, String namedPipeline) throws ContainerException {
         // this request processor's classloader could be different from the above classloader
         // because this request processor and other components could be loaded from another web application context
         // such as a portal web application.
@@ -48,7 +52,6 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         ClassLoader containerClassLoader = requestContainerConfig.getContextClassLoader();
         ClassLoader processorClassLoader = getClass().getClassLoader();
         
-        String namedPipeline = (String) servletRequest.getAttribute(Pipeline.class.getName());
         Pipeline pipeline = (namedPipeline != null ? pipelines.getPipeline(namedPipeline) : pipelines.getDefaultPipeline());
         
         if (namedPipeline != null && pipeline == null)

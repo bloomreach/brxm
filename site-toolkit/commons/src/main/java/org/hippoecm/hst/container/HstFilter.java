@@ -216,11 +216,8 @@ public class HstFilter implements Filter {
                      * HstRequestContext is created, and there is a RESOLVED_SITEMAP_ITEM on the request, we put it on the HstRequestContext.
                      */  
                     request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
-                   
-                    if (resolvedSiteMapItem.getNamedPipeline() != null) {
-                        req.setAttribute(Pipeline.class.getName(), resolvedSiteMapItem.getNamedPipeline());
-                    }
-                    HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res);
+                  
+                    HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
                     
                 } else {
                     
