@@ -48,14 +48,14 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         if(siteMount == null) {
             log.debug("Virtual Host '{}' is not mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());
         }
-        String requestInfo = HstRequestUtils.getRequestPath(request);
+        String requestPath = HstRequestUtils.getRequestPath(request);
         // strip leading and trailing slashes
-        requestInfo = PathUtils.normalizePath(requestInfo);
-        String[] pathInfoSegments = requestInfo.split("/");
+        requestPath = PathUtils.normalizePath(requestPath);
+        String[] requestPathSegments = requestPath.split("/");
         int position = 0;
-        while(position < pathInfoSegments.length) {
-            if(siteMount.getChildMount(pathInfoSegments[position]) != null) {
-                siteMount = siteMount.getChildMount(pathInfoSegments[position]);
+        while(position < requestPathSegments.length) {
+            if(siteMount.getChildMount(requestPathSegments[position]) != null) {
+                siteMount = siteMount.getChildMount(requestPathSegments[position]);
             } else {
                 // we're done: we have the deepest site mount
                 break;
@@ -67,7 +67,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         // we thus create the resolvedPathInfoPrefix
         StringBuilder builder = new StringBuilder();
         while(position > 0) {
-            builder.insert(0,pathInfoSegments[--position]).insert(0,"/");
+            builder.insert(0,requestPathSegments[--position]).insert(0,"/");
            
         }
         
