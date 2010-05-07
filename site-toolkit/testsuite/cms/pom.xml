@@ -73,7 +73,7 @@
   
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-testcontents</artifactId>
+      <artifactId>hst-addon-unittestcontents</artifactId>
       <version>${pom.version}</version>
       <type>jar</type>
     </dependency>
