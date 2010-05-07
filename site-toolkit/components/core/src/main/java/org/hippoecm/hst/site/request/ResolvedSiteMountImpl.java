@@ -67,8 +67,8 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
         }
         String siteMapPathInfo = requestPath.substring(getResolvedMountPrefix().length());
         
-        if("".equals(siteMapPathInfo)) {
-           log.debug("Empty siteMapPathInfo. If there is a homepage path configured, we try to map this path to the sitemap");
+        if("".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
+           log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
            siteMapPathInfo = siteMount.getHomePage();
            if(siteMapPathInfo == null || "".equals(siteMapPathInfo)) {
                log.warn("SiteMount '{}' for host '{}' does not have a homepage configured and the pathInfo is empty. Cannot map to sitemap item. Return null", getSiteMount().getName(), getResolvedVirtualHost().getResolvedHostName());
