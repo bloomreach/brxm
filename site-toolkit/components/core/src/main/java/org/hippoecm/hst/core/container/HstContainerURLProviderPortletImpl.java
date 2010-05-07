@@ -81,7 +81,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                 urlString = path.toString();
                 
             } else {
-                path.append(containerURL.getServletPath());
+                //path.append(containerURL.getServletPath());
                 path.append(buildHstURLPath(containerURL));
                 
                 BaseURL url = null;

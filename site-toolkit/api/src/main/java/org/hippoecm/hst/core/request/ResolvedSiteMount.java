@@ -43,11 +43,12 @@ public interface ResolvedSiteMount {
     String getNamedPipeline();
     
     /**
-     * Returns the pathInfoPrefix from the backing {@link SiteMount} where possible wildcard values might have been replaced
-     * @see SiteMount#getPathInfoPrefix()
-     * @return the resolved pathInfo prefix for this ResolvedSiteMount
+     * Returns the mountPrefix from the backing {@link SiteMount} where possible wildcard values might have been replaced. When there is no 
+     * mountPrefix, an empty String will be returned. When the value is non-empty, it starts with a  <code>"/"</code>/
+     * @see SiteMount#getMountPrefix()
+     * @return the resolved mountPrefix for this ResolvedSiteMount
      */
-    String getResolvedPathInfoPrefix();
+    String getResolvedMountPrefix();
 
     /**
      * matches the current request, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or <code>null</code> when

@@ -39,12 +39,6 @@ public interface HstContainerURL {
      */
     String getContextPath();
     
-    /**
-     * Returns the current container servlet's servlet path.
-     * 
-     * @return
-     */
-    String getServletPath();
     
     /**
      * Returns the current request's path info.

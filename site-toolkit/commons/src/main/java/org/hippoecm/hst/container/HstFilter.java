@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 
 public class HstFilter implements Filter {
@@ -177,11 +178,12 @@ public class HstFilter implements Filter {
             
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
             
-            String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
+            String requestPath = HstRequestUtils.getRequestPath(req);
             
             VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
             VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
-            if(vHosts == null || vHosts.isExcluded(pathInfo)) {
+            
+            if(vHosts == null || vHosts.isExcluded(requestPath)) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -195,7 +197,7 @@ public class HstFilter implements Filter {
                     if (resolvedSiteMapItem.getErrorCode() > 0) {
                         try {
                             if (logger.isDebugEnabled()) {
-                                logger.debug("The resolved sitemap item for {} has error status: {}", pathInfo, Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
+                                logger.debug("The resolved sitemap item for {} has error status: {}", requestPath, Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
                             }           
                             ((HttpServletResponse)response).sendError(resolvedSiteMapItem.getErrorCode());
                             

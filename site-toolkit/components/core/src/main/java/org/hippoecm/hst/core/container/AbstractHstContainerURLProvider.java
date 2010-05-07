@@ -26,7 +26,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.util.HttpUtils;
@@ -102,11 +101,9 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
 
         if (baseURL != null) {
             url.setContextPath(baseURL.getContextPath());
-            url.setServletPath(baseURL.getServletPath());
         }
         else {
             url.setContextPath(request.getContextPath());
-            url.setServletPath(request.getServletPath());
         }
         
         String characterEncoding = request.getCharacterEncoding();
@@ -226,11 +223,8 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
     }
     
-    
-    // TODO deze mag niet weg: portal
     public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
-        url.append(containerURL.getServletPath());
         String pathInfo = buildHstURLPath(containerURL);
         url.append(pathInfo);
         return url.toString();
@@ -298,65 +292,16 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         return url.toString();
     }
-    
-//    protected String getVirtualizedContextPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
-//        String virtualizedContextPath = containerURL.getContextPath();
-//        
-//        HstContainerURL baseURL = requestContext.getBaseURL();
-//        if (baseURL != null) {
-//            
-//            VirtualHost virtualHost = requestContext.getVirtualHost();
-//            
-//            if (virtualHost != null && path != null) {
-//                if (virtualHost.isContextPathInUrl()) {
-//                    virtualizedContextPath = baseURL.getContextPath();
-//                } else {
-//                    virtualizedContextPath = "";
-//                }
-//            }
-//        }
-//        
-//        return virtualizedContextPath;
-//    }
-//    
-//    protected String getVirtualizedServletPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
-//        String virtualizedServletPath = containerURL.getServletPath();
-//        
-//        HstContainerURL baseURL = requestContext.getBaseURL();
-//
-//        if (baseURL != null) {
-//            VirtualHost virtualHost = requestContext.getVirtualHost();
-//            
-//            if (virtualHost != null && path != null) {
-//                if (virtualHost.getVirtualHosts().isExcluded(path)) {
-//                    // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
-//                    // a servletpath in the url
-//                    virtualizedServletPath = "";
-//                } else {
-//                    // as the external url is mapped, get the external 'fake' servletpath
-//                    virtualizedServletPath = requestContext.getMatchedMapping().getMapping().getUriPrefix();
-//                    if (virtualizedServletPath == null) {
-//                        virtualizedServletPath = "";
-//                    }
-//                }
-//                if (virtualizedServletPath.endsWith("/")) {
-//                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
-//                }
-//            }
-//        }
-//        
-//        return virtualizedServletPath;
-//    }
-    
+  
     /*
      * Splits path info to an array of namespaced path part and remainder. 
      */
     protected String [] splitPathInfo(HttpServletRequest request, String characterEncoding) {
        
-        String pathInfo = HstRequestUtils.getDecodedPath(request, characterEncoding);
+        String requestPath = HstRequestUtils.getRequestPath(request, characterEncoding);
         
-        if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
-            return new String [] { null, pathInfo };
+        if (!requestPath.startsWith(urlNamespacePrefixedPath)) {
+            return new String [] { null, requestPath };
         }
         
         String requestURI = (String) request.getAttribute("javax.servlet.include.request_uri");

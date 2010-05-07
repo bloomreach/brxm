@@ -48,10 +48,10 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         if(siteMount == null) {
             log.debug("Virtual Host '{}' is not mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());
         }
-        String pathInfo = HstRequestUtils.getDecodedPath(request);
+        String requestInfo = HstRequestUtils.getRequestPath(request);
         // strip leading and trailing slashes
-        pathInfo = PathUtils.normalizePath(pathInfo);
-        String[] pathInfoSegments = pathInfo.split("/");
+        requestInfo = PathUtils.normalizePath(requestInfo);
+        String[] pathInfoSegments = requestInfo.split("/");
         int position = 0;
         while(position < pathInfoSegments.length) {
             if(siteMount.getChildMount(pathInfoSegments[position]) != null) {
@@ -71,9 +71,9 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
            
         }
         
-        String resolvedPathInfoPrefix = builder.toString();
-        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedPathInfoPrefix);
-        log.debug("Found ResolvedSiteMount is '{}' and the prefix path for it is :", resolvedSiteMount.getResolvedPathInfoPrefix());
+        String resolvedMountPrefix = builder.toString();
+        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedMountPrefix);
+        log.debug("Found ResolvedSiteMount is '{}' and the mount prefix for it is :", resolvedSiteMount.getResolvedMountPrefix());
         
         return resolvedSiteMount;
     }

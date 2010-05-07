@@ -101,11 +101,11 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
 
     
     
-    public boolean isExcluded(String pathInfo) {
+    public boolean isExcluded(String requestPath) {
         // test prefix
         if(prefixExclusions != null) {
             for(String excludePrefix : prefixExclusions) {
-                if(pathInfo.startsWith(excludePrefix)) {
+                if(requestPath.startsWith(excludePrefix)) {
                     return true;
                 }
             }
@@ -113,7 +113,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         // test suffix
         if(suffixExclusions != null) {
             for(String excludeSuffix : suffixExclusions) {
-                if(pathInfo.endsWith(excludeSuffix)) {
+                if(requestPath.endsWith(excludeSuffix)) {
                     return true;
                 }
             }

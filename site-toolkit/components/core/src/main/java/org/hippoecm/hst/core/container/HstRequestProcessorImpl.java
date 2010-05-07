@@ -60,11 +60,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             if (processorClassLoader != containerClassLoader) {
                 Thread.currentThread().setContextClassLoader(processorClassLoader);
             }
-            
-            if (pathInfo != null) {
-                servletRequest.setAttribute(ContainerConstants.HST_CONTAINER_PATH_INFO, pathInfo);
-            }
-            
+       
             pipeline.beforeInvoke(requestContainerConfig, servletRequest, servletResponse);
             pipeline.invoke(requestContainerConfig, servletRequest, servletResponse);
         } catch (ContainerException e) {
@@ -73,11 +69,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             throw new ContainerException(e);
         } finally {
             pipeline.afterInvoke(requestContainerConfig, servletRequest, servletResponse);
-            
-            if (pathInfo != null) {
-                servletRequest.removeAttribute(ContainerConstants.HST_CONTAINER_PATH_INFO);
-            }
-            
+      
             if (processorClassLoader != containerClassLoader) {
                 Thread.currentThread().setContextClassLoader(containerClassLoader);
             }

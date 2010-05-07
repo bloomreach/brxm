@@ -76,11 +76,6 @@ public interface ContainerConstants {
     String HST_FORWARD_PATH_INFO = "org.hippoecm.hst.container.forward.path_info";
     
     /**
-     * The key used to set the forced path info for request processing.
-     */
-    String HST_CONTAINER_PATH_INFO = "org.hippoecm.hst.container.path_info";
-
-    /**
      * The key used to set the entry path for the preview entry node in the repository
      */
     String PREVIEW_REPOSITORY_ENTRY_PATH = "preview.repository.entry.path";

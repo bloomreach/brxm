@@ -261,7 +261,7 @@ public class StaticResourceServlet extends HttpServlet {
         }
         
         if (path == null) {
-            path = HstRequestUtils.getDecodedPath(request);
+            path = HstRequestUtils.getRequestPath(request);
         }
 
         if (path != null && !path.startsWith("/") && path.indexOf(':') > 0) {

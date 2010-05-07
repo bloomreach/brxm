@@ -31,9 +31,9 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     private String name;
     
     /**
-     * The pathInfoPrefix of this sitemount. Note that it can contain wildcards
+     * The mountPrefix of this sitemount. Note that it can contain wildcards
      */
-    private String pathInfoPrefix;
+    private String mountPrefix;
     
     /**
      * The virtual host of where this SiteMount belongs to
@@ -91,9 +91,9 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         this.name = getValueProvider().getName();
         
         if(parent == null) {
-            pathInfoPrefix = "";
+            mountPrefix = "";
         } else {
-            pathInfoPrefix = parent.getPathInfoPrefix() + "/" + name;
+            mountPrefix = parent.getMountPrefix() + "/" + name;
         }
         
         // the portnumber
@@ -239,8 +239,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     }
 
 
-    public String getPathInfoPrefix() {
-        return pathInfoPrefix;
+    public String getMountPrefix() {
+        return mountPrefix;
     }
 
     

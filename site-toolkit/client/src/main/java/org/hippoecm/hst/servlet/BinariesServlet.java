@@ -641,7 +641,7 @@ public class BinariesServlet extends HttpServlet {
         }
 
         if (path == null) {
-            path = HstRequestUtils.getDecodedPath(request);
+            path = HstRequestUtils.getRequestPath(request);
             
             try {
                 String characterEncoding = request.getCharacterEncoding();

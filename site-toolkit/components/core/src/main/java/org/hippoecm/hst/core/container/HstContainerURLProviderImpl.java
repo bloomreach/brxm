@@ -54,10 +54,24 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
             path = buildHstURLPath(containerURL);
         }
         
-        return new StringBuilder(100)
-        .append(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl() ? contextPath : "")
-        .append(path)
-        .toString();
+        StringBuilder urlBuilder = new StringBuilder(100);
+        if(contextPath != null) {
+            urlBuilder.append(contextPath);
+        } else if(requestContext.getVirtualHost().isContextPathInUrl()) {
+            urlBuilder.append(containerURL.getContextPath());
+        }
+        
+        // TODO for resources, we do not include the mount path. Can we do this cleaner?
+        if(!ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
+            String mountPrefix = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedMountPrefix();
+            if(mountPrefix != null) {
+                urlBuilder.append(mountPrefix);
+            }
+        }
+        
+        urlBuilder.append(path);
+        
+        return urlBuilder.toString();
     }
     
 }

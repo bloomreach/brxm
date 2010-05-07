@@ -27,7 +27,6 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     protected String characterEncoding;
     protected String contextPath;
-    protected String servletPath;
     protected String pathInfo;
     protected String actionWindowReferenceNamespace;
     protected String resourceWindowReferenceNamespace;
@@ -42,15 +41,7 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
     public String getContextPath() {
         return this.contextPath;
     }
-    
-    public void setServletPath(String servletPath) {
-        this.servletPath = servletPath;
-    }
-    
-    public String getServletPath() {
-        return this.servletPath;
-    }
-    
+  
     public void setPathInfo(String pathInfo) {
         this.pathInfo = pathInfo;
     }
@@ -155,7 +146,6 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         
         cloned.characterEncoding = this.characterEncoding;
         cloned.contextPath = this.contextPath;
-        cloned.servletPath = this.servletPath;
         cloned.pathInfo = this.pathInfo;
         cloned.actionWindowReferenceNamespace = this.actionWindowReferenceNamespace;
         cloned.resourceWindowReferenceNamespace = this.resourceWindowReferenceNamespace;
