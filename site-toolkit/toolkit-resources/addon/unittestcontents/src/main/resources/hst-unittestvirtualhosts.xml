@@ -14,7 +14,7 @@
     express or implied.
     See the License for the specific language governing permissions and
     limitations under the License. -->
-<sv:node sv:name="hst:testvirtualhosts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="hst:unittestvirtualhosts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhosts</sv:value>
     </sv:property>

@@ -32,7 +32,7 @@
     </bean>
     
     <bean id="org.hippoecm.hst.configuration.hosting.VirtualHostsManager" class="org.hippoecm.hst.configuration.hosting.VirtualHostsManagerImpl">
-        <constructor-arg value="/hst:testvirtualhosts"/>
+        <constructor-arg value="/hst:unittestvirtualhosts"/>
         <property name="repository" ref="javax.jcr.Repository" />
         <property name="hstSiteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     </bean>  
