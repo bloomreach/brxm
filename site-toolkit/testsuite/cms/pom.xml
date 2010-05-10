@@ -71,12 +71,21 @@
       <type>jar</type>
     </dependency>
   
+  
     <dependency>
+      <groupId>org.onehippo.ecm.hst.testsuite</groupId>
+      <artifactId>hst-testsuite-content</artifactId>
+      <version>${pom.version}</version>
+      <type>jar</type>
+    </dependency>
+    
+    <!-- If you want to see the unittest contents in the console, use this content instead of the one above -->
+    <!--dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-unittestcontents</artifactId>
       <version>${pom.version}</version>
       <type>jar</type>
-    </dependency>
+    </dependency-->
     
     <!-- workaround for HSTTWO-554 -->
     <dependency>
