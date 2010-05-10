@@ -61,11 +61,7 @@
   
   <filter>
     <filter-name>HstFilter</filter-name>
-    <filter-class>org.hippoecm.hst.container.HstFilter</filter-class>    
-    <init-param>
-      <param-name>welcome-page</param-name>
-      <param-value>news</param-value>
-    </init-param>
+    <filter-class>org.hippoecm.hst.container.HstFilter</filter-class>   
     <!--
     HST Application Context Namespace Prefix.
     This should be unique among multiple HST-based application contexts.
