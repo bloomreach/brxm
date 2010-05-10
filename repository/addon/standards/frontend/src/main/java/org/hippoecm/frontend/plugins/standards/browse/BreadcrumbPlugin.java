@@ -15,15 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.jcr.Node;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -51,6 +42,14 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 public class BreadcrumbPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
@@ -62,6 +61,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
     private final Set<String> roots;
     private final AjaxButton up;
 
+    private int maxNumberOfCrumbs;
     private MaxLengthStringFormatter format;
     private IModelReference<Node> folderReference;
 
@@ -69,6 +69,8 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
 
     public BreadcrumbPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        maxNumberOfCrumbs = config.getInt("max.breadcrumbs", 8);
 
         if (config.getString("model.folder") == null) {
             throw new IllegalArgumentException("Expected model.folder configuration key");
@@ -237,6 +239,8 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
                     }
                 };
                 item.add(new AttributeAppender("class", css, " "));
+
+                item.setVisible(item.getIndex() < maxNumberOfCrumbs);
             }
         };
         return listview;
