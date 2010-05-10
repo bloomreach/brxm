@@ -34,13 +34,13 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
     
     private SiteMount siteMount;
     private ResolvedVirtualHost resolvedVirtualHost;
-    private String resolvedMountPrefix;
+    private String resolvedMountPath;
     
     
-    public ResolvedSiteMountImpl(SiteMount siteMount, ResolvedVirtualHost resolvedVirtualHost, String resolvedPathInfoPrefix){
+    public ResolvedSiteMountImpl(SiteMount siteMount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath){
         this.siteMount = siteMount;
         this.resolvedVirtualHost = resolvedVirtualHost;
-        this.resolvedMountPrefix = resolvedPathInfoPrefix;
+        this.resolvedMountPath = resolvedMountPath;
     }
     
     public SiteMount getSiteMount() {
@@ -51,8 +51,8 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
         return resolvedVirtualHost;
     }
     
-    public String getResolvedMountPrefix() {
-        return resolvedMountPrefix;
+    public String getResolvedMountPath() {
+        return resolvedMountPath;
     }
 
     public String getNamedPipeline() {
@@ -68,10 +68,10 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
         }
         
         String requestPath = HstRequestUtils.getRequestPath(request);
-        if(!requestPath.startsWith(getResolvedMountPrefix())) {
+        if(!requestPath.startsWith(getResolvedMountPath())) {
             throw new MatchException("It is not allowed that the pathInfo from the request is different then the resolvedPathInfoPrefix from the ResolvedSiteMount");
         }
-        String siteMapPathInfo = requestPath.substring(getResolvedMountPrefix().length());
+        String siteMapPathInfo = requestPath.substring(getResolvedMountPath().length());
         
         if("".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
            log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");

@@ -43,12 +43,12 @@ public interface ResolvedSiteMount {
     String getNamedPipeline();
     
     /**
-     * Returns the mountPrefix from the backing {@link SiteMount} where possible wildcard values might have been replaced. When there is no 
-     * mountPrefix, an empty String will be returned. When the value is non-empty, it starts with a  <code>"/"</code>/
-     * @see SiteMount#getMountPrefix()
-     * @return the resolved mountPrefix for this ResolvedSiteMount
+     * Returns the mountPath from the backing {@link SiteMount} where possible wildcard values might have been replaced. When there is no 
+     * mountPath, an empty String will be returned. When the mountPath is non-empty, it always starts with a  <code>"/"</code>
+     * @see SiteMount#getMountPath()
+     * @return the resolved mountPath for this ResolvedSiteMount
      */
-    String getResolvedMountPrefix();
+    String getResolvedMountPath();
 
     /**
      * matches the current request, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or <code>null</code> when

@@ -72,9 +72,9 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
            
         }
         
-        String resolvedMountPrefix = builder.toString();
-        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedMountPrefix);
-        log.debug("Found ResolvedSiteMount is '{}' and the mount prefix for it is :", resolvedSiteMount.getResolvedMountPrefix());
+        String resolvedMountPath = builder.toString();
+        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedMountPath);
+        log.debug("Found ResolvedSiteMount is '{}' and the mount prefix for it is :", resolvedSiteMount.getResolvedMountPath());
         
         return resolvedSiteMount;
     }

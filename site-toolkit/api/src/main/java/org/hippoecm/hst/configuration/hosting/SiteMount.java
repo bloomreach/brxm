@@ -117,15 +117,15 @@ public interface SiteMount {
     
     /**
      * <p>
-     * Returns the mount prefix for this SiteMount object. The root SiteMount has an empty mountPrefix. A mountPrefix for a 
-     * SiteMount is its own {@link #getName()} plus all ancestors up to the root and always starts with a "/" if is it not an empty
-     * String. It can contain wildcards, for example /preview/*. Typically, these wildcards are replaced by their actual values in the {@link ResolvedSiteMount}.
+     * Returns the mount path for this SiteMount object. The root SiteMount has an empty mount path. A mountPath for a 
+     * SiteMount is its own {@link #getName()} plus all ancestors up to the root and always starts with a "/" (unless for the root, this one is empty).
+     * It can contain wildcards, for example /preview/*. Typically, these wildcards are replaced by their request specific values in the {@link ResolvedSiteMount}.
      * </p>
      * 
-     * @see ResolvedSiteMount#getResolvedPathInfoPrefix()
-     * @return the mountPrefix for this siteMount
+     * @see ResolvedSiteMount#getResolvedMountPath()
+     * @return the mountPath for this siteMount
      */
-    String getMountPrefix();
+    String getMountPath();
     
     /**
      * 

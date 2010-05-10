@@ -128,7 +128,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
                 log.warn("Did not find a matching sitemap item for path '{}', SiteMount '{}' and Host '"+resolvedSiteMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
-                		". Return null", pathInfo, resolvedSiteMount.getSiteMount().getParent() == null ? "hst:root" : resolvedSiteMount.getSiteMount().getMountPrefix() );
+                		". Return null", pathInfo, resolvedSiteMount.getSiteMount().getParent() == null ? "hst:root" : resolvedSiteMount.getSiteMount().getMountPath() );
                 return null;
             } else {
                 // The ** has the value of the entire pathInfo

@@ -131,7 +131,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the requestURI did not match the preview SiteMount, so our siteMount must be live:
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
-                assertTrue("The live SiteMount must have an empty string \"\" as pathInfoPrefix", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPrefix()));
+                assertTrue("The live SiteMount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }
@@ -156,7 +156,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the Mount from the requestURI should match the preview SiteMount, so our siteMount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
-                assertTrue("The preview SiteMount must have '/preview' as MountPrefix", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPrefix()));
+                assertTrue("The preview SiteMount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }
@@ -181,7 +181,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
-                assertTrue("The live SiteMount must have an empty string \"\" as MountPrefix", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPrefix()));
+                assertTrue("The live SiteMount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }
@@ -207,7 +207,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the Mount from the requestURI should match the preview SiteMount, so our siteMount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
-                assertTrue("The preview SiteMount must have '/preview' as MountPrefix", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPrefix()));
+                assertTrue("The preview SiteMount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }
@@ -234,7 +234,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the Mount from the requestURI should match the preview SiteMount, so our siteMount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
-                assertTrue("The preview SiteMount must have '/preview/services' as MountPrefix", "/preview/services".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPrefix()));
+                assertTrue("The preview SiteMount must have '/preview/services' as mountPath", "/preview/services".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
                 
                 // because the /preview/services SiteMount has configured a different pipeline, the resolvedSiteMapItem should reflect this:
                 assertTrue("Expected pipeline name is 'JaxrsPipeline' ", "JaxrsPipeline".equals(resolvedSiteMapItem.getNamedPipeline()));
@@ -322,7 +322,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // there should be though a sitemount, namely 'preview'
                 ResolvedSiteMount resolvedSiteMount =  vhosts.matchSiteMount(request);
                 assertNotNull("The sitemount should be there still", resolvedSiteMount);
-                assertTrue("The preview SiteMount must have '/preview' as MountPrefix", "/preview".equals(resolvedSiteMount.getResolvedMountPrefix()));
+                assertTrue("The preview SiteMount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMount.getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }

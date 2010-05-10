@@ -63,7 +63,7 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
         
         // TODO for resources, we do not include the mount path. Can we do this cleaner?
         if(!ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
-            String mountPrefix = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedMountPrefix();
+            String mountPrefix = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedMountPath();
             if(mountPrefix != null) {
                 urlBuilder.append(mountPrefix);
             }
