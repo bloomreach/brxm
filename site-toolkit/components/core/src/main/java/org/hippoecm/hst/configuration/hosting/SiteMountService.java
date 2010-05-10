@@ -167,9 +167,9 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         
         
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
-        // needed in the future
+        // needed in the future though, for example for performance reasons
         if(mountPath == null ){
-            log.info("SiteMount '{}' at '{}' does have an empty mountPath and will thus be used to skip hst request processing", getName(), getValueProvider().getPath());
+            log.info("SiteMount '{}' at '{}' does have an empty mountPath. This means the SiteMount is not using a HstSite", getName(), getValueProvider().getPath());
         } else if(!mountPath.startsWith("/")) {
             throw new ServiceException("SiteMount at '"+getValueProvider().getPath()+"' has an invalid mountPath '"+mountPath+"'. A mount path is absolute and must start with a '/'");
         } else {
