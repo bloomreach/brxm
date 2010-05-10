@@ -185,17 +185,16 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             throw new ServiceException("SiteMount at '"+getValueProvider().getPath()+"' has an invalid mountPath '"+mountPath+"'. A mount path is absolute and must start with a '/'");
         } else {
             try {
-                if (siteMount.getSession().itemExists(mountPath)) {
-                    if (siteMount.getSession().getItem(mountPath).isNode() && ((Node) siteMount.getSession().getItem(mountPath)).isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
-                        Node hstSiteNode = (Node) siteMount.getSession().getItem(mountPath);
-                        this.hstSite = new HstSiteService(hstSiteNode, this);
-                        log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
-                    } else {
-                        throw new ServiceException("Mountpath '" + mountPath
-                                + "' does not point to a hst:site node for SiteMount '" + getValueProvider().getPath()
-                                + "'. Cannot create HstSite for SiteMount");
-                    }
+                if (siteMount.getSession().itemExists(mountPath) && siteMount.getSession().getItem(mountPath).isNode() && ((Node) siteMount.getSession().getItem(mountPath)).isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
+                    Node hstSiteNode = (Node) siteMount.getSession().getItem(mountPath);
+                    this.hstSite = new HstSiteService(hstSiteNode, this);
+                    log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
+                } else {
+                    throw new ServiceException("Mountpath '" + mountPath
+                            + "' does not point to a hst:site node for SiteMount '" + getValueProvider().getPath()
+                            + "'. Cannot create HstSite for SiteMount");
                 }
+                
             } catch (RepositoryException e) {
                 throw new ServiceException("Error during creating HstSite. Cannot add SiteMount for '"+getValueProvider().getPath()+"'", e);
             }

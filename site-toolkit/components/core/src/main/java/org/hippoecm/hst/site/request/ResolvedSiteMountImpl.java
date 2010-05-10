@@ -61,6 +61,12 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
 
 
     public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException {
+        // test whether this SiteMount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
+        if(getSiteMount().getHstSite() == null) {
+            log.debug("For SiteMount '{}' there is no (correct) HstSite configured so request can never be mapped to a HstSiteMapItem. Return null");
+            return null;
+        }
+        
         String requestPath = HstRequestUtils.getRequestPath(request);
         if(!requestPath.startsWith(getResolvedMountPrefix())) {
             throw new MatchException("It is not allowed that the pathInfo from the request is different then the resolvedPathInfoPrefix from the ResolvedSiteMount");

@@ -160,7 +160,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 }
             } 
         } catch (ServiceException e) {
-            log.warn("The host '{}' contains an incorrect configured SiteMount. The hist cannot be used for hst request processing:", name, e);
+            log.warn("The host '{}' contains an incorrect configured SiteMount. The host cannot be used for hst request processing:", name, e);
         } catch (RepositoryException e) {
             throw new ServiceException("Error during creating sitemounts: ", e);
         }
