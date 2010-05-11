@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
  *   Z_INDEX: z-index for this unit. 
  *   </li>
  *   <li>
- *   EXPANDED: wether or not this unit is expanded, meaning it will take up all available space inside the wireframe, hiding
+ *   EXPANDED: whether or not this unit is expanded, meaning it will take up all available space inside the wireframe, hiding
  *   all other active units.
  *   </li>
  * </ul>

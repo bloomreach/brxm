@@ -21,7 +21,6 @@ import org.apache.wicket.behavior.AbstractBehavior;
 
 public class UnitExpandCollapseBehavior extends AbstractBehavior {
 
-    //Component c;
     WireframeSettings settings;
     String defaultToggleUnit;
 
@@ -34,30 +33,22 @@ public class UnitExpandCollapseBehavior extends AbstractBehavior {
         this.defaultToggleUnit = defaultToggleUnit;
     }
 
-
-//    @Override
-//    public void bind(Component component) {
-//        super.bind(c = component);
-//    }
-//
-//    protected Component getComponent() {
-//        return c;
-//    }
-
     public void toggle(String position, AjaxRequestTarget target) {
         UnitSettings unitSettings = settings.getUnit(position);
         if(unitSettings != null) {
-            if(unitSettings.isExpanded()) {
-                target.appendJavascript("YAHOO.hippo.LayoutManager.collapseUnit('" + settings.getRootId().getElementId() + "', '" + position + "');");
-            } else {
-                target.appendJavascript("YAHOO.hippo.LayoutManager.expandUnit('" + settings.getRootId().getElementId() + "', '" + position + "');");
-            }
-            unitSettings.setExpanded(!unitSettings.isExpanded());
+            boolean expand = !unitSettings.isExpanded();
+            String jsMethod = expand ? "YAHOO.hippo.LayoutManager.expandUnit" : "YAHOO.hippo.LayoutManager.collapseUnit";
+            target.appendJavascript(jsMethod + "('" + settings.getRootId().getElementId() + "', '" + position + "');");
+            unitSettings.setExpanded(expand);
+            onToggle(expand, target);
         }
     }
 
     public void toggle(AjaxRequestTarget target) {
         toggle(defaultToggleUnit, target);
+    }
+
+    protected void onToggle(boolean expand, AjaxRequestTarget target) {
     }
 
 }
