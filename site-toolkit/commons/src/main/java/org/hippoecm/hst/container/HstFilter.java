@@ -223,6 +223,7 @@ public class HstFilter implements Filter {
                          * HstRequestContext is created, and there is a RESOLVED_SITEMAP_ITEM on the request, we put it on the HstRequestContext.
                          */  
                         request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
+                        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMapItem.getResolvedSiteMount());
                       
                         HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
                         return;
@@ -248,12 +249,13 @@ public class HstFilter implements Filter {
                     }  catch (NoHstSiteException e) {
                         // this error can only be thrown when we had found a SiteMount, but there was no HstSite attached to it
                         // let's see if this sitemount has a custom pipeline: if not, we cannot process the request
-                        ResolvedSiteMount siteMount = vHosts.matchSiteMount(req);
-                        if(siteMount.getNamedPipeline() == null) {
+                        ResolvedSiteMount resolvedSiteMount = vHosts.matchSiteMount(req);
+                        if(resolvedSiteMount.getNamedPipeline() == null) {
                             throw new MatchException("No hstSite and no custom namedPipeline for SiteMount found for '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
                         } 
-                        logger.info("Processing request for pipeline '{}'", siteMount.getNamedPipeline());
-                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, siteMount.getNamedPipeline());
+                        logger.info("Processing request for pipeline '{}'", resolvedSiteMount.getNamedPipeline());
+                        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMount);
+                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMount.getNamedPipeline());
                     }
                 }catch (MatchException e) {
                     // TODO ??

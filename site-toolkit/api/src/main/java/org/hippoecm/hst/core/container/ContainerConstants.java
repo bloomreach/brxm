@@ -49,11 +49,16 @@ public interface ContainerConstants {
      * The attribute name used to set the embedded request context target component configuration object into the servlet request.
      */
     String HST_EMBEDDED_REQUEST_CONTEXT_TARGET = "org.hippoecm.hst.core.request.HstEmbeddedRequestContext.target";
-    
+
     /**
      * The attribute name used to set a matched resolved sitemap item object into the servlet request.
      */
     String RESOLVED_SITEMAP_ITEM = "org.hippoecm.hst.core.request.ResolvedSiteMapItem";
+
+    /**
+     * The attribute name used to set a matched resolved sitemount object into the servlet request.
+     */
+    String RESOLVED_SITEMOUNT = "org.hippoecm.hst.core.request.ResolvedSiteMount";
     
     /**
      * The reference namespace for container managed resource url.
