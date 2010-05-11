@@ -34,7 +34,16 @@ public class ContextResolvingValve extends AbstractValve
     {
         HstComponentConfiguration rootComponentConfig = null;
         
+        
         HstRequestContextImpl requestContext = (HstRequestContextImpl) context.getServletRequest().getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        
+        ResolvedSiteMapItem resolvedSiteMapItem = (ResolvedSiteMapItem)context.getServletRequest().getAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM);
+        if(resolvedSiteMapItem == null) {
+         // if there is no ResolvedSiteMapItem on the request we cannot continue
+         throw new ContainerException("During the initialization valve, there must be a resolved sitemap item on the request. Cannot continue request processing");
+        }
+        requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+        
         HstContainerURL baseURL = requestContext.getBaseURL();
         HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
         
@@ -61,7 +70,6 @@ public class ContextResolvingValve extends AbstractValve
         }
         else {
             
-            ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
             if (resolvedSiteMapItem == null) {
                 throw new ContainerException("At this point the requestContext must contain a resolvedSiteMapItem");
             }

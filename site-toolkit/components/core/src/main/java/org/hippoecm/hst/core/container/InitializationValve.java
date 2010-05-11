@@ -53,15 +53,6 @@ public class InitializationValve extends AbstractValve
             requestContext.setEmbeddedRequestContext(erc);
         }
         
-        
-        ResolvedSiteMapItem resolvedSiteMapItem = (ResolvedSiteMapItem)servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM);
-        if(resolvedSiteMapItem == null) {
-         // if there is no ResolvedSiteMapItem on the request we cannot continue
-         throw new ContainerException("During the initialization valve, there must be a resolved sitemap item on the request. Cannot continue request processing");
-        }
-        
-        requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-        
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
                 resourceLifecycleManagement.disposeAllResources();
