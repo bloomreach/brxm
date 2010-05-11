@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -144,12 +145,17 @@ public class TabsPlugin extends RenderPlugin {
 
     @Override
     public void focus(IRenderService child) {
-        Tab tabbie = findTabbie(child);
-        if (tabbie != null) {
-            tabbie.select();
-            onSelectTab(tabs.indexOf(tabbie));
+        if(child == null) {
+            tabbedPanel.setDefaultModel(new Model<Integer>(-1));
+            tabbedPanel.redraw();
+        } else {
+            Tab tabbie = findTabbie(child);
+            if (tabbie != null) {
+                tabbie.select();
+                onSelectTab(tabs.indexOf(tabbie));
+            }
+            super.focus(child);
         }
-        super.focus(child);
     }
 
     @Override

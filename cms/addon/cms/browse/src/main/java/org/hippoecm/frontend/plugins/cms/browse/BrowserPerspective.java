@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.browse;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -28,7 +29,9 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.service.render.RenderService;
 
+import javax.jcr.Node;
 import java.util.Iterator;
 
 public class BrowserPerspective extends Perspective {
@@ -40,6 +43,9 @@ public class BrowserPerspective extends Perspective {
     private final WireframeSettings settings;
     private UnitExpandCollapseBehavior toggler;
 
+    private IModelReference documentModelReference;
+    private RenderService editorBrowseService;
+
     public BrowserPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -47,12 +53,28 @@ public class BrowserPerspective extends Perspective {
         addExtensionPoint("center");
         addExtensionPoint("left");
 
+        context.registerTracker(new ServiceTracker<RenderService>(RenderService.class) {
+            @Override
+            protected void onServiceAdded(RenderService service, String name) {
+                super.onServiceAdded(service, name);
+                editorBrowseService = service;
+            }
+
+            @Override
+            protected void onRemoveService(RenderService service, String name) {
+                super.onRemoveService(service, name);
+                editorBrowseService = null;
+            }
+        }, "service.browse.editor");
+
         context.registerTracker(new ServiceTracker<IModelReference>(IModelReference.class) {
 
             IObserver observer;
 
             @Override
             protected void onServiceAdded(final IModelReference service, String name) {
+                documentModelReference = service;
+
                 if (observer == null) {
                     context.registerService(observer = new IObserver() {
 
@@ -61,13 +83,22 @@ public class BrowserPerspective extends Perspective {
                         }
 
                         public void onEvent(Iterator events) {
+                            if (documentModelReference != null) {
+                                JcrNodeModel documentModel = (JcrNodeModel) documentModelReference.getModel();
+                                if(documentModel.getItemModel() == null || documentModel.getItemModel().getPath() == null) {
+                                    //Prevent calling toggle twice in a single request: we will end up here after
+                                    //the onToggle override below sets the documentModel to null to remove the selected
+                                    //state from the doclisting
+                                    return;
+                                }
+                            }
+
                             AjaxRequestTarget target = AjaxRequestTarget.get();
                             if (target != null) {
                                 UnitSettings leftSettings = settings.getUnit("left");
                                 if (leftSettings != null && leftSettings.isExpanded()) {
-                                    toggler.toggle("left", (AjaxRequestTarget) target);
+                                    toggler.toggle("left", target);
                                 }
-
                             }
                         }
                     }, IObserver.class.getName());
@@ -82,6 +113,7 @@ public class BrowserPerspective extends Perspective {
                     context.unregisterService(observer, IObserver.class.getName());
                     observer = null;
                 }
+                documentModelReference = null;
             }
         }, config.getString("model.document"));
 
@@ -101,9 +133,24 @@ public class BrowserPerspective extends Perspective {
                 super.onServiceAdded(service, name);
 
                 if(extension.equals("left")) {
-                    service.getComponent().add(toggler = new UnitExpandCollapseBehavior(settings, "left"));
-                }
+                    service.getComponent().add(toggler = new UnitExpandCollapseBehavior(settings, "left") {
 
+                        @Override
+                        protected void onToggle(boolean expand, AjaxRequestTarget target) {
+                            if(expand) {
+                                //remove focus from tabs
+                                if(editorBrowseService != null) {
+                                    editorBrowseService.focus(null);
+                                }
+                                //Remove selected state from doclisting
+                                if (documentModelReference != null) {
+                                    documentModelReference.setModel(new JcrNodeModel((Node) null));
+                                }
+
+                            }
+                        }
+                    });
+                }
             }
         };
     }
