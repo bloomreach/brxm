@@ -28,9 +28,9 @@
     <packaging>pom</packaging>
 
     <modules>
-      <module>sandbox</module>
-      <module>cms</module>
       <module>content</module>
+      <module>cms</module>
+      <module>sandbox</module>
       <module>site</module>
     </modules>
 

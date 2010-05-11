@@ -97,6 +97,7 @@
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
 
     <cxf.version>2.2.5</cxf.version>
+    <jackson.version>1.3.2</jackson.version>
     <mime4j.version>0.6</mime4j.version>
 
     <!-- use UTF-8 encoding for filtered file copy -->
@@ -723,6 +724,21 @@
             <artifactId>spring-web</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      
+      <!-- Jackson JSON -->
+      <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-jaxrs</artifactId>
+        <version>${jackson.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-xc</artifactId>
+        <version>${jackson.version}</version>
+        <scope>runtime</scope>
       </dependency>
       
       <dependency>

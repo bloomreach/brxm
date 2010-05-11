@@ -55,19 +55,13 @@ public class ContentService extends BaseHstContentService {
     
     private static Logger log = LoggerFactory.getLogger(ContentService.class);
     
-    @Context
-    private HttpServletRequest servletRequest;
-    
-    @Context
-    private UriInfo uriInfo;
-    
     public ContentService() {
         super();
     }
     
     @GET
     @Path("/uuid/{uuid}/")
-    public HippoBeanContent getContentNodeByUUID(@PathParam("uuid") String uuid, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
+    public HippoBeanContent getContentNodeByUUID(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("uuid") String uuid, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
@@ -96,7 +90,7 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/{path:.*}")
-    public ItemContent getContentItem(@PathParam("path") List<PathSegment> pathSegments, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
+    public ItemContent getContentItem(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         ItemContent itemContent = new ItemContent();
         
@@ -137,7 +131,7 @@ public class ContentService extends BaseHstContentService {
     
     @DELETE
     @Path("/{path:.*}")
-    public Response deleteContentNode(@PathParam("path") List<PathSegment> pathSegments) {
+    public Response deleteContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
@@ -168,7 +162,7 @@ public class ContentService extends BaseHstContentService {
     
     @POST
     @Path("/{path:.*}")
-    public Response createContentDocument(@PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
+    public Response createContentDocument(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
         String parentPath = getContentItemPath(servletRequest, pathSegments);
         String itemPath = parentPath + "/" + documentBeanContent.getName();
         
@@ -206,7 +200,7 @@ public class ContentService extends BaseHstContentService {
     
     @POST
     @Path("/node/{path:.*}")
-    public Response createContentNode(@PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
+    public Response createContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
         String parentPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
@@ -264,7 +258,7 @@ public class ContentService extends BaseHstContentService {
     
     @PUT
     @Path("/{path:.*}")
-    public Response updateContentProperty(@PathParam("path") List<PathSegment> pathSegments, PropertyContent propertyContent) {
+    public Response updateContentProperty(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, PropertyContent propertyContent) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {

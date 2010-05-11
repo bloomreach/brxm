@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -54,7 +53,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +64,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseHstContentService {
     
-    public static final String SITE_CONTENT_PATH = "org.hippoecm.hst.services.support.site.content.path"; 
-
     private static Logger log = LoggerFactory.getLogger(BaseHstContentService.class);
 
     private ObjectConverter objectConverter;
@@ -134,8 +131,8 @@ public class BaseHstContentService {
     }
     
     protected String getSiteContentPath(HttpServletRequest servletRequest) {
-        ResolvedSiteMapItem resolvedSiteMapItem = (ResolvedSiteMapItem)servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM);
-        return resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().getHstSite().getContentPath();
+        ResolvedSiteMount resolvedSiteMount = (ResolvedSiteMount) servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
+        return resolvedSiteMount.getSiteMount().getMountPoint();
     }
     
     protected String getRelativeItemContentPath(HttpServletRequest servletRequest, final ItemContent itemContent) {
@@ -165,55 +162,13 @@ public class BaseHstContentService {
                 String defaultContextServletPath = servletRequest.getContextPath() + servletRequest.getServletPath();
                 
                 if (path.startsWith(defaultContextServletPath)) {
-                    path = getVirtualizedContextPath(servletRequest) + getVirtualizedServletPath(servletRequest) + path.substring(defaultContextServletPath.length());
+                    path = servletRequest.getContextPath() + servletRequest.getServletPath() + path.substring(defaultContextServletPath.length());
                     base = hostAddress + path;
                 }
             }
         }
         
         return base;
-    }
-    
-    protected String getVirtualizedContextPath(HttpServletRequest servletRequest) {
-        String virtualizedContextPath = servletRequest.getContextPath();
-        HstRequestContext requestContext = getHstRequestContext(servletRequest);
-        
-        if (requestContext != null) {
-            VirtualHost virtualHost = requestContext.getVirtualHost();
-            
-            if (virtualHost != null && !virtualHost.isContextPathInUrl()) {
-                virtualizedContextPath = "";
-            }
-        }
-        
-        return virtualizedContextPath;
-    }
-    
-    /**
-     * We should be able to remove getVirtualizedServletPath after HSTTWO-1067
-     * @param servletRequest
-     * @return
-     */
-    @Deprecated
-    protected String getVirtualizedServletPath(HttpServletRequest servletRequest) {
-        String virtualizedServletPath = servletRequest.getServletPath();
-        HstRequestContext requestContext = getHstRequestContext(servletRequest);
-      
-// TODO is the part below still needed after HSTTWO-1067??
-//        if (requestContext != null) {
-//            MatchedMapping matchedMapping = requestContext.getMatchedMapping();
-//            if (matchedMapping != null) {
-//                virtualizedServletPath = matchedMapping.getMapping().getUriPrefix();
-//                
-//                if (virtualizedServletPath == null) {
-//                    virtualizedServletPath = "";
-//                } else if (virtualizedServletPath.endsWith("/")) {
-//                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
-//                }
-//            }
-//        }
-        
-        return virtualizedServletPath;
     }
     
     protected void init() {
