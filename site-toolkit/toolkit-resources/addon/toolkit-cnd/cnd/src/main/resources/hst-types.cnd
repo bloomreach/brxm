@@ -103,7 +103,10 @@
 
 [hst:sitemount]
 + * (hst:sitemount)
-- hst:mountpath (string)
+// the path to the (sub)site. for example /preview/myproject
+- hst:mountpoint (string)
+// whether this sitemount is associated with a hstSite
+- hst:issitemount (boolean)
 // if you do not want to sitemount to run with the default hst pipeline, you can configure the pipeline to be used here
 - hst:namedpipeline (string)
 - hst:port (long)
@@ -114,6 +117,8 @@
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
+- hst:pagenotfound (string)
+- hst:sitemapprefix
 
 
 [hst:virtualhost]
@@ -126,6 +131,7 @@
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
+- hst:pagenotfound (string)
 
 [hst:virtualhosts]
 - hst:port (long)
@@ -138,6 +144,7 @@
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
+- hst:pagenotfound (string)
 + * (hst:virtualhost)
 
 

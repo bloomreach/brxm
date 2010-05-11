@@ -66,7 +66,7 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:sitemount</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:mountpath" sv:type="String">
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/testlive/testproject</sv:value>
           </sv:property>
           <sv:node sv:name="services">
@@ -87,7 +87,7 @@
             <sv:property sv:name="hst:ispreview" sv:type="Boolean">
                 <sv:value>true</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:mountpath" sv:type="String">
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/testpreview/testproject</sv:value>
             </sv:property>
             <sv:node sv:name="services">
@@ -113,7 +113,7 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:sitemount</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:mountpath" sv:type="String">
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/testlive/testproject</sv:value>
           </sv:property>
           <sv:node sv:name="services">
@@ -134,7 +134,7 @@
             <sv:property sv:name="hst:ispreview" sv:type="Boolean">
                 <sv:value>true</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:mountpath" sv:type="String">
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/testpreview/testproject</sv:value>
             </sv:property>
             <sv:node sv:name="services">
