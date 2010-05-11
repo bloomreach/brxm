@@ -37,7 +37,6 @@ import org.hippoecm.hst.core.container.Pipeline;
 import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
