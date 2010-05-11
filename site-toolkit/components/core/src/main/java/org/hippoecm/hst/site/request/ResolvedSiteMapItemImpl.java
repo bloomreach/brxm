@@ -158,12 +158,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     }
 
     public String getNamedPipeline() {
-        String namedPipeline = hstSiteMapItem.getNamedPipeline();
-        if(namedPipeline == null) {
-            // perhaps the backing ResolvedSiteMount does contain one
-            namedPipeline = resolvedSiteMount.getNamedPipeline();
-        }
-        return namedPipeline;
+        return hstSiteMapItem.getNamedPipeline();
     }
 
 }

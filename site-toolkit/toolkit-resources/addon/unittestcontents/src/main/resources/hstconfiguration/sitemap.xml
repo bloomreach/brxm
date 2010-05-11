@@ -41,6 +41,24 @@
             <sv:value>hst:pages/homepage</sv:value>
         </sv:property>
     </sv:node>
+    
+    <sv:node sv:name="pagenotfound">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/pagenotfound</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="home">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/homepage</sv:value>
+        </sv:property>
+    </sv:node>
 
  
     <sv:node sv:name="news">

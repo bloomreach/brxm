@@ -38,6 +38,7 @@ public interface HstNodeTypes {
     public final static String GENERAL_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
     public final static String GENERAL_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
     public final static String GENERAL_PROPERTY_HOMEPAGE = "hst:homepage";
+    public final static String GENERAL_PROPERTY_PAGE_NOT_FOUND = "hst:pagenotfound";
     
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
@@ -86,7 +87,8 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_PORT = "hst:port";
     public final static String SITEMOUNT_PROPERTY_SHOWPORT = "hst:showport";
     public final static String SITEMOUNT_PROPERTY_SCHEME = "hst:scheme";
-    public final static String SITEMOUNT_PROPERTY_MOUNTPATH = "hst:mountpath";
+    public final static String SITEMOUNT_PROPERTY_MOUNTPATH = "hst:mountpoint";
+    public final static String SITEMOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
     public final static String SITEMOUNT_PROPERTY_ISPREVIEW = "hst:ispreview";
      
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";

@@ -252,6 +252,7 @@
             </sv:node>
         </sv:node>
     </sv:node>
+    
     <sv:node sv:name="rss.xml">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>

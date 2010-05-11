@@ -49,6 +49,11 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
      * taken (which still might be <code>null</code> though)
      */
     private String homepage;
+    /**
+     * The pageNotFound for this VirtualHost. When the backing configuration does not contain a pageNotFound, then, the pageNotFound from the backing {@link VirtualHosts} is 
+     * taken (which still might be <code>null</code> though)
+     */
+    private String pageNotFound;
     private VirtualHosts virtualHosts;
     private VirtualHostService parentHost;
     private SiteMount rootSiteMount;
@@ -124,6 +129,17 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             }
         }
         
+        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
+            this.pageNotFound = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        } else {
+           // try to get the one from the parent
+            if(parentHost != null) {
+                this.pageNotFound = parentHost.pageNotFound;
+            } else {
+                this.pageNotFound = virtualHosts.getPageNotFound();
+            }
+        }
+        
         String fullName = this.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
         
@@ -151,6 +167,9 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             this.name = this.getValueProvider().getName();
         }
         
+
+        hostName = buildHostName();
+        
         try {
             if(virtualHostNode.hasNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME)) {
                 // we have a configured root sitemount node. Let's populate this sitemount for this host
@@ -158,9 +177,11 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 if(siteMount.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMOUNT)) {
                     attachSiteMountToHost.rootSiteMount = new SiteMountService(siteMount, null, attachSiteMountToHost);
                 }
-            } 
+            } else {
+                log.info("Host '{}' does not have a root SiteMount", this.getHostName());
+            }
         } catch (ServiceException e) {
-            log.warn("The host '{}' contains an incorrect configured SiteMount. The host cannot be used for hst request processing:", name, e);
+            log.warn("The host '{}' contains an incorrect configured SiteMount. The host cannot be used for hst request processing: {}", name, e.getMessage());
         } catch (RepositoryException e) {
             throw new ServiceException("Error during creating sitemounts: ", e);
         }
@@ -179,7 +200,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             throw new ServiceException("Error during initializing hosts", e);
         }
      
-        hostName = buildHostName();
     }
 
 
@@ -193,6 +213,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.portNumber = parent.portNumber;
         this.scheme = parent.scheme;
         this.homepage = parent.homepage;
+        this.pageNotFound = parent.pageNotFound;
         this.portVisible = parent.portVisible;
         this.contextPathInUrl = parent.contextPathInUrl;
         this.name = nameSegments[position];
@@ -243,6 +264,10 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     
     public String getHomePage() {
         return homepage;
+    }
+
+    public String getPageNotFound() {
+        return pageNotFound;
     }
 
     

@@ -15,8 +15,9 @@
  */
 package org.hippoecm.hst.core.request;
 
-import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 /**
  * Implementations should be able to match a path (pathInfo) in combination with a <code>{@link HstSite}</code> object to a
@@ -37,9 +38,10 @@ public interface HstSiteMapMatcher {
      * 
      * @param pathInfo the pathInfo that should be matched in the <code>HstSiteMapItem</code> tree
      * @param resolvedSiteMount the current <code>ResolvedSiteMount</code> that must matches the request serverName and pathInfo
-     * @return a ResolvedSiteMapItem and <code>null</code> if non matched
+     * @return a ResolvedSiteMapItem
+     * @throws NotFoundException when the pathInfo can not be matched to a <code>{@link HstSiteMapItem}</code>
      */
-    ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) throws MatchException;
+    ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) throws NotFoundException;
   
     /**
      * method that can be called if some event is triggered. For example if the <code>HstSiteMapMatcher</code> implementing class

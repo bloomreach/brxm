@@ -66,16 +66,44 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:sitemount</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:mountpath" sv:type="String">
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/live/demosite</sv:value>
           </sv:property>
+          <sv:node sv:name="services">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namedpipeline" sv:type="String">
+              <sv:value>JaxrsPipeline</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentservice">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              <!-- inherit namedpipeline from parent -->
+            </sv:node>
+          </sv:node>
           <sv:node sv:name="preview">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:mountpath" sv:type="String">
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/preview/demosite</sv:value>
             </sv:property>
+            <sv:node sv:name="services">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>JaxrsPipeline</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentservice">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <!-- inherit namedpipeline from parent -->
+              </sv:node>
+            </sv:node>
           </sv:node>
         </sv:node>
     </sv:node>
@@ -84,14 +112,49 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:mapping" sv:type="String">
-            <sv:value>/preview/services/* --> /preview/services/${1}</sv:value>
-            <sv:value>/services/* --> /live/services/${1}</sv:value>
-            <sv:value>/preview/* --> /preview/${1}</sv:value>
-            <sv:value>/* --> /live/${1}</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitename" sv:type="String">
-            <sv:value>demosite</sv:value>
-        </sv:property>
+        <sv:node sv:name="hst:root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/live/demosite</sv:value>
+          </sv:property>
+          <sv:node sv:name="services">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namedpipeline" sv:type="String">
+              <sv:value>JaxrsPipeline</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentservice">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              <!-- inherit namedpipeline from parent -->
+            </sv:node>
+          </sv:node>
+          <sv:node sv:name="preview">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/preview/demosite</sv:value>
+            </sv:property>
+            <sv:node sv:name="services">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>JaxrsPipeline</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentservice">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <!-- inherit namedpipeline from parent -->
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
     </sv:node>
 </sv:node>

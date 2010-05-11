@@ -212,6 +212,9 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             this.namedPipeline = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
         } else if(this.parentItem != null) {
             this.namedPipeline = parentItem.getNamedPipeline();
+        } else {
+            // inherit the namedPipeline from the sitemount (can be null)
+            this.namedPipeline = this.getHstSiteMap().getSite().getSiteMount().getNamedPipeline();
         }
         
         init(jcrNode);

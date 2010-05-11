@@ -18,16 +18,19 @@ package org.hippoecm.hst.configuration.hosting;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
- * <p>A SiteMount object is the mount from a prefix to some (sub)site. SiteMount is a Composite pattern: Each SiteMount can contain any descendant
- * child SiteMount tree. A SiteMount 'lives' below a {@link VirtualHost}. The SiteMount directly below a {@link VirtualHost} <b>must</b> be called <b>root</b> by definition and
- * must exist. The <code>root</code> SiteMount is where the SiteMount matching starts. Once a virtual host is matched for the incoming {@link HttpServletRequest},
- * we inspect the {@link HttpServletRequest#getPathInfo()} and try to match the path info as deep as possible to the SiteMount tree: note that 
+ * <p>A SiteMount object is the mount from a prefix to some (sub)site *or* content location: when the <code>issitemount</code> property is <code>true</code> or missing,
+ * the SiteMount is linked to a {@link HstSite}. When <code>issitemount</code> property is <code>false</code>, the SiteMount should have it's own namedPipeline and the
+ * <code>hst:mountpoint</code> property is used a content path: for example a simple jcr browser unaware of HstSite at all could be easily built with this. 
+ * </p>
+ * <p>
+ * SiteMount is a Composite pattern: Each SiteMount can contain any descendant
+ * child SiteMount tree. A SiteMount 'lives' below a {@link VirtualHost}. The SiteMount directly below a {@link VirtualHost} <b>must</b> be called <b>hst:root</b> by definition. 
+ * The <code>hst:root</code> SiteMount is where the SiteMount matching starts. Once a virtual host is matched for the incoming {@link HttpServletRequest},
+ * we inspect the request path (the path after the context path and before the query string) and try to match the request path as deep as possible to the SiteMount tree: note that 
  * we try to map to the best matching SiteMount: This means, that 'exact' matching names have precedence over wildcard names
  * </p>
  * 
@@ -35,14 +38,14 @@ import org.hippoecm.hst.core.request.ResolvedSiteMount;
  * 
  * <pre>
  *    127.0.0.1
- *      `- root  (hst:mountpath = /live/myproject)
- *            `- preview (hst:mountpath = /preview/myproject)
+ *      `- hst:root  (hst:mountpoint = /live/myproject, hst:issitemount = true)
+ *            `- preview (hst:mountpoint = /preview/myproject, hst:issitemount = true)
  * </pre>
  * <p>
- * The configuration above means, that below the host 127.0.0.1 we have of course the mandatory SiteMount <code>root</code>, and below it, we have 
- * a SiteMount <code>preview</code>. Every pathInfo that starts with <code>/preview</code> will be mapped to 'preview' SiteMount, all other pathInfo's that do not start with '/preview' 
- * resolve to the <code>root<code> item. While the pathInfo does match the next SiteMount descendant in the tree, the matching is continued to descendant SiteMount items, also see {@link #match(HttpServletRequest)}. Thus, in the current example,
- * the pathInfo <code>/preview/home</code> will return the SiteMount with name 'preview'. 
+ * The configuration above means, that below the host 127.0.0.1 we have of course the mandatory SiteMount <code>hst:root</code>, and below it, we have 
+ * a SiteMount <code>preview</code>. Every request path that starts with <code>/preview</code> will be mapped to 'preview' SiteMount, all other request path's that do not start with '/preview' 
+ * resolve to the <code>hst:root<code> item. While the request path does match the next SiteMount descendant in the tree, the matching is continued to descendant SiteMount items. Thus, in the current example,
+ * the request path <code>/preview/home</code> will return the SiteMount with name 'preview'. 
  * </p>
  * 
  * Also, you can configure some of the same properties the {@link VirtualHost} also has:
@@ -63,24 +66,24 @@ import org.hippoecm.hst.core.request.ResolvedSiteMount;
  * 
  * <pre>
  *    www.mycompany.com
- *        ` root  (hst:mountpath = /live/myproject)
+ *        ` hst:root  (hst:mountpoint = /live/myproject)
  *    preview.mycompany.com
- *        ` root  (hst:mountpath = /preview/myproject)
+ *        ` hst:root  (hst:mountpoint = /preview/myproject)
  * </pre>
  * 
- * <p>As can be seen, instead of using the pathInfo prefix to distuinguish between live and preview, we now do so by hostname.</p>
+ * <p>As can be seen, instead of using the request path prefix to distuinguish between live and preview, we now do so by hostname.</p>
  * 
  * An example with more SiteMount items is for example:
  * 
  * <pre>
  *    127.0.0.1
- *      `- root  (hst:mountpath = /live/myproject)
- *            |-myrestservice (hst:mountpath = /live/myproject, hst:namedpipeline=JaxrsPipeline)
- *            `- preview (hst:mountpath = /preview/myproject)
- *                  `-myrestservice (hst:mountpath = /preview/myproject, hst:namedpipeline=JaxrsPipeline)
+ *      `- hst:root  (hst:mountpoint = /live/myproject)
+ *            |-myrestservice (hst:mountpoint = /live/myproject, hst:namedpipeline=JaxrsPipeline)
+ *            `- preview (hst:mountpoint = /preview/myproject)
+ *                  `-myrestservice (hst:mountpoint = /preview/myproject, hst:namedpipeline=JaxrsPipeline)
  * </pre>
  * 
- * <p>Now, all pathInfo's that start with <code>/myrestservice</code> or  <code>/preview/myrestservice</code> resolve to the <code>myrestservice</code>
+ * <p>Now, all request path's that start with <code>/myrestservice</code> or  <code>/preview/myrestservice</code> resolve to the <code>myrestservice</code>
  * SiteMount item. This one has a custom <code>hst:namedpipeline</code>, where you can configure a complete custom hst request processing, in this example
  * some pipeline exposing some rest interface.</p>
  * 
@@ -88,16 +91,16 @@ import org.hippoecm.hst.core.request.ResolvedSiteMount;
  * Optionally, wildcard matching support can be implemented, where even the wilcards can be used within the property values. For example:
  * <pre>
  *    127.0.0.1
- *      `- root  (hst:mountpath = /live/myproject)
- *            |- * (hst:mountpath = /live/${1})
- *            `- preview (hst:mountpath = /preview/myproject)
- *                  ` - * (hst:mountpath = /preview/${1})
+ *      `- hst:root  (hst:mountpoint = /live/myproject)
+ *            |- * (hst:mountpoint = /live/${1})
+ *            `- preview (hst:mountpoint = /preview/myproject)
+ *                  ` - * (hst:mountpoint = /preview/${1})
  * </pre>
  * 
- * The above means, that when there is a (sub)site complying to the wildcard, this one is used, and otherwise, the the default one pointing
- * to <code>myproject</code> is used. Thus, a pathInfo like <code>/preview/mysubsite/home</code> will map to the SiteMount <code>/preview/*</code>
- * if there is a (sub)site at the mountpath <code>/preview/${1}</code>, where obviously ${1} is substituted by 'mysubsite'. Assuming that there
- * is no subsite called 'news', a pathInfo like /preview/news/2010/05/my-news-item will thus be handled by the site 'myproject'
+ * The above means, that when there is a (sub)site complying to the wildcard, this one is used, and otherwise, the default one pointing
+ * to <code>myproject</code> is used. Thus, a request path like <code>/preview/mysubsite/home</code> will map to the SiteMount <code>/preview/*</code>
+ * if there is a (sub)site at the mountpoint <code>/preview/${1}</code>, where obviously ${1} is substituted by 'mysubsite'. Assuming that there
+ * is no subsite called 'news', a request path like /preview/news/2010/05/my-news-item will thus be handled by the site 'myproject'
  * 
  * </p>
  * 
@@ -111,15 +114,39 @@ public interface SiteMount {
     String getName();
     
     /**
+     * When this returns <code>true</code>, this SiteMount is referring to a {@link HstSite}. When it is <code>false</code>, it is referring
+     * to a content location when {@link #getMountPoint()} is not <code>null</code> or empty. When having the value <code>false</code>, you most
+     * like invoke some specific pipeline through {@link #getNamedPipeline()}
+     * @return <code>true</code> when this SiteMount is referring to a {@link HstSite}
+     */
+    boolean isSiteMount();
+    
+    /**
      * @return the parent SiteMount of this SiteMount and <code>null</code> if we are at the root SiteMount
      */
     SiteMount getParent();
     
     /**
      * <p>
+     * Returns the mount point for this SiteMount object. The root SiteMount has an empty mount point. A mountPoint for a 
+     * SiteMount is its own {@link #getName()} plus all ancestors up to the root and always starts with a "/" (unless for the root, this one is empty).
+     * It can contain wildcards, for example /preview/*. Typically, these wildcards are replaced by their request specific values in the {@link ResolvedSiteMount}.
+     * </p>
+     * 
+     * @see ResolvedSiteMount#getResolvedMountPath()
+     * @return the mountPoint for this siteMount
+     */
+    String getMountPoint();
+    
+    /**
+     * <p>
      * Returns the mount path for this SiteMount object. The root SiteMount has an empty mount path. A mountPath for a 
      * SiteMount is its own {@link #getName()} plus all ancestors up to the root and always starts with a "/" (unless for the root, this one is empty).
      * It can contain wildcards, for example /preview/*. Typically, these wildcards are replaced by their request specific values in the {@link ResolvedSiteMount}.
+     * </p>
+     * 
+     * <p>
+     * Note the difference with {@link #getMountPoint()}: this returns the jcr location of the (sub)site or of the content
      * </p>
      * 
      * @see ResolvedSiteMount#getResolvedMountPath()
@@ -143,17 +170,7 @@ public interface SiteMount {
      * @return the {@link HstSite} this <code>SiteMount</code> is pointing to or <code>null</code> when none found
      */
     HstSite getHstSite();
-    
-    /**
-     * This method handles multiple matching's: First, the pathInfo is used, to match the best deepest <code>SiteMount</code>. Once the best deepest 
-     * <code>SiteMount</code> is found, the remainder of the pathInfo will be delegated to the {@link HstSiteMapMatcher}, which returns a flyweight 'request' time 
-     * instance of a {@link HstSiteMapItem}  
-     * @param request
-     * @return the resolvedSiteMap item for the current request pathInfo or <code>null</code> when the request can not be matched.
-     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured
-     */
-    ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
-    
+  
     /**
      * @return <code>true</code> when the created url should have the contextpath in it
      */
@@ -175,6 +192,12 @@ public interface SiteMount {
      * @return the homepage for this SiteMount or <code>null</code> when not present
      */
     String getHomePage();
+    
+    /**
+     * 
+     * @return the pagenotfound for this SiteMount or <code>null</code> when not present
+     */
+    String getPageNotFound();
     
     /**
      * @return the scheme to use for creating external urls, for example http / https

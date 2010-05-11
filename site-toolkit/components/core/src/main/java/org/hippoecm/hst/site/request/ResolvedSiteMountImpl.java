@@ -18,6 +18,7 @@ package org.hippoecm.hst.site.request;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.NoHstSiteException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -61,23 +62,27 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
 
 
     public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException {
-        // test whether this SiteMount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
-        if(getSiteMount().getHstSite() == null) {
-            log.debug("For SiteMount '{}' there is no (correct) HstSite configured so request can never be mapped to a HstSiteMapItem. Return null");
-            return null;
-        }
-        
         String requestPath = HstRequestUtils.getRequestPath(request);
+
         if(!requestPath.startsWith(getResolvedMountPath())) {
-            throw new MatchException("It is not allowed that the pathInfo from the request is different then the resolvedPathInfoPrefix from the ResolvedSiteMount");
+            throw new MatchException("It is not allowed that the request path from the request is different then the mountPath from the ResolvedSiteMount");
         }
         String siteMapPathInfo = requestPath.substring(getResolvedMountPath().length());
+        
+        return matchSiteMapItem(request, siteMapPathInfo);
+    }
+    
+    public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String siteMapPathInfo) throws MatchException {
+        // test whether this SiteMount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
+        if(getSiteMount().getHstSite() == null) {
+            throw new NoHstSiteException("No HstSite attached to SiteMount '"+ getSiteMount().getName()+"'. The path '"+siteMapPathInfo+"' thus not be matched to a sitemap item");
+        }
         
         if("".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
            log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
            siteMapPathInfo = siteMount.getHomePage();
-           if(siteMapPathInfo == null || "".equals(siteMapPathInfo)) {
-               log.warn("SiteMount '{}' for host '{}' does not have a homepage configured and the pathInfo is empty. Cannot map to sitemap item. Return null", getSiteMount().getName(), getResolvedVirtualHost().getResolvedHostName());
+           if(siteMapPathInfo == null || "".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
+               log.warn("SiteMount '{}' for host '{}' does not have a homepage configured and the request path is empty. Cannot map to sitemap item. Return null", getSiteMount().getName(), getResolvedVirtualHost().getResolvedHostName());
                return null;
            } else {
                log.debug("Trying to map homepage '{}' to the sitemap for SiteMount '{}'", siteMapPathInfo, getSiteMount().getName());
@@ -89,7 +94,6 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
             throw new MatchException("The VirtualHostManager does not have a HstSiteMapMatcher configured. Cannot match request to a sitemap without this");        
         }
         return matcher.match(siteMapPathInfo, this);
-       
     }
 
 }

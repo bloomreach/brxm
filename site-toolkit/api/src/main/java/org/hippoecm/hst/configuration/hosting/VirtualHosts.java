@@ -57,10 +57,23 @@ public interface VirtualHosts {
      * </p>
      * 
      * @param request the HttpServletRequest
-     * @return the resolvedSiteMapItem for this request or <code>null</code> when it can not be matched to a sitemap item
-     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured
+     * @return the resolvedSiteMapItem for this request
+     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured or when the request path does not match 
+     * a sitemap item
      */
     ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException;
+
+    /**
+     * Same as {@link #matchSiteMapItem(HttpServletRequest)} only now the match is done against <code>path</code> and not against the
+     * request path 
+     * @see #matchSiteMapItem(HttpServletRequest)
+     * @param request the HttpServletRequest
+     * @param siteMapPathInfo the path to match relative to the HstSiteMap
+     * @return the resolvedSiteMapItem for this request
+     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured or when the request path does not match 
+     * a sitemap item
+     */
+    ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String siteMapPathInfo) throws MatchException;
     
     /**
      * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 

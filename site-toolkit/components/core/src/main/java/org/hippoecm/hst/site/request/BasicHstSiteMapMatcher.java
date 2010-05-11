@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
@@ -54,7 +55,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
 
     
-    public ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) {
+    public ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) throws NotFoundException {
         HstSite hstSite = resolvedSiteMount.getSiteMount().getHstSite();
        
         Properties params = new Properties();
@@ -129,7 +130,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             if(hstSiteMapItemAny == null) {
                 log.warn("Did not find a matching sitemap item for path '{}', SiteMount '{}' and Host '"+resolvedSiteMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
                 		". Return null", pathInfo, resolvedSiteMount.getSiteMount().getParent() == null ? "hst:root" : resolvedSiteMount.getSiteMount().getMountPath() );
-                return null;
+                throw new NotFoundException("Request path '"+pathInfo+"' could not be matched");
             } else {
                 // The ** has the value of the entire pathInfo
                 params.put(String.valueOf(params.size()+1), pathInfo);

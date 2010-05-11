@@ -18,13 +18,13 @@ package org.hippoecm.hst.configuration.hosting;
 /**
  * Exception which can be thrown when matching fails 
  */
-public class MatchException extends RuntimeException {
+public class NoHstSiteException extends MatchException {
 
     private static final long serialVersionUID = 1L;
     /**
      * Constructs a new ContainerException exception.
      */
-    public MatchException() {
+    public NoHstSiteException() {
         super();
     }
 
@@ -34,7 +34,7 @@ public class MatchException extends RuntimeException {
      * @param   message
      *          the exception message
      */
-    public MatchException(String message) {
+    public NoHstSiteException(String message) {
         super(message);
     }
 
@@ -44,7 +44,7 @@ public class MatchException extends RuntimeException {
      * @param   nested
      *          the nested exception
      */
-    public MatchException(Throwable nested) {
+    public NoHstSiteException(Throwable nested) {
         super(nested);
     }
 
@@ -62,7 +62,7 @@ public class MatchException extends RuntimeException {
      * @param   nested
      *          the nested exception
      */
-    public MatchException(String msg, Throwable nested) {
+    public NoHstSiteException(String msg, Throwable nested) {
         super(msg, nested);
     }
 }

@@ -55,6 +55,11 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
      * The homepage for this VirtualHosts. When the backing configuration does not contain a homepage, the value is <code>null
      */
     private String homepage;
+
+    /**
+     * The pageNotFound for this VirtualHosts. When the backing configuration does not contain a pageNotFound, the value is <code>null
+     */
+    private String pageNotFound;
     private boolean virtualHostsConfigured;
     private String jcrPath;
     private boolean portVisible;
@@ -77,6 +82,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         this.suffixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
         this.scheme = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
         this.homepage = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        this.pageNotFound = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
         this.defaultHostName  = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if(scheme == null || "".equals(scheme)) {
             this.scheme = DEFAULT_SCHEME;
@@ -123,20 +129,35 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     }
     
     
-    public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request)  throws MatchException{
+public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request)  throws MatchException{
         
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
         if(resolvedVirtualHost == null) {
-            // logging is already done when it is null
-            return null;
+            throw new MatchException("Unknown host '"+HstRequestUtils.getRequestServerName(request)+"'");
         }
         ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(request);
         if(resolvedSiteMount == null) {
-            // logging is already done when it is null
-            return null;
+            if(resolvedSiteMount == null) {
+                throw new MatchException("resolvedVirtualHost '"+resolvedVirtualHost.getResolvedHostName()+"' does not have a site mount");
+            }
         }
         return resolvedSiteMount.matchSiteMapItem(request);
     }
+
+public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String siteMapPathInfo)  throws MatchException{
+    
+    ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
+    if(resolvedVirtualHost == null) {
+        throw new MatchException("Unknown host '"+HstRequestUtils.getRequestServerName(request)+"'");
+    }
+    ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(request);
+    if(resolvedSiteMount == null) {
+        if(resolvedSiteMount == null) {
+            throw new MatchException("resolvedVirtualHost '"+resolvedVirtualHost.getResolvedHostName()+"' does not have a site mount");
+        }
+    }
+    return resolvedSiteMount.matchSiteMapItem(request, siteMapPathInfo);
+}
 
     public ResolvedSiteMount matchSiteMount(HttpServletRequest request) throws MatchException {
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
@@ -271,6 +292,9 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
 
     public String getHomePage() {
         return homepage;
+    }
+    public String getPageNotFound() {
+        return pageNotFound;
     }
 
     public List<VirtualHost> getVirtualHosts(boolean mountedOnly) {

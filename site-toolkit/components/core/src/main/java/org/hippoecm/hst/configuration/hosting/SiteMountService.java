@@ -6,13 +6,11 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -61,16 +59,34 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      */
     private String namedPipeline;
     
+
     /**
-     * The path where the mount is pointing to
+     * The mountpath of this sitemount. Note that it can contain wildcards
      */
     private String mountPath;
     
+    /**
+     * The jcr path where the mount is pointing to
+     */
+    private String mountPoint;
+    
+    /**
+     * <code>true</code> (default) when this SiteMount is used as a site mount. False when used only as content mount point and possibly a namedPipeline
+     */
+    private boolean isSiteMount = true;
+
     /**
      * The homepage for this SiteMount. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHost} is 
      * taken (which still might be <code>null</code> though)
      */
     private String homepage;
+    
+
+    /**
+     * The pagenotfound for this SiteMount. When the backing configuration does not contain a pagenotfound, then, the pagenotfound from the backing {@link VirtualHost} is 
+     * taken (which still might be <code>null</code> though)
+     */
+    private String pageNotFound;
     
     private boolean portVisible;
     private int portNumber;
@@ -85,6 +101,13 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         
         this.name = getValueProvider().getName();
 
+        
+        if(parent == null) {
+            mountPath = "";
+        } else {
+            mountPath = parent.getMountPath() + "/" + name;
+        }
+        
         // the portnumber
         if(getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_PORT)) {
             this.portNumber = getValueProvider().getLong(HstNodeTypes.SITEMOUNT_PROPERTY_PORT).intValue();
@@ -139,11 +162,28 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
+        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
+            this.pageNotFound = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        } else {
+           // try to get the one from the parent
+            if(parent != null) {
+                this.pageNotFound = parent.getPageNotFound();
+            } else {
+                this.pageNotFound = ((VirtualHostService)virtualHost).getPageNotFound();
+            }
+        }
+         
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW)) {
             this.preview = this.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW);
         } else if(parent != null) {
             this.preview = parent.isPreview();
+        }
+        
+        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT)) {
+            this.isSiteMount = this.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT);
+        } else if(parent != null) {
+            this.isSiteMount = parent.isSiteMount();
         }
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE)) {
@@ -153,33 +193,34 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         }
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH)) {
-            this.mountPath = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH);
+            this.mountPoint = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH);
             // now, we need to create the HstSite object
-            if(mountPath == null || "".equals(mountPath)){
-                mountPath = null;
+            if(mountPoint == null || "".equals(mountPoint)){
+                mountPoint = null;
             }
         } else if(parent != null) {
-            this.mountPath = ((SiteMountService)parent).mountPath;
-            if(mountPath != null) {
-                log.info("Mountpath for SiteMount '{}' is inherited from its parent SiteMount and is '{}'", getName() , mountPath);
+            this.mountPoint = ((SiteMountService)parent).mountPoint;
+            if(mountPoint != null) {
+                log.info("mountPoint for SiteMount '{}' is inherited from its parent SiteMount and is '{}'", getName() , mountPoint);
             }
         }
         
-        
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
-        if(mountPath == null ){
-            log.info("SiteMount '{}' at '{}' does have an empty mountPath. This means the SiteMount is not using a HstSite", getName(), getValueProvider().getPath());
-        } else if(!mountPath.startsWith("/")) {
-            throw new ServiceException("SiteMount at '"+getValueProvider().getPath()+"' has an invalid mountPath '"+mountPath+"'. A mount path is absolute and must start with a '/'");
+        if(mountPoint == null ){
+            log.info("SiteMount '{}' at '{}' does have an empty mountPoint. This means the SiteMount is not using a HstSite and does not have a content path", getName(), getValueProvider().getPath());
+        } else if(!mountPoint.startsWith("/")) {
+            throw new ServiceException("SiteMount at '"+getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
+        } else if(!isSiteMount()){
+            log.info("SiteMount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), getValueProvider().getPath());
         } else {
             try {
-                if (siteMount.getSession().itemExists(mountPath) && siteMount.getSession().getItem(mountPath).isNode() && ((Node) siteMount.getSession().getItem(mountPath)).isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
-                    Node hstSiteNode = (Node) siteMount.getSession().getItem(mountPath);
+                if (siteMount.getSession().itemExists(mountPoint) && siteMount.getSession().getItem(mountPoint).isNode() && ((Node) siteMount.getSession().getItem(mountPoint)).isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
+                    Node hstSiteNode = (Node) siteMount.getSession().getItem(mountPoint);
                     this.hstSite = new HstSiteService(hstSiteNode, this);
                     log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
                 } else {
-                    throw new ServiceException("Mountpath '" + mountPath
+                    throw new ServiceException("mountPoint '" + mountPoint
                             + "' does not point to a hst:site node for SiteMount '" + getValueProvider().getPath()
                             + "'. Cannot create HstSite for SiteMount");
                 }
@@ -208,12 +249,6 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         }
     }
     
-    public ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException {
-        
-        return null;
-    }
-
-
     public SiteMount getChildMount(String name) {
         return childSiteMountServices.get(name);
     }
@@ -226,9 +261,16 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         return name;
     }
 
-
     public String getMountPath() {
         return mountPath;
+    }
+    
+    public String getMountPoint() {
+        return mountPoint;
+    }
+
+    public boolean isSiteMount() {
+        return isSiteMount;
     }
 
     
@@ -246,6 +288,10 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
 
     public String getHomePage() {
         return homepage;
+    }
+    
+    public String getPageNotFound() {
+        return pageNotFound;
     }
 
     public VirtualHost getVirtualHost() {
@@ -284,6 +330,7 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     public HstSiteMapMatcher getHstSiteMapMatcher() {
         return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getHstSiteMapMatcher();
     }
+
 
 
 }

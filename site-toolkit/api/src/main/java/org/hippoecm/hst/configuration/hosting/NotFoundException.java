@@ -16,40 +16,42 @@
 package org.hippoecm.hst.configuration.hosting;
 
 /**
- * Exception which can be thrown when matching fails 
+ * When a request fails to match for example a HstSiteMapItem because the request path can match the sitemap tree, this exception should be 
+ * thrown. 
+ * 
  */
-public class MatchException extends RuntimeException {
+public class NotFoundException extends MatchException{
 
     private static final long serialVersionUID = 1L;
     /**
      * Constructs a new ContainerException exception.
      */
-    public MatchException() {
+    public NotFoundException() {
         super();
     }
 
     /**
-     * Constructs a new MatchException exception with the given message.
+     * Constructs a new NotFoundExceptiion exception with the given message.
      *
      * @param   message
      *          the exception message
      */
-    public MatchException(String message) {
+    public NotFoundException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new MatchException exception with the nested exception.
+     * Constructs a new NotFoundExceptiion exception with the nested exception.
      *
      * @param   nested
      *          the nested exception
      */
-    public MatchException(Throwable nested) {
+    public NotFoundException(Throwable nested) {
         super(nested);
     }
 
     /**
-     * Constructs a new MatchException exception when the container needs to do
+     * Constructs a new NotFoundExceptiion exception when the container needs to do
      * the following:
      * <ul>
      * <li>throw an exception 
@@ -62,7 +64,7 @@ public class MatchException extends RuntimeException {
      * @param   nested
      *          the nested exception
      */
-    public MatchException(String msg, Throwable nested) {
+    public NotFoundException(String msg, Throwable nested) {
         super(msg, nested);
     }
 }
