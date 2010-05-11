@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.hippoecm.hst.configuration.hosting.NoHstSiteException;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -321,7 +322,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 try {
                     ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
-                    fail("The vhosts.matchSiteMapItem(request) should have thrown a '"+NotFoundException.class.getName()+"' exception");
+                    fail("The vhosts.matchSiteMapItem(request) should have thrown a '"+NotFoundException.class.getName()+"'");
                     
                 } catch (NotFoundException e) {
                     // we should get here: There was however found a HstSite, so, confirm that we can find SiteMount having a HstSite
@@ -342,7 +343,37 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             }
         }
 
-       
+        /*
+         * Tests for the not mounted sitemounts, which for example can be used in case of rest interface, which have their own custom
+         * namedPipeline, and only use the mountpoint as a location for content, not for a HstSite
+         */
+        @Test 
+        public void testSiteMountThatIsNotMounted(){
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("127.0.0.1");
+            request.setRequestURI("/preview/services");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                
+                // because there is the /preview/services sitemount has isSiteMount=false, we expect a NoHstSiteException when trying to match the request
+                // to a ResolvedSiteMapItem
+                try {
+                    ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
+                    fail("The vhosts.matchSiteMapItem(request) should have thrown a '"+NoHstSiteException.class.getName()+"'");
+                } catch (NoHstSiteException e) {
+                    // we should get here: We should be able to get a SiteMount though. The SiteMount should have a mountPoint, but a null HstSite because isSiteMount = false;
+                    ResolvedSiteMount resolvedSiteMount = vhosts.matchSiteMount(request);
+                    assertNull("/preview/services should map to a sitemount having 'isSiteMount = false' configured" ,resolvedSiteMount.getSiteMount().getHstSite());
+                    // the mountPoint must be /unittestpreview/unittestproject
+                    assertTrue("resolvedSiteMount for /preview/services should have mountpoint '/unittestpreview/unittestproject' but was ''"+resolvedSiteMount.getSiteMount().getMountPoint()+"'","/unittestpreview/unittestproject".equals(resolvedSiteMount.getSiteMount().getMountPoint()));
+                }
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
         /*
          * We also have a test host, that has configuration like this:
          * 

@@ -35,6 +35,9 @@
     <sv:property sv:name="hst:homepage" sv:type="String">
         <sv:value>home</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:pagenotfound" sv:type="String">
+        <sv:value>pagenotfound</sv:value>
+    </sv:property>
     <sv:property sv:name="hst:suffixexclusions" sv:type="String">
         <sv:value>.do</sv:value>
         <sv:value>.jsp</sv:value>
@@ -90,6 +93,9 @@
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/preview/demosite</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
             <sv:node sv:name="services">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
@@ -97,10 +103,12 @@
               <sv:property sv:name="hst:namedpipeline" sv:type="String">
                 <sv:value>JaxrsPipeline</sv:value>
               </sv:property>
+              <!-- inherit mountpoint from parent -->
               <sv:node sv:name="contentservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemount</sv:value>
                 </sv:property>
+                <!-- inherit mountpoint from parent -->
                 <!-- inherit namedpipeline from parent -->
               </sv:node>
             </sv:node>
@@ -136,6 +144,9 @@
           <sv:node sv:name="preview">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+              <sv:value>true</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/preview/demosite</sv:value>
