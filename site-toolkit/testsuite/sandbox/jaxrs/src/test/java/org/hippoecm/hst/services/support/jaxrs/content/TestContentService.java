@@ -81,7 +81,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         };
     }
     
-    @Ignore
+    @Test
     public void testDemo() throws Exception {
         /* 
          * retrieves customer json data...
@@ -103,7 +103,8 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertNotNull(response.getContentAsString());
-        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", response.getContentAsString());
+        assertTrue(response.getContentAsString().contains("123"));
+        assertTrue(response.getContentAsString().contains("John"));
         
         /*
          * updating the existing customer...
@@ -119,7 +120,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setServletPath("/preview/services");
         request.setPathInfo("/customerservice/customers/");
         request.setContentType("application/json");
-        request.setContent("{\"Customer\":{\"id\":123,\"name\":\"John Doe\"}}".getBytes());
+        request.setContent("{\"id\":123,\"name\":\"John Doe\"}".getBytes());
 
         response = new MockHttpServletResponse();
         
@@ -141,7 +142,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setServletPath("/preview/services");
         request.setPathInfo("/customerservice/customers/");
         request.setContentType("application/json");
-        request.setContent("{\"Customer\":{\"name\":\"Jisung Park\"}}".getBytes());
+        request.setContent("{\"name\":\"Jisung Park\"}".getBytes());
 
         response = new MockHttpServletResponse();
         
@@ -149,8 +150,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertNotNull(response.getContentAsString());
-        assertTrue(response.getContentAsString().startsWith("{\"Customer\":"));
-        assertTrue(response.getContentAsString().contains("\"name\":\"Jisung Park\""));
+        assertTrue(response.getContentAsString().contains("Jisung Park"));
         
         /*
          * deleting a new customer...
