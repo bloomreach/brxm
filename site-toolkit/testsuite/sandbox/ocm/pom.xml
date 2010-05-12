@@ -24,7 +24,7 @@
 
   <name>Hippo Site Toolkit OCM</name>
   <description>Hippo Site Toolkit OCM</description>
-  <groupId>org.onehippo.ecm.hst</groupId>
+  <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
   <artifactId>hst-ocm</artifactId>
   <packaging>jar</packaging>
 
