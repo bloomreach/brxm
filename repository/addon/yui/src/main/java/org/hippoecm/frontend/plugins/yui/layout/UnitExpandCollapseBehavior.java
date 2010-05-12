@@ -33,19 +33,21 @@ public class UnitExpandCollapseBehavior extends AbstractBehavior {
         this.defaultToggleUnit = defaultToggleUnit;
     }
 
-    public void toggle(String position, AjaxRequestTarget target) {
-        UnitSettings unitSettings = settings.getUnit(position);
-        if(unitSettings != null) {
-            boolean expand = !unitSettings.isExpanded();
-            String jsMethod = expand ? "YAHOO.hippo.LayoutManager.expandUnit" : "YAHOO.hippo.LayoutManager.collapseUnit";
-            target.appendJavascript(jsMethod + "('" + settings.getRootId().getElementId() + "', '" + position + "');");
-            unitSettings.setExpanded(expand);
-            onToggle(expand, target);
+    public boolean toggle(String position, AjaxRequestTarget target) {
+        UnitSettings settings = this.settings.getUnit(position);
+        if(settings == null) {
+            throw new IllegalArgumentException("No unit with position " + position + " is defined in layout[" + settings.getId() + "], cannot expand/collapse.");
         }
+        boolean expand = !settings.isExpanded();
+        String jsMethod = expand ? "YAHOO.hippo.LayoutManager.expandUnit" : "YAHOO.hippo.LayoutManager.collapseUnit";
+        target.appendJavascript(jsMethod + "('" + this.settings.getRootId().getElementId() + "', '" + position + "');");
+        settings.setExpanded(expand);
+        onToggle(expand, target);
+        return expand;
     }
 
-    public void toggle(AjaxRequestTarget target) {
-        toggle(defaultToggleUnit, target);
+    public boolean toggle(AjaxRequestTarget target) {
+        return toggle(defaultToggleUnit, target);
     }
 
     protected void onToggle(boolean expand, AjaxRequestTarget target) {

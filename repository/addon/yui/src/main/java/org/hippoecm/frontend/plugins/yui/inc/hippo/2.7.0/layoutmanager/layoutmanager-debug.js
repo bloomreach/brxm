@@ -468,31 +468,23 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
                 
                 for (var i = 0; i < this.config.units.length; i++) {
-                    var uCfg = this.config.units[i];
-                    var un = this.layout.getUnitByPosition(uCfg.position);
-                    if(un) {
-                        if(uCfg.zindex > 0) {
-                            un.setStyle('zIndex', uCfg.zindex);
+                    var unitConfig = this.config.units[i];
+                    var unit = this.layout.getUnitByPosition(unitConfig.position);
+                    if(unit) {
+                        if(unitConfig.zindex > 0) {
+                            unit.setStyle('zIndex', unitConfig.zindex);
                         }
-                    }
-                }
 
-                //By default, yui-layout units don't dynamically keep a maxWidth/minWidth with respect to their neighbors
-                //which means a user can render the UI useless. To prevent this we add a check right when the unit's 
-                //resize event finishes 
-                for(var i=0; i<this.config.units.length; i++) {
-                    console.log('Storing onEndResize for unit[' + this.config.units[i].position + '] in layout[' + this.id + ']');
-                    var x = this.layout.getUnitByPosition(this.config.units[i].position);
-                    var me = this;
-                    x.on('endResize', this.onEndResizeUnit, x, this);
-//                    x.on('endResize', function() {
-//                        console.log('on end resize[' + me.id + ']');
-//                    }, x, true);
+                        //By default, yui-layout units don't dynamically keep a maxWidth/minWidth with respect to their neighbors
+                        //which means a user can render the UI useless. To prevent this we add a check right when the unit's
+                        //resize event finishes
+                        unit.on('endResize', this.onEndResizeUnit, unit, this);
+                    }
                 }
             },
 
             onEndResizeUnit : function(o, unit) {
-                console.log('resize unit[' + unit.position + '] for layout[' + this.id + ']');
+                console.log('end resize unit[' + unit.get('position') + '] for layout[' + this.id + ']');
                 //if the width of this unit is bigger than the layout width, it will
                 //overlap neighboring units. A 20px margin is used.
                 //Added check for minWidth as well
@@ -510,24 +502,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     //we add 20 pixels to it to define the new width
                     var diff = this.newWidthIsOk();
                     if(diff < 0) {
-                        this.fixChildren();
                         unit.set('width', (newWidth-diff)+20);
                     }
                 }
 
             },
 
-            fixChildren : function() {
-                var values = this.children.valueSet();
-                for(var i=0; i<values.length; i++) {
-                    var us = values[i].config.units;
-                    for(var j=0; j<us.length; j++) {
-                        var unit = values[i].layout.getUnitByPosition(us[j].position);
-                        values[i].onEndResizeUnit(null, unit); 
-                    }
-                }
-            },
-            
             newWidthIsOk : function() {
                 var result = 0;
                 for(var i=0; i<this.config.units.length; i++) {

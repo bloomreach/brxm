@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import java.util.Iterator;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -34,6 +31,10 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefiniti
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.util.Iterator;
 
 public abstract class AbstractListingPlugin extends RenderPlugin<Node> implements TableSelectionListener<Node> {
     @SuppressWarnings("unused")
@@ -80,6 +81,19 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
 
         if (!isOrderable()) {
             updateSelection(getModel());
+        }
+    }
+
+    protected IModel<Node> getSelectedModel() {
+        if(documentReference != null) {
+            return documentReference.getModel();
+        }
+        return null;
+    }
+
+    protected void setSelectedModel(IModel<Node> model){
+        if(documentReference != null) {
+            documentReference.setModel(model);
         }
     }
 

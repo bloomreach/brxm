@@ -31,7 +31,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 
-import javax.jcr.Node;
 import java.util.Iterator;
 
 public class BrowserPerspective extends Perspective {
@@ -43,7 +42,6 @@ public class BrowserPerspective extends Perspective {
     private final WireframeSettings settings;
     private UnitExpandCollapseBehavior toggler;
 
-    private IModelReference documentModelReference;
     private RenderService editorBrowseService;
 
     public BrowserPerspective(final IPluginContext context, final IPluginConfig config) {
@@ -73,8 +71,6 @@ public class BrowserPerspective extends Perspective {
 
             @Override
             protected void onServiceAdded(final IModelReference service, String name) {
-                documentModelReference = service;
-
                 if (observer == null) {
                     context.registerService(observer = new IObserver() {
 
@@ -83,8 +79,8 @@ public class BrowserPerspective extends Perspective {
                         }
 
                         public void onEvent(Iterator events) {
-                            if (documentModelReference != null) {
-                                JcrNodeModel documentModel = (JcrNodeModel) documentModelReference.getModel();
+                            if (service != null) {
+                                JcrNodeModel documentModel = (JcrNodeModel) service.getModel();
                                 if(documentModel.getItemModel() == null || documentModel.getItemModel().getPath() == null) {
                                     //Prevent calling toggle twice in a single request: we will end up here after
                                     //the onToggle override below sets the documentModel to null to remove the selected
@@ -113,7 +109,6 @@ public class BrowserPerspective extends Perspective {
                     context.unregisterService(observer, IObserver.class.getName());
                     observer = null;
                 }
-                documentModelReference = null;
             }
         }, config.getString("model.document"));
 
@@ -142,11 +137,6 @@ public class BrowserPerspective extends Perspective {
                                 if(editorBrowseService != null) {
                                     editorBrowseService.focus(null);
                                 }
-                                //Remove selected state from doclisting
-                                if (documentModelReference != null) {
-                                    documentModelReference.setModel(new JcrNodeModel((Node) null));
-                                }
-
                             }
                         }
                     });
