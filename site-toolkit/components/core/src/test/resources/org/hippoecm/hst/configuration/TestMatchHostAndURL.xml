@@ -31,6 +31,18 @@
     <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
     </bean>
     
+    <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"
+         class="org.hippoecm.hst.core.container.HstNavigationalStateCodecImpl" />
+         
+    <bean id="org.hippoecm.hst.core.component.HstURLFactory"
+        class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
+      <property name="urlNamespacePrefix" value="_hn:" />
+      <property name="parameterNameComponentSeparator" value=":" />
+      <property name="navigationalStateCodec" ref="org.hippoecm.hst.core.container.HstNavigationalStateCodec" />
+      <property name="portletResourceURLEnabled" value="false" />
+      <property name="referenceNamespaceIgnored" value="false" />
+    </bean>
+  
     <bean id="org.hippoecm.hst.configuration.hosting.VirtualHostsManager" class="org.hippoecm.hst.configuration.hosting.VirtualHostsManagerImpl">
         <constructor-arg value="/hst:unittestvirtualhosts"/>
         <property name="repository" ref="javax.jcr.Repository" />
