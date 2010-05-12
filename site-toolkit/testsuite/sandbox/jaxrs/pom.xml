@@ -226,13 +226,6 @@
       <scope>runtime</scope>
     </dependency>
     
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.testsuite</groupId>
-      <artifactId>hst-testsuite-content</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>
-    </dependency>
-    
   </dependencies>
   
   <build>

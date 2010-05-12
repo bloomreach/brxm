@@ -80,8 +80,9 @@ public class JaxrsServiceValve extends AbstractValve {
                 throw new IllegalStateException("Sitemount is not resolved for JAX-RS service for " + request.getServletPath());
             }
             
+            String requestPath = HstRequestUtils.getRequestPath(request);
             String servletPath = StringUtils.removeEnd(resolvedSiteMount.getResolvedMountPath(), "/");
-            String pathInfo = HstRequestUtils.getRequestPath(request);
+            String pathInfo = requestPath.substring(servletPath.length());
             
             HttpServletRequest adjustedRequest = new PathsAdjustedHttpServletRequestWrapper(context.getServletRequest(), servletPath, pathInfo);
             
