@@ -13,38 +13,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.jackrabbit.ocm;
+package org.hippoecm.hst.jackrabbit.ocm.hippo;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.hst.content.beans.NodeAware;
 
-@Node(jcrType="hippo:document", discriminator=false)
-public class HippoStdDocument extends HippoStdNode {
-
-    private String stateSummary;
-    private String state;
-
-
-    @Field(jcrName="hippostd:stateSummary") 
-    public String getStateSummary() {
-        return this.stateSummary;
+@Node(jcrType="hippostd:html", discriminator=false)
+public class HippoStdHtml implements NodeAware{
+    
+    private String content; 
+    private javax.jcr.Node node;
+    
+    public void setNode(javax.jcr.Node node) {
+        this.node = node;
     }
     
-    public void setStateSummary(String stateSummary) {
-        this.stateSummary = stateSummary;
+    public javax.jcr.Node getNode(){
+       return this.node;
     }
     
-    @Field(jcrName="hippostd:state") 
-    public String getState() {
-        return this.state;
+    
+    @Field(jcrName="hippostd:content")
+    public String getContent() {
+        return this.content;
     }
     
-    public void setState(String state) {
-        this.state = state;
+    public void setContent(String content) {
+        this.content = content;
     }
-    
-    public HippoStdFolder getFolder() {
-        return this.getParentFolder();
-    }
+
     
 }

@@ -18,6 +18,8 @@ package org.hippoecm.hst.jackrabbit.ocm;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdDocument;
+import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdHtml;
 
 @Node(jcrType="testproject:textpage", discriminator=false)
 public class TextPage extends HippoStdDocument {

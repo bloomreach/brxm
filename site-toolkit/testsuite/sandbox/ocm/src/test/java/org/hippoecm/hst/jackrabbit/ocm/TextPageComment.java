@@ -17,7 +17,7 @@ package org.hippoecm.hst.jackrabbit.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
+import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdNode;
 
 @Node(jcrType="testproject:comment", discriminator=false)
 public class TextPageComment extends HippoStdNode {

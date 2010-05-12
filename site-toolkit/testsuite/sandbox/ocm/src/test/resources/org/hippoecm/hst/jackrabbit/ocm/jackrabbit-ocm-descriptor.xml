@@ -23,18 +23,18 @@
     <field-descriptor fieldName="title" jcrName="testproject:title" />
   </class-descriptor>
   
-  <class-descriptor jcrType="hippo:html" className="org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml">
+  <class-descriptor jcrType="hippo:html" className="org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdHtml">
     <field-descriptor fieldName="path" path="true" />
     <field-descriptor fieldName="content" jcrName="hippostd:content" />
   </class-descriptor>
   
-  <class-descriptor jcrType="hippo:document" className="org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument">
+  <class-descriptor jcrType="hippo:document" className="org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdDocument">
     <field-descriptor fieldName="path" path="true" />
     <field-descriptor fieldName="stateSummary" jcrName="hippostd:stateSummary" />
     <field-descriptor fieldName="state" jcrName="hippostd:state" />
   </class-descriptor>
   
-  <class-descriptor jcrType="hippostd:folder" className="org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder">
+  <class-descriptor jcrType="hippostd:folder" className="org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdFolder">
     <field-descriptor fieldName="path" path="true" />
   </class-descriptor>
   

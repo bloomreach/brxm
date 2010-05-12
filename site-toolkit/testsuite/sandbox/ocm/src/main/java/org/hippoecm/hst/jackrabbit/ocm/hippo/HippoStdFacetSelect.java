@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.jackrabbit.ocm;
+package org.hippoecm.hst.jackrabbit.ocm.hippo;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
-@Node(jcrType="hippostd:fixeddirectory", discriminator=false)
-public class HippoStdFixedDirectory extends HippoStdFolder{
+@Node(jcrType="hippo:facetselect", discriminator=false)
+public class HippoStdFacetSelect extends HippoStdFolder{
 
 }
