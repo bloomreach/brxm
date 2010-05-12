@@ -15,12 +15,11 @@
  */
 package org.hippoecm.hst.core.request;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.container.HstContainerURL;
 
 /**
  * Implementations of this interface are a request flyweight instance of the {@link SiteMount} object, where possible wildcard property placeholders have been filled in, similar
@@ -52,23 +51,12 @@ public interface ResolvedSiteMount {
     String getResolvedMountPath();
 
     /**
-     * matches the current request, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or throws a 
+     * matches the current hstContainerURL, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or throws a 
      * {@link MatchException} or {@link NotFoundException} when cannot resolve to a sitemap item
-     * @param request
-     * @return the ResolvedSiteMapItem for the current request 
+     * @param HstContainerURL hstContainerURL
+     * @return the ResolvedSiteMapItem for the current hstContainerURL 
      * @throws MatchException 
      */
-    ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException;
-    
-    /**
-     * matches the current request but with excplicit <code>path</code> instead of the one from the request, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or throws a 
-     * {@link MatchException} or {@link NotFoundException} when cannot resolve to a sitemap item
-     * @param request
-     * @param siteMapPathInfo the path to match relative to the HstSiteMap
-     * @return the ResolvedSiteMapItem for the current request
-     * @throws MatchException 
-     */
-    ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String siteMapPathInfo) throws MatchException;
-
+    ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL) throws MatchException;
     
 }

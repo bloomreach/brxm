@@ -43,10 +43,14 @@ public class HstURLValve extends AbstractValve {
         requestContext.setSiteMapMatcher(getSiteMapMatcher());
         requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
       
-        HstContainerURL baseURL = requestContext.getContainerURLProvider().parseURL(servletRequest, context.getServletResponse(), requestContext);
+        
+        HstContainerURL baseURL = (HstContainerURL)servletRequest.getAttribute(HstContainerURL.class.getName());
+        
+        if(baseURL == null) {
+            baseURL = requestContext.getContainerURLProvider().parseURL(servletRequest, context.getServletResponse(), requestContext);
+        }
         
         requestContext.setBaseURL(baseURL);
-        
         // continue
         context.invokeNext();
     }

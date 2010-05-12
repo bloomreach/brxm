@@ -17,9 +17,8 @@ package org.hippoecm.hst.configuration.hosting;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -49,11 +48,11 @@ public interface VirtualHosts {
     boolean isExcluded(String pathInfo);
     
     /**
-     * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the 
+     * <p>This method tries to match a hstContainerURL to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMount(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. This object
-     * delegates to {@link ResolvedSiteMount#matchSiteMapItem(HttpServletRequest)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
-     * in the chain a match cannot be made, <code>null</code> will be returned. 
+     * {@link ResolvedVirtualHost#matchSiteMount(HstContainerURL)}, which returns the {@link ResolvedSiteMount}. This object
+     * delegates to {@link ResolvedSiteMount#matchSiteMapItem(HstContainerURL)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
+     * in the chain a match cannot be made a MatchException exception is thrown
      * </p>
      * 
      * @param request the HttpServletRequest
@@ -61,41 +60,31 @@ public interface VirtualHosts {
      * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured or when the request path does not match 
      * a sitemap item
      */
-    ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException;
+    ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL) throws MatchException;
 
-    /**
-     * Same as {@link #matchSiteMapItem(HttpServletRequest)} only now the match is done against <code>path</code> and not against the
-     * request path 
-     * @see #matchSiteMapItem(HttpServletRequest)
-     * @param request the HttpServletRequest
-     * @param siteMapPathInfo the path to match relative to the HstSiteMap
-     * @return the resolvedSiteMapItem for this request
-     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured or when the request path does not match 
-     * a sitemap item
-     */
-    ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String siteMapPathInfo) throws MatchException;
     
     /**
-     * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 
+     * <p>This method tries to match a hostName and requestPath to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMount(HttpServletRequest)}, which returns the {@link ResolvedSiteMount}. If somewhere
+     * {@link ResolvedVirtualHost#matchSiteMount(String)}, which returns the {@link ResolvedSiteMount}. If somewhere
      * in the chain a match cannot be made, <code>null</code> will be returned. 
      * </p>
-     * @param request the HttpServletRequest
-     * @return the resolvedSiteMount for this request or <code>null</code> when it can not be matched to a siteMount
+     * @param String hostName
+     * @param String requestPath
+     * @return the resolvedSiteMount for this hstContainerUrl or <code>null</code> when it can not be matched to a siteMount
      * @throws MatchException
      */
-    ResolvedSiteMount matchSiteMount(HttpServletRequest request) throws MatchException;
+    ResolvedSiteMount matchSiteMount(String hostName, String requestPath) throws MatchException;
     
     /**
      * <p>
      *  This method tries to match a request to a flyweight {@link ResolvedVirtualHost}
      * </p>
-     * @param request
-     * @return the resolvedVirtualHost for this request or <code>null</code> when it can not be matched to a virtualHost
+     * @param hostName 
+     * @return the resolvedVirtualHost for this hostName or <code>null</code> when it can not be matched to a virtualHost
      * @throws MatchException
      */
-    ResolvedVirtualHost matchVirtualHost(HttpServletRequest request) throws MatchException;
+    ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException;
  
     /**
      * Returns the list of all available hosts managed by this VirtualHosts object. When <code>mountableOnly</code> is <code>false</code>, you might get

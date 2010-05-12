@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.util.HttpUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
@@ -87,6 +88,10 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         return this.navigationalStateCodec;
     }
 
+    public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse) {
+        return parseURL(servletRequest, servletResponse, null);
+    }
+    
     public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext) {
         return parseURL(servletRequest, servletResponse, requestContext, null);
     }
@@ -96,14 +101,23 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
 
         HstContainerURLImpl url = new HstContainerURLImpl();
         
-        // requestContext now is a required parameter...
-        HstContainerURL baseURL = requestContext.getBaseURL();
+        HstContainerURL baseURL = requestContext == null ? null : requestContext.getBaseURL();
 
         if (baseURL != null) {
             url.setContextPath(baseURL.getContextPath());
+            url.setHostName(baseURL.getHostName());
+            url.setPortNumber(baseURL.getPortNumber());
+            url.setRequestPath(baseURL.getRequestPath());
+            url.setResolvedMountPath(baseURL.getResolvedMountPath());
         }
         else {
             url.setContextPath(request.getContextPath());
+            url.setHostName(HstRequestUtils.getFarthestRequestHost(request));
+            url.setPortNumber(HstRequestUtils.getRequestServerPort(request));
+            url.setRequestPath(HstRequestUtils.getRequestPath(request));
+            if(requestContext != null && requestContext.getResolvedSiteMapItem() != null) {
+                url.setResolvedMountPath(requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedMountPath());
+            }
         }
         
         String characterEncoding = request.getCharacterEncoding();
@@ -113,6 +127,20 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
         
         url.setCharacterEncoding(characterEncoding);
+
+        
+        Map<String, String []> paramMap = HttpUtils.parseQueryString(request);
+        url.setParameters(paramMap);
+        
+        ResolvedSiteMount resolvedSiteMount = (ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
+        if(resolvedSiteMount == null) {
+            // we cannot determine the pathInfo as long as there is no resolved sitemount. Let's return
+            return url;
+        }
+        
+        
+        url.setResolvedMountPath(resolvedSiteMount.getResolvedMountPath());
+        
         
         String namespacedPathPart = null;
         // pathInfo argument is always passed when a navigational url is needed; 
@@ -164,9 +192,6 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
                 log.warn("Invalid container URL path: {}", pathInfo);
             }
         }
-        
-        Map<String, String []> paramMap = HttpUtils.parseQueryString(request);
-        url.setParameters(paramMap);
         
         return url;
     }
@@ -298,10 +323,10 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
      */
     protected String [] splitPathInfo(HttpServletRequest request, String characterEncoding) {
        
-        String requestPath = HstRequestUtils.getRequestPath(request, characterEncoding);
+        String pathInfo = HstRequestUtils.getPathInfo(request, characterEncoding);
         
-        if (!requestPath.startsWith(urlNamespacePrefixedPath)) {
-            return new String [] { null, requestPath };
+        if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
+            return new String [] { null, pathInfo };
         }
         
         String requestURI = (String) request.getAttribute("javax.servlet.include.request_uri");

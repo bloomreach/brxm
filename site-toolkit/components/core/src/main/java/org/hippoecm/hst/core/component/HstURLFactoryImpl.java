@@ -65,9 +65,24 @@ public class HstURLFactoryImpl implements HstURLFactory {
         return referenceNamespaceIgnored;
     }
     
-    public HstContainerURLProvider getContainerURLProvider(HstRequestContext requestContext) {
-        return requestContext.isPortletContext() ? requestContext.isEmbeddedRequest() ? getEmbeddedPortletURLProvider() : getPortletURLProvider() : getURLProvider();
-    }
+
+    public HstContainerURLProvider getContainerURLProvider() {
+        return getContainerURLProvider(true, false); 
+     }
+    
+    public HstContainerURLProvider getContainerURLProvider(boolean website) {
+       return getContainerURLProvider(website, false);
+     }
+    
+    public HstContainerURLProvider getContainerURLProvider(boolean website, boolean isEmbedded) {
+        if(website) {
+            return getURLProvider();
+        }
+        if(isEmbedded) {
+          return  getEmbeddedPortletURLProvider();
+        }
+        return getPortletURLProvider();
+     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext) {
         // if container url == null, use the requestContext baseUrl
@@ -77,7 +92,7 @@ public class HstURLFactoryImpl implements HstURLFactory {
             referenceNamespace = "";
         }
         
-        return new HstURLImpl(type, baseContainerURL, referenceNamespace, getContainerURLProvider(requestContext), requestContext);
+        return new HstURLImpl(type, baseContainerURL, referenceNamespace, getContainerURLProvider(!requestContext.isPortletContext(), requestContext.isEmbeddedRequest()), requestContext);
     }
 
     protected HstContainerURLProvider getURLProvider() {
@@ -117,4 +132,5 @@ public class HstURLFactoryImpl implements HstURLFactory {
         
         return embeddedPortletURLProvider;
     }
+
 }

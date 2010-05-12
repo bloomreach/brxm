@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -95,11 +96,11 @@ public class SiteMapItemTag extends TagSupport {
             if(siteMapItem != null) {
                 log.warn("preferPath attr is added, but also 'preferItemByPath', 'siteMapItem' or 'preferItemId'. This is double. Skipping preferItemId attr");
             } else {
-                ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedSiteMount);
-                if(resolvedItem == null) {
-                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedSiteMount.getSiteMount().getName());
-                } else {
+                try {
+                    ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedSiteMount);
                     siteMapItem = resolvedItem.getHstSiteMapItem();  
+                } catch (NotFoundException e) {
+                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedSiteMount.getSiteMount().getName());
                 }
             }
         }

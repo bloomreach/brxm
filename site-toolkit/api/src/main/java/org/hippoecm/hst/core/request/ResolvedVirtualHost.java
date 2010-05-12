@@ -15,10 +15,9 @@
  */
 package org.hippoecm.hst.core.request;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.core.container.HstContainerURL;
 
 /**
  * Implementations of this interface are a request flyweight instance of the {@link VirtualHost} object, where possible wildcard property placeholders have been filled in, similar
@@ -40,10 +39,10 @@ public interface ResolvedVirtualHost {
     String getResolvedHostName();
 
     /**
-     * matches the current request and resolved virtual host to a {@link ResolvedSiteMount} item
-     * @param request
+     * matches the current requestPath and resolved virtual host to a {@link ResolvedSiteMount} item
+     * @param requestPath
      * @return a {@link ResolvedSiteMount} or <code>null</code> when none matches
      */
-    ResolvedSiteMount matchSiteMount(HttpServletRequest request);
+    ResolvedSiteMount matchSiteMount(String requestPath);
     
 }

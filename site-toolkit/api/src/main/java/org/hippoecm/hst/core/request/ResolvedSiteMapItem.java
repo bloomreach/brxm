@@ -50,7 +50,7 @@ public interface ResolvedSiteMapItem {
     
     /**
      * Returns a relative path from hst request path to the SiteMapItem that was matched
-     * @return the matched path to this <code>ResolvedSiteMapItem</code>, relative to the servletpath
+     * @return the matched path to this <code>ResolvedSiteMapItem</code>, relative to the mount path
      */
     String getPathInfo();
     

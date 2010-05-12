@@ -27,12 +27,49 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     protected String characterEncoding;
     protected String contextPath;
+    protected String hostName;
+    protected String requestPath;
+    protected String resolvedMountPath;
     protected String pathInfo;
+    protected int portNumber;
     protected String actionWindowReferenceNamespace;
     protected String resourceWindowReferenceNamespace;
     protected String resourceId;
     protected Map<String, String[]> parameterMap;
     protected Map<String, String[]> actionParameterMap;
+    
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public String getRequestPath() {
+        return requestPath;
+    }
+
+    public void setRequestPath(String requestPath) {
+        this.requestPath = requestPath;
+    }
+
+    public String getResolvedMountPath() {
+        return resolvedMountPath;
+    }
+
+    public void setResolvedMountPath(String resolvedMountPath) {
+        this.resolvedMountPath = resolvedMountPath;
+    }
+
+    public int getPortNumber() {
+        return portNumber;
+    }
+
+    public void setPortNumber(int portNumber) {
+        this.portNumber = portNumber;
+    }
+
     
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
@@ -146,6 +183,10 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         
         cloned.characterEncoding = this.characterEncoding;
         cloned.contextPath = this.contextPath;
+        cloned.hostName = this.hostName;
+        cloned.requestPath = this.requestPath;
+        cloned.resolvedMountPath = this.resolvedMountPath;
+        cloned.portNumber = this.portNumber;
         cloned.pathInfo = this.pathInfo;
         cloned.actionWindowReferenceNamespace = this.actionWindowReferenceNamespace;
         cloned.resourceWindowReferenceNamespace = this.resourceWindowReferenceNamespace;

@@ -58,7 +58,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
         this.urlFactory = getComponent(HstURLFactory.class.getName());
         this.requestContext = new HstRequestContextImpl(null);
-        this.urlProvider = this.urlFactory.getContainerURLProvider(requestContext);
+        this.urlProvider = this.urlFactory.getContainerURLProvider(!requestContext.isPortletContext(), requestContext.isEmbeddedRequest());
         ((HstRequestContextImpl) this.requestContext).setURLFactory(urlFactory);
         
         rootWindow = new MockHstComponentWindow();

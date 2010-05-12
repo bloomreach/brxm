@@ -130,7 +130,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             if(hstSiteMapItemAny == null) {
                 log.warn("Did not find a matching sitemap item for path '{}', SiteMount '{}' and Host '"+resolvedSiteMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
                 		". Return null", pathInfo, resolvedSiteMount.getSiteMount().getParent() == null ? "hst:root" : resolvedSiteMount.getSiteMount().getMountPath() );
-                throw new NotFoundException("Request path '"+pathInfo+"' could not be matched");
+                throw new NotFoundException("PathInfo '"+pathInfo+"' could not be matched");
             } else {
                 // The ** has the value of the entire pathInfo
                 params.put(String.valueOf(params.size()+1), pathInfo);

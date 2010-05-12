@@ -119,7 +119,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
     
     public HstContainerURLProvider getContainerURLProvider() {
-        return urlFactory != null ? urlFactory.getContainerURLProvider(this) : null;
+        return urlFactory != null ? urlFactory.getContainerURLProvider(!isPortletContext(), isEmbeddedRequest()) : null;
     }
 
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {

@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -77,7 +78,12 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
             return null;
         }
         HstRequestContext ctx = request.getRequestContext();
-        resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getResolvedSiteMount()));
+        try {
+            resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getResolvedSiteMount()));
+        }  catch (NotFoundException e) {
+            HstServices.getLogger(getClass().getName()).warn("Cannot resolve to sitemap item because '{}'. Return null.", e.getMessage()); 
+            return null;
+        }
         return resolvedSiteMapItem.resolvedItem;
     }
 

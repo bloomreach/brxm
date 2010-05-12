@@ -15,13 +15,10 @@
  */
 package org.hippoecm.hst.site.request;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,16 +40,15 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         return virtualHost;
     }
 
-    public ResolvedSiteMount matchSiteMount(HttpServletRequest request) {
+    public ResolvedSiteMount matchSiteMount(String requestPath) {
         SiteMount siteMount = virtualHost.getRootSiteMount();
         if(siteMount == null) {
             log.warn("Virtual Host '{}' is not (correctly) mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());
             return null;
         }
-        String requestPath = HstRequestUtils.getRequestPath(request);
         // strip leading and trailing slashes
-        requestPath = PathUtils.normalizePath(requestPath);
-        String[] requestPathSegments = requestPath.split("/");
+        String path = PathUtils.normalizePath(requestPath);
+        String[] requestPathSegments = path.split("/");
         int position = 0;
         while(position < requestPathSegments.length) {
             if(siteMount.getChildMount(requestPathSegments[position]) != null) {
@@ -71,8 +67,8 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             builder.insert(0,requestPathSegments[--position]).insert(0,"/");
            
         }
-        
         String resolvedMountPath = builder.toString();
+        
         ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedMountPath);
         log.debug("Found ResolvedSiteMount is '{}' and the mount prefix for it is :", resolvedSiteMount.getResolvedMountPath());
         

@@ -52,7 +52,7 @@ public class ActionValve extends AbstractValve {
             window = findComponentWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
             
             HstResponseState responseState = null;
-            HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider(requestContext);
+            HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider(!requestContext.isPortletContext(), requestContext.isEmbeddedRequest());
             
             if (window == null) {
                 if (log.isWarnEnabled()) {

@@ -21,7 +21,7 @@ import java.util.Map;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
- * HstContainerURLProviderImpl
+ * HstCogetContainerURLProviderntainerURLProviderImpl
  * 
  * @version $Id$
  */
@@ -61,9 +61,8 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
             urlBuilder.append(containerURL.getContextPath());
         }
         
-        // TODO for resources, we do not include the mount path. Can we do this cleaner?
         if(!ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
-            String mountPrefix = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedMountPath();
+            String mountPrefix = containerURL.getResolvedMountPath();
             if(mountPrefix != null) {
                 urlBuilder.append(mountPrefix);
             }

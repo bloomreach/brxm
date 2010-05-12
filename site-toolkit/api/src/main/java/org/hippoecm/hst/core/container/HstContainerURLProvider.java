@@ -49,13 +49,24 @@ public interface HstContainerURLProvider {
     String getParameterNameComponentSeparator();
 
     /**
-     * Parses the current request with the current {@link HstRequestContext} and create an {@link HstContainerURL} instance.
+     * Parses the current request and create an {@link HstContainerURL} instance.
      * 
      * @param servletRequest
      * @param servletResponse
      * @return
      */
+    HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse);
+    
+    /**
+     * Parses the current request with the current {@link HstRequestContext} and create an {@link HstContainerURL} instance.
+     * 
+     * @param servletRequest
+     * @param servletResponse
+     * @param requestContext
+     * @return
+     */
     HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext);
+    
     
     /**
      * Parses the current request with the current {@link HstRequestContext} and a specified pathInfo

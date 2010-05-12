@@ -28,13 +28,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
-import org.hippoecm.hst.configuration.hosting.NoHstSiteException;
-import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -181,12 +181,10 @@ public class HstFilter implements Filter {
             
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
             
-            String requestPath = HstRequestUtils.getRequestPath(req);
-            
-            VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
+              VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
             VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
             
-            if(vHosts == null || vHosts.isExcluded(requestPath)) {
+            if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(req))) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -194,67 +192,59 @@ public class HstFilter implements Filter {
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 try {
-                    try {
-                        ResolvedSiteMapItem resolvedSiteMapItem = vHosts.matchSiteMapItem(req);
-                        if(resolvedSiteMapItem == null) {
-                            // should not be possible as when it would be null, an exception should have been thrown
-                            throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
-                        }
-                        if (resolvedSiteMapItem.getErrorCode() > 0) {
-                            try {
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("The resolved sitemap item for {} has error status: {}", requestPath, Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
-                                }           
-                                ((HttpServletResponse)response).sendError(resolvedSiteMapItem.getErrorCode());
-                                
-                            } catch (IOException e) {
-                                if (logger.isDebugEnabled()) {
-                                    logger.warn("Exception invocation on sendError().", e);
-                                } else if (logger.isWarnEnabled()) {
-                                    logger.warn("Exception invocation on sendError().");
-                                }
+                    ResolvedSiteMount mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(req), HstRequestUtils.getRequestPath(req));
+                    if(mount != null) {
+                        
+                        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
+                        
+                        // now we can parse the url *with* a RESOLVED_SITEMOUNT which is needed!
+                        
+                        HstURLFactory factory = (HstURLFactory)HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
+                        HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(req, res);
+                        req.setAttribute(HstContainerURL.class.getName(), hstContainerURL);
+                        
+                        if(mount.getSiteMount().isSiteMount()) {
+                            ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL);
+                            if(resolvedSiteMapItem == null) {
+                                // should not be possible as when it would be null, an exception should have been thrown
+                                throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
                             }
-                            // we're done:
-                            return;
-                        } 
-                        /*
-                         * put the matched RESOLVED_SITEMAP_ITEM temporarily on the request, as we do not yet have a HstRequestContext. When the
-                         * HstRequestContext is created, and there is a RESOLVED_SITEMAP_ITEM on the request, we put it on the HstRequestContext.
-                         */  
-                        request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
-                        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMapItem.getResolvedSiteMount());
-                      
-                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
-                        return;
-                    } catch (NotFoundException e) {
-                        // try to find an error page from the SiteMount: The NotFoundException can be only thrown when there was found a SiteMount with 
-                        // HstSite, but not a match in the sitemap tree.
-                        ResolvedSiteMount siteMount = vHosts.matchSiteMount(req);
-                        if(siteMount == null) {
-                            throw new MatchException("No SiteMount found for '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
-                        }
-                        String pageNotFound = siteMount.getSiteMount().getPageNotFound();
-                        if(pageNotFound == null) {
-                            throw new MatchException("There is no pagenotfound configured for '"+siteMount.getSiteMount().getName()+"'");
-                        }
-                        ResolvedSiteMapItem resolvedSiteMapItem = vHosts.matchSiteMapItem(req, pageNotFound);
-                        if(resolvedSiteMapItem != null) {
+                            if (resolvedSiteMapItem.getErrorCode() > 0) {
+                                try {
+                                    if (logger.isDebugEnabled()) {
+                                        logger.debug("The resolved sitemap item for {} has error status: {}", hstContainerURL.getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
+                                    }           
+                                    ((HttpServletResponse)response).sendError(resolvedSiteMapItem.getErrorCode());
+                                    
+                                } catch (IOException e) {
+                                    if (logger.isDebugEnabled()) {
+                                        logger.warn("Exception invocation on sendError().", e);
+                                    } else if (logger.isWarnEnabled()) {
+                                        logger.warn("Exception invocation on sendError().");
+                                    }
+                                }
+                                // we're done:
+                                return;
+                            } 
+
+                            /*
+                             * It is mandatory to have the resolved sitemount on the request as an attribute for the hst request processing.
+                             * In case we have a resolved sitemap item, we also store it on the request
+                             */
                             request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
+                            
                             HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
                             return;
                         } else {
-                            throw new MatchException("The configured pagenotfound '"+pageNotFound+"' can not be matched in the sitemap.");
+                            if(mount.getNamedPipeline() == null) {
+                                throw new MatchException("No hstSite and no custom namedPipeline for SiteMount found for '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
+                            } 
+                            logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
+                            HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, mount.getNamedPipeline());
+                        
                         }
-                    }  catch (NoHstSiteException e) {
-                        // this error can only be thrown when we had found a SiteMount, but there was no HstSite attached to it
-                        // let's see if this sitemount has a custom pipeline: if not, we cannot process the request
-                        ResolvedSiteMount resolvedSiteMount = vHosts.matchSiteMount(req);
-                        if(resolvedSiteMount.getNamedPipeline() == null) {
-                            throw new MatchException("No hstSite and no custom namedPipeline for SiteMount found for '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
-                        } 
-                        logger.info("Processing request for pipeline '{}'", resolvedSiteMount.getNamedPipeline());
-                        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMount);
-                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMount.getNamedPipeline());
+                    } else {
+                        throw new MatchException("Request cannot be matched to a SiteMount");
                     }
                 }catch (MatchException e) {
                     // TODO ??

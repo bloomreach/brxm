@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -107,11 +108,11 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
 
     
     
-    public boolean isExcluded(String requestPath) {
+    public boolean isExcluded(String pathInfo) {
         // test prefix
         if(prefixExclusions != null) {
             for(String excludePrefix : prefixExclusions) {
-                if(requestPath.startsWith(excludePrefix)) {
+                if(pathInfo.startsWith(excludePrefix)) {
                     return true;
                 }
             }
@@ -119,7 +120,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         // test suffix
         if(suffixExclusions != null) {
             for(String excludeSuffix : suffixExclusions) {
-                if(requestPath.endsWith(excludeSuffix)) {
+                if(pathInfo.endsWith(excludeSuffix)) {
                     return true;
                 }
             }
@@ -129,60 +130,45 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     }
     
     
-public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request)  throws MatchException{
-        
-        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
+    public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException{
+            
+        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hstContainerURL.getHostName());
         if(resolvedVirtualHost == null) {
-            throw new MatchException("Unknown host '"+HstRequestUtils.getRequestServerName(request)+"'");
+            throw new MatchException("Unknown host '"+hstContainerURL.getHostName()+"'");
         }
-        ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(request);
+        ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(hstContainerURL.getRequestPath());
         if(resolvedSiteMount == null) {
             if(resolvedSiteMount == null) {
-                throw new MatchException("resolvedVirtualHost '"+resolvedVirtualHost.getResolvedHostName()+"' does not have a site mount");
+                throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a site mount");
             }
         }
-        return resolvedSiteMount.matchSiteMapItem(request);
+        return resolvedSiteMount.matchSiteMapItem(hstContainerURL);
     }
 
-public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String siteMapPathInfo)  throws MatchException{
     
-    ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
-    if(resolvedVirtualHost == null) {
-        throw new MatchException("Unknown host '"+HstRequestUtils.getRequestServerName(request)+"'");
-    }
-    ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(request);
-    if(resolvedSiteMount == null) {
-        if(resolvedSiteMount == null) {
-            throw new MatchException("resolvedVirtualHost '"+resolvedVirtualHost.getResolvedHostName()+"' does not have a site mount");
-        }
-    }
-    return resolvedSiteMount.matchSiteMapItem(request, siteMapPathInfo);
-}
-
-    public ResolvedSiteMount matchSiteMount(HttpServletRequest request) throws MatchException {
-        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(request);
+    public ResolvedSiteMount matchSiteMount(String hostName, String requestPath) throws MatchException {
+        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
         ResolvedSiteMount resolvedSiteMount = null;
         if(resolvedVirtualHost != null) {
-            resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(request);
+            resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(requestPath);
         }
         return resolvedSiteMount;
     }
     
-    public ResolvedVirtualHost matchVirtualHost(HttpServletRequest request) throws MatchException {
+    public ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException {
         if(!virtualHostsConfigured) {
             throw new MatchException("No correct virtual hosts configured. Cannot continue request");
         }
         
-        String requestServerName = HstRequestUtils.getRequestServerName(request);
-        ResolvedVirtualHost host = matchVirtualHost(requestServerName);
+        ResolvedVirtualHost host = findMatchingVirtualHost(hostName);
         
         // no host found. Let's try the default host, if there is one configured:
         if(host == null && this.getDefaultHostName() != null) {
-            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", requestServerName, this.getDefaultHostName());
+            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", hostName, this.getDefaultHostName());
             host = matchVirtualHost(this.getDefaultHostName());
         }
         if(host == null) {
-           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", requestServerName, this.getDefaultHostName());
+           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", hostName , this.getDefaultHostName());
           
         }
         return host;
@@ -195,7 +181,7 @@ public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String s
      * @param host
      * @return the matched virtual host
      */
-    protected ResolvedVirtualHost matchVirtualHost(String hostName) {
+    protected ResolvedVirtualHost findMatchingVirtualHost(String hostName) {
         for(VirtualHostService virtualHost : rootVirtualHosts.values()) {
             // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
             // with their id, hence, we cannot get them directly, but have to test them all

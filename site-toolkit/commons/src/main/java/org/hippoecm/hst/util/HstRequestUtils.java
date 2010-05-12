@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
  * HST Request Utils 
@@ -66,31 +67,8 @@ public class HstRequestUtils {
         
         return hstResponse;
     }
-    
-    
+
     /**
-     * This method has been deprecated as we moved from Servlets to Filters: the pathInfo is misleading, as wrt {@link HttpServletRequest#getPathInfo}: this
-     * returns the path after the servlet path. In case of a Filter listing to /*, this is always an empty string "". Therefor, use getDecodedPath instead
-     * @deprecated use {@link #getDecodedPath(HttpServletRequest)} instead
-     */
-    public static String getPathInfo(HttpServletRequest request){
-        return getRequestPath(request);
-    }
-    
-    /**
-     * This method has been deprecated as we moved from Servlets to Filters: the pathInfo is misleading, as wrt {@link HttpServletRequest#getPathInfo}: this
-     * returns the path after the servlet path. In case of a Filter listing to /*, this is always an empty string "". Therefor, use getDecodedPath instead
-     * @deprecated use {@link #getDecodedPath(HttpServletRequest, String)} instead
-     */
-    public static String getPathInfo(HttpServletRequest request, String characterEncoding){
-        return getRequestPath(request);
-    }
-    
-    /**
-     * Returns any extra path information associated with the URL the client sent when it made this request.
-     * The  extra path information that comes after the context path but before the query string in the request URL
-     * This method extracts and decodes the path information from the request URI returned from
-     * <CODE>HttpServletRequest#getRequestURI()</CODE>.
      * @param request
      * @return the decoded getRequestURI after the context path but before the query string in the request URL
      */
@@ -99,18 +77,51 @@ public class HstRequestUtils {
     }
     
     /**
-     * <p>
-     * Returns any extra path information associated with the URL the client sent when it made this request.
-     * The  extra path information that comes after the context path but before the query string in the request URL
-     * This method extracts and decodes the path information by the specified character encoding parameter
-     * from the request URI.
-     * </p>
      * @param request
      * @param characterEncoding
      * @return the decoded getRequestURI after the context path but before the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request, String characterEncoding) {
+        return getDecodedPath(request, characterEncoding, false);
+    }
+    
+    /**
+     * Returns any extra path information associated with the URL the client sent when it made this request.
+     * The  extra path information that comes after the context path and after the (resolved) mountpath but before the query string in the request URL
+     * This method extracts and decodes the path information from the request URI returned from
+     * <CODE>HttpServletRequest#getRequestURI()</CODE>.
+     * @param request
+     * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
+     */
+    public static String getPathInfo(HttpServletRequest request) {
+        return getPathInfo(request, null);
+    }
+    
+    /**
+     * <p>
+     * Returns any extra path information associated with the URL the client sent when it made this request.
+     * The  extra path information that comes after the context path and after the (resolved) mountpath but before the query string in the request URL
+     * This method extracts and decodes the path information by the specified character encoding parameter
+     * from the request URI.
+     * </p>
+     * @param request
+     * @param characterEncoding
+     * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
+     */
+    public static String getPathInfo(HttpServletRequest request, String characterEncoding) {
+        return getDecodedPath(request, characterEncoding, true);
+    }
+    
+    
+    private static String getDecodedPath(HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
         String encodePathInfo = request.getRequestURI().substring(request.getContextPath().length());
+        if(stripMountPath) {
+            ResolvedSiteMount resSiteMount = (ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
+            if(resSiteMount == null) {
+                throw new IllegalStateException("When asking for the request path, there has to be a resolved sitemount on the request");
+            }
+            encodePathInfo = encodePathInfo.substring(resSiteMount.getResolvedMountPath().length());
+        }
         
         if (characterEncoding == null) {
             characterEncoding = request.getCharacterEncoding();
@@ -234,5 +245,7 @@ public class HstRequestUtils {
     public static String getFarthestRemoteAddr(HttpServletRequest request) {
         return getRemoteAddrs(request)[0];
     }
+
+   
     
 }

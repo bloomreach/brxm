@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 

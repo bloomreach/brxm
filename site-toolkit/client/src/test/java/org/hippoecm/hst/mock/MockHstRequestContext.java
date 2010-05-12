@@ -130,7 +130,7 @@ public class MockHstRequestContext implements HstRequestContext {
     }
     
     public HstContainerURLProvider getContainerURLProvider() {
-        return urlFactory != null ? urlFactory.getContainerURLProvider(this) : null;
+        return urlFactory != null ? urlFactory.getContainerURLProvider(!this.isPortletContext(), this.isEmbeddedRequest()) : null;
     }
 
     public void removeAttribute(String name) {

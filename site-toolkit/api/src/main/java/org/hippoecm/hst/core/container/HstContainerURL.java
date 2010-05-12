@@ -33,17 +33,43 @@ public interface HstContainerURL {
     String getCharacterEncoding();
     
     /**
+     * Returns the host name of the request: note that with reverse proxies, this can be the original host informations requested 
+     * by the client or the proxies 
+     * @return the host name of the request
+     */
+    String getHostName();
+    
+    /**
      * Returns the current container's servlet context path.
      * 
      * @return
      */
     String getContextPath();
     
+    /**
+     * Returns the current request after the context path but before the queryString
+     * 
+     * @return 
+     */
+    String getRequestPath();
     
     /**
-     * Returns the current request's path info.
+     * Returns the portnumber of the request: note that with reverse proxies, this can be the original port requested 
+     * by the client or the proxies 
+     * @return the portnumber of the request
+     */
+    int getPortNumber();
+    
+    /**
      * 
-     * @return
+     * @return resolved mount path or <code>null</code> when not yet resolved
+     */
+    String getResolvedMountPath();
+    
+    /**
+     * Returns the current request's path info (part after context path and sitemount path)
+     * 
+     * @return path info or <code>null</code> when the resolved mount path is not yet resolved
      */
     String getPathInfo();
     

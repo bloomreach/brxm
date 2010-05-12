@@ -15,16 +15,14 @@
  */
 package org.hippoecm.hst.site.request;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.configuration.hosting.MatchException;
-import org.hippoecm.hst.configuration.hosting.NoHstSiteException;
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,30 +58,23 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
        return siteMount.getNamedPipeline();
     }
 
-
-    public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request) throws MatchException {
-        String requestPath = HstRequestUtils.getRequestPath(request);
-
-        if(!requestPath.startsWith(getResolvedMountPath())) {
-            throw new MatchException("It is not allowed that the request path from the request is different then the mountPath from the ResolvedSiteMount");
-        }
-        String siteMapPathInfo = requestPath.substring(getResolvedMountPath().length());
-        
-        return matchSiteMapItem(request, siteMapPathInfo);
-    }
-    
-    public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request, String siteMapPathInfo) throws MatchException {
+    public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL) throws MatchException {
         // test whether this SiteMount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
         if(getSiteMount().getHstSite() == null) {
-            throw new NoHstSiteException("No HstSite attached to SiteMount '"+ getSiteMount().getName()+"'. The path '"+siteMapPathInfo+"' thus not be matched to a sitemap item");
+            throw new MatchException("No HstSite attached to SiteMount '"+ getSiteMount().getName()+"'. The path '"+hstContainerURL.getRequestPath()+"' thus not be matched to a sitemap item");
+        }
+        
+        String siteMapPathInfo = hstContainerURL.getPathInfo();
+        if(siteMapPathInfo == null) {
+          throw new MatchException("SiteMapPathInfo is not allowed to be null");
         }
         
         if("".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
            log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
            siteMapPathInfo = siteMount.getHomePage();
            if(siteMapPathInfo == null || "".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
-               log.warn("SiteMount '{}' for host '{}' does not have a homepage configured and the request path is empty. Cannot map to sitemap item. Return null", getSiteMount().getName(), getResolvedVirtualHost().getResolvedHostName());
-               return null;
+               log.warn("SiteMount '{}' for host '{}' does not have a homepage configured and the path info is empty. Cannot map to sitemap item. Return null", getSiteMount().getName(), getResolvedVirtualHost().getResolvedHostName());
+               throw new MatchException("No homepage configured and empty path after sitemount");
            } else {
                log.debug("Trying to map homepage '{}' to the sitemap for SiteMount '{}'", siteMapPathInfo, getSiteMount().getName());
            }
@@ -93,7 +84,19 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
         if(matcher == null) {
             throw new MatchException("The VirtualHostManager does not have a HstSiteMapMatcher configured. Cannot match request to a sitemap without this");        
         }
-        return matcher.match(siteMapPathInfo, this);
+        ResolvedSiteMapItem item = null;
+        try {
+            item = matcher.match(siteMapPathInfo, this);
+        } catch(NotFoundException e){
+            log.debug("Cannot match '{}'. Try getting the pagenotfound", siteMapPathInfo);
+            String pageNotFound = siteMount.getPageNotFound();
+            if(pageNotFound == null) {
+                throw new MatchException("There is no pagenotfound configured for '"+siteMount.getName()+"'");
+            }
+            // if pageNotFound cannot be matched, again a NotFoundException is thrown which extends MatchException so is allowed
+            item = matcher.match(pageNotFound, this);
+        }
+        return item; 
     }
 
 }
