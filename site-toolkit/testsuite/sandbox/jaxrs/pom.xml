@@ -25,7 +25,7 @@
   <name>Hippo Site Toolkit Test Suite Sandbox Experimental REST Support</name>
   <description>Hippo Site Toolkit Test Suite Sandbox for Experimental REST Support</description>
   <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
-  <artifactId>hst-sandbox-jaxrs</artifactId>
+  <artifactId>hst-jaxrs</artifactId>
   <packaging>jar</packaging>
   
   <dependencies>

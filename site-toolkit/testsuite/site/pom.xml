@@ -152,7 +152,7 @@
    
     <dependency>
       <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
-      <artifactId>hst-sandbox-jaxrs</artifactId>
+      <artifactId>hst-jaxrs</artifactId>
       <version>${project.version}</version>
     </dependency>
 

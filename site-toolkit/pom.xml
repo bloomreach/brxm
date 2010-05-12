@@ -664,6 +664,12 @@
         <version>${jackrabbit.version}</version>
       </dependency>
       
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-ocm</artifactId>
+        <version>${jackrabbit.version}</version>
+      </dependency>
+      
       <!-- HTML Cleaner -->
       
       <dependency>
