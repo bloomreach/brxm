@@ -20,51 +20,37 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
-import org.apache.jackrabbit.ocm.manager.atomictypeconverter.impl.DefaultAtomicTypeConverterProvider;
-import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
-import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
-import org.apache.jackrabbit.ocm.manager.objectconverter.ObjectConverter;
-import org.apache.jackrabbit.ocm.manager.objectconverter.ProxyManager;
-import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ProxyManagerImpl;
-import org.apache.jackrabbit.ocm.mapper.Mapper;
-import org.apache.jackrabbit.ocm.mapper.impl.digester.DigesterMapperImpl;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
 import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdDocument;
 import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdFolder;
-import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdHtml;
-import org.hippoecm.hst.jackrabbit.ocm.manager.cache.NOOPObjectCache;
-import org.hippoecm.hst.jackrabbit.ocm.manager.impl.HstAnnotationMapperImpl;
-import org.hippoecm.hst.jackrabbit.ocm.manager.impl.HstObjectConverterImpl;
-import org.hippoecm.hst.jackrabbit.ocm.query.impl.HstQueryManagerImpl;
+import org.hippoecm.hst.jackrabbit.ocm.util.OCMUtils;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Test;
 
+/**
+ * TestOCM
+ * 
+ * @version $Id$
+ */
 public class TestOCM extends AbstractHstTestCase{
+    
+    private String [] fallbackHippoBeans = { "hippo:document" };
+    private Class [] annotatedBeans = { TextPage.class };
     
     @Test
     public void testTextPage() throws Exception {
-        List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
-        classes.add(HippoStdHtml.class);
-        classes.add(HippoStdDocument.class);
-        classes.add(HippoStdFolder.class);
-        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
-        
         Session session = getSession();
         
-        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
         TextPage productsPage = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
@@ -79,11 +65,7 @@ public class TestOCM extends AbstractHstTestCase{
         System.out.println("state: " + productsPage.getState());
         System.out.println("html: " + productsPage.getHtml().getContent());
 
-        classes = new ArrayList<Class>();
-        classes.add(HippoStdDocument.class);
-        classes.add(HippoStdFolder.class);
-        mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
-        ocm = createObjectContentManager(session, mapper);
+        ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, null);
         
         HippoStdDocument productsPageDoc = (HippoStdDocument) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPageDoc);
@@ -112,16 +94,9 @@ public class TestOCM extends AbstractHstTestCase{
     
     @Test
     public void testCollection() throws Exception {
-        List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
-        classes.add(HippoStdHtml.class);
-        classes.add(HippoStdDocument.class);
-        classes.add(HippoStdFolder.class);
-        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
-        
         Session session = getSession();
         
-        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
         TextPage productsPage = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
@@ -168,11 +143,9 @@ public class TestOCM extends AbstractHstTestCase{
     
     @Test
     public void testCollectionWithDigesterMapper() throws Exception {
-        Mapper mapper = new DigesterMapperImpl(getClass().getResourceAsStream("jackrabbit-ocm-descriptor.xml"));
-        
         Session session = getSession();
         
-        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, new InputStream [] { getClass().getResourceAsStream("jackrabbit-ocm-descriptor.xml") } );
         
         TextPage productsPage = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
@@ -219,15 +192,9 @@ public class TestOCM extends AbstractHstTestCase{
     
     @Test
     public void testQueryManager() throws Exception {
-        List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
-        classes.add(HippoStdHtml.class);
-        classes.add(HippoStdDocument.class);
-        classes.add(HippoStdFolder.class);
-        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
-        
         Session session = getSession();
-        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        
+        ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
         // search collection
         QueryManager qm = ocm.getQueryManager();
@@ -275,16 +242,9 @@ public class TestOCM extends AbstractHstTestCase{
     
     @Test
     public void testTextPageUpdate() throws Exception {
-        List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
-        classes.add(HippoStdHtml.class);
-        classes.add(HippoStdDocument.class);
-        classes.add(HippoStdFolder.class);
-        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
-        
         Session session = getSession();
         
-        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
         TextPage productsPage = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
@@ -321,19 +281,5 @@ public class TestOCM extends AbstractHstTestCase{
         ocm.save();
         
         session.logout();
-    }
-    
-    private ObjectContentManager createObjectContentManager(Session session, Mapper mapper) throws UnsupportedRepositoryOperationException, RepositoryException {
-        ObjectContentManager ocm = null;
-        
-        DefaultAtomicTypeConverterProvider converterProvider = new DefaultAtomicTypeConverterProvider();
-        Map atomicTypeConverters = converterProvider.getAtomicTypeConverters();
-        QueryManager queryManager = new HstQueryManagerImpl(mapper, atomicTypeConverters, session.getValueFactory());
-        ProxyManager proxyManager = new ProxyManagerImpl();
-        ObjectCache requestObjectCache = new NOOPObjectCache();
-        ObjectConverter objectConverter = new HstObjectConverterImpl(mapper, converterProvider, proxyManager, requestObjectCache);
-        ocm = new ObjectContentManagerImpl(mapper, objectConverter, queryManager, requestObjectCache, session);
-        
-        return ocm;
     }
 }
