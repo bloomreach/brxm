@@ -23,11 +23,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class RepositoryLoginTest extends TestCase {
+public class RepositoryLoginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,9 +52,7 @@ public class RepositoryLoginTest extends TestCase {
     private static final String TESTUSER_HASH_SHA1 = "$SHA-1$LDiazWf2qBc=$VjcsDMKtiRKYushsjTNDuk5a//4=";
     private static final String TESTUSER_HASH_SHA256 = "$SHA-256$LDiazWf2qBc=$/bzV6rjHX+fgx4dVz6oaPcW3kX1ynSJ+vGv1mbbm+v4=";
 
-
-
-    @Override
+    @Before
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
         serverSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
@@ -79,7 +79,7 @@ public class RepositoryLoginTest extends TestCase {
         serverSession.save();
     }
 
-    @Override
+    @After
     public void tearDown() throws RepositoryException {
         if (users != null) {
             if (users.hasNode(TESTUSER_ID_PLAIN)) {
@@ -104,6 +104,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginPlainSuccess() throws Exception {
         try {
             Session session = server.login(TESTUSER_ID_PLAIN, TESTUSER_PASS.toCharArray());
@@ -114,6 +115,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginMD5Success() throws Exception {
         try {
             Session session = server.login(TESTUSER_ID_MD5, TESTUSER_PASS.toCharArray());
@@ -124,6 +126,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginSHA1Success() throws Exception {
         try {
             Session session = server.login(TESTUSER_ID_SHA1, TESTUSER_PASS.toCharArray());
@@ -134,6 +137,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginSHA256Success() throws Exception {
         try {
             Session session = server.login(TESTUSER_ID_SHA256, TESTUSER_PASS.toCharArray());
@@ -144,7 +148,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
-
+    @Test
     public void testLoginPlainFail() throws Exception {
         Session session = null;
         try {
@@ -156,6 +160,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginHashFail() throws Exception {
         Session session = null;
         try {
@@ -167,6 +172,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginNoEmptyPassword() throws Exception {
         Session session = null;
         try {
@@ -178,6 +184,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginNoNullPassword() throws Exception {
         Session session = null;
         try {
@@ -189,6 +196,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginNullUsername() throws Exception {
         Session session = null;
         try {
@@ -200,6 +208,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginNullUsernameNullPassword() throws Exception {
         Session session = null;
         try {
@@ -211,6 +220,7 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoginAnonymous() throws Exception {
         try {
             Session session = server.login();
