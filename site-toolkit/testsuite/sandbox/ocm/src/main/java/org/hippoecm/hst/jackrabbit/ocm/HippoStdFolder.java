@@ -27,6 +27,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Will be moved to org.hippoecm.hst.jackrabbit.ocm.hippo package.
+ */
 @Node(jcrType="hippostd:folder", discriminator=false)
 public class HippoStdFolder extends HippoStdNode {
     

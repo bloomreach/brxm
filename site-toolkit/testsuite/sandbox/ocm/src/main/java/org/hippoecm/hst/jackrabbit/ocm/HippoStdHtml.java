@@ -19,6 +19,9 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.hippoecm.hst.content.beans.NodeAware;
 
+/**
+ * @deprecated Will be moved to org.hippoecm.hst.jackrabbit.ocm.hippo package.
+ */
 @Node(jcrType="hippostd:html", discriminator=false)
 public class HippoStdHtml implements NodeAware{
     

@@ -17,8 +17,9 @@ package org.hippoecm.hst.jackrabbit.ocm;
 
 import java.util.Iterator;
 
-
-
+/**
+ * @deprecated Will be removed because this is not complying with jackrabbit-ocm APIs.
+ */
 public interface HippoStdNodeIterator extends Iterator {
 
     /**

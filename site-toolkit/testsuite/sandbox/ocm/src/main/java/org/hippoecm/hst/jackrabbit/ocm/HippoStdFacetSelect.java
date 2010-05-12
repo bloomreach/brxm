@@ -17,6 +17,9 @@ package org.hippoecm.hst.jackrabbit.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
+/**
+ * @deprecated Will be moved to org.hippoecm.hst.jackrabbit.ocm.hippo package.
+ */
 @Node(jcrType="hippo:facetselect", discriminator=false)
 public class HippoStdFacetSelect extends HippoStdFolder{
 

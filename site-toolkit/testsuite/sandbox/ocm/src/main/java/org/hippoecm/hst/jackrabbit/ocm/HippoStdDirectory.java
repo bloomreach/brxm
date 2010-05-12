@@ -17,6 +17,9 @@ package org.hippoecm.hst.jackrabbit.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
+/**
+ * @deprecated Will be moved to org.hippoecm.hst.jackrabbit.ocm.hippo package.
+ */
 @Node(jcrType="hippostd:directory", discriminator=false)
 public class HippoStdDirectory extends HippoStdFolder{
 
