@@ -40,6 +40,9 @@ import org.hippoecm.hst.jackrabbit.ocm.impl.HippoStdNodeIteratorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Will not be supported because this is not complying with Jackrabbit-OCM API.
+ */
 public class HstOCMQuery {
 
     private static Logger log = LoggerFactory.getLogger(HstOCMQuery.class);

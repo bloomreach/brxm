@@ -20,6 +20,7 @@ import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
 /**
  * HST Object cache which is expected to use HST Cache Infrastructure
  * 
+ * @deprecated
  * @version $Id$
  */
 public class HstRequestObjectCacheImpl implements ObjectCache {
