@@ -255,6 +255,18 @@ public class TestOCM extends AbstractHstTestCase{
         assertNotNull(page);
         assertTrue(page instanceof TextPage);
         
+        // search document by TextPage class filter with 'contains'.
+        filter = qm.createFilter(TextPage.class);
+        filter.setScope("/testcontent/documents/testproject/Products//");
+        filter.addContains(".", "CMS");
+        query = qm.createQuery(filter);
+        Collection<TextPage> textPages = (Collection<TextPage>) ocm.getObjects(query);
+        assertNotNull(textPages);
+        assertFalse(textPages.isEmpty());
+        for (TextPage textPage : textPages) {
+            System.out.println("text page containing 'CMS': " + textPage.getPath());
+        }
+        
         session.logout();
     }
     
