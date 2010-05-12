@@ -34,7 +34,7 @@ public class TextPage extends HippoStdDocument {
         this.title = title;
     }
 
-    @Bean(jcrName="testproject:body")
+    @Bean(jcrName="testproject:body", proxy=true)
     public HippoStdHtml getHtml() {
         return this.html;
     }
