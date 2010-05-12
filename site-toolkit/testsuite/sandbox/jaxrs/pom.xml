@@ -197,13 +197,6 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-testcontents</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>      
-    </dependency>
-    
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
