@@ -63,7 +63,7 @@
         <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,min.width=300,width=400,gutter=0px 0px 0px 0px,use.shim=true,resize=true</sv:value>
+        <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
