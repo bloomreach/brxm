@@ -25,6 +25,10 @@ public class HstAnnotationMapperImpl extends AnnotationMapperImpl {
 
     protected String[] fallBackJcrNodeTypes;
 
+    public HstAnnotationMapperImpl(List<Class> annotatedClassNames) {
+        super(annotatedClassNames);
+    }
+    
     public HstAnnotationMapperImpl(List<Class> annotatedClassNames, String... fallBackJcrNodeTypes) {
         super(annotatedClassNames);
         this.fallBackJcrNodeTypes = fallBackJcrNodeTypes;
