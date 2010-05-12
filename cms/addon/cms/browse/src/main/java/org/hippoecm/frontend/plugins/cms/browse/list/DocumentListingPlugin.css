@@ -22,17 +22,7 @@
     position: static;
 }
 
-table.hippo-list-documents {
-    width: 900px;
-}
-
-table.hippo-list-documents tr.even {
-    background-color: #f6f6f2;
-}
-
 .doclisting-icon { width:15px; }
-
-.doclisting-name { width:130px; }
 
 .doclisting-state { width: 40px; }
 

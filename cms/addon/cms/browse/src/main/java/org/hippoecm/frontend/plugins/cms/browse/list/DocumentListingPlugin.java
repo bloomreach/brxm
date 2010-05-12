@@ -23,8 +23,10 @@ import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.list.comparators.DocumentAttributeComparator;
@@ -46,12 +48,15 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttribute
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.plugins.yui.layout.UnitExpandCollapseBehavior;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -66,6 +71,9 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     private static final String DOCUMENT_LISTING_CSS = "DocumentListingPlugin.css";
     private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";
+
+    private IModel<Node> previousSelected;
+    private boolean isExpanded;
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -87,10 +95,55 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         while(c != null) {
             for(IBehavior b : c.getBehaviors()) {
                 if(b instanceof UnitExpandCollapseBehavior) {
-                    ((UnitExpandCollapseBehavior) b).toggle(target);
+                    boolean isExpanding = ((UnitExpandCollapseBehavior) b).toggle(target);
+                    if(isExpanding) {
+                        previousSelected = getSelectedModel();
+                        setSelectedModel(new JcrNodeModel((Node)null));
+                        renderExpanded();
+                    } else {
+                        setSelectedModel(previousSelected);
+                        renderCollapsed();
+                    }
+                    return;
                 }
             }
             c = c.getParent();
+        }
+    }
+
+    private void renderCollapsed() {
+        isExpanded = false;
+        onModelChanged();
+    }
+
+    private void renderExpanded() {
+        isExpanded = true;
+        onModelChanged();
+    }
+
+    @Override
+    protected void onSelectionChanged(IModel<Node> model) {
+        super.onSelectionChanged(model);
+        if(isExpanded && model instanceof JcrNodeModel) {
+            JcrNodeModel nodeModel = (JcrNodeModel) model;
+            if (nodeModel.getItemModel() != null && nodeModel.getItemModel().getPath() != null) {
+                Node node = nodeModel.getNode();
+                try {
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        NodeIterator nodeIt = node.getNodes();
+                        while (nodeIt.hasNext()) {
+                            Node childNode = nodeIt.nextNode();
+                            if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                isExpanded = false;
+                                onModelChanged();
+                                break;
+                            }
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -101,6 +154,10 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     @Override
     protected TableDefinition<Node> getTableDefinition() {
+        return new TableDefinition<Node>(isExpanded ? getExpandedColumns() : getCollapsedColumns());
+    }
+
+    protected List<ListColumn<Node>> getCollapsedColumns() {
         List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
 
         //Type Icon
@@ -126,8 +183,14 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         column.setCssClass("doclisting-state");
         columns.add(column);
 
+        return columns;
+    }
+
+    protected List<ListColumn<Node>> getExpandedColumns() {
+        List<ListColumn<Node>> columns = getCollapsedColumns();
+
         //Type
-        column = new ListColumn<Node>(new StringResourceModel("doclisting-type", this, null), "type");
+        ListColumn<Node>  column = new ListColumn<Node>(new StringResourceModel("doclisting-type", this, null), "type");
         column.setComparator(new TypeComparator());
         column.setRenderer(new TypeRenderer());
         column.setCssClass("doclisting-type");
@@ -238,7 +301,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         });
         columns.add(column);
 
-        return new TableDefinition<Node>(columns);
+        return columns;
     }
 
     private String simpleFormattedCalendar(Calendar cal) {
@@ -286,4 +349,12 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         }
     }
 
+    @Override
+    public void detachModels() {
+        super.detachModels();
+
+        if(previousSelected != null) {
+            previousSelected.detach();
+        }
+    }
 }
