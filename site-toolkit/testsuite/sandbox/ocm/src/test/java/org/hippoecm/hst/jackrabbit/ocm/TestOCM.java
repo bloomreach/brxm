@@ -34,6 +34,11 @@ import org.hippoecm.hst.jackrabbit.ocm.util.OCMUtils;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Test;
 
+/**
+ * TestOCM
+ * 
+ * @version $Id$
+ */
 public class TestOCM extends AbstractHstTestCase{
     
     private String [] fallbackHippoBeans = { "hippo:document" };
