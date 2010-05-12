@@ -66,7 +66,7 @@ public class HstURLFactoryImpl implements HstURLFactory {
     }
     
     public HstContainerURLProvider getContainerURLProvider(HstRequestContext requestContext) {
-        return requestContext.isPortletContext() ? requestContext.isEmbeddedRequest() ? getEmbeddedPortletURLProvider() : getPortletURLProvider() : getServletURLProvider();
+        return requestContext.isPortletContext() ? requestContext.isEmbeddedRequest() ? getEmbeddedPortletURLProvider() : getPortletURLProvider() : getURLProvider();
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext) {
@@ -80,7 +80,7 @@ public class HstURLFactoryImpl implements HstURLFactory {
         return new HstURLImpl(type, baseContainerURL, referenceNamespace, getContainerURLProvider(requestContext), requestContext);
     }
 
-    protected HstContainerURLProvider getServletURLProvider() {
+    protected HstContainerURLProvider getURLProvider() {
         if (servletURLProvider == null) {
             HstContainerURLProviderImpl provider = new HstContainerURLProviderImpl();
             provider.setUrlNamespacePrefix(urlNamespacePrefix);
