@@ -77,11 +77,17 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                 if(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl()) {
                     path.append(contextPath);
                 }
+                else {
+                	path.append(containerURL.getContextPath());
+                }
                 path.append(pathInfo);
                 urlString = path.toString();
                 
             } else {
-                //path.append(containerURL.getServletPath());
+                String mountPrefix = containerURL.getResolvedMountPath();
+                if(mountPrefix != null) {
+                    path.append(mountPrefix);
+                }
                 path.append(buildHstURLPath(containerURL));
                 
                 BaseURL url = null;
