@@ -156,6 +156,15 @@ public class HstFilter implements Filter {
         
         HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
+
+        // Cross-context includes are not (yet) supported to be handled directly by HstFilter
+        // Typical use-case for these is within a portal environment where the portal dispatches to a portlet (within in a separate portlet application)
+        // which *might* dispatch to HST. If such portlet dispatches again it most likely will run through this filter (being by default configured against /*)
+        // but in that case the portlet container will have setup a wrapper request as embedded within this web application (not cross-context).
+        if (isCrossContextInclude(req)) {
+            chain.doFilter(request, response);
+            return;
+        }
         
         Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
         
@@ -275,7 +284,7 @@ public class HstFilter implements Filter {
             }
         }
     }
-
+    
     public void destroy() {
         initialized = false;
 
@@ -291,6 +300,16 @@ public class HstFilter implements Filter {
                 clientComponentManager = null;
             }
         }
+    }
+
+    /**
+     * Determine if the current request is an cross-context include, as typically exercised by Portals dispatching to a targetted portlet
+     * @param request
+     * @return
+     */
+    protected boolean isCrossContextInclude(HttpServletRequest request) {
+    	String includeContextPath = (String)request.getAttribute("java.servlet.include.context_path");
+    	return (includeContextPath != null && !includeContextPath.equals(request.getContextPath()));
     }
 
     /**
