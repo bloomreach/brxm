@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -67,7 +66,7 @@ public class SiteNameDecoratedContextCredentialsProvider extends DefaultContextC
             String userIDWithSiteName = userID + siteNameSeparator + siteName;
             char [] password = ((SimpleCredentials) credentials).getPassword();
             
-            if (Boolean.TRUE == requestContext.getAttribute(ContainerConstants.IS_PREVIEW)) {
+            if (requestContext.isPreview()) {
                 credentials = defaultCredentialsForPreviewModeCache.get(userIDWithSiteName);
                 
                 if (credentials == null) {

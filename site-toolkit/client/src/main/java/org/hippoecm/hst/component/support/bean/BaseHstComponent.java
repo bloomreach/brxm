@@ -228,7 +228,7 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     public boolean isPreview(HstRequest request) {
-        return Boolean.TRUE == request.getRequestContext().getAttribute(ContainerConstants.IS_PREVIEW);
+    	return request.getRequestContext().isPreview();
     }
     
     

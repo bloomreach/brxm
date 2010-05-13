@@ -17,7 +17,6 @@ package org.hippoecm.hst.site.request;
 
 import javax.jcr.Credentials;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -47,7 +46,7 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     }
     
     public Credentials getDefaultCredentials(HstRequestContext requestContext) {
-        if (defaultCredentialsForPreviewMode != null && Boolean.TRUE == requestContext.getAttribute(ContainerConstants.IS_PREVIEW)) {
+        if (defaultCredentialsForPreviewMode != null && requestContext.isPreview()) {
             return defaultCredentialsForPreviewMode;
         }
         

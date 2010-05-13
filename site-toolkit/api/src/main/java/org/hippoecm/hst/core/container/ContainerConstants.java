@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 
 /**
  * HstComponent container constants
@@ -87,6 +89,7 @@ public interface ContainerConstants {
 
     /**
      * The key used to set the entry path for the preview entry node in the repository
+     * @deprecated use {@link HstRequestContext#isPreview} instead
      */
     String IS_PREVIEW = "org.hippoecm.hst.container.is.preview";
     

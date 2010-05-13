@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.Before;
@@ -52,8 +51,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     
     @Test
     public void testDefaultCredentials() throws Exception {
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
         
         replay(requestContext);
         
@@ -65,8 +64,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         
         reset(requestContext);
     
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
       
         replay(requestContext);
         Credentials creds2 = ccp.getDefaultCredentials(requestContext);
@@ -75,8 +74,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         
         reset(requestContext);
       
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.FALSE);
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
         replay(requestContext);
       
         Credentials creds3 = ccp.getDefaultCredentials(requestContext);
@@ -89,8 +88,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     @Test
     public void testPreviewCredentials() throws Exception {
         
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
         
         replay(requestContext);
         
@@ -102,8 +101,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         
         reset(requestContext);
         
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
         
         replay(requestContext);
 
@@ -113,8 +112,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         
         reset(requestContext);
 
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
-        expect(requestContext.getAttribute(ContainerConstants.IS_PREVIEW)).andReturn(Boolean.TRUE);
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
        
         replay(requestContext);
       

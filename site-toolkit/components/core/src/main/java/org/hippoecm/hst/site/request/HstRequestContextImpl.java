@@ -72,6 +72,10 @@ public class HstRequestContextImpl implements HstRequestContext {
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
     
+    public boolean isPreview() {
+    	return this.resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview();
+    }    
+    
     public void setContextNamespace(String contextNamespace) {
         this.contextNamespace = contextNamespace;
     }

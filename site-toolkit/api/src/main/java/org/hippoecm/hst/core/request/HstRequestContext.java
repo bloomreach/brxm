@@ -21,6 +21,7 @@ import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -53,6 +54,12 @@ public interface HstRequestContext {
      * @return the resolvedSiteMapItem for this request
      */
     ResolvedSiteMapItem getResolvedSiteMapItem();
+    
+    /**
+     * @return <code>true</code> when this request is matched to a preview site
+     * @see SiteMount#isPreview()
+     */
+    boolean isPreview();
     
     /**
      * Returns the context namespace. If there are multiple HstContainer based applications,

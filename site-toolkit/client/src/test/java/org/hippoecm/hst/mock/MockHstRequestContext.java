@@ -53,6 +53,10 @@ public class MockHstRequestContext implements HstRequestContext {
     protected ContainerConfiguration containerConfiguration;
     protected ContextCredentialsProvider contextCredentialsProvider;
 
+    public boolean isPreview() {
+    	return this.resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview();
+    }
+    
     public Object getAttribute(String name) {
         return this.attributes.get(name);
     }
