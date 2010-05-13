@@ -308,7 +308,7 @@ public class HstFilter implements Filter {
      * @return
      */
     protected boolean isCrossContextInclude(HttpServletRequest request) {
-    	String includeContextPath = (String)request.getAttribute("java.servlet.include.context_path");
+    	String includeContextPath = (String)request.getAttribute("javax.servlet.include.context_path");
     	return (includeContextPath != null && !includeContextPath.equals(request.getContextPath()));
     }
 
