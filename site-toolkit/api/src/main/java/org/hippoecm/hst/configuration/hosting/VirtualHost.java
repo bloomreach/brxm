@@ -127,10 +127,6 @@ public interface VirtualHost {
      * @return the <code>URL</code> until the context path, thus <code>scheme + hostname + portnumber</code>, for example 'http://www.hippoecm.org:8081' 
      */
     
-    /**
-     * TODO see where it is all used
-     * @deprecated
-     */
     String getBaseURL(HttpServletRequest request);
 
 }
