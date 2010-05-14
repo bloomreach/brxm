@@ -95,7 +95,7 @@
   </li>
 </c:forEach>
   <li>
-    <a href="<hst:link path="/services/contentservice/"/>" target="_blank">Restful Service</a>
+    <a href="<hst:link path="/restservice/contentservice/"/>" target="_blank">Restful Service</a>
   </li>
 </ul>
 </div>

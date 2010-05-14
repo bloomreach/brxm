@@ -190,7 +190,7 @@ public class HstFilter implements Filter {
             
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
             
-              VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
+            VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
             VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
             
             if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(req))) {
