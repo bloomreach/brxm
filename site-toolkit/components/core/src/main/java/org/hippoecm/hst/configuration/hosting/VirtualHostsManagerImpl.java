@@ -16,12 +16,13 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import javax.jcr.Credentials;
-import javax.jcr.Item;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
@@ -36,12 +37,7 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager {
     protected Repository repository;
     protected Credentials credentials;
     protected VirtualHosts virtualHosts;
-    private String virtualHostsPath;
     private HstSiteMapMatcher hstSiteMapMatcher;
-    
-    public VirtualHostsManagerImpl(String virtualHostsPath) {
-        this.virtualHostsPath = virtualHostsPath;
-    }
     
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -87,23 +83,20 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager {
             // session can come from a pooled event based pool so always refresh before building configuration:
             session.refresh(false);
             
-            if(virtualHostsPath != null && virtualHostsPath.startsWith("/") && session.itemExists(virtualHostsPath)) {
-                Item item = session.getItem(virtualHostsPath);
-                if(!item.isNode()) {
-                    log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node but a property", virtualHostsPath);
-                    return;
-                }
-                Node virtualHostsNode = (Node)item;
-                if(!virtualHostsNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS)) {
-                    log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node of type '{}'", virtualHostsPath, HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS);
-                    return;
-                }
-                this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
-            } else {
-                log.error("No correct virtualhosts configured at {}. We cannot build virtual hosts configuration", virtualHostsPath);
+            // now, only a single node of type hst:virtualhosts is allowed in the repository: search that node and build the configuration.
+            
+            String xpath = "//element(*, "+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS+")";
+            QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+            NodeIterator it = result.getNodes();
+            if(it.getSize() != 1L) {
+                log.error("There must be exactly one node of type '{}' in the repository. We found '{}' nodes of type hst:virtualhosts. Cannot build configuration.",HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS, String.valueOf(it.getSize()));
                 return;
             }
             
+            // there is 1 result!
+            Node virtualHostsNode = it.nextNode();
+            this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
+           
         } catch (LoginException e) {
             if (log.isDebugEnabled()) {
                 log.info("The repository is not (yet) available: {}", e.getMessage()); 

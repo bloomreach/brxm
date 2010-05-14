@@ -29,7 +29,6 @@
     </bean>
    
     <bean id="org.hippoecm.hst.configuration.hosting.VirtualHostsManager" class="org.hippoecm.hst.configuration.hosting.VirtualHostsManagerImpl">
-        <constructor-arg value="${virtualhosts.repository.path}"/>
         <property name="repository" ref="javax.jcr.Repository" />
         <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
         <property name="hstSiteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
