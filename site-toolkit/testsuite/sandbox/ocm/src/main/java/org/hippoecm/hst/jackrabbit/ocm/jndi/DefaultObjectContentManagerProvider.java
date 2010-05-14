@@ -36,7 +36,13 @@ public class DefaultObjectContentManagerProvider implements ObjectContentManager
 
     public ObjectContentManager getObjectContentManager(Session session) {
         if (annotatedClasses != null) {
-            return OCMUtils.createObjectContentManager(session, (Class []) annotatedClasses.toArray());
+            Class [] annotatedClassArray = new Class [annotatedClasses.size()];
+            int index = 0;
+            for (Class annotatedClass : annotatedClasses)
+            {
+                annotatedClassArray[index++] = annotatedClass;
+            }
+            return OCMUtils.createObjectContentManager(session, annotatedClassArray);
         } else if (xmlMappingFiles != null) {
             return OCMUtils.createObjectContentManager(session, xmlMappingFiles);
         } else {
