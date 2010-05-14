@@ -96,6 +96,29 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         return parseURL(servletRequest, servletResponse, requestContext, null);
     }
     
+    public HstContainerURL parseURL(HstRequestContext requestContext, String requestPath, ResolvedSiteMount mount) {
+        HstContainerURLImpl url = new HstContainerURLImpl();
+        HstContainerURL baseURL = requestContext.getBaseURL();
+        url.setContextPath(baseURL.getContextPath());
+        url.setHostName(baseURL.getHostName());
+        url.setPortNumber(baseURL.getPortNumber());
+        url.setRequestPath(requestPath);
+        url.setCharacterEncoding(baseURL.getCharacterEncoding());
+        
+        String [] namespacedPartAndPathInfo = splitPathInfo(requestPath, baseURL.getCharacterEncoding());
+        url.setPathInfo(namespacedPartAndPathInfo[1]);
+        parseRequestInfo(url,namespacedPartAndPathInfo[0]);
+        
+        if (mount != null) {
+        	url.setResolvedMountPath(mount.getResolvedMountPath());
+        }
+        else {
+        	url.setResolvedMountPath(baseURL.getResolvedMountPath());
+        }
+        
+        return url;
+    }
+    
     public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
@@ -108,16 +131,12 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
             url.setHostName(baseURL.getHostName());
             url.setPortNumber(baseURL.getPortNumber());
             url.setRequestPath(baseURL.getRequestPath());
-            url.setResolvedMountPath(baseURL.getResolvedMountPath());
         }
         else {
             url.setContextPath(request.getContextPath());
             url.setHostName(HstRequestUtils.getFarthestRequestHost(request));
             url.setPortNumber(HstRequestUtils.getRequestServerPort(request));
             url.setRequestPath(HstRequestUtils.getRequestPath(request));
-            if(requestContext != null && requestContext.getResolvedSiteMapItem() != null) {
-                url.setResolvedMountPath(requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedMountPath());
-            }
         }
         
         String characterEncoding = request.getCharacterEncoding();
@@ -128,7 +147,6 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         url.setCharacterEncoding(characterEncoding);
 
-        
         Map<String, String []> paramMap = HttpUtils.parseQueryString(request);
         url.setParameters(paramMap);
         
@@ -138,9 +156,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
             return url;
         }
         
-        
         url.setResolvedMountPath(resolvedSiteMount.getResolvedMountPath());
-        
         
         String namespacedPathPart = null;
         // pathInfo argument is always passed when a navigational url is needed; 
@@ -152,46 +168,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
         
         url.setPathInfo(pathInfo);
-        
-        try {
-            if (namespacedPathPart != null) {
-                String encodedInfo = namespacedPathPart.substring(urlNamespacePrefixedPath.length());
-                String [] requestInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR, 3);
-                
-                String requestType = requestInfos[0];
-                
-                if (HstURL.ACTION_TYPE.equals(requestType)) {
-                    String actionWindowReferenceNamespace = requestInfos[1];
-                    url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
-                    
-                    if (log.isDebugEnabled()) {
-                        log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
-                    }
-                } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
-                    String resourceWindowReferenceNamespace = requestInfos[1];
-                    String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
-                    
-                    if (resourceId != null) {
-                        // resource id is double-encoded because it can have slashes,
-                        // which can make a problem in Tomcat 6.
-                        resourceId = URLDecoder.decode(resourceId, characterEncoding);
-                    }
-                    
-                    url.setResourceId(resourceId);
-                    url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
-                    
-                    if (log.isDebugEnabled()) {
-                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Invalid container URL path: {}", pathInfo, e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Invalid container URL path: {}", pathInfo);
-            }
-        }
+        parseRequestInfo(url,namespacedPathPart);
         
         return url;
     }
@@ -250,6 +227,10 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     
     public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
+        String mountPrefix = containerURL.getResolvedMountPath();
+        if(mountPrefix != null) {
+            url.append(mountPrefix);
+        }
         String pathInfo = buildHstURLPath(containerURL);
         url.append(pathInfo);
         return url.toString();
@@ -317,7 +298,86 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         return url.toString();
     }
+    
+    protected void parseRequestInfo(HstContainerURL url, String encodedRequestInfo) {
+        try {
+            if (encodedRequestInfo != null) {
+                String encodedInfo = encodedRequestInfo.substring(urlNamespacePrefixedPath.length());
+                String [] requestInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR, 3);
+                
+                String requestType = requestInfos[0];
+                
+                if (HstURL.ACTION_TYPE.equals(requestType)) {
+                    String actionWindowReferenceNamespace = requestInfos[1];
+                    url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
+                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
+                    }
+                } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
+                    String resourceWindowReferenceNamespace = requestInfos[1];
+                    String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
+                    
+                    if (resourceId != null) {
+                        // resource id is double-encoded because it can have slashes,
+                        // which can make a problem in Tomcat 6.
+                        resourceId = URLDecoder.decode(resourceId, url.getCharacterEncoding());
+                    }
+                    
+                    url.setResourceId(resourceId);
+                    url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
+                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Invalid container URL path: {}", url.getRequestPath(), e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Invalid container URL path: {}", url.getRequestPath());
+            }
+        }
+        
+    }
   
+    /*
+     * Splits path info to an array of namespaced path part and remainder. 
+     */
+    protected String [] splitPathInfo(String requestPath, String characterEncoding) {
+       
+    	String pathInfo = requestPath;
+    	try {
+    		pathInfo = URLDecoder.decode(requestPath, characterEncoding);
+    	}
+    	catch (UnsupportedEncodingException e) {
+    		if (log.isDebugEnabled()) {
+                log.warn("Invalid request path: {}", requestPath, e);
+    		}
+    	}
+        if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
+            return new String [] { null, pathInfo };
+        }
+        
+        String temp = requestPath.substring(requestPath.indexOf(urlNamespacePrefixedPath));
+        int offset = temp.indexOf('/', 1);
+        String namespacedPathPart = temp.substring(0, offset);
+        pathInfo = "";
+
+        try {
+            namespacedPathPart = URLDecoder.decode(namespacedPathPart, characterEncoding);
+            pathInfo = URLDecoder.decode(temp.substring(offset), characterEncoding);
+        } catch (UnsupportedEncodingException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Invalid request uri: {}", requestPath, e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Invalid request uri: {}", requestPath);
+            }
+        }        
+        return new String [] { namespacedPathPart, pathInfo };
+    }
+    
     /*
      * Splits path info to an array of namespaced path part and remainder. 
      */

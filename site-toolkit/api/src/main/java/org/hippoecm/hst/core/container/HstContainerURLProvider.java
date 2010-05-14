@@ -23,6 +23,7 @@ import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
  * The URL provider for the {@link HstContainerURL}.
@@ -79,6 +80,17 @@ public interface HstContainerURLProvider {
      * @return
      */
     HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo);
+    
+    /**
+     * Parses a specified requestPath with the current {@link HstRequestContext} and an optional {@link ResolvedSiteMount}
+     * and creates an {@link HstContainerURL} instance.
+     * 
+     * @param requestContext
+     * @param requestPath
+     * @param mount
+     * @return
+     */
+    HstContainerURL parseURL(HstRequestContext requestContext, String requestPath, ResolvedSiteMount mount);
     
     /**
      * Creates an {@link HstContainerURL} instance by merging the information of hstUrl 

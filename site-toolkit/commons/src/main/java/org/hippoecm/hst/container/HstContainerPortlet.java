@@ -211,7 +211,7 @@ public class HstContainerPortlet extends GenericPortlet {
     public void serveResource(ResourceRequest request, ResourceResponse response) throws PortletException, IOException {
         if (!PortletConfigUtils.isEmpty(request.getResourceID())) {
             // only handle serveResource by ResourceID parameter
-            HstResponseState portletResponseState = new HstPortletResponseState(request, response);
+            HstPortletResponseState portletResponseState = new HstPortletResponseState(request, response);
             processMimeResponseRequest(request, response, request.getResourceID(), portletResponseState);
         }
     }
@@ -322,17 +322,18 @@ public class HstContainerPortlet extends GenericPortlet {
         boolean readDispPathParam = PortletConfigUtils.isEmpty(containerHstPathInfo);
         String hstDispUrl = getHstDispatchUrl(request, response, hstServletPath, hstPathInfo, readDispPathParam);
         
-        HstResponseState portletResponseState = new HstPortletResponseState(request, response);
+        HstPortletResponseState portletResponseState = new HstPortletResponseState(request, response);
         request.setAttribute(HstResponseState.class.getName(), portletResponseState);
 
         if (portletResponseState.isActionResponse()) {
             String hstActionDispUrl = hstDispUrl;
+/* TODO: why is/was this needed?            
             int offset = hstActionDispUrl.indexOf('?');
             
             if (offset != -1) {
                 hstActionDispUrl = hstActionDispUrl.substring(0, offset);
             }
-            
+*/            
             // create the request dispatcher, to delegate the request to the hst url
             PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher(hstActionDispUrl);
             
@@ -386,7 +387,7 @@ public class HstContainerPortlet extends GenericPortlet {
         return hstDispUrl.toString();
     }
 
-    private void processMimeResponseRequest(PortletRequest request, MimeResponse response, String hstDispUrl, HstResponseState portletResponseState) throws PortletException, IOException {
+    private void processMimeResponseRequest(PortletRequest request, MimeResponse response, String hstDispUrl, HstPortletResponseState portletResponseState) throws PortletException, IOException {
         
         request.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, response.getNamespace());
         
@@ -397,14 +398,14 @@ public class HstContainerPortlet extends GenericPortlet {
         }
     }
     
-    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstServletPath, HstResponseState portletResponseState) throws IOException {
+    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstServletPath, HstPortletResponseState portletResponseState) throws IOException {
         // write out Cookies to ActionResponse
         portletResponseState.flush();
         
         String redirectLocationUrl = portletResponseState.getRedirectLocation();
 
         if (redirectLocationUrl != null) {
-            if (redirectLocationUrl.startsWith(hstServletPath)) {
+        	if (portletResponseState.isRenderRedirect()) {
                 response.setRenderParameter(HST_PATH_PARAM_NAME + request.getPortletMode().toString(), redirectLocationUrl);
             } else {
                 response.sendRedirect(redirectLocationUrl);

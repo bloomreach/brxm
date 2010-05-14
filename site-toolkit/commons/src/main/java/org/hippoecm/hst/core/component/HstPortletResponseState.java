@@ -34,6 +34,7 @@ import org.w3c.dom.Element;
 public class HstPortletResponseState extends AbstractHstResponseState {
     
     protected PortletResponse response;
+    protected boolean renderRedirect;
 
     public HstPortletResponseState(PortletRequest request, PortletResponse response) {
         super(request, response);
@@ -47,6 +48,14 @@ public class HstPortletResponseState extends AbstractHstResponseState {
         
         isStateAwareResponse = isActionResponse;
         isMimeResponse = isRenderResponse || isResourceResponse;
+    }
+    
+    public void setRenderRedirect(boolean renderRedirect) {
+    	this.renderRedirect = renderRedirect;
+    }
+    
+    public boolean isRenderRedirect() {
+    	return renderRedirect;
     }
     
     public Element createElement(String tagName) {

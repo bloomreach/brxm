@@ -23,12 +23,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.component.HstPortletResponseState;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
  * ActionValve
@@ -163,6 +165,24 @@ public class ActionValve extends AbstractValve {
                                     servletResponse.sendRedirect(absoluteRedirectUrl);
                                 } else {
                                     servletResponse.sendRedirect(location);
+                                }
+                            }
+                        }
+                        else {
+                            String location = responseState.getRedirectLocation();
+                            if (!(location.startsWith("http:") || location.startsWith("https:"))) {
+                                if (!location.startsWith("/")) {
+                                    throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
+                                }
+                                if (!getVirtualHostsManager().getVirtualHosts().isExcluded(location)) {
+                                    ResolvedSiteMount mount = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedVirtualHost().matchSiteMount(location);
+                                    if (mount != null && mount.getSiteMount().isSiteMount()) {
+                                    	HstContainerURL url = urlProvider.parseURL(requestContext, location, mount);                                    
+                                        if (mount.matchSiteMapItem(url) != null) {
+                                        	// redirectLocation is serviceable as SiteMapItem: the portlet can render it 
+                                        	((HstPortletResponseState)responseState).setRenderRedirect(true);
+                                        }
+                                    }
                                 }
                             }
                         }
