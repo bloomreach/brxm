@@ -96,7 +96,7 @@
       <version>${pom.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
       <artifactId>hst-ocm</artifactId>
       <version>${pom.version}</version>
     </dependency>
