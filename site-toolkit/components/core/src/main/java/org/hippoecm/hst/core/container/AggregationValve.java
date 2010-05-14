@@ -213,9 +213,9 @@ public class AggregationValve extends AbstractValve {
                     }
                     
                     try {
-                        // add the hst-version as a response header if we are in preview:
+                        // add the X-HST-VERSION as a response header if we are in preview:
                         if (requestContext.isPreview()) {
-                            rootWindow.getResponseState().addHeader("HST-VERSION", HstServices.getImplementationVersion());
+                            rootWindow.getResponseState().addHeader("X-HST-VERSION", HstServices.getImplementationVersion());
                         }
                         // flush root component window content.
                         // note that the child component's contents are already flushed into the root component's response state.
