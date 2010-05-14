@@ -44,9 +44,6 @@ public class ContextResolvingValve extends AbstractValve
         }
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         
-        // backwards compatibility support
-        requestContext.setAttribute(ContainerConstants.IS_PREVIEW, requestContext.isPreview() ? Boolean.TRUE : Boolean.FALSE);
-        
         HstContainerURL baseURL = requestContext.getBaseURL();
         HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
         

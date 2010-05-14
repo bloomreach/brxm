@@ -88,12 +88,6 @@ public interface ContainerConstants {
     String PREVIEW_REPOSITORY_ENTRY_PATH = "preview.repository.entry.path";
 
     /**
-     * The key used to set the entry path for the preview entry node in the repository
-     * @deprecated use {@link HstRequestContext#isPreview} instead
-     */
-    String IS_PREVIEW = "org.hippoecm.hst.container.is.preview";
-    
-    /**
      * The key used to set the cms location for the surf and edit 
      */
     String CMS_LOCATION = "cms.location";
