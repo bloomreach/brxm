@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration;
 
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -315,7 +316,6 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             requestGeneral.addHeader("Host", "127.0.0.1");
             requestGeneral.setRequestURI("/preview/custompipeline/pipelines/general");
             
-            
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 
@@ -327,17 +327,17 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 ResolvedSiteMapItem customResolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 // because the /preview/services/pipelines/custom matches a sitemap item containing a custom named pipeline
-                assertTrue("Expected pipeline name is 'myCustomPipeLine' ", "myCustomPipeLine".equals(customResolvedSiteMapItem.getNamedPipeline()));
+                assertTrue("Expected pipeline name is 'MyCustomPipeline' ", "MyCustomPipeline".equals(customResolvedSiteMapItem.getNamedPipeline()));
                 
                 // requestGeneral
                 ResolvedSiteMount mountGeneral = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(requestGeneral), HstRequestUtils.getRequestPath(requestGeneral));
-                requestCustom.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mountGeneral);
-                HstContainerURL hstContainerURL2 = hstURLFactory.getContainerURLProvider().parseURL(requestCustom, response);
+                requestGeneral.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mountGeneral);
+                HstContainerURL hstContainerURL2 = hstURLFactory.getContainerURLProvider().parseURL(requestGeneral, response);
                 ResolvedSiteMapItem generalResolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL2);
                 
                 // because the /preview/services/pipelines/general matches a sitemap item NOT containing a custom named pipeline, this having the one
                 // from the SiteMount /preview/services
-                assertTrue("Expected pipeline name is 'JaxrsPipeline' but was '"+generalResolvedSiteMapItem.getNamedPipeline()+"'", "JaxrsPipeline".equals(generalResolvedSiteMapItem.getNamedPipeline()));
+                assertTrue("Expected pipeline name is 'CustomPipeline' but was '"+generalResolvedSiteMapItem.getNamedPipeline()+"'", "CustomPipeline".equals(generalResolvedSiteMapItem.getNamedPipeline()));
                 
                 
             } catch (RepositoryNotAvailableException e) {
@@ -406,7 +406,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         }
 
         /*
-         * Tests for the not mounted sitemounts, which for example can be used in case of rest interface, which have their own custom
+         * Tests for the not mounted sitemounts (issitemount = false), which for example can be used in case of rest interface, which have their own custom
          * namedPipeline, and only use the mountpoint as a location for content, not for a HstSite
          */
         @Test 
@@ -421,18 +421,13 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 
-                // because there is the /preview/services sitemount has isSiteMount=false, we expect a NoHstSiteException when trying to match the request
-                // to a ResolvedSiteMapItem
-//                try {
-//                    ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(request);
-//                    fail("The vhosts.matchSiteMapItem(request) should have thrown a '"+NoHstSiteException.class.getName()+"'");
-//                } catch (NoHstSiteException e) {
-//                    // we should get here: We should be able to get a SiteMount though. The SiteMount should have a mountPoint, but a null HstSite because isSiteMount = false;
-//                    ResolvedSiteMount resolvedSiteMount = vhosts.matchSiteMount(request);
-//                    assertNull("/preview/services should map to a sitemount having 'isSiteMount = false' configured" ,resolvedSiteMount.getSiteMount().getHstSite());
-//                    // the mountPoint must be /unittestpreview/unittestproject
-//                    assertTrue("resolvedSiteMount for /preview/services should have mountpoint '/unittestpreview/unittestproject' but was ''"+resolvedSiteMount.getSiteMount().getMountPoint()+"'","/unittestpreview/unittestproject".equals(resolvedSiteMount.getSiteMount().getMountPoint()));
-//                }
+                // since the requestURI is empty, we expect a fallback to the configured homepage:
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+
+                assertTrue("The mount for /preview/services is should return not", !mount.getSiteMount().isSiteMount());
+                assertNull("An not mounted sitemount should have a HstSite that is null", mount.getSiteMount().getHstSite());
+                assertTrue("The mountpath for /preview/services mount must be '/preview/services' but was '"+mount.getSiteMount().getMountPath()+"'", "/preview/services".equals(mount.getSiteMount().getMountPath()));
+                assertTrue("The mountpoint for /preview/services mount must be '/unittestpreview/unittestproject' but was '"+mount.getSiteMount().getMountPoint()+"'", "/unittestpreview/unittestproject".equals(mount.getSiteMount().getMountPoint()));
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }
@@ -464,6 +459,13 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setServerName("www.onehippo.test");
             request.addHeader("Host", "www.onehippo.test");
             request.setRequestURI("/news/2009");
+            
+            MockHttpServletRequest previewRequest = new MockHttpServletRequest();
+            previewRequest.setLocalPort(8081);
+            previewRequest.setScheme("http");
+            previewRequest.setServerName("www.onehippo.test");
+            previewRequest.addHeader("Host", "preview.onehippo.test");
+            previewRequest.setRequestURI("");
             try {
                 
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
@@ -489,24 +491,22 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // third test: change request hostname to "preview.onehippo.test" : the expected resolvedSiteMapItem is now the homepage from the preview.onehippo.test, thus myhometest1 from the host preview.onehippo.test
                 // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest1 = _default_ , we should have myparam='myhometest1'
-                request.setServerName("preview.onehippo.test");
-                request.addHeader("Host", "preview.onehippo.test");
-                request.setRequestURI("");
+               
                 
-                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), HstRequestUtils.getRequestPath(previewRequest));
+                previewRequest.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
+                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
-                assertTrue("We expect the parameter 'testparam to resolve to 'myhometestpreview' ","myhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));
+                assertTrue("We expect the parameter 'testparam to resolve to 'myhometestpreview' but it was '"+resolvedSiteMapItem.getParameter("testparam")+"'","myhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
                 // fourth test: change request uri to "/custompipeline" : the expected resolvedSiteMapItem is now the homepage from the preview.onehippo.test/custompipeline, thus mycustomhometestpreview
                 // since we have a parameter configured as testparam = ${1} and the expected match for /mycustomhometestpreview = _default_ , we should have myparam='mycustomhometestpreview'
-                request.setRequestURI("/custompipeline");
+                previewRequest.setRequestURI("/custompipeline");
                 
-                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), HstRequestUtils.getRequestPath(previewRequest));
+                previewRequest.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
+                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("We expect the parameter 'testparam to resolve to 'mycustomhometestpreview' ","mycustomhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));

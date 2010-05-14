@@ -153,6 +153,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         ResolvedSiteMount resolvedSiteMount = (ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
         if(resolvedSiteMount == null) {
             // we cannot determine the pathInfo as long as there is no resolved sitemount. Let's return
+            log.warn("There is not yet set the attribute '{}' on the request containing the Resolved SiteMount. Without this, we cannot determine the the pathInfo to match to the SiteMap");
             return url;
         }
         

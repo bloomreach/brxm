@@ -143,7 +143,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>myCustomPipeLine</sv:value>
+                <sv:value>MyCustomPipeline</sv:value>
             </sv:property>
        </sv:node>
        <sv:node sv:name="_default_">
