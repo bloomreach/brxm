@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -51,6 +52,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
+    protected ResolvedSiteMount resolvedSiteMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
@@ -73,7 +75,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
     
     public boolean isPreview() {
-    	return this.resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview();
+    	return this.resolvedSiteMount.getSiteMount().isPreview();
     }    
     
     public void setContextNamespace(String contextNamespace) {
@@ -98,6 +100,14 @@ public class HstRequestContextImpl implements HstRequestContext {
         this.session = session;
     }
  
+    public void setResolvedSiteMount(ResolvedSiteMount resolvedSiteMount) {
+        this.resolvedSiteMount = resolvedSiteMount;
+    }
+
+    public ResolvedSiteMount getResolvedSiteMount() {
+        return this.resolvedSiteMount;
+    }
+    
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
@@ -221,7 +231,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
 
     public VirtualHost getVirtualHost() {
-       return resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().getVirtualHost();
+       return resolvedSiteMount.getSiteMount().getVirtualHost();
     }
     
     public HstEmbeddedRequestContext getEmbeddedRequestContext() {

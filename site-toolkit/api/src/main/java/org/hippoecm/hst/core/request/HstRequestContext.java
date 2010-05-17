@@ -50,6 +50,12 @@ public interface HstRequestContext {
     Session getSession() throws LoginException, RepositoryException;
     
     /**
+     * Returns the {@link ResolvedSiteMount} for this request
+     * @return the resolvedSiteMount for this request
+     */
+    ResolvedSiteMount getResolvedSiteMount();
+    
+    /**
      * Returns the {@link ResolvedSiteMapItem} for this request
      * @return the resolvedSiteMapItem for this request
      */

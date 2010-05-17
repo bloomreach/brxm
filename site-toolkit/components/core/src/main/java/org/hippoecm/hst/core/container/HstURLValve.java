@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletRequest;
 
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 /**
@@ -42,7 +43,12 @@ public class HstURLValve extends AbstractValve {
         requestContext.setLinkCreator(getLinkCreator());
         requestContext.setSiteMapMatcher(getSiteMapMatcher());
         requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
-      
+        
+        ResolvedSiteMount resolvedSiteMount = (ResolvedSiteMount) servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
+        
+        if (resolvedSiteMount != null) {
+            requestContext.setResolvedSiteMount(resolvedSiteMount);
+        }
         
         HstContainerURL baseURL = (HstContainerURL)servletRequest.getAttribute(HstContainerURL.class.getName());
         

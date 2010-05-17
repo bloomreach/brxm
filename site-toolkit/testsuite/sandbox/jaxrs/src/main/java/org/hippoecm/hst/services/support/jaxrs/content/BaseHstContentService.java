@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -132,7 +133,7 @@ public class BaseHstContentService {
     
     protected String getSiteContentPath(HttpServletRequest servletRequest) {
         ResolvedSiteMount resolvedSiteMount = (ResolvedSiteMount) servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
-        return resolvedSiteMount.getSiteMount().getMountPoint();
+        return resolvedSiteMount.getSiteMount().getMountPoint() + "/" + HstNodeTypes.NODENAME_HST_CONTENTNODE;
     }
     
     protected String getRelativeItemContentPath(HttpServletRequest servletRequest, final ItemContent itemContent) {

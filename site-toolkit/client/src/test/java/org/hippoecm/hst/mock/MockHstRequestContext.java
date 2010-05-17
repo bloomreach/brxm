@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -44,6 +45,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected HstContainerURL baseURL;
     protected String contextNamespace;
     protected HstURLFactory urlFactory;
+    protected ResolvedSiteMount resolvedSiteMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstLinkCreator linkCreator;
     protected HstSiteMapMatcher siteMapMatcher;
@@ -54,7 +56,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected ContextCredentialsProvider contextCredentialsProvider;
 
     public boolean isPreview() {
-    	return this.resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview();
+    	return this.resolvedSiteMount.getSiteMount().isPreview();
     }
     
     public Object getAttribute(String name) {
@@ -107,6 +109,14 @@ public class MockHstRequestContext implements HstRequestContext {
     
     public HstSiteMenus getHstSiteMenus(){
         return this.siteMenus;
+    }
+    
+    public ResolvedSiteMount getResolvedSiteMount() {
+        return this.resolvedSiteMount;
+    }
+    
+    public void setResolvedSiteMount(ResolvedSiteMount resolvedSiteMount) {
+        this.resolvedSiteMount = resolvedSiteMount;
     }
     
     public ResolvedSiteMapItem getResolvedSiteMapItem() {
