@@ -118,7 +118,7 @@
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
 - hst:pagenotfound (string)
-- hst:sitemapprefix
+- hst:versioninpreviewheader (boolean)
 
 
 [hst:virtualhost]
@@ -132,6 +132,7 @@
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
 - hst:pagenotfound (string)
+- hst:versioninpreviewheader (boolean)
 
 [hst:virtualhosts]
 - hst:port (long)
@@ -145,6 +146,7 @@
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
 - hst:pagenotfound (string)
+- hst:versioninpreviewheader (boolean)
 + * (hst:virtualhost)
 
 
