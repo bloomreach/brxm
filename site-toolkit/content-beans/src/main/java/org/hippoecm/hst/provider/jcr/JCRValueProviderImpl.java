@@ -30,6 +30,7 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.hippoecm.hst.provider.PropertyMap;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     private String nodePath;
     private String nodeName;
+    private String localizedName;
     
     private boolean detached = false;
     private boolean isLoaded = false;
@@ -95,7 +97,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             } 
             return this.jcrNode.getParent();
         } catch(RepositoryException e ) {
-            log.error("Repository Exception {}", e);
+            log.error("Repository Exception", e);
             return null;
         }
     }
@@ -115,7 +117,25 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     public String getName() {
        return this.nodeName;
     }
-
+    
+    public String getLocalizedName(){
+        if(localizedName != null) {
+            return localizedName;
+        }
+        Node node = this.getJcrNode();
+        if(!(node instanceof HippoNode)){
+            localizedName =  getName();
+            return localizedName;
+        }
+        try {
+            localizedName = ((HippoNode)node).getLocalizedName();
+            return localizedName;
+        } catch (RepositoryException e) {
+           log.error("RepositoryException during fetching localizedName. Return null", e);
+           return null;
+        } 
+    }
+    
     public String getPath() {
       return this.nodePath;
     }
