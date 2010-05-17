@@ -39,6 +39,5 @@ public interface HstSiteMenus extends Serializable{
      * @return the {@link HstSiteMenu} having the corresponding name and <code>null</code> if none matches
      */
     HstSiteMenu getSiteMenu(String name);
-
     
 }

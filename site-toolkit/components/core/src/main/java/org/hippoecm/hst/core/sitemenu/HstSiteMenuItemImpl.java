@@ -16,14 +16,18 @@
 package org.hippoecm.hst.core.sitemenu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 
 public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenuItem {
@@ -32,13 +36,17 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private HstSiteMenuItem parent;
     private HstLinkCreator linkCreator;
+    private ResolvedSiteMapItem resolvedSiteMapItem;
+    private HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration;
     private HstSite hstSite;
     private String hstSiteMapItemPath;
     private String externalLink;
     
+    
     public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenu = hstSiteMenu;
         this.parent = parent;
+        this.hstSiteMenuItemConfiguration = hstSiteMenuItemConfiguration;
         this.hstSite = hstSiteMenuItemConfiguration.getHstSiteMenuConfiguration().getSiteMenusConfiguration().getSite();
         this.hstSiteMapItemPath = hstSiteMenuItemConfiguration.getSiteMapItemPath();
         this.externalLink = hstSiteMenuItemConfiguration.getExternalLink();
@@ -50,8 +58,9 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
             hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
         }
+        resolvedSiteMapItem = hstRequestContext.getResolvedSiteMapItem();
         
-        String currentPathInfo = hstRequestContext.getResolvedSiteMapItem().getPathInfo();
+        String currentPathInfo = resolvedSiteMapItem.getPathInfo();
         String siteMenuItemToMapPath = PathUtils.normalizePath(hstSiteMenuItemConfiguration.getSiteMapItemPath());
        
          if (siteMenuItemToMapPath != null && currentPathInfo != null) {
@@ -134,4 +143,39 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         return this.properties;
     }
 
+
+    public Map<String,String> getParameters() {
+        Map<String,String> parameters = new HashMap<String, String>();
+        PropertyParser pp = new PropertyParser(resolvedSiteMapItem.getParameters());
+        for(Entry<String, String> entry: hstSiteMenuItemConfiguration.getParameters().entrySet()) {
+            String parsedParamValue = (String)pp.resolveProperty(entry.getKey(), entry.getValue());
+            parameters.put(entry.getKey(), parsedParamValue);
+        }
+        return parameters;
+    }
+    
+   
+    public String getParameter(String name) {
+        String paramValue = hstSiteMenuItemConfiguration.getParameter(name);
+        PropertyParser pp = new PropertyParser(resolvedSiteMapItem.getParameters());
+        String parsedParamValue = (String)pp.resolveProperty(name, paramValue);
+        return parsedParamValue;
+    }
+    
+    public Map<String,String> getLocalParameters() {
+        Map<String,String> parameters = new HashMap<String, String>();
+        PropertyParser pp = new PropertyParser(resolvedSiteMapItem.getParameters());
+        for(Entry<String, String> entry: hstSiteMenuItemConfiguration.getLocalParameters().entrySet()) {
+            String parsedParamValue = (String)pp.resolveProperty(entry.getKey(), entry.getValue());
+            parameters.put(entry.getKey(), parsedParamValue);
+        }
+        return parameters;
+    }
+    
+    public String getLocalParameter(String name) {
+        String paramValue = hstSiteMenuItemConfiguration.getLocalParameter(name);
+        PropertyParser pp = new PropertyParser(resolvedSiteMapItem.getParameters());
+        String parsedParamValue = (String)pp.resolveProperty(name, paramValue);
+        return parsedParamValue;
+    }
 }

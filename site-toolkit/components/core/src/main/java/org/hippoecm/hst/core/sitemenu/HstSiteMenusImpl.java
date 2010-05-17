@@ -23,7 +23,7 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class HstSiteMenusImpl implements HstSiteMenus{
+public class HstSiteMenusImpl implements HstSiteMenus {
 
     private static final long serialVersionUID = 1L;
     private Map<String, HstSiteMenu> siteMenus = new HashMap<String, HstSiteMenu>(); 

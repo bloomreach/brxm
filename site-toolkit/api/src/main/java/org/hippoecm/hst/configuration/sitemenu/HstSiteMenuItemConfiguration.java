@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+
 /**
  * Implementations should return an unmodifiable map for {@link #getSiteMenuItemConfigurations()} because clients should not
  * be able to modify the configuration
@@ -79,5 +81,43 @@ public interface HstSiteMenuItemConfiguration extends Serializable{
      * 
      * @return the depth of repository based items in case of repository based navigation
      */
-    int getDepth(); 
+    int getDepth();
+    
+    /**
+     * A HstSiteMenuItemConfiguration can contain a Map of parameters. A parameter from this Map can be accessed through this method. If it is not present, <code>null</code>
+     * will be returned.
+     * 
+     * Parameters are inherited from ancestor HstSiteMenuItemConfiguration's. When this HstSiteMenuItemConfiguration configures the same parameter as an ancestor, the
+     * value from the ancestor is overwritten. 
+     * 
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     * client code changing configurationn
+     * 
+     * @param name the name of the parameter
+     * @return the value of the parameter or <code>null</code> when not present
+     */
+    String getParameter(String name);
+    
+    /**
+     * The value of the local parameter, where there are no parameters inherited from ancestor items
+     * @see {@link #getParameter(String)}, only this method returns parameters without inheritance
+     * @param name the name of the parameter
+     * @return the value of the parameter or <code>null</code> when not present
+     */
+    String getLocalParameter(String name);
+    
+    /**
+     * Parameters are inherited from ancestor HstSiteMenuItemConfiguration's. When this HstSiteMenuItemConfiguration configures the same parameter as an ancestor, the
+     * value from the ancestor is overwritten. 
+     * 
+     * @see {@link #getParameter(String)}, only now the entire parameters map is returned.
+     * @return the Map of parameters contained in this <code>HstSiteMenu</code>. If no parameters present, and empty map is returned
+     */
+    Map<String, String> getParameters();
+    
+    /**
+     * @see {@link #getParameters()}, only this method returns parameters (unmodifiable map) without inheritance
+     * @return the Map of parameters contained in this <code>HstSiteMenuItemConfiguration</code>. If no parameters present, and empty map is returned
+     */
+    Map<String, String> getLocalParameters();
 }

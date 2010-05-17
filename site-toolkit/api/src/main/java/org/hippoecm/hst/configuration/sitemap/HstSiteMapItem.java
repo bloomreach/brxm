@@ -151,7 +151,7 @@ public interface HstSiteMapItem {
     String getLocalParameter(String name);
     
     /**
-     * See {@link #getParameter(String)}, only now the parameters map is returned.
+     * See {@link #getParameter(String)}, only now entire the parameters map is returned.
      * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
      * client code changing configuration
      * 

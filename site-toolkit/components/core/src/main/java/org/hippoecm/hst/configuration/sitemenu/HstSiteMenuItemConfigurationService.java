@@ -17,8 +17,10 @@ package org.hippoecm.hst.configuration.sitemenu;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -47,6 +49,8 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private int depth;
     private boolean repositoryBased;
     private Map<String, Object> properties;
+    private Map<String,String> parameters = new HashMap<String,String>();
+    private Map<String,String> localParameters = new HashMap<String,String>();
     
     public HstSiteMenuItemConfigurationService(Node siteMenuItem, HstSiteMenuItemConfiguration parent, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws ServiceException {
         this.parent = parent;
@@ -87,11 +91,36 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
                 		"depth > 0 the configuration is correct for repository based navigation. Skipping repobased and depth setting for this item.");
             }
             
+            
+            
             // fetch all properties from the sitemenu item node and put this in the propertyMap
             ValueProvider provider = new JCRValueProviderImpl(siteMenuItem);
             this.properties = provider.getProperties();
             
 
+            String[] parameterNames = provider.getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
+            String[] parameterValues = provider.getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+            
+            if(parameterNames != null && parameterValues != null){
+               if(parameterNames.length != parameterValues.length) {
+                   log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+               }  else {
+                   for(int i = 0; i < parameterNames.length ; i++) {
+                       this.parameters.put(parameterNames[i], parameterValues[i]);
+                       this.localParameters.put(parameterNames[i], parameterValues[i]);
+                   }
+               }
+            }
+            
+            if(this.parent != null){
+                // add the parent parameters that are not already present
+                for(Entry<String, String> parentParam : this.parent.getParameters().entrySet()) {
+                    if(!this.parameters.containsKey(parentParam.getKey())) {
+                        this.parameters.put(parentParam.getKey(), parentParam.getValue());
+                    }
+                }
+            }
+            
             NodeIterator siteMenuIt = siteMenuItem.getNodes();
             while(siteMenuIt.hasNext()){
                 Node childSiteMenuItem = siteMenuIt.nextNode();
@@ -139,6 +168,23 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         return this.repositoryBased;
     }
 
+    public String getParameter(String name) {
+        return this.parameters.get(name);
+    }
+    
+
+    public Map<String, String> getParameters() {
+        return Collections.unmodifiableMap(this.parameters);
+    }
+    
+    public String getLocalParameter(String name) {
+        return this.localParameters.get(name);
+    }
+
+    public Map<String, String> getLocalParameters() {
+        return Collections.unmodifiableMap(this.localParameters);
+    }
+    
     public Map<String, Object> getProperties() {
         return properties;
     }
