@@ -239,7 +239,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
                 pooledSessionLifecycleManagement.registerResource(session);
             }
         } catch (NoSuchElementException e) {
-            throw new NoAvailableSessionException("No session is available now. Probably the session pool was exhasuted.");
+            throw new NoAvailableSessionException("No session is available now. Probably the session pool was exhausted.");
         } catch (Exception e) {
             throw new LoginException("Failed to borrow session from the pool.", e);
         }
