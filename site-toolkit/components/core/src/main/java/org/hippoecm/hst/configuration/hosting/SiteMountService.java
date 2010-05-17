@@ -54,6 +54,13 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      */
     private boolean preview;
     
+
+    /**
+     * When the SiteMount is preview, and this isVersionInPreviewHeader is true, the used HST version is set as a response header. 
+     * Default this variable is true when it is not configured explicitly
+     */
+    private boolean versionInPreviewHeader;
+    
     /**
      * If this site mount must use some custom other than the default pipeline, the name of the pipeline is contained by <code>namedPipeline</code>
      */
@@ -74,7 +81,7 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      * <code>true</code> (default) when this SiteMount is used as a site mount. False when used only as content mount point and possibly a namedPipeline
      */
     private boolean isSiteMount = true;
-
+    
     /**
      * The homepage for this SiteMount. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHost} is 
      * taken (which still might be <code>null</code> though)
@@ -87,6 +94,7 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      * taken (which still might be <code>null</code> though)
      */
     private String pageNotFound;
+    
     
     private boolean portVisible;
     private int portNumber;
@@ -172,6 +180,20 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
                 this.pageNotFound = ((VirtualHostService)virtualHost).getPageNotFound();
             }
         }
+        
+        
+        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+            this.versionInPreviewHeader = this.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        } else {
+           // try to get the one from the parent
+            if(parent != null) {
+                this.versionInPreviewHeader = parent.isVersionInPreviewHeader();
+            } else {
+                this.versionInPreviewHeader = ((VirtualHostService)virtualHost).isVersionInPreviewHeader();
+            }
+        }
+        
+        
          
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW)) {
@@ -310,6 +332,10 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         return preview;
     }
 
+    public boolean isVersionInPreviewHeader() {
+        return versionInPreviewHeader;
+    }
+
     public Service[] getChildServices() {
         // the services are the child mounts AND the hstSite if this one is not null
         Service[] childServices = childSiteMountServices.values().toArray(new Service[childSiteMountServices.values().size()]);
@@ -330,7 +356,6 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     public HstSiteMapMatcher getHstSiteMapMatcher() {
         return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getHstSiteMapMatcher();
     }
-
 
 
 }

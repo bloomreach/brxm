@@ -205,10 +205,16 @@ public interface SiteMount {
     String getScheme();
     
     /**
-     * 
      * @return <code>true</code> when this SiteMount is configured to be a preview site mount
      */
     boolean isPreview();
+    
+    /**
+     * When this SiteMount has {@link #isPreview()} return <code>false</code>, this method always returns false. When the SiteMount is preview,
+     * and the SiteMount is configured to have the hst version number in preview, then this method returns <code>true</code> 
+     * @return <code>true</code> when for this SiteMount the current hst version should be added as a response header
+     */
+    boolean isVersionInPreviewHeader();
     
     /**
      * Note that if an ancestor siteMount contains a namedPipeline, this value is inherited unless this siteMount explicitly defines its own

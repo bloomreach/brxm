@@ -186,6 +186,29 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         }
         
         /*
+         * Default, when there is no hst:versioninpreviewheader configured, or, since we configure hst:versioninpreviewheader = true on the 
+         * base hstvirtualhosts configuration, all sitemount's by default should return true: 
+         */
+        @Test
+        public void testVersionInPreviewHeaderDefaultTrue(){
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("127.0.0.1");
+            request.addHeader("Host", "127.0.0.1");
+            request.setRequestURI("/preview/news/2009");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+               
+                assertTrue("We expect the mount to return true for version in preview header", mount.getSiteMount().isVersionInPreviewHeader());
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        
+        /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest *does* have a context path
          * The backing SiteMount should be live
@@ -444,7 +467,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          *        |        `- services (sitemount, isSiteMount = false)
          *        `preview (homepage = myhometestpreview)
          *        |    `hst:root  (sitemount)
-         *        |        |- custompipeline (sitemount, homepage = mycustomhometestpreview)
+         *        |        |- custompipeline (sitemount, homepage = mycustomhometestpreview, hst:versioninpreviewheader = false)
          *        |        `- services (sitemount, isSiteMount = false)
          *                  
          */
@@ -502,9 +525,13 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // fourth test: change request uri to "/custompipeline" : the expected resolvedSiteMapItem is now the homepage from the preview.onehippo.test/custompipeline, thus mycustomhometestpreview
                 // since we have a parameter configured as testparam = ${1} and the expected match for /mycustomhometestpreview = _default_ , we should have myparam='mycustomhometestpreview'
+                
                 previewRequest.setRequestURI("/custompipeline");
                 
                 mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), HstRequestUtils.getRequestPath(previewRequest));
+                // The custompipeline sitemount also has hst:versioninpreviewheader = false
+                assertFalse("The mount for custompipeline should return false for version in preview header but returned true",mount.getSiteMount().isVersionInPreviewHeader());
+                
                 previewRequest.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);

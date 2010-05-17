@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -34,7 +33,6 @@ import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +59,12 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
      * The pageNotFound for this VirtualHosts. When the backing configuration does not contain a pageNotFound, the value is <code>null
      */
     private String pageNotFound;
+    
+    /**
+     * Whether the {@link SiteMount}'s below this VirtualHostsService should show the hst version as a response header when they are a preview SiteMount
+     */
+    private boolean versionInPreviewHeader = true;
+    
     private boolean virtualHostsConfigured;
     private String jcrPath;
     private boolean portVisible;
@@ -84,6 +88,9 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         this.scheme = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
         this.homepage = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
         this.pageNotFound = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+            this.versionInPreviewHeader = this.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        }
         this.defaultHostName  = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if(scheme == null || "".equals(scheme)) {
             this.scheme = DEFAULT_SCHEME;
@@ -283,6 +290,10 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return pageNotFound;
     }
 
+    public boolean isVersionInPreviewHeader(){
+        return versionInPreviewHeader;
+    }
+    
     public List<VirtualHost> getVirtualHosts(boolean mountedOnly) {
         if(mountedOnly) {
             List<VirtualHost> mountedHosts = new ArrayList<VirtualHost>();
@@ -296,6 +307,5 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
             return allVirtualHosts;
         }
     }
-
 
 }

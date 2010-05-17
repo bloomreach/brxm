@@ -54,6 +54,12 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
      * taken (which still might be <code>null</code> though)
      */
     private String pageNotFound;
+    
+    /**
+     * Whether the {@link SiteMount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview SiteMount
+     */
+    private boolean versionInPreviewHeader;
+    
     private VirtualHosts virtualHosts;
     private VirtualHostService parentHost;
     private SiteMount rootSiteMount;
@@ -140,6 +146,18 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             }
         }
         
+        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+            this.versionInPreviewHeader = this.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        } else {
+           // try to get the one from the parent
+            if(parentHost != null) {
+                this.versionInPreviewHeader = parentHost.versionInPreviewHeader;
+            } else {
+                this.versionInPreviewHeader = virtualHosts.isVersionInPreviewHeader();
+            }
+        }
+        
+        
         String fullName = this.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
         
@@ -214,6 +232,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.scheme = parent.scheme;
         this.homepage = parent.homepage;
         this.pageNotFound = parent.pageNotFound;
+        this.versionInPreviewHeader = parent.versionInPreviewHeader;
         this.portVisible = parent.portVisible;
         this.contextPathInUrl = parent.contextPathInUrl;
         this.name = nameSegments[position];
@@ -270,7 +289,10 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         return pageNotFound;
     }
 
-    
+    public boolean isVersionInPreviewHeader() {
+        return versionInPreviewHeader;
+    }
+
     public VirtualHosts getVirtualHosts() {
         return this.virtualHosts;
     }
@@ -339,6 +361,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         }
         return builder.toString();
     }
+
 
 
 

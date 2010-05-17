@@ -38,6 +38,9 @@
     <sv:property sv:name="hst:pagenotfound" sv:type="String">
         <sv:value>pagenotfound</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
+        <sv:value>true</sv:value>
+    </sv:property>
     <sv:property sv:name="hst:suffixexclusions" sv:type="String">
         <sv:value>.do</sv:value>
         <sv:value>.jsp</sv:value>
@@ -233,7 +236,6 @@
                   <sv:property sv:name="hst:ispreview" sv:type="Boolean">
                     <sv:value>true</sv:value>
                   </sv:property>
-               
                   <sv:node sv:name="custompipeline">
                       <sv:property sv:name="jcr:primaryType" sv:type="Name">
                           <sv:value>hst:sitemount</sv:value>
@@ -242,7 +244,10 @@
                          <sv:value>mycustomhometestpreview</sv:value>
                       </sv:property>
                       <!-- mountpoint inherited here from parent  -->
-                      
+                      <!-- ispreview inherited from parent  -->
+                      <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
+                         <sv:value>false</sv:value>
+                      </sv:property>
                       <sv:property sv:name="hst:namedpipeline" sv:type="String">
                         <sv:value>CustomPipeline</sv:value>
                       </sv:property>

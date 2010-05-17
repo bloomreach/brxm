@@ -214,7 +214,7 @@ public class AggregationValve extends AbstractValve {
                     
                     try {
                         // add the X-HST-VERSION as a response header if we are in preview:
-                        if (requestContext.isPreview()) {
+                        if (requestContext.isPreview() && requestContext.getResolvedSiteMount().getSiteMount().isVersionInPreviewHeader()) {
                             rootWindow.getResponseState().addHeader("X-HST-VERSION", HstServices.getImplementationVersion());
                         }
                         // flush root component window content.
