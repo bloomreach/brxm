@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.core.container;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -27,17 +31,19 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.component.HstURLFactoryImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.mock.MockHstComponentWindow;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -77,15 +83,17 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testBasicCotnainerURL() throws UnsupportedEncodingException, ContainerException {
+    public void testBasicContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
-
-        ((MockHttpServletRequest) request).setParameter("param1", "value1");
-        ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
+        setResolvedSiteMount(request);
+        
+        // request.getServletPath() = ""
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         
+        ((MockHttpServletRequest) request).setParameter("param1", "value1");
+        ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
 
@@ -93,17 +101,22 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertNull("resource window reference namespace is not null.", containerURL.getResourceWindowReferenceNamespace());
         assertEquals("The path info is wrong: " + containerURL.getPathInfo(), "/news/2008/08", containerURL.getPathInfo());
     }
+
+    
     
     @Test
     public void testRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
-        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
+        setResolvedSiteMount(request);
         
+        // request.getServletPath() = ""
+        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
         ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
+        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
 
         HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL, requestContext);
         url.setParameter("param1", "value1");
@@ -144,10 +157,13 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         
+        setResolvedSiteMount(request);
         
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
         ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
+        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
 
+        
         ((HstURLFactoryImpl) this.urlFactory).setReferenceNamespaceIgnored(true);
         
         HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL, requestContext);
@@ -195,6 +211,12 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
+        
+        setResolvedSiteMount(request);
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
+        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
+        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
+
         HstContainerURL actionURL = this.urlProvider.parseURL(request, response, requestContext);
         actionURL.setActionWindowReferenceNamespace("b");
         actionURL.setActionParameter("ap1", "one");
@@ -224,6 +246,12 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
+        setResolvedSiteMount(request);
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
+        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
+        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
+
+        
         HstContainerURL resourceURL = this.urlProvider.parseURL(request, response, requestContext);
         resourceURL.setResourceWindowReferenceNamespace("b");
         resourceURL.setResourceId("myresource001");
@@ -235,6 +263,25 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertNotNull("resource window reference namespace is null.", resourceURL.getResourceWindowReferenceNamespace());
         assertEquals("resource id is wrong.", "myresource001", resourceURL.getResourceId());
         assertEquals("The path info is wrong.", "/news/2008/08", resourceURL.getPathInfo());
+    }
+    
+    private void setResolvedSiteMount(HttpServletRequest request) {
+        ResolvedSiteMount resolvedSiteMount = createNiceMock(ResolvedSiteMount.class);
+        SiteMount siteMount = createNiceMock(SiteMount.class);
+        VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        
+        expect(resolvedSiteMount.getResolvedMountPath()).andReturn("").anyTimes();
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount).anyTimes();
+        expect(siteMount.getVirtualHost()).andReturn(virtualHost).anyTimes();
+        expect(virtualHost.isContextPathInUrl()).andReturn(true).anyTimes();
+
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(virtualHost);
+        
+        // to parse a url, there must be a ResolvedSiteMount on the request attribute ContainerConstants.RESOLVED_SITEMOUNT
+        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMount);
+        
     }
     
 }
