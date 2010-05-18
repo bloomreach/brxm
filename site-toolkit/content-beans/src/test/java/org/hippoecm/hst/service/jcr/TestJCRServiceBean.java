@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class TestJCRServiceBean extends AbstractBeanTestCase {
     
-    private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
+    private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/unittestpreview/unittestproject/hst:content/common/homepage/homepage";
 
 
     @Before

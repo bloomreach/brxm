@@ -39,17 +39,17 @@ import org.junit.Test;
 public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     
     private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
-    private static final String TEST_DOCUMENT_NODE_TYPE = "testproject:textpage";
+    private static final String TEST_DOCUMENT_NODE_TYPE = "unittestproject:textpage";
     
-    private static final String TEST_CONTENTS_PATH = "/testpreview/testproject/hst:content";
-    private static final String TEST_FOLDER_NODE_PATH = TEST_CONTENTS_PATH + "/Solutions";
+    private static final String TEST_CONTENTS_PATH = "/unittestpreview/unittestproject/hst:content";
+    private static final String TEST_FOLDER_NODE_PATH = TEST_CONTENTS_PATH + "/common";
 
-    private static final String TEST_EXISTING_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/SolutionsPage";
+    private static final String TEST_EXISTING_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/homepage";
     
-    private static final String TEST_NEW_DOCUMENT_NODE_NAME = "CollaborationPortal";
+    private static final String TEST_NEW_DOCUMENT_NODE_NAME = "about";
     private static final String TEST_NEW_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/" + TEST_NEW_DOCUMENT_NODE_NAME;
     
-    private static final String TEST_NEW_FOLDER_NODE_NAME = "SubSolutions";
+    private static final String TEST_NEW_FOLDER_NODE_NAME = "subcommon";
     private static final String TEST_NEW_FOLDER_NODE_PATH = TEST_FOLDER_NODE_PATH + "/" + TEST_NEW_FOLDER_NODE_NAME;
     
     private static final String TEST_AUTO_NEW_FOLDER_NODE_NAME = "comments/tests";
@@ -62,7 +62,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     public void setUp() throws Exception {
         super.setUp();
         this.persistBinders = new HashMap<String, ContentNodeBinder>();
-        this.persistBinders.put("testproject:textpage", new PersistableTextPageBinder());
+        this.persistBinders.put("unittestproject:textpage", new PersistableTextPageBinder());
     }
     
  
@@ -95,8 +95,8 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
                 PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
                 assertNotNull(newPage);
                 
-                newPage.setTitle("Collaboration Portal Title");
-                newPage.setBodyContent("<h1>Welcome to the Collaboration Portal!</h1>");
+                newPage.setTitle("Title of the about page");
+                newPage.setBodyContent("<h1>Welcome to the about page!</h1>");
 
                 // custom mapping binder is already provided during WPM instantiation.
                 // but you can also provide your custom binder as the second parameter.
@@ -106,8 +106,8 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
                 
                 // retrieves the document created just before
                 newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
-                assertEquals("Collaboration Portal Title", newPage.getTitle());
-                assertEquals("<h1>Welcome to the Collaboration Portal!</h1>", newPage.getBodyContent());
+                assertEquals("Title of the about page", newPage.getTitle());
+                assertEquals("<h1>Welcome to the about page!</h1>", newPage.getBodyContent());
                 
             } finally {
                 PersistableTextPage newPage = null;
@@ -201,8 +201,8 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
             PersistableTextPage page = (PersistableTextPage) content;
             
             try {
-                node.setProperty("testproject:title", page.getTitle());
-                Node htmlNode = node.getNode("testproject:body");
+                node.setProperty("unittestproject:title", page.getTitle());
+                Node htmlNode = node.getNode("unittestproject:body");
                 htmlNode.setProperty("hippostd:content", page.getBodyContent());
             } catch (Exception e) {
                 throw new ContentNodeBindingException(e);

@@ -21,11 +21,11 @@ public class TextPageImpl extends HippoStdImpl implements TextPage {
     private static final long serialVersionUID = 1L;
 
     public String getTitle() {
-        return getProperty("testproject:title");
+        return getProperty("unittestproject:title");
     }
     
     public String getSummary() {
-        return getProperty("testproject:summary");
+        return getProperty("unittestproject:summary");
     }
      
 }

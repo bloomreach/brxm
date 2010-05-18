@@ -17,7 +17,7 @@ package org.hippoecm.hst.service.jcr;
 
 import org.hippoecm.hst.content.beans.Node;
 
-@Node(jcrType="testproject:textpage")
+@Node(jcrType="unittestproject:textpage")
 public interface TextPage extends HippoStd{
     
     public String getTitle();

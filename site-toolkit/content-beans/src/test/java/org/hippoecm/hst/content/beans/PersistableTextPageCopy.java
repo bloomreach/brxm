@@ -18,14 +18,14 @@ package org.hippoecm.hst.content.beans;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-@Node(jcrType="testproject:textpage")
+@Node(jcrType="unittestproject:textpage")
 public class PersistableTextPageCopy extends HippoDocument {
     
     protected String title;
     protected String bodyContent;
 
     public String getTitle() {
-        return (title != null ? title : (String) getProperty("testproject:title"));
+        return (title != null ? title : (String) getProperty("unittestproject:title"));
     }
     
     public void setTitle(String title) {
@@ -33,7 +33,7 @@ public class PersistableTextPageCopy extends HippoDocument {
     }
     
     public HippoHtml getBody(){
-        return getHippoHtml("testproject:body");
+        return getHippoHtml("unittestproject:body");
     }
     
     public String getBodyContent() {

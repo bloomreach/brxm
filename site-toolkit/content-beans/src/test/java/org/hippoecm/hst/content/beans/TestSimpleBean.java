@@ -64,21 +64,21 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         Session session = this.getSession();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
-        HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/documents/testproject/Products");
+        HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         
      
-        Object o = obm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
+        Object o = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         assertNotNull("The object is not retrieved from the path.", o);
         assertTrue(" Object should be an instance of PersistableTextPage and not PersistableTextPageCopy, because PersistableTextPage is added first", o instanceof PersistableTextPage);
         
-        PersistableTextPage productsPage =  (PersistableTextPage)obm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
-        PersistableTextPage productsPage2 = (PersistableTextPage) obm.getObject("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct");
+        PersistableTextPage homePage =  (PersistableTextPage)obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
+        PersistableTextPage homePageAsWell = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage/homepage");
 
-        assertTrue("Handle and Document should return true for equalCompare ", productsPage.equalCompare(productsPage2));
-        assertFalse("Folder and Document should return false for equalCompare ",folder.equalCompare(productsPage2));
+        assertTrue("Handle and Document should return true for equalCompare ", homePage.equalCompare(homePageAsWell));
+        assertFalse("Folder and Document should return false for equalCompare ",folder.equalCompare(homePageAsWell));
         
-        assertNotNull(productsPage);
-        assertNotNull(productsPage.getNode());
+        assertNotNull(homePage);
+        assertNotNull(homePage.getNode());
         
         session.logout();
     }
@@ -91,13 +91,13 @@ public class TestSimpleBean extends AbstractBeanTestCase {
       
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         
-        HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/documents/testproject/Products");
+        HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         
         HstQueryManager queryManager = new HstQueryManagerImpl(objectConverter, new HstCtxWhereClauseComputerImpl());
         
         HstQuery hstQuery = queryManager.createQuery(folder);
 
-        String query = "CMS";
+        String query = "homepage";
         Filter filter = new FilterImpl();
         filter.addContains(".", query);
         hstQuery.setFilter(filter);
@@ -111,7 +111,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
         
         resultBeans = doQuery(hstQuery);
-        assertTrue("The query should not find any result with common English word like '" + query + "'.", resultBeans.isEmpty());
+        assertTrue("The query should not find any result with stopwords '" + query + "'.", resultBeans.isEmpty());
         
         session.logout();
     }
