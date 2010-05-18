@@ -75,6 +75,6 @@ public class HstEmbeddedRequestContextImpl implements HstEmbeddedRequestContext
     
     public String getSiteName()
     {
-        return resolvedSiteMapItem != null ? resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite().getName() : null;
+        return resolvedSiteMapItem != null ? resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().getHstSite().getName() : null;
     }
 }

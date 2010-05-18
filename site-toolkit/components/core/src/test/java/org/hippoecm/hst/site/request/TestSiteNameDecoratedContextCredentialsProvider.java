@@ -26,8 +26,12 @@ import static org.junit.Assert.assertTrue;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,6 +43,10 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     private Credentials writableCredentials;
     private ContextCredentialsProvider ccp;
     private HstRequestContext requestContext;
+    private ResolvedSiteMapItem resolvedSiteMapItem;
+    private ResolvedSiteMount resolvedSiteMount;
+    private SiteMount siteMount;
+    private HstSite hstSite;
     
     @Before
     public void setUp() throws Exception {
@@ -47,37 +55,76 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         writableCredentials = new SimpleCredentials("admin@writable", "password@writable".toCharArray());
         ccp = new SiteNameDecoratedContextCredentialsProvider(defaultCredentials, defaultCredentialsForPreviewMode, writableCredentials);
         requestContext = createMock(HstRequestContext.class);
+        resolvedSiteMapItem = createMock(ResolvedSiteMapItem.class);
+        resolvedSiteMount = createMock(ResolvedSiteMount.class);
+        siteMount = createMock(SiteMount.class);
+        hstSite = createMock(HstSite.class);
     }
     
     @Test
     public void testDefaultCredentials() throws Exception {
-        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
-        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
+
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE).anyTimes();
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site1");
         
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
         
         Credentials creds = ccp.getDefaultCredentials(requestContext);
         
         assertTrue(creds instanceof SimpleCredentials);
         assertEquals("admin@default@site1", ((SimpleCredentials) creds).getUserID());
         assertEquals("password@default", new String(((SimpleCredentials) creds).getPassword()));
-        
+
         reset(requestContext);
+        reset(resolvedSiteMapItem);
+        reset(resolvedSiteMount);
+        reset(siteMount);
+        reset(hstSite);
     
-        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
-        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
-      
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE).anyTimes();
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site1");
+        
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
+        
         Credentials creds2 = ccp.getDefaultCredentials(requestContext);
         
         assertTrue(creds == creds2);
         
         reset(requestContext);
-      
-        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
-        expect(requestContext.isPreview()).andReturn(Boolean.FALSE);
+        reset(resolvedSiteMapItem);
+        reset(resolvedSiteMount);
+        reset(siteMount);
+        reset(hstSite);
+    
+        expect(requestContext.isPreview()).andReturn(Boolean.FALSE).anyTimes();
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site2");
+        
         replay(requestContext);
-      
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
+        
         Credentials creds3 = ccp.getDefaultCredentials(requestContext);
         assertTrue(creds3 instanceof SimpleCredentials);
         assertFalse(creds == creds3);
@@ -88,10 +135,18 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     @Test
     public void testPreviewCredentials() throws Exception {
         
-        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
-        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE).anyTimes();
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site1");
         
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
         
         Credentials creds = ccp.getDefaultCredentials(requestContext);
         
@@ -100,22 +155,46 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         assertEquals("password@preview", new String(((SimpleCredentials) creds).getPassword()));
         
         reset(requestContext);
-        
-        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
-        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
+        reset(resolvedSiteMapItem);
+        reset(resolvedSiteMount);
+        reset(siteMount);
+        reset(hstSite);
+    
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE).anyTimes();
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site1");
         
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
 
         Credentials creds2 = ccp.getDefaultCredentials(requestContext);
         
         assertTrue(creds == creds2);
         
         reset(requestContext);
-
-        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
-        expect(requestContext.isPreview()).andReturn(Boolean.TRUE);
-       
+        reset(resolvedSiteMapItem);
+        reset(resolvedSiteMount);
+        reset(siteMount);
+        reset(hstSite);
+    
+        expect(requestContext.isPreview()).andReturn(Boolean.TRUE).anyTimes();
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site2");
+        
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
       
         Credentials creds3 = ccp.getDefaultCredentials(requestContext);
         assertTrue(creds3 instanceof SimpleCredentials);
@@ -127,7 +206,17 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     @Test
     public void testWritableCredentials() throws Exception {
        
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site1");
+        
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
         
         Credentials creds = ccp.getWritableCredentials(requestContext);
         
@@ -136,17 +225,44 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         assertEquals("password@writable", new String(((SimpleCredentials) creds).getPassword()));
         
         reset(requestContext);
+        reset(resolvedSiteMapItem);
+        reset(resolvedSiteMount);
+        reset(siteMount);
+        reset(hstSite);
       
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site1");
+        
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
      
         Credentials creds2 = ccp.getWritableCredentials(requestContext);
         
         assertTrue(creds == creds2);
         
         reset(requestContext);
-    
-       
+        reset(resolvedSiteMapItem);
+        reset(resolvedSiteMount);
+        reset(siteMount);
+        reset(hstSite);
+      
+        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
+        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(siteMount.getHstSite()).andReturn(hstSite);
+        expect(hstSite.getName()).andReturn("site2");
+        
         replay(requestContext);
+        replay(resolvedSiteMapItem);
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(hstSite);
      
         Credentials creds3 = ccp.getWritableCredentials(requestContext);
         assertTrue(creds3 instanceof SimpleCredentials);
