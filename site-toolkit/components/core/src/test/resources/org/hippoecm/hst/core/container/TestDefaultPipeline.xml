@@ -27,7 +27,6 @@
   <import resource="classpath:/org/hippoecm/hst/core/TestConfigurations.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-virtualhosting.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-configuration.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-sitemenu.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-search.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
@@ -67,7 +66,6 @@
      <property name="serverPort" value="8085" />
      <property name="method" value="GET" />
      <property name="contextPath" value="/site" />
-     <property name="servletPath" value="/preview" />
   </bean>
   
   <bean id="javax.servlet.http.HttpServletResponse" scope="prototype"

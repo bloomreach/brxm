@@ -25,14 +25,20 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -91,7 +97,13 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news");
+        ((MockHttpServletRequest)servletRequest).addHeader("Host", servletRequest.getServerName());
+        
         ((MockHttpServletRequest)servletRequest).setRequestURI(servletRequest.getContextPath() + servletRequest.getServletPath() + servletRequest.getPathInfo());
+        
+
+        // need to set the resolved sitemap item on the request
+        resolveRequest(servletRequest, servletResponse);
         
         this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         
@@ -106,13 +118,16 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();
         assertTrue("The content of HTTP response is null or empty!", content != null && !"".equals(content.trim()));
     }
+
     
-    
-    @Test
     public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");
+        ((MockHttpServletRequest)servletRequest).addHeader("Host", servletRequest.getServerName());
         ((MockHttpServletRequest)servletRequest).setRequestURI(servletRequest.getContextPath() + servletRequest.getServletPath() + servletRequest.getPathInfo());
+        
+        // need to set the resolved sitemap item on the request
+        resolveRequest(servletRequest, servletResponse);
         
         this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         

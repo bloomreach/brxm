@@ -70,10 +70,6 @@ public class ContextResolvingValve extends AbstractValve
         }
         else {
             
-            if (resolvedSiteMapItem == null) {
-                throw new ContainerException("At this point the requestContext must contain a resolvedSiteMapItem");
-            }
-
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
 
             if (!requestContext.isPortletContext()) {

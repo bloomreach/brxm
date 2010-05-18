@@ -15,10 +15,29 @@
  */
 package org.hippoecm.hst.test;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -77,5 +96,38 @@ public abstract class AbstractSpringTestCase
     protected Configuration getContainerConfiguration() {
         PropertiesConfiguration propConf = new PropertiesConfiguration();
         return propConf;
+    }
+    
+    protected void setResolvedSiteMount(HttpServletRequest request) {
+        ResolvedSiteMount resolvedSiteMount = createNiceMock(ResolvedSiteMount.class);
+        SiteMount siteMount = createNiceMock(SiteMount.class);
+        VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        
+        expect(resolvedSiteMount.getResolvedMountPath()).andReturn("").anyTimes();
+        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount).anyTimes();
+        expect(siteMount.getVirtualHost()).andReturn(virtualHost).anyTimes();
+        expect(virtualHost.isContextPathInUrl()).andReturn(true).anyTimes();
+
+        replay(resolvedSiteMount);
+        replay(siteMount);
+        replay(virtualHost);
+        
+        // to parse a url, there must be a ResolvedSiteMount on the request attribute ContainerConstants.RESOLVED_SITEMOUNT
+        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMount);
+        
+    }
+    
+
+    protected void resolveRequest(HttpServletRequest request, HttpServletResponse response) throws RepositoryNotAvailableException {
+        VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
+        VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
+        ResolvedSiteMount mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));     
+        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);           
+        // now we can parse the url *with* a RESOLVED_SITEMOUNT which is needed!        
+        HstURLFactory factory = (HstURLFactory)HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
+        HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(request, response);
+        request.setAttribute(HstContainerURL.class.getName(), hstContainerURL);
+        ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL);
+        request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
     }
 }

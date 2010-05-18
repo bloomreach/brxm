@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -31,8 +27,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstURL;
@@ -87,6 +81,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
         
+        // need to set the resolved sitemount on the request
         setResolvedSiteMount(request);
         
         // request.getServletPath() = ""
@@ -265,23 +260,5 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("The path info is wrong.", "/news/2008/08", resourceURL.getPathInfo());
     }
     
-    private void setResolvedSiteMount(HttpServletRequest request) {
-        ResolvedSiteMount resolvedSiteMount = createNiceMock(ResolvedSiteMount.class);
-        SiteMount siteMount = createNiceMock(SiteMount.class);
-        VirtualHost virtualHost = createNiceMock(VirtualHost.class);
-        
-        expect(resolvedSiteMount.getResolvedMountPath()).andReturn("").anyTimes();
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount).anyTimes();
-        expect(siteMount.getVirtualHost()).andReturn(virtualHost).anyTimes();
-        expect(virtualHost.isContextPathInUrl()).andReturn(true).anyTimes();
-
-        replay(resolvedSiteMount);
-        replay(siteMount);
-        replay(virtualHost);
-        
-        // to parse a url, there must be a ResolvedSiteMount on the request attribute ContainerConstants.RESOLVED_SITEMOUNT
-        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMount);
-        
-    }
     
 }
