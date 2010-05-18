@@ -196,7 +196,7 @@
       <sv:value>unittest-image.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/testcontent/gallery</sv:value>
+      <sv:value>/unittestcontent/gallery</sv:value>
     </sv:property>
   </sv:node>
   
