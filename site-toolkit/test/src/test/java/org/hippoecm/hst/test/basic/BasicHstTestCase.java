@@ -33,11 +33,11 @@ public class BasicHstTestCase extends AbstractHstTestCase{
         
        Session session = this.getSession();
        
-       assertTrue("Node /testpreview must exist",session.itemExists("/testpreview"));
-       assertTrue("Node /testlive must exist",session.itemExists("/testlive"));
-       assertTrue("Node /hst:testvirtualhosts must exist", session.itemExists("/hst:testvirtualhosts"));
-       assertTrue("Node /hst:testconfiguration must exist", session.itemExists("/hst:testconfiguration"));
-       assertTrue("Node /testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct must exist", session.itemExists("/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct"));
+       assertTrue("Node /unittestpreview must exist",session.itemExists("/unittestpreview"));
+       assertTrue("Node /unittestlive must exist",session.itemExists("/unittestlive"));
+       assertTrue("Node /hst:unittestvirtualhosts must exist", session.itemExists("/hst:unittestvirtualhosts"));
+       assertTrue("Node /hst:unittestconfiguration must exist", session.itemExists("/hst:unittestconfiguration"));
+       assertTrue("Node /unittestpreview/unittestproject/hst:content/common/homepage must exist", session.itemExists("/unittestpreview/unittestproject/hst:content/common/homepage"));
 
     }
     
