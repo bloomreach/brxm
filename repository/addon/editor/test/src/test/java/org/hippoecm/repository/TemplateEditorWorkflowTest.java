@@ -58,7 +58,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
         "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
         "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
+        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.1'>\n" +
         "<hippotest3='http://www.hippoecm.org/test2/1.0'>\n" +
         "\n" +
         "[hippotest3:test] > hippo:document\n" +
@@ -69,7 +69,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
         "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
         "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
+        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.1'>\n" +
         "<hippotest3='http://www.hippoecm.org/test2/1.1'>\n" +
         "\n" +
         "[hippotest3:test] > hippo:document\n" +
@@ -341,7 +341,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
         "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
         "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
+        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.1'>\n" +
         "<test='http://www.hippoecm.org/editor/test/nt/0.2'>\n" +
         "\n" +
         "[test:mandatorybase]\n" +
