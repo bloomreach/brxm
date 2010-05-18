@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
  */
 public class TestContentService extends AbstractJaxrsSpringTestCase {
     
-    private static final String PREVIEW_SITE_CONTENT_PATH = "/testpreview/testproject/hst:content";
+    private static final String SITE_MOUNT_POINT = "/testpreview/testproject";
     
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
@@ -86,7 +86,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         };
         
         siteMount = EasyMock.createNiceMock(SiteMount.class);
-        EasyMock.expect(siteMount.getMountPoint()).andReturn(PREVIEW_SITE_CONTENT_PATH).anyTimes();
+        EasyMock.expect(siteMount.getMountPoint()).andReturn(SITE_MOUNT_POINT).anyTimes();
         
         resolvedSiteMount = EasyMock.createNiceMock(ResolvedSiteMount.class);
         EasyMock.expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount).anyTimes();
