@@ -79,15 +79,15 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs) throws RepositoryException {
         NamespaceRegistryImpl nsReg = super.createNamespaceRegistry(fs);
         log.info("Initializing hippo namespace");
-        safeRegisterNamespace(nsReg, "hippo", "http://www.onehippo.org/jcr/hippo/nt/2.0.1");
+        safeRegisterNamespace(nsReg, "hippo", "http://www.onehippo.org/jcr/hippo/nt/2.1");
         log.info("Initializing hipposys namespace");
-        safeRegisterNamespace(nsReg, "hipposys", "http://www.onehippo.org/jcr/hipposys/nt/1.0");
+        safeRegisterNamespace(nsReg, "hipposys", "http://www.onehippo.org/jcr/hipposys/nt/1.2");
         log.info("Initializing hipposysedit namespace");
-        safeRegisterNamespace(nsReg, "hipposysedit", "http://www.onehippo.org/jcr/hipposysedit/nt/1.2");
+        safeRegisterNamespace(nsReg, "hipposysedit", "http://www.onehippo.org/jcr/hipposysedit/nt/1.3");
 
         // TODO HREPTWO-3571 remove the hippofacnav registration here to its own subproject
         log.info("Initializing hippofacnav namespace: this needs to move to its own subproject, see HREPTWO-3571: ");
-        safeRegisterNamespace(nsReg, "hippofacnav", "http://www.onehippo.org/jcr/hippofacnav/nt/1.0");
+        safeRegisterNamespace(nsReg, "hippofacnav", "http://www.onehippo.org/jcr/hippofacnav/nt/1.1");
         return nsReg;
     }
 
