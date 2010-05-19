@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
+import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +29,14 @@ public class VirtualHostsConfigurationEventListener extends GenericEventListener
     static Logger log = LoggerFactory.getLogger(VirtualHostsConfigurationEventListener.class);
     
     protected VirtualHostsManager virtualHostsManager;
+    protected HstComponentRegistry componentRegistry;
     
     public void setVirtualHostsManager(VirtualHostsManager virtualHostsManager) {
         this.virtualHostsManager = virtualHostsManager;
+    }
+    
+    public void setComponentRegistry(HstComponentRegistry componentRegistry) {
+        this.componentRegistry = componentRegistry;
     }
     
     public void onEvent(EventIterator events) {
@@ -62,6 +68,7 @@ public class VirtualHostsConfigurationEventListener extends GenericEventListener
     }
     
     private void doInvalidation(String path) {
+        this.componentRegistry.unregisterAllComponents();
         this.virtualHostsManager.invalidate(path);
     }
 }

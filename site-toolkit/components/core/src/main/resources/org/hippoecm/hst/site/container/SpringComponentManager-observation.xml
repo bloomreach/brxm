@@ -103,6 +103,7 @@
                 <list>
                   <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.hosting.VirtualHostsConfigurationEventListener">
                     <property name="virtualHostsManager" ref="org.hippoecm.hst.configuration.hosting.VirtualHostsManager"/>
+                    <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
                   </bean>
                   <ref bean="hstconfigreaderSessionPoolRefresher" />
                 </list>
