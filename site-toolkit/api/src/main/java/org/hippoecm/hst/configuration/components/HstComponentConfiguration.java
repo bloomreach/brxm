@@ -160,4 +160,12 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @param name the name of the child HstComponentConfiguration
      */
     HstComponentConfiguration getChildByName(String name);
+    
+    
+    /**
+     * 
+     * @return the creation time of this HstComponentConfiguration
+     */
+    long getCreatedTime();
+    
 }

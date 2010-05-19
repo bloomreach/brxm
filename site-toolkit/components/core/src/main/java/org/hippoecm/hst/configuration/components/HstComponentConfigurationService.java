@@ -73,6 +73,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private PropertyMap propertyMap;
 
     private String configurationRootNodePath;
+    
+    private long createdTime;
 
     private ArrayList<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
@@ -94,6 +96,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                     "Node path of the component cannot start without the global components path. Skip Component");
         }
 
+        this.createdTime = System.currentTimeMillis();
         this.parent = parent;
 
         this.configurationRootNodePath = configurationRootNodePath;
@@ -467,6 +470,10 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 child.setReferenceName(autoRefName);
             }
         }
+    }
+
+    public long getCreatedTime() {
+        return createdTime;
     }
 
 }

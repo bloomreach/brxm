@@ -202,6 +202,7 @@ public abstract class AbstractValve implements Valve {
                     public HstComponentConfiguration getParent() { return null; }
 					public String getLocalParameter(String name) {return null;}
 					public Map<String, String> getLocalParameters() {return null;}
+					public long getCreatedTime() {return 0L;}
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);
