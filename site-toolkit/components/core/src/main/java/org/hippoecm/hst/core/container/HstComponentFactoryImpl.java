@@ -37,7 +37,7 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
     public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig) throws HstComponentException {
         
         String componentId = compConfig.getId();
-        HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId);
+        HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId, compConfig.getCreatedTime());
         
         if (component == null) {
             boolean initialized = false;

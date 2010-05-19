@@ -32,22 +32,37 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
     
     static Logger log = LoggerFactory.getLogger(HstComponentRegistryImpl.class);
     
-    protected Map<HstContainerConfig, Map<String, HstComponent>> servletConfigComponentsMap = Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponent>>());
+    protected Map<HstContainerConfig, Map<String, HstComponentHolder>> servletConfigComponentsMap = 
+        Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponentHolder>>());
 
     public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId) {
-        return getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
+        return getComponent(requestContainerConfig, componentId, 0L);
+    }
+    
+    public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId, long refreshedTime) {
+        HstComponentHolder holder = getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
+        
+        if (holder != null) {
+            if (holder.getTimestamp() < refreshedTime) {
+                unregisterComponent(requestContainerConfig, componentId);
+            } else {
+                return holder.getComponent();
+            }
+        }
+        
+        return null;
     }
 
     public void registerComponent(HstContainerConfig requestContainerConfig, String componentId, HstComponent component) {
-        getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, component);
+        getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, new HstComponentHolder(component, System.currentTimeMillis()));
     }
 
     public void unregisterComponent(HstContainerConfig requestContainerConfig, String componentId) {
-        HstComponent component = getServletConfigComponentsMap(requestContainerConfig, true).remove(componentId);
+        HstComponentHolder holder = getServletConfigComponentsMap(requestContainerConfig, true).remove(componentId);
         
-        if (component != null) {
+        if (holder != null) {
             try {
-                component.destroy();
+                holder.getComponent().destroy();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Exception occurred during destroying component: {}", e.toString(), e);
@@ -63,22 +78,22 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
             return;
         }
         
-        Map<HstContainerConfig, Map<String, HstComponent>> copiedMap = Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponent>>());
+        Map<HstContainerConfig, Map<String, HstComponentHolder>> copiedMap = Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponentHolder>>());
         
         synchronized (this.servletConfigComponentsMap) {
             for (HstContainerConfig requestContainerConfig : this.servletConfigComponentsMap.keySet()) {
-                copiedMap.put(requestContainerConfig, new HashMap<String, HstComponent>());
+                copiedMap.put(requestContainerConfig, new HashMap<String, HstComponentHolder>());
             }
         }
         
         for (HstContainerConfig requestContainerConfig : copiedMap.keySet()) {
-            Map<String, HstComponent> compMap = getServletConfigComponentsMap(requestContainerConfig, false);
+            Map<String, HstComponentHolder> compMap = getServletConfigComponentsMap(requestContainerConfig, false);
             
             if (compMap != null) {
-                Map<String, HstComponent> copiedCompMap = new HashMap<String, HstComponent>();
+                Map<String, HstComponentHolder> copiedCompMap = new HashMap<String, HstComponentHolder>();
                 
                 synchronized (compMap) {
-                    for (Map.Entry<String, HstComponent> compEntry : compMap.entrySet()) {
+                    for (Map.Entry<String, HstComponentHolder> compEntry : compMap.entrySet()) {
                         copiedCompMap.put(compEntry.getKey(), compEntry.getValue());
                     }
                 }
@@ -87,8 +102,8 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
             }
         }
         
-        for (Map.Entry<HstContainerConfig, Map<String, HstComponent>> entry : copiedMap.entrySet()) {
-            for (Map.Entry<String, HstComponent> compEntry : entry.getValue().entrySet()) {
+        for (Map.Entry<HstContainerConfig, Map<String, HstComponentHolder>> entry : copiedMap.entrySet()) {
+            for (Map.Entry<String, HstComponentHolder> compEntry : entry.getValue().entrySet()) {
                 unregisterComponent(entry.getKey(), compEntry.getKey());
             }
         }
@@ -96,14 +111,34 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
         this.servletConfigComponentsMap.clear();
     }
     
-    protected Map<String, HstComponent> getServletConfigComponentsMap(HstContainerConfig requestContainerConfig, boolean create) {
-        Map<String, HstComponent> componentsMap = this.servletConfigComponentsMap.get(requestContainerConfig);
+    protected Map<String, HstComponentHolder> getServletConfigComponentsMap(HstContainerConfig requestContainerConfig, boolean create) {
+        Map<String, HstComponentHolder> componentsMap = this.servletConfigComponentsMap.get(requestContainerConfig);
         
         if (componentsMap == null && create) {
-            componentsMap = Collections.synchronizedMap(new HashMap<String, HstComponent>());
+            componentsMap = Collections.synchronizedMap(new HashMap<String, HstComponentHolder>());
             this.servletConfigComponentsMap.put(requestContainerConfig, componentsMap);
         }
         
         return this.servletConfigComponentsMap.get(requestContainerConfig);
     }
+    
+    private static class HstComponentHolder {
+        
+        private HstComponent component;
+        private long timestamp;
+        
+        private HstComponentHolder(final HstComponent component, long timestamp) {
+            this.timestamp = timestamp;
+            this.component = component;
+        }
+        
+        public HstComponent getComponent() {
+            return component;
+        }
+        
+        public long getTimestamp() {
+            return timestamp;
+        }
+    }
+    
 }
