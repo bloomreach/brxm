@@ -608,7 +608,7 @@ public class UpdaterEngine {
         log.info("upgrade cycle traverse process save");
         session.save();
         log.info("upgrade cycle iterated process");
-        Map<String,List<UpdaterItemVisitor>> totalBatch = new HashMap<String,List<UpdaterItemVisitor>>();
+        Map<UpdaterPath,List<UpdaterItemVisitor>> totalBatch = new HashMap<UpdaterPath,List<UpdaterItemVisitor>>();
         UpdaterException exception = null;
         for (ModuleRegistration module : modules) {
             log.info("migration update cycle for module " + module.name);
@@ -633,21 +633,21 @@ public class UpdaterEngine {
                         List<UpdaterItemVisitor> visitors;
                         if ((visitors = totalBatch.get(path)) == null) {
                                 visitors = new LinkedList<UpdaterItemVisitor>();
-                                totalBatch.put(path, visitors);
+                                totalBatch.put(new UpdaterPath(path), visitors);
                         }
                         visitors.add((UpdaterItemVisitor)visitor);
                     }
                 }
             }
         }
-        Collection<SortedMap<String, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch, false);
+        Collection<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch, false);
         log.info("upgrade cycle iterated process breath first iteration");
         if(log.isDebugEnabled()) {
             log.debug("update batch plan breath first iteration");
             int batchCount = 0;
-            for(SortedMap<String,List<UpdaterItemVisitor>> partition : partitionedBatch) {
+            for(SortedMap<UpdaterPath,List<UpdaterItemVisitor>> partition : partitionedBatch) {
                 log.debug("  update batch "+(++batchCount));
-                for(Map.Entry<String,List<UpdaterItemVisitor>> visit : partition.entrySet()) {
+                for(Map.Entry<UpdaterPath,List<UpdaterItemVisitor>> visit : partition.entrySet()) {
                     StringBuffer visitors = new StringBuffer();
                     for(UpdaterItemVisitor visitor : visit.getValue()) {
                         if(visitors.length() > 0)
@@ -658,9 +658,9 @@ public class UpdaterEngine {
                 }
             }
         }
-        for (Map<String, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
-            for (Map.Entry<String, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
-                String path = entry.getKey();
+        for (Map<UpdaterPath, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
+            for (Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
+                String path = entry.getKey().toString();
                 Node node = updaterSession.getRootNode();
                 try {
                     if (!path.equals("/")) {
@@ -693,9 +693,9 @@ public class UpdaterEngine {
         if(log.isDebugEnabled()) {
             log.debug("update batch plan depth first iteration");
             int batchCount = 0;
-            for(SortedMap<String,List<UpdaterItemVisitor>> partition : partitionedBatch) {
+            for(SortedMap<UpdaterPath,List<UpdaterItemVisitor>> partition : partitionedBatch) {
                 log.debug("  update batch "+(++batchCount));
-                for(Map.Entry<String,List<UpdaterItemVisitor>> visit : partition.entrySet()) {
+                for(Map.Entry<UpdaterPath,List<UpdaterItemVisitor>> visit : partition.entrySet()) {
                     StringBuffer visitors = new StringBuffer();
                     for(UpdaterItemVisitor visitor : visit.getValue()) {
                         if(visitors.length() > 0)
@@ -706,9 +706,9 @@ public class UpdaterEngine {
                 }
             }
         }
-        for (Map<String, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
-            for (Map.Entry<String, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
-                String path = entry.getKey();
+        for (Map<UpdaterPath, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
+            for (Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
+                String path = entry.getKey().toString();
                 Node node = updaterSession.getRootNode();
                 try {
                     if (!path.equals("/")) {
@@ -748,29 +748,29 @@ public class UpdaterEngine {
         log.info("upgrade cycle saved");
     }
 
-    protected Collection<SortedMap<String, List<UpdaterItemVisitor>>> partition(Map<String, List<UpdaterItemVisitor>> totalBatch, boolean reverse) {
-        Comparator<String> comparator;
+    protected Collection<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> partition(Map<UpdaterPath, List<UpdaterItemVisitor>> totalBatch, boolean reverse) {
+        Comparator<UpdaterPath> comparator;
         if(reverse) {
-            comparator = new Comparator<String>() {
-                public int compare(String o1, String o2) {
+            comparator = new Comparator<UpdaterPath>() {
+                public int compare(UpdaterPath o1, UpdaterPath o2) {
                     return o2.compareTo(o1);
                 }
             };
         } else {
-            comparator = new Comparator<String>() {
-                public int compare(String o1, String o2) {
+            comparator = new Comparator<UpdaterPath>() {
+                public int compare(UpdaterPath o1, UpdaterPath o2) {
                     return o1.compareTo(o2);
                 }
             };
         }
-        Map<String,List<UpdaterItemVisitor>> sortedBatch = new TreeMap<String,List<UpdaterItemVisitor>>(comparator);
+        Map<UpdaterPath,List<UpdaterItemVisitor>> sortedBatch = new TreeMap<UpdaterPath,List<UpdaterItemVisitor>>(comparator);
         sortedBatch.putAll(totalBatch);
         totalBatch = sortedBatch;
-        LinkedList<SortedMap<String, List<UpdaterItemVisitor>>> partitionedBatch = new LinkedList<SortedMap<String, List<UpdaterItemVisitor>>>();
-        SortedMap<String, List<UpdaterItemVisitor>> currentBatch = null;
-        for (Map.Entry<String, List<UpdaterItemVisitor>> entry : totalBatch.entrySet()) {
+        LinkedList<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> partitionedBatch = new LinkedList<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>>();
+        SortedMap<UpdaterPath, List<UpdaterItemVisitor>> currentBatch = null;
+        for (Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry : totalBatch.entrySet()) {
             if(currentBatch == null) {
-                currentBatch = new TreeMap<String, List<UpdaterItemVisitor>>(comparator);
+                currentBatch = new TreeMap<UpdaterPath, List<UpdaterItemVisitor>>(comparator);
             }
             currentBatch.put(entry.getKey(), entry.getValue());
             if(currentBatch.size() >= LocalHippoRepository.BATCH_THRESHOLD) {
