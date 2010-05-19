@@ -15,20 +15,24 @@
  */
 package org.hippoecm.repository.updater;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 public class UpdaterPathTest {
 
+    static void assertEqualSign(int a, int b) {
+        assertTrue((a < 0 && b < 0) || (a > 0 && b > 0) || (a == 0 && b ==0)); 
+    }
+    
     @Test
     public void testSns() {
-        assertEquals(new UpdaterPath("/a").compareTo(new UpdaterPath("/b")), -1);
-        assertEquals(new UpdaterPath("/b").compareTo(new UpdaterPath("/a")), 1);
-        assertEquals(new UpdaterPath("/a[2]").compareTo(new UpdaterPath("/a[10]")), -1);
-        assertEquals(new UpdaterPath("/a").compareTo(new UpdaterPath("/a/b")), -1);
-        assertEquals(new UpdaterPath("/a/b").compareTo(new UpdaterPath("/a")), 1);
-        assertEquals(new UpdaterPath("/a/b").compareTo(new UpdaterPath("/a[2]")), -1);
+        assertEqualSign("/a".compareTo("/b"), new UpdaterPath("/a").compareTo(new UpdaterPath("/b")));
+        assertEqualSign("/b".compareTo("/a"), new UpdaterPath("/b").compareTo(new UpdaterPath("/a")));
+        assertEqualSign(-1, new UpdaterPath("/a[2]").compareTo(new UpdaterPath("/a[10]")));
+        assertEqualSign("/a".compareTo("/a/b"), new UpdaterPath("/a").compareTo(new UpdaterPath("/a/b")));
+        assertEqualSign("/a/b".compareTo("/a"), new UpdaterPath("/a/b").compareTo(new UpdaterPath("/a")));
+        assertEqualSign("/a/b".compareTo("/a[2]"), new UpdaterPath("/a/b").compareTo(new UpdaterPath("/a[2]")));
     }
 
 }

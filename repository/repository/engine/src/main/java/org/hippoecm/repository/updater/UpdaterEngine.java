@@ -629,11 +629,11 @@ public class UpdaterEngine {
                     log.info("migration update iterated for module " + module.name + " (" + visitor.toString() + ") "+nodeIter.getSize()+" nodes");
                     while(nodeIter.hasNext()) {
                         Node node = nodeIter.nextNode();
-                        String path = node.getPath();
+                        UpdaterPath path = new UpdaterPath(node.getPath());
                         List<UpdaterItemVisitor> visitors;
                         if ((visitors = totalBatch.get(path)) == null) {
                                 visitors = new LinkedList<UpdaterItemVisitor>();
-                                totalBatch.put(new UpdaterPath(path), visitors);
+                                totalBatch.put(path, visitors);
                         }
                         visitors.add((UpdaterItemVisitor)visitor);
                     }
@@ -823,6 +823,7 @@ public class UpdaterEngine {
                     /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
                 } catch (InvalidNodeTypeDefException ex) {
                     log.error("upgrade failed to register new nodetype " + ntd.getName(), ex);
+                    log.error("upgrade registering new nodetype failed: ", ex);
                 }
             }
         }
