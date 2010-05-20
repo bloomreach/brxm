@@ -16,6 +16,7 @@
 package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -39,7 +42,12 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
+import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.HstQueryManager;
+import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +65,98 @@ public class ContentService extends BaseHstContentService {
     
     public ContentService() {
         super();
+    }
+    
+    @GET
+    @Path("/query/{path:.*}")
+    public HippoBeanContentCollection queryContentItems(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, 
+            @PathParam("path") List<PathSegment> pathSegments, 
+            @QueryParam("scope") @DefaultValue(".") String queryScope, 
+            @QueryParam("op") @DefaultValue("contains") String queryOperator, 
+            @QueryParam("query") String queryText, 
+            @FormParam("jcrexpr") String jcrExpression, 
+            @QueryParam("lang") @DefaultValue("xpath") String queryLanguage, 
+            @QueryParam("begin") @DefaultValue("0") String beginIndex,
+            @QueryParam("end") @DefaultValue("100") String endIndex,
+            @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
+        
+        HippoBeanContentCollection beanContents = new HippoBeanContentCollection();
+        
+        try {
+            String scopeItemPath = getContentItemPath(servletRequest, pathSegments);
+            Item item = getHstRequestContext(servletRequest).getSession().getItem(scopeItemPath);
+            
+            if (!item.isNode()) {
+                throw new IllegalArgumentException("Invalid scope node path: " + scopeItemPath);
+            } else {
+                Node scopeNode = (Node) item;
+                
+                ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+                HstQueryManager queryManager = getHstQueryManager();
+                
+                HstQuery hstQuery = queryManager.createQuery(scopeNode);
+                Filter filter = hstQuery.createFilter();
+                
+                if (queryText != null) {
+                    if ("contains".equals(queryOperator)) {
+                        filter.addContains(queryScope, queryText);
+                    } else if ("equalto".equals(queryOperator)) {
+                        filter.addEqualTo(queryScope, queryText);
+                    }
+                }
+                
+                if (!StringUtils.isBlank(jcrExpression)) {
+                    filter.addJCRExpression(jcrExpression);
+                }
+                
+                hstQuery.setFilter(filter);
+                HstQueryResult result = hstQuery.execute();
+                int totalSize = result.getSize();
+                HippoBeanIterator iterator = result.getHippoBeans();
+                
+                int begin = Math.max(0, Integer.parseInt(beginIndex));
+                int end = Integer.parseInt(endIndex);
+                
+                if (end < 0) {
+                    end = Integer.MAX_VALUE;
+                }
+                
+                // don't skip past unreachable item:
+                if (begin < totalSize) {
+                    iterator.skip(begin);
+                }
+                
+                List<HippoBeanContent> list = new LinkedList<HippoBeanContent>();
+                
+                int maxCount = end - begin;
+                int count = 0;
+                
+                while (iterator.hasNext() && count < maxCount) {
+                    HippoBean bean = iterator.nextHippoBean();
+                    
+                    if (bean != null) {
+                        HippoBeanContent beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
+                        list.add(beanContent);
+                        count++;
+                    }
+                }
+                
+                beanContents = new HippoBeanContentCollection(list);
+                beanContents.setTotalSize(totalSize);
+                beanContents.setBeginIndex(begin);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return beanContents;
     }
     
     @GET
