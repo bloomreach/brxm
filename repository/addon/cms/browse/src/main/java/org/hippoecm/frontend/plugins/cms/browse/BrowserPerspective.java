@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -23,14 +24,14 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.plugins.yui.layout.UnitExpandCollapseBehavior;
-import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
+import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
+import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
-import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 
+import javax.jcr.Node;
 import java.util.Iterator;
 
 public class BrowserPerspective extends Perspective {
@@ -39,10 +40,15 @@ public class BrowserPerspective extends Perspective {
 
     private static final long serialVersionUID = 1L;
 
-    private final WireframeSettings settings;
-    private UnitExpandCollapseBehavior toggler;
+    private static final JcrNodeModel NULL_MODEL = new JcrNodeModel((Node)null);
 
-    private RenderService editorBrowseService;
+    private TabsPlugin tabs;
+    private IExpandableCollapsable listing;
+
+    private IModelReference modelReference;
+    private IModel previousSelection;
+
+    private final WireframeBehavior wireframe;
 
     public BrowserPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -52,16 +58,41 @@ public class BrowserPerspective extends Perspective {
         addExtensionPoint("left");
 
         context.registerTracker(new ServiceTracker<RenderService>(RenderService.class) {
+
             @Override
             protected void onServiceAdded(RenderService service, String name) {
                 super.onServiceAdded(service, name);
-                editorBrowseService = service;
+                if(service instanceof IExpandableCollapsable) {
+                    listing = (IExpandableCollapsable)service;
+                }
+
+                if(listing == null || !listing.isSupported()) {
+                    wireframe.collapseAll();
+                }
             }
 
             @Override
             protected void onRemoveService(RenderService service, String name) {
                 super.onRemoveService(service, name);
-                editorBrowseService = null;
+                
+                listing = null;
+                previousSelection = null;
+            }
+        }, "service.browse.list");
+
+        context.registerTracker(new ServiceTracker<RenderService>(RenderService.class) {
+            @Override
+            protected void onServiceAdded(RenderService service, String name) {
+                super.onServiceAdded(service, name);
+                if(service instanceof TabsPlugin) {
+                    tabs = (TabsPlugin) service;
+                }
+            }
+
+            @Override
+            protected void onRemoveService(RenderService service, String name) {
+                super.onRemoveService(service, name);
+                tabs = null;
             }
         }, "service.browse.editor");
 
@@ -71,6 +102,8 @@ public class BrowserPerspective extends Perspective {
 
             @Override
             protected void onServiceAdded(final IModelReference service, String name) {
+                modelReference = service;
+
                 if (observer == null) {
                     context.registerService(observer = new IObserver() {
 
@@ -79,22 +112,11 @@ public class BrowserPerspective extends Perspective {
                         }
 
                         public void onEvent(Iterator events) {
-                            if (service != null) {
-                                JcrNodeModel documentModel = (JcrNodeModel) service.getModel();
-                                if(documentModel.getItemModel() == null || documentModel.getItemModel().getPath() == null) {
-                                    //Prevent calling toggle twice in a single request: we will end up here after
-                                    //the onToggle override below sets the documentModel to null to remove the selected
-                                    //state from the doclisting
-                                    return;
-                                }
-                            }
-
-                            AjaxRequestTarget target = AjaxRequestTarget.get();
-                            if (target != null) {
-                                UnitSettings leftSettings = settings.getUnit("left");
-                                if (leftSettings != null && leftSettings.isExpanded()) {
-                                    toggler.toggle("left", target);
-                                }
+                            //Prevent calling toggle twice in a single request: we will end up here after
+                            //the onToggle override below sets the documentModel to null to remove the selected
+                            //state from the doclisting
+                            if (service != null && !service.getModel().equals(NULL_MODEL)) {
+                                wireframe.collapseAll();
                             }
                         }
                     }, IObserver.class.getName());
@@ -109,40 +131,53 @@ public class BrowserPerspective extends Perspective {
                     context.unregisterService(observer, IObserver.class.getName());
                     observer = null;
                 }
+                modelReference = null;
             }
         }, config.getString("model.document"));
-
 
         // register as the IRenderService for the browser service
         String browserId = config.getString("browser.id");
         context.registerService(this, browserId);
 
-        add(new WireframeBehavior(settings = new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+        add(wireframe = new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))) {
+            @Override
+            protected void onToggle(boolean expand, String position, AjaxRequestTarget target) {
+                if(listing != null && listing.isSupported()) {
+                    if (expand) {
+                        listing.expand();
+                    } else {
+                        listing.collapse();
+                    }
+                }
+
+                if (tabs != null) {
+                    if (expand) {
+                        tabs.hide();
+                    } else {
+                        tabs.show();
+                    }
+                }
+
+                if(modelReference != null) {
+                    if (expand) {
+                        previousSelection = modelReference.getModel();
+                        modelReference.setModel(NULL_MODEL);
+                    } else if (previousSelection != null && modelReference.getModel().equals(
+                            NULL_MODEL)) {
+                        modelReference.setModel(previousSelection);
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
-    protected ExtensionPoint createExtensionPoint(String extension) {
-        return new ExtensionPoint(extension) {
-            @Override
-            public void onServiceAdded(IRenderService service, String name) {
-                super.onServiceAdded(service, name);
+    public void detachModels() {
+        super.detachModels();
 
-                if(extension.equals("left")) {
-                    service.getComponent().add(toggler = new UnitExpandCollapseBehavior(settings, "left") {
-
-                        @Override
-                        protected void onToggle(boolean expand, AjaxRequestTarget target) {
-                            if(expand) {
-                                //remove focus from tabs
-                                if(editorBrowseService != null) {
-                                    editorBrowseService.focus(null);
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        };
+        if(previousSelection != null) {
+            previousSelection.detach();
+        }
     }
-
 }

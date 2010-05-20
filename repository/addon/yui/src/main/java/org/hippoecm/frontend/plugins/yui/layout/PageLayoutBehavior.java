@@ -37,7 +37,7 @@ import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
  * 
  * @see WireframeBehavior
  */
-public class PageLayoutBehavior extends AbstractYuiBehavior implements IWireframeService {
+public class PageLayoutBehavior extends AbstractYuiBehavior implements IWireframe {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -85,7 +85,7 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
     }
 
     //Implement IWireframeService
-    public YuiId getParentId() {
+    public YuiId getYuiId() {
         return settings.getRootId();
     }
 

@@ -15,18 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.list.comparators.DocumentAttributeComparator;
@@ -47,21 +41,19 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
-import org.hippoecm.frontend.plugins.yui.layout.UnitExpandCollapseBehavior;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
+import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class DocumentListingPlugin extends AbstractListingPlugin {
+public class DocumentListingPlugin extends AbstractListingPlugin implements IExpandableCollapsable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -72,79 +64,28 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     private static final String DOCUMENT_LISTING_CSS = "DocumentListingPlugin.css";
     private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";
 
-    private IModel<Node> previousSelected;
-    private boolean isExpanded;
+    boolean isExpanded = false;
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new AjaxLink<String>("toggleFullscreen", new Model<String>()) {
-            private static final long serialVersionUID = 8830106986441125452L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                toggleFullscreen(target);
-            }
-
-        }.add(new Image("toggleFullscreenImage", TOGGLE_FULLSCREEN_IMG)));
+        add(new ExpandCollapseLink<String>("toggleFullscreen").add(
+                new Image("toggleFullscreenImage", TOGGLE_FULLSCREEN_IMG)));
 
     }
 
-    private void toggleFullscreen(AjaxRequestTarget target) {
-        MarkupContainer c = getParent();
-        while(c != null) {
-            for(IBehavior b : c.getBehaviors()) {
-                if(b instanceof UnitExpandCollapseBehavior) {
-                    boolean isExpanding = ((UnitExpandCollapseBehavior) b).toggle(target);
-                    if(isExpanding) {
-                        previousSelected = getSelectedModel();
-                        setSelectedModel(new JcrNodeModel((Node)null));
-                        renderExpanded();
-                    } else {
-                        setSelectedModel(previousSelected);
-                        renderCollapsed();
-                    }
-                    return;
-                }
-            }
-            c = c.getParent();
-        }
-    }
-
-    private void renderCollapsed() {
+    public void collapse() {
         isExpanded = false;
         onModelChanged();
     }
 
-    private void renderExpanded() {
-        isExpanded = true;
-        onModelChanged();
+    public boolean isSupported() {
+        return getPluginConfig().getAsBoolean("expand.collapse.supported", false);
     }
 
-    @Override
-    protected void onSelectionChanged(IModel<Node> model) {
-        super.onSelectionChanged(model);
-        if(isExpanded && model instanceof JcrNodeModel) {
-            JcrNodeModel nodeModel = (JcrNodeModel) model;
-            if (nodeModel.getItemModel() != null && nodeModel.getItemModel().getPath() != null) {
-                Node node = nodeModel.getNode();
-                try {
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        NodeIterator nodeIt = node.getNodes();
-                        while (nodeIt.hasNext()) {
-                            Node childNode = nodeIt.nextNode();
-                            if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                                isExpanded = false;
-                                onModelChanged();
-                                break;
-                            }
-                        }
-                    }
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    public void expand() {
+        isExpanded = true;
+        onModelChanged();
     }
 
     @Override
@@ -190,7 +131,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         List<ListColumn<Node>> columns = getCollapsedColumns();
 
         //Type
-        ListColumn<Node>  column = new ListColumn<Node>(new StringResourceModel("doclisting-type", this, null), "type");
+        ListColumn<Node> column = new ListColumn<Node>(new StringResourceModel("doclisting-type", this, null), "type");
         column.setComparator(new TypeComparator());
         column.setRenderer(new TypeRenderer());
         column.setCssClass("doclisting-type");
@@ -203,19 +144,10 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
             @Override
             protected int compare(StateIconAttributes s1, StateIconAttributes s2) {
-                Calendar o1 = s1.getLastModifiedDate();
-                Calendar o2 = s2.getLastModifiedDate();
-                if (o1 == null) {
-                    if (o2 == null) {
-                        return 0;
-                    }
-                    return 1;
-                } else if (o2 == null) {
-                    return -1;
-                }
-                return o1.compareTo(o2);
+                return compareDates(s1.getLastModifiedDate(), s2.getLastModifiedDate());
             }
         });
+        column.setCssClass("doclisting-date");
         column.setRenderer(new DocumentAttributeRenderer() {
             private static final long serialVersionUID = -1485899011687542362L;
 
@@ -241,17 +173,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
             @Override
             protected int compare(StateIconAttributes s1, StateIconAttributes s2) {
-                String o1 = s1.getLastModifiedBy();
-                String o2 = s2.getLastModifiedBy();
-                if (o1 == null) {
-                    if (o2 == null) {
-                        return 0;
-                    }
-                    return 1;
-                } else if (o2 == null) {
-                    return -1;
-                }
-                return o1.compareTo(o2);
+                return s1.getLastModifiedBy().compareTo(s2.getLastModifiedBy());
             }
         });
         column.setRenderer(new DocumentAttributeRenderer() {
@@ -262,6 +184,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
                 return atts.getLastModifiedBy();
             }
         });
+        column.setCssClass("doclisting-lastmodified-by");
         columns.add(column);
 
         //publication date
@@ -270,17 +193,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
             @Override
             protected int compare(StateIconAttributes s1, StateIconAttributes s2) {
-                Calendar o1 = s1.getPublicationDate();
-                Calendar o2 = s2.getPublicationDate();
-                if (o1 == null) {
-                    if (o2 == null) {
-                        return 0;
-                    }
-                    return 1;
-                } else if (o2 == null) {
-                    return -1;
-                }
-                return o1.compareTo(o2);
+                return compareDates(s1.getPublicationDate(), s2.getPublicationDate());
             }
         });
         column.setRenderer(new DocumentAttributeRenderer() {
@@ -299,9 +212,22 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
                 return advancedFormattedCalendar(atts.getPublicationDate());
             }
         });
+        column.setCssClass("doclisting-date");
         columns.add(column);
 
         return columns;
+    }
+
+    private int compareDates(Calendar o1, Calendar o2) {
+        if (o1 == null) {
+            if (o2 == null) {
+                return 0;
+            }
+            return 1;
+        } else if (o2 == null) {
+            return -1;
+        }
+        return o1.compareTo(o2);
     }
 
     private String simpleFormattedCalendar(Calendar cal) {
@@ -349,12 +275,4 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         }
     }
 
-    @Override
-    public void detachModels() {
-        super.detachModels();
-
-        if(previousSelected != null) {
-            previousSelected.detach();
-        }
-    }
 }

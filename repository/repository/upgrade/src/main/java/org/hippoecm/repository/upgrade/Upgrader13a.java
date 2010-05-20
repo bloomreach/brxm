@@ -15,7 +15,12 @@
  */
 package org.hippoecm.repository.upgrade;
 
-import java.io.InputStreamReader;
+import org.hippoecm.repository.ext.UpdaterContext;
+import org.hippoecm.repository.ext.UpdaterItemVisitor;
+import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
+import org.hippoecm.repository.ext.UpdaterModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -23,13 +28,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
-
-import org.hippoecm.repository.ext.UpdaterContext;
-import org.hippoecm.repository.ext.UpdaterItemVisitor;
-import org.hippoecm.repository.ext.UpdaterModule;
-import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.InputStreamReader;
 
 public class Upgrader13a implements UpdaterModule {
     @SuppressWarnings("unused")
@@ -168,6 +167,37 @@ public class Upgrader13a implements UpdaterModule {
                 if (node.hasNode("cms-pickers")) {
                     log.info("Removing the cms-pickers node from " + node.getPath());
                     node.getNode("cms-pickers").remove();
+                }
+            }
+        });
+
+        //Documentlisting wide-view update
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if(node.hasNode("browserPerspective/layout.wireframe")) {
+                    Node layout = node.getNode("browserPerspective/layout.wireframe");
+                    layout.setProperty("left", "id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px 0px 0px 0px,expand.collapse.enabled=true");
+                    layout.setProperty("center", "id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px 0px 0px 0px");
+                }
+                if(node.hasNode("navigatorLayout/yui.config")) {
+                    Node config = node.getNode("navigatorLayout/yui.config");
+                    config.setProperty("left", "id=navigator-left,body=navigator-left-body,width=200,zindex=2,min.width=100,resize=true");
+                    config.setProperty("center", "id=navigator-center,body=navigator-center-body,width=250,min.width=100");
+                }
+            }
+        });
+
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-folder-views") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if(node.hasNode("hippostd:directory/root")) {
+                    Node root = node.getNode("hippostd:directory/root");
+                    root.setProperty("expand.collapse.supported", true);
+                }
+                if (node.hasNode("hippostd:folder/root")) {
+                    Node root = node.getNode("hippostd:folder/root");
+                    root.setProperty("expand.collapse.supported", true);
                 }
             }
         });

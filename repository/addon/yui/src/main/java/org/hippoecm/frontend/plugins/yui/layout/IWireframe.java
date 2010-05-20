@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.behavior.IBehavior;
+import java.io.Serializable;
 
 /**
  * Base wireframe interface, allows wireframes that are linked to their parent to register
  * with their parent through the Wicket component tree model.
  */
-public interface IWireframeService extends IBehavior {
+public interface IWireframe extends Serializable {
     final static String SVN_ID = "$Id$";
 
     /**
@@ -29,5 +29,6 @@ public interface IWireframeService extends IBehavior {
      * 
      * @return the root {@link YuiId} of this wireframe 
      */
-    YuiId getParentId();
+    YuiId getYuiId();
+
 }

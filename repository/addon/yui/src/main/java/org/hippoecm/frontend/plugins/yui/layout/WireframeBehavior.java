@@ -15,20 +15,22 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.io.Serializable;
-
 import net.sf.json.JsonConfig;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Component.IVisitor;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.service.render.RenderService;
+
+import java.io.Serializable;
 
 /**
  * The WireframeBehavior allows you to create cross-browser application layouts based on the YUI Layout Manager:
@@ -111,7 +113,7 @@ import org.hippoecm.frontend.service.render.RenderService;
  * <p>
  * When a wireframe is nested inside another wireframe, YUI demands that the child wireframe knows the id value of it's
  * parent wireframe at render time. Because of this, a wireframe will look up it's ancestors graph for a class
- * implementing the {@link IWireframeService} and, if found, retrieves and stores the parent id.
+ * implementing the {@link IWireframe} and, if found, retrieves and stores the parent id.
  * </p>
  * 
  * <p>
@@ -131,7 +133,7 @@ import org.hippoecm.frontend.service.render.RenderService;
  * @see org.hippoecm.frontend.plugins.yui.layout.YuiId
  */
 
-public class WireframeBehavior extends AbstractYuiBehavior implements IWireframeService {
+public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWireframe {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -141,10 +143,10 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
             "add_wireframe.js");
 
     private WireframeSettings settings;
-    private Component component;
     private HippoTextTemplate template;
 
     public WireframeBehavior(final WireframeSettings settings) {
+        super(settings);
         this.settings = settings;
 
         template = new HippoTextTemplate(behaviorJs, settings.getClientClassName()) {
@@ -164,22 +166,14 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
             public JsonConfig getJsonConfig() {
                 JsonConfig jsonConfig = new JsonConfig();
                 jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
+                jsonConfig.registerJsonValueProcessor(JsFunction.class, new JsFunctionProcessor());
                 return jsonConfig;
             }
         };
     }
 
-    /**
-     * Implements IWireframeService
-     */
-    public YuiId getParentId() {
+    public YuiId getYuiId() {
         return settings.getRootId();
-    }
-
-    @Override
-    public void bind(Component component) {
-        super.bind(component);
-        this.component = component;
     }
 
     @Override
@@ -197,22 +191,22 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
 
     @Override
     public void onRenderHead(IHeaderResponse response) {
-        settings.setMarkupId(component.getMarkupId(true));
+        settings.setMarkupId(getComponent().getMarkupId(true));
 
         //If linkedWithParent, look for an ancestor Component that implements IWireframeService and retrieve it's id
         if (settings.isLinkedWithParent()) {
-            Component parent = component;
+            Component parent = getComponent();
             boolean found = false;
             while (!found) {
                 parent = parent.getParent();
                 if (parent == null) {
                     throw new RuntimeException("Parent layout behavior not found for component["
-                            + component.getMarkupId() + "]");
+                            + getComponent().getMarkupId() + "]");
                 }
                 for (Object parentBehavior : parent.getBehaviors()) {
-                    if (parentBehavior instanceof IWireframeService) {
-                        IWireframeService service = (IWireframeService) parentBehavior;
-                        settings.setParentId(service.getParentId());
+                    if (parentBehavior instanceof IWireframe) {
+                        IWireframe wireframe = (IWireframe) parentBehavior;
+                        settings.setParentId(wireframe.getYuiId());
                         found = true;
                         break;
                     }
@@ -222,11 +216,11 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
 
         //Visit child components in order to find components that contain a {@link UnitBehavior}. If another wireframe
         //or unit is encountered, stop going deeper.
-        MarkupContainer cont = (MarkupContainer) component;
+        MarkupContainer cont = (MarkupContainer) getComponent();
         cont.visitChildren(new IVisitor<Component>() {
             public Object component(Component component) {
                 for (Object behavior : component.getBehaviors()) {
-                    if (behavior instanceof IWireframeService) {
+                    if (behavior instanceof IWireframe) {
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (behavior instanceof UnitBehavior) {
                         String position = ((UnitBehavior) behavior).getPosition();
@@ -250,4 +244,41 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
         super.onRenderHead(response);
     }
 
+    @Override
+    protected void respond(AjaxRequestTarget target) {
+        final RequestCycle requestCycle = RequestCycle.get();
+        String position = requestCycle.getRequest().getParameter("position");
+        if (!Strings.isEmpty(position)) {
+            toggle(position, target);
+        }
+    }
+
+    public void toggle(String position, AjaxRequestTarget target) {
+        UnitSettings unitSettings = settings.getUnit(position);
+        if (unitSettings == null) {
+            throw new IllegalArgumentException(
+                    "No unit with position " + position + " is defined in layout[" + settings.getRootId() + "], cannot expand/collapse.");
+        }
+
+        boolean expand = !unitSettings.isExpanded();
+        String jsMethod = expand ? "YAHOO.hippo.LayoutManager.expandUnit" : "YAHOO.hippo.LayoutManager.collapseUnit";
+        target.appendJavascript(
+                jsMethod + "('" + this.settings.getRootId().getElementId() + "', '" + position + "');");
+        unitSettings.setExpanded(expand);
+        onToggle(expand, position, target);
+    }
+
+    protected void onToggle(boolean expand, String position, AjaxRequestTarget target) {
+    }
+
+    public void collapseAll() {
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            for (UnitSettings unit : settings.getUnits()) {
+                if (unit.isExpanded()) {
+                    toggle(unit.getPosition(), target);
+                }
+            }
+        }
+    }
 }

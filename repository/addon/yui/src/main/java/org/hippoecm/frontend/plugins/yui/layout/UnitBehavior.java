@@ -16,8 +16,6 @@
 
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.util.Map;
-
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -29,6 +27,8 @@ import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.IBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * This behavior stores the component id as it's markupId in the {@link UnitSettings} and if the request rendering this
@@ -65,7 +65,7 @@ public class UnitBehavior extends AbstractBehavior {
                     boolean found = false;
                     while (parent != null) {
                         for (IBehavior behavior : parent.getBehaviors()) {
-                            if (behavior instanceof IWireframeService) {
+                            if (behavior instanceof IWireframe) {
                                 target.addComponent(parent);
                                 found = true;
                                 break;
