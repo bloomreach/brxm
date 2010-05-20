@@ -229,7 +229,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 folderNode = canonical;
             }
             
-            Workflow wf = getWorkflow(session, folderNodeWorkflowCategory, folderNode);
+            Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
 
             if (wf instanceof FolderWorkflow) {
                 FolderWorkflow fwf = (FolderWorkflow) wf;
@@ -335,7 +335,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     contentNode = canonical;
                 }
                 
-                Workflow wf = getWorkflow(session, documentNodeWorkflowCategory, contentNode);
+                Workflow wf = getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
                 //String handleUuid = contentNode.getParent().getUUID();
                 
@@ -354,7 +354,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         if (changed) {
                             contentNode.save();
                             // we need to recreate the EditableWorkflow because the node has changed
-                            ewf = (EditableWorkflow) getWorkflow(session, documentNodeWorkflowCategory, contentNode);
+                            ewf = (EditableWorkflow) getWorkflow(documentNodeWorkflowCategory, contentNode);
                             document = ewf.commitEditableInstance();
                         } else {
                             document = ewf.disposeEditableInstance();
@@ -366,7 +366,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 
                 if (workflowCallbackHandler != null) {
                     // recreate the wf 
-                    wf = getWorkflow(session, documentNodeWorkflowCategory, document);
+                    wf = getWorkflow(documentNodeWorkflowCategory, document);
                     if (wf != null) {
                         workflowCallbackHandler.processWorkflow(wf);
                     } else {
@@ -427,7 +427,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     // TODO : check for childs all being checked out??
                 }
                     
-                Workflow wf = getWorkflow(session, folderNodeWorkflowCategory, folderNode);
+                Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
                 
                 if (wf instanceof FolderWorkflow) {
                     FolderWorkflow fwf = (FolderWorkflow) wf;
@@ -565,7 +565,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         this.workflowCallbackHandler = workflowCallbackHandler;
     }
     
-    private Workflow getWorkflow(Session session, String category, Node node) throws RepositoryException {
+    public Workflow getWorkflow(String category, Node node) throws RepositoryException {
         Workspace workspace = session.getWorkspace();
         
         ClassLoader workspaceClassloader = workspace.getClass().getClassLoader();
@@ -585,7 +585,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         }
     }
     
-    private Workflow getWorkflow(Session session, String category, Document document) throws RepositoryException {
+    public Workflow getWorkflow(String category, Document document) throws RepositoryException {
         Workspace workspace = session.getWorkspace();
         
         ClassLoader workspaceClassloader = workspace.getClass().getClassLoader();

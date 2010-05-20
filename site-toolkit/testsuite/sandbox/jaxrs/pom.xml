@@ -58,6 +58,12 @@
       <artifactId>jackrabbit-jcr-commons</artifactId>
     </dependency>
     
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- JAX-RS API -->
     <dependency>
       <groupId>javax.ws.rs</groupId>
