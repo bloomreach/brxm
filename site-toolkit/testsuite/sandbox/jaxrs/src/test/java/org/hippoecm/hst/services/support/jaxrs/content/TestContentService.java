@@ -41,6 +41,7 @@ import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -300,6 +301,33 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         root = document.getDocumentElement();
         assertEquals("node", root.getNodeName());
+    }
+    
+    @Ignore
+    public void testQueryContentItems() throws Exception {
+        /*
+         * Retrieves document xml by path
+         */
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/contentservice/query/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/query/");
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        System.out.println("$$$$$ " + response.getContentAsString());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        Element root = document.getDocumentElement();
     }
     
     @Test
