@@ -96,13 +96,14 @@ public class UnitSettings implements Serializable {
     private String minHeight;
 
     private String gutter = "0px 0px 0px 0px";
-    private boolean scroll;
-    private boolean resize;
-    private boolean useShim;
+    private boolean scroll = false;
+    private boolean resize = false;
+    private boolean useShim = false;
 
-    private int zIndex;
+    private int zIndex = 0;
 
-    private boolean expanded;
+    private boolean expandCollapseEnabled = false;
+    private boolean expanded = false;
     
     public static final String TOP = "top";
     public static final String RIGHT = "right";
@@ -215,5 +216,13 @@ public class UnitSettings implements Serializable {
 
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
+    }
+
+    public boolean isExpandCollapseEnabled() {
+        return expandCollapseEnabled;
+    }
+
+    public void setExpandCollapseEnabled(boolean expandCollapseEnabled) {
+        this.expandCollapseEnabled = expandCollapseEnabled;
     }
 }

@@ -15,15 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
-import java.util.Map;
-
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
+import org.hippoecm.frontend.plugins.yui.layout.IAjaxSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
+
+import java.util.Map;
 
 /**
  * Base class for {@link AbstractDefaultAjaxBehavior}s that want to use YUI modules. It uses a {@link IYuiContext} to
@@ -55,9 +56,9 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
     private static final long serialVersionUID = 1L;
 
     private IYuiContext context;
-    private AjaxSettings settings;
+    private IAjaxSettings settings;
 
-    public AbstractYuiAjaxBehavior(AjaxSettings settings) {
+    public AbstractYuiAjaxBehavior(IAjaxSettings settings) {
         this.settings = settings;
     }
 

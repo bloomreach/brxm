@@ -118,9 +118,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     var o = new v.clazz(k, v.config, this);
                     this.wireframes.put(k, o);
                     o.render();
-                })
+                });
                 this._w.clear();
-
             },
             
             addRoot : function(id, clazz, config) {
@@ -137,7 +136,36 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 };
                 this._w.put(id, o);
             },
-            
+
+            handleExpandCollapse : function(element) {
+                while(true) {
+                    var unit = this.findLayoutUnit(element);
+                    if(unit == null) {
+                        return;
+                    }
+                    var layout = unit.get('parent');
+                    var layoutId = layout.get('id');
+                    var wireframe = null;
+                    if(this.wireframes.containsKey(layoutId)) {
+                        wireframe = this.wireframes.get(layoutId);
+                    } else if (this.root.layout.get('id') == layoutId) {
+                        wireframe = this.root;
+                    }
+                    if(wireframe == null) {
+                        return;
+                    }
+                    var position = unit.get('position');
+                    var unitCfg = wireframe.getUnitConfigByPosition(position);
+                    if(unitCfg != null && unitCfg.expandCollapseEnabled) {
+                        //do callback
+                        var url = wireframe.config.callbackUrl + '&position=' + position;
+                        wireframe.config.callbackFunction(url);
+                        return;
+                    }
+                    element = Dom.get(wireframe.id);
+                }
+            },
+
             expandUnit : function(id, position) {
                 if(this.wireframes.containsKey(id)) {
                     this.wireframes.get(id).expandUnit(position);
@@ -314,7 +342,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             this.layout = null;
             this.children = new YAHOO.hippo.HashMap();
             this.throttler = new Wicket.Throttler(true);
-            
+            this.unitExpanded = null;
+            this.layoutInitialized = false;
+
             this.name = id.indexOf(':') > -1 ? id.substr(id.indexOf(':') + 1) : id;
             
             this.DIM_COOKIE = 'hippocms7-layout-sizes';
@@ -327,8 +357,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     this.enhanceIds();
                     this.prepareConfig();
                 
-                    var layout = new YAHOO.widget.Layout(this.id, this.config);
-                    this.layout = layout;
+                    this.layout = new YAHOO.widget.Layout(this.id, this.config);
                     this.initLayout();
                     
                     try {
@@ -336,6 +365,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     } catch(e) {
                         YAHOO.log('An error occured during render of wireframe[' + this.id +'], dump=' + Lang.dump(this), 'error', 'Wireframe');
                     }
+                    this.layoutInitialized = true;
                 }
                 this.afterRender();
             },
@@ -352,11 +382,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             onLayoutResize: function() {
-                try {
-                    this.storeDimensions();
-                } catch(e) {
+                if (this.layoutInitialized) {
+                    try {
+                        this.storeDimensions();
+                    } catch(e) {
+                    }
                 }
-                
                 var values = this.children.valueSet();
                 for(var i=0; i<values.length; i++) {
                     values[i].resize();
@@ -366,6 +397,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             resize : function() {
                 if(this.layout != null) {
                     this.layout.resize();
+                }
+                if(this.unitExpanded) {
+                    this.expandUnit(this.unitExpanded);
                 }
             },
 
@@ -390,6 +424,11 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             storeDimensions : function() {
+                if (this.unitExpanded != null) {
+                    //Don't store expanded dimensions
+                    return;
+                }
+
                 this.storeDimension('top');
                 this.storeDimension('right');
                 this.storeDimension('bottom');
@@ -422,43 +461,45 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
                 
                 for (var i = 0; i < this.config.units.length; i++) {
-                    var uCfg = this.config.units[i];
-                    var un = this.layout.getUnitByPosition(uCfg.position);
-                    if(un) {
-                        if(uCfg.zindex > 0) {
-                            un.setStyle('zIndex', uCfg.zindex);
+                    var unitConfig = this.config.units[i];
+                    var unit = this.layout.getUnitByPosition(unitConfig.position);
+                    if(unit) {
+                        if(unitConfig.zindex > 0) {
+                            unit.setStyle('zIndex', unitConfig.zindex);
                         }
+
+                        //By default, yui-layout units don't dynamically keep a maxWidth/minWidth with respect to their neighbors
+                        //which means a user can render the UI useless. To prevent this we add a check right when the unit's
+                        //resize event finishes
+                        unit.on('endResize', this.onEndResizeUnit, unit, this);
                     }
                 }
-                
-                //By default, yui-layout units don;t dynamically keep a maxWidth/minWidth with respect to their neighbors
-                //which means a user can render the UI useless. To prevent this we add a check right when the unit's 
-                //resize event finishes 
-                for(var i=0; i<this.config.units.length; i++) {
-                    var x = this.layout.getUnitByPosition(this.config.units[i].position);
-                    var me = this;
-                    x.on('endResize', function() {
-                        var newWidth = this.get('width');
-                        var sizes = this.get('parent').getSizes();
-                        
-                        //if the width of this unit is bigger than the layout width, it will
-                        //overlap neighboring units. A 20px margin is used.
-                        if((sizes.doc.w-20) < newWidth) {
-                            this.set('width', sizes.doc.w-20);
-                        } else {
-                            //else check if the new width isn't rendering nested layout's units invisible.
-                            //if a number less than zero is returned, it resembles the offset of the least 
-                            //visible unit. This offset + the new width will make the unit still invisible, so
-                            //we add 20 pixels to it to define the new width
-                            var diff = me.newWidthIsOk();
-                            if(diff < 0) {
-                                this.set('width', (newWidth-diff)+20);
-                            }
-                        }
-                    }, x, true);
-                }
             },
-            
+
+            onEndResizeUnit : function(o, unit) {
+                //if the width of this unit is bigger than the layout width, it will
+                //overlap neighboring units. A 20px margin is used.
+                //Added check for minWidth as well
+                var sizes = unit.get('parent').getSizes();
+                var minWidth = unit.get('minWidth');
+                var newWidth = unit.get('width');
+                var offset = minWidth != null ? minWidth : 20;
+
+                if((sizes.doc.w-offset) < newWidth) {
+                    unit.set('width', sizes.doc.w-offset);
+                } else {
+                    //else check if the new width isn't rendering nested layout's units invisible.
+                    //if a number less than zero is returned, it resembles the offset of the least
+                    //visible unit. This offset + the new width will make the unit still invisible, so
+                    //we add 20 pixels to it to define the new width
+                    var diff = this.newWidthIsOk();
+                    if(diff < 0) {
+                        unit.set('width', (newWidth-diff)+20);
+                    }
+                }
+
+            },
+
             newWidthIsOk : function() {
                 var result = 0;
                 for(var i=0; i<this.config.units.length; i++) {
@@ -501,25 +542,31 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             expandUnit : function(position) {
                 var unit = this.layout.getUnitByPosition(position);
                 if (unit != null) {
-                    var sizes = this.layout.getSizes();
-                    unit.set('width', sizes.doc.w);
+                    this.unitExpanded = position;
+                    unit.set('width', this.layout.getSizes().doc.w);
                 }
             },
 
             collapseUnit : function(position) {
                 var unit = this.layout.getUnitByPosition(position);
                 if (unit != null) {
-                    var conf = null;
                     for(var i=0; i<this.config.units.length; ++i) {
                         if(this.config.units[i].position == position) {
-                            conf = this.config.units[i];
+                            this.unitExpanded = null;
+                            unit.set('width', Number(this.config.units[i].width));
                             break;
                         }
                     }
-                    if(conf != null) {
-                        unit.set('width', Number(conf.width));
+                }
+            },
+
+            getUnitConfigByPosition : function(position) {
+                for(var i=0; i<this.config.units.length; ++i) {
+                    if(this.config.units[i].position == position) {
+                        return this.config.units[i];
                     }
                 }
+                return null;
             }
 
         };
@@ -689,13 +736,14 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         YAHOO.extend(YAHOO.hippo.Wireframe, YAHOO.hippo.BaseWireframe, {
             
             prepareConfig : function() {
-    			YAHOO.hippo.Wireframe.superclass.prepareConfig.call(this);
+        		    YAHOO.hippo.Wireframe.superclass.prepareConfig.call(this);
 
-    			if(this.config.linkedWithParent) {
+                if(this.config.linkedWithParent) {
                     this.parent = YAHOO.hippo.LayoutManager.getWireframe(this.config.parentId);
                     this.parent.registerChild(this);
                     this.config.parent = this.parent.layout;
                 }
+
                 this.initDimensions();
 				
                 //HREPTWO-3064 To make older browsers more responsive during resizing

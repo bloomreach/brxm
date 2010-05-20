@@ -118,7 +118,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     var o = new v.clazz(k, v.config, this);
                     this.wireframes.put(k, o);
                     o.render();
-                })
+                });
                 this._w.clear();
             },
             
@@ -135,6 +135,35 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         config: config
                 };
                 this._w.put(id, o);
+            },
+
+            handleExpandCollapse : function(element) {
+                while(true) {
+                    var unit = this.findLayoutUnit(element);
+                    if(unit == null) {
+                        return;
+                    }
+                    var layout = unit.get('parent');
+                    var layoutId = layout.get('id');
+                    var wireframe = null;
+                    if(this.wireframes.containsKey(layoutId)) {
+                        wireframe = this.wireframes.get(layoutId);
+                    } else if (this.root.layout.get('id') == layoutId) {
+                        wireframe = this.root;
+                    }
+                    if(wireframe == null) {
+                        return;
+                    }
+                    var position = unit.get('position');
+                    var unitCfg = wireframe.getUnitConfigByPosition(position);
+                    if(unitCfg != null && unitCfg.expandCollapseEnabled) {
+                        //do callback
+                        var url = wireframe.config.callbackUrl + '&position=' + position;
+                        wireframe.config.callbackFunction(url);
+                        return;
+                    }
+                    element = Dom.get(wireframe.id);
+                }
             },
 
             expandUnit : function(id, position) {
@@ -383,17 +412,15 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 });
                 
                 this.layout.on('resize', this.onLayoutResize, null, this);
-
             },
             
             onLayoutResize: function() {
-                
-                if(this.layoutInitialized) {
+                if (this.layoutInitialized) {
                     try {
                         this.storeDimensions();
                     } catch(e) {
                     }
-                }   
+                }
                 var values = this.children.valueSet();
                 for(var i=0; i<values.length; i++) {
                     values[i].resize();
@@ -402,8 +429,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             resize : function() {
                 if(this.layout != null) {
-                    console.log('calling layout resize[' + this.id + ']');
                     this.layout.resize();
+                }
+                if(this.unitExpanded) {
+                    this.expandUnit(this.unitExpanded);
                 }
             },
 
@@ -429,11 +458,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             storeDimensions : function() {
                 if (this.unitExpanded != null) {
+                    //Don't store expanded dimensions
                     return;
                 }
-
                 YAHOO.log('Store dimensions for: ' + this.name, 'info', 'Wireframe');
-                console.log('Store dimensions for: ' + this.name);
 
                 this.storeDimension('top');
                 this.storeDimension('right');
@@ -484,7 +512,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             onEndResizeUnit : function(o, unit) {
-                console.log('end resize unit[' + unit.get('position') + '] for layout[' + this.id + ']');
                 //if the width of this unit is bigger than the layout width, it will
                 //overlap neighboring units. A 20px margin is used.
                 //Added check for minWidth as well
@@ -566,9 +593,18 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         }
                     }
                 }
+            },
+
+            getUnitConfigByPosition : function(position) {
+                for(var i=0; i<this.config.units.length; ++i) {
+                    if(this.config.units[i].position == position) {
+                        return this.config.units[i];
+                    }
+                }
+                return null;
             }
 
-        }; 
+        };
 
         YAHOO.hippo.GridsRootWireframe = function(id, config) {
             YAHOO.hippo.GridsRootWireframe.superclass.constructor.apply(this, arguments); 

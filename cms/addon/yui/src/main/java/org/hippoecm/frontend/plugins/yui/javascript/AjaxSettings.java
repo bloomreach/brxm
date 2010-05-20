@@ -15,11 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.yui.javascript;
 
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.layout.IAjaxSettings;
+
 import java.util.Map;
 
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-
-public class AjaxSettings extends YuiObject {
+public class AjaxSettings extends YuiObject implements IAjaxSettings {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

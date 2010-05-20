@@ -62,6 +62,8 @@ public class TabsPlugin extends RenderPlugin {
     private int selectCount;
     private boolean openleft = false;
 
+    private int previousSelectedTabIndex = -1;
+
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
@@ -145,17 +147,12 @@ public class TabsPlugin extends RenderPlugin {
 
     @Override
     public void focus(IRenderService child) {
-        if(child == null) {
-            tabbedPanel.setDefaultModel(new Model<Integer>(-1));
-            tabbedPanel.redraw();
-        } else {
-            Tab tabbie = findTabbie(child);
-            if (tabbie != null) {
-                tabbie.select();
-                onSelectTab(tabs.indexOf(tabbie));
-            }
-            super.focus(child);
+        Tab tabbie = findTabbie(child);
+        if (tabbie != null) {
+            tabbie.select();
+            onSelectTab(tabs.indexOf(tabbie));
         }
+        super.focus(child);
     }
 
     @Override
@@ -220,6 +217,21 @@ public class TabsPlugin extends RenderPlugin {
             }
         }
         return null;
+    }
+
+    public void hide() {
+        previousSelectedTabIndex = tabbedPanel.getSelectedTab();
+        tabbedPanel.setSelectedTab(-1);
+        tabbedPanel.setDefaultModel(new Model<Integer>(-1));
+        tabbedPanel.redraw();
+    }
+
+    public void show() {
+        if (previousSelectedTabIndex > -1) {
+            tabbedPanel.setSelectedTab(previousSelectedTabIndex);
+            tabbedPanel.redraw();
+            previousSelectedTabIndex = -1;
+        }
     }
 
     class Tab implements ITab, IObserver<IObservable> {
