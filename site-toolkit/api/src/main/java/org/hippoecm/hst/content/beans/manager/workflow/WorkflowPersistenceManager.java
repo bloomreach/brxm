@@ -15,11 +15,19 @@
  */
 package org.hippoecm.hst.content.beans.manager.workflow;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 
 public interface WorkflowPersistenceManager extends ObjectBeanPersistenceManager {
     
     void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler);
+    
+    Workflow getWorkflow(String category, Node node) throws RepositoryException;
+    
+    Workflow getWorkflow(String category, Document document) throws RepositoryException;
     
 }

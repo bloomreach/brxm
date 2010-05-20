@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoAsset;
@@ -81,6 +82,10 @@ public class BaseHstContentService {
     }
     
     protected ObjectBeanPersistenceManager getContentPersistenceManager(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
+        return new WorkflowPersistenceManagerImpl(getHstRequestContext(servletRequest).getSession(), getObjectConverter());
+    }
+    
+    protected WorkflowPersistenceManager createWorkflowPersistenceManager(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
         return new WorkflowPersistenceManagerImpl(getHstRequestContext(servletRequest).getSession(), getObjectConverter());
     }
     

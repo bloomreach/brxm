@@ -146,7 +146,6 @@ public class ContentService extends BaseHstContentService {
                 beanContents.setBeginIndex(begin);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
             } else {
