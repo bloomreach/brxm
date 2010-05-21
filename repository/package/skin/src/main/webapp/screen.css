@@ -530,7 +530,7 @@ line-height: 18px;}
 /* Image Picker */
 .hippo-picker-properties label{float: left; margin-right: 5px; padding: 2px; line-height: 21px;}
 body .hippo-picker-properties div.text-input input{border: 1px solid #afafaf; padding: 4px; line-height: 16px; background: url("images/hippo-window-input-back.png") no-repeat;width: 535px}
-.hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
+.hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 1px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
 
 /* Referring documents */
 .hippo-referring-documents {margin: 5px; height: 365px;}
@@ -578,8 +578,7 @@ ents-small-folders h3{background: transparent url(images/filelistHeaderback.png)
  
 .hippo-browser-documents-small .hippo-browser-documents-small-files{border-left: 1px solid #afafaf; border-right: 1px solid #afafaf; background: white;}
 .hippo-browser-documents-small .hippo-browser-documents-small-folders{background: #f4f4f4; border-left: 1px solid #afafaf; border-bottom: 0px; border-top: 0px }
-/* this is nasty and temporary, YUI wireframe needs an update */
-.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details{margin-top: 25px;}
+/* this is nasty and temporary, YUI wireframe needs an update */.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details{margin-top: 25px;}
 
 .hippo-browser-documents-small .hippo-browser-documents-small-files {background: #ffffff url('images/document-list-back.png') repeat-x;}
 /* toolbar requires some tweaks here */

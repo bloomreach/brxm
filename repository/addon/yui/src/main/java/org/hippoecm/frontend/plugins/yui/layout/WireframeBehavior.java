@@ -282,4 +282,13 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
             }
         }
     }
+
+    public boolean hasExpandableUnit() {
+        for (UnitSettings unit : settings.getUnits()) {
+            if (unit.isExpandCollapseEnabled()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
