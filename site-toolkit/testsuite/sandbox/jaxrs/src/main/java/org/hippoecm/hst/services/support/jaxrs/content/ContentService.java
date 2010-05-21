@@ -48,6 +48,7 @@ import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
+import org.hippoecm.hst.util.NodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -311,11 +312,7 @@ public class ContentService extends BaseHstContentService {
             }
             
             HippoBeanContent beanContent = createHippoBeanContent(bean, null);
-            Node canonicalParentNode = beanContent.getCanonicalNode();
-            
-            if (canonicalParentNode == null) {
-                throw new WebApplicationException(new IllegalArgumentException("Cannot create a node because there is no canonical node for '" + beanContent.getPath() + "'"));
-            }
+            Node canonicalParentNode = NodeUtils.getCanonicalNode(beanContent.getBean().getNode());
             
             Node node = null;
             
@@ -370,11 +367,7 @@ public class ContentService extends BaseHstContentService {
             }
             
             HippoBeanContent beanContent = createHippoBeanContent(bean, null);
-            Node canonicalNode = beanContent.getCanonicalNode();
-            
-            if (canonicalNode == null) {
-                throw new WebApplicationException(new IllegalArgumentException("Cannot update the property because there is no canonical node for '" + beanContent.getPath() + "'"));
-            }
+            Node canonicalNode = NodeUtils.getCanonicalNode(beanContent.getBean().getNode());
             
             setPropertyValue(canonicalNode, propertyContent);
             

@@ -33,7 +33,7 @@ import javax.jcr.observation.ObservationManager;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.logging.LoggerFactory;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.hst.util.NodeUtils;
 
 /**
  * EventListenersContainerImpl
@@ -204,7 +204,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                         if(!jcrItem.isNode()) {
                             jcrItem = jcrItem.getParent();
                         }
-                        Node canonical = ((HippoNode)jcrItem).getCanonicalNode();
+                        Node canonical = NodeUtils.getCanonicalNode((Node) jcrItem);
                         if(canonical == null || !canonical.isSame(jcrItem)) {
                             log.warn("An event handler will be registered for a virtual node. Virtual nodes never have events. You should take the canonical location most likely. Virtual path = " + absolutePath);
                         }
