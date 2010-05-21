@@ -305,7 +305,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/query/");
-        request.addParameter("query", "cms");
+        request.setQueryString("query=cms");
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
