@@ -26,7 +26,6 @@ import javax.jcr.Property;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -75,7 +74,7 @@ public class ContentService extends BaseHstContentService {
             @QueryParam("scope") @DefaultValue(".") String queryScope, 
             @QueryParam("op") @DefaultValue("contains") String queryOperator, 
             @QueryParam("query") String queryText, 
-            @FormParam("jcrexpr") String jcrExpression, 
+            @QueryParam("jcrexpr") String jcrExpression, 
             @QueryParam("lang") @DefaultValue("xpath") String queryLanguage, 
             @QueryParam("begin") @DefaultValue("0") String beginIndex,
             @QueryParam("end") @DefaultValue("100") String endIndex,

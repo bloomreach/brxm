@@ -31,6 +31,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -41,7 +42,6 @@ import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -303,11 +303,8 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         assertEquals("node", root.getNodeName());
     }
     
-    @Ignore
+    @Test
     public void testQueryContentItems() throws Exception {
-        /*
-         * Retrieves document xml by path
-         */
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
         request.setScheme("http");
@@ -319,15 +316,31 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/query/");
+        request.addParameter("query", "cms");
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         invokeJaxrsPipeline(request, response);
         
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        System.out.println("$$$$$ " + response.getContentAsString());
+        
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
-        Element root = document.getDocumentElement();
+        
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile("string(/data/beginIndex)");
+        String value = expr.evaluate(document);
+        assertTrue(NumberUtils.isNumber(value));
+        assertEquals(0, NumberUtils.toInt(value));
+        
+        expr = xpath.compile("string(/data/totalSize)");
+        value = expr.evaluate(document);
+        assertTrue(NumberUtils.isNumber(value));
+        assertTrue(NumberUtils.toInt(value) > 0);
+        
+        expr = xpath.compile("count(/data/document)");
+        value = expr.evaluate(document);
+        assertTrue(NumberUtils.isNumber(value));
+        assertTrue(NumberUtils.toInt(value) > 0);
     }
     
     @Test

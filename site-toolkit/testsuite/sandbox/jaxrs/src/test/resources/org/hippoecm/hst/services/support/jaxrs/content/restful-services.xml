@@ -109,13 +109,20 @@
         <ref bean="jaxrsJsonProvider" />
       </list>
     </property>
-    <property name="resourceProviders">
+    <property name="resourceProviders" ref="jaxrsResourceProviders" />
+  </bean>
+  
+  <bean id="jaxrsResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg ref="jaxrsCustomerService" />
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg ref="jaxrsContentService" />
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg ref="jaxrsWorkflowService" />
         </bean>
       </list>
     </property>
@@ -127,6 +134,10 @@
   
   <!-- Content Service -->
   <bean id="jaxrsContentService" class="org.hippoecm.hst.services.support.jaxrs.content.ContentService">
+  </bean>
+  
+  <!-- Workflow Service -->
+  <bean id="jaxrsWorkflowService" class="org.hippoecm.hst.services.support.jaxrs.content.workflow.WorkflowService">
   </bean>
   
   <!-- ========================================================= -->

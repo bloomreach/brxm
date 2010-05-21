@@ -109,7 +109,11 @@
         <ref bean="jaxrsJsonProvider" />
       </list>
     </property>
-    <property name="resourceProviders">
+    <property name="resourceProviders" ref="jaxrsResourceProviders" />
+  </bean>
+  
+  <bean id="jaxrsResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg ref="jaxrsCustomerService" />
