@@ -19,9 +19,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.jcr.Item;
+import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,9 +30,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -98,12 +99,13 @@ public class WorkflowService extends BaseHstContentService {
     
     @POST
     @Path("/{path:.*}")
-    public void processAction(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, 
+    public Response processAction(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, 
             @PathParam("path") List<PathSegment> pathSegments, 
             @QueryParam("cat") @DefaultValue("default") String category,
-            @QueryParam("editaction") String editableWorkflowAction,
-            @FormParam("action") String action,
-            @FormParam("params") Object [] params) {
+            @QueryParam("editaction") @DefaultValue("commitEditableInstance") String editAction,
+            @QueryParam("wfclass") String workflowClassName,
+            @QueryParam("action") String action,
+            @QueryParam("param") String [] params) {
         
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
@@ -112,28 +114,59 @@ public class WorkflowService extends BaseHstContentService {
             
             if (!item.isNode()) {
                 throw new IllegalArgumentException("Invalid node path: " + itemPath);
-            } else {
-                WorkflowPersistenceManager wpm = createWorkflowPersistenceManager(servletRequest);
-                HippoBean bean = (HippoBean) wpm.getObject(itemPath);
-                Workflow workflow = wpm.getWorkflow(category, bean.getNode());
-                
-                if (!StringUtils.isBlank(editableWorkflowAction)) {
-                    if (workflow instanceof EditableWorkflow) {
-                        EditableWorkflow ewf = (EditableWorkflow) workflow;
-                        Document document = ewf.obtainEditableInstance();
-                        document = (Document) MethodUtils.invokeMethod(ewf, editableWorkflowAction, null);
-                        workflow = wpm.getWorkflow(category, document);
-                    } else {
-                        throw new IllegalArgumentException("The workflow for '" + itemPath + "' is not an EditableWorkflow: " + workflow.getClass().getName());
-                    }
-                }
-                
-                if (!isInvokable(workflow, action)) {
-                    throw new IllegalArgumentException("Invalid action name: " + action);
-                } else {
-                    MethodUtils.invokeMethod(workflow, action, params);
-                }
             }
+            
+            if (StringUtils.isBlank(action)) {
+                throw new IllegalArgumentException("action should be provided.");
+            }
+            
+            WorkflowPersistenceManager wpm = createWorkflowPersistenceManager(servletRequest);
+            HippoBean bean = (HippoBean) wpm.getObject(itemPath);
+            Node contentNode = bean.getNode();
+            contentNode = NodeUtils.getCanonicalNode(contentNode, contentNode);
+            Workflow workflow = wpm.getWorkflow(category, contentNode);
+            
+            if (workflow == null) {
+                throw new IllegalArgumentException("Workflow is not available for " + itemPath);
+            }
+            
+            if (workflow instanceof EditableWorkflow) {
+                EditableWorkflow ewf = (EditableWorkflow) workflow;
+                Document document = ewf.obtainEditableInstance();
+                Method editMethod = EditableWorkflow.class.getDeclaredMethod(editAction);
+                document = (Document) editMethod.invoke(ewf);
+                workflow = wpm.getWorkflow(category, document);
+            }
+            
+            if (!StringUtils.isBlank(action)) {
+                if (StringUtils.isBlank(workflowClassName)) {
+                    throw new IllegalArgumentException("Invalid workflow class name: " + workflowClassName);
+                }
+                
+                Class<?> wfClazz = Thread.currentThread().getContextClassLoader().loadClass(workflowClassName);
+                
+                if (!wfClazz.isAssignableFrom(workflow.getClass())) {
+                    throw new IllegalArgumentException("Invalid workflow class name. The workflow doesn't support this.");
+                }
+                
+                Method actionInvokingMethod = getMethodByName(wfClazz, action);
+                
+                if (actionInvokingMethod == null) {
+                    throw new IllegalArgumentException("Invalid action name: " + action + ". Not supported by " + wfClazz);
+                }
+                
+                Class<?> [] argTypes = actionInvokingMethod.getParameterTypes();
+                int paramCount = (params != null ? params.length : 0);
+                Object [] args = new Object[paramCount];
+                
+                for (int i = 0; i < paramCount; i++) {
+                    args[i] = ConvertUtils.convert(params[i], argTypes[i]);
+                }
+                
+                actionInvokingMethod.invoke(workflow, args);
+            }
+            
+            return Response.ok().build();
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -145,19 +178,13 @@ public class WorkflowService extends BaseHstContentService {
         }
     }
     
-    private boolean isInvokable(Object bean, String methodName) {
-        boolean invokable = false;
-        
-        try {
-            for (Method method : bean.getClass().getMethods()) {
-                if (methodName.equals(method.getName())) {
-                    return true;
-                }
+    private Method getMethodByName(Class<?> clazz, String methodName) throws Exception {
+        for (Method method : clazz.getMethods()) {
+            if (methodName.equals(method.getName())) {
+                return method;
             }
-        } catch (Exception ignore) {
-            
         }
         
-        return invokable;
+        return null;
     }
 }
