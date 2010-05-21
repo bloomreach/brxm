@@ -43,7 +43,7 @@ public class DeleteDialog extends WorkflowAction.WorkflowDialog implements ITitl
 
     private IModel title;
 
-    public DeleteDialog(IModel/*<String>*/ title, IModel/*<String>*/ message, CompatibilityWorkflowPlugin.WorkflowAction action,
+    public DeleteDialog(IModel<String> title, IModel<String> message, CompatibilityWorkflowPlugin.WorkflowAction action,
             IEditorManager editorMgr) {
         action.super(message);
 

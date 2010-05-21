@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -27,6 +31,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
@@ -34,12 +39,15 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -52,6 +60,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
@@ -73,6 +82,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private WorkflowAction renameAction;
     private WorkflowAction copyAction;
     private WorkflowAction moveAction;
+    private WorkflowAction whereUsedAction;
 
     public DefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -125,29 +135,36 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-text",
-                        DefaultWorkflowPlugin.this, null, new Object[] { caption })) {
-
-                    @Override
-                    public IModel getTitle() {
-                        return new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null);
-                    }
-
-                    @Override
-                    protected void init() {
-                        setFocusOnCancel();
-                    }
-
-                    @Override
-                    public IValueMap getProperties() {
-                        return SMALL;
-                    }
-                };
+                final IModel<String> docName = getDocumentName();
+                IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null,
+                        new Object[] { getDocumentName() });
+                IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null,
+                        new Object[] { getDocumentName() });
+                return new DeleteDialog(title, message, this, getEditorManager());
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
                 ((DefaultWorkflow) wf).delete();
+                return null;
+            }
+        });
+
+        add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
+                .getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "where-used-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                return new WhereUsedDialog(wdm, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
                 return null;
             }
         });
@@ -184,7 +201,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if (!((WorkflowDescriptorModel)getDefaultModel()).getNode().getName().equals(nodeName)) {
+                if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     ((DefaultWorkflow) wf).rename(nodeName);
                 }
                 if (!node.getLocalizedName().equals(localName)) {
@@ -260,30 +277,85 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     protected StringCodec getLocalizeCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
+                ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.display");
     }
 
     protected StringCodec getNodeNameCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
+                ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.node");
     }
 
+    IModel<String> getDocumentName() {
+        try {
+            return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getDefaultModel()).getNode())))
+                    .getNodeName();
+        } catch (RepositoryException ex) {
+            try {
+                return new Model<String>(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
+            } catch (RepositoryException e) {
+                return new StringResourceModel("unknown", this, null);
+            }
+        }
+    }
+
+    IEditorManager getEditorManager() {
+        return getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditorManager.class);
+    }
+
     @Override
     public void onModelChanged() {
-        try {
-            super.onModelChanged();
-            WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
-            if (model != null) {
+        super.onModelChanged();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        if (model != null) {
+            try {
                 Node documentNode = model.getNode();
                 if (documentNode != null) {
                     caption = new NodeTranslator(new JcrNodeModel(documentNode)).getNodeName();
                 }
+                WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) model.getObject();
+                if (workflowDescriptor != null) {
+                    WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+                    Workflow workflow = manager.getWorkflow(workflowDescriptor);
+                    Map<String, Serializable> info = workflow.hints();
+                    if (info != null) {
+                        if (info.containsKey("edit") && info.get("edit") instanceof Boolean
+                                && !((Boolean) info.get("edit")).booleanValue()) {
+                            editAction.setVisible(false);
+                        }
+                        if (info.containsKey("delete") && info.get("delete") instanceof Boolean
+                                && !((Boolean) info.get("delete")).booleanValue()) {
+                            deleteAction.setVisible(false);
+                        }
+                        if (info.containsKey("rename") && info.get("rename") instanceof Boolean
+                                && !((Boolean) info.get("rename")).booleanValue()) {
+                            renameAction.setVisible(false);
+                        }
+                        if (info.containsKey("move") && info.get("move") instanceof Boolean
+                                && !((Boolean) info.get("move")).booleanValue()) {
+                            moveAction.setVisible(false);
+                        }
+                        if (info.containsKey("copy") && info.get("copy") instanceof Boolean
+                                && !((Boolean) info.get("copy")).booleanValue()) {
+                            copyAction.setVisible(false);
+                        }
+                        if (info.containsKey("status") && info.get("status") instanceof Boolean
+                                && !((Boolean) info.get("status")).booleanValue()) {
+                            whereUsedAction.setVisible(false);
+                        }
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            } catch (RemoteException e) {
+                log.error(e.getMessage());
+            } catch (WorkflowException e) {
+                log.error(e.getMessage());
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
         }
     }
 
