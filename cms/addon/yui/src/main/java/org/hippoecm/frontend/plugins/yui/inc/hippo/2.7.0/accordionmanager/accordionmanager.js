@@ -183,6 +183,6 @@ if (!YAHOO.hippo.AccordionManager) {
 
     YAHOO.hippo.AccordionManager = new YAHOO.hippo.AccordionManagerImpl();
     YAHOO.register("AccordionManager", YAHOO.hippo.AccordionManager, {
-        version: "2.7.0", build: "1799"            
+        version: "2.8.1", build: "19"            
     });
 }

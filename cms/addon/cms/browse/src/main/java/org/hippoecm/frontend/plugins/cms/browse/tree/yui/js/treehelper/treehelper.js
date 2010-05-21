@@ -170,6 +170,6 @@ if (!YAHOO.hippo.TreeHelper) {
 
     YAHOO.hippo.TreeHelper = new YAHOO.hippo.TreeHelperImpl();
     YAHOO.register("TreeHelper", YAHOO.hippo.TreeHelper, {
-        version: "2.7.0", build: "1799"            
+        version: "2.8.1", build: "19"
     });
 }

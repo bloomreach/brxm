@@ -64,6 +64,6 @@ if (!YAHOO.hippo.AutoCompleteManager) {
 
     YAHOO.hippo.AutoCompleteManager = new YAHOO.hippo.AutoCompleteManagerImpl();
     YAHOO.register("autocompletemanager", YAHOO.hippo.AutoCompleteManager, {
-        version: "2.7.0", build: "1799"        
+        version: "2.8.1", build: "19"
     });
 }
