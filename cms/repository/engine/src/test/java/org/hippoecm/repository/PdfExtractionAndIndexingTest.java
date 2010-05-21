@@ -107,7 +107,7 @@ public class PdfExtractionAndIndexingTest extends TestCase {
         Node document = handle.addNode(name, NT_SEARCHDOCUMENT);
         
         Node compound =  document.addNode("substructure", NT_COMPOUNDSTRUCTURE);
-        Node resource = compound.addNode("hippo:testresource", "hippo:testtextresource");
+        Node resource = compound.addNode("hippo:testresource", "hippo:resource");
         
         {
             resource.setProperty("jcr:encoding", "UTF-8");

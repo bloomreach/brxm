@@ -69,7 +69,7 @@ public class FreeTextSearchTest extends TestCase {
      *     ` Document1 (hippo:testsearchdocument)
      *           ` compoundchild (hippo:testcompoundstructure)
      *                |- hippo:testhtml  (hippo:testhtml)
-     *                |- hippo:testresource (hippo:testtextresource)
+     *                |- hippo:testresource (hippo:resource)
      *                `- hippo:testpdfresource (hippo:resource) (this one conditional if includePdf = true)
      *                     
      */
@@ -83,7 +83,7 @@ public class FreeTextSearchTest extends TestCase {
         Node html = compound.addNode("hippo:testhtml", NT_HTML);
         html.setProperty("hippo:testcontent", "The content property of testhtml node containing " + HTML_CONTENT_PART);
         
-        Node resource = compound.addNode("hippo:testresource", "hippo:testtextresource");
+        Node resource = compound.addNode("hippo:testresource", "hippo:resource");
         resource.setProperty("jcr:encoding", "UTF-8");
         resource.setProperty("jcr:mimeType", "text/plain");
         ByteArrayOutputStream data = new ByteArrayOutputStream();

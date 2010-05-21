@@ -70,12 +70,9 @@
 
 [hippo:testhtmltwo] > hippo:testhtml
 
-[hippo:testtextresource] > hippo:resource
-- hippo:text (binary) 
-
 [hippo:testcompoundstructure] > nt:base
 + * (hippo:testhtml) = hippo:testhtml multiple
-+ hippo:testresource (hippo:testtextresource)
++ hippo:testresource (hippo:resource)
 - *
 
 [hippo:testsearchdocument] > hippo:document
