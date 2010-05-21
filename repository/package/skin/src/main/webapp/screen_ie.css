@@ -29,3 +29,5 @@ table.toolbarRow {
 .hippo-search-scope-container-ul li {
   width: 42%;
 }
+
+.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details{margin-top: 0px;}
