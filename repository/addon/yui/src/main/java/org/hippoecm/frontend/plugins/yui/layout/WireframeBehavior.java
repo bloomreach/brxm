@@ -165,6 +165,7 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
             @Override
             public JsonConfig getJsonConfig() {
                 JsonConfig jsonConfig = new JsonConfig();
+                jsonConfig.setExcludes(new String[] {"markupId"});
                 jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
                 jsonConfig.registerJsonValueProcessor(JsFunction.class, new JsFunctionProcessor());
                 return jsonConfig;
