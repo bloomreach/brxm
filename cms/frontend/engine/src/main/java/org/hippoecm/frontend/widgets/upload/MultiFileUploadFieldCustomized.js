@@ -102,7 +102,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
 
                 // Hide this: we can't use display:none because Safari doesn't like it
                 this.style.position = 'absolute';
-                this.style.left = '-1000px';
+                this.style.left = '-3000px';
 
             };
             // If we've reached maximum number, disable input element
