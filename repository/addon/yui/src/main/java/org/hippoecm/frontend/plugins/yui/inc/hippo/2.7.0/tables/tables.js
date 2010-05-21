@@ -187,7 +187,7 @@ if (!YAHOO.hippo.TableHelper) {
     YAHOO.hippo.TableHelper = new YAHOO.hippo.TableHelperImpl();
     
     YAHOO.register("TableHelper", YAHOO.hippo.TableHelper, {
-        version: "2.7.0", build: "1799"            
+        version: "2.8.1", build: "19"
     });
 }
 	

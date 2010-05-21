@@ -260,6 +260,6 @@ if (!YAHOO.hippo.DateTime) {
     YAHOO.hippo.DateTime = new YAHOO.hippo.DateTimeImpl();
     
     YAHOO.register("DateTime", YAHOO.hippo.DateTime, {
-        version: "2.7.0", build: "1799"            
+        version: "2.8.1", build: "19"
     });
 }

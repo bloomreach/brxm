@@ -131,6 +131,6 @@ if (!YAHOO.hippo.DragDropManager) {
 
     YAHOO.hippo.DragDropManager = new YAHOO.hippo.DragDropManagerImpl();
     YAHOO.register("dragdropmanager", YAHOO.hippo.DragDropManager, {
-        version: "2.7.0", build: "1799"
+        version: "2.8.1", build: "19"
     });
 }

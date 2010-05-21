@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.onehippo.yui</groupId>
       <artifactId>yui-2.xx-sources</artifactId>
-      <version>1.01.07</version>
+      <version>1.01.09</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>

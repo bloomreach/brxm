@@ -978,7 +978,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
     YAHOO.hippo.LayoutManager = new YAHOO.hippo.LayoutManagerImpl();
     YAHOO.register("layoutmanager", YAHOO.hippo.LayoutManager, {
-        version: "2.7.0", build: "1799"
+        version: "2.8.1", build: "19"
     });
 }
 
