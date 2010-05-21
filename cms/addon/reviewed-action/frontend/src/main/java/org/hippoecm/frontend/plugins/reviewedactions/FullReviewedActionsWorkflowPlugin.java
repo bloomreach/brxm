@@ -178,24 +178,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
                 IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this, null,
-                        new Object[] { docName }) {
-                    @Override
-                    public void detach() {
-                        docName.detach();
-                        super.detach();
-                    }
-                };
-                // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
+                        new Object[] { docName });
                 IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { docName }) {
-                    @Override
-                    public void detach() {
-                        docName.detach();
-                        super.detach();
-                    }
-                };
+                        null, new Object[] { docName });
                 return new DepublishDialog(title, message, this, getEditorManager());
             }
 
@@ -393,25 +379,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                final IModel docName = getDocumentName();
-                // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
-                IModel message = new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { getDocumentName() }) {
-                    @Override
-                    public void detach() {
-                        docName.detach();
-                        super.detach();
-                    }
-                };
-                // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
-                IModel title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this, null,
-                        new Object[] { getDocumentName() }) {
-                    @Override
-                    public void detach() {
-                        docName.detach();
-                        super.detach();
-                    }
-                };
+                final IModel<String> docName = getDocumentName();
+                IModel<String> message = new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { getDocumentName() });
+                IModel<String> title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this, null,
+                        new Object[] { getDocumentName() });
                 return new DeleteDialog(title, message, this, getEditorManager());
             }
 
@@ -576,13 +548,13 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 .browse(nodeModel);
     }
 
-    IModel getDocumentName() {
+    IModel<String> getDocumentName() {
         try {
             return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getDefaultModel()).getNode())))
                     .getNodeName();
         } catch (RepositoryException ex) {
             try {
-                return new Model(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
+                return new Model<String>(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
             } catch (RepositoryException e) {
                 return new StringResourceModel("unknown", this, null);
             }
