@@ -17,13 +17,11 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.util.Set;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.repository.api.HippoNode;
 
 /**
  * HippoBeanContent
