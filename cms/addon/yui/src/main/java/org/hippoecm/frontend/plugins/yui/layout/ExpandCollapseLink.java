@@ -21,7 +21,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.model.IModel;
 
 public class ExpandCollapseLink<T> extends AjaxLink<T> {
 
@@ -35,6 +34,23 @@ public class ExpandCollapseLink<T> extends AjaxLink<T> {
     @Override
     public void onClick(AjaxRequestTarget target) {
         //do nothing
+    }
+
+    @Override
+    public boolean isVisible() {
+        MarkupContainer parent = getParent();
+        while (parent != null) {
+            for (IBehavior behavior : parent.getBehaviors()) {
+                if (behavior instanceof WireframeBehavior) {
+                    WireframeBehavior wireframe = (WireframeBehavior) behavior;
+                    if (wireframe.hasExpandableUnit()) {
+                        return true;
+                    }
+                }
+            }
+            parent = parent.getParent();
+        }
+        return false;
     }
 
     @Override
