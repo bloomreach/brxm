@@ -16,11 +16,17 @@
 package org.hippoecm.hst.services.support.jaxrs.content.workflow;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.ClassUtils;
 import org.hippoecm.repository.api.Workflow;
 
 /**
@@ -31,31 +37,52 @@ import org.hippoecm.repository.api.Workflow;
 @XmlRootElement(name = "workflow")
 public class WorkflowContent {
     
-    private String className;
-    private Map<String, Serializable> hints;
+    private Map<String, String> hints;
+    private Collection<String> interfaceNames;
     
     public WorkflowContent() {
     }
     
     public WorkflowContent(Workflow workflow) throws Exception {
-        className = workflow.getClass().getName();
-        hints = workflow.hints();
+        hints = new HashMap<String, String>();
+        
+        for (Map.Entry<String, Serializable> entry : workflow.hints().entrySet()) {
+            hints.put(entry.getKey(), stringifyHintValue(entry.getValue()));
+        }
+        
+        interfaceNames = new LinkedList<String>();
+        List<Class> intrfcs = ClassUtils.getAllInterfaces(workflow.getClass());
+        
+        for (Class intrfc : intrfcs) {
+            if (Workflow.class.isAssignableFrom(intrfc)) {
+                interfaceNames.add(intrfc.getName());
+            }
+        }
     }
     
-    @XmlAttribute
-    public String getClassName() {
-        return className;
-    }
-    
-    public void setClassName(String className) {
-        this.className = className;
-    }
-    
-    public Map<String, Serializable> getHints() {
+    public Map<String, String> getHints() {
         return hints;
     }
     
-    public void setHints(Map<String, Serializable> hints) {
+    public void setHints(Map<String, String> hints) {
         this.hints = hints;
+    }
+    
+    @XmlElementWrapper(name="interfaces")
+    @XmlElement(name="interface")
+    public Collection<String> getInterfaceNames() {
+        return interfaceNames;
+    }
+    
+    public void setInterfaceNames(Collection<String> interfaceNames) {
+        this.interfaceNames = interfaceNames;
+    }
+    
+    private String stringifyHintValue(Serializable value) {
+        if (value != null) {
+            return value.toString();
+        }
+        
+        return "";
     }
 }

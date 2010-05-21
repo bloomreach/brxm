@@ -33,11 +33,11 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.services.support.jaxrs.content.BaseHstContentService;
+import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -76,8 +76,8 @@ public class WorkflowService extends BaseHstContentService {
                 throw new IllegalArgumentException("Invalid node path: " + itemPath);
             } else {
                 WorkflowPersistenceManager wpm = createWorkflowPersistenceManager(servletRequest);
-                HippoBean bean = (HippoBean) wpm.getObject(itemPath);
-                Workflow wf = wpm.getWorkflow(category, bean.getNode());
+                HippoBean contentBean = (HippoBean) wpm.getObject(itemPath);
+                Workflow wf = wpm.getWorkflow(category, NodeUtils.getCanonicalNode(contentBean.getNode()));
                 
                 if (wf != null) {
                     wfContent = new WorkflowContent(wf);
@@ -101,16 +101,13 @@ public class WorkflowService extends BaseHstContentService {
     public void processAction(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, 
             @PathParam("path") List<PathSegment> pathSegments, 
             @QueryParam("cat") @DefaultValue("default") String category,
-            @QueryParam("isdoc") @DefaultValue("false") String isDocument,
-            @QueryParam("editaction") @DefaultValue("commitEditableInstance") String editableWorkflowAction,
+            @QueryParam("editaction") String editableWorkflowAction,
             @FormParam("action") String action,
             @FormParam("params") Object [] params) {
         
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
-            boolean isWorkflowDocument = BooleanUtils.toBoolean(isDocument);
-            
             Item item = getHstRequestContext(servletRequest).getSession().getItem(itemPath);
             
             if (!item.isNode()) {
@@ -118,24 +115,23 @@ public class WorkflowService extends BaseHstContentService {
             } else {
                 WorkflowPersistenceManager wpm = createWorkflowPersistenceManager(servletRequest);
                 HippoBean bean = (HippoBean) wpm.getObject(itemPath);
-                Workflow wf = wpm.getWorkflow(category, bean.getNode());
+                Workflow workflow = wpm.getWorkflow(category, bean.getNode());
                 
-                if (isWorkflowDocument) {
-                    if (wf instanceof EditableWorkflow) {
-                        EditableWorkflow ewf = (EditableWorkflow) wf;
+                if (!StringUtils.isBlank(editableWorkflowAction)) {
+                    if (workflow instanceof EditableWorkflow) {
+                        EditableWorkflow ewf = (EditableWorkflow) workflow;
                         Document document = ewf.obtainEditableInstance();
-                        
-                        if (!StringUtils.isBlank(editableWorkflowAction)) {
-                            document = (Document) MethodUtils.invokeMethod(ewf, editableWorkflowAction, null);
-                            wf = wpm.getWorkflow(category, document);
-                        }
+                        document = (Document) MethodUtils.invokeMethod(ewf, editableWorkflowAction, null);
+                        workflow = wpm.getWorkflow(category, document);
+                    } else {
+                        throw new IllegalArgumentException("The workflow for '" + itemPath + "' is not an EditableWorkflow: " + workflow.getClass().getName());
                     }
                 }
                 
-                if (!isInvokable(wf, action)) {
+                if (!isInvokable(workflow, action)) {
                     throw new IllegalArgumentException("Invalid action name: " + action);
                 } else {
-                    MethodUtils.invokeMethod(wf, action, params);
+                    MethodUtils.invokeMethod(workflow, action, params);
                 }
             }
         } catch (Exception e) {
