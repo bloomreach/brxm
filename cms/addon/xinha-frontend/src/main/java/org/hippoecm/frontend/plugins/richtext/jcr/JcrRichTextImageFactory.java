@@ -17,10 +17,13 @@ package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.Strings;
@@ -69,18 +72,23 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
                 relPath = path.substring(path.indexOf('/') + 1);
             }
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
             Node root = nodeModel.getNode();
             if (root.hasNode(name)) {
                 Node link = root.getNode(name);
                 if (link.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                     String uuid = link.getProperty("hippo:docbase").getString();
-                    Node node = session.getNodeByUUID(uuid);
-                    return createImageItem(node, name, relPath);
+                    try {
+                        Node node = session.getNodeByUUID(uuid);
+                        return createImageItem(node, name, relPath);
+                    } catch (ItemNotFoundException infe) {
+                        throw new RichTextException("Could not resolve " + uuid);
+                    }
                 }
             }
+            log.error("Link {} does not correspond to a valid facetselect", path);
             throw new RichTextException("Canonical node is null at relative path " + path);
         } catch (RepositoryException e) {
+            log.error("Error resolving image " + path);
             throw new RichTextException("Error retrieving canonical node for imageNode[" + path + "]", e);
         }
     }

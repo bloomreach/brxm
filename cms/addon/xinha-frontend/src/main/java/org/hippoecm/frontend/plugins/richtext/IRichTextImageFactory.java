@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
-import java.util.List;
-
 import org.apache.wicket.model.IDetachable;
 
 public interface IRichTextImageFactory extends IDetachable {

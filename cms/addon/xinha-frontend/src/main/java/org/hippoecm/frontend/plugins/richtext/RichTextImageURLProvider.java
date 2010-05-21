@@ -41,7 +41,7 @@ public class RichTextImageURLProvider implements IImageURLProvider {
                 RichTextImage rti = imageFactory.loadImageItem(link);
                 return rti.getUrl();
             } catch (RichTextException ex) {
-                log.error("Could not load link as image", ex);
+                log.info("Could not load link as image", ex);
             }
         }
         return link;
