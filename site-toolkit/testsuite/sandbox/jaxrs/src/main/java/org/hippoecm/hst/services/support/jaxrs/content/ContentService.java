@@ -71,6 +71,8 @@ public class ContentService extends BaseHstContentService {
     @Path("/query/{path:.*}")
     public HippoBeanContentCollection queryContentItems(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, 
             @PathParam("path") List<PathSegment> pathSegments, 
+            @QueryParam("sortby") String sortBy,
+            @QueryParam("sortdir") @DefaultValue("descending") String sortDirection,
             @QueryParam("scope") @DefaultValue(".") String queryScope, 
             @QueryParam("op") @DefaultValue("contains") String queryOperator, 
             @QueryParam("query") String queryText, 
@@ -95,6 +97,15 @@ public class ContentService extends BaseHstContentService {
                 HstQueryManager queryManager = getHstQueryManager();
                 
                 HstQuery hstQuery = queryManager.createQuery(scopeNode);
+                
+                if (!StringUtils.isBlank(sortBy)) {
+                    if ("descending".equals(sortDirection)) {
+                        hstQuery.addOrderByDescending(sortBy);
+                    } else {
+                        hstQuery.addOrderByAscending(sortBy);
+                    }
+                }
+                
                 Filter filter = hstQuery.createFilter();
                 
                 if (queryText != null) {
