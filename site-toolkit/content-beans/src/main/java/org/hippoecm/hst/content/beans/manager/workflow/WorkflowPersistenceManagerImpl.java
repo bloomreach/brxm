@@ -30,8 +30,8 @@ import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -202,12 +202,8 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         }
                         // this is always the canonical
                         curNode = session.getNodeByUUID(docbaseUuid);
-                    } else if (curNode instanceof HippoNode) {
-                        Node canonical = ((HippoNode) curNode).getCanonicalNode();
-                        if(canonical == null) {
-                            throw new ObjectBeanPersistenceException("Cannot create folders because there is no canonical node for '"+curNode.getPath()+"'");
-                        }
-                        curNode =  canonical;
+                    } else {
+                        curNode = NodeUtils.getCanonicalNode(curNode, curNode);
                     }
                 }
             }
@@ -221,14 +217,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     protected void createNodeByWorkflow(Node folderNode, String nodeTypeName, String name)
             throws ObjectBeanPersistenceException {
         try {
-            if (folderNode instanceof HippoNode) {
-                Node canonical = ((HippoNode) folderNode).getCanonicalNode();
-                if(canonical == null) {
-                    throw new ObjectBeanPersistenceException("Cannot createNodeByWorkflow because there is no canonical node for '"+folderNode.getPath()+"'");
-                }
-                folderNode = canonical;
-            }
-            
+            folderNode = NodeUtils.getCanonicalNode(folderNode, folderNode);
             Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
 
             if (wf instanceof FolderWorkflow) {
@@ -278,18 +267,10 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             ContentNodeBinder binder = null;
 
             if (contentNodeBinders != null && !contentNodeBinders.isEmpty()) {
-                HippoBean contentBean = (HippoBean) content;
-                Node contentNode = contentBean.getNode();
-                
                 try {
-                    if (contentNode instanceof HippoNode) {
-                        Node canonical = ((HippoNode) contentNode).getCanonicalNode();
-                        if(canonical == null) {
-                            throw new ObjectBeanPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
-                        }
-                        contentNode = canonical;
-                    }
-                    
+                    HippoBean contentBean = (HippoBean) content;
+                    Node contentNode = contentBean.getNode();
+                    contentNode = NodeUtils.getCanonicalNode(contentNode, contentNode);
                     binder = contentNodeBinders.get(contentNode.getPrimaryNodeType().getName());
                 } catch (Exception e) {
                     throw new ObjectBeanPersistenceException(e);
@@ -327,14 +308,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 HippoBean contentBean = (HippoBean) content;
                 Node contentNode = contentBean.getNode();
                 path = contentNode.getPath();
-                if (contentNode instanceof HippoNode) {
-                    Node canonical = ((HippoNode) contentNode).getCanonicalNode();
-                    if(canonical == null) {
-                        throw new ObjectBeanPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
-                    }
-                    contentNode = canonical;
-                }
-                
+                contentNode = NodeUtils.getCanonicalNode(contentNode, contentNode);
                 Workflow wf = getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
                 //String handleUuid = contentNode.getParent().getUUID();
@@ -391,56 +365,46 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * @throws ObjectBeanPersistenceException
      */
     public void remove(Object content) throws ObjectBeanPersistenceException {
-        if (content instanceof HippoBean) {
-            try {
-                HippoBean contentBean = (HippoBean) content;
-                
-                Node canonical = ((HippoNode)contentBean.getNode()).getCanonicalNode();
-                if(canonical == null) {
-                    throw new ObjectBeanPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+contentBean.getPath()+"'");
-                }
-             
-                Node handleNode = canonical.getParent();
-                String nodeName = handleNode.getName();
-                HippoBean folderBean = contentBean.getParentBean();
-                Node folderNode = folderBean.getNode();
-                canonical = ((HippoNode)folderNode).getCanonicalNode();
-                if(canonical == null) {
-                    throw new ObjectBeanPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+folderNode.getPath()+"'");
-                }
-                folderNode = canonical;
-                
-                // TODO when HREPTWO-2844 is fixed, this code can be removed
-                if(handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    handleNode.checkout();
-                    NodeIterator it = handleNode.getNodes();
-                    while(it.hasNext()) {
-                        Node doc = it.nextNode();
-                        if(doc == null) { 
-                            continue;
-                        }
-                        if(doc.isNodeType("mix:versionable")) {
-                            doc.checkout();
-                        }
-                    }
-                } else {
-                    // TODO : check for childs all being checked out??
-                }
-                    
-                Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
-                
-                if (wf instanceof FolderWorkflow) {
-                    FolderWorkflow fwf = (FolderWorkflow) wf;
-                    fwf.delete(nodeName);
-                    
-                } else {
-                    throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for " + folderBean.getPath() + ": " + wf);
-                }
-            } catch (Exception e) {
-                throw new ObjectBeanPersistenceException(e);
-            }
-        } else {
+        if (!(content instanceof HippoBean)) {
             throw new ObjectBeanPersistenceException("The content object parameter should be an instance of HippoBean.");
+        }
+        
+        try {
+            HippoBean contentBean = (HippoBean) content;
+            Node canonical = NodeUtils.getCanonicalNode(contentBean.getNode());
+            Node handleNode = canonical.getParent();
+            String nodeName = handleNode.getName();
+            HippoBean folderBean = contentBean.getParentBean();
+            Node folderNode = NodeUtils.getCanonicalNode(folderBean.getNode());
+            
+            // TODO when HREPTWO-2844 is fixed, this code can be removed
+            if(handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                handleNode.checkout();
+                NodeIterator it = handleNode.getNodes();
+                while(it.hasNext()) {
+                    Node doc = it.nextNode();
+                    if(doc == null) { 
+                        continue;
+                    }
+                    if(doc.isNodeType("mix:versionable")) {
+                        doc.checkout();
+                    }
+                }
+            } else {
+                // TODO : check for childs all being checked out??
+            }
+                
+            Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
+            
+            if (wf instanceof FolderWorkflow) {
+                FolderWorkflow fwf = (FolderWorkflow) wf;
+                fwf.delete(nodeName);
+                
+            } else {
+                throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for " + folderBean.getPath() + ": " + wf);
+            }
+        } catch (Exception e) {
+            throw new ObjectBeanPersistenceException(e);
         }
     }
 

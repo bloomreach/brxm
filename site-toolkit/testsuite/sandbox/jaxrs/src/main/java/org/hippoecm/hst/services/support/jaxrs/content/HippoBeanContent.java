@@ -75,22 +75,4 @@ public class HippoBeanContent extends NodeContent {
         this.canonicalUuid = canonicalUuid;
     }
     
-    /**
-     * 
-     * @return the canonical JCR Node of the backing JCR Node of the HippoBean or <code>null</code> when there is no canonical or the backing jcr node is <code>null</code> 
-     * @throws RepositoryException
-     */
-    public Node getCanonicalNode() throws RepositoryException {
-        Node node = getBean().getNode();
-        
-        if (node == null) {
-            return null;
-        }
-        
-        if (node instanceof HippoNode) {
-            return ((HippoNode) node).getCanonicalNode();
-        }
-        
-        return node;
-    }
 }
