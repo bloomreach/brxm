@@ -204,6 +204,7 @@
           <include>**/*.js</include>
           <include>**/*.html</include>
           <include>**/*.css</include>
+          <include>**/*.png</include>
           <include>**/*.properties</include>
         </includes>
       </resource>

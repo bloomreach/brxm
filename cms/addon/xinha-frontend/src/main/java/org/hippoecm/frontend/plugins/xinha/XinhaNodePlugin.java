@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -37,12 +38,10 @@ import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.ILinkDecorator;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.PrefixingImageDecorator;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
@@ -120,20 +119,16 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
         IModel<String> decoratedBase = new PrefixingModel(baseModel, new IImageURLProvider() {
             private static final long serialVersionUID = 1L;
 
-            public String getURL(String link) {
+            public String getURL(String link) throws RichTextException {
                 String facetName = link;
                 if (link.indexOf('/') > 0) {
                     facetName = link.substring(0, link.indexOf('/'));
                 }
                 if (baseLinkFactory.getLinks().contains(facetName) && currentLinkFactory.getLinks().contains(facetName)) {
-                    try {
-                        RichTextLink baseRtl = baseLinkFactory.loadLink(facetName);
-                        RichTextLink currentRtl = currentLinkFactory.loadLink(facetName);
-                        if (currentRtl.getTargetId().equals(baseRtl.getTargetId())) {
-                            return currentDecorator.getURL(link);
-                        }
-                    } catch (RichTextException e) {
-                        log.error("Could not load link", e);
+                    RichTextLink baseRtl = baseLinkFactory.loadLink(facetName);
+                    RichTextLink currentRtl = currentLinkFactory.loadLink(facetName);
+                    if (currentRtl.getTargetId().equals(baseRtl.getTargetId())) {
+                        return currentDecorator.getURL(link);
                     }
                 } else if (baseLinkFactory.getLinks().contains(facetName)) {
                     return baseDecorator.getURL(link);
@@ -312,8 +307,10 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
                                 browser.browse(new JcrNodeModel(node));
                             }
                         }
+                    } catch (ItemNotFoundException ex) {
+                        log.info("Could not resolve link", ex);
                     } catch (RepositoryException e) {
-                        e.printStackTrace();
+                        log.error("Error while browing to link", e);
                     }
                 }
             }

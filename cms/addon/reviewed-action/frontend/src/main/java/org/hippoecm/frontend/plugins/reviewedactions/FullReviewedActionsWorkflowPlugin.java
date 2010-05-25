@@ -18,8 +18,10 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -28,6 +30,8 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -51,7 +55,10 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
+import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -158,6 +165,73 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "publish-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                HippoNode node;
+                try {
+                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
+                            new JcrNodeModel(node)));
+                    if (referenced.size() > 0) {
+                        return new UnpublishedReferencesDialog(publishAction, new ISortableDataProvider<Node>() {
+                            private static final long serialVersionUID = 1L;
+
+                            public Iterator<? extends Node> iterator(int first, int count) {
+                                final Iterator<String> upstream = referenced.iterator(first, count);
+                                return new Iterator<Node>() {
+
+                                    public boolean hasNext() {
+                                        return upstream.hasNext();
+                                    }
+
+                                    public Node next() {
+                                        String uuid = upstream.next();
+                                        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                                        try {
+                                            return session.getNodeByUUID(uuid);
+                                        } catch (ItemNotFoundException e) {
+                                            log.error("could not find handle with uuid " + uuid, e);
+                                        } catch (RepositoryException e) {
+                                            log.error(e.getMessage(), e);
+                                        }
+                                        return null;
+                                    }
+
+                                    public void remove() {
+                                        upstream.remove();
+                                    }
+                                    
+                                };
+                            }
+
+                            public IModel<Node> model(Node object) {
+                                return new JcrNodeModel(object);
+                            }
+
+                            public int size() {
+                                return referenced.size();
+                            }
+
+                            public void detach() {
+                                referenced.detach();
+                            }
+
+                            public ISortState getSortState() {
+                                return referenced.getSortState();
+                            }
+
+                            public void setSortState(ISortState state) {
+                                referenced.setSortState(state);
+                            }
+                            
+                        }, getEditorManager());
+                    }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+                return null;
             }
 
             @Override
@@ -291,7 +365,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if (!((WorkflowDescriptorModel)getDefaultModel()).getNode().getName().equals(nodeName)) {
+                if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     ((FullReviewedActionsWorkflow) wf).rename(nodeName);
                 }
                 if (!node.getLocalizedName().equals(localName)) {
@@ -380,10 +454,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 final IModel<String> docName = getDocumentName();
-                IModel<String> message = new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this,
+                IModel<String> message = new StringResourceModel("delete-message",
+                        FullReviewedActionsWorkflowPlugin.this, null, new Object[] { getDocumentName() });
+                IModel<String> title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this,
                         null, new Object[] { getDocumentName() });
-                IModel<String> title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this, null,
-                        new Object[] { getDocumentName() });
                 return new DeleteDialog(title, message, this, getEditorManager());
             }
 
@@ -441,13 +515,15 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     }
 
     protected StringCodec getLocalizeCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
+                ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.display");
     }
 
     protected StringCodec getNodeNameCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
+                ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.node");
     }
@@ -466,8 +542,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 }
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
-                if (info.containsKey("obtainEditableInstance")
-                        && info.get("obtainEditableInstance") instanceof Boolean
+                if (info.containsKey("obtainEditableInstance") && info.get("obtainEditableInstance") instanceof Boolean
                         && !((Boolean) info.get("obtainEditableInstance")).booleanValue()) {
                     editAction.setVisible(false);
                 }

@@ -31,18 +31,14 @@ public class RichTextImageURLProvider implements IImageURLProvider {
         this.linkFactory = linkFactory;
     }
 
-    public String getURL(String link) {
+    public String getURL(String link) throws RichTextException {
         String facetName = link;
         if (link.indexOf('/') > 0) {
             facetName = link.substring(0, link.indexOf('/'));
         }
         if (linkFactory.getLinks().contains(facetName)) {
-            try {
-                RichTextImage rti = imageFactory.loadImageItem(link);
-                return rti.getUrl();
-            } catch (RichTextException ex) {
-                log.info("Could not load link as image", ex);
-            }
+            RichTextImage rti = imageFactory.loadImageItem(link);
+            return rti.getUrl();
         }
         return link;
     }
