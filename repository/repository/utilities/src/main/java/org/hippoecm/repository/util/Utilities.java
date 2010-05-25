@@ -61,6 +61,7 @@ public class Utilities {
             out.print(",uuid="+parent.getProperty("jcr:uuid").getString());
             // out.print(",uuid=...");
         }
+        out.print(",path="+parent.getPath());
         out.println("]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
@@ -77,6 +78,8 @@ public class Utilities {
                     out.print(i > 0 ? ", " : "");
                     if (values[i].getType() == PropertyType.BINARY || prop.getName().equals("jcr:data")) {
                         out.print("<<binary>>");
+                    } else if(values[i].getString().contains("\n")) {
+                        out.println("<<multi-line>>");
                     } else {
                         out.print(values[i].getString());
                     }
@@ -86,7 +89,11 @@ public class Utilities {
                 if (prop.getType() == PropertyType.BINARY || prop.getName().equals("jcr:data")) {
                     out.println("<<binary>>");
                 } else {
-                    out.println(prop.getString());
+                    if(prop.getString().contains("\n")) {
+                        out.println("<<multi-line>>");
+                    } else {
+                        out.println(prop.getString());
+                    }
                 }
             }
         }
