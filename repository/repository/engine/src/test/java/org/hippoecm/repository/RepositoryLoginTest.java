@@ -230,4 +230,59 @@ public class RepositoryLoginTest {
             fail("Anonymous login failed");
         }
     }
+
+    @Test
+    public void testRootSessionOnCredentials() throws RepositoryException {
+        SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
+        try {
+            Session session = server.login(creds);
+            fail("this should have failed");
+            session.logout();
+        } catch (LoginException ex) {
+            Object object = creds.getAttribute("rootSession");
+            assertNotNull(object);
+            assertTrue(object instanceof Session);
+        }
+    }
+
+    @Test
+    public void testImpersonateAsWorkflowUser() throws RepositoryException {
+        SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
+        Session anonymousSession = server.login();
+        assertEquals("anonymous", anonymousSession.getUserID());
+        Session workflowSession = session.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
+        anonymousSession.logout();
+        assertEquals("workflowuser", workflowSession.getUserID());
+        workflowSession.logout();
+    }
+
+    @Test
+    public void testLogins() throws RepositoryException {
+        for (int count = 1; count <= 1024; count = count << 1) {
+            long t1 = System.currentTimeMillis();
+            Session[] sessions = new Session[count];
+            for (int i = 0; i < count; i++) {
+                sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+                sessions[i].logout();
+            }
+            long t2 = System.currentTimeMillis();
+            System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
+        }
+    }
+
+    @Test
+    public void testConcurrentLogins() throws RepositoryException {
+        for (int count = 1; count <= 1024; count = count << 1) {
+            long t1 = System.currentTimeMillis();
+            Session[] sessions = new Session[count];
+            for (int i = 0; i < count; i++) {
+                sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+            }
+            for (int i = 0; i < count; i++) {
+                sessions[i].logout();
+            }
+            long t2 = System.currentTimeMillis();
+            System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
+        }
+    }
 }
