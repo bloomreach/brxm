@@ -92,80 +92,84 @@ public class ContentService extends BaseHstContentService {
             
             if (!item.isNode()) {
                 throw new IllegalArgumentException("Invalid scope node path: " + scopeItemPath);
-            } else {
-                Node scopeNode = (Node) item;
-                
-                ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
-                HstQueryManager queryManager = getHstQueryManager();
-                
-                HstQuery hstQuery = null;
-                
-                if (CollectionUtils.isEmpty(nodeTypes)) {
-                    hstQuery = queryManager.createQuery(scopeNode);
-                } else if (nodeTypes.size() == 1) {
-                    hstQuery = queryManager.createQuery(scopeNode, nodeTypes.iterator().next(), true);
-                } else {
-                    hstQuery = queryManager.createQuery(scopeNode, nodeTypes.toArray(new String[nodeTypes.size()]));
-                }
-                
-                if (!StringUtils.isBlank(sortBy)) {
-                    if ("descending".equals(sortDirection)) {
-                        hstQuery.addOrderByDescending(sortBy);
-                    } else {
-                        hstQuery.addOrderByAscending(sortBy);
-                    }
-                }
-                
-                Filter filter = hstQuery.createFilter();
-                
-                if (queryText != null) {
-                    if ("contains".equals(queryOperator)) {
-                        filter.addContains(queryScope, queryText);
-                    } else if ("equalto".equals(queryOperator)) {
-                        filter.addEqualTo(queryScope, queryText);
-                    }
-                }
-                
-                if (!StringUtils.isBlank(jcrExpression)) {
-                    filter.addJCRExpression(jcrExpression);
-                }
-                
-                hstQuery.setFilter(filter);
-                HstQueryResult result = hstQuery.execute();
-                int totalSize = result.getSize();
-                HippoBeanIterator iterator = result.getHippoBeans();
-                
-                int begin = Math.max(0, Integer.parseInt(beginIndex));
-                int end = Integer.parseInt(endIndex);
-                
-                if (end < 0) {
-                    end = Integer.MAX_VALUE;
-                }
-                
-                // don't skip past unreachable item:
-                if (begin < totalSize) {
-                    iterator.skip(begin);
-                }
-                
-                List<HippoBeanContent> list = new LinkedList<HippoBeanContent>();
-                
-                int maxCount = end - begin;
-                int count = 0;
-                
-                while (iterator.hasNext() && count < maxCount) {
-                    HippoBean bean = iterator.nextHippoBean();
-                    
-                    if (bean != null) {
-                        HippoBeanContent beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
-                        list.add(beanContent);
-                        count++;
-                    }
-                }
-                
-                beanContents = new HippoBeanContentCollection(list);
-                beanContents.setTotalSize(totalSize);
-                beanContents.setBeginIndex(begin);
             }
+            
+            String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
+            String encoding = servletRequest.getCharacterEncoding();
+
+            Node scopeNode = (Node) item;
+            
+            ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+            HstQueryManager queryManager = getHstQueryManager();
+            
+            HstQuery hstQuery = null;
+            
+            if (CollectionUtils.isEmpty(nodeTypes)) {
+                hstQuery = queryManager.createQuery(scopeNode);
+            } else if (nodeTypes.size() == 1) {
+                hstQuery = queryManager.createQuery(scopeNode, nodeTypes.iterator().next(), true);
+            } else {
+                hstQuery = queryManager.createQuery(scopeNode, nodeTypes.toArray(new String[nodeTypes.size()]));
+            }
+            
+            if (!StringUtils.isBlank(sortBy)) {
+                if ("descending".equals(sortDirection)) {
+                    hstQuery.addOrderByDescending(sortBy);
+                } else {
+                    hstQuery.addOrderByAscending(sortBy);
+                }
+            }
+            
+            Filter filter = hstQuery.createFilter();
+            
+            if (queryText != null) {
+                if ("contains".equals(queryOperator)) {
+                    filter.addContains(queryScope, queryText);
+                } else if ("equalto".equals(queryOperator)) {
+                    filter.addEqualTo(queryScope, queryText);
+                }
+            }
+            
+            if (!StringUtils.isBlank(jcrExpression)) {
+                filter.addJCRExpression(jcrExpression);
+            }
+            
+            hstQuery.setFilter(filter);
+            HstQueryResult result = hstQuery.execute();
+            int totalSize = result.getSize();
+            HippoBeanIterator iterator = result.getHippoBeans();
+            
+            int begin = Math.max(0, Integer.parseInt(beginIndex));
+            int end = Integer.parseInt(endIndex);
+            
+            if (end < 0) {
+                end = Integer.MAX_VALUE;
+            }
+            
+            // don't skip past unreachable item:
+            if (begin < totalSize) {
+                iterator.skip(begin);
+            }
+            
+            List<HippoBeanContent> list = new LinkedList<HippoBeanContent>();
+            
+            int maxCount = end - begin;
+            int count = 0;
+            
+            while (iterator.hasNext() && count < maxCount) {
+                HippoBean bean = iterator.nextHippoBean();
+                
+                if (bean != null) {
+                    HippoBeanContent beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
+                    beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
+                    list.add(beanContent);
+                    count++;
+                }
+            }
+            
+            beanContents = new HippoBeanContentCollection(list);
+            beanContents.setTotalSize(totalSize);
+            beanContents.setBeginIndex(begin);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
