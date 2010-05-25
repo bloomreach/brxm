@@ -39,11 +39,11 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
         return getComponent(requestContainerConfig, componentId, 0L);
     }
     
-    public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId, long refreshedTime) {
+    public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId, long creationTime) {
         HstComponentHolder holder = getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
         
         if (holder != null) {
-            if (holder.getTimestamp() < refreshedTime) {
+            if (holder.getTimestamp() < creationTime) {
                 unregisterComponent(requestContainerConfig, componentId);
             } else {
                 return holder.getComponent();

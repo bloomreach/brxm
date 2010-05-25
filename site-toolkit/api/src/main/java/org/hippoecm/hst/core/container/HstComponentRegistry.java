@@ -56,15 +56,15 @@ public interface HstComponentRegistry {
     /**
      * Returns the registered HstComponent. The key is the pair of container configuration and component ID.
      * <P>
-     * If the component is not found or is out-dated after the refreshedTime, then it will return null.
+     * If the component is not found or is out-dated after the creation time, then it will return null.
      * </P>
      * 
      * @param requestContainerConfig the container configuration
      * @param componentId the component ID
-     * @param refreshedTime the refreshed time milliseconds of the configuration of the component
+     * @param creationTime the creation time milliseconds of the configuration of the component
      * @return the HstComponent registered with the key pair.
      */
-    HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId, long refreshedTime);
+    HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId, long creationTime);
     
     /**
      * Unregisters all the HstComponents.
