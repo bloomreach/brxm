@@ -241,8 +241,7 @@ public class RepositoryLoginTest {
             session.logout();
         } catch (LoginException ex) {
             Object object = creds.getAttribute("rootSession");
-            assertNotNull(object);
-            assertTrue(object instanceof Session);
+            assertNull(object);
         }
     }
 
