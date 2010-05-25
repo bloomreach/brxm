@@ -144,10 +144,40 @@ public class HstQueryManagerImpl implements HstQueryManager{
         }
         return createQuery(scope, primaryNodeTypeFilter);
     }
-
+    
+    public HstQuery createQuery(Node scope, String nodeType, boolean includeSubTypes) throws QueryException {
+        if (nodeType == null) {
+            throw new IllegalArgumentException("The node type for query must not be null!");
+        }
+        
+        if (!includeSubTypes) {
+            return createQuery(scope, nodeType);
+        }
+        
+        IsNodeTypeFilter isNodeTypeFilter = new IsNodeTypeFilter(nodeType);
+        return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
+    }
+    
+    public HstQuery createQuery(HippoBean scope, String... primaryNodeTypes) throws QueryException {
+        if (scope.getNode() == null) {
+            return createQuery((Node) null, primaryNodeTypes);
+        }
+        
+        return createQuery(scope.getNode(), primaryNodeTypes);
+    }
+    
+    public HstQuery createQuery(Node scope, String ... primaryNodeTypes) throws QueryException {
+        if (primaryNodeTypes == null) {
+            throw new IllegalArgumentException("Primary node types for query must not be null!");
+        }
+        
+        NodeTypeFilter primaryNodeTypeFilter = null;
+        primaryNodeTypeFilter = new PrimaryNodeTypeFilterImpl(primaryNodeTypes);
+        return createQuery(scope, primaryNodeTypeFilter);
+    }
+    
     private HstQuery createQuery(Node scope, NodeTypeFilter filter) throws QueryException {
         return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, filter);
     }
     
- 
 }

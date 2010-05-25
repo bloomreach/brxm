@@ -39,6 +39,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.query.HstQuery;
@@ -71,6 +72,7 @@ public class ContentService extends BaseHstContentService {
     @Path("/query/{path:.*}")
     public HippoBeanContentCollection queryContentItems(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, 
             @PathParam("path") List<PathSegment> pathSegments, 
+            @QueryParam("type") Set<String> nodeTypes,
             @QueryParam("sortby") String sortBy,
             @QueryParam("sortdir") @DefaultValue("descending") String sortDirection,
             @QueryParam("scope") @DefaultValue(".") String queryScope, 
@@ -95,8 +97,15 @@ public class ContentService extends BaseHstContentService {
                 
                 ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
                 HstQueryManager queryManager = getHstQueryManager();
+                HstQuery hstQuery = null;
                 
-                HstQuery hstQuery = queryManager.createQuery(scopeNode);
+                if (CollectionUtils.isEmpty(nodeTypes)) {
+                    hstQuery = queryManager.createQuery(scopeNode);
+                } else if (nodeTypes.size() == 1) {
+                    hstQuery = queryManager.createQuery(scopeNode, nodeTypes.iterator().next(), true);
+                } else {
+                    hstQuery = queryManager.createQuery(scopeNode, nodeTypes.toArray(new String[nodeTypes.size()]));
+                }
                 
                 if (!StringUtils.isBlank(sortBy)) {
                     if ("descending".equals(sortDirection)) {
