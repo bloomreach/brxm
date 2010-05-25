@@ -22,6 +22,7 @@ import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
@@ -250,7 +251,7 @@ public class RepositoryLoginTest {
         SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
         Session anonymousSession = server.login();
         assertEquals("anonymous", anonymousSession.getUserID());
-        Session workflowSession = session.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
+        Session workflowSession = serverSession.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
         anonymousSession.logout();
         assertEquals("workflowuser", workflowSession.getUserID());
         workflowSession.logout();
@@ -262,7 +263,7 @@ public class RepositoryLoginTest {
             long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
-                sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+                sessions[i] = serverSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
                 sessions[i].logout();
             }
             long t2 = System.currentTimeMillis();
@@ -276,7 +277,7 @@ public class RepositoryLoginTest {
             long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
-                sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+                sessions[i] = serverSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
             }
             for (int i = 0; i < count; i++) {
                 sessions[i].logout();
