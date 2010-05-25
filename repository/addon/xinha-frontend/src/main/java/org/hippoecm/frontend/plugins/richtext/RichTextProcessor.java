@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
@@ -37,6 +39,8 @@ public class RichTextProcessor {
 
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
+
+    private static ResourceReference BROKEN_IMAGE = new ResourceReference(RichTextProcessor.class, "broken.png");
 
     /**
      * Decorate the targets of relative image links in a text.  Text and decorator may
@@ -56,8 +60,13 @@ public class RichTextProcessor {
                 String link = s.group(1);
 
                 if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                    s.appendReplacement(newImg, ("src=\"" + decorator.getURL(link) + "\"").replace("\\", "\\\\")
-                            .replace("$", "\\$"));
+                    String url;
+                    try {
+                        url = decorator.getURL(link);
+                    } catch (RichTextException ex) {
+                        url = RequestCycle.get().urlFor(BROKEN_IMAGE, null).toString();
+                    }
+                    s.appendReplacement(newImg, ("src=\"" + url + "\"").replace("\\", "\\\\").replace("$", "\\$"));
                     newImg.append(' ');
                     newImg.append("facetselect=\"");
                     newImg.append(link);

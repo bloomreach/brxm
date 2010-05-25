@@ -19,6 +19,6 @@ import org.apache.wicket.IClusterable;
 
 public interface IImageURLProvider extends IClusterable {
 
-    String getURL(String link);
+    String getURL(String link) throws RichTextException;
 
 }

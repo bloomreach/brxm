@@ -20,20 +20,23 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.model.ReferringDocumentsProvider;
+import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
@@ -49,23 +52,22 @@ import org.hippoecm.frontend.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReferringDocumentsView extends Panel implements IPagingDefinition {
+public class UnpublishedReferencesDialog extends WorkflowDialog implements IPagingDefinition {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ReferringDocumentsView.class);
+    static final Logger log = LoggerFactory.getLogger(UnpublishedReferencesDialog.class);
 
-    private ReferringDocumentsProvider provider;
+    private ISortableDataProvider<Node> provider;
     private IEditorManager editorMgr;
     private ListDataTable dataTable;
     private WebMarkupContainer actionContainer;
-    private List<JcrNodeModel> selectedDocuments = new LinkedList<JcrNodeModel>();
+    private List<IModel<Node>> selectedDocuments = new LinkedList<IModel<Node>>();
 
-    public ReferringDocumentsView(String id, ReferringDocumentsProvider provider, IEditorManager mgr) {
-        super(id);
-
+    public UnpublishedReferencesDialog(CompatibilityWorkflowPlugin.WorkflowAction base, ISortableDataProvider<Node> provider, IEditorManager mgr) {
+        base.super();
         this.provider = provider;
         this.editorMgr = mgr;
 
@@ -76,20 +78,14 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
             @Override
             protected String load() {
-                ReferringDocumentsProvider provider = ReferringDocumentsView.this.provider;
-                if (provider.getNumResults() < 0) {
-                    return new StringResourceModel("message-thousands", ReferringDocumentsView.this, new Model(provider))
-                            .getObject();
-                } else if (provider.getNumResults() > provider.getLimit()) {
-                    return new StringResourceModel("message-many", ReferringDocumentsView.this, new Model(provider))
-                            .getObject();
-                } else if (provider.size() > 1) {
-                    return new StringResourceModel("message", ReferringDocumentsView.this, new Model(provider))
+                ISortableDataProvider<Node> provider = UnpublishedReferencesDialog.this.provider;
+                if (provider.size() > 1) {
+                    return new StringResourceModel("message", UnpublishedReferencesDialog.this, new Model(provider))
                             .getObject();
                 } else if (provider.size() == 1) {
-                    return new StringResourceModel("message-single", ReferringDocumentsView.this, null).getObject();
+                    return new StringResourceModel("message-single", UnpublishedReferencesDialog.this, null).getObject();
                 } else {
-                    return new StringResourceModel("message-empty", ReferringDocumentsView.this, null).getObject();
+                    return new StringResourceModel("message-empty", UnpublishedReferencesDialog.this, null).getObject();
                 }
             }
 
@@ -109,7 +105,7 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
             @Override
             protected String load() {
-                if (ReferringDocumentsView.this.provider.size() == 0) {
+                if (UnpublishedReferencesDialog.this.provider.size() == 0) {
                     return "hippo-empty";
                 }
                 return "";
@@ -122,12 +118,12 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 selectedDocuments.clear();
-                ReferringDocumentsProvider provider = ReferringDocumentsView.this.provider;
-                Iterator<?> iter = provider.iterator(0, provider.size());
+                ISortableDataProvider<Node> provider = UnpublishedReferencesDialog.this.provider;
+                Iterator<? extends Node> iter = provider.iterator(0, provider.size());
                 while (iter.hasNext()) {
-                    selectedDocuments.add((JcrNodeModel) provider.model(iter.next()));
+                    selectedDocuments.add(provider.model(iter.next()));
                 }
-                target.addComponent(ReferringDocumentsView.this);
+                target.addComponent(UnpublishedReferencesDialog.this);
             }
         };
         actionContainer.add(selectAll);
@@ -138,7 +134,7 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 selectedDocuments.clear();
-                target.addComponent(ReferringDocumentsView.this);
+                target.addComponent(UnpublishedReferencesDialog.this);
             }
         };
         actionContainer.add(selectNone);
@@ -149,13 +145,13 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 if (editorMgr != null) {
-                    for (JcrNodeModel model : selectedDocuments) {
+                    for (IModel<Node> model : selectedDocuments) {
                         IEditor editor = editorMgr.getEditor(model);
                         if (editor == null) {
                             try {
                                 editorMgr.openEditor(model);
                             } catch (ServiceException ex) {
-                                log.error("Could not open editor for " + model.getItemModel().getPath(), ex);
+                                log.error("Could not open editor", ex);
                             }
                         }
                     }
@@ -168,6 +164,8 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             open.setEnabled(false);
         }
         actionContainer.add(open);
+
+        setOkLabel(new StringResourceModel("publish", this, null));
 
         add(new CssClassAppender(new Model("hippo-referring-documents")));
     }
@@ -208,6 +206,15 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
     public int getViewSize() {
         return 5;
+    }
+
+    public IModel<String> getTitle() {
+        return new StringResourceModel("title", this, null);
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return MEDIUM;
     }
 
 }
