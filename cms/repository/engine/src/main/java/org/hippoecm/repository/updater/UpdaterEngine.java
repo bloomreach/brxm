@@ -787,6 +787,7 @@ public class UpdaterEngine {
     private void preprocess() throws RepositoryException {
         Workspace workspace = session.getWorkspace();
         List<NamespaceVisitorImpl> nsVisitors = new LinkedList<NamespaceVisitorImpl>();
+        NamespaceVisitorImpl lastNamespaceVisitor = null;
         for (ModuleRegistration module : modules) {
             log.info("upgrade preprocess cycle for module " + module.name);
             for (ItemVisitor visitor : module.visitors) {
@@ -808,6 +809,8 @@ public class UpdaterEngine {
                         log.info("upgrade registering new prefix " + remap.newPrefix + " to " + remap.newURI);
                         nsreg.registerNamespace(remap.newPrefix, remap.newURI);
                     }
+                    remap.initialize(lastNamespaceVisitor);
+                    lastNamespaceVisitor = remap;
                     nsVisitors.add(remap);
                 }
             }
@@ -902,6 +905,7 @@ public class UpdaterEngine {
         boolean isCollecting = false;
         boolean isExecuting = false;
         Set<Node> collection = new HashSet<Node>();
+        NamespaceVisitorImpl lastNamespaceVisitor = null;
 
         NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
             this.namespace = definition.prefix;
@@ -932,6 +936,10 @@ public class UpdaterEngine {
                 log.error("cannot autogenerate cnd", ex);
             }
             initialize();
+        }
+
+        void initialize(NamespaceVisitorImpl last) {
+            lastNamespaceVisitor = last;
         }
 
         void initialize() throws NamespaceException {
@@ -1121,6 +1129,9 @@ public class UpdaterEngine {
                 if (child.getName().startsWith(namespace + ":")) {
                     context.setName(child, newPrefix + ":" + child.getName().substring(child.getName().indexOf(":") + 1));
                 }
+            }
+            if (lastNamespaceVisitor != null) {
+                lastNamespaceVisitor.leaving(node, level);
             }
         }
 
