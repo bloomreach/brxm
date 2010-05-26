@@ -271,7 +271,7 @@ public class PingServlet extends HttpServlet {
                 session.getRootNode().getNode(checkNode);
             }
         } catch (PathNotFoundException e) {
-            msg = "FAILURE - Path for node to lookup '" + checkNode + "' is not found by ping servelt. ";
+            msg = "FAILURE - Path for node to lookup '" + checkNode + "' is not found by ping servlet. ";
             throw new PingException(msg, e);
         } catch (RepositoryException e) {
             msg = "FAILURE - Could not obtain a node, which is at this point unexpected since we already have a connection."
