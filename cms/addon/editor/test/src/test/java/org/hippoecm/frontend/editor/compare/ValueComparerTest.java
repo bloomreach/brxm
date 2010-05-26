@@ -33,6 +33,8 @@ import org.hippoecm.repository.TestCase;
 import org.junit.Test;
 
 public class ValueComparerTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testStreams() throws RepositoryException, TypeException, IOException {

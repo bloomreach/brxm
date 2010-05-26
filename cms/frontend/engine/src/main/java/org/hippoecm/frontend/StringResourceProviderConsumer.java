@@ -34,6 +34,8 @@ import org.hippoecm.repository.api.HippoNodeType;
  * search for a translation.
  */
 public class StringResourceProviderConsumer implements IStringResourceLoader {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public String loadStringResource(Component component, String key) {
         IStringResourceProvider provider;

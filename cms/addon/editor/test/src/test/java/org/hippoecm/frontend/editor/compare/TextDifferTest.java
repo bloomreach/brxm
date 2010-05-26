@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class TextDifferTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testDiffer() {

@@ -33,6 +33,8 @@ import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 
 public class HippoNamePathResolver implements NamePathResolver {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private final NameResolver nResolver;
 

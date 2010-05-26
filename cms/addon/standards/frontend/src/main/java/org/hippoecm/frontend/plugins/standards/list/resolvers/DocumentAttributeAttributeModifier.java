@@ -23,6 +23,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import javax.jcr.Node;
 
 public abstract class DocumentAttributeAttributeModifier extends AbstractNodeAttributeModifier {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = -1694566516119253553L;
 

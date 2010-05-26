@@ -25,6 +25,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 public abstract class DocumentAttributeRenderer extends AbstractNodeRenderer {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = -2853371369162994945L;
 
     @Override

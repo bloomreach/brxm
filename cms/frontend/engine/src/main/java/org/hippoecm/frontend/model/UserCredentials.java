@@ -27,19 +27,25 @@ import javax.security.auth.login.LoginException;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 
 public class UserCredentials {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private Credentials credentials = null;
     private String username = "";
+
     @Deprecated
     public UserCredentials(String username, String password) {
         this(new SimpleCredentials(username, (password != null ? password.toCharArray() : new char[0])));
         this.username = username;
     }
+
     public UserCredentials(Credentials credentials) {
         this.credentials = credentials;
         if(credentials instanceof SimpleCredentials) {
             username = ((SimpleCredentials)credentials).getUserID();
         }
     }
+
     public UserCredentials(CallbackHandler callbackHandler) {
         NameCallback nameCallback = new NameCallback("username");
         PasswordCallback passwordCallback = new PasswordCallback("password", false);
@@ -61,12 +67,15 @@ public class UserCredentials {
             }
         }
     }
+
     @Deprecated
     public UserCredentials() {
     }
+
     public String getUsername() {
         return username;
     }
+
     Credentials getJcrCredentials() {
         return credentials;
     }

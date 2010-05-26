@@ -36,6 +36,8 @@ import org.hippoecm.frontend.types.TypeException;
 import org.junit.Test;
 
 public class NodeComparerTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     String[] content = {
         "/test", "nt:unstructured",

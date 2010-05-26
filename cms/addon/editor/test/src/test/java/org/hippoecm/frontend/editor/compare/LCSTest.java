@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import org.junit.Test;
 
 public class LCSTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     void check(String a, String b, String lcs) {
         LinkedList<String> result = new LinkedList<String>();

@@ -19,6 +19,9 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 
 public class TransparentFragment extends Fragment {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public TransparentFragment(String id, String markupId, MarkupContainer markupProvider) {

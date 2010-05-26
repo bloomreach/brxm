@@ -36,6 +36,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class DiffModel extends LoadableDetachableModel<String> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DiffModel.class);

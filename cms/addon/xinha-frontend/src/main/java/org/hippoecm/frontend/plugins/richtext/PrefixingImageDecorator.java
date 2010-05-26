@@ -20,6 +20,9 @@ package org.hippoecm.frontend.plugins.richtext;
  * link name in the _path request parameter in a portal environment.
  */
 public class PrefixingImageDecorator implements IImageURLProvider {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private String prefix;

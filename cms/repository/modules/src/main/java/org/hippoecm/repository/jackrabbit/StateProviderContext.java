@@ -16,6 +16,9 @@
 package org.hippoecm.repository.jackrabbit;
 
 public class StateProviderContext {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private String argument;
 
     public StateProviderContext(String argument) {

@@ -22,6 +22,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.FormComponent;
 
 public class AutoSaveBehavior extends AbstractDefaultAjaxBehavior implements XinhaExtension {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public void populateProperties(List properties) {

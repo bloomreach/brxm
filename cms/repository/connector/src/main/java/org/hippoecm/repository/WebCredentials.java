@@ -31,6 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 
 public class WebCredentials implements Credentials, CallbackHandler {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
+
     private String username = null;
     private char[] password = null;
     private Map<String, String> parameters = new HashMap<String, String>();
