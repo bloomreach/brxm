@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.yui.layout;
+package org.hippoecm.frontend.plugins.yui;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;

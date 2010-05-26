@@ -15,17 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 import org.hippoecm.frontend.util.MappingException;
 import org.hippoecm.frontend.util.PluginConfigMapper;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Contains all settings of a wireframe and it's units.
@@ -56,7 +54,7 @@ import java.util.Map;
  * Warning: this class currently extends the YuiObject which is deprecated and will soon be replaced by a POJO settings
  * file. Not sure how to handle default values and things like dont-escape-string yet.
  */
-public class WireframeSettings implements IAjaxSettings, Serializable {
+public class WireframeSettings extends AjaxSettings {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -69,18 +67,12 @@ public class WireframeSettings implements IAjaxSettings, Serializable {
 
     private String clientClassName = "YAHOO.hippo.Wireframe";
 
-    private String callbackUrl;
-    private JsFunction callbackFunction = new JsFunction();
-    private Map<String, Object> callbackParameters;
-
     public WireframeSettings(IPluginConfig config) {
         units = new ArrayList<UnitSettings>(5);
         for (String position : new String[] {"top", "left", "center", "right", "bottom"}) {
             String unitConfig = config.getString(position);
-            IValueMap unitPars = null;
             if (unitConfig != null) {
-                unitPars = new ValueMap(unitConfig);
-                units.add(new UnitSettings(position, unitPars));
+                units.add(new UnitSettings(position, new ValueMap(unitConfig)));
             }
         }
         try {
@@ -138,30 +130,6 @@ public class WireframeSettings implements IAjaxSettings, Serializable {
             }
         }
         return null;
-    }
-
-    public void setCallbackUrl(String url) {
-        this.callbackUrl = url;
-    }
-
-    public void setCallbackFunction(String function) {
-        this.callbackFunction.setFunction(function);
-    }
-
-    public void setCallbackParameters(Map<String, Object> map) {
-        this.callbackParameters = map;
-    }
-
-    public String getCallbackUrl() {
-        return callbackUrl;
-    }
-
-    public Map<String, Object> getCallbackParameters() {
-        return callbackParameters;
-    }
-
-    public JsFunction getCallbackFunction() {
-        return callbackFunction;
     }
 
 }

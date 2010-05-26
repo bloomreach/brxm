@@ -26,6 +26,8 @@ import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
+import org.hippoecm.frontend.plugins.yui.JsFunction;
+import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.service.render.RenderService;
