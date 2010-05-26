@@ -20,8 +20,25 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 
 public interface Filter extends BaseFilter{
 
+    
+    /**
+     * Adds a fulltext search to this Filter. A fulltext search is a search on the indexed text of the <code>scope</code>. When the 
+     * <code>scope</code> is just a <code><b>.</b></code>, the search will be done on the entire document. When the <code>scope</code> is 
+     * for example <code><b>@myproject:title</b></code>, the free text search is done on this property only. You can also point to properties of 
+     * child nodes, for example a scope like <code><b>myproject:paragraph/@myproject:header</b></code>
+     * @param scope
+     * @param fullTextSearch
+     * @throws FilterException
+     */
     void addContains(String scope, String fullTextSearch) throws FilterException ;
     
+    /**
+     * The negated version of {@link #addContains(String, String)}
+     * @see {@link #addContains(String, String)}
+     * @param scope
+     * @param fullTextSearch
+     * @throws FilterException
+     */
     void addNotContains(String scope, String fullTextSearch) throws FilterException ;
 
     void addBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException ;
