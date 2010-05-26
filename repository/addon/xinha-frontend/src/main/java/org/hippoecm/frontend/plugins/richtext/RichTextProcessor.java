@@ -40,7 +40,7 @@ public class RichTextProcessor {
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
 
-    private static ResourceReference BROKEN_IMAGE = new ResourceReference(RichTextProcessor.class, "broken.png");
+    private static ResourceReference BROKEN_IMAGE = new ResourceReference(RichTextProcessor.class, "broken-image-32.png");
 
     /**
      * Decorate the targets of relative image links in a text.  Text and decorator may
