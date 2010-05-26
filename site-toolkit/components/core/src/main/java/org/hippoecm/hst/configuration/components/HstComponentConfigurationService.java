@@ -92,6 +92,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             String configurationRootNodePath) throws ServiceException {
         super(jcrNode);
         if (!getValueProvider().getPath().startsWith(configurationRootNodePath)) {
+            this.closeValueProvider(false);
             throw new ServiceException(
                     "Node path of the component cannot start without the global components path. Skip Component");
         }
@@ -124,8 +125,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
             if (parameterNames != null && parameterValues != null) {
                 if (parameterNames.length != parameterValues.length) {
-                    log
-                            .warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+                    log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
                 } else {
                     for (int i = 0; i < parameterNames.length; i++) {
                         this.parameters.put(parameterNames[i], parameterValues[i]);

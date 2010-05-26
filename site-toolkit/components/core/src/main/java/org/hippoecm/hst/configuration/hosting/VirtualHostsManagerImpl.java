@@ -27,6 +27,7 @@ import javax.jcr.query.QueryResult;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,8 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager {
     protected Repository repository;
     protected Credentials credentials;
     protected VirtualHosts virtualHosts;
-    private HstSiteMapMatcher hstSiteMapMatcher;
+    private HstSiteMapMatcher siteMapMatcher;
+    private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
     
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -47,12 +49,20 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager {
         this.credentials = credentials;
     }
 
-    public void setHstSiteMapMatcher(HstSiteMapMatcher hstSiteMapMatcher) {
-        this.hstSiteMapMatcher = hstSiteMapMatcher;
+    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
+        this.siteMapMatcher = siteMapMatcher;
     }
     
-    public HstSiteMapMatcher getHstSiteMapMatcher() {
-        return hstSiteMapMatcher;
+    public HstSiteMapMatcher getSiteMapMatcher() {
+        return siteMapMatcher;
+    }
+    
+    public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
+        this.siteMapItemHandlerFactory = siteMapItemHandlerFactory;
+    }
+    
+    public HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory() {
+        return siteMapItemHandlerFactory;
     }
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException{

@@ -60,8 +60,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private String relativeContentPath;
     
     private String componentConfigurationId;
-    
+
     private String portletComponentConfigurationId;
+    
+    private String[] siteMapItemHandlerIds;
     
     private List<String> roles;
     
@@ -107,6 +109,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         this.depth = depth;
         String nodePath = getValueProvider().getPath();
         if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
+            this.closeValueProvider(false);
             throw new ServiceException("Node path of the sitemap cannot start without the global sitemap root path. Skip SiteMapItem");
         }
 
@@ -121,6 +124,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
        
         if(this.value == null){
             log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
+            this.closeValueProvider(false);
             throw new ServiceException("The 'value' of a SiteMapItem is not allowed to be null. It is so for '"+nodePath+"'");
         }
         if(parentItem != null) {
@@ -191,6 +195,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         
         this.relativeContentPath = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         this.componentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
+        this.siteMapItemHandlerIds = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         this.portletComponentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         
         if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
@@ -272,6 +277,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.portletComponentConfigurationId;
     }
 
+
+    public String[] getSiteMapItemHandlerIds() {
+        return siteMapItemHandlerIds;
+    }
+    
     public String getId() {
         return this.id;
     }
@@ -459,5 +469,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public int getDepth() {
         return this.depth;
     }
+
 
 }

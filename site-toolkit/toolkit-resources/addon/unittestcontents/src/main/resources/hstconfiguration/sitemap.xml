@@ -42,6 +42,81 @@
         </sv:property>
     </sv:node>
     
+    
+    <sv:node sv:name="handler_nooptest">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+            <sv:value>noophandler</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parameternames" sv:type="String">
+            <sv:value>myparam</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parametervalues" sv:type="String">
+            <sv:value>/home</sv:value>
+        </sv:property>
+        <sv:node sv:name="_default_">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemapitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+              <sv:value>noophandler</sv:value>
+          </sv:property>
+          <!-- myparam inherited from parent sitemap item  -->
+       </sv:node>
+    </sv:node>
+    
+    <sv:node sv:name="handler_sitemapitem_redirecttest">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+            <sv:value>sitemapitem_redirecthandler</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parameternames" sv:type="String">
+            <sv:value>redirectto</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parametervalues" sv:type="String">
+            <sv:value>/home</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="handler_browser_redirecttest">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+            <sv:value>browser_redirecthandler</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parameternames" sv:type="String">
+            <sv:value>redirectto</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parametervalues" sv:type="String">
+            <sv:value>/home</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="multiplehandler_wildcardexample">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:node sv:name="_default_">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemapitem</sv:value>
+          </sv:property>
+          <sv:node sv:name="_default_">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+                <sv:value>wildcardexamplehandler1</sv:value>
+                <sv:value>wildcardexamplehandler2</sv:value>
+            </sv:property>
+           </sv:node>
+        </sv:node>
+    </sv:node>
+    
     <sv:node sv:name="pagenotfound">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
@@ -51,16 +126,6 @@
         </sv:property>
     </sv:node>
     
-    <sv:node sv:name="home">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/homepage</sv:value>
-        </sv:property>
-    </sv:node>
-
- 
     <sv:node sv:name="news">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>

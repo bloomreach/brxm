@@ -204,4 +204,10 @@ public interface HstSiteMapItem {
      */
     String getNamedPipeline();
     
+    /**
+     * The array of sitemapItemHandler ids for this HstSiteMapItem. SiteMapItemHandlerIds are <b>NOT</b> inherited from parent/ancestor HstSiteMapItem's 
+     * @return the array of sitemapItemHandler ids which are attached to this sitemap item. When no handlers are configured, <code>null</code> or an empty array can be returned
+     */
+    String[] getSiteMapItemHandlerIds();
+    
 }

@@ -33,6 +33,8 @@ import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
+import org.hippoecm.hst.configuration.sitemapitemhandler.HstSiteMapItemHandlersConfigurationService;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
@@ -47,8 +49,9 @@ import org.slf4j.LoggerFactory;
 public class HstSiteService extends AbstractJCRService implements HstSite, Service{
 
     private static final long serialVersionUID = 1L;
-    
+
     private HstSiteMapService siteMapService;
+    private HstSiteMapItemHandlersConfigurationService siteMapItemHandlersConfigurationService;
     private HstComponentsConfigurationService componentsConfigurationService;
     private HstSiteMenusConfiguration siteMenusConfigurations;
     private String name;
@@ -115,6 +118,8 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     
     private void init(Node configurationNode) throws  RepositoryException, ServiceException {
        Map<String, String> templateRenderMap = new HashMap<String,String>();
+       
+       // templates
        Node hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
        NodeIterator nodeIt = hstTemplates.getNodes();
        while(nodeIt.hasNext()){
@@ -131,9 +136,24 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
                templateRenderMap.put(template.getName(), renderpath.trim());
            }
        }
-        
+       
+       // component configuration
        this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateRenderMap); 
       
+       // sitemapitem handlers
+       if(configurationNode.hasNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS)) {
+           log.info("Found a '{}' configuration. Initialize handles service now", HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
+           Node sitemapItemHandlersNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
+           try {
+               this.siteMapItemHandlersConfigurationService = new HstSiteMapItemHandlersConfigurationService(sitemapItemHandlersNode);
+           } catch (ServiceException e) {
+               log.error("ServiceException: Skipping handlesConfigurationService", e);
+           }
+       } else {
+           log.debug("No handles configuration present.");
+       }
+       
+       // sitemap
        Node siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
        this.siteMapService = new HstSiteMapService(this, siteMapNode); 
        
@@ -146,7 +166,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
            try {
            this.siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
            } catch (ServiceException e) {
-               log.error("ServiceException: Skipping SiteMenusConfiguration '{}'", e);
+               log.error("ServiceException: Skipping SiteMenusConfiguration", e);
            }
        } else {
            log.info("There is no configuration for 'hst:sitemenus' for this HstSite. The clien cannot use the HstSiteMenusConfiguration");
@@ -158,8 +178,13 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     }
 
     public Service[] getChildServices() {
-       Service[] services = {siteMapService,componentsConfigurationService};
-       return services;
+        if(siteMapItemHandlersConfigurationService == null) {
+            Service[] services = {siteMapService,componentsConfigurationService};
+            return services;
+        } else {
+            Service[] services = {siteMapService,componentsConfigurationService, siteMapItemHandlersConfigurationService};
+            return services;
+        }
     }
     
     /*
@@ -201,7 +226,11 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     public HstSiteMap getSiteMap() {
        return this.siteMapService;
     }
-
+    
+    public HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration(){
+        return this.siteMapItemHandlersConfigurationService;
+    }
+    
     public String getContentPath() {
         return contentPath;
     }
@@ -225,6 +254,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     public HstSiteMenusConfiguration getSiteMenusConfiguration() {
         return this.siteMenusConfigurations;
     }
+
 
 
 }

@@ -19,6 +19,8 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,10 +35,12 @@ import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.hippoecm.hst.site.request.SiteMapItemHandlerConfigurationImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -99,6 +103,7 @@ public abstract class AbstractSpringTestCase
     }
     
     protected void setResolvedSiteMount(HttpServletRequest request) {
+        
         ResolvedSiteMount resolvedSiteMount = createNiceMock(ResolvedSiteMount.class);
         SiteMount siteMount = createNiceMock(SiteMount.class);
         VirtualHost virtualHost = createNiceMock(VirtualHost.class);

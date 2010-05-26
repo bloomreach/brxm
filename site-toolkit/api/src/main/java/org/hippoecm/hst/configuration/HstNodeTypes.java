@@ -32,7 +32,11 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_VIRTUALHOSTS = "hst:virtualhosts";
     public final static String NODETYPE_HST_VIRTUALHOST = "hst:virtualhost";
     public final static String NODETYPE_HST_SITEMOUNT = "hst:sitemount";
+    public final static String NODETYPE_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
+    public final static String NODETYPE_HST_SITEMAPITEMHANDLER = "hst:sitemapitemhandler";
+    public final static String NODETYPE_HST_SCRIPTS = "hst:scripts";
     public final static String NODETYPE_HST_SCRIPT = "hst:script";
+    public final static String NODETYPE_HST_CONTENTMOUNT = "hst:contentmount";
 
     
     public final static String GENERAL_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
@@ -61,6 +65,7 @@ public interface HstNodeTypes {
     public final static String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID =  "hst:componentconfigurationid";
     public final static String SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID =  "hst:portletcomponentconfigurationid";
     public final static String SITEMAPITEM_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
+    public final static String SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS =  "hst:sitemapitemhandlerids";
 
     public final static String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     public final static String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";
@@ -92,6 +97,9 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
     public final static String SITEMOUNT_PROPERTY_ISPREVIEW = "hst:ispreview";
      
+
+    public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
+    
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";
     public final static String NODENAME_HST_CONTENTNODE = "hst:content";
     public final static String NODENAME_HST_SITEMAP = "hst:sitemap";
@@ -99,6 +107,7 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_COMPONENTS = "hst:components";
     public final static String NODENAME_HST_PAGES = "hst:pages";
     public final static String NODENAME_HST_TEMPLATES = "hst:templates";
+    public static final String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     
     
 }

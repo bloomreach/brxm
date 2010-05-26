@@ -45,11 +45,34 @@
 [hst:pages] orderable
 + * (hst:component)
 
+[hst:sitemapitemhandler] > nt:base
+- hst:sitemapitemhandlerclassname (string) mandatory
+- * (string) 
+- * (string) multiple
+- * (boolean) 
+- * (boolean) multiple
+- * (long) 
+- * (long) multiple
+- * (double) 
+- * (double) multiple
+- * (date) 
+- * (date) multiple
+
+[hst:sitemapitemhandlers] orderable
++ * (hst:sitemapitemhandler)
+
+[hst:script] > nt:base
+- * (string)  
+
+[hst:scripts] orderable
++ * (hst:script)
+
 [hst:sitemapitem]
 - hst:value
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
 - hst:portletcomponentconfigurationid (string)
+- hst:sitemapitemhandlerids (string) multiple
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:namedpipeline (string)
@@ -85,6 +108,8 @@
 + hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:templates (hst:templates) = hst:templates
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
++ hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
++ hst:scripts (hst:scripts) = hst:scripts
 
 
 [hst:site]

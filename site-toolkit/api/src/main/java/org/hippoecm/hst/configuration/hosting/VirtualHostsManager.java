@@ -17,6 +17,8 @@ package org.hippoecm.hst.configuration.hosting;
 
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 
 
 public interface VirtualHostsManager {
@@ -31,7 +33,12 @@ public interface VirtualHostsManager {
      *  {@link HstSiteMapMatcher} implementation if needed
      * @return the global HstSiteMapMatcher implementation used for all the hosts & sites
      */
-    HstSiteMapMatcher getHstSiteMapMatcher();
+    HstSiteMapMatcher getSiteMapMatcher();
+    
+    /**
+     * @return the siteMapItemHandler factory which can create {@link HstSiteMapItemHandler} instances
+     */
+    HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory();
     
     /**
      * Invalidates this VirtualHostsManager. Typically this invalidate is called after a received event indicating that for example

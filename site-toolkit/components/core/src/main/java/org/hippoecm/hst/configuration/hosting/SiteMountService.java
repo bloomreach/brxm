@@ -354,7 +354,7 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     }
 
     public HstSiteMapMatcher getHstSiteMapMatcher() {
-        return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getHstSiteMapMatcher();
+        return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getSiteMapMatcher();
     }
 
 

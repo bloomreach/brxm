@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.site;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 
 /**
@@ -50,6 +51,11 @@ public interface HstSite {
      * @return @return The absolute absolute content path for this <code>HstSite</code>
      */
     String getCanonicalContentPath();
+    
+    /**
+     * @return the siteMapItemHandlersConfiguration for this <code>HstSite</code>
+     */
+    HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration();
     
     /**
      * @return the componentsConfiguration for this <code>HstSite</code>

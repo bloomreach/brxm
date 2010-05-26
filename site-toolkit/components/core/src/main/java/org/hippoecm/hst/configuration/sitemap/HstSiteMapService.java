@@ -55,6 +55,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
         this.siteMapRootNodePath = siteMapNode.getPath();
         
         if(!siteMapNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAP)) {
+            this.closeValueProvider(false);
             throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+HstNodeTypes.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getPrimaryNodeType().getName()+"'");
         }
         

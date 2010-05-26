@@ -39,8 +39,6 @@
     <property name="locationResolvers" ref="org.hippoecm.hst.core.linking.locationResolvers"/>
   </bean>
 
-  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor" class="org.hippoecm.hst.core.linking.HstLinkProcessorChain"> </bean>
-
   <bean id="org.hippoecm.hst.core.linking.locationResolvers"
     class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
