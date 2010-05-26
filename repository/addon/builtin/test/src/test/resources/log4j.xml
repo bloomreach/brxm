@@ -75,7 +75,7 @@
   </category>
 
   <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
-    <level value="info"/>
+    <level value="debug"/>
     <appender-ref ref="root"/>
   </category>
 
