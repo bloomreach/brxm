@@ -14,21 +14,20 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.yui.layout;
+package org.hippoecm.frontend.plugins.yui;
 
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsonValueProcessor;
+import org.apache.wicket.IClusterable;
 
-public class JsFunctionProcessor implements JsonValueProcessor {
+import java.util.Map;
+
+public interface IAjaxSettings extends IClusterable {
     @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
-    public Object processArrayValue(Object o, JsonConfig jsonConfig) {
-        return null;
-    }
+    void setCallbackUrl(String url);
 
-    public Object processObjectValue(String s, Object o, JsonConfig jsonConfig) {
-        JsFunction func = (JsFunction) o;
-        return func.getFunction();
-    }
+    void setCallbackFunction(JsFunction function);
+
+    void setCallbackParameters(Map< String, Object > map);
+
 }

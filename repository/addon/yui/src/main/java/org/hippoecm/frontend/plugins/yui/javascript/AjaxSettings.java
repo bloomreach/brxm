@@ -16,7 +16,8 @@
 package org.hippoecm.frontend.plugins.yui.javascript;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.layout.IAjaxSettings;
+import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
+import org.hippoecm.frontend.plugins.yui.JsFunction;
 
 import java.util.Map;
 
@@ -44,8 +45,8 @@ public class AjaxSettings extends YuiObject implements IAjaxSettings {
         CALLBACK_URL.set(url, this);
     }
 
-    public void setCallbackFunction(String function) {
-        CALLBACK_FUNCTION.set(function, this);
+    public void setCallbackFunction(JsFunction function) {
+        CALLBACK_FUNCTION.set(function.getFunction(), this);
     }
 
     public void setCallbackParameters(Map<String, Object> map) {
