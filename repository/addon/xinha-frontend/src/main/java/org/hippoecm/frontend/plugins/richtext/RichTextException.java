@@ -16,6 +16,9 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 public class RichTextException extends Exception {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public RichTextException(String message) {

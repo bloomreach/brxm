@@ -18,9 +18,10 @@ package org.hippoecm.frontend.plugins.richtext;
 import org.apache.wicket.IClusterable;
 
 public interface ILinkDecorator extends IClusterable {
+    @SuppressWarnings("unused")
+    final String SVN_ID = "$Id$";
 
     String internalLink(String link);
 
     String externalLink(String link);
-
 }

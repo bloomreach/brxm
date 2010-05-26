@@ -53,6 +53,8 @@ import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 
 public class EditorFactoryTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     static final String EDITORS = "editors";
     static final String PREVIEWS = "previews";

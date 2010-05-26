@@ -40,6 +40,9 @@ import org.apache.wicket.protocol.http.WebRequest;
  *       earlier when they are serialized.
  */
 public class UnbindingHttpSessionStore extends HttpSessionStore {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private Map<String, WeakReference<UserSession>> sessions = new HashMap<String, WeakReference<UserSession>>();
 
     public UnbindingHttpSessionStore(Application application) {

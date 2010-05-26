@@ -20,6 +20,8 @@ import java.util.Set;
 import org.apache.wicket.model.IDetachable;
 
 public interface IRichTextLinkFactory extends IDetachable {
+    @SuppressWarnings("unused")
+    final String SVN_ID = "$Id$";
 
     Set<String> getLinks();
 

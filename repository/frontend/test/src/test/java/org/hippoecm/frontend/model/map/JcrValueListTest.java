@@ -33,6 +33,8 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.junit.Test;
 
 public class JcrValueListTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void addMultipleValuesToNonExistingPropertyAddsAll() throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {

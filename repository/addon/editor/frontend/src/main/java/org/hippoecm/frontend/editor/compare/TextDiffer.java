@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
 import org.apache.wicket.util.string.Strings;
 
 public class TextDiffer implements Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = -112736024904848783L;
 
     private final static Pattern WHITESPACE = Pattern.compile("[ \t\r\n]");

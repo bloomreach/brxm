@@ -16,6 +16,9 @@
 package org.hippoecm.frontend.editor.compare;
 
 public class ObjectComparer implements IComparer<Object> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 9007990171845097749L;
 
     public boolean areEqual(Object oldValue, Object newValue) {

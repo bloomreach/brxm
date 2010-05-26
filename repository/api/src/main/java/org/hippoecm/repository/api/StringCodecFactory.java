@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
  * Typically a single instance of the StringCodecFactory is stored in the application framework.
  */
 public class StringCodecFactory {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private Map<String, StringCodec> codecs;
 
     /**

@@ -35,6 +35,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class TestDaisyDiff {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
     
     @Test
     public void testDiff() throws SAXException, IOException, TransformerConfigurationException {
