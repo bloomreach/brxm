@@ -19,8 +19,8 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -75,7 +75,6 @@ public class PropertyContent extends ItemContent {
         }
     }
     
-    @XmlAttribute
     public int getType() {
         return type;
     }
@@ -85,7 +84,6 @@ public class PropertyContent extends ItemContent {
         this.type = type;
     }
     
-    @XmlAttribute
     public String getTypeName() {
         return typeName;
     }
@@ -95,7 +93,6 @@ public class PropertyContent extends ItemContent {
         this.typeName = typeName;
     }
     
-    @XmlAttribute
     public String getMultiple() {
         return multiple;
     }
@@ -104,6 +101,7 @@ public class PropertyContent extends ItemContent {
         this.multiple = multiple;
     }
     
+    @XmlElementWrapper(name="values")
     @XmlElements(@XmlElement(name="value"))
     public ValueContent [] getValueContents() {
         return valueContents;
@@ -111,14 +109,6 @@ public class PropertyContent extends ItemContent {
     
     public void setValueContents(ValueContent [] valueContents) {
         this.valueContents = valueContents;
-    }
-    
-    public ValueContent getFirstValueContent() {
-        if (valueContents != null && valueContents.length > 0) {
-            return valueContents[0];
-        }
-        
-        return null;
     }
     
 }

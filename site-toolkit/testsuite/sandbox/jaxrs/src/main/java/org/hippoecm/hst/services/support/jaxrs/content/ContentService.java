@@ -298,7 +298,7 @@ public class ContentService extends BaseHstContentService {
                 throw new WebApplicationException(new IllegalArgumentException("primary node type name not found."), Response.Status.BAD_REQUEST);
             }
             
-            cpm.create(parentPath, (String) primaryTypePropertyContent.getFirstValueContent().getString(), documentBeanContent.getName(), true);
+            cpm.create(parentPath, (String) primaryTypePropertyContent.getValueContents()[0].getValue(), documentBeanContent.getName(), true);
             cpm.save();
             
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
@@ -336,7 +336,7 @@ public class ContentService extends BaseHstContentService {
             }
             
             HippoBeanContent beanContent = createHippoBeanContent(bean, null);
-            Node canonicalParentNode = NodeUtils.getCanonicalNode(beanContent.getBean().getNode());
+            Node canonicalParentNode = NodeUtils.getCanonicalNode(bean.getNode());
             
             Node node = null;
             
@@ -391,7 +391,7 @@ public class ContentService extends BaseHstContentService {
             }
             
             HippoBeanContent beanContent = createHippoBeanContent(bean, null);
-            Node canonicalNode = NodeUtils.getCanonicalNode(beanContent.getBean().getNode());
+            Node canonicalNode = NodeUtils.getCanonicalNode(bean.getNode());
             
             setPropertyValue(canonicalNode, propertyContent);
             

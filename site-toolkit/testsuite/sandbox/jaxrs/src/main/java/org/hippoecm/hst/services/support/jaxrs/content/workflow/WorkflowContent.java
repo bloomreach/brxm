@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.ClassUtils;
@@ -69,7 +70,7 @@ public class WorkflowContent {
     }
     
     @XmlElementWrapper(name="interfaces")
-    @XmlElement(name="interface")
+    @XmlElements(@XmlElement(name="interface"))
     public Collection<String> getInterfaceNames() {
         return interfaceNames;
     }

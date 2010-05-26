@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -55,6 +56,7 @@ public class HippoBeanContentCollection extends BeanCollection {
         }
     }
     
+    @XmlElementWrapper(name="folders")
     @XmlElements(@XmlElement(name="folder"))
     public Collection<HippoFolderBeanContent> getFolderBeanContents() {
         return folderBeanContents;
@@ -64,6 +66,7 @@ public class HippoBeanContentCollection extends BeanCollection {
         this.folderBeanContents = folderBeanContents;
     }
     
+    @XmlElementWrapper(name="documents")
     @XmlElements(@XmlElement(name="document"))
     public Collection<HippoDocumentBeanContent> getDocumentBeanContents() {
         return documentBeanContents;
@@ -73,6 +76,7 @@ public class HippoBeanContentCollection extends BeanCollection {
         this.documentBeanContents = documentBeanContents;
     }
     
+    @XmlElementWrapper(name="nodes")
     @XmlElements(@XmlElement(name="node"))
     public Collection<HippoBeanContent> getBeanContents() {
         return beanContents;

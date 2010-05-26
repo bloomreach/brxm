@@ -215,7 +215,10 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         Element root = document.getDocumentElement();
         assertEquals("folder", root.getNodeName());
-        assertEquals("abababab-5fa8-48a8-b03b-4524373d992a", root.getAttribute("uuid"));
+        
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile("string(/folder/uuid)");
+        assertEquals("abababab-5fa8-48a8-b03b-4524373d992a", expr.evaluate(document));
     }
     
     @Test
@@ -245,10 +248,10 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         assertEquals("document", root.getNodeName());
         
         XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile("string(/document/node[@name='testproject:body']/@uri)");
+        XPathExpression expr = xpath.compile("string(/document/nodes/node[string(./name)='testproject:body']/uri)");
         assertEquals("http://localhost:8085/testapp/preview/services/contentservice/Products/HippoCMS/HippoCMS/testproject:body",
                 expr.evaluate(document));
-        expr = xpath.compile("string(/document/property[@name='testproject:title']/@uri)");
+        expr = xpath.compile("string(/document/properties/property[string(./name)='testproject:title']/uri)");
         assertEquals("http://localhost:8085/testapp/preview/services/contentservice/Products/HippoCMS/HippoCMS/testproject:title",
                 expr.evaluate(document));
         
@@ -275,7 +278,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         root = document.getDocumentElement();
         assertEquals("property", root.getNodeName());
-        expr = xpath.compile("string(/property/value)");
+        expr = xpath.compile("string(/property/values/value)");
         assertEquals("Hippo CMS", expr.evaluate(document));
         
         /*
@@ -337,7 +340,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         assertTrue(NumberUtils.isNumber(value));
         assertTrue(NumberUtils.toInt(value) > 0);
         
-        expr = xpath.compile("count(/data/document)");
+        expr = xpath.compile("count(/data/documents/document)");
         value = expr.evaluate(document);
         assertTrue(NumberUtils.isNumber(value));
         assertTrue(NumberUtils.toInt(value) > 0);
@@ -406,10 +409,17 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setPathInfo("/contentservice/Solutions");
         request.setContentType("application/xml");
         String content = 
-            "<document name=\"SolutionsPage2\">" +
-            "<property name=\"jcr:primaryType\" typeName=\"String\">" +
+            "<document>" +
+            "<name>SolutionsPage2</name>" +
+            "<properties>" +
+            "<property>" +
+            "<name>jcr:primaryType</name>" +
+            "<typeName>String</typeName>" +
+            "<values>" +
             "<value>testproject:textpage</value>" +
+            "</values>" +
             "</property>" +
+            "</properties>" +
             "</document>";
         request.setContent(content.getBytes());
         
@@ -476,7 +486,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/node/jcr:root/testcontent/documents/testproject");
         request.setContentType("application/xml");
-        content = "<node primaryNodeTypeName=\"hippostd:folder\" name=\"afolder\"/>";
+        content = "<node><primaryNodeTypeName>hippostd:folder</primaryNodeTypeName><name>afolder</name></node>";
         request.setContent(content.getBytes());
         
         response = new MockHttpServletResponse();
@@ -536,9 +546,9 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         Element root = document.getDocumentElement();
         XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile("string(/document/property[@name='testproject:title']/value)");
+        XPathExpression expr = xpath.compile("string(/document/properties/property[string(./name)='testproject:title']/values/value)");
         assertEquals("News Item 1", expr.evaluate(document).trim());
-        expr = xpath.compile("string(/document/property[@name='testproject:summary']/value)");
+        expr = xpath.compile("string(/document/properties/property[string(./name)='testproject:summary']/values/value)");
         assertEquals("Summary about news item 1", expr.evaluate(document));
         
         /*
@@ -558,8 +568,12 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setQueryString(null);
         request.setContentType("application/xml");
         String content = 
-            "<property name=\"testproject:title\" typeName=\"String\">" +
+            "<property>" +
+            "<name>testproject:title</name>" +
+            "<typeName>String</typeName>" +
+            "<values>" +
             "<value>News Item 1 - updated</value>" +
+            "</values>" +
             "</property>";
         request.setContent(content.getBytes());
         
@@ -593,9 +607,9 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         root = document.getDocumentElement();
         xpath = XPathFactory.newInstance().newXPath();
-        expr = xpath.compile("string(/document/property[@name='testproject:title']/value)");
+        expr = xpath.compile("string(/document/properties/property[string(./name)='testproject:title']/values/value)");
         assertEquals("News Item 1 - updated", expr.evaluate(document));
-        expr = xpath.compile("string(/document/property[@name='testproject:summary']/value)");
+        expr = xpath.compile("string(/document/properties/property[string(./name)='testproject:summary']/values/value)");
         assertEquals("Summary about news item 1", expr.evaluate(document));
     }
     

@@ -18,7 +18,6 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -55,7 +54,6 @@ public class HippoDocumentBeanContent extends HippoBeanContent {
         this.canonicalHandleUuid = bean.getCanonicalHandleUUID();
     }
     
-    @XmlAttribute
     public String getCanonicalHandleUuid() {
         return canonicalHandleUuid;
     }
