@@ -411,7 +411,10 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     UpdaterEngine.log.debug("commit remove old origin "+oldOrigin.getPath());
                 }
                 try {
-                    oldOrigin.remove();
+                    /* let the node exists (will probably be removed later, in case of a mandatory node.1 */
+                    if(!((Node)oldOrigin).getDefinition().isMandatory() || ((Node)oldOrigin).getDefinition().allowsSameNameSiblings()) {
+                        oldOrigin.remove();
+                    }
                 } catch (RepositoryException ex) {
                     try {
                         UpdaterEngine.log.warn("cannot remove no longer available old origin node "+origin.getPath());
@@ -423,6 +426,17 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             if (noSameNameSiblingWorkaround != null) {
                 if (UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.debug("commit restore from no-same-name-sibling "+parent.origin.getPath()+"/"+nodeName);
+                }
+
+                if (((Node)parent.origin).hasNode(nodeName)) {
+                    Node existingNode = ((Node)parent.origin).getNode(nodeName);
+                    NodeDefinition existingNodeDefinition = existingNode.getDefinition();
+                    if (!existingNodeDefinition.allowsSameNameSiblings() && existingNodeDefinition.isMandatory()) {
+                        if (UpdaterEngine.log.isDebugEnabled()) {
+                            UpdaterEngine.log.debug("commit restore from no-same-name-sibling remove old mandatory child");
+                        }
+                        existingNode.remove();
+                    }
                 }
                 parent.origin.getSession().move(parent.origin.getPath() + "/" + noSameNameSiblingWorkaround, parent.origin.getPath() + "/" + nodeName);
             }

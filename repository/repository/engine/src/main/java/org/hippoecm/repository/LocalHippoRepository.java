@@ -274,7 +274,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private void initialize() throws RepositoryException {
         initializeStartup();
-        ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
         if(needsRestart) {
             log.warn("restarting repository after upgrade cycle");
             close();
@@ -283,7 +282,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             initializeStartup();
             ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
             log.warn("post migration cycle validating content");
-            ((SessionDecorator)rootSession).postValidation();
+            ((org.hippoecm.repository.impl.SessionDecorator)rootSession).postValidation();
+        } else {
+            ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
         }
     }
 
