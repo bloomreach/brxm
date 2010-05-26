@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
-import java.io.InputStream;
 import java.util.Calendar;
 
 import javax.jcr.PropertyType;
@@ -34,7 +33,7 @@ import org.apache.jackrabbit.util.ISO8601;
  * @version $Id$
  */
 @XmlRootElement(name = "value")
-public class ValueContent implements Value {
+public class ValueContent {
     
     private int type;
     private String typeName;
@@ -112,30 +111,6 @@ public class ValueContent implements Value {
     
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public boolean getBoolean() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return Boolean.parseBoolean(value);
-    }
-
-    public String getString() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return value;
-    }
-    
-    public Calendar getDate() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return ISO8601.parse(value);
-    }
-
-    public double getDouble() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return Double.parseDouble(value);
-    }
-
-    public long getLong() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return Long.parseLong(value);
-    }
-
-    public InputStream getStream() throws IllegalStateException, RepositoryException {
-        return null;
     }
     
 }

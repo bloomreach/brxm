@@ -37,7 +37,6 @@ public class ItemContent {
     private String name;
     private String path;
     private URI uri;
-    private transient Item item;
     
     public ItemContent() {
     }
@@ -53,10 +52,6 @@ public class ItemContent {
     
     public ItemContent(Item item) throws RepositoryException {
         this(item.getName(), item.getPath());
-    }
-    
-    public Item getItem() {
-        return item;
     }
     
     @XmlAttribute

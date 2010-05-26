@@ -31,7 +31,6 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 @XmlRootElement(name = "node")
 public class HippoBeanContent extends NodeContent {
     
-    private HippoBean bean;
     private String canonicalUuid;
     
     public HippoBeanContent() {
@@ -53,15 +52,9 @@ public class HippoBeanContent extends NodeContent {
     public HippoBeanContent(HippoBean bean, final Set<String> propertyNamesFilledWithValues) throws RepositoryException {
         super(bean.getNode(), propertyNamesFilledWithValues);
         
-        this.bean = bean;
-        
-        if (this.bean.getNode().isNodeType("mix:referenceable")) {
+        if (bean.getNode().isNodeType("mix:referenceable")) {
             this.canonicalUuid = bean.getCanonicalUUID();
         }
-    }
-    
-    public HippoBean getBean() {
-        return bean;
     }
     
     @XmlAttribute

@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -94,6 +95,7 @@ public class HippoFolderBeanContent extends HippoBeanContent {
         }
     }
     
+    @XmlElementWrapper(name="folders")
     @XmlElements(@XmlElement(name="folder"))
     public Collection<HippoFolderBeanContent> getChildFolderBeanContents() {
         return childFolderBeanContents;
@@ -103,6 +105,7 @@ public class HippoFolderBeanContent extends HippoBeanContent {
         this.childFolderBeanContents = childFolderBeanContents;
     }
     
+    @XmlElementWrapper(name="documents")
     @XmlElements(@XmlElement(name="document"))
     public Collection<HippoDocumentBeanContent> getChildDocumentBeanContents() {
         return childDocumentBeanContents;
@@ -133,11 +136,6 @@ public class HippoFolderBeanContent extends HippoBeanContent {
                 documentContent.buildUri(urlBase, siteContentPath, encoding);
             }
         }
-    }
-    
-    @Override
-    public Collection<NodeContent> getChildNodeContents() {
-        return childNodeContents;
     }
     
 }
