@@ -17,7 +17,6 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -38,7 +37,6 @@ public class BeanCollection implements Serializable {
         
     }
     
-    @XmlAttribute
     public int getTotalSize() {
         return totalSize;
     }
@@ -47,7 +45,6 @@ public class BeanCollection implements Serializable {
         this.totalSize = totalSize;
     }
     
-    @XmlAttribute
     public int getBeginIndex() {
         return beginIndex;
     }

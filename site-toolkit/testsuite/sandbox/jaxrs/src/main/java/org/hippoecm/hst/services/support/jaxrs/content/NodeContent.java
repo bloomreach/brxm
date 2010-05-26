@@ -26,7 +26,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
@@ -93,7 +92,6 @@ public class NodeContent extends ItemContent {
         }
     }
     
-    @XmlAttribute
     public String getPrimaryNodeTypeName() {
         return primaryNodeTypeName;
     }
@@ -102,7 +100,6 @@ public class NodeContent extends ItemContent {
         this.primaryNodeTypeName = primaryNodeTypeName;
     }
     
-    @XmlAttribute
     public String getUuid() {
         return uuid;
     }

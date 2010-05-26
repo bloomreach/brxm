@@ -21,7 +21,6 @@ import java.net.URLEncoder;
 
 import javax.jcr.Item;
 import javax.jcr.RepositoryException;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +53,6 @@ public class ItemContent {
         this(item.getName(), item.getPath());
     }
     
-    @XmlAttribute
     public String getName() {
         return name;
     }
@@ -63,7 +61,6 @@ public class ItemContent {
         this.name = name;
     }
     
-    @XmlAttribute
     public String getPath() {
         return path;
     }
@@ -72,7 +69,6 @@ public class ItemContent {
         this.path = path;
     }
     
-    @XmlAttribute
     public URI getUri() {
         return uri;
     }
