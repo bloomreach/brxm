@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.widgets.upload;
+package org.hippoecm.frontend.plugins.yui.upload;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
@@ -47,7 +47,8 @@ public class UploadWidget extends Panel {
 
         //TODO: detect if flash is enabled, otherwise fallback to javascript which should be enough for Hippo atm.
         //For now only use default MultiFileUpload from Wicket
-        uploadComponent = new MultiFileUpload("upload");
+        uploadComponent = new AjaxMultiFileUpload("upload");
+
         add(uploadComponent.getComponent());
 
     }
@@ -103,6 +104,28 @@ public class UploadWidget extends Panel {
 
             ResourceReference cssResourceReference = new ResourceReference(UploadWidget.class, MULTI_FILE_UPLOAD_CSS);
             container.getHeaderResponse().renderCSSReference(cssResourceReference);
+        }
+    }
+
+    private class AjaxMultiFileUpload implements UploadComponent {
+
+        private Component c;
+
+        public AjaxMultiFileUpload(String id) {
+
+            add(c = new AjaxMultiFileUploadComponent(id, new AjaxMultiFileUploadSettings()));
+        }
+
+        public Component getFocusComponent() {
+            return null;
+        }
+
+        public Component getComponent() {
+            return c;
+        }
+
+        public Collection<FileUpload> getUploads() {
+            return null;
         }
     }
 

@@ -34,7 +34,7 @@ import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
-import org.hippoecm.frontend.widgets.upload.UploadWidget;
+import org.hippoecm.frontend.plugins.yui.upload.UploadWidget;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
