@@ -525,7 +525,7 @@
           <show>protected</show>
           <source>1.5</source>
           <javadocVersion>1.6</javadocVersion>
-	  <docfilessubdirs>true</docfilessubdirs>
+          <docfilessubdirs>true</docfilessubdirs>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
@@ -861,7 +861,7 @@
           <author>false</author>
           <show>protected</show>
           <source>1.5</source>
-	  <docfilessubdirs>true</docfilessubdirs>
+          <docfilessubdirs>true</docfilessubdirs>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
