@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
@@ -27,6 +28,12 @@ public interface VirtualHostsManager {
      * @return the <code>VirtualHosts</code> managed by this VirtualHostsManager
      */
     VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException;
+    
+    
+    /**
+     * @return the HstURLFactory for this VirtualHostsManager
+     */
+    HstURLFactory getUrlFactory();
     
     /**
      * VirtualHostsManager must contain a reference to the {@link HstSiteMapMatcher} that is being used. You can inject your own

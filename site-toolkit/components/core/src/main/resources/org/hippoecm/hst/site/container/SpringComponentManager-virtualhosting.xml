@@ -40,7 +40,8 @@
    
    <bean id="org.hippoecm.hst.configuration.hosting.VirtualHostsManager" class="org.hippoecm.hst.configuration.hosting.VirtualHostsManagerImpl">
        <property name="repository" ref="javax.jcr.Repository" />
-       <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />        
+       <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
+       <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
        <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
        <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
    </bean>

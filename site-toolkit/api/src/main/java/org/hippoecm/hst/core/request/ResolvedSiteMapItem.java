@@ -49,7 +49,7 @@ public interface ResolvedSiteMapItem {
     String getRelativeContentPath();
     
     /**
-     * Returns a relative path from hst request path to the SiteMapItem that was matched
+     * Returns a relative path from hst request path to the SiteMapItem that was matched. This path <b>never</b> starts with a "/"
      * @return the matched path to this <code>ResolvedSiteMapItem</code>, relative to the mount path
      */
     String getPathInfo();

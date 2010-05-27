@@ -208,7 +208,7 @@ public class HstFilter implements Filter {
                         
                         // now we can parse the url *with* a RESOLVED_SITEMOUNT which is needed!
                         
-                        HstURLFactory factory = (HstURLFactory)HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
+                        HstURLFactory factory = virtualHostManager.getUrlFactory();
                         HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(req, res);
                         req.setAttribute(HstContainerURL.class.getName(), hstContainerURL);
                         

@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
@@ -35,9 +36,10 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager {
 
     private static final Logger log = LoggerFactory.getLogger(VirtualHostsManagerImpl.class);
     
-    protected Repository repository;
-    protected Credentials credentials;
-    protected VirtualHosts virtualHosts;
+    private Repository repository;
+    private Credentials credentials;
+    private VirtualHosts virtualHosts;
+    private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
     private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
     
@@ -49,6 +51,14 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager {
         this.credentials = credentials;
     }
 
+    public HstURLFactory getUrlFactory() {
+        return this.urlFactory;
+    }
+    
+    public void setUrlFactory(HstURLFactory urlFactory) {
+        this.urlFactory = urlFactory;
+    }
+    
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
         this.siteMapMatcher = siteMapMatcher;
     }

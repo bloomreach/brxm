@@ -69,12 +69,12 @@
        </sv:property>
     </sv:node>
     
-    <sv:node sv:name="wildcardexamplehandler1">
+    <sv:node sv:name="examplehandler1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopWildCardExampleHandler1</sv:value>
+            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandler1</sv:value>
         </sv:property>
         <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
             <!-- the first wildcard value from the resolved sitemap item -->
@@ -86,12 +86,12 @@
         </sv:property>
     </sv:node>
     
-    <sv:node sv:name="wildcardexamplehandler2">
+    <sv:node sv:name="examplehandler2">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopWildCardExampleHandler2</sv:value>
+            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandler2</sv:value>
         </sv:property>
         <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
             <!-- the first wildcard value from the resolved sitemap item -->
@@ -110,7 +110,7 @@
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.test.sitemapitemhandler.SiteMapItemRedirectHandler</sv:value>
         </sv:property>
-        <sv:property sv:name="unittestproject:redirecttositemapitem" sv:type="String">
+        <sv:property sv:name="unittestproject:redirecttopath" sv:type="String">
             <!--  take the value from the resolved sitemap item -->
             <sv:value>${redirectto}</sv:value>
         </sv:property>

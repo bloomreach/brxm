@@ -97,7 +97,7 @@
         </sv:property>
     </sv:node>
     
-    <sv:node sv:name="multiplehandler_wildcardexample">
+    <sv:node sv:name="multiplehandler_example">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
@@ -110,8 +110,8 @@
               <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
-                <sv:value>wildcardexamplehandler1</sv:value>
-                <sv:value>wildcardexamplehandler2</sv:value>
+                <sv:value>examplehandler1</sv:value>
+                <sv:value>examplehandler2</sv:value>
             </sv:property>
            </sv:node>
         </sv:node>

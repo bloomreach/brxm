@@ -4,6 +4,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
@@ -46,4 +49,42 @@ public abstract class AbstractHstSiteMapHandler implements HstSiteMapItemHandler
         return servletContext;
     }
 
+    /**
+     * Resolves with the help of the current resolvedSiteMapItem to a new sitemap item with path <code>pathInfo</code>
+     * @param request
+     * @param response
+     * @param currentResolvedSiteMapItem
+     * @param pathInfo
+     * @throws MatchException when the <code>pathInfo</code> cannot be matched
+     * @return a new ResolvedSiteMapItem
+     */
+    public ResolvedSiteMapItem resolveToNewSiteMapItem(HttpServletRequest request,
+            HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo) throws MatchException {
+        
+        HstContainerURL newContainerUrl = createContainerURL(request, response, currentResolvedSiteMapItem, pathInfo);
+        return currentResolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(newContainerUrl);
+    }
+    
+    /**
+     * creates a new website HstContainerURL for <code>pathInfo</code>. Note that for portal or embedded portal requests, this method should be overridden 
+     * as the {@link HstURLFactory#getContainerURLProvider()} returns a website url container
+     * @param request
+     * @param response
+     * @param resolvedSiteMapItem
+     * @param pathInfo
+     * @return HstContainerURL 
+     */
+    public HstContainerURL createContainerURL(HttpServletRequest request, HttpServletResponse response, ResolvedSiteMapItem resolvedSiteMapItem, String pathInfo) {
+        HstURLFactory factory = getURLFactory(resolvedSiteMapItem);
+        return factory.getContainerURLProvider().parseURL(request, response, null, pathInfo);
+    }
+    
+    /**
+     * @param resolvedSiteMapItem
+     * @return the HstURLFactory 
+     */
+    public HstURLFactory getURLFactory(ResolvedSiteMapItem resolvedSiteMapItem) {
+        HstURLFactory factory = resolvedSiteMapItem.getResolvedSiteMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getVirtualHostsManager().getUrlFactory();
+        return factory;
+    }
 }
