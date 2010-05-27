@@ -22,7 +22,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:handleclassname" sv:type="String">
+        <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.sitemapitemhandler.DemoHandle</sv:value>
         </sv:property>
     </sv:node>
