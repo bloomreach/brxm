@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 
@@ -36,17 +37,26 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.ScheduleDepublishDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
+import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
@@ -131,6 +141,23 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "workflow-requestpublish-16.png");
             }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                HippoNode node;
+                try {
+                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
+                            new JcrNodeModel(node)));
+                    if (referenced.size() > 0) {
+                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
+                    }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+                return null;
+            }
+            
             @Override
             protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
@@ -140,10 +167,22 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
         });
 
         add(depublishAction = new WorkflowAction("requestDepublication", new StringResourceModel("request-depublication", this, null).getString(), null) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "workflow-requestunpublish-16.png");
             }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                final IModel docName = getDocumentName();
+                IModel title = new StringResourceModel("depublish-title", BasicReviewedActionsWorkflowPlugin.this, null,
+                        new Object[] { docName });
+                IModel message = new StringResourceModel("depublish-message", BasicReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { docName });
+                return new DepublishDialog(title, message, this, getEditorManager());
+            }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
@@ -157,6 +196,16 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "workflow-requestdelete-16.png");
             }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                IModel<String> message = new StringResourceModel("delete-message",
+                        BasicReviewedActionsWorkflowPlugin.this, null, new Object[] { getDocumentName() });
+                IModel<String> title = new StringResourceModel("delete-title", BasicReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { getDocumentName() });
+                return new DeleteDialog(title, message, this, getEditorManager());
+            }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
@@ -173,12 +222,15 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text", BasicReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
-                    @Override
-                    public IModel getTitle() {
-                        return new StringResourceModel("schedule-publish-title", BasicReviewedActionsWorkflowPlugin.this, null);
-                    }};
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                try {
+                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel(this, "date"), getEditorManager());
+                } catch (RepositoryException ex) {
+                    log.warn("could not retrieve node for scheduling publish", ex);
+                }
+                return null;
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow)wf;
@@ -197,14 +249,18 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "unpublish-scheduled-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text", BasicReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
-                    @Override
-                    public IModel getTitle() {
-                        return new StringResourceModel("schedule-depublish-title", BasicReviewedActionsWorkflowPlugin.this, null);
-                    }};
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                try {
+                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel(this, "date"), getEditorManager());
+                } catch (RepositoryException e) {
+                    log.warn("could not retrieve node for scheduling depublish", e);
+                }
+                return null;
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow)wf;
@@ -261,6 +317,19 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
     private IEditorManager getEditorManager() {
         return getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditorManager.class);
+    }
+
+    IModel<String> getDocumentName() {
+        try {
+            return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getDefaultModel()).getNode())))
+                    .getNodeName();
+        } catch (RepositoryException ex) {
+            try {
+                return new Model<String>(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
+            } catch (RepositoryException e) {
+                return new StringResourceModel("unknown", this, null);
+            }
+        }
     }
 
     @Override
