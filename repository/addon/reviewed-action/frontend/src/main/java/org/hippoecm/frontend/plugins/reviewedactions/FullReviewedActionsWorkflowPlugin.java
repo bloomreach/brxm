@@ -18,10 +18,8 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -30,8 +28,6 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -55,6 +51,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.ScheduleDepublishDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
@@ -85,7 +83,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
+    static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
     public String stateSummary = "UNKNOWN";
 
@@ -172,61 +170,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 HippoNode node;
                 try {
                     node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
-                            new JcrNodeModel(node)));
+                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(
+                            new ReferenceProvider(new JcrNodeModel(node)));
                     if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(publishAction, new ISortableDataProvider<Node>() {
-                            private static final long serialVersionUID = 1L;
-
-                            public Iterator<? extends Node> iterator(int first, int count) {
-                                final Iterator<String> upstream = referenced.iterator(first, count);
-                                return new Iterator<Node>() {
-
-                                    public boolean hasNext() {
-                                        return upstream.hasNext();
-                                    }
-
-                                    public Node next() {
-                                        String uuid = upstream.next();
-                                        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                                        try {
-                                            return session.getNodeByUUID(uuid);
-                                        } catch (ItemNotFoundException e) {
-                                            log.error("could not find handle with uuid " + uuid, e);
-                                        } catch (RepositoryException e) {
-                                            log.error(e.getMessage(), e);
-                                        }
-                                        return null;
-                                    }
-
-                                    public void remove() {
-                                        upstream.remove();
-                                    }
-                                    
-                                };
-                            }
-
-                            public IModel<Node> model(Node object) {
-                                return new JcrNodeModel(object);
-                            }
-
-                            public int size() {
-                                return referenced.size();
-                            }
-
-                            public void detach() {
-                                referenced.detach();
-                            }
-
-                            public ISortState getSortState() {
-                                return referenced.getSortState();
-                            }
-
-                            public void setSortState(ISortState state) {
-                                referenced.setSortState(state);
-                            }
-                            
-                        }, getEditorManager());
+                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(
+                                referenced), getEditorManager());
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
@@ -278,14 +226,13 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text",
-                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
-                    @Override
-                    public IModel getTitle() {
-                        return new StringResourceModel("schedule-publish-title",
-                                FullReviewedActionsWorkflowPlugin.this, null);
-                    }
-                };
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                try {
+                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel(this, "date"), getEditorManager());
+                } catch (RepositoryException ex) {
+                    log.warn("could not retrieve node for scheduling publish", ex);
+                }
+                return null;
             }
 
             @Override
@@ -311,14 +258,13 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text",
-                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
-                    @Override
-                    public IModel getTitle() {
-                        return new StringResourceModel("schedule-depublish-title",
-                                FullReviewedActionsWorkflowPlugin.this, null);
-                    }
-                };
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                try {
+                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel(this, "date"), getEditorManager());
+                } catch (RepositoryException e) {
+                    log.warn("could not retrieve node for scheduling depublish", e);
+                }
+                return null;
             }
 
             @Override
@@ -453,7 +399,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                final IModel<String> docName = getDocumentName();
                 IModel<String> message = new StringResourceModel("delete-message",
                         FullReviewedActionsWorkflowPlugin.this, null, new Object[] { getDocumentName() });
                 IModel<String> title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this,
