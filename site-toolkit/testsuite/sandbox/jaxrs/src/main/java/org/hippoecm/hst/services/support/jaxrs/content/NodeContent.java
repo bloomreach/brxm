@@ -74,7 +74,7 @@ public class NodeContent extends ItemContent {
         for (PropertyIterator it = node.getProperties(); it.hasNext(); ) {
             Property prop = it.nextProperty();
             
-            if (propertyNamesFilledWithValues != null && propertyNamesFilledWithValues.contains(prop.getName())) {
+            if (propertyNamesFilledWithValues == null || propertyNamesFilledWithValues.contains(prop.getName())) {
                 propertyContents.add(new PropertyContent(prop));
             } else {
                 propertyContents.add(new PropertyContent(prop.getName(), prop.getPath()));
