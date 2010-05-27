@@ -133,7 +133,7 @@
       <sv:value>10057.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/"sitemapitemhandlers.xml</sv:value>
+      <sv:value>hstconfiguration/sitemapitemhandlers.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:configuration/hst:configuration</sv:value>
