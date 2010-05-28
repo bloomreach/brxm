@@ -65,6 +65,7 @@ public class Upgrader13a implements UpdaterModule {
                     for(NodeIterator iter=node.getNode("hippo:log").getNodes(); iter.hasNext(); ) {
                         iter.nextNode().remove();
                     }
+                    context.setName(node.getNode("hippo:log"), "hippo_2_1:log");
                 }
             }
         });
@@ -213,6 +214,67 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
+        for (String path : new String[] {"/hippo:configuration/hippo:frontend/cms/cms-browser",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-dashboard",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-editor",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-folder-views",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-pickers",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-preview",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-services",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-static",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-search-views",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-tree-views",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-reports",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-headshortcuts",
+                                         "/hippo:configuration/hippo:frontend/login",
+                                         "/hippo:configuration/hippo:domains/frontendconfig/frontent-plugins/exclude-management"}) {
+            context.registerVisitor(new PathVisitor(path) {
+                @Override
+                protected void leaving(Node node, int level) throws RepositoryException {
+                    node.remove();
+                }
+            });
+        }
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:initialize") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                for (String element : new String[] {"cms-browser",
+                                                    "cms-dashboard",
+                                                    "cms-editor",
+                                                    "cms-folder-views",
+                                                    "cms-pickers",
+                                                    "cms-preview",
+                                                    "cms-services",
+                                                    "cms-static",
+                                                    "layout-provider", "html-cleaner-service",
+                                                    "reviewedactions3","reviewedactions4","cms-dashshortcuts-gotolink","cms-dashshortcuts-changepassword","cms-search-views","cms-tree-views","cms-reports","cms-dashshortcuts",
+                                                    "cms-login"}) {
+                    if(node.hasNode(element)) {
+                        node.getNode(element).remove();
+                    }
+                }
+            }
+        });
+
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:domains/defaultread/hippo-facetsubsearch/type-hippo-facetsubsearch") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if (node.hasProperty("hipposys:value") && node.getProperty("hipposys:value").getString().equals("hippo:facetsubsearch")) {
+                    node.setProperty("hipposys:value", "hipposys:facetsubsearch");
+                }
+            }
+        });
+
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:document") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if (!node.hasProperty("hippo:availability")) {
+                    node.setProperty("hippo:availability", new String[] {"live", "preview"});
+                }
+            }
+        });
+
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", "-",
                 new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippo.cnd"))));
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", "-",
@@ -255,6 +317,44 @@ public class Upgrader13a implements UpdaterModule {
         } catch (RepositoryException ex) {
             log.error("failure in conversion script", ex);
         }
+
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostdpubwf:document") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                System.err.println("BERRY VISIT "+node.getPath());
+                boolean isPublished = false;
+                boolean isUnpublished = false;
+                for (NodeIterator iter = node.getParent().getNodes(); iter.hasNext();) {
+                    Node sibling = iter.nextNode();
+                    if (!sibling.getName().equals(node.getName()))
+                        continue;
+                    String siblingState = sibling.getProperty("hippostd_2_0:state").getString();
+                    if (siblingState.equals("published")) {
+                        isPublished = true;
+                    }
+                    if (siblingState.equals("unpublished")) {
+                        isUnpublished = true;
+                    }
+                }
+                System.err.println("BERRY "+isUnpublished);
+                String state = node.getProperty("hippostd_2_0:state").getString();
+                if (state.equals("published")) {
+                    if (isUnpublished) {
+                System.err.println("BERRY P1");
+                        node.setProperty("hippo:availability", new String[] {"live"});
+                    } else {
+                System.err.println("BERRY P2");
+                        node.setProperty("hippo:availability", new String[] {"live", "preview"});
+                    }
+                } else if (state.equals("unpublished")) {
+                System.err.println("BERRY U1");
+                    node.setProperty("hippo:availability", new String[] {"preview"});
+                } else {
+                System.err.println("BERRY O");
+                    node.setProperty("hippo:availability", new String[0]);
+                }
+            }
+        });
     }
 
 
