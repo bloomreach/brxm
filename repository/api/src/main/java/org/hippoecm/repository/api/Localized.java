@@ -232,4 +232,8 @@ public final class Localized implements Serializable {
             throw new RepositoryException();
         }
     }
+
+    public String toString() {
+        return getClass().getName()+"[locale="+locale.toString()+"]";
+    }
 }
