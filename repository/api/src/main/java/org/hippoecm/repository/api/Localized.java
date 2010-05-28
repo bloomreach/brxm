@@ -22,6 +22,13 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+/**
+ * The Localized object is a more generic form of the Locale object, but serves a similar purpose.
+ * Where the Locale object can only hande language, country and region and only if specified in
+ * that exact order, the Localized object can also indicate a locale on other factors.
+ * Such as on live or preview site, or when a translation is based only upon country regardless
+ * of language.
+ */
 public final class Localized implements Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -32,21 +39,40 @@ public final class Localized implements Serializable {
         this.locale = locale;
     }
 
+    /**
+     * A default non-specific localized object
+     * @return a Localized object without any specification such or language or region to base a translation upon
+     */
     public static Localized getInstance() {
         return new Localized(null);
     }
 
+    /**
+     * Obtain a Localized object for the specified locale
+     * @param locale the Locale to base the Localized object on
+     * @return the Localized object
+     */
     public static Localized getInstance(Locale locale) {
         return new Localized(locale);
     }
 
+    /**
+     * Obtain a Localized object for the specified locales
+     * @param locales 
+     * @return the Localized object
+     */
     public static Localized getInstance(Map<String, List<String>> locales) {
-        List<String> list = locales.get("hippostd:language" /*HippoStdNodeType.HIPPOSTD_LANGUAGE*/); // FIXME auw auw auw
+        List<String> list = locales.get("hippostd:language" /*HippoStdNodeType.HIPPOSTD_LANGUAGE*/); // FIXME
         if(list != null && list.size()==1)
             return getInstance(new Locale(list.get(0)));
         return getInstance();
     }
 
+    /**
+     * Returns the Locale object if available and if the Locale object holds
+     * enough information to specify a translation.
+     * @return returns a plain locale object, if available or null otherwise
+     */
     public Locale getLocale() {
         return locale;
     }
@@ -71,6 +97,10 @@ public final class Localized implements Serializable {
         return hash;
     }
 
+    /**
+     * DO NOT USE THIS METHOD IS NOT PART OF THE PUBLIC API
+     * @exclude
+     */
     public boolean matches(Localized other) {
         Locale otherLocale = other.getLocale();
         if(locale != null && locale.getLanguage() != null)
@@ -94,6 +124,10 @@ public final class Localized implements Serializable {
         return true;
     }
 
+    /**
+     * DO NOT USE THIS METHOD IS NOT PART OF THE PUBLIC API
+     * @exclude
+     */
     public Localized matches(Localized candidate1, Localized candidate2) {
         if(candidate1 == null) {
             if(candidate2 != null && matches(candidate2)) {
@@ -158,6 +192,14 @@ public final class Localized implements Serializable {
         return candidate1;
     }
 
+    /**
+     * Gets an instance of Localized where the parameter indicates a translation from
+     * which to form the localized object.  I.e. if the node is a translation node for
+     * the english translation, then the returned Localized object specifies the english locale.
+     * @param node the translation for which to return the Localized object
+     * @return the Localized object, or null if not available
+     * @throws RepositoryException
+     */
     public static Localized getInstance(Node node) throws RepositoryException {
         if(node.isNodeType(HippoNodeType.NT_TRANSLATION)) {
             if(node.hasProperty(HippoNodeType.HIPPO_LANGUAGE)) {
@@ -175,6 +217,10 @@ public final class Localized implements Serializable {
         }
     }
 
+    /**
+     * DO NOT USE THIS METHOD IS NOT PART OF THE PUBLIC API.
+     * @exclude
+     */
     public void setTranslation(Node node) throws RepositoryException{
         if(node.isNodeType(HippoNodeType.NT_TRANSLATION)) {
             if(locale != null) {

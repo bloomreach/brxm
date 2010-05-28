@@ -66,6 +66,21 @@ public interface HippoNode extends Node {
     public String getLocalizedName() throws RepositoryException;
 
     /**
+     * Get a localized name of this node if available.  If this name is not
+     * available, the name of the node itself is returned.
+     * To determine which localized name to fetch the localized parameter is
+     * passed, but if this node is itself in a particular locale setting (i.e.
+     * the document is in language X) then that context is used to provide
+     * the translated node name.
+     *
+     * @param localized the locale or other determining specification (like
+     * country without a language specification or live/preview site).
+     * @return the localized node name
+     * @throws RepositoryException
+     */
+    public String getLocalizedName(Localized localized) throws RepositoryException;
+
+    /**
      * Get the most accurate and complete version available of the information
      * represented in the current node.  Certain operations are only allowed
      * on the most complete version of a node, rather than on any presentation

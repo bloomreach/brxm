@@ -22,6 +22,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecorator {
@@ -64,6 +65,10 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         return getLocalizedName(session, remoteSession, this);
     }
 
+    public String getLocalizedName(Localized localized) throws RepositoryException {
+        return getLocalizedName(session, remoteSession, this, localized);
+    }
+
     static String getLocalizedName(Session session, HippoSession remoteSession, final Node node) throws RepositoryException {
         String path = node.getPath();
         if (path == null) {
@@ -79,6 +84,27 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
                 return null;
             }
             return ((HippoNode)session.getRootNode().getNode(remote.getPath().substring(1))).getLocalizedName();
+        } catch (PathNotFoundException ex) {
+            // Node is new or has been moved
+            return node.getName();
+        }
+    }
+
+    static String getLocalizedName(Session session, HippoSession remoteSession, final Node node, Localized localized) throws RepositoryException {
+        String path = node.getPath();
+        if (path == null) {
+            return null;
+        }
+        if ("/".equals(path)) {
+            return ((HippoNode)session.getRootNode()).getLocalizedName();
+        }
+        try {
+            Node remote = remoteSession.getRootNode().getNode(node.getPath().substring(1));
+            remote = ((HippoNode) remote).getCanonicalNode();
+            if (remote == null) {
+                return null;
+            }
+            return ((HippoNode)session.getRootNode().getNode(remote.getPath().substring(1))).getLocalizedName(localized);
         } catch (PathNotFoundException ex) {
             // Node is new or has been moved
             return node.getName();
