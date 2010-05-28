@@ -275,6 +275,12 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
      * @inheritDoc
      */
     public String getLocalizedName() throws RepositoryException {
+        return getLocalizedName(null);
+    }
+    /**
+     * @inheritDoc
+     */
+    public String getLocalizedName(Localized localized) throws RepositoryException {
         Node node = this;
         if (!node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
             if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -288,9 +294,11 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
                 return getName();
             }
         }
-        Localized localized = getLocalized(null);
-        if (localized == null)
-            localized = Localized.getInstance();
+        if(localized == null) {
+            localized = getLocalized(null);
+            if (localized == null)
+                localized = Localized.getInstance();
+        }
         Node bestCandidateNode = null;
         Localized bestCandidate = null;
         for (NodeIterator iter = node.getNodes(HippoNodeType.HIPPO_TRANSLATION); iter.hasNext(); ) {

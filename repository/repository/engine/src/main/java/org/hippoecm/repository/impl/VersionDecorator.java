@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class VersionDecorator extends org.hippoecm.repository.decorating.VersionDecorator {
@@ -45,5 +46,9 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
 
     public String getLocalizedName() throws RepositoryException {
         return ((HippoNode)version).getLocalizedName();
+    }
+
+    public String getLocalizedName(Localized localized) throws RepositoryException {
+        return ((HippoNode)version).getLocalizedName(localized);
     }
 }
