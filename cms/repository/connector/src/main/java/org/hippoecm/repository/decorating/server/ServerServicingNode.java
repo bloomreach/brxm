@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerNode;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 
 public class ServerServicingNode extends ServerNode implements RemoteServicingNode {
@@ -46,9 +47,9 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
         }
     }
 
-    public String getLocalizedName(Locale locale) throws RepositoryException, RemoteException {
+    public String getLocalizedName(Localized localized) throws RepositoryException, RemoteException {
         try {
-            return node.getLocalizedName();
+            return node.getLocalizedName(localized);
         } catch(RepositoryException ex) {
             throw getRepositoryException(ex);
         }

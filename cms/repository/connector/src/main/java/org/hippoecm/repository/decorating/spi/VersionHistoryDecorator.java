@@ -23,6 +23,7 @@ import javax.jcr.Node;
 
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.Localized;
 
 public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.VersionHistoryDecorator {
     @SuppressWarnings("unused")
@@ -41,5 +42,9 @@ public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.
 
     public String getLocalizedName() throws RepositoryException {
         return NodeDecorator.getLocalizedName(session, remoteSession, node);
+    }
+
+    public String getLocalizedName(Localized localized) throws RepositoryException {
+        return NodeDecorator.getLocalizedName(session, remoteSession, node, localized);
     }
 }
