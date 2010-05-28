@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -68,6 +69,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+import org.hippoecm.repository.SessionStateThresholdEnum;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -75,8 +77,8 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
-import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
+import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.SecurityManager;
 import org.hippoecm.repository.updater.UpdaterEngine;
@@ -133,6 +135,17 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Whether to perform an automatic upgrade from previous releases */
     private UpgradeFlag upgradeFlag = UpgradeFlag.TRUE;
+
+    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
+        session = org.hippoecm.repository.decorating.SessionDecorator.unwrap(session);
+        session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
+        session = org.hippoecm.repository.impl.SessionDecorator.unwrap(session);
+        if(session instanceof org.apache.jackrabbit.core.SessionImpl) {
+            HippoSessionItemStateManager sessionISM = (HippoSessionItemStateManager) (session instanceof org.hippoecm.repository.jackrabbit.XASessionImpl ? ((org.hippoecm.repository.jackrabbit.XASessionImpl)session).getItemStateManager() : ((org.hippoecm.repository.jackrabbit.SessionImpl)session).getItemStateManager());
+            return sessionISM.stateThresholdExceeded(interests);
+        }
+        return false;
+    }
 
     private static enum UpgradeFlag {
         TRUE, FALSE, ABORT

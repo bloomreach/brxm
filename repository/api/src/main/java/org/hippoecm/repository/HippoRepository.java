@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.repository;
+
+import java.util.EnumSet;
 
 import javax.transaction.NotSupportedException;
 import javax.transaction.TransactionManager;
@@ -127,4 +129,14 @@ public interface HippoRepository {
      * @throws RepositoryException in case of a generic error occurs communicating with the repository
      */
     public ValueMap getValueMap(Node node) throws RepositoryException;
+
+    /**
+     * DO NOT USE THIS CALL IS NOT YET PART OF THE API AS IT IS CURRENTLY UNDER EVALUATION
+     * returns true whenever the session has grown to such an extend that it is advisable to persist or flush changes.
+     * @param session the session for which to compute the resource consumption
+     * @param the states for which the threshold should be inspected, or null for any state
+     * @return true when it is advisable to flush the state of the session, either by calling
+     * session.save() or session.refresh(false)
+     */
+    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests);
 }

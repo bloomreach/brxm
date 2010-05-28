@@ -19,7 +19,9 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import java.util.EnumSet;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.hippoecm.repository.decorating.client.ClientServicesAdapterFactory;
@@ -38,5 +40,9 @@ class RemoteHippoRepository extends HippoRepositoryImpl {
     public static HippoRepository create(String location) throws MalformedURLException, NotBoundException, RemoteException,
             RepositoryException {
         return new RemoteHippoRepository(location);
+    }
+
+    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
+        return false; // FIXME: unimplemented
     }
 }

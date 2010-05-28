@@ -20,8 +20,10 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import java.util.EnumSet;
 import javax.jcr.RepositoryException;
 import javax.jcr.Repository;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.jcr2spi.RepositoryImpl;
 import org.apache.jackrabbit.jcr2spi.config.RepositoryConfig;
@@ -97,5 +99,8 @@ class SPIHippoRepository extends HippoRepositoryImpl {
             location = location.substring(0, location.length() - "/spi".length());
         }
         return new SPIHippoRepository(location);
+    }
+    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
+        return false; // FIXME: unimplemented
     }
 }
