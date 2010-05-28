@@ -136,6 +136,12 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** Whether to perform an automatic upgrade from previous releases */
     private UpgradeFlag upgradeFlag = UpgradeFlag.TRUE;
 
+    /** Whether to perform an automatic upgrade from previous releases */
+    private boolean upgradeReindexFlag = false;
+
+    /** Whether to perform an automatic upgrade from previous releases */
+    private boolean upgradeValidateFlag = true;
+
     public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
         session = org.hippoecm.repository.decorating.SessionDecorator.unwrap(session);
         session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
@@ -290,12 +296,16 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if(needsRestart) {
             log.warn("restarting repository after upgrade cycle");
             close();
-            log.warn("post migration cycle forced reindexing");
-            initializeReindex();
+            if (upgradeReindexFlag) {
+                log.warn("post migration cycle forced reindexing");
+                initializeReindex();
+            }
             initializeStartup();
             ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
-            log.warn("post migration cycle validating content");
-            ((org.hippoecm.repository.impl.SessionDecorator)rootSession).postValidation();
+            if (upgradeValidateFlag) {
+                log.warn("post migration cycle validating content");
+                ((org.hippoecm.repository.impl.SessionDecorator)rootSession).postValidation();
+            }
         } else {
             ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
         }
@@ -317,10 +327,24 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
         if (result != null) {
-            if (result.equalsIgnoreCase("abort")) {
-                upgradeFlag = UpgradeFlag.ABORT;
-            } else {
-                upgradeFlag = (Boolean.parseBoolean(result) ? UpgradeFlag.TRUE : UpgradeFlag.FALSE);
+            for(String option : result.split(",")) {
+                if (option.equalsIgnoreCase("abort")) {
+                    upgradeFlag = UpgradeFlag.ABORT;
+                } else if(option.equalsIgnoreCase("reindex")) {
+                    upgradeReindexFlag = true;
+                } else if(option.equalsIgnoreCase("validate")) {
+                    upgradeValidateFlag = true;
+                } else if(option.equalsIgnoreCase("skipreindex")) {
+                    upgradeReindexFlag = false;
+                } else if(option.equalsIgnoreCase("skipvalidate")) {
+                    upgradeValidateFlag = false;
+                } else if(option.equalsIgnoreCase("true")) {
+                    upgradeFlag = UpgradeFlag.TRUE;
+                } else if(option.equalsIgnoreCase("false")) {
+                    upgradeFlag = UpgradeFlag.FALSE;
+                } else {
+                    log.warn("Unrecognized upgrade option \""+option+"\"");
+                }
             }
         }
         switch(upgradeFlag) {
@@ -328,7 +352,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             log.info("Automatic upgrade enabled: false");
             break;
         case TRUE:
-            log.info("Automatic upgrade enabled: true");
+            log.info("Automatic upgrade enabled: true (reindexing "+(upgradeReindexFlag?"on":"off")+" revalidation "+(upgradeValidateFlag?"on":"off")+")");
             break;
         case ABORT:
             log.info("Automatic upgrade enabled: abort on upgrade required");
