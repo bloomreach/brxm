@@ -322,7 +322,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         });
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
-            public String name;
             public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
             };
 
@@ -333,30 +332,20 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                try {
-                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
-                } catch (RepositoryException ex) {
-                    name = "";
-                }
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
-                        FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("copy-text",
-                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+                        FullReviewedActionsWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if (name == null || name.trim().equals("")) {
-                    throw new WorkflowException("No name for destination given");
-                }
+                String nodeName = (((WorkflowDescriptorModel) getDefaultModel()).getNode()).getName();
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name,
-                        true));
+                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
                 return null;
             }
         });
 
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
-            public String name;
             public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
             };
 
@@ -367,23 +356,14 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                try {
-                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
-                } catch (RepositoryException ex) {
-                    name = "";
-                }
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
-                        FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("move-text",
-                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+                        FullReviewedActionsWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if (name == null || name.trim().equals("")) {
-                    throw new WorkflowException("No name for destination given");
-                }
+                String nodeName = (((WorkflowDescriptorModel) getDefaultModel()).getNode()).getName();
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                String nodeName = NodeNameCodec.encode(name, true);
                 workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
                 browseTo(new JcrNodeModel(destination.getNodeModel().getItemModel().getPath() + "/" + nodeName));
                 return null;
