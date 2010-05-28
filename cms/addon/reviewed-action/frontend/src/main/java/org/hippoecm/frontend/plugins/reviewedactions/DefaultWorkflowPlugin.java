@@ -212,7 +212,6 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
 
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
-            public String name;
             public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
             };
 
@@ -223,30 +222,20 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                try {
-                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
-                } catch (RepositoryException ex) {
-                    name = "";
-                }
-                return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
-                        DefaultWorkflowPlugin.this, null), new StringResourceModel("move-text",
-                        DefaultWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
+                        DefaultWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if (name == null || name.trim().equals("")) {
-                    throw new WorkflowException("No name for destination given");
-                }
+                String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name,
-                        true));
+                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
                 return null;
             }
         });
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
-            public String name;
             public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
             };
 
@@ -257,20 +246,15 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                name = "";
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
-                        DefaultWorkflowPlugin.this, null), new StringResourceModel("copy-text",
-                        DefaultWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+                        DefaultWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if (name == null || name.trim().equals("")) {
-                    throw new WorkflowException("No name for destination given");
-                }
+                String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name,
-                        true));
+                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
                 return null;
             }
         });

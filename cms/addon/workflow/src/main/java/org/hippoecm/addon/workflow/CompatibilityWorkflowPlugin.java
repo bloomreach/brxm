@@ -326,8 +326,20 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                     final NodeModelWrapper destination) {
                 super();
                 this.title = title;
-                add(new Label("question", question));
-                add(new TextFieldWidget("name", nameModel));
+                if (question != null) {
+                    add(new Label("question", question));
+                } else {
+                    Label dummy = new Label("question");
+                    dummy.setVisible(false);
+                    add(dummy);
+                }
+                if (nameModel != null) {
+                    add(new TextFieldWidget("name", nameModel));
+                } else {
+                    Label dummy = new Label("name");
+                    dummy.setVisible(false);
+                    add(dummy);
+                }
 
                 final IPluginContext context = CompatibilityWorkflowPlugin.this.getPluginContext();
                 IPluginConfig config = CompatibilityWorkflowPlugin.this.getPluginConfig();
