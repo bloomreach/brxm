@@ -34,6 +34,10 @@
   <sv:property sv:name="hippostd:gallerytype" sv:type="String">
     <sv:value>hippogallery:exampleAssetSet</sv:value>
   </sv:property>
+  <sv:property sv:name="hippo:availability" sv:type="String">
+    <sv:value>preview</sv:value>
+    <sv:value>live</sv:value>
+  </sv:property>
   <sv:node sv:name="Hippo.pdf">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
@@ -59,6 +63,10 @@
       <sv:property sv:name="hippo:paths" sv:type="String">
       </sv:property>
       <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String">
+        <sv:value>preview</sv:value>
+        <sv:value>live</sv:value>
       </sv:property>
       <sv:node sv:name="hippogallery:asset">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -31,6 +31,10 @@
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-folder</sv:value>
   </sv:property>
+  <sv:property sv:name="hippo:availability" sv:type="String">
+    <sv:value>preview</sv:value>
+    <sv:value>live</sv:value>
+  </sv:property>
   <sv:node sv:name="documents">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:folder</sv:value>
@@ -48,6 +52,10 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:availability" sv:type="String">
+      <sv:value>preview</sv:value>
+      <sv:value>live</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -89,6 +97,10 @@
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String">
+        <sv:value>preview</sv:value>
+        <sv:value>live</sv:value>
+      </sv:property>
       <sv:node sv:name="myarticle1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:handle</sv:value>
@@ -120,6 +132,9 @@
           <sv:property sv:name="hippo:related___pathreference" sv:type="String">
             <sv:value>content/documents/articles/myarticle1/myarticle1[2]</sv:value>
             <sv:value>content/documents/articles/myarticle1</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:availability" sv:type="String">
+            <sv:value>preview</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
@@ -172,6 +187,9 @@
           </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>published</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:availability" sv:type="String">
+            <sv:value>live</sv:value>
           </sv:property>
           <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
               <sv:value>admin</sv:value>
@@ -231,6 +249,9 @@
           </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:availability" sv:type="String">
+            <sv:value>preview</sv:value>
           </sv:property>
           <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
               <sv:value>admin</sv:value>
@@ -310,6 +331,9 @@
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
           </sv:property>
+          <sv:property sv:name="hippo:availability" sv:type="String">
+            <sv:value>preview</sv:value>
+          </sv:property>
           <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
               <sv:value>admin</sv:value>
           </sv:property>
@@ -365,6 +389,10 @@
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String">
+        <sv:value>preview</sv:value>
+        <sv:value>live</sv:value>
+      </sv:property>
       <sv:node sv:name="myevent1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:handle</sv:value>
@@ -398,6 +426,9 @@
           </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:availability" sv:type="String">
+            <sv:value>preview</sv:value>
           </sv:property>
           <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
               <sv:value>admin</sv:value>
@@ -486,6 +517,10 @@
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String">
+        <sv:value>preview</sv:value>
+        <sv:value>live</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="tags">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -537,6 +572,10 @@
     <sv:property sv:name="hippostd:gallerytype" sv:type="String">
       <sv:value>hippogallery:exampleImageSet</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:availability" sv:type="String">
+      <sv:value>preview</sv:value>
+      <sv:value>live</sv:value>
+    </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -577,6 +616,10 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-file-folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:availability" sv:type="String">
+      <sv:value>preview</sv:value>
+      <sv:value>live</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:gallerytype" sv:type="String">
       <sv:value>hippogallery:exampleAssetSet</sv:value>
