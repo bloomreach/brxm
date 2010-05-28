@@ -136,10 +136,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** Whether to perform an automatic upgrade from previous releases */
     private UpgradeFlag upgradeFlag = UpgradeFlag.TRUE;
 
-    /** Whether to perform an automatic upgrade from previous releases */
+    /** Whether to reindex after upgrading */
     private boolean upgradeReindexFlag = false;
 
-    /** Whether to perform an automatic upgrade from previous releases */
+    /** Whether to run a derived properties validation after upgrading */
     private boolean upgradeValidateFlag = true;
 
     public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
