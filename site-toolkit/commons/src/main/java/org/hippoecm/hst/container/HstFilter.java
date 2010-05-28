@@ -170,7 +170,7 @@ public class HstFilter implements Filter {
         
         try {
             if (!HstServices.isAvailable()) {
-                ((HttpServletResponse)response).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 logger.error("The HST Container Services are not initialized yet.");
                 return;
             }
@@ -216,14 +216,14 @@ public class HstFilter implements Filter {
                             ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL);
                             if(resolvedSiteMapItem == null) {
                                 // should not be possible as when it would be null, an exception should have been thrown
-                                throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
+                                throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
                             }
                             if (resolvedSiteMapItem.getErrorCode() > 0) {
                                 try {
                                     if (logger.isDebugEnabled()) {
                                         logger.debug("The resolved sitemap item for {} has error status: {}", hstContainerURL.getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
                                     }           
-                                    ((HttpServletResponse)response).sendError(resolvedSiteMapItem.getErrorCode());
+                                    res.sendError(resolvedSiteMapItem.getErrorCode());
                                     
                                 } catch (IOException e) {
                                     if (logger.isDebugEnabled()) {
@@ -246,18 +246,18 @@ public class HstFilter implements Filter {
                             return;
                         } else {
                             if(mount.getNamedPipeline() == null) {
-                                throw new MatchException("No hstSite and no custom namedPipeline for SiteMount found for '"+HstRequestUtils.getRequestServerName(req)+"' and '"+req.getRequestURI()+"'");
+                                throw new MatchException("No hstSite and no custom namedPipeline for SiteMount found for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
                             } 
                             logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
                             HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, mount.getNamedPipeline());
                         
                         }
                     } else {
-                        throw new MatchException("Request cannot be matched to a SiteMount");
+                        throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
                     }
                 }catch (MatchException e) {
-                    // TODO ??
-                    throw e;
+                	logger.error(e.getMessage());
+                	res.sendError(HttpServletResponse.SC_NOT_FOUND);
                 } 
                 
             } else {

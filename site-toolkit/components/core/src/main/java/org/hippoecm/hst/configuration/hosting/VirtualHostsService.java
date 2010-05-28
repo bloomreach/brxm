@@ -167,12 +167,30 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
             throw new MatchException("No correct virtual hosts configured. Cannot continue request");
         }
         
-        ResolvedVirtualHost host = findMatchingVirtualHost(hostName);
+    	int portNumber = 0;
+    	String portPostfix = null;
+        int offset = hostName.indexOf(':');
+        if (offset != -1) {
+        	try {
+        		portNumber = Integer.parseInt(hostName.substring(offset+1));
+        	}
+        	catch (NumberFormatException nfe) {
+        		// todo: ignore invalid port?
+        	}
+        	// strip off portNumber
+        	hostName = hostName.substring(0, offset);
+        }
+        ResolvedVirtualHost host = findMatchingVirtualHost(hostName, portNumber);
         
         // no host found. Let's try the default host, if there is one configured:
-        if(host == null && this.getDefaultHostName() != null) {
+        if(host == null && this.getDefaultHostName() != null && !this.getDefaultHostName().equals(hostName)) {
             log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", hostName, this.getDefaultHostName());
-            host = matchVirtualHost(this.getDefaultHostName());
+            if (portNumber != 0) {
+                host = matchVirtualHost(this.getDefaultHostName()+":"+Integer.toString(portNumber));
+            }
+            else {
+                host = matchVirtualHost(this.getDefaultHostName());
+            }
         }
         if(host == null) {
            log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", hostName , this.getDefaultHostName());
@@ -188,17 +206,21 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
      * @param host
      * @return the matched virtual host
      */
-    protected ResolvedVirtualHost findMatchingVirtualHost(String hostName) {
+    protected ResolvedVirtualHost findMatchingVirtualHost(String hostName, int portNumber) {
+        String[] requestServerNameSegments = hostName.split("\\.");
+        int depth = requestServerNameSegments.length - 1;
+        
         for(VirtualHostService virtualHost : rootVirtualHosts.values()) {
             // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
             // with their id, hence, we cannot get them directly, but have to test them all
-            String[] requestServerNameSegments = hostName.split("\\.");
-            int depth = requestServerNameSegments.length - 1;
             if(requestServerNameSegments[depth].equals(virtualHost.getName())) {
                VirtualHost host = traverseInToHost(virtualHost, requestServerNameSegments, depth);
                if(host == null) {
                    return null;
                }
+           		if (host.getPortNumber() != 0 && portNumber != host.getPortNumber()) {
+           			return null;
+           		}
                return new ResolvedVirtualHostImpl(host, hostName);
             }
         }
