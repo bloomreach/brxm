@@ -46,6 +46,7 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.Localized;
 
 public class NodeDecorator extends ItemDecorator implements HippoNode {
     @SuppressWarnings("unused")
@@ -105,6 +106,11 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
     public String getLocalizedName() throws RepositoryException {
         check();
         return node.getLocalizedName();
+    }
+
+    public String getLocalizedName(Localized localized) throws RepositoryException {
+        check();
+        return node.getLocalizedName(localized);
     }
 
     public static Node unwrap(Node node) {
