@@ -82,6 +82,10 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
      */
     static final int ITEM_TYPE_VIRTUAL  = 0x02;
 
+    /** Threshold of the number of virtual state deemed to be acceptable to hold in memory.
+     */
+    static final int VIRTUALSTATE_THRESHOLD = 10000;
+
     NodeTypeRegistry ntReg;
     protected org.apache.jackrabbit.core.SessionImpl session;
     protected HierarchyManager hierMgr;
@@ -99,6 +103,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     private boolean virtualLayerEnabled = false;
     private int virtualLayerEnabledCount = 0;
     private boolean virtualLayerRefreshing = true;
+    private boolean argumentBasedSearch = false;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
                                       ItemStateCacheFactory cacheFactory, String attributeName, NodeTypeRegistry ntReg, boolean enabled,
@@ -236,6 +241,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         edit();
         FilteredChangeLog tempChangeLog = filteredChangeLog;
         filteredChangeLog = null;
+        argumentBasedSearch = false;
         if(tempChangeLog != null) {
             tempChangeLog.repopulate();
         }
@@ -286,6 +292,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     if (virtualLayerEnabled) {
                         if(id instanceof ArgumentNodeId) {
                             state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(((ArgumentNodeId)id).getArgument()), nodeState);
+                            argumentBasedSearch = true;
                         } else if(id instanceof HippoNodeId) {
                             state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
                         } else {
@@ -428,6 +435,26 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         }
     }
 
+    public boolean stateThresholdExceeded() {
+        int count = 0;
+        if (argumentBasedSearch) {
+            return true;
+        }
+        ChangeLog changelog = getChangeLog();
+        if(changelog != null) {
+            for (Iterator iter = changelog.modifiedStates(); iter.hasNext(); iter.next()) {
+                ++count;
+            }
+            for (Iterator iter = changelog.addedStates(); iter.hasNext(); iter.next()) {
+                ++count;
+            }
+            for (Iterator iter = changelog.deletedStates(); iter.hasNext(); iter.next()) {
+                ++count;
+            }
+        }
+        return count > VIRTUALSTATE_THRESHOLD;
+    }
+
     class FilteredChangeLog extends ChangeLog {
 
         private ChangeLog upstream;
@@ -522,6 +549,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     try {
                         if(state.getId() instanceof ArgumentNodeId) {
                             virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(((ArgumentNodeId)state.getId()).getArgument()), (NodeState)state);
+                            argumentBasedSearch = true;
                         } else if(state.getId() instanceof HippoNodeId) {
                             ((HippoNodeId)state.getId()).populate(virtualNodeNames.get(((NodeState)state).getNodeTypeName()), (NodeState)state);
                         } else {

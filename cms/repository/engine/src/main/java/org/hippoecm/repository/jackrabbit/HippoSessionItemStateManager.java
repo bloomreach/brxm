@@ -15,9 +15,12 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.RepositoryException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,9 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
+
+import org.hippoecm.repository.LocalHippoRepository;
+import org.hippoecm.repository.SessionStateThresholdEnum;
 
 public class HippoSessionItemStateManager extends SessionItemStateManager {
     @SuppressWarnings("unused")
@@ -52,6 +58,28 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
         if (wrappedHierMgr == null) {
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
         }
+    }
+
+    public boolean stateThresholdExceeded(EnumSet<SessionStateThresholdEnum> interests) {
+        if (interests == null || interests.contains(SessionStateThresholdEnum.MISCELLANEOUS)) {
+            if (localStateMgr.stateThresholdExceeded()) {
+                return true;
+            }
+        }
+        if (interests == null || interests.contains(SessionStateThresholdEnum.UNPERSISTED)) {
+            try {
+                int count = 0;
+                for (Iterator iter = getDescendantTransientItemStates(rootNodeId); iter.hasNext(); iter.next()) {
+                    ++count;
+                }
+                return count >= LocalHippoRepository.BATCH_THRESHOLD;
+            } catch (InvalidItemStateException ex) {
+                return true;
+            } catch (RepositoryException ex) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
