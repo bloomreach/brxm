@@ -148,6 +148,33 @@ final public class UpdaterSession implements HippoSession {
                 property.setValue(targetUUID);
             }
 
+            // docbases that come after the source node in the traversal FIXME needed for hippo namespace transition
+            boolean namespaceTransition = true;
+            try {
+                upstream.getNamespaceURI("hippo_2_1");
+            } catch(NamespaceException ex) {
+                namespaceTransition = false;
+            }
+            if(namespaceTransition) {
+                query = queryMgr.createQuery("//*[(hippo_2_1:docbase='" + sourceUUID + "')]", Query.XPATH);
+                result = query.execute();
+                for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
+                    Node reference = iter.nextNode();
+                    // ignore version storage
+                    if (reference.getPath().startsWith("/jcr:system")) {
+                        continue;
+                    }
+                    if (reference.isNodeType("mix:versionable")) {
+                        reference.checkout();
+                    }
+                    Property property = reference.getProperty("hippo_2_1:docbase");
+                    if (log.isDebugEnabled()) {
+                        log.debug("setting " + property.getPath() + " from " + sourceUUID + " to " + targetUUID);
+                    }
+                    property.setValue(targetUUID);
+                }
+            }
+
             // update values of reference properties
             List<UpdaterProperty> properties = references.get(sourceUUID);
             if (properties != null) {
