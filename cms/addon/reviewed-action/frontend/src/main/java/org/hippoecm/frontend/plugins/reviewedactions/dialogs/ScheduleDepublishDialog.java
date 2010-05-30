@@ -28,6 +28,9 @@ import org.hippoecm.frontend.plugins.reviewedactions.model.ReferringDocumentsPro
 import org.hippoecm.frontend.service.IEditorManager;
 
 public class ScheduleDepublishDialog extends WorkflowAction.DateDialog {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public ScheduleDepublishDialog(WorkflowAction action, JcrNodeModel nodeModel, PropertyModel<Date> dateModel, IEditorManager editorMgr) {

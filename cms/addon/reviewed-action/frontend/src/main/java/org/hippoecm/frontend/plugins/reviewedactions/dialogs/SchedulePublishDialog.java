@@ -28,6 +28,9 @@ import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceP
 import org.hippoecm.frontend.service.IEditorManager;
 
 public class SchedulePublishDialog extends WorkflowAction.DateDialog {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public SchedulePublishDialog(WorkflowAction action, JcrNodeModel nodeModel, PropertyModel dateModel,
