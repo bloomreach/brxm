@@ -302,7 +302,11 @@ public class ServicingSearchIndex extends SearchIndex {
                 try {
                     NodeState nodeState = (NodeState) getContext().getItemStateManager().getItemState(
                             childNodeEntry.getId());
+                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, nodeState.getNodeId().getUUID().toString(),
+                            Field.Store.NO, Field.Index.NO_NORMS));
+
                     aDoc = createDocument(nodeState, getNamespaceMappings(), indexFormatVersion, true);
+
                     // transfer fields to doc if there are any
                     Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
                     if (fulltextFields != null) {
@@ -318,10 +322,6 @@ public class ServicingSearchIndex extends SearchIndex {
                             doc.add(f);
                         }
                     }
-                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, nodeState.getNodeId().getUUID().toString(),
-                            Field.Store.NO, Field.Index.NO_NORMS));
-                    //////////////////////////////////
-
                 } catch (ItemStateException e) {
                     log.warn("ItemStateException while indexing descendants of a hippo:document for "
                             + "node with UUID: " + state.getNodeId().getUUID(), e);

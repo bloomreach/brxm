@@ -294,9 +294,16 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                             state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(((ArgumentNodeId)id).getArgument()), nodeState);
                             argumentBasedSearch = true;
                         } else if(id instanceof HippoNodeId) {
-                            state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                            if (isEnabled()) {
+                                state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                            }
                         } else {
-                            state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
+                            if (isEnabled()) {
+                                state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
+                            } else {
+                                state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
+                                ((NodeState)state).removeAllChildNodeEntries();
+                            }
                         }
                     } else {
                         log.error("Populating while virtual layer disabled", new Exception());
@@ -521,6 +528,9 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                        !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                         ((NodeState)state).removeAllChildNodeEntries();
                         stateDiscarded((NodeState)state);
+                        if(changedParents.contains(state.getId())) {
+                            modifiedExternals.add(state.getId());
+                        }
                     }
                 }
             }
