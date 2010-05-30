@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.ocm;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.jcr.AccessDeniedException;
@@ -25,12 +23,12 @@ import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -48,7 +46,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.jpox.StateManager;
 import org.jpox.exceptions.JPOXDataStoreException;
 import org.jpox.metadata.AbstractClassMetaData;
-import org.jpox.metadata.AbstractPropertyMetaData;
 import org.jpox.state.StateManagerFactory;
 import org.jpox.store.fieldmanager.AbstractFieldManager;
 import org.slf4j.Logger;
@@ -856,6 +853,72 @@ class FieldManagerImpl extends AbstractFieldManager {
                     if(!property.getParent().isCheckedOut()) {
                         checkoutNode(property.getParent());
                     }
+                    if(property.getDefinition().isMultiple()) {
+                        if(value == null)
+                            property.remove();
+                        else
+                            property.setValue(value.split(","));
+                    } else
+                        property.setValue(value);
+                }
+            } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+    public void storeStringArrayField(int fieldNumber, String[] value) {
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
+        }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
+        String field = cmd.getField(fieldNumber).getColumn();
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field);
+        if (field != null && !field.equals("jcr:uuid")) {
+            try {
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
+                if (property == null) {
+                    if ("{.}".equals(last.relPath) || "{_name}".equals(last.relPath)) {
+                        // if(!last.node.getParent().isCheckedOut()) {
+                        //     checkoutNode(last.node.getParent());
+                        // }
+                        // last.node.getSession().move(last.node.getPath(), last.node.getParent().getPath() + "/" + value);
+                        throw new JPOXDataStoreException("Node renaming is not supported");
+                    } else {
+                        if(!last.node.isCheckedOut()) {
+                            checkoutNode(last.node);
+                        }
+                        property = last.node.setProperty(last.relPath, value);
+                    }
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        checkoutNode(property.getParent());
+                    }
                     property.setValue(value);
                 }
             } catch (ValueFormatException ex) {
@@ -905,9 +968,22 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 Node node = oid.getNode(session);
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field);
-                if (property != null)
-                    value = property.getString();
-                else {
+                if (property != null) {
+                    if(property.getDefinition().isMultiple()) {
+                        Value[] values = property.getValues();
+                        if(values != null) {
+                            StringBuffer sb = new StringBuffer();
+                            for(int i=0; i<values.length; i++) {
+                                if(i>0)
+                                    sb.append(",");
+                                sb.append(values[i].getString());
+                            }
+                        } else
+                            value = null;
+                    } else {
+                        value = property.getString();
+                    }
+                } else {
                     Node ref = node;
                     String prop = field;
                     if (field.lastIndexOf('/') > -1) {
@@ -956,6 +1032,75 @@ class FieldManagerImpl extends AbstractFieldManager {
         return value;
     }
 
+    public String[] fetchStringArrayField(int fieldNumber) {
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
+        }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
+        String field = cmd.getField(fieldNumber).getColumn();
+        String[] value = null;
+        if (log.isDebugEnabled()) {
+            log.debug("fetching \"" + (cmd.getField(fieldNumber) != null ?
+                                    cmd.getField(fieldNumber).getFullFieldName() : "unknown")
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field);
+                if (property != null) {
+                    Value[] propertyValues = property.getValues();
+                    value = new String[propertyValues.length];
+                    for(int i=0; i<propertyValues.length; i++) {
+                        value[i] = propertyValues[i].getString();
+                    }
+                } else {
+                    Node ref = node;
+                    String prop = field;
+                    if (field.lastIndexOf('/') > -1) {
+                        ref = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node,
+                                field.substring(0, field.lastIndexOf('/')));
+                        prop = field.substring(field.lastIndexOf('/') + 1);
+                    }
+                    value = null;
+                }
+            } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+                                 + "\" = \"" + field);
+        }
+        return value;
+    }
+
     public void storeObjectField(int fieldNumber, Object value) {
         if(value instanceof Date) {
             storeLongField(fieldNumber, ((Date)value).getTime());
@@ -1000,6 +1145,10 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
             return;
             // throw new NullPointerException();
+        }
+        if(value instanceof String[]) {
+            storeStringArrayField(fieldNumber, (String[]) value);
+            return;
         }
         StateManager valueSM = sm.getObjectManager().findStateManager((PersistenceCapable) value);
         if (valueSM == null) { // If not already persisted
@@ -1103,6 +1252,8 @@ class FieldManagerImpl extends AbstractFieldManager {
                     Class clazz = cmd.getField(fieldNumber).getType();
                     if(Date.class.isAssignableFrom(clazz)) {
                         value = new Date(((Property)child).getLong());
+                    } else if(String[].class.isAssignableFrom(clazz)) {
+                        value = fetchStringArrayField(fieldNumber);
                     } else {
                         Object id = new JCROID(((Node)child).getUUID(), clazz.getName());
                         StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
