@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         info.put("copy", info.get("delete"));
         return info;
     }
+
     public void delete() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("deletion on document ");
         if(current != null)
@@ -61,6 +62,19 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         if(draftDocument != null)
             throw new WorkflowException("cannot delete document being edited");
         doDelete();
+    }
+
+    public void publish(Date publicationDate, Date depublicationDate) throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("publication on document ");
+        throw new WorkflowException("unsupported");
+    }
+
+   public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        doSchedPublish(publicationDate);
+    }
+
+    public void depublish(Date depublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        doSchedDepublish(depublicationDate);
     }
 
     public void doDelete() throws WorkflowException {
@@ -169,6 +183,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         publishedDocument = null;
         unpublishedDocument.setState(PublishableDocument.PUBLISHED);
         unpublishedDocument.setPublicationDate(new Date());
+        unpublishedDocument.availability = "live,preview"; // new String[] { "live", "preview" };
         try {
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             versionWorkflow.version();
@@ -199,6 +214,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             VersionWorkflow versionWorkflow;
             if(unpublishedDocument == null) {
                 publishedDocument.state = PublishableDocument.UNPUBLISHED;
+                publishedDocument.availability = "preview"; // new String[] { "preview" };
                 versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
             } else {
                 publishedDocument = null;
@@ -223,14 +239,6 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new WorkflowException("Versioning of published document failed");
         }
-    }
-
-    public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        doSchedPublish(publicationDate);
-    }
-
-    public void depublish(Date depublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        doSchedDepublish(depublicationDate);
     }
 
     void doSchedPublish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {

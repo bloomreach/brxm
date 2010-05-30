@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,18 +17,12 @@ package org.hippoecm.repository.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
-import java.util.TreeMap;
-
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 
 public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements BasicReviewedActionsWorkflow {
     @SuppressWarnings("unused")
@@ -129,6 +123,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                     draftDocument = (PublishableDocument) publishedDocument.clone();
                 }
                 draftDocument.state = PublishableDocument.DRAFT;
+                draftDocument.availability = "none"; // new String[0];
                 draftDocument.setOwner(getWorkflowContext().getUserIdentity());
                 if (unpublishedDocument != null) {
                     unpublishedDocument.setOwner(getWorkflowContext().getUserIdentity());
@@ -153,7 +148,11 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         if (draftDocument != null) {
             unpublishedDocument = null;
             draftDocument.setState(PublishableDocument.UNPUBLISHED);
+            draftDocument.availability = "preview"; // new String[] { "preview" };
             draftDocument.setModified(getWorkflowContext().getUserIdentity());
+            if (publishedDocument != null) {
+                publishedDocument.availability = "live"; // new String[] { "live" };
+            }
             return draftDocument;
         } else {
             throw new WorkflowException("no draft version of publication");
@@ -200,17 +199,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         } else {
             throw new WorkflowException("publication request already pending");
         }
-    }
-
-    public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException,
-            RemoteException {
-        ReviewedActionsWorkflowImpl.log.info("publication on document ");
-        throw new WorkflowException("unsupported");
-    }
-
-    public void publish(Date publicationDate, Date depublicationDate) throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("publication on document ");
-        throw new WorkflowException("unsupported");
     }
 
     public void requestPublication(Date publicationDate) throws WorkflowException {
