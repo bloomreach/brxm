@@ -168,7 +168,6 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         }
         
     	int portNumber = 0;
-    	String portPostfix = null;
         int offset = hostName.indexOf(':');
         if (offset != -1) {
         	try {
