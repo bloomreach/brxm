@@ -362,6 +362,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                         super.onServiceAdded(service, name);
                         if (modelRef == null) {
                             modelRef = service;
+                            modelRef.setModel(destination.getChainedModel());
                             context.registerService(modelObserver = new IObserver<IModelReference>() {
                                 private static final long serialVersionUID = 1L;
             
