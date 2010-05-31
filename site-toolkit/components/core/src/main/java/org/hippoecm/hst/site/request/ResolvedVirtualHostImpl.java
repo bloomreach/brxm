@@ -30,10 +30,12 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     private VirtualHost virtualHost;
     
     private String hostName;
+    private int portNumber;
     
-    public ResolvedVirtualHostImpl(VirtualHost virtualHost, String hostName) {
+    public ResolvedVirtualHostImpl(VirtualHost virtualHost, String hostName, int portNumber) {
         this.virtualHost = virtualHost;
         this.hostName = hostName;
+        this.portNumber = portNumber;
     }
 
     public VirtualHost getVirtualHost() {
@@ -77,6 +79,10 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
 
     public String getResolvedHostName() {
         return hostName;
+    }
+    
+    public int getResolvedPortNumber() {
+    	return portNumber;
     }
 
 }

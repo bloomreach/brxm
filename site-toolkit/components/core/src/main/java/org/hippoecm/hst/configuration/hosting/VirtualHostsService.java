@@ -221,7 +221,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
            		if (host.getPortNumber() != 0 && portNumber != host.getPortNumber()) {
            			return null;
            		}
-               return new ResolvedVirtualHostImpl(host, hostName);
+               return new ResolvedVirtualHostImpl(host, hostName, portNumber);
             }
         }
         return null;

@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.request;
 
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.core.container.HstContainerURL;
 
 /**
  * Implementations of this interface are a request flyweight instance of the {@link VirtualHost} object, where possible wildcard property placeholders have been filled in, similar
@@ -37,6 +36,14 @@ public interface ResolvedVirtualHost {
      * @return the hostName that resolved to this ResolvedVirtualHost
      */
     String getResolvedHostName();
+
+    /**
+     * the portNumber that resolved to this ResolvedVirtualHost. Note that this might be different then the one in {@link VirtualHost#getPortNumber()} as this
+     * portNumber is the actual portNumber to be used for the current request. 
+     * @see VirtualHost#getPortNumber()
+     * @return the portNumber that resolved to this ResolvedVirtualHost
+     */
+    int getResolvedPortNumber();
 
     /**
      * matches the current requestPath and resolved virtual host to a {@link ResolvedSiteMount} item
