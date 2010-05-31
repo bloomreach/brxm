@@ -174,7 +174,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         		portNumber = Integer.parseInt(hostName.substring(offset+1));
         	}
         	catch (NumberFormatException nfe) {
-        		// todo: ignore invalid port?
+        		throw new MatchException("The hostName '"+hostName+"' contains an invalid portnumber");
         	}
         	// strip off portNumber
         	hostName = hostName.substring(0, offset);
