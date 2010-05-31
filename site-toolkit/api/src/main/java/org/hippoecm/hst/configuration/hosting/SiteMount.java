@@ -146,7 +146,7 @@ public interface SiteMount {
      * </p>
      * 
      * <p>
-     * Note the difference with {@link #getMountPoint()}: this returns the jcr location of the (sub)site or of the content
+     * Note the difference with {@link #getMountPoint()}: the {@link #getMountPoint()} returns the jcr location of the (sub)site or of the content
      * </p>
      * 
      * @see ResolvedSiteMount#getResolvedMountPath()
