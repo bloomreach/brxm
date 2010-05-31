@@ -847,7 +847,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                         if(!last.node.isCheckedOut()) {
                             checkoutNode(last.node);
                         }
-                        property = last.node.setProperty(last.relPath, value);
+                        try {
+                            property = last.node.setProperty(last.relPath, value);
+                        } catch(ConstraintViolationException ex) {
+                            property = last.node.setProperty(last.relPath, value.split(","));
+                        }
                     }
                 } else {
                     if(!property.getParent().isCheckedOut()) {
