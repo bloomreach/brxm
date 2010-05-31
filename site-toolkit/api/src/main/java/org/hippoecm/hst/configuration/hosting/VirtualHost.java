@@ -59,20 +59,7 @@ public interface VirtualHost {
      * @return the root {@link SiteMount} for this virtual host
      */
     SiteMount getRootSiteMount();
-    
-   /** 
-    * <p>This method tries to match a request to a flyweight {@link ResolvedSiteMapItem}. It starts from the <code>root</code> {@link SiteMount} for
-    * this virtualHost, and delegates the match to this siteMount item</p>
-    *
-    * 
-    * @see {@link SiteMount#match(HttpServletRequest)} and {@link VirtualHosts#matchSiteMapItem(HttpServletRequest)} 
-    * 
-    * @param request the HttpServletRequest
-    * @return the resolvedSiteMapItem for this request or <code>null</code> when it can not be matched
-    * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured
-    */
-   ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException;
-   
+  
     /**
      * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>
      */

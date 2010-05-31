@@ -257,10 +257,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         return id;
     }
     
-    public ResolvedSiteMapItem match(HttpServletRequest request) throws MatchException {
-        throw new MatchException("Not yet implemented");
-    }
-    
     public SiteMount getRootSiteMount(){
         return this.rootSiteMount;
     }
