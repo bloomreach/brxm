@@ -29,27 +29,27 @@ public class BeanCollection implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    private int totalSize = -1;
+    private long totalSize = -1;
     
-    private int beginIndex = -1;
+    private long beginIndex = -1;
     
     public BeanCollection() {
         
     }
     
-    public int getTotalSize() {
+    public long getTotalSize() {
         return totalSize;
     }
     
-    public void setTotalSize(int totalSize) {
+    public void setTotalSize(long totalSize) {
         this.totalSize = totalSize;
     }
     
-    public int getBeginIndex() {
+    public long getBeginIndex() {
         return beginIndex;
     }
     
-    public void setBeginIndex(int beginIndex) {
+    public void setBeginIndex(long beginIndex) {
         this.beginIndex = beginIndex;
     }
     
