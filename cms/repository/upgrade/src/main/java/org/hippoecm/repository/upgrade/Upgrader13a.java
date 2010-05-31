@@ -321,7 +321,6 @@ public class Upgrader13a implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostdpubwf:document") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                System.err.println("BERRY VISIT "+node.getPath());
                 boolean isPublished = false;
                 boolean isUnpublished = false;
                 for (NodeIterator iter = node.getParent().getNodes(); iter.hasNext();) {
@@ -336,21 +335,16 @@ public class Upgrader13a implements UpdaterModule {
                         isUnpublished = true;
                     }
                 }
-                System.err.println("BERRY "+isUnpublished);
                 String state = node.getProperty("hippostd_2_0:state").getString();
                 if (state.equals("published")) {
                     if (isUnpublished) {
-                System.err.println("BERRY P1");
                         node.setProperty("hippo:availability", new String[] {"live"});
                     } else {
-                System.err.println("BERRY P2");
                         node.setProperty("hippo:availability", new String[] {"live", "preview"});
                     }
                 } else if (state.equals("unpublished")) {
-                System.err.println("BERRY U1");
                     node.setProperty("hippo:availability", new String[] {"preview"});
                 } else {
-                System.err.println("BERRY O");
                     node.setProperty("hippo:availability", new String[0]);
                 }
             }
