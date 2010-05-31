@@ -212,8 +212,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
 
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
-            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
-            };
+            public NodeModelWrapper destination = null;
 
             @Override
             protected ResourceReference getIcon() {
@@ -222,23 +221,28 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
+                destination = new NodeModelWrapper(getFolder()) {
+                };
                  return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
                         DefaultWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                JcrNodeModel folderModel = new JcrNodeModel("/");
+                if (destination != null) {
+                    folderModel = destination.getNodeModel();
+                }
                 String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
+                workflow.move(new Document(folderModel.getNode().getUUID()), nodeName);
                 return null;
             }
         });
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
-            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
-            };
-
+            NodeModelWrapper destination = null;
+            
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "copy-16.png");
@@ -246,18 +250,40 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
+                destination = new NodeModelWrapper(getFolder()) {
+                };
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
                         DefaultWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                JcrNodeModel folderModel = new JcrNodeModel("/");
+                if (destination != null) {
+                    folderModel = destination.getNodeModel();
+                }
                 String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
+                workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
                 return null;
             }
         });
+    }
+
+    private JcrNodeModel getFolder() {
+        JcrNodeModel folderModel = new JcrNodeModel("/");
+        try {
+            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+            if (wdm != null) {
+                HippoNode node = (HippoNode) wdm.getNode();
+                if (node != null) {
+                    folderModel = new JcrNodeModel(node.getParent().getParent());
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.warn("Could not determine folder path", ex);
+        }
+        return folderModel;
     }
 
     protected StringCodec getLocalizeCodec() {

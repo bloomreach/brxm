@@ -20,6 +20,8 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Map;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -322,8 +324,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         });
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
-            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
-            };
+            NodeModelWrapper destination = null;
 
             @Override
             protected ResourceReference getIcon() {
@@ -332,22 +333,27 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
+                destination = new NodeModelWrapper(getFolder()) {
+                };
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
                         FullReviewedActionsWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                JcrNodeModel folderModel = new JcrNodeModel("/");
+                if (destination != null) {
+                    folderModel = destination.getNodeModel();
+                }
                 String nodeName = (((WorkflowDescriptorModel) getDefaultModel()).getNode()).getName();
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
+                workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
                 return null;
             }
         });
 
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
-            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
-            };
+            NodeModelWrapper destination;
 
             @Override
             protected ResourceReference getIcon() {
@@ -356,16 +362,22 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
+                destination = new NodeModelWrapper(getFolder()) {
+                };
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
                         FullReviewedActionsWorkflowPlugin.this, null), null, null, destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                JcrNodeModel folderModel = new JcrNodeModel("/");
+                if (destination != null) {
+                    folderModel = destination.getNodeModel();
+                }
                 String nodeName = (((WorkflowDescriptorModel) getDefaultModel()).getNode()).getName();
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
-                browseTo(new JcrNodeModel(destination.getNodeModel().getItemModel().getPath() + "/" + nodeName));
+                workflow.move(new Document(folderModel.getNode().getUUID()), nodeName);
+                browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
                 return null;
             }
         });
@@ -433,6 +445,22 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         });
 
         onModelChanged();
+    }
+
+    private JcrNodeModel getFolder() {
+        JcrNodeModel folderModel = new JcrNodeModel("/");
+        try {
+            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+            if (wdm != null) {
+                HippoNode node = (HippoNode) wdm.getNode();
+                if (node != null) {
+                    folderModel = new JcrNodeModel(node.getParent().getParent());
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.warn("Could not determine folder path", ex);
+        }
+        return folderModel;
     }
 
     private IEditorManager getEditorManager() {
