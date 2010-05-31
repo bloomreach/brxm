@@ -348,6 +348,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 String nodeName = (((WorkflowDescriptorModel) getDefaultModel()).getNode()).getName();
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
+                browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
                 return null;
             }
         });

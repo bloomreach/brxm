@@ -49,6 +49,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IEditor.Mode;
@@ -265,6 +266,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
                 workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
+                browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
                 return null;
             }
         });
@@ -298,6 +300,14 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.node");
+    }
+
+    private void browseTo(JcrNodeModel nodeModel) throws RepositoryException {
+        //refresh session before IBrowseService.browse is called
+        ((UserSession) org.apache.wicket.Session.get()).getJcrSession().refresh(false);
+
+        getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class)
+                .browse(nodeModel);
     }
 
     IModel<String> getDocumentName() {
