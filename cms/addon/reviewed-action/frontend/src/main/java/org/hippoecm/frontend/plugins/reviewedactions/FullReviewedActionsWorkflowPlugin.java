@@ -609,7 +609,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             nameComponent = new TextField<String>("name", nameModel);
             nameComponent.setRequired(true);
-            nameComponent.setLabel(new StringResourceModel("name-label", FullReviewedActionsWorkflowPlugin.this, null));
+            nameComponent.setLabel(new StringResourceModel("name-label", this, null));
             nameComponent.add(new OnChangeAjaxBehavior() {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
