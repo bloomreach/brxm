@@ -398,10 +398,83 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // since the requestURI is empty, we expect a fallback to the configured homepage:
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
 
-                assertTrue("The mount for /preview/services is should return not", !mount.getSiteMount().isSiteMount());
+                assertTrue("The mount for /preview/services should return that it is not mounted ", !mount.getSiteMount().isSiteMount());
                 assertNull("An not mounted sitemount should have a HstSite that is null", mount.getSiteMount().getHstSite());
                 assertTrue("The mountpath for /preview/services mount must be '/preview/services' but was '"+mount.getSiteMount().getMountPath()+"'", "/preview/services".equals(mount.getSiteMount().getMountPath()));
                 assertTrue("The mountpoint for /preview/services mount must be '/unittestpreview/unittestproject' but was '"+mount.getSiteMount().getMountPoint()+"'", "/unittestpreview/unittestproject".equals(mount.getSiteMount().getMountPoint()));
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        
+        /*
+         * We now test with port 7979: this one is not explicitly defined in the unittest config: this means, it should default back to the matching host for port 0
+         */
+        @Test 
+        public void testSiteWithNoConfiguredPort(){
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("127.0.0.1");
+            request.setServerPort(8180);
+            // the port is part of the Host header
+            request.addHeader("Host", "127.0.0.1:7979");
+            request.setRequestURI("/site/home");
+            request.setContextPath("/site");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                
+                // since the requestURI is empty, we expect a fallback to the configured homepage:
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
+                
+                assertFalse("For port 7979 we do not have a configured a portmount, and thus we should get a mount that is live ", mount.getSiteMount().isPreview());
+                
+                assertTrue("Resolved virtualhost must have the portnumber! ",mount.getResolvedVirtualHost().getPortNumber() == 7979);
+                
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                
+                assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
+                
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        /*
+         * We now test with port 8081: this one *is explicitly* defined in the unittest config: this means, it should be used.
+         * 
+         * For port 8081 we configured that it is a preview. We should thus get a SiteMount that has isPreview = true
+         */
+        @Test 
+        public void testSiteWithConfiguredPort(){
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("127.0.0.1");
+            request.setServerPort(8180);
+            // the port is part of the Host header
+            request.addHeader("Host", "127.0.0.1:8081");
+            request.setRequestURI("/site/home");
+            request.setContextPath("/site");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                
+                // since the requestURI is empty, we expect a fallback to the configured homepage:
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
+                
+                assertTrue("For port 8081 we do not have a configured a portmount, and thus we should get a mount that is preview ", mount.getSiteMount().isPreview());
+                
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                
+                assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
+                
             } catch (RepositoryNotAvailableException e) {
                 e.printStackTrace();
             }

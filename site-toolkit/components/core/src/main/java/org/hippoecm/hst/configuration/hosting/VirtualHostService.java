@@ -191,11 +191,11 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                     continue;
                 }
                 if(childNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
-                    VirtualHostService childHost = new VirtualHostService(virtualHosts, childNode, this);
-                    this.childVirtualHosts.put(childHost.name, childHost);
+                    VirtualHostService childHost = new VirtualHostService(virtualHosts, childNode, attachPortMountToHost);
+                    attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } else if(childNode.isNodeType(HstNodeTypes.NODETYPE_HST_PORTMOUNT)) {
-                    PortMount portMount = new PortMountService(childNode, this);
-                    portMounts.put(portMount.getPortNumber(), portMount);
+                    PortMount portMount = new PortMountService(childNode, attachPortMountToHost);
+                    attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 }
             }
         } catch (RepositoryException e) {
