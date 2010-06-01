@@ -1,0 +1,43 @@
+/*
+ *  Copyright 2010 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.util;
+
+import java.util.HashMap;
+
+/**
+ * A  HashMap<K,V> that throws an exception when you put in the same key twice
+ *
+ * @param <K>
+ * @param <V>
+ */
+public class DuplicateKeyNotAllowedHashMap<K, V> extends HashMap<K, V> {
+    
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public V put(K key, V value) {
+        V prev = get(key);
+        if (prev != null) {
+            throw new IllegalArgumentException(
+                    "VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
+                            + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
+                            + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
+        }
+        return super.put(key, value);
+    }
+    
+}
+

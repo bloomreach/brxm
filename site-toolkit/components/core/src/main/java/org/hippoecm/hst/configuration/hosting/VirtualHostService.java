@@ -38,7 +38,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
     
-    private Map<String, VirtualHostService> childVirtualHosts = VirtualHostsService.createVirtualHostHashMap();
+    private Map<String, VirtualHostService> childVirtualHosts = VirtualHostsService.virtualHostHashMap();
    
     private String name;
     private String hostName;

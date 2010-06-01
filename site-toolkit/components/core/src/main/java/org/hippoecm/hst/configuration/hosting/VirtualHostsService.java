@@ -31,6 +31,7 @@ import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
+import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     public final static String DEFAULT_SCHEME = "http";
 
     private VirtualHostsManager virtualHostsManager;
-    private Map<String, VirtualHostService> rootVirtualHosts = createVirtualHostHashMap();
+    private Map<String, VirtualHostService> rootVirtualHosts = virtualHostHashMap();
   
     private String defaultHostName;
     /**
@@ -302,32 +303,8 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     /**
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
-    public final static HashMap<String, VirtualHostService> createVirtualHostHashMap(){
-        return new VirtualHostHashMap<String, VirtualHostService>();
-    }
-    
-    /**
-     * A  HashMap<K,V> that throws an exception when you put in the same key twice
-     *
-     * @param <K>
-     * @param <V>
-     */
-    private static class VirtualHostHashMap<K, V> extends HashMap<K, V> {
-        
-        private static final long serialVersionUID = 1L;
-    
-        @Override
-        public V put(K key, V value) {
-            V prev = get(key);
-            if (prev != null) {
-                throw new IllegalArgumentException(
-                        "VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
-                                + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
-                                + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
-            }
-            return super.put(key, value);
-        }
-        
+    public final static HashMap<String, VirtualHostService> virtualHostHashMap(){
+        return new DuplicateKeyNotAllowedHashMap<String, VirtualHostService>();
     }
     
 }
