@@ -349,6 +349,16 @@ public class Upgrader13a implements UpdaterModule {
                 }
             }
         });
+
+        //HREPTWO-4159 - implement AjaxUpload; new Flash upload can be restricted to only allow files with certain extensions           
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:workflows/threepane/image-gallery/frontend:renderer") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if(!node.hasProperty("file.extensions")) {
+                    node.setProperty("file.extensions", new String[] {"*.jpg", "*.jpeg", "*.gif", "*.png"});
+                }
+            }
+        });
     }
 
 
