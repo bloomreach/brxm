@@ -25,7 +25,7 @@
   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
   
   <bean id="hstMBeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
-    <property name="locateExistingServerIfPossible" value="true" />
+    <property name="locateExistingServerIfPossible" value="${management.connector.server.locate.existing}" />
   </bean>
   
   <bean id="hstSessionPoolsMBeanExporter" class="org.springframework.jmx.export.MBeanExporter">
