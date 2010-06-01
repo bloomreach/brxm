@@ -73,10 +73,11 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_nooptest");
+            request.setContextPath("/site");
             
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
@@ -169,9 +170,10 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_nooptest/foo");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
@@ -211,9 +213,10 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/multiplehandler_example/foo/bar");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
@@ -231,7 +234,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 ResolvedSiteMapItem processedSiteMapItem = resolvedSiteMapItem;
                 for(String handlerId : handlersIds){
-                    HstSiteMapItemHandlerConfiguration handlerConfig = mount.getSiteMount().getHstSite().getSiteMapItemHandlersConfiguration().getSiteMapItemHandlerConfiguration(handlersIds[0]);
+                    HstSiteMapItemHandlerConfiguration handlerConfig = mount.getSiteMount().getHstSite().getSiteMapItemHandlersConfiguration().getSiteMapItemHandlerConfiguration(handlerId);
                     try {
                         HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
                         processedSiteMapItem = siteMapHandler.process(processedSiteMapItem, request, response);
@@ -282,10 +285,11 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_browser_redirecttest");
+            request.setContextPath("/site");
             
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
@@ -343,9 +347,10 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_sitemapitem_redirecttest"); 
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);

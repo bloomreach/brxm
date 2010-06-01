@@ -134,10 +134,12 @@
 - hst:issitemount (boolean)
 // if you do not want to sitemount to run with the default hst pipeline, you can configure the pipeline to be used here
 - hst:namedpipeline (string)
-- hst:port (long)
 - hst:showcontextpath (boolean)
+// when this sitemount is only applicable for certain contextpath, add this property for the contextpath that is allowed (must start with '/')
+- hst:onlyforcontextpath (string)
+// for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
+- hst:embeddedsitemountpath
 - hst:ispreview (boolean)
-- hst:showport(boolean)
 - hst:scheme (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
@@ -145,13 +147,14 @@
 - hst:pagenotfound (string)
 - hst:versioninpreviewheader (boolean)
 
+[hst:portmount]
++ hst:root (hst:sitemount)
 
 [hst:virtualhost]
 + * (hst:virtualhost)
++ * (hst:portmount)
 + hst:root (hst:sitemount)
-- hst:port (long)
 - hst:showcontextpath (boolean)
-- hst:showport(boolean)
 - hst:scheme (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
@@ -160,9 +163,7 @@
 - hst:versioninpreviewheader (boolean)
 
 [hst:virtualhosts]
-- hst:port (long)
 - hst:showcontextpath (boolean)
-- hst:showport(boolean)
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
 - hst:scheme (string)

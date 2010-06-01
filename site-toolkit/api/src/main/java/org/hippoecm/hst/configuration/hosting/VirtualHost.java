@@ -19,8 +19,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-
 /**
  * VirtualHost which holds the mapping between host (server name) and site name.
  * 
@@ -55,11 +53,12 @@ public interface VirtualHost {
     List<VirtualHost> getChildHosts();
     
     /**
-     * A virtual host has to have at least a root {@link SiteMount}, otherwise it is not a valid VirtualHost and cannot be used.
-     * @return the root {@link SiteMount} for this virtual host
+     * 
+     * @param portNumber
+     * @return the 
      */
-    SiteMount getRootSiteMount();
-  
+    PortMount getPortMount(int portNumber);
+ 
     /**
      * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>
      */
@@ -69,17 +68,6 @@ public interface VirtualHost {
      * @return <code>true</code> when the created url should have the contextpath in it
      */
     boolean isContextPathInUrl();
-    
-    /**
-     * @return <code>true</code> when an externalized (starting with http/https) should contain a port number
-     */
-    boolean isPortVisible();
-
-    /**
-     * 
-     * @return when {@link #isPortVisible()} returns <code>true</code> this method returns the port number of the externalized url
-     */
-    int getPortNumber();
     
     /**
      * @return the scheme to use for creating external urls, for example http / https

@@ -143,7 +143,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         if(resolvedVirtualHost == null) {
             throw new MatchException("Unknown host '"+hstContainerURL.getHostName()+"'");
         }
-        ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(hstContainerURL.getRequestPath());
+        ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(hstContainerURL.getContextPath(), hstContainerURL.getRequestPath());
         if(resolvedSiteMount == null) {
             if(resolvedSiteMount == null) {
                 throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a site mount");
@@ -153,11 +153,11 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     }
 
     
-    public ResolvedSiteMount matchSiteMount(String hostName, String requestPath) throws MatchException {
+    public ResolvedSiteMount matchSiteMount(String hostName, String contextPath, String requestPath) throws MatchException {
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
         ResolvedSiteMount resolvedSiteMount = null;
         if(resolvedVirtualHost != null) {
-            resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(requestPath);
+            resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(contextPath, requestPath);
         }
         return resolvedSiteMount;
     }
@@ -217,9 +217,6 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
                if(host == null) {
                    return null;
                }
-           		if (host.getPortNumber() != 0 && portNumber != host.getPortNumber()) {
-           			return null;
-           		}
                return new ResolvedVirtualHostImpl(host, hostName, portNumber);
             }
         }
@@ -315,18 +312,4 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return versionInPreviewHeader;
     }
     
-    public List<VirtualHost> getVirtualHosts(boolean mountedOnly) {
-        if(mountedOnly) {
-            List<VirtualHost> mountedHosts = new ArrayList<VirtualHost>();
-            for(VirtualHost host :allVirtualHosts) {
-                if(host.getRootSiteMount() != null){
-                    mountedHosts.add(host);
-                }
-            }
-            return mountedHosts;
-        } else {
-            return allVirtualHosts;
-        }
-    }
-
 }

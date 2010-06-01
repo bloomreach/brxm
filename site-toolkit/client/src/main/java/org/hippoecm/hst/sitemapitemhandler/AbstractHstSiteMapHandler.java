@@ -58,7 +58,7 @@ public abstract class AbstractHstSiteMapHandler implements HstSiteMapItemHandler
      * @throws MatchException when the <code>pathInfo</code> cannot be matched
      * @return a new ResolvedSiteMapItem
      */
-    public ResolvedSiteMapItem resolveToNewSiteMapItem(HttpServletRequest request,
+    public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request,
             HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo) throws MatchException {
         
         HstContainerURL newContainerUrl = createContainerURL(request, response, currentResolvedSiteMapItem, pathInfo);

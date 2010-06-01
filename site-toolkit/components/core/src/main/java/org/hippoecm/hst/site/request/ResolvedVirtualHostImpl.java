@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.site.request;
 
+import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -42,16 +44,28 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         return virtualHost;
     }
 
-    public ResolvedSiteMount matchSiteMount(String requestPath) {
-        SiteMount siteMount = virtualHost.getRootSiteMount();
-        if(siteMount == null) {
-            log.warn("Virtual Host '{}' is not (correctly) mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName());
+    public ResolvedSiteMount matchSiteMount(String contextPath, String requestPath) throws MatchException {
+        PortMount portMount = virtualHost.getPortMount(portNumber);
+        if(portMount == null && portNumber != 0) {
+            log.debug("Could not match the request to port '{}'. If there is a default port '0', we'll try this one");
+            portMount = virtualHost.getPortMount(0);
+            if(portMount == null) {
+                log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber));
+                return null;
+            }
+        }
+        
+        if(portMount.getRootSiteMount() == null) {
+            log.warn("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
             return null;
         }
+        
         // strip leading and trailing slashes
         String path = PathUtils.normalizePath(requestPath);
         String[] requestPathSegments = path.split("/");
         int position = 0;
+        SiteMount siteMount = portMount.getRootSiteMount();
+        
         while(position < requestPathSegments.length) {
             if(siteMount.getChildMount(requestPathSegments[position]) != null) {
                 siteMount = siteMount.getChildMount(requestPathSegments[position]);
@@ -61,6 +75,19 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             }
             position++;
         }
+        
+        
+        // let's find a siteMount that has a valid 'onlyForContextPath' : if onlyForContextPath is not null && not equal to the contextPath, we need to try the parent sitemount until we have a valid one or have a sitemount that is null
+        while(siteMount != null && (siteMount.onlyForContextPath() != null && !siteMount.onlyForContextPath().equals(contextPath) )) {
+            log.debug("SiteMount '{}' cannot be used because the contextPath '{}' is not valid for this siteMount, because it is only for context path. Let's try parent siteMounts if present.'"+siteMount.onlyForContextPath()+"' ", siteMount.getName(), contextPath);
+            siteMount = siteMount.getParent();
+        }
+        
+        if(siteMount == null) {
+            log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()));
+            return null;
+        }
+        
         
         // reconstruct the prefix that needs to be stripped of from the request because it belongs to the site mount
         // we thus create the resolvedPathInfoPrefix
@@ -81,7 +108,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         return hostName;
     }
     
-    public int getResolvedPortNumber() {
+    public int getPortNumber() {
     	return portNumber;
     }
 

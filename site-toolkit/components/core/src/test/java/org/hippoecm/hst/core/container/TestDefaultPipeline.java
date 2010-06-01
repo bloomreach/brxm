@@ -25,20 +25,14 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -77,8 +71,6 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         HstComponent component = new NewsOverview();
         //component.init(this.servletConfig, newsCompConfig);
         
-        Map<String, Object> emptyProps = new HashMap<String, Object>();
-        //ComponentConfiguration compConfig = new ComponentConfigurationImpl(emptyProps); 
        
         ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.requestContainerConfig, "pages/newsoverview", component);
 

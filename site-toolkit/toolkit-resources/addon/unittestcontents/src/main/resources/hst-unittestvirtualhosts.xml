@@ -18,12 +18,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhosts</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:showport" sv:type="Boolean">
-        <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:port" sv:type="Long">
-        <sv:value>0</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
         <sv:value>true</sv:value>
     </sv:property>
@@ -75,15 +69,15 @@
             <sv:value>/unittestlive/unittestproject</sv:value>
           </sv:property>
           <sv:node sv:name="preview">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemount</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:ispreview" sv:type="Boolean">
-              <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:mountpoint" sv:type="String">
-            <sv:value>/unittestpreview/unittestproject</sv:value>
-          </sv:property>
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+               <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+               <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+             <sv:value>/unittestpreview/unittestproject</sv:value>
+            </sv:property>
             <sv:node sv:name="custompipeline">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemount</sv:value>
@@ -110,6 +104,23 @@
                 </sv:property>
             </sv:node>
          </sv:node>
+        </sv:node>
+        <!--  example of a preview for the portnumber 8081 -->
+        <sv:node sv:name="8081">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:portmount</sv:value>
+          </sv:property>
+          <sv:node sv:name="hst:root">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+               <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+               <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+             <sv:value>/unittestpreview/unittestproject</sv:value>
+            </sv:property>
+           </sv:node>
         </sv:node>
     </sv:node>
     

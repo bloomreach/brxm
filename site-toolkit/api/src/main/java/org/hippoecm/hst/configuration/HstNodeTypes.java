@@ -31,6 +31,7 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_SITEMENUITEM = "hst:sitemenuitem";
     public final static String NODETYPE_HST_VIRTUALHOSTS = "hst:virtualhosts";
     public final static String NODETYPE_HST_VIRTUALHOST = "hst:virtualhost";
+    public final static String NODETYPE_HST_PORTMOUNT = "hst:portmount";
     public final static String NODETYPE_HST_SITEMOUNT = "hst:sitemount";
     public final static String NODETYPE_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     public final static String NODETYPE_HST_SITEMAPITEMHANDLER = "hst:sitemapitemhandler";
@@ -81,14 +82,13 @@ public interface HstNodeTypes {
     public final static String VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME = "hst:defaulthostname";
     public final static String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
 
-    public final static String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";
-    public final static String VIRTUALHOST_PROPERTY_PORT = "hst:port";
     public final static String VIRTUALHOST_PROPERTY_SCHEME = "hst:scheme";
     public final static String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
     public final static String VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
     
     public final static String SITEMOUNT_HST_ROOTNAME = "hst:root";
     public final static String SITEMOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+    public final static String SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH = "hst:onlyforcontextpath";
     public final static String SITEMOUNT_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
     public final static String SITEMOUNT_PROPERTY_PORT = "hst:port";
     public final static String SITEMOUNT_PROPERTY_SHOWPORT = "hst:showport";
@@ -96,8 +96,8 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_MOUNTPATH = "hst:mountpoint";
     public final static String SITEMOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
     public final static String SITEMOUNT_PROPERTY_ISPREVIEW = "hst:ispreview";
-     
-
+    public final static String SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH = "hst:embeddedsitemountpath";
+    
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";

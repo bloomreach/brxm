@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class SiteMountService extends AbstractJCRService implements SiteMount, Service {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
+    private static final Logger log = LoggerFactory.getLogger(SiteMountService.class);
     
     
     /**
@@ -95,12 +95,19 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      */
     private String pageNotFound;
     
-    
-    private boolean portVisible;
-    private int portNumber;
     private boolean contextPathInUrl;
+    
+    /**
+     *  when this sitemount is only applicable for certain contextpath, this property for the contextpath tells which value it must have. It must start with a slash.
+     */
+    private String onlyForContextPath;
+    
     private String scheme;
 
+    /**
+     * for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
+     */
+    private String embeddedSiteMountPath;
     
     public SiteMountService(Node siteMount, SiteMount parent, VirtualHost virtualHost) throws ServiceException {
         super(siteMount);
@@ -115,25 +122,7 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         } else {
             mountPath = parent.getMountPath() + "/" + name;
         }
-        
-        // the portnumber
-        if(getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_PORT)) {
-            this.portNumber = getValueProvider().getLong(HstNodeTypes.SITEMOUNT_PROPERTY_PORT).intValue();
-        } else if(parent != null) {
-            this.portNumber = parent.getPortNumber();
-        } else {
-            this.portNumber = virtualHost.getPortNumber();
-        }
-        
-        // is the portnumber visible
-        if(getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWPORT)) {
-            this.portVisible = getValueProvider().getBoolean((HstNodeTypes.SITEMOUNT_PROPERTY_SHOWPORT));
-        } else if(parent != null) {
-            this.portVisible = parent.isPortVisible();
-        } else {
-            this.portVisible = virtualHost.isPortVisible();
-        }
-        
+       
         // is the context path visible in the url
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWCONTEXTPATH);
@@ -143,6 +132,14 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             } else {
                 this.contextPathInUrl = virtualHost.isContextPathInUrl();
             }
+        }
+        
+        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
+            this.onlyForContextPath = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH);
+        } else {
+            if(parent != null) {
+                this.onlyForContextPath = parent.onlyForContextPath();
+            } 
         }
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SCHEME)) {
@@ -207,11 +204,18 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         } else if(parent != null) {
             this.isSiteMount = parent.isSiteMount();
         }
-        
+
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE);
         } else if(parent != null) {
             this.namedPipeline = parent.getNamedPipeline();
+        }
+        
+
+        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH)) {
+            this.embeddedSiteMountPath = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH);
+        } else if(parent != null) {
+            this.embeddedSiteMountPath = parent.getEmbeddedSiteMountPath();
         }
         
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH)) {
@@ -300,10 +304,7 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         return parent;
     }
 
-    public int getPortNumber() {
-        return portNumber;
-    }
-
+  
     public String getScheme() {
         return scheme;
     }
@@ -323,9 +324,9 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
     }
-
-    public boolean isPortVisible() {
-        return portVisible;
+    
+    public String onlyForContextPath() {
+        return onlyForContextPath;
     }
 
     public boolean isPreview() {
@@ -356,6 +357,11 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     public HstSiteMapMatcher getHstSiteMapMatcher() {
         return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getSiteMapMatcher();
     }
+
+    public String getEmbeddedSiteMountPath() {
+        return embeddedSiteMountPath;
+    }
+
 
 
 }

@@ -175,7 +175,7 @@ public class ActionValve extends AbstractValve {
                                     throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
                                 }
                                 if (!getVirtualHostsManager().getVirtualHosts().isExcluded(location)) {
-                                    ResolvedSiteMount mount = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedVirtualHost().matchSiteMount(location);
+                                    ResolvedSiteMount mount = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedVirtualHost().matchSiteMount(baseURL.getContextPath(), location);
                                     if (mount != null && mount.getSiteMount().isSiteMount()) {
                                     	HstContainerURL url = urlProvider.parseURL(requestContext, location, mount);                                    
                                         if (mount.matchSiteMapItem(url) != null) {

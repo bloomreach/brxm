@@ -64,17 +64,20 @@ public interface VirtualHosts {
 
     
     /**
-     * <p>This method tries to match a hostName and requestPath to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 
+     * <p>This method tries to match a hostName, contextPath and requestPath to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMount(String)}, which returns the {@link ResolvedSiteMount}. If somewhere
-     * in the chain a match cannot be made, <code>null</code> will be returned. 
+     * {@link ResolvedVirtualHost#matchSiteMount(String, String)}, which returns the {@link ResolvedSiteMount}. If somewhere
+     * in the chain a match cannot be made, <code>null</code> will be returned. The contextPath will only be of influence in the matching
+     * when the SiteMount has a non-empty value for {@link SiteMount#onlyForContextPath()}. If {@link SiteMount#onlyForContextPath()} is <code>null</code> or empty,
+     * the <code>contextPath</code> is ignored for matching.
      * </p>
      * @param String hostName
+     * @param String contextPath the contextPath of the request
      * @param String requestPath
      * @return the resolvedSiteMount for this hstContainerUrl or <code>null</code> when it can not be matched to a siteMount
      * @throws MatchException
      */
-    ResolvedSiteMount matchSiteMount(String hostName, String requestPath) throws MatchException;
+    ResolvedSiteMount matchSiteMount(String hostName, String contextPath,  String requestPath) throws MatchException;
     
     /**
      * <p>
@@ -86,23 +89,6 @@ public interface VirtualHosts {
      */
     ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException;
  
-    /**
-     * Returns the list of all available hosts managed by this VirtualHosts object. When <code>mountableOnly</code> is <code>false</code>, you might get
-     * hosts back your are not interested in: For example, when the host, www.onehippo.org is added, then the cleanest way to configure this is:
-     * <pre>
-     * org
-     *  ` onehippo
-     *        ` www
-     * </pre>
-     * Now, quite likely, only the 'www' host segment has a {@link SiteMount} attached to it. However, this does not mean that by itself, 'org' and 'onehippo.org' are 
-     * as well hosts. When <code>mountedOnly</code> is <code>false</code>, you get back three hosts. When however <code>mountedOnly</code> is <code>true</code>,
-     * only those hosts that have a {@link SiteMount} attached <b>and</b> for which at least <code>1</code> SiteMount points to a correct mountPath, in other words, have 
-     * an existing {@link HstSite} they point to  
-     * @param mountedOnly when <code>true</code>, only the list of virtual hosts are returned that have a {@link SiteMount} that have a correct <code>mountPath</code>
-     * @return the list of VirtualHosts, and an empty list when no hosts apply
-     */
-    List<VirtualHost> getVirtualHosts(boolean mountedOnly);
-    
     /**
      * 
      * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.

@@ -201,7 +201,7 @@ public class HstFilter implements Filter {
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 try {
-                    ResolvedSiteMount mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(req), HstRequestUtils.getRequestPath(req));
+                    ResolvedSiteMount mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(req), req.getContextPath() , HstRequestUtils.getRequestPath(req));
                     if(mount != null) {
                         
                         request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
@@ -256,7 +256,7 @@ public class HstFilter implements Filter {
                         throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
                     }
                 }catch (MatchException e) {
-                	logger.error(e.getMessage());
+                    logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: {}" , e.getMessage());
                 	res.sendError(HttpServletResponse.SC_NOT_FOUND);
                 } 
                 

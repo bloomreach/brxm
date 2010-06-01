@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.request;
 
+import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 
@@ -38,18 +39,17 @@ public interface ResolvedVirtualHost {
     String getResolvedHostName();
 
     /**
-     * the portNumber that resolved to this ResolvedVirtualHost. Note that this might be different then the one in {@link VirtualHost#getPortNumber()} as this
-     * portNumber is the actual portNumber to be used for the current request. 
-     * @see VirtualHost#getPortNumber()
+     * the portNumber that resolved to this ResolvedVirtualHost.
      * @return the portNumber that resolved to this ResolvedVirtualHost
      */
-    int getResolvedPortNumber();
+    int getPortNumber();
 
     /**
      * matches the current requestPath and resolved virtual host to a {@link ResolvedSiteMount} item
+     * @param contextPath
      * @param requestPath
      * @return a {@link ResolvedSiteMount} or <code>null</code> when none matches
      */
-    ResolvedSiteMount matchSiteMount(String requestPath);
+    ResolvedSiteMount matchSiteMount(String contextPath, String requestPath)  throws MatchException;
     
 }

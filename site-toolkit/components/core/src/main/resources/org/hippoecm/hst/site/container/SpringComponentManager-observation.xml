@@ -81,6 +81,7 @@
             <list>
               <value>hst:virtualhosts</value>
               <value>hst:virtualhost</value> 
+              <value>hst:portmount</value>
               <value>hst:sitemount</value>
               <value>hst:template</value>
               <value>hst:component</value>

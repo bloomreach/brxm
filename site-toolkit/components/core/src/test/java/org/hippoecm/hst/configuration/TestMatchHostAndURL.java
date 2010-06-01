@@ -21,9 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.List;
-
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -63,62 +60,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             
         }
         
-        
-        /*
-         *  we configured the following hosts for test content:
-         *  
-         *  127.0.0.1
-         *  localhost
-         *  test
-         *    ` onehippo
-         *            |- www
-         *            `- preview
-         *          
-         */
-        @Test
-        public void testAllHosts(){
-            try {
-                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                List<VirtualHost> allHosts = vhosts.getVirtualHosts(false);
-               
-                /*
-                 * we expect the following hosts now:
-                 * 1
-                 * 0.1
-                 * 0.0.1
-                 * 127.0.0.1
-                 * localhost
-                 * test
-                 * onehippo.test
-                 * www.onehippo.test
-                 * preview.onehippo.test
-                 */
-                
-                 assertTrue("We expect 9 hosts in total", allHosts.size() == 9);
-            } catch (RepositoryNotAvailableException e) {
-                e.printStackTrace();
-            }
-            
-        }
-        
-        /*
-         * From all the hosts above, actually only the host 127.0.0.1, localhost, www.onehippo.org and preview.onehippo.org do have 
-         * a SiteMount. Thus the number of mounted hosts should be 4
-         */
-        @Test
-        public void testMountedHosts(){
-            
-            try {
-                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                List<VirtualHost> mountedHosts = vhosts.getVirtualHosts(true);
-                assertTrue("We expect 4 mounted hosts in total but found '"+mountedHosts.size()+"' hosts", mountedHosts.size() == 4);
-            } catch (RepositoryNotAvailableException e) {
-                e.printStackTrace();
-            }
-            
-        }
-        
-        
+    
         /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest does not have a context path
@@ -133,10 +75,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/news/2009");
-            
+            request.setContextPath("");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
@@ -166,9 +108,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/preview/news/2009");
+            request.setContextPath("");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 
@@ -197,9 +140,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/preview/news/2009");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                
                 assertTrue("We expect the mount to return true for version in preview header", mount.getSiteMount().isVersionInPreviewHeader());
             } catch (RepositoryNotAvailableException e) {
@@ -223,9 +167,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.addHeader("Host", "127.0.0.1");
             request.setContextPath("/site");
             request.setRequestURI("/site/news/2009");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
@@ -258,7 +203,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             try {
                 
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 
@@ -290,11 +235,12 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setScheme("http");
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
-            request.setRequestURI("/preview/custompipeline/news/2009");
+            request.setRequestURI("/site/preview/custompipeline/news/2009");
+            request.setContextPath("/site");
             try {
                 
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 
@@ -329,7 +275,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             requestCustom.setScheme("http");
             requestCustom.setServerName("127.0.0.1");
             requestCustom.addHeader("Host", "127.0.0.1");
-            requestCustom.setRequestURI("/preview/custompipeline/pipelines/custom");
+            requestCustom.setRequestURI("/site/preview/custompipeline/pipelines/custom");
+            requestCustom.setContextPath("/site");
 
             MockHttpServletRequest requestGeneral = new MockHttpServletRequest();
             
@@ -337,13 +284,14 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             requestGeneral.setScheme("http");
             requestGeneral.setServerName("127.0.0.1");
             requestGeneral.addHeader("Host", "127.0.0.1");
-            requestGeneral.setRequestURI("/preview/custompipeline/pipelines/general");
+            requestGeneral.setRequestURI("/site/preview/custompipeline/pipelines/general");
+            requestGeneral.setContextPath("/site");
             
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 
                 // requestCustom
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(requestCustom), HstRequestUtils.getRequestPath(requestCustom));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(requestCustom), requestCustom.getContextPath(), HstRequestUtils.getRequestPath(requestCustom));
                 requestCustom.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(requestCustom, response);
@@ -353,7 +301,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("Expected pipeline name is 'MyCustomPipeline' ", "MyCustomPipeline".equals(customResolvedSiteMapItem.getNamedPipeline()));
                 
                 // requestGeneral
-                ResolvedSiteMount mountGeneral = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(requestGeneral), HstRequestUtils.getRequestPath(requestGeneral));
+                ResolvedSiteMount mountGeneral = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(requestGeneral), requestGeneral.getContextPath(), HstRequestUtils.getRequestPath(requestGeneral));
                 requestGeneral.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mountGeneral);
                 HstContainerURL hstContainerURL2 = hstURLFactory.getContainerURLProvider().parseURL(requestGeneral, response);
                 ResolvedSiteMapItem generalResolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL2);
@@ -381,11 +329,12 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setScheme("http");
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
-            request.setRequestURI("");
+            request.setRequestURI("/site");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 // since the requestURI is empty, we expect a fallback to the configured homepage:
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 
@@ -409,11 +358,12 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setScheme("http");
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
-            request.setRequestURI("/preview/x/y/z/a/b/c");
+            request.setRequestURI("/site/preview/x/y/z/a/b/c");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 
@@ -440,12 +390,13 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setScheme("http");
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
-            request.setRequestURI("/preview/services");
+            request.setRequestURI("/site/preview/services");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 
                 // since the requestURI is empty, we expect a fallback to the configured homepage:
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
 
                 assertTrue("The mount for /preview/services is should return not", !mount.getSiteMount().isSiteMount());
                 assertNull("An not mounted sitemount should have a HstSite that is null", mount.getSiteMount().getHstSite());
@@ -481,19 +432,21 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setScheme("http");
             request.setServerName("www.onehippo.test");
             request.addHeader("Host", "www.onehippo.test");
-            request.setRequestURI("/news/2009");
+            request.setRequestURI("/site/news/2009");
+            request.setContextPath("/site");
             
             MockHttpServletRequest previewRequest = new MockHttpServletRequest();
             previewRequest.setLocalPort(8081);
             previewRequest.setScheme("http");
             previewRequest.setServerName("www.onehippo.test");
             previewRequest.addHeader("Host", "preview.onehippo.test");
-            previewRequest.setRequestURI("");
+            previewRequest.setRequestURI("/site");
+            previewRequest.setContextPath("/site");
             try {
                 
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -503,9 +456,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // second test: change request uri to "" : the expected resolvedSiteMapItem is now the homepage from the www.onehippo.test, thus myhometest2
                 // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest2 = _default_ , we should have myparam='myhometest2'
-                request.setRequestURI("");
+                request.setRequestURI("/site");
                 
-                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
+                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -516,7 +469,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest1 = _default_ , we should have myparam='myhometest1'
                
                 
-                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), HstRequestUtils.getRequestPath(previewRequest));
+                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
                 previewRequest.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -526,9 +479,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // fourth test: change request uri to "/custompipeline" : the expected resolvedSiteMapItem is now the homepage from the preview.onehippo.test/custompipeline, thus mycustomhometestpreview
                 // since we have a parameter configured as testparam = ${1} and the expected match for /mycustomhometestpreview = _default_ , we should have myparam='mycustomhometestpreview'
                 
-                previewRequest.setRequestURI("/custompipeline");
+                previewRequest.setRequestURI("/site/custompipeline");
                 
-                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), HstRequestUtils.getRequestPath(previewRequest));
+                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
                 // The custompipeline sitemount also has hst:versioninpreviewheader = false
                 assertFalse("The mount for custompipeline should return false for version in preview header but returned true",mount.getSiteMount().isVersionInPreviewHeader());
                 

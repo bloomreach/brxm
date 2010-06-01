@@ -178,15 +178,9 @@ public interface SiteMount {
     
     /**
      * 
-     * @return <code>true</code> when an externalized (starting with http/https) should contain a port number
+     * @return <code>null</code> or empty if the contextPath does not matter, otherwise it returns the value the contextPath must have a possible to match to this SiteMount
      */
-    boolean isPortVisible();
-
-    /**
-     * 
-     * @return when {@link #isPortVisible()} returns <code>true</code> this method returns the port number of the externalized url
-     */
-    int getPortNumber();
+    String onlyForContextPath();
     
     /**
      * @return the homepage for this SiteMount or <code>null</code> when not present
@@ -227,5 +221,11 @@ public interface SiteMount {
      * @return the HstSiteMapMatcher implementation
      */
     HstSiteMapMatcher getHstSiteMapMatcher();
+    
+    /**
+     * for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
+     * @return the embedded sitemount path and <code>null</code> if not present
+     */
+    String getEmbeddedSiteMountPath();
     
 }
