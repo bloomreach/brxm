@@ -38,9 +38,8 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
     
-    private Map<String, VirtualHostService> childVirtualHosts = new VirtualHostHashMap<String, VirtualHostService>();
+    private Map<String, VirtualHostService> childVirtualHosts = VirtualHostsService.createVirtualHostHashMap();
    
-    private String id;
     private String name;
     private String hostName;
     /**
@@ -68,14 +67,12 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private boolean contextPathInUrl;
     private String scheme;
 
-    public VirtualHostService(VirtualHostsService virtualHosts,Node virtualHostNode, VirtualHostService parentHost) throws ServiceException {
+    public VirtualHostService(VirtualHostsService virtualHosts,Node virtualHostNode, VirtualHostService parentHost) throws ServiceException {        
         super(virtualHostNode);
-
+      
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
-        this.id = this.getValueProvider().getPath();
-        this.jcrPath = this.id;
-        
+        this.jcrPath =  this.getValueProvider().getPath();
         if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
         } else {
@@ -210,7 +207,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         super(null);
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
-        this.id = parent.id+"_";
         this.jcrPath = parent.jcrPath;
         this.scheme = parent.scheme;
         this.homepage = parent.homepage;
@@ -233,10 +229,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     
     public String getHostName(){
         return hostName;
-    }
-    
-    public String getId(){
-        return id;
     }
     
     public boolean isContextPathInUrl() {
@@ -317,23 +309,6 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         return builder.toString();
     }
 
-    
-    private class VirtualHostHashMap<K,V> extends HashMap<K,V> {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public V put(K key, V value) {
-            V prev = get(key);
-            if(prev != null) {
-                throw new IllegalArgumentException("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured" +
-                		"as 'preview.mycompany.org' and 'www.mycompany.org' where mycompany.org is duplicate because both for preview and for www. In that case, make sure to " +
-                		"configure them hierarchically as org -> mycompany -> (preview , www)");
-            }
-            return super.put(key, value);
-        }
-        
-        
-    }
+   
     
 }

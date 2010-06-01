@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -47,8 +45,8 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     public final static String DEFAULT_SCHEME = "http";
 
     private VirtualHostsManager virtualHostsManager;
-    private Map<String, VirtualHostService> rootVirtualHosts = new HashMap<String, VirtualHostService>();
-    private List<VirtualHost> allVirtualHosts = new ArrayList<VirtualHost>();
+    private Map<String, VirtualHostService> rootVirtualHosts = createVirtualHostHashMap();
+  
     private String defaultHostName;
     /**
      * The homepage for this VirtualHosts. When the backing configuration does not contain a homepage, the value is <code>null
@@ -202,25 +200,25 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     /**
      * Override this method if you want a different algorithm to resolve hostName
      * @param hostName
-     * @param host
-     * @return the matched virtual host
+     * @param portNumber
+     * @return the matched virtual host or <code>null</code> when no host can be matched
      */
     protected ResolvedVirtualHost findMatchingVirtualHost(String hostName, int portNumber) {
         String[] requestServerNameSegments = hostName.split("\\.");
         int depth = requestServerNameSegments.length - 1;
         
-        for(VirtualHostService virtualHost : rootVirtualHosts.values()) {
-            // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
-            // with their id, hence, we cannot get them directly, but have to test them all
-            if(requestServerNameSegments[depth].equals(virtualHost.getName())) {
-               VirtualHost host = traverseInToHost(virtualHost, requestServerNameSegments, depth);
-               if(host == null) {
-                   return null;
-               }
-               return new ResolvedVirtualHostImpl(host, hostName, portNumber);
-            }
+        VirtualHost host  = rootVirtualHosts.get(requestServerNameSegments[depth]);
+        if(host == null) {
+          return null;   
         }
-        return null;
+        
+        host = traverseInToHost(host, requestServerNameSegments, depth);
+        
+        if(host == null) {
+            return null;
+        }
+        return new ResolvedVirtualHostImpl(host, hostName, portNumber);
+      
     }
     
     /**
@@ -255,25 +253,14 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
            if(virtualHostNode == null) {continue;}
            try {
                VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null);
-               this.rootVirtualHosts.put(virtualHost.getId(), virtualHost);
+               this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
            } catch (ServiceException e) {
                log.warn("Unable to initialize VirtualHost for '{}'. Skipping. {}", virtualHostNode.getPath(), e.getMessage());
            }
        }
        
-       // populate the allVirtualHosts 
-       for(VirtualHost host : rootVirtualHosts.values()) {
-           populateAllVHosts(host);
-       }
-       
     }
 
-    private void populateAllVHosts(VirtualHost host) {
-        allVirtualHosts.add(host);
-        for(VirtualHost childHost : host.getChildHosts()) {
-            populateAllVHosts(childHost);
-        }
-    }
 
     public Service[] getChildServices() {
         return rootVirtualHosts.values().toArray(new Service[rootVirtualHosts.values().size()]);
@@ -310,6 +297,37 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
 
     public boolean isVersionInPreviewHeader(){
         return versionInPreviewHeader;
+    }
+    
+    /**
+     * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
+     */
+    public final static HashMap<String, VirtualHostService> createVirtualHostHashMap(){
+        return new VirtualHostHashMap<String, VirtualHostService>();
+    }
+    
+    /**
+     * A  HashMap<K,V> that throws an exception when you put in the same key twice
+     *
+     * @param <K>
+     * @param <V>
+     */
+    private static class VirtualHostHashMap<K, V> extends HashMap<K, V> {
+        
+        private static final long serialVersionUID = 1L;
+    
+        @Override
+        public V put(K key, V value) {
+            V prev = get(key);
+            if (prev != null) {
+                throw new IllegalArgumentException(
+                        "VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
+                                + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
+                                + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
+            }
+            return super.put(key, value);
+        }
+        
     }
     
 }
