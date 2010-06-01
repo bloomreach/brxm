@@ -13,10 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui.upload;
+package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
 import net.sf.json.JsonConfig;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
@@ -24,16 +27,13 @@ import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-import org.hippoecm.frontend.plugins.yui.layout.YuiId;
-import org.hippoecm.frontend.plugins.yui.layout.YuiIdProcessor;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
-    final static String SVN_ID = "$Id$";
-
-    private final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(AjaxMultiFileUploadBehavior.class,
-            "add_upload.js");
+    @SuppressWarnings("unused")
+    private static final String SVN_ID = "$Id$";
 
 
     DynamicTextTemplate template;
@@ -41,7 +41,7 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
     public AjaxMultiFileUploadBehavior(final AjaxMultiFileUploadSettings settings) {
         super(settings);
 
-        template = new DynamicTextTemplate(behaviorJs) {
+        template = new DynamicTextTemplate(new PackagedTextTemplate(getClass(), "add_upload.js")) {
 
             @Override
             public String getId() {
@@ -64,6 +64,7 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
     @Override
     public void addHeaderContribution(IYuiContext context) {
+        context.addCssReference(new ResourceReference(AjaxMultiFileUploadBehavior.class, "skin.css"));
         context.addModule(HippoNamespace.NS, "upload");
         context.addTemplate(template);
         context.addOnWinLoad("YAHOO.hippo.Upload.render()");
@@ -71,5 +72,13 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
     @Override
     protected void respond(AjaxRequestTarget ajaxRequestTarget) {
+        HttpServletRequest r = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
+        if(r.getParameter("finished") != null && r.getParameter("finished").equals("true")) {
+            onFinish(ajaxRequestTarget);
+        }
     }
+
+    protected void onFinish(AjaxRequestTarget ajaxRequestTarget) {
+    }
+
 }

@@ -13,11 +13,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui.upload;
+package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
 import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 
 public class AjaxMultiFileUploadSettings extends AjaxSettings {
     final static String SVN_ID = "$Id$";
 
+    private String flashUrl;
+    private String uploadUrl;
+    private String[] fileExtensions;
+
+    public String[] getFileExtensions() {
+        return fileExtensions;
+    }
+
+    public void setFileExtensions(String[] fileExtensions) {
+        this.fileExtensions = fileExtensions;
+    }
+
+    public String getUploadUrl() {
+        return uploadUrl;
+    }
+
+    public void setUploadUrl(String uploadUrl) {
+        this.uploadUrl = uploadUrl;
+    }
+
+    public String getFlashUrl() {
+        return flashUrl;
+    }
+
+    public void setFlashUrl(String flashUrl) {
+        this.flashUrl = flashUrl;
+    }
 }

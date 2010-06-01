@@ -1,5 +1,5 @@
 <!--
-  Copyright 2008 Hippo
+  Copyright 2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -15,11 +15,21 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-    <wicket:enclosure child="type">
-        <label for="typeselect">
-            <wicket:message key="file-type-label"/>
+    <div class="hippo-dialog-container">
+        <label>
+            <wicket:message key="select-file-label"/>
         </label>
-        <select wicket:id="type" id="typeselect"/>
-    </wicket:enclosure>
+
+        <div wicket:id="upload">Upload widget</div>
+
+        <wicket:child/>
+
+        <!--<wicket:enclosure child="type">-->
+            <!--<label for="typeselect">-->
+                <!--<wicket:message key="file-type-label"/>-->
+            <!--</label>-->
+            <!--<select wicket:id="type" id="typeselect"/>-->
+        <!--</wicket:enclosure>-->
+    </div>
 </wicket:extend>
 </html>
