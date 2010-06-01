@@ -25,16 +25,13 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
-import org.hippoecm.frontend.plugins.yui.upload.UploadWidget;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -50,7 +47,6 @@ import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.List;
 
 public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
@@ -59,58 +55,11 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
-    public class UploadDialog extends AbstractDialog {
+    public class UploadDialog extends org.hippoecm.frontend.plugins.yui.upload.UploadDialog {
         private static final long serialVersionUID = 1L;
 
-        private final UploadWidget uploadWidget;
-        public String type;
-
-        public UploadDialog() {
-            super();
-            setMultiPart(true);
-            setOutputMarkupId(true);
-            setNonAjaxSubmit();
-
-            add(uploadWidget = new UploadWidget("uploadWidget"));
-            setFocus(uploadWidget.getFocusComponent());
-
-            List<String> galleryTypes = null;
-            try {
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
-                        .getDefaultModel();
-                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
-                        .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
-                if (workflow == null) {
-                    GalleryWorkflowPlugin.log.error("No gallery workflow accessible");
-                } else {
-                    galleryTypes = workflow.getGalleryTypes();
-                }
-            } catch (MappingException ex) {
-                GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
-            } catch (RepositoryException ex) {
-                GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
-            } catch (RemoteException ex) {
-                GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
-            }
-            if (galleryTypes != null && galleryTypes.size() > 1) {
-                DropDownChoice folderChoice;
-                type = galleryTypes.get(0);
-                add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
-                        new TypeChoiceRenderer(this)));
-                folderChoice.setNullValid(false);
-                folderChoice.setRequired(true);
-            } else if (galleryTypes != null && galleryTypes.size() == 1) {
-                type = galleryTypes.get(0);
-                Component component;
-                add(component = new Label("type", type));
-                component.setVisible(false);
-            } else {
-                type = null;
-                Component component;
-                add(component = new Label("type", "default"));
-                component.setVisible(false);
-            }
+        public UploadDialog(String[] fileExtensions) {
+            super(fileExtensions);
         }
 
         public IModel getTitle() {
@@ -119,92 +68,84 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         }
 
         @Override
-        public IValueMap getProperties() {
-            return MEDIUM;
-        }
-
-        @Override
-        protected void onOk() {
-            Collection<FileUpload> uploads = uploadWidget.getUploads();
-            if (uploads != null) {
-                for (FileUpload upload : uploads) {
-                    if (upload != null) {
-                        try {
-                            String filename = upload.getClientFileName();
-                            String mimetype;
-
-                            mimetype = upload.getContentType();
-                            InputStream istream = upload.getInputStream();
-                            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                            HippoNode node = null;
-                            try {
-                                WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
-                                        .getDefaultModel();
-                                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(
-                                        GalleryWorkflowPlugin.this
-                                                .getPluginConfig().getString("workflow.categories"),
-                                        workflowDescriptorModel.getNode());
-                                String nodeName = getNodeNameCodec().encode(filename);
-                                String localName = getLocalizeCodec().encode(filename);
-                                Document document = workflow.createGalleryItem(nodeName, type);
-                                node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(
-                                        document.getIdentity());
-                                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                                if (!node.getLocalizedName().equals(localName)) {
-                                    defaultWorkflow.localizeName(localName);
-                                }
-                            } catch (WorkflowException ex) {
-                                GalleryWorkflowPlugin.log.error(ex.getMessage());
-                                error(ex);
-                            } catch (MappingException ex) {
-                                GalleryWorkflowPlugin.log.error(ex.getMessage());
-                                error(ex);
-                            } catch (RepositoryException ex) {
-                                GalleryWorkflowPlugin.log.error(ex.getMessage());
-                                error(ex);
-                            }
-                            if (node != null) {
-                                try {
-                                    ImageUtils.galleryProcessor(getPluginConfig()).makeImage(node, istream, mimetype,
-                                            filename);
-                                    node.getSession().save();
-                                } catch (RepositoryException ex) {
-                                    GalleryWorkflowPlugin.log.error(ex.getMessage());
-                                    error(ex);
-                                    try {
-                                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core",
-                                                node);
-                                        defaultWorkflow.delete();
-                                    } catch (WorkflowException e) {
-                                        GalleryWorkflowPlugin.log.error(e.getMessage());
-                                    } catch (MappingException e) {
-                                        GalleryWorkflowPlugin.log.error(e.getMessage());
-                                    } catch (RepositoryException e) {
-                                        GalleryWorkflowPlugin.log.error(e.getMessage());
-                                    }
-                                    try {
-                                        node.getSession().refresh(false);
-                                    } catch (RepositoryException e) {
-                                        // deliberate ignore
-                                    }
-                                }
-                            }
-                        } catch (IOException ex) {
-                            GalleryWorkflowPlugin.log.info("upload of image truncated");
-                            error((new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this,
-                                    null).getString()));
-                        }
-                    } else {
-                        error(new StringResourceModel("no-file-uploaded-label", GalleryWorkflowPlugin.this,
-                                null).getString());
-                    }
-                }
-            }
+        protected void handleUploadItem(FileUpload upload) {
+            createGalleryItem(upload);
         }
     }
 
+    public String type;
+
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    private void createGalleryItem(FileUpload upload) {
+        try {
+            String filename = upload.getClientFileName();
+            String mimetype;
+
+            mimetype = upload.getContentType();
+            InputStream istream = upload.getInputStream();
+            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+            HippoNode node = null;
+            try {
+                WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
+                        .getDefaultModel();
+                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(
+                        GalleryWorkflowPlugin.this
+                                .getPluginConfig().getString("workflow.categories"),
+                        workflowDescriptorModel.getNode());
+                String nodeName = getNodeNameCodec().encode(filename);
+                String localName = getLocalizeCodec().encode(filename);
+                Document document = workflow.createGalleryItem(nodeName, type);
+                node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(
+                        document.getIdentity());
+                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                if (!node.getLocalizedName().equals(localName)) {
+                    defaultWorkflow.localizeName(localName);
+                }
+            } catch (WorkflowException ex) {
+                GalleryWorkflowPlugin.log.error(ex.getMessage());
+                error(ex);
+            } catch (MappingException ex) {
+                GalleryWorkflowPlugin.log.error(ex.getMessage());
+                error(ex);
+            } catch (RepositoryException ex) {
+                GalleryWorkflowPlugin.log.error(ex.getMessage());
+                error(ex);
+            }
+            if (node != null) {
+                try {
+                    ImageUtils.galleryProcessor(getPluginConfig()).makeImage(node, istream, mimetype,
+                            filename);
+                    node.getSession().save();
+                } catch (RepositoryException ex) {
+                    GalleryWorkflowPlugin.log.error(ex.getMessage());
+                    error(ex);
+                    try {
+                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core",
+                                node);
+                        defaultWorkflow.delete();
+                    } catch (WorkflowException e) {
+                        GalleryWorkflowPlugin.log.error(e.getMessage());
+                    } catch (MappingException e) {
+                        GalleryWorkflowPlugin.log.error(e.getMessage());
+                    } catch (RepositoryException e) {
+                        GalleryWorkflowPlugin.log.error(e.getMessage());
+                    }
+                    try {
+                        node.getSession().refresh(false);
+                    } catch (RepositoryException e) {
+                        // deliberate ignore
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            GalleryWorkflowPlugin.log.info("upload of image truncated");
+            error((new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this,
+                    null).getString()));
+        }
+
     }
 
     @Override
@@ -220,11 +161,59 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                UploadDialog dialog = new UploadDialog();
-                return dialog;
+                return createDialog();
             }
         });
         return super.createListDataProvider(list);
+    }
+
+    private Dialog createDialog() {
+        List<String> galleryTypes = null;
+        try {
+            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
+                    .getDefaultModel();
+            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
+                    .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
+            if (workflow == null) {
+                GalleryWorkflowPlugin.log.error("No gallery workflow accessible");
+            } else {
+                galleryTypes = workflow.getGalleryTypes();
+            }
+        } catch (MappingException ex) {
+            GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
+        } catch (RepositoryException ex) {
+            GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
+        } catch (RemoteException ex) {
+            GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
+        }
+
+        Component typeComponent = null;
+        if (galleryTypes != null && galleryTypes.size() > 1) {
+            DropDownChoice folderChoice;
+            type = galleryTypes.get(0);
+            typeComponent = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
+                    new TypeChoiceRenderer(this)).setNullValid(false).setRequired(true);
+        } else if (galleryTypes != null && galleryTypes.size() == 1) {
+            type = galleryTypes.get(0);
+            typeComponent = new Label("type", type).setVisible(false);
+        } else {
+            type = null;
+            typeComponent = new Label("type", "default").setVisible(false);
+        }
+
+        String[] fileExtensions = new String[0];
+        if(getPluginConfig().containsKey("file.extensions")) {
+            fileExtensions = getPluginConfig().getStringArray("file.extensions");
+        }
+        UploadDialog dialog = new UploadDialog(fileExtensions) {
+            @Override
+            protected void onOk() {
+                onModelChanged();
+            }
+        };
+        dialog.add(typeComponent);
+        return dialog;
     }
 
 }

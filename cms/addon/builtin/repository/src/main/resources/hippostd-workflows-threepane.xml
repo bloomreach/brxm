@@ -70,6 +70,12 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>shortcuts</sv:value>
       </sv:property>
+      <sv:property sv:name="file.extensions" sv:type="String">
+        <sv:value>*.jpg</sv:value>
+        <sv:value>*.jpeg</sv:value>
+        <sv:value>*.gif</sv:value>
+        <sv:value>*.png</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

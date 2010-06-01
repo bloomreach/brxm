@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.plugins.yui.upload;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.MultiFileUploadField;
@@ -25,6 +25,8 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
+import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -32,13 +34,7 @@ import java.util.LinkedList;
 public class UploadWidget extends Panel {
     final static String SVN_ID = "$Id$";
 
-    interface UploadComponent extends IClusterable {
-        Component getFocusComponent();
-        Component getComponent();
-        Collection<FileUpload> getUploads();
-    }
-
-    private final UploadComponent uploadComponent;
+    private final IUploadComponent uploadComponent;
 
     public UploadWidget(String id) {
         super(id);
@@ -46,8 +42,20 @@ public class UploadWidget extends Panel {
 
         //TODO: detect if flash is enabled, otherwise fallback to javascript which should be enough for Hippo atm.
         //For now only use default MultiFileUpload from Wicket
-        uploadComponent = new AjaxMultiFileUpload("upload");
+        uploadComponent = new AjaxMultiFileUploadComponent("upload", new AjaxMultiFileUploadSettings()) {
 
+            @Override
+            protected void processFileUpload(FileUpload fileUpload) {
+            }
+
+            @Override
+            protected void onFinish(AjaxRequestTarget target) {
+            }
+
+            @Override
+            protected void onUploadSuccess() {
+            }
+        };
         add(uploadComponent.getComponent());
 
     }
@@ -60,7 +68,7 @@ public class UploadWidget extends Panel {
         return uploadComponent.getUploads();
     }
 
-    private class MultiFileUpload extends Fragment implements UploadComponent {
+    private class MultiFileUpload extends Fragment implements IUploadComponent {
 
         private static final String MULTI_FILE_UPLOAD_CSS = "MultiFileUpload.css";
         private static final String MULTI_FILE_UPLOAD_CUSTOM_JS = "MultiFileUploadFieldCustomized.js";
@@ -105,27 +113,4 @@ public class UploadWidget extends Panel {
             container.getHeaderResponse().renderCSSReference(cssResourceReference);
         }
     }
-
-    private class AjaxMultiFileUpload implements UploadComponent {
-
-        private Component c;
-
-        public AjaxMultiFileUpload(String id) {
-
-            add(c = new AjaxMultiFileUploadComponent(id, new AjaxMultiFileUploadSettings()));
-        }
-
-        public Component getFocusComponent() {
-            return null;
-        }
-
-        public Component getComponent() {
-            return c;
-        }
-
-        public Collection<FileUpload> getUploads() {
-            return null;
-        }
-    }
-
 }

@@ -79,11 +79,11 @@ public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
         if (getSettings() != null) {
             variables.put("config", getConfigurationAsJSON());
         }
-        if (id != null) {
-            variables.put("id", id);
+        if (getId() != null) {
+            variables.put("id", getId());
         }
-        if (moduleClass != null) {
-            variables.put("class", moduleClass);
+        if (getModuleClass() != null) {
+            variables.put("class", getModuleClass());
         }
         return variables;
     }
