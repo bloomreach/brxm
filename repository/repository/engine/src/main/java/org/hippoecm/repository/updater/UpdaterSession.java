@@ -310,6 +310,22 @@ final public class UpdaterSession implements HippoSession {
     public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException {
         UpdaterNode node = (UpdaterNode) getItem(srcAbsPath);
         UpdaterNode destination = (UpdaterNode) getItem(destAbsPath.substring(0, destAbsPath.lastIndexOf("/")));
+        if (node.predecessor == null) {
+            node.parent.head = node.successor;
+        } else {
+            node.predecessor.successor = node.successor;
+        }
+        if (node.successor == null) {
+            node.parent.tail = node.predecessor;
+        } else {
+            node.successor.predecessor = node.predecessor;
+        }
+        node.predecessor = destination.tail;
+        node.successor = null;
+        if (node.predecessor != null) {
+            node.predecessor.successor = node;
+        }
+        destination.tail = node;
         node.parent = destination;
         node.setName(destAbsPath.substring(destAbsPath.lastIndexOf("/")));
     }

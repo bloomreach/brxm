@@ -74,7 +74,15 @@ final public class UpdaterNode extends UpdaterItem implements Node {
     Map<UpdaterItem, String> reverse;// = new HashMap<UpdaterItem, String>();
     Set<UpdaterItem> removed;// = new HashSet<UpdaterItem>();
 
-    UpdaterNode(UpdaterSession session, UpdaterNode target) {
+    // ordering with respect to siblings
+    UpdaterNode predecessor;
+    UpdaterNode successor;
+
+    // child node ordering
+    UpdaterNode head;
+    UpdaterNode tail;
+
+    UpdaterNode(UpdaterSession session, UpdaterNode target) throws RepositoryException {
         super(session, target);
         hollow = false;
         children = new LinkedHashMap<String, List<UpdaterItem>>();
@@ -108,13 +116,24 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         children = new LinkedHashMap<String, List<UpdaterItem>>();
         reverse = new HashMap<UpdaterItem, String>();
         removed = new HashSet<UpdaterItem>();
+        UpdaterNode predecessor = null;
         for (NodeIterator iter = ((Node) origin).getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
             String name = child.getName();
             if (!children.containsKey(name))
                 children.put(name, new LinkedList<UpdaterItem>());
             List<UpdaterItem> siblings = children.get(name);
-            siblings.add(new UpdaterNode(session, child, this));
+            UpdaterNode updaterNode = new UpdaterNode(session, child, this);
+            siblings.add(updaterNode);
+            if (predecessor != null) {
+                updaterNode.predecessor = predecessor;
+                predecessor.successor = updaterNode;
+            }
+            predecessor = updaterNode;
+            if (head == null) {
+                head = updaterNode;
+            }
+            tail = updaterNode;
         }
         for (PropertyIterator iter = ((Node) origin).getProperties(); iter.hasNext();) {
             Property child = iter.nextProperty();
@@ -395,6 +414,18 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     }
                 }
             }
+            
+            Node originNode = (Node) origin;
+            if (originNode.getPrimaryNodeType().hasOrderableChildNodes() && tail != null) {
+                UpdaterNode cursor = tail.predecessor;
+                while (cursor != null) {
+                    Node sucessorNode = (Node) cursor.successor.origin;
+                    Node cursorNode = (Node) cursor.origin;
+                    originNode.orderBefore(cursorNode.getName() + "[" + cursorNode.getIndex() + "]",
+                            sucessorNode.getName() + "[" + sucessorNode.getIndex() + "]");
+                    cursor = cursor.predecessor;
+                }
+            }
             for (UpdaterItem item : removed) {
                 if (item.origin != null) {
                     ItemDefinition definition = ( item.origin.isNode() ? ((Node)item.origin).getDefinition() : ((Property)item.origin).getDefinition() );
@@ -552,6 +583,23 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         visitor.visit(this);
     }
 
+    @Override
+    public void remove() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        if (predecessor != null) {
+            predecessor.successor = successor;
+        }
+        if (successor != null) {
+            successor.predecessor = predecessor;
+        }
+        if (parent.tail == this) {
+            parent.tail = predecessor;
+        }
+        if (parent.head == this) {
+            parent.head = successor;
+        }
+        super.remove();
+    }
+
     // javax.jcr.Node interface
 
     public Node addNode(String relPath) throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException {
@@ -561,13 +609,11 @@ final public class UpdaterNode extends UpdaterItem implements Node {
 
     public Node addNode(String relPath, String primaryNodeTypeName) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
         substantiate();
-        Node node = this;
         String name = relPath;
         if (relPath.contains("/")) {
             HierarchyResolver manager = ((HippoWorkspace) (session.getWorkspace())).getHierarchyResolver();
             HierarchyResolver.Entry last = new HierarchyResolver.Entry();
             manager.getItem(this, relPath, false, last);
-            node = last.node;
             name = last.relPath;
             if (name.contains("/")) {
                 throw new PathNotFoundException(name.substring(0, name.lastIndexOf("/")));
@@ -577,6 +623,14 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             name = name.substring(0, name.indexOf("["));
         }
         UpdaterNode child = new UpdaterNode(session, this);
+        if (tail != null) {
+            child.predecessor = tail;
+            tail.successor = child;
+        }
+        tail = child;
+        if (head == null) {
+            head = child;
+        }
         List<UpdaterItem> siblings;
         if (children.containsKey(name)) {
             siblings = children.get(name);
@@ -590,12 +644,74 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         return child;
     }
 
-    @Deprecated
+    // FIXME: test whether this actually works
     public void orderBefore(String srcChildRelPath, String destChildRelPath) throws UnsupportedRepositoryOperationException, VersionException, ConstraintViolationException, ItemNotFoundException, LockException, RepositoryException {
         substantiate();
-        if (srcChildRelPath.contains("/") || destChildRelPath.contains("/"))
+        if (srcChildRelPath.contains("/") || (destChildRelPath != null && destChildRelPath.contains("/")))
             throw new ConstraintViolationException();
-        throw new UpdaterException("illegal method");
+        if (!getPrimaryNodeType().hasOrderableChildNodes())
+            throw new UnsupportedRepositoryOperationException();
+        UpdaterNode srcNode = (UpdaterNode) getItem(srcChildRelPath, false);
+        if (destChildRelPath == null) {
+            // order last
+            if (tail == srcNode) {
+                return;
+            }
+
+            UpdaterNode predecessor = srcNode.predecessor;
+            UpdaterNode successor = srcNode.successor;
+            if (predecessor != null) {
+                predecessor.successor = successor;
+            }
+            if (successor != null) {
+                successor.predecessor = predecessor;
+            }
+            if (head == srcNode && tail != srcNode) {
+                head = srcNode.successor;
+            }
+            tail.successor = srcNode;
+            srcNode.predecessor = tail;
+            srcNode.successor = null;
+            tail = srcNode;
+
+            LinkedList<UpdaterItem> siblings = (LinkedList<UpdaterItem>) children.get(srcNode.getName());
+            siblings.remove(srcNode);
+            siblings.addLast(srcNode);
+        } else {
+            UpdaterNode destNode = (UpdaterNode) getItem(destChildRelPath, false);
+            if (srcNode == destNode || srcNode.predecessor == null || destNode.successor == null
+                    || srcNode.successor == destNode || tail == destNode || head == srcNode) {
+                return;
+            }
+
+            if (head == destNode) {
+                head = srcNode;
+            }
+            if (tail == srcNode) {
+                tail = srcNode.predecessor;
+            }
+            srcNode.predecessor.successor = srcNode.successor;
+            srcNode.successor.predecessor = srcNode.predecessor;
+            srcNode.predecessor = destNode.predecessor;
+            srcNode.successor = destNode;
+            destNode.predecessor = srcNode;
+
+            int index = 0;
+            String name = srcNode.getName();
+            UpdaterNode cursor = head;
+            while (cursor != null) {
+                if (cursor == srcNode) {
+                    break;
+                }
+                if (name.equals(cursor.getName())) {
+                    index++;
+                }
+                cursor = cursor.successor;
+            }
+            LinkedList<UpdaterItem> siblings = (LinkedList<UpdaterItem>) children.get(srcNode.getName());
+            siblings.remove(srcNode);
+            siblings.add(index, srcNode);
+        }
     }
 
     public Property setProperty(String name, Value value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
