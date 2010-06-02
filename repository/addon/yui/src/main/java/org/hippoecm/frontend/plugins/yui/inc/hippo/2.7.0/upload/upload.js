@@ -139,8 +139,8 @@ if (!YAHOO.hippo.Upload) {
                 //this.uploader.setAllowLogging(true);
 
                 // Allows multiple file selection in "Browse" dialog.
-                this.uploader.setAllowMultipleFiles(true);
-                this.uploader.setSimUploadLimit(3);
+                this.uploader.setAllowMultipleFiles(this.config.allowMultipleFiles);
+                this.uploader.setSimUploadLimit(this.config.simultaneousUploadLimit);
 
                 if(this.config.fileExtensions != null && this.config.fileExtensions.length > 0) {
                     var allowedExtensions = '';

@@ -20,9 +20,36 @@ import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 public class AjaxMultiFileUploadSettings extends AjaxSettings {
     final static String SVN_ID = "$Id$";
 
+    //URL of the Flash file
     private String flashUrl;
+
+    //URL that is used to upload files; must include a session ID
     private String uploadUrl;
+
+    //Allowed file extensions; format is [ "*.jpg", "*.gif" ] etc
     private String[] fileExtensions;
+
+    //Set to true if Browse dialog should allow multiple file selection
+    private boolean allowMultipleFiles = true;
+
+    //Max number of simultaneous uploads 
+    private int simultaneousUploadLimit = 3;
+
+    public boolean isAllowMultipleFiles() {
+        return allowMultipleFiles;
+    }
+
+    public void setAllowMultipleFiles(boolean allowMultipleFiles) {
+        this.allowMultipleFiles = allowMultipleFiles;
+    }
+
+    public int getSimultaneousUploadLimit() {
+        return simultaneousUploadLimit;
+    }
+
+    public void setSimultaneousUploadLimit(int simultaneousUploadLimit) {
+        this.simultaneousUploadLimit = simultaneousUploadLimit;
+    }
 
     public String[] getFileExtensions() {
         return fileExtensions;
