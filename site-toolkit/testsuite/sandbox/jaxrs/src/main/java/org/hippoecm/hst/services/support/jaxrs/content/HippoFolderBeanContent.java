@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -31,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * HippoFolderBeanContent
@@ -43,7 +40,6 @@ public class HippoFolderBeanContent extends HippoBeanContent {
     
     private Collection<HippoFolderBeanContent> childFolderBeanContents;
     private Collection<HippoDocumentBeanContent> childDocumentBeanContents;
-    private Collection<NodeContent> childNodeContents;
     
     public HippoFolderBeanContent() {
         super();
@@ -81,16 +77,6 @@ public class HippoFolderBeanContent extends HippoBeanContent {
             if (docBean != null) {
                 childDocumentBeanContents.add(new HippoDocumentBeanContent(docBean.getName(), docBean.getPath()));
                 childNodePathSet.add(docBean.getPath());
-            }
-        }
-
-        childNodeContents = new ArrayList<NodeContent>();
-        
-        for (NodeIterator nodeIt = bean.getNode().getNodes(); nodeIt.hasNext(); ) {
-            Node childNode = nodeIt.nextNode();
-            
-            if (childNode != null && !childNode.isNodeType(HippoNodeType.NT_HANDLE) && !childNodePathSet.contains(childNode.getPath())) {
-                childNodeContents.add(new NodeContent(childNode.getName(), childNode.getPath()));
             }
         }
     }
