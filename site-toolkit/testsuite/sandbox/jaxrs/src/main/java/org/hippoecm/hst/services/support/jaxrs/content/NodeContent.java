@@ -42,7 +42,7 @@ public class NodeContent extends ItemContent {
     private String primaryNodeTypeName;
     private String uuid;
     private Collection<PropertyContent> propertyContents;
-    private Collection<NodeContent> childNodeContents;
+    private Collection<NodeContent> children;
     
     public NodeContent() {
         super();
@@ -81,13 +81,13 @@ public class NodeContent extends ItemContent {
             }
         }
         
-        childNodeContents = new ArrayList<NodeContent>();
+        children = new ArrayList<NodeContent>();
         
         for (NodeIterator it = node.getNodes(); it.hasNext(); ) {
             Node childNode = it.nextNode();
             
             if (childNode != null) {
-                childNodeContents.add(new NodeContent(childNode.getName(), childNode.getPath()));
+                children.add(new NodeContent(childNode.getName(), childNode.getPath()));
             }
         }
     }
@@ -130,14 +130,14 @@ public class NodeContent extends ItemContent {
         return null;
     }
     
-    @XmlElementWrapper(name="nodes")
+    @XmlElementWrapper(name="children")
     @XmlElements(@XmlElement(name="node"))
-    public Collection<NodeContent> getChildNodeContents() {
-        return childNodeContents;
+    public Collection<NodeContent> getChildren() {
+        return children;
     }
     
-    public void setChildNodeContents(List<NodeContent> childNodeContents) {
-        this.childNodeContents = childNodeContents;
+    public void setChildren(List<NodeContent> children) {
+        this.children = children;
     }
     
     public void buildChildUris(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
@@ -147,8 +147,8 @@ public class NodeContent extends ItemContent {
             }
         }
         
-        if (childNodeContents != null) {
-            for (NodeContent nodeContent : childNodeContents) {
+        if (children != null) {
+            for (NodeContent nodeContent : children) {
                 nodeContent.buildUri(urlBase, siteContentPath, encoding);
             }
         }

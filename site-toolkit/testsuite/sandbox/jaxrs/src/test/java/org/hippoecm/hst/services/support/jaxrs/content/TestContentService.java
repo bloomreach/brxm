@@ -234,7 +234,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         assertEquals("document", root.getNodeName());
         
         XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile("string(/document/nodes/node[string(./name)='testproject:body']/uri)");
+        XPathExpression expr = xpath.compile("string(/document/children/node[string(./name)='testproject:body']/uri)");
         assertEquals("http://localhost:8085/testapp/preview/services/contentservice/Products/HippoCMS/HippoCMS/testproject:body",
                 expr.evaluate(document));
         expr = xpath.compile("string(/document/properties/property[string(./name)='testproject:title']/uri)");
