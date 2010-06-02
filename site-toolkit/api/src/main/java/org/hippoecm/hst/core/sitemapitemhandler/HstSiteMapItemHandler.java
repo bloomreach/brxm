@@ -42,7 +42,7 @@ public interface HstSiteMapItemHandler {
      * @param resolvedSiteMapItem
      * @param request
      * @param response
-     * @return
+     * @return a new or the original {@link ResolvedSiteMapItem}, or <code>null</code> when the handler did for example already write the entire <code>response</code> and request processing can be stopped
      * @throws HstSiteMapItemHandlerException
      */
     ResolvedSiteMapItem process(ResolvedSiteMapItem resolvedSiteMapItem, HttpServletRequest request, HttpServletResponse response) throws HstSiteMapItemHandlerException;

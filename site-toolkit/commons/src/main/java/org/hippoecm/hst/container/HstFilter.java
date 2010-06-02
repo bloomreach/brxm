@@ -16,6 +16,7 @@
 package org.hippoecm.hst.container;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -39,6 +41,9 @@ import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -69,6 +74,9 @@ public class HstFilter implements Filter {
     protected ComponentManager clientComponentManager;
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     protected HstContainerConfig requestContainerConfig;
+    
+    protected VirtualHostsManager virtualHostsManager;
+    protected HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
     
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
@@ -105,6 +113,19 @@ public class HstFilter implements Filter {
             return;
         }
         
+
+        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+        
+        virtualHostsManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
+        if(virtualHostsManager != null) {
+            siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
+            if(siteMapItemHandlerFactory == null) {
+                logger.error("Cannot find the siteMapItemHandlerFactory component");
+            }
+        } else {
+            logger.error("Cannot find the virtualHostsManager component for '{}'", VirtualHostsManager.class.getName());
+        }
+        
         if (clientComponentManager != null) {
             try {
                 clientComponentManager.stop();
@@ -130,6 +151,7 @@ public class HstFilter implements Filter {
                 clientComponentManager.initialize();
                 clientComponentManager.start();
                 config.getServletContext().setAttribute(clientComponentManagerContextAttributeName, clientComponentManager);
+                
             }
         } 
         catch (Exception e) {
@@ -180,6 +202,12 @@ public class HstFilter implements Filter {
                 doInit(filterConfig);
             }
             
+            if(this.siteMapItemHandlerFactory == null || this.virtualHostsManager == null) {
+                res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
+                return;
+            }
+            
             if (this.requestContainerConfig == null) {
                 this.requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
             }
@@ -190,9 +218,8 @@ public class HstFilter implements Filter {
             
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
             
-            VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
-            VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
-            
+            VirtualHosts vHosts = virtualHostsManager.getVirtualHosts();
+           
             if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(req))) {
                 chain.doFilter(request, response);
                 return;
@@ -208,7 +235,7 @@ public class HstFilter implements Filter {
                         
                         // now we can parse the url *with* a RESOLVED_SITEMOUNT which is needed!
                         
-                        HstURLFactory factory = virtualHostManager.getUrlFactory();
+                        HstURLFactory factory = virtualHostsManager.getUrlFactory();
                         HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(req, res);
                         req.setAttribute(HstContainerURL.class.getName(), hstContainerURL);
                         
@@ -219,7 +246,12 @@ public class HstFilter implements Filter {
                                 throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
                             }
                             
-                            // run the sitemap handlers if present
+                            // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
+                            resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, req, res);
+                            if(resolvedSiteMapItem == null) {
+                                // one of the handlers has finished the request already
+                                return;
+                            }
                             
                             if (resolvedSiteMapItem.getErrorCode() > 0) {
                                 try {
@@ -258,7 +290,7 @@ public class HstFilter implements Filter {
                     } else {
                         throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
                     }
-                }catch (MatchException e) {
+                } catch (MatchException e) {
                     logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: {}" , e.getMessage());
                 	res.sendError(HttpServletResponse.SC_NOT_FOUND);
                 } 
@@ -286,6 +318,40 @@ public class HstFilter implements Filter {
                 }
             }
         }
+    }
+
+    /**
+     * This method is invoked for every {@link HstSiteMapItemHandler} from the resolvedSiteMapItem that was matched from {@link ResolvedSiteMount#matchSiteMapItem(HstContainerURL)}. 
+     * If in the for loop the <code>orginalResolvedSiteMapItem</code> switches to a different newResolvedSiteMapItem, then still
+     * the handlers for  <code>orginalResolvedSiteMapItem</code> are processed and not the one from <code>newResolvedSiteMapItem</code>. If some intermediate
+     * {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, HttpServletRequest, HttpServletResponse)} returns <code>null</code>, the loop and processing is stooped, 
+     * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for 
+     * example if one of the handlers is a caching handler). When <code>null</code> is returned, request processing is stopped.
+     * @param orginalResolvedSiteMapItem
+     * @param req
+     * @param res
+     * @return a new or original {@link ResolvedSiteMapItem}, or <code>null</code> when request processing can be stopped
+     */
+    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem, HttpServletRequest req, HttpServletResponse res) {
+        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+        
+        ResolvedSiteMapItem newResolvedSiteMapItem = orginalResolvedSiteMapItem;
+        List<HstSiteMapItemHandlerConfiguration> handlerConfigsFromMatchedSiteMapItem = orginalResolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
+        for(HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigsFromMatchedSiteMapItem) {
+           HstSiteMapItemHandler handler = siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
+           logger.debug("Processing siteMapItemHandler for configuration handler '{}'", handlerConfig.getName() );
+           try {
+               newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
+               if(newResolvedSiteMapItem == null) {
+                   logger.debug("handler for '{}' return null. Request processing done. Return null", handlerConfig.getName());
+                   return null;
+               }
+           } catch (HstSiteMapItemHandlerException e){
+               logger.warn("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'", e);
+               throw new MatchException("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'. Cannot process request");
+           }
+        }
+        return newResolvedSiteMapItem;
     }
     
     public void destroy() {
