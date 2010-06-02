@@ -78,7 +78,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         
         
         // let's find a siteMount that has a valid 'onlyForContextPath' : if onlyForContextPath is not null && not equal to the contextPath, we need to try the parent sitemount until we have a valid one or have a sitemount that is null
-        while(siteMount != null && (siteMount.onlyForContextPath() != null && !siteMount.onlyForContextPath().equals(contextPath) )) {
+        while(siteMount != null && contextPath != null && (siteMount.onlyForContextPath() != null && !siteMount.onlyForContextPath().equals(contextPath) )) {
             log.debug("SiteMount '{}' cannot be used because the contextPath '{}' is not valid for this siteMount, because it is only for context path. Let's try parent siteMounts if present.'"+siteMount.onlyForContextPath()+"' ", siteMount.getName(), contextPath);
             siteMount = siteMount.getParent();
         }
