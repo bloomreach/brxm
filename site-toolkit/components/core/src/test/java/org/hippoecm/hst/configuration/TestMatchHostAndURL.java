@@ -481,6 +481,52 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         }
         
         /*
+         * We now test a match on a sitemount at 127.0.0.1/hst:root/examplecontextpathonly  that has configured: 
+         * 
+         * hst:onlyforcontextpath = /mycontextpath
+         *  
+         * This means, that for a request uri like '127.0.0.1/hst:root/examplecontextpathonly/home' that in case:
+         * 
+         * 1) The contextPath is '/mycontextpath' it should match this sitemount
+         * 2) the contextPath is different than  '/mycontextpath': it should default back to the hst:root sitemount
+         * 
+         * 
+         */
+        @Test 
+        public void testSiteMountOnlyForContextPath(){
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setLocalPort(8081);
+            request.setScheme("http");
+            request.setServerName("127.0.0.1");
+            request.setServerPort(8180);
+            // the port is part of the Host header
+            request.addHeader("Host", "127.0.0.1");
+            
+            // hst:onlyforcontextpath = /mycontextpath so we start with correct context path
+            request.setRequestURI("/mycontextpath/examplecontextpathonly/home");
+            request.setContextPath("/mycontextpath");
+            try {
+                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                
+                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                
+                assertTrue("As the contextPath '/mycontextpath' matches the configured one of sitemount 'examplecontextpathonly', we expect the sitemount to have the name 'examplecontextpathonly'",mount.getSiteMount().getName().equals("examplecontextpathonly"));
+                
+                // now change the contextPath to be unequal to the 'hst:onlyforcontextpath = /mycontextpath'. The sitemount should be the hst:root sitemount now
+                request.setRequestURI("/mywrongpath/examplecontextpathonly/home");
+                request.setContextPath("/mywrongpath");
+                
+                mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+               
+                assertTrue("As the contextPath '/mywrongpath' does not match the configured one of sitemount 'examplecontextpathonly', we expect a fallback to the sitemount hst:root ",mount.getSiteMount().getName().equals("hst:root"));
+                
+            } catch (RepositoryNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        /*
          * We also have a test host, that has configuration like this:
          * 
          * test  (host)

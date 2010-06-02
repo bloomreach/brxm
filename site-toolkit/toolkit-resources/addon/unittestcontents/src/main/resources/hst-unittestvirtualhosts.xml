@@ -17,7 +17,7 @@
 <sv:node sv:name="hst:unittestvirtualhosts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhosts</sv:value>
-    </sv:property>
+    </sv:property> 
     <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
         <sv:value>true</sv:value>
     </sv:property>
@@ -68,6 +68,14 @@
           <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/unittestlive/unittestproject</sv:value>
           </sv:property>
+          <sv:node sv:name="examplecontextpathonly">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+               <sv:value>hst:sitemount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
+               <sv:value>/mycontextpath</sv:value>
+            </sv:property>
+          </sv:node>
           <sv:node sv:name="preview">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                <sv:value>hst:sitemount</sv:value>

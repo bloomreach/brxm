@@ -135,7 +135,7 @@
 // if you do not want to sitemount to run with the default hst pipeline, you can configure the pipeline to be used here
 - hst:namedpipeline (string)
 - hst:showcontextpath (boolean)
-// when this sitemount is only applicable for certain contextpath, add this property for the contextpath that is allowed (must start with '/')
+// when this sitemount is only applicable for certain contextpath, add this property for the contextpath that is allowed (must start with '/' and no further '/' is allowed)
 - hst:onlyforcontextpath (string)
 // for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
 - hst:embeddedsitemountpath

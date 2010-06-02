@@ -142,6 +142,19 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             } 
         }
         
+        if(onlyForContextPath != null && !"".equals(onlyForContextPath)) {
+            if(onlyForContextPath.startsWith("/")) {
+                // onlyForContextPath starts with a slash. If it contains another /, it is configured incorrectly
+                if(onlyForContextPath.substring(1).contains("/")) {
+                    log.warn("Incorrectly configured 'onlyForContextPath' : It must start with a '/' and is not allowed to contain any other '/' slashes. We set onlyForContextPath to null");
+                    onlyForContextPath = null;
+                }
+            }else {
+                log.warn("Incorrect configured 'onlyForContextPath': It must start with a '/' to be used, but it is '{}'. We set onlyForContextPath to null", onlyForContextPath);
+                onlyForContextPath = null;
+            }
+        }
+        
         if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SCHEME)) {
             this.scheme = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_SCHEME);
             if(this.scheme == null || "".equals(this.scheme)) {

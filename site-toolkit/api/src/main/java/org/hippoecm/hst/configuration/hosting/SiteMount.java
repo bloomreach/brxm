@@ -177,6 +177,8 @@ public interface SiteMount {
     boolean isContextPathInUrl();
     
     /**
+     * In case the {@link HttpServletRequest#getContextPath()} does not matter, this method must return <code>null</code> or empty. <b>If</b> only this SiteMount 
+     * can be used for a certain contextPath, this method should return that contextPath. A contextPath has to start with a "/" and is not allowed to have any other "/". 
      * 
      * @return <code>null</code> or empty if the contextPath does not matter, otherwise it returns the value the contextPath must have a possible to match to this SiteMount
      */
