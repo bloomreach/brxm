@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 
@@ -73,7 +74,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_nooptest");
-            request.setContextPath("/site");
+            request.setContextPath("");
             
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
@@ -85,22 +86,20 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
-                String[] handlersIds = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerIds();
+                List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                 
-                assertNotNull("There must be a handler on the resolvedSiteMapItem for '/handler_nooptest'",handlersIds);
-                assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlersIds.length == 1 && handlersIds[0].equals("noophandler"));
+                
+                assertNotNull("There must be a handler on the resolvedSiteMapItem for '/handler_nooptest'",handlerConfigrations.size() > 0);
+                assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlerConfigrations.size() == 1 && handlerConfigrations.get(0).getName().equals("noophandler"));
                 
                 HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
                 
                 assertNotNull(siteMapItemHandlerFactory);
-                
-                HstSiteMapItemHandlerConfiguration handlerConfig = mount.getSiteMount().getHstSite().getSiteMapItemHandlersConfiguration().getSiteMapItemHandlerConfiguration(handlersIds[0]);
-                
-                assertNotNull("The HstSiteMapItemHandlerConfiguration must not be null for '"+handlersIds[0]+"'",handlerConfig);
-                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.NoopHandler' but was '"+handlerConfig.getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.NoopHandler".equals(handlerConfig.getSiteMapItemHandlerClassName()));
+               
+                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.NoopHandler' but was '"+handlerConfigrations.get(0).getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.NoopHandler".equals(handlerConfigrations.get(0).getSiteMapItemHandlerClassName()));
                                                                        
                 try {
-                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
+                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
                     assertNotNull("There should be created a siteMapHandler", siteMapHandler);
                     
                     // the property 'unittestproject:somestring' is ${myparam} which is configured on the sitemap item and should be resolved to /home for getProperty
@@ -170,7 +169,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_nooptest/foo");
-            request.setContextPath("/site");
+            request.setContextPath("");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
@@ -181,12 +180,11 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                  
-                String[] handlersIds = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerIds();
                 HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
-                HstSiteMapItemHandlerConfiguration handlerConfig = mount.getSiteMount().getHstSite().getSiteMapItemHandlersConfiguration().getSiteMapItemHandlerConfiguration(handlersIds[0]);
-                                                                       
+                List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
+                                                                     
                 try {
-                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
+                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
                     // the property 'unittestproject:somestrings' contains in configuration val1, val2 and ${1}. The current sitemap item DID  involve a wildcard, so ${1} should
                     // now resolve to 'foo'
                     String[] myStringParams = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somestrings", resolvedSiteMapItem, String[].class);
@@ -213,7 +211,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/multiplehandler_example/foo/bar");
-            request.setContextPath("/site");
+            request.setContextPath("");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
@@ -224,17 +222,16 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 assertTrue("The expected id of the resolved sitemap item is 'multiplehandler_wildcardexample/_default_/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "multiplehandler_example/_default_/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                
-                String[] handlersIds = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerIds();
+                List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                 
                 // assert we have two handlers:
                 
-                assertTrue("for '/multiplehandler_wildcardexample/foo/bar' we expect two handlers but we found '"+handlersIds.length+"'",handlersIds.length == 2);
+                assertTrue("for '/multiplehandler_wildcardexample/foo/bar' we expect two handlers but we found '"+handlerConfigrations.size()+"'",handlerConfigrations.size() == 2);
                 
                 HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
                 
                 ResolvedSiteMapItem processedSiteMapItem = resolvedSiteMapItem;
-                for(String handlerId : handlersIds){
-                    HstSiteMapItemHandlerConfiguration handlerConfig = mount.getSiteMount().getHstSite().getSiteMapItemHandlersConfiguration().getSiteMapItemHandlerConfiguration(handlerId);
+                for( HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigrations){
                     try {
                         HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
                         processedSiteMapItem = siteMapHandler.process(processedSiteMapItem, request, response);
@@ -285,7 +282,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_browser_redirecttest");
-            request.setContextPath("/site");
+            request.setContextPath("");
             
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
@@ -297,26 +294,21 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_browser_redirecttest' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_browser_redirecttest".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                
-                String[] handlersIds = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerIds();
+                List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                 
-                assertNotNull("There must be  a handler on the resolvedSiteMapItem for '/handler_browser_redirecttest'",handlersIds);
-                assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlersIds.length == 1 && handlersIds[0].equals("browser_redirecthandler"));
+                assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlerConfigrations.size() == 1 && handlerConfigrations.get(0).getName().equals("browser_redirecthandler"));
                 
                 HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
                 
                 assertNotNull(siteMapItemHandlerFactory);
                 
-                HstSiteMapItemHandlerConfiguration handlerConfig = mount.getSiteMount().getHstSite().getSiteMapItemHandlersConfiguration().getSiteMapItemHandlerConfiguration(handlersIds[0]);
-                
-                assertNotNull("The HstSiteMapItemHandlerConfiguration must not be null for '"+handlersIds[0]+"'",handlerConfig);
-                
-                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler' but was '"+handlerConfig.getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler".equals(handlerConfig.getSiteMapItemHandlerClassName()));
+                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler' but was '"+handlerConfigrations.get(0).getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler".equals(handlerConfigrations.get(0).getSiteMapItemHandlerClassName()));
                                                                        
                 try {
-                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
+                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
                     assertNotNull("There should be created a siteMapHandler", siteMapHandler);
                     
-                    HstSiteMapItemHandler siteMapHandler2 =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
+                    HstSiteMapItemHandler siteMapHandler2 =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
                     
                     assertTrue("The exact same instance should be returned the second time by the siteMapItemHandlerFactory ", siteMapHandler == siteMapHandler2);
                     
@@ -347,7 +339,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setServerName("127.0.0.1");
             request.addHeader("Host", "127.0.0.1");
             request.setRequestURI("/handler_sitemapitem_redirecttest"); 
-            request.setContextPath("/site");
+            request.setContextPath("");
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
@@ -355,14 +347,15 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
-                String[] handlersIds = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerIds();
+                
+                List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
+                
                 try {
                     HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
                     
                     assertNotNull(siteMapItemHandlerFactory);
                     
-                    HstSiteMapItemHandlerConfiguration handlerConfig = mount.getSiteMount().getHstSite().getSiteMapItemHandlersConfiguration().getSiteMapItemHandlerConfiguration(handlersIds[0]);
-                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
+                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
                     
                     ResolvedSiteMapItem redirectedResolvedSiteMapItem = siteMapHandler.process(resolvedSiteMapItem, request, response);
                     

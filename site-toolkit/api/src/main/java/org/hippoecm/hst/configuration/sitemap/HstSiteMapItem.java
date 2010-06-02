@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
  
 /**
  * A <code>HstSiteMapItem<code> is used as a representation of a logical path (element) for matching (part of a) external URL 
@@ -41,6 +43,12 @@ public interface HstSiteMapItem {
      * @return the id of this HstSiteMapItem
      */
     String getId(); 
+    
+    /**
+     * The qualified id, which might contain more info then just {@link #getId()} as the getId might return an id which is meaningfull only within it's current {@link HstSiteMap}
+     * @return the qualified id of this HstSiteMapItem
+     */
+    String getQualifiedId();
     
     /**
      * Returns the logical path element of this <code>SiteMapItem</code>. The constraint to the return value is, that it needs to be
@@ -113,7 +121,7 @@ public interface HstSiteMapItem {
      * Returns a <code>List</code> of all child <code>HstSiteMapItem</code>'s of this <code>HstSiteMapItem</code>.    
      * Implementations should return an unmodifiable list, for example {@link java.util.Collections$UnmodifiableList} to avoid 
      * client code changing configuration
-     * @return
+     * @return the List of HstSiteMapItem children. If there are no children, an empty list is returned
      */
     List<HstSiteMapItem> getChildren();
     
@@ -205,9 +213,21 @@ public interface HstSiteMapItem {
     String getNamedPipeline();
     
     /**
-     * The array of sitemapItemHandler ids for this HstSiteMapItem. SiteMapItemHandlerIds are <b>NOT</b> inherited from parent/ancestor HstSiteMapItem's 
-     * @return the array of sitemapItemHandler ids which are attached to this sitemap item. When no handlers are configured, <code>null</code> or an empty array can be returned
+     * @param handlerId
+     * @return the {@link HstSiteMapItemHandlerConfiguration} for <code>handlerId</code> or <code>null</code> if no handler present for <code>handlerId</code>
      */
-    String[] getSiteMapItemHandlerIds();
+    HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(String handlerId);
+    
+    /**
+     * <p>
+     * The List of {@link HstSiteMapItemHandlerConfiguration}s and an empty list if this SiteMapItem does not contain {@link HstSiteMapItemHandlerConfiguration}s.
+     * <br/> 
+     * <b>Note</b> that {@link HstSiteMapItemHandlerConfiguration}s are  <b>NOT</b> inherited from  parent/ancestor HstSiteMapItem's. 
+     * </p>
+     * <p>Implementations should return an unmodifiable list, for example {@link java.util.Collections$UnmodifiableList} to avoid 
+     * client code changing configuration</p>
+     * @return The List of {@link HstSiteMapItemHandlerConfiguration}s and an empty list if this SiteMapItem does not contain {@link HstSiteMapItemHandlerConfiguration}s 
+     */
+    List<HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations();
     
 }

@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -45,14 +46,17 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
     
     private String siteMapRootNodePath;
     
+    private HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration;
+    
     private Map<String, HstSiteMapItem> rootSiteMapItems = new LinkedHashMap<String, HstSiteMapItem>();
    
     private Map<String, HstSiteMapItem> siteMapDescendants = new HashMap<String, HstSiteMapItem>();
     
-    public HstSiteMapService(HstSite hstSite, Node siteMapNode) throws RepositoryException, ServiceException {
+    public HstSiteMapService(HstSite hstSite, Node siteMapNode, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws RepositoryException, ServiceException {
         super(siteMapNode);
         this.hstSite = hstSite;
         this.siteMapRootNodePath = siteMapNode.getPath();
+        this.siteMapItemHandlersConfiguration = siteMapItemHandlersConfiguration;
         
         if(!siteMapNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAP)) {
             this.closeValueProvider(false);
@@ -78,7 +82,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
             }
             if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
                 try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, null, this, 1);
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, siteMapItemHandlersConfiguration , null, this, 1);
                     rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                 } catch (ServiceException e) {
                     if (log.isDebugEnabled()) {

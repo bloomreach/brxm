@@ -155,7 +155,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
        
        // sitemap
        Node siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
-       this.siteMapService = new HstSiteMapService(this, siteMapNode); 
+       this.siteMapService = new HstSiteMapService(this, siteMapNode, siteMapItemHandlersConfigurationService); 
        
        checkAndLogAccessibleRootComponents();
        

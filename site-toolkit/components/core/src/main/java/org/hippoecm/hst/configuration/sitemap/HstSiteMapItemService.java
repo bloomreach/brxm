@@ -29,6 +29,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -42,10 +44,14 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
+    
+    private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new HashMap<String, HstSiteMapItemHandlerConfiguration>();
 
     private String siteMapRootNodePath;
     
     private String id;
+    
+    private String qualifiedId;
     
     private String value;
 
@@ -62,9 +68,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private String componentConfigurationId;
 
     private String portletComponentConfigurationId;
-    
-    private String[] siteMapItemHandlerIds;
-    
+  
     private List<String> roles;
     
     private boolean secured = false;
@@ -90,6 +94,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private HstSiteMap hstSiteMap;
     
     private HstSiteMapItemService parentItem;
+    
+    private HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration;
 
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
@@ -102,10 +108,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private String extension;
     private String prefix; 
     
-    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
+    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         super(jcrNode);
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
+        this.siteMapItemHandlersConfiguration = siteMapItemHandlersConfiguration;
         this.depth = depth;
         String nodePath = getValueProvider().getPath();
         if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
@@ -114,6 +121,9 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         }
 
         this.siteMapRootNodePath = siteMapRootNodePath;
+        
+        this.qualifiedId = nodePath;
+        
         // path & id are the same
         this.id = nodePath.substring(siteMapRootNodePath.length()+1);
         // currently, the value is always the nodename
@@ -195,7 +205,19 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         
         this.relativeContentPath = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         this.componentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
-        this.siteMapItemHandlerIds = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
+        
+        String[] siteMapItemHandlerIds = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
+        if(siteMapItemHandlerIds != null) {
+            for(String handlerId : siteMapItemHandlerIds) {
+                HstSiteMapItemHandlerConfiguration handlerConfiguration = this.siteMapItemHandlersConfiguration.getSiteMapItemHandlerConfiguration(handlerId);
+                if(handlerConfiguration == null) {
+                    log.error("Incorrect configuration: SiteMapItem '{}' contains a handlerId '{}' which cannot be found in the siteMapItemHandlers configuration. The handler will be ignored", getQualifiedId(), handlerId);
+                } else {
+                    this.siteMapItemHandlerConfigurations.put(handlerId, handlerConfiguration);
+                }
+            }
+        }
+        
         this.portletComponentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         
         if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
@@ -235,7 +257,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                 }
                 if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
                     try {
-                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this, this.hstSiteMap, ++depth);
+                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
                         childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                     } catch (ServiceException e) {
                         if (log.isDebugEnabled()) {
@@ -276,11 +298,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public String getPortletComponentConfigurationId() {
         return this.portletComponentConfigurationId;
     }
-
-
-    public String[] getSiteMapItemHandlerIds() {
-        return siteMapItemHandlerIds;
-    }
     
     public String getId() {
         return this.id;
@@ -308,6 +325,15 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 	public Map<String, String> getLocalParameters() {
 		return Collections.unmodifiableMap(this.localParameters);
 	}
+
+
+	public HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(String handlerId) {
+	    return siteMapItemHandlerConfigurations.get(handlerId);
+	}
+	
+    public List<HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
+        return Collections.unmodifiableList(new ArrayList<HstSiteMapItemHandlerConfiguration>(siteMapItemHandlerConfigurations.values()));
+    }
 
     public int getStatusCode() {
         return this.statusCode;
@@ -470,5 +496,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.depth;
     }
 
+    public String getQualifiedId() {
+        return qualifiedId;
+    }
 
 }
