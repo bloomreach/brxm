@@ -105,6 +105,11 @@ public class ContentService extends BaseHstContentService {
         
         try {
             String scopeItemPath = getContentItemPath(servletRequest, pathSegments);
+            
+            if (!getHstRequestContext(servletRequest).getSession().itemExists(scopeItemPath)) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
+            
             Item item = getHstRequestContext(servletRequest).getSession().getItem(scopeItemPath);
             
             if (!item.isNode()) {
@@ -180,6 +185,8 @@ public class ContentService extends BaseHstContentService {
             beanContents = new HippoBeanContentCollection(list);
             beanContents.setTotalSize(totalSize);
             beanContents.setBeginIndex(begin);
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -229,6 +236,10 @@ public class ContentService extends BaseHstContentService {
         ItemContent itemContent = new ItemContent();
         
         try {
+            if (!getHstRequestContext(servletRequest).getSession().itemExists(itemPath)) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
+            
             Item item = getHstRequestContext(servletRequest).getSession().getItem(itemPath);
             
             if (item.isNode()) {
@@ -250,6 +261,8 @@ public class ContentService extends BaseHstContentService {
                 propContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
                 itemContent = propContent;
             }
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
