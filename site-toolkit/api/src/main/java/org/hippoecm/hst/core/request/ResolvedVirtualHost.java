@@ -45,8 +45,9 @@ public interface ResolvedVirtualHost {
     int getPortNumber();
 
     /**
-     * matches the current requestPath and resolved virtual host to a {@link ResolvedSiteMount} item
-     * @param contextPath
+     * matches the current requestPath and resolved virtual host to a {@link ResolvedSiteMount} item. When the <code>contextPath</code> param is not <code>null</code> it 
+     * might influence the matching, depending whether {@link SiteMount#onlyForContextPath()} is not <code>null</code> 
+     * @param contextPath the contextPath if needed for matching. This parameter is allowed to be <code>null</code>
      * @param requestPath
      * @return a {@link ResolvedSiteMount} or <code>null</code> when none matches
      */
