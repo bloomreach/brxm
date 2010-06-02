@@ -74,6 +74,8 @@ public class BaseHstContentService {
     private ObjectConverter objectConverter;
     private HstQueryManager hstQueryManager;
     
+    private List<Class<? extends HippoBean>> annotatedClasses;
+    
     public BaseHstContentService() {
     }
     
@@ -92,9 +94,9 @@ public class BaseHstContentService {
     protected ObjectConverter getObjectConverter() {
         if (objectConverter == null) {
             Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClassNames();
+            List<Class<? extends HippoBean>> annoClasses = getAnnotatedClasses();
             
-            for (Class<? extends HippoBean> c : annotatedClasses) {
+            for (Class<? extends HippoBean> c : annoClasses) {
                 addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c, false) ;
             }
             
@@ -217,8 +219,16 @@ public class BaseHstContentService {
         return base;
     }
     
-    protected List<Class<? extends HippoBean>> getAnnotatedClassNames() {
-        return Collections.emptyList();
+    public List<Class<? extends HippoBean>> getAnnotatedClasses() {
+        if (annotatedClasses == null) {
+            return Collections.emptyList();
+        }
+        
+        return annotatedClasses;
+    }
+    
+    public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
+        this.annotatedClasses = annotatedClasses;
     }
     
     protected String[] getFallBackJcrNodeTypes(){
