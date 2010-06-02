@@ -133,7 +133,14 @@
   </bean>
   
   <!-- Content Service -->
+  <bean id="customContentBeanClasses" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
   <bean id="jaxrsContentService" class="org.hippoecm.hst.services.support.jaxrs.content.ContentService">
+    <property name="annotatedClasses" ref="customContentBeanClasses" />
   </bean>
   
   <!-- Workflow Service -->
