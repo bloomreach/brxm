@@ -120,7 +120,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
             path = e.getMessage();
             log.warn("Unable to get path for : " + nodeModel);
         }
-        return new Model("Permissions for " + path);
+        return new Model("References for " + path);
     }
 
 }
