@@ -429,20 +429,23 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     return;
                 }
 
-                this.storeDimension('top');
-                this.storeDimension('right');
-                this.storeDimension('bottom');
-                this.storeDimension('left');
+                for(var i=0; i<this.config.units.length; ++i) {
+                    if(this.config.units[i].position != 'center') {
+                        this.storeDimension(this.config.units[i]);
+                    }
+                }
             },
             
-            storeDimension : function(pos) {
-                var unit = this.layout.getUnitByPosition(pos);
-                if(unit && unit.get('resize')) {
+            storeDimension : function(unitConfig) {
+                var pos = unitConfig.position;
+                var sizes  = this.layout.getSizes();
+                var width  = sizes[pos].w;
+                var height = sizes[pos].h;
+                if(unitConfig.resize) {
                     var date = new Date();
                     date.setDate(date.getDate() + 31);
                     var opts = { expires: date };
-                    var sizes = this.layout.getSizes();
-                    YAHOO.util.Cookie.setSub(this.DIM_COOKIE, this.name + ':' + pos, sizes[pos].w + ',' + sizes[pos].h, opts);
+                    YAHOO.util.Cookie.setSub(this.DIM_COOKIE, this.name + ':' + pos, width + ',' + height, opts);
                 }
             },
             
@@ -472,6 +475,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         //which means a user can render the UI useless. To prevent this we add a check right when the unit's
                         //resize event finishes
                         unit.on('endResize', this.onEndResizeUnit, unit, this);
+
+                        if(unitConfig.expanded === true) {
+                            this.expandUnit(unitConfig.position);
+                        }
                     }
                 }
             },
@@ -550,14 +557,25 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             collapseUnit : function(position) {
                 var unit = this.layout.getUnitByPosition(position);
                 if (unit != null) {
-                    for(var i=0; i<this.config.units.length; ++i) {
-                        if(this.config.units[i].position == position) {
-                            this.unitExpanded = null;
-                            unit.set('width', Number(this.config.units[i].width));
-                            break;
-                        }
+                    var config = this.getUnitConfigByPosition(position);
+                    if(config != null) {
+                        this.unitExpanded = null;
+                        unit.set('width', Number(config.width));
+                        this.children.forEach(this, function(k, v) {
+                            v.checkSizes();
+                        });
                     }
                 }
+            },
+
+            checkSizes : function() {
+                for(var i=0; i<this.config.units.length; ++i) {
+                    var unit = this.layout.getUnitByPosition(this.config.units[i].position);
+                    this.onEndResizeUnit(null, unit);
+                }
+                this.children.forEach(this, function(k, v) {
+                    v.checkSizes();
+                });
             },
 
             getUnitConfigByPosition : function(position) {
