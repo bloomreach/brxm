@@ -43,6 +43,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttribute
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
+import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
@@ -244,35 +245,15 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
         return "";
     }
 
-
     @Override
     protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
             ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
             ListPagingDefinition pagingDefinition) {
-        return new DraggebleListDataTable(id, tableDefinition, dataProvider, selectionListener, triState,
-                pagingDefinition);
-    }
 
-    class DraggebleListDataTable extends ListDataTable<Node> {
-        private static final long serialVersionUID = 1L;
-
-        public DraggebleListDataTable(String id, TableDefinition<Node> tableDefinition, ISortableDataProvider<Node> dataProvider,
-                TableSelectionListener<Node> selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
-            super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
-
-            //Don't use drag&drop on documents because 300+ documents in a folder on IE* is slow
-            //            add(new DragBehavior(YuiPluginHelper.getManager(getPluginContext()), new DragSettings(YuiPluginHelper
-            //                    .getConfig(getPluginConfig()))) {
-            //                private static final long serialVersionUID = 1L;
-            //
-            //                @Override
-            //                protected IModel getDragModel() {
-            //                    return null;
-            //                }
-            //            });
-
-            //add(new TableHelperBehavior());
-        }
+        ListDataTable<Node> datatable = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
+                triState, pagingDefinition);
+        datatable.add(new TableHelperBehavior());
+        return datatable;
     }
 
 }
