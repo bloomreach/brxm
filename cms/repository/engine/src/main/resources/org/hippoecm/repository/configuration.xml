@@ -299,7 +299,6 @@
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
       <sv:value>v13a</sv:value>
-      <sv:value>v13a-defaultcontent</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

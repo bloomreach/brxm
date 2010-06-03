@@ -29,6 +29,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
@@ -46,6 +48,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
@@ -59,8 +62,6 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.api.JackrabbitRepository;
-import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -69,7 +70,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
-import org.hippoecm.repository.SessionStateThresholdEnum;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -494,6 +494,20 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                             } else {
                                 log.info("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
                             }
+                        }
+                        if(mergeInitializationNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
+                            Node initializeNode = rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize");
+                            Set<String> tags = new TreeSet<String>();
+                            if (initializeNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
+                                for (Value value : initializeNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues()) {
+                                    tags.add(value.getString());
+                                }
+                            }
+                            Value[] added = mergeInitializationNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues();
+                            for (Value value : added) {
+                                tags.add(value.getString());
+                            }
+                            initializeNode.setProperty(HippoNodeType.HIPPO_VERSION, tags.toArray(new String[tags.size()]));
                         }
                         mergeInitializationNode.remove();
                         rootSession.save();

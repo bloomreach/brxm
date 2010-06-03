@@ -36,7 +36,6 @@ public class DefaultcontentUpgrader12a implements UpdaterModule {
     
     public void register(final UpdaterContext context) {
         context.registerName("default-content-upgrade-v12a");
-        context.registerStartTag("v20902");
         context.registerEndTag("v12a-defaultcontent");
         context.registerAfter("upgrade-v12a");
 
