@@ -15,7 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+
 import org.apache.commons.beanutils.MethodUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +71,12 @@ public class JaxrsServiceValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
         try {
             MethodUtils.invokeStaticMethod(busFactoryClass, "setThreadDefaultBus", new Object[] { bus });
-            MethodUtils.invokeMethod(servletController, "invoke", new Object[] { context.getServletRequest(), context.getServletResponse() });
+            
+            HttpServletRequest request = context.getServletRequest();
+            String pathInfo = HstRequestUtils.getPathInfo(request);
+            HttpServletRequest adjustedRequest = new PathsAdjustedHttpServletRequestWrapper(context.getServletRequest(), null, pathInfo);
+            
+            MethodUtils.invokeMethod(servletController, "invoke", new Object[] { adjustedRequest, context.getServletResponse() });
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.error("Failed to invoke jaxrs service.", e);
@@ -79,6 +88,27 @@ public class JaxrsServiceValve extends AbstractValve {
                 MethodUtils.invokeStaticMethod(busFactoryClass, "setThreadDefaultBus", new Object[] { null });
             } catch (Exception ignore) {
             }
+        }
+    }
+    
+    private static class PathsAdjustedHttpServletRequestWrapper extends HttpServletRequestWrapper {
+        private String servletPath;
+        private String pathInfo;
+        
+        private PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String pathInfo) {
+            super(request);
+            this.servletPath = servletPath;
+            this.pathInfo = pathInfo;
+        }
+        
+        @Override
+        public String getServletPath() {
+            return (servletPath != null ? servletPath : super.getServletPath());
+        }
+        
+        @Override
+        public String getPathInfo() {
+            return (pathInfo != null ? pathInfo : super.getPathInfo());
         }
     }
     

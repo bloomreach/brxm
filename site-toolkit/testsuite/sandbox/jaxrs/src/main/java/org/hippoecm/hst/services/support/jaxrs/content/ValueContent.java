@@ -21,7 +21,6 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -35,21 +34,12 @@ import org.apache.jackrabbit.util.ISO8601;
 @XmlRootElement(name = "value")
 public class ValueContent {
     
-    private int type;
-    private String typeName;
     private String value;
     
     public ValueContent() {
     }
     
-    public ValueContent(int type) {
-        this(type, null);
-    }
-    
-    public ValueContent(int type, Object valueObject) {
-        this.typeName = PropertyType.nameFromValue(type);;
-        this.type = type;
-        
+    public ValueContent(Object valueObject) {
         if (valueObject != null) {
             if (valueObject instanceof Calendar) {
                 this.value = ISO8601.format((Calendar) valueObject);
@@ -60,8 +50,7 @@ public class ValueContent {
     }
     
     public ValueContent(Value valueObject) throws ValueFormatException, IllegalStateException, RepositoryException {
-        type = valueObject.getType();
-        typeName = PropertyType.nameFromValue(type);;
+        int type = valueObject.getType();
         
         switch (type) {
         case PropertyType.BOOLEAN: 
@@ -82,26 +71,6 @@ public class ValueContent {
             value = ISO8601.format(valueObject.getDate());
             break;
         }
-    }
-    
-    @XmlAttribute
-    public int getType() {
-        return type;
-    }
-    
-    public void setType(int type) {
-        typeName = PropertyType.nameFromValue(type);
-        this.type = type;
-    }
-    
-    @XmlAttribute
-    public String getTypeName() {
-        return typeName;
-    }
-    
-    public void setTypeName(String typeName) {
-        type = PropertyType.valueFromName(typeName);
-        this.typeName = typeName;
     }
     
     @XmlValue
