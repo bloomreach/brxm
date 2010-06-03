@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
@@ -100,27 +99,23 @@ public class JaxrsServiceValve extends AbstractValve {
         }
     }
     
-    private static class PathsAdjustedHttpServletRequestWrapper extends HttpServletRequestWrapper
-    {
+    private static class PathsAdjustedHttpServletRequestWrapper extends HttpServletRequestWrapper {
         private String servletPath;
         private String pathInfo;
         
-        private PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String pathInfo)
-        {
+        private PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String pathInfo) {
             super(request);
             this.servletPath = servletPath;
             this.pathInfo = pathInfo;
         }
         
         @Override
-        public String getServletPath()
-        {
+        public String getServletPath() {
             return (servletPath != null ? servletPath : super.getServletPath());
         }
         
         @Override
-        public String getPathInfo()
-        {
+        public String getPathInfo() {
             return (pathInfo != null ? pathInfo : super.getPathInfo());
         }
     }

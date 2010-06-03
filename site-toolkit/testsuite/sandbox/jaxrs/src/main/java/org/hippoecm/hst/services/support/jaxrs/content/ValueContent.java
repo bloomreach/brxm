@@ -15,14 +15,12 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
-import java.io.InputStream;
 import java.util.Calendar;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -34,23 +32,14 @@ import org.apache.jackrabbit.util.ISO8601;
  * @version $Id$
  */
 @XmlRootElement(name = "value")
-public class ValueContent implements Value {
+public class ValueContent {
     
-    private int type;
-    private String typeName;
     private String value;
     
     public ValueContent() {
     }
     
-    public ValueContent(int type) {
-        this(type, null);
-    }
-    
-    public ValueContent(int type, Object valueObject) {
-        this.typeName = PropertyType.nameFromValue(type);;
-        this.type = type;
-        
+    public ValueContent(Object valueObject) {
         if (valueObject != null) {
             if (valueObject instanceof Calendar) {
                 this.value = ISO8601.format((Calendar) valueObject);
@@ -61,8 +50,7 @@ public class ValueContent implements Value {
     }
     
     public ValueContent(Value valueObject) throws ValueFormatException, IllegalStateException, RepositoryException {
-        type = valueObject.getType();
-        typeName = PropertyType.nameFromValue(type);;
+        int type = valueObject.getType();
         
         switch (type) {
         case PropertyType.BOOLEAN: 
@@ -85,26 +73,6 @@ public class ValueContent implements Value {
         }
     }
     
-    @XmlAttribute
-    public int getType() {
-        return type;
-    }
-    
-    public void setType(int type) {
-        typeName = PropertyType.nameFromValue(type);
-        this.type = type;
-    }
-    
-    @XmlAttribute
-    public String getTypeName() {
-        return typeName;
-    }
-    
-    public void setTypeName(String typeName) {
-        type = PropertyType.valueFromName(typeName);
-        this.typeName = typeName;
-    }
-    
     @XmlValue
     public String getValue() {
         return value;
@@ -112,30 +80,6 @@ public class ValueContent implements Value {
     
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public boolean getBoolean() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return Boolean.parseBoolean(value);
-    }
-
-    public String getString() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return value;
-    }
-    
-    public Calendar getDate() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return ISO8601.parse(value);
-    }
-
-    public double getDouble() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return Double.parseDouble(value);
-    }
-
-    public long getLong() throws ValueFormatException, IllegalStateException, RepositoryException {
-        return Long.parseLong(value);
-    }
-
-    public InputStream getStream() throws IllegalStateException, RepositoryException {
-        return null;
     }
     
 }
