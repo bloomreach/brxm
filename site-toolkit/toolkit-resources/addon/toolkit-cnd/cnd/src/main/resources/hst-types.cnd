@@ -177,8 +177,8 @@
 + * (hst:virtualhost)
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
-[hst:contentmount] > hippo:mirror
-
+// TODO rethink this nodetype: we rather do not depend on hippo namespace at all from hst namespace
+// [hst:contentmount] > hippo:mirror
 
 [hst:formdata]
 - hst:creationtime (date) mandatory
