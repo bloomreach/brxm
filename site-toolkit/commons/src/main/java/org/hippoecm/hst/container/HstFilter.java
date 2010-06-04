@@ -287,6 +287,34 @@ public class HstFilter implements Filter {
                                 req.setAttribute(HstContainerURL.class.getName(), forwardedHstContainerURL);
                                 
                                 resolvedSiteMapItem = mount.matchSiteMapItem(forwardedHstContainerURL);
+                                if(resolvedSiteMapItem == null) {
+                                    // should not be possible as when it would be null, an exception should have been thrown
+                                    throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
+                                }
+                                
+                                // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
+                                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, req, res);
+                                if(resolvedSiteMapItem == null) {
+                                    // one of the handlers has finished the request already
+                                    return;
+                                }
+                                if (resolvedSiteMapItem.getErrorCode() > 0) {
+                                    try {
+                                        if (logger.isDebugEnabled()) {
+                                            logger.debug("The resolved sitemap item for {} has error status: {}", hstContainerURL.getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
+                                        }           
+                                        res.sendError(resolvedSiteMapItem.getErrorCode());
+                                        
+                                    } catch (IOException e) {
+                                        if (logger.isDebugEnabled()) {
+                                            logger.warn("Exception invocation on sendError().", e);
+                                        } else if (logger.isWarnEnabled()) {
+                                            logger.warn("Exception invocation on sendError().");
+                                        }
+                                    }
+                                    // we're done:
+                                    return;
+                                } 
                                 request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
                                 HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
                             }
