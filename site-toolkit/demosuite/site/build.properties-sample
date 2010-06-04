@@ -19,10 +19,3 @@
 tomcat.server.home = /home/hstdev/tomcat-6.0.18
 tomcat.hst.shared.lib = ${tomcat.server.home}/lib
 tomcat.hst.cms.webapp = ${tomcat.server.home}/webapps/cms
-
-# Jetspeed deployment properties. Use these with `jetspeed' profile. E.g. `mvn -P jetspeed clean install'
-
-jetspeed.server.home = /home/hstdev/tomcat-6.0.18
-jetspeed.hst.shared.lib = ${jetspeed.server.home}/lib
-jetspeed.portal.webapp = ${jetspeed.server.home}/webapps/jetspeed
-jetspeed.hst.cms.webapp = ${jetspeed.server.home}/webapps/cms

@@ -39,26 +39,13 @@
       </c:otherwise>
     </c:choose>    
 
-    <c:choose>
-      <c:when test="${hstRequest.requestContext.portletContext}">
-        <hst:actionURL var="searchURL" />
-        <form action="${searchURL}" method="post">
-	        <div>
-	          <input type="text" name="query" value="${query}"/>
-	          <input type="submit" value="Search"/>
-	        </div>
-        </form>
-      </c:when>
-      <c:otherwise>
-        <hst:link var="searchURL" path="/search" />
-        <form action="${searchURL}" method="get">
-	        <div>
-	          <input type="text" name="query" value="${query}"/>
-	          <input type="submit" value="Search"/>
-	        </div>
-        </form>
-      </c:otherwise>
-    </c:choose>
+    <hst:link var="searchURL" path="/search" />
+    <form action="${searchURL}" method="get">
+      <div>
+        <input type="text" name="query" value="${query}"/>
+        <input type="submit" value="Search"/>
+      </div>
+    </form>
     
     <c:if test="${query != null && query != ''}">
 

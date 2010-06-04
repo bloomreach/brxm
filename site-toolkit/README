@@ -12,8 +12,6 @@ How to test and build Hippo Site Toolkit
   (2) Maven 2.0.9 or higher
   (3) [Optional] Tomcat 5.5 or 6.0 (if you want to deploy and run on Tomcat.)
       -- Note shared lib folder path, depending on your Tomcat version, in your build.properties.
-  (4) [Optional] Apache Jetspeed 2.2 (if you want to deploy and run on Apache Jetspeed 2.2 Enterprise Portal.) 
-      -- Note shared lib folder path, depending on the Jetspeed's Tomcat version, in your build.properties.
 
 3. Build
     
@@ -55,27 +53,5 @@ How to test and build Hippo Site Toolkit
   
     - Visit the preview pages by http://127.0.0.1:8080/site/preview/
     - Visit the live pages by by http://127.0.0.1:8080/site/
-    - You can visit cms by http://127.0.0.1:8080/cms/
-      and console by http://127.0.0.1:8080/cms/console/
-
-  (3) With Jetspeed (on Tomcat)
-
-    - Move to demosuite/site folder.
-    - Copy build.properties-sample to build.properties in the folder.
-    - Edit the jetspeed server directory path and shared lib folder path in build.properties.
-      For example,
-      
-        jetspeed.server.home = /home/jdoe/tomcat-6.0.18
-        jetspeed.hst.shared.lib = ${jetspeed.server.home}/lib  # For tomcat 6.x. Use ${jetspeed.server.home}/shared/lib for Tomcat 5.x.
-      
-    - Run the following to deploy applications in the folder.
-  
-      $ mvn -P jetspeed clean install
-  
-    - Please note the NOTICE from the build output in your console.
-      You need to edit two web.xml files and to restart Jetspeed as indicated.
-    - If you complete the final step in the above, 
-      visit the page: http://127.0.0.1:8080/jetspeed/
-      And, click 'HST-2 Demo' tab.
     - You can visit cms by http://127.0.0.1:8080/cms/
       and console by http://127.0.0.1:8080/cms/console/

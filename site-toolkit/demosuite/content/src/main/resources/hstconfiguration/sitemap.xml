@@ -10,9 +10,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/home</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodyhome/bodymain</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>common/homepage</sv:value>
         </sv:property>
@@ -23,9 +20,6 @@
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/detailpage</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodydetailpage/content</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>common/About Us</sv:value>
@@ -38,9 +32,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodynewsarchive/content</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
         </sv:property>
@@ -50,9 +41,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/newsarchive</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodynewsarchive/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -64,9 +52,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/detailpage</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodydetailpage/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -86,9 +71,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodynewsarchive/content</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
         </sv:property>
@@ -98,9 +80,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/newsarchive</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodynewsarchive/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -112,9 +91,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/detailpage</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodydetailpage/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -134,9 +110,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodynewsarchive/content</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
         </sv:property>
@@ -146,9 +119,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/newsarchive</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodynewsarchive/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -160,9 +130,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/detailpage</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodydetailpage/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -183,9 +150,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodynewsarchive/content</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
         </sv:property>
@@ -195,9 +159,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/newsarchive</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodynewsarchive/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news</sv:value>
@@ -209,9 +170,6 @@
                 <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                     <sv:value>hst:pages/newsarchive</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                    <sv:value>hst:components/bodynewsarchive/content</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                     <sv:value>news</sv:value>
                 </sv:property>
@@ -221,9 +179,6 @@
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                         <sv:value>hst:pages/newsarchive</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                        <sv:value>hst:components/bodynewsarchive/content</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                         <sv:value>news/${3}</sv:value>
@@ -235,9 +190,6 @@
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                         <sv:value>hst:pages/detailpage</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                        <sv:value>hst:components/bodydetailpage/content</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                         <sv:value>news/${3}</sv:value>
@@ -271,9 +223,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/searchpage</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodysearch/content</sv:value>
-        </sv:property>
     </sv:node>
     <sv:node sv:name="error">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -299,23 +248,12 @@
             <sv:value>hst:components/bodyhome/bodymain/todolist</sv:value>
         </sv:property>
     </sv:node>
-    <sv:node sv:name="portletprefseditor">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/portletprefseditor</sv:value>
-        </sv:property>
-    </sv:node>
     <sv:node sv:name="faceted">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/faceted</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-            <sv:value>hst:components/bodyfaceted/content</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>faceted</sv:value>
@@ -326,9 +264,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/faceted</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodyfaceted/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>faceted/${1}</sv:value>
@@ -345,9 +280,6 @@
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/productpage</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
-                <sv:value>hst:components/bodyproductpage/content</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>products/${1}</sv:value>
