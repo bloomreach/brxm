@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -63,7 +64,10 @@ public abstract class StdWorkflow extends ActionDescription {
                         return StdWorkflow.this.isEnabled();
                     }
                 });
-                link.add(new Label("label", getTitle()));
+                IModel<String> title = getTitle();
+                Label titleLabel = new Label("label", title);
+                titleLabel.add(new AttributeModifier("title", true, title));
+                link.add(titleLabel);
             }
         });
 

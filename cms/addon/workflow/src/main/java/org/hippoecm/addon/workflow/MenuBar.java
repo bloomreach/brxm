@@ -20,11 +20,13 @@ import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
 class MenuBar extends Panel implements MenuComponent {
@@ -48,11 +50,14 @@ class MenuBar extends Panel implements MenuComponent {
 
             @Override
             public void populateItem(final Item item) {
-                Component button = (Component) item.getModelObject();
-                if (button instanceof MenuButton) {
-                    buttons.add((MenuButton) button);
+                Component component = (Component) item.getModelObject();
+                item.add(new AttributeAppender("class", new Model<String>(
+                        component instanceof MenuLabel ? "menu-label-item" : "icon-16"), " "));
+
+                if (component instanceof MenuButton) {
+                    buttons.add((MenuButton) component);
                 }
-                item.add(button);
+                item.add(component);
             }
         });
     }
