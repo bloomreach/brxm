@@ -55,6 +55,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("Expected from the hst testcontents default hostname to be 127.0.0.1. ", "127.0.0.1".equals(vhosts.getDefaultHostName()));
                 
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
             
@@ -90,6 +91,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The live SiteMount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -124,6 +126,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The preview SiteMount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -147,6 +150,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                
                 assertTrue("We expect the mount to return true for version in preview header", mount.getSiteMount().isVersionInPreviewHeader());
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -181,6 +185,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The live SiteMount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -216,6 +221,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedSiteMount().getSiteMount().isPreview());
                 assertTrue("The preview SiteMount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedSiteMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -257,6 +263,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("Expected pipeline name is 'CustomPipeline' ", "CustomPipeline".equals(resolvedSiteMapItem.getNamedPipeline()));
                 
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -312,6 +319,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -343,6 +351,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                
                 assertTrue("The expected id of the resolved sitemap item is 'home'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -403,6 +412,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The mountpath for /preview/services mount must be '/preview/services' but was '"+mount.getSiteMount().getMountPath()+"'", "/preview/services".equals(mount.getSiteMount().getMountPath()));
                 assertTrue("The mountpoint for /preview/services mount must be '/unittestpreview/unittestproject' but was '"+mount.getSiteMount().getMountPoint()+"'", "/unittestpreview/unittestproject".equals(mount.getSiteMount().getMountPoint()));
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -440,6 +450,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -476,6 +487,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -522,6 +534,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("As the contextPath '/mywrongpath' does not match the configured one of sitemount 'examplecontextpathonly', we expect a fallback to the sitemount hst:root ",mount.getSiteMount().getName().equals("hst:root"));
                 
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -611,6 +624,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("We expect the parameter 'testparam to resolve to 'mycustomhometestpreview' ","mycustomhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
             } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
                 e.printStackTrace();
             }
         }
