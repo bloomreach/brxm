@@ -278,7 +278,7 @@ public interface HstResponse extends HttpServletResponse {
      * the invocation will be just ignored with no operation.
      * </P>
      * 
-     * @param pathInfo the path info to forward
+     * @param pathInfo the path info to forward. It should start with a "/"
      * @throws IOException If the response was committed
      */
     void forward(String pathInfo) throws IOException;
