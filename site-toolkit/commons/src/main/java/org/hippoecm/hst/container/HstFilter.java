@@ -278,14 +278,33 @@ public class HstFilter implements Filter {
                             request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
                             
                             HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
+                           
+                            // check whether there was a forward: 
+                            String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+                            if (forwardPathInfo != null) {
+                                req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+                                HstContainerURL forwardedHstContainerURL = factory.getContainerURLProvider().parseURL(req, res, null, forwardPathInfo);
+                                req.setAttribute(HstContainerURL.class.getName(), forwardedHstContainerURL);
+                                
+                                resolvedSiteMapItem = mount.matchSiteMapItem(forwardedHstContainerURL);
+                                request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
+                                HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
+                            }
+                            
+                            if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+                                throw new Exception("Not allowed to have multiple forwards for one request. Request was already forwarded");
+                            }
+                            
                             return;
                         } else {
                             if(mount.getNamedPipeline() == null) {
                                 throw new MatchException("No hstSite and no custom namedPipeline for SiteMount found for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
                             } 
                             logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
+                            
+                            
                             HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, mount.getNamedPipeline());
-                        
+                            return;
                         }
                     } else {
                         throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");

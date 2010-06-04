@@ -90,9 +90,6 @@
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
   
-  <bean id="forwardValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ForwardValve">
-  </bean>
-  
   <!-- Pipelines -->
   
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
@@ -120,7 +117,6 @@
             <property name="postInvokingValves">
               <list>
                 <ref bean="cleanupValve" />
-                <ref bean="forwardValve" />
               </list>
             </property>
           </bean>
