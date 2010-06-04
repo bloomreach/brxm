@@ -315,7 +315,7 @@ padding-right: 9px;
 /* Toolbar */
 /* ================================================ */ 
 .hippo-toolbar{padding: 0px; margin-left: 0px;}
-.hippo-toolbar .hippo-toolbar-section {display: block; float: left; color: #666666; padding-top: 0px; margin-right: 2px; background: url("images/devider.png") no-repeat 5px right;}
+.hippo-toolbar .hippo-toolbar-section {display: block; float: left; color: #666666; padding-top: 0px; margin-right: 2px;}
 .hippo-toolbar .hippo-toolbar-section li{margin-right: 1px; float: left;}
 
 .hippo-toolbar .hippo-toolbar-section select{float: right;  background: #32629b; color: white; margin: 0px; border: 1px solid white;}
@@ -381,6 +381,8 @@ color: black
 
 .hippo-toolbar-section li.icon-16{padding-left: 0px; background-position: 3px 4px; width: 118px;}
 .hippo-toolbar-section span.icon-16{display: block; height: 16px; width: 16px}
+
+.hippo-toolbar .hippo-toolbar-section li.menu-label-item {white-space: nowrap; padding-left: 4px; padding-right: 0px; padding-top: 2px;}
 
 .hippo-toolbar-section li.icon-16 div{position: relative}
 
