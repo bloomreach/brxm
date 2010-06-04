@@ -1112,7 +1112,11 @@ public class UpdaterEngine {
                 if (mixinsChanged) {
                     node.setProperty("jcr:mixinTypes", mixins);
                 }
-                node.removeMixin("hipposys:unstructured");
+                if ("hipposys".equals(namespace)) {
+                    node.removeMixin(newPrefix + ":unstructured");
+                } else {
+                    node.removeMixin("hipposys:unstructured");
+                }
             }
             if (node.getName().startsWith(namespace + ":")) {
                 context.setName(node, newPrefix + ":" + node.getName().substring(node.getName().indexOf(":") + 1));
