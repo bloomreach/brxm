@@ -21,7 +21,6 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
  
 /**
  * A <code>HstSiteMapItem<code> is used as a representation of a logical path (element) for matching (part of a) external URL 
@@ -116,6 +115,20 @@ public interface HstSiteMapItem {
      * @return <code>true</code> if the sitemap item is secured. 
      */
     boolean isSecured();
+    
+    /**
+     * <p>
+     * When having more sitemapitem as sibblings, for example foo.xml, foo.html and foo.rss, you might not want all three being used for linkrewriting: Even worse, if
+     * they all three have the same {@link #getRelativeContentPath()}, we cannot choose which one is the one you want, so, one of the items is used. When configuring 
+     * a SiteMapItem to return <code>true</code> for isExcludedForLinkRewriting(), you can exclude the item to be used for linkrewriting. Thus, setting the .rss and .xml
+     * version to <code>true</code> will make sure that linkrewriting returns you the .html links.
+     * </p>
+     * <p>
+     * <b>Note</b> that this value is <b>not</b> inherited from ancestor HstSiteMapItem's
+     * </p>
+     * @return <code>true</code> when this sitemap item should be ignored for linkrewriting
+     */
+    boolean isExcludedForLinkRewriting();
     
     /**
      * Returns a <code>List</code> of all child <code>HstSiteMapItem</code>'s of this <code>HstSiteMapItem</code>.    

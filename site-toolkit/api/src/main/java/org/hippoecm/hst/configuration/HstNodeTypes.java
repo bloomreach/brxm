@@ -67,6 +67,7 @@ public interface HstNodeTypes {
     public final static String SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID =  "hst:portletcomponentconfigurationid";
     public final static String SITEMAPITEM_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
     public final static String SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS =  "hst:sitemapitemhandlerids";
+    public final static String SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING = "hst:excludedforlinkrewriting";
 
     public final static String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     public final static String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";

@@ -79,6 +79,7 @@
 - hst:statuscode (long)
 - hst:errorcode (long)
 - hst:secured (boolean)
+- hst:excludedforlinkrewriting (boolean)
 - hst:roles (string) multiple
 + * (hst:sitemapitem)
 

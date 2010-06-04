@@ -58,6 +58,11 @@ public class LocationMapTreeImpl implements LocationMapTree{
     
     public void addSiteMapItem(String unresolvedPath, HstSiteMapItem hstSiteMapItem){
         if(unresolvedPath == null) {
+            log.debug("HstSiteMapItem '{}' will not be used for linkrewriting as it has an empty relative content path.", hstSiteMapItem.getId());
+            return;
+        }
+        if(hstSiteMapItem.isExcludedForLinkRewriting()){
+            log.debug("HstSiteMapItem '{}' will not be used for linkrewriting as is configured to be excluded for linkrewriting.", hstSiteMapItem.getId());
             return;
         }
         

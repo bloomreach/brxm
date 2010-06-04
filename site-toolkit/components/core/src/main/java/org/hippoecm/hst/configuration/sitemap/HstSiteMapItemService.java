@@ -72,6 +72,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private List<String> roles;
     
     private boolean secured = false;
+    
+    private boolean isExcludedForLinkRewriting = false;
 
     private boolean isWildCard;
     
@@ -234,6 +236,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         } else if(this.parentItem != null){
             this.secured = parentItem.isSecured();
         } 
+        
+        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
+            this.isExcludedForLinkRewriting = getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
+        }
         
         if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
@@ -498,6 +504,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public String getQualifiedId() {
         return qualifiedId;
+    }
+
+    public boolean isExcludedForLinkRewriting() {
+        return isExcludedForLinkRewriting;
     }
 
 }
