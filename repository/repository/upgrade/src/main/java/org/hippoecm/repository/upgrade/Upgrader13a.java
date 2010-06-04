@@ -15,31 +15,34 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+
 import javax.jcr.NamespaceException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.query.Query;
+
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
-import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.VersionNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import java.io.InputStreamReader;
 
 public class Upgrader13a implements UpdaterModule {
     @SuppressWarnings("unused")
@@ -160,7 +163,22 @@ public class Upgrader13a implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.display]", Query.XPATH) {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                log.error("encoding.dos[;ay property on "+node.getPath()+" no longer supported, please set /hippo:configuration/hippo:frontend/cms/cms-services/settingsService/codecs/@encoding.display property instead");
+                log.error("encoding.display property on "+node.getPath()+" no longer supported, please set /hippo:configuration/hippo:frontend/cms/cms-services/settingsService/codecs/@encoding.display property instead");
+            } 
+        });
+
+        context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(hipposysedit:prototype,nt:unstructured)", Query.XPATH) {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                for (PropertyIterator properties = node.getProperties(); properties.hasNext();) {
+                    Property property = properties.nextProperty();
+                    String name = property.getName();
+                    if (name.startsWith("hippostd:")) {
+                        context.setName(property, "hippostd_2_1:" + name.substring("hippostd:".length()));
+                    } else if (name.startsWith("hippostdpubwf:")) {
+                        context.setName(property, "hippostdpubwf_1_1:" + name.substring("hippostdpubwf:".length()));
+                    }
+                }
             } 
         });
 
@@ -183,51 +201,13 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
-        //Documentlisting wide-view update
-        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser") {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                if(node.hasNode("browserPerspective/layout.wireframe")) {
-                    Node layout = node.getNode("browserPerspective/layout.wireframe");
-                    layout.setProperty("left", "id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px 0px 0px 0px,expand.collapse.enabled=true");
-                    layout.setProperty("center", "id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px 0px 0px 0px");
-                }
-                if(node.hasNode("navigatorLayout/yui.config")) {
-                    Node config = node.getNode("navigatorLayout/yui.config");
-                    config.setProperty("left", "id=navigator-left,body=navigator-left-body,width=200,zindex=2,min.width=100,resize=true");
-                    config.setProperty("center", "id=navigator-center,body=navigator-center-body,width=250,min.width=100");
-                }
-            }
-        });
-
-        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-folder-views") {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                if(node.hasNode("hippostd:directory/root")) {
-                    Node root = node.getNode("hippostd:directory/root");
-                    root.setProperty("expand.collapse.supported", true);
-                }
-                if (node.hasNode("hippostd:folder/root")) {
-                    Node root = node.getNode("hippostd:folder/root");
-                    root.setProperty("expand.collapse.supported", true);
-                }
-            }
-        });
-
-        for (String path : new String[] {"/hippo:configuration/hippo:frontend/cms/cms-browser",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-dashboard",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-editor",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-folder-views",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-pickers",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-preview",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-services",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-static",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-search-views",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-tree-views",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-reports",
-                                         "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts",
+        for (String path : new String[] {"/hippo:configuration/hippo:frontend/login",
                                          "/hippo:configuration/hippo:frontend/cms/cms-headshortcuts",
-                                         "/hippo:configuration/hippo:frontend/login",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-reports",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-browser/browserLayout",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-browser/editorTabUnit",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-browser/editorTabTopUnit",
+                                         "/hippo:configuration/hippo:frontend/cms/cms-browser/tabbedEditorLayout",
                                          "/hippo:configuration/hippo:domains/frontendconfig/frontent-plugins/exclude-management"}) {
             context.registerVisitor(new PathVisitor(path) {
                 @Override
@@ -239,20 +219,238 @@ public class Upgrader13a implements UpdaterModule {
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:initialize") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                for (String element : new String[] {"cms-browser",
-                                                    "cms-dashboard",
-                                                    "cms-editor",
-                                                    "cms-folder-views",
-                                                    "cms-pickers",
-                                                    "cms-preview",
-                                                    "cms-services",
-                                                    "cms-static",
-                                                    "layout-provider", "html-cleaner-service",
-                                                    "reviewedactions3","reviewedactions4","cms-dashshortcuts-gotolink","cms-dashshortcuts-changepassword","cms-search-views","cms-tree-views","cms-reports","cms-dashshortcuts",
-                                                    "cms-login"}) {
+                for (String element : new String[] {"cms-login", "cms-reports"}) {
                     if(node.hasNode(element)) {
                         node.getNode(element).remove();
                     }
+                }
+            }
+        });
+
+
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-services") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                Node settings = node.addNode("settingsService", "frontend_2_1:plugin");
+                settings.setProperty("plugin.class", "org.hippoecm.frontend.service.settings.SettingsStorePlugin");
+                Node codecs = settings.addNode("codecs", "frontend_2_1:pluginconfig");
+                codecs.setProperty("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+                codecs.setProperty("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+                
+                if (node.hasNode("htmlCleanerService")) {
+                    Node cleanup = node.getNode("htmlCleanerService/cleaner.config/hippohtmlcleaner_2_1:cleanup");
+                    for (NodeIterator elements = cleanup.getNodes("hippohtmlcleaner_2_1:cleanupElement"); elements.hasNext();) {
+                        Node element = elements.nextNode();
+                        Utilities.dump(element);
+                        if ("img".equals(element.getProperty("hippohtmlcleaner_2_1:name").getString()) && element.hasProperty("hippohtmlcleaner_2_1:attributes")) {
+                            Property attrs = element.getProperty("hippohtmlcleaner_2_1:attributes");
+                            Value[] values = attrs.getValues();
+                            if (values.length > 0) {
+                                int idx = -1;
+                                for (int i = 0; i < values.length; i++) {
+                                    if ("facetselect".equals(values[i].getString())) {
+                                        idx = i;
+                                        break;
+                                    }
+                                }
+                                if (idx >= 0) {
+                                    Value[] newValues = new Value[values.length - 1];
+                                    System.arraycopy(values, 0, newValues, 0, idx);
+                                    System.arraycopy(values, idx + 1, newValues, idx, values.length - idx - 1);
+                                    attrs.setValue(newValues);
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            }
+        });
+
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-static") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                Node translations = node.getNode("configTranslator/hippostd_2_1:translations");
+                Node sectionTranslation = translations.getNode("section-configuration");
+                /* {
+                    Node en = sectionTranslation.addNode("hippo_2_1:translation", "hippo_2_1:translation");
+                    en.setProperty("hippo_2_1:language", "en");
+                    en.setProperty("hippo_2_1:message", "Configuration");
+                } */
+                {
+                    Node nl = sectionTranslation.addNode("hippo_2_1:translation", "hippo_2_1:translation");
+                    nl.setProperty("hippo_2_1:language", "nl");
+                    nl.setProperty("hippo_2_1:message", "Configuratie");
+                }
+                node.getNode("headerPlugin").remove();
+                node.getNode("footerPlugin").remove();
+                node.getNode("adminLayout").remove();
+                node.getNode("browseShortcutsListPlugin").remove();
+                node.getNode("browseShortcutsPlugin").remove();
+                node.getNode("centerPlugin").remove();
+                node.getNode("browserSpecificStylesheetsBehavior").remove();
+                {
+                    Node adminPerspective = node.getNode("adminPerspective");
+                    adminPerspective.getProperty("wicket.behavior").remove();
+                    Node layout = adminPerspective.addNode("layout.wireframe", "frontend_2_1:pluginconfig");
+                    layout.setProperty("center", "id=hippo-controlpanel-perspective-center,body=hippo-controlpanel-perspective-center-body,scroll=true");
+                    layout.setProperty("linked.with.parent", true);
+                    layout.setProperty("root.id", "hippo-controlpanel-perspective-wrapper");
+                    layout.setProperty("top", "id=hippo-controlpanel-perspective-top,body=hippo-controlpanel-perspective-top-body,height=35");
+                }
+                node.getNode("logoutPlugin").remove();
+                {
+                    Node root = node.getNode("root");
+                    root.getProperty("extension.center").remove();
+                    root.getProperty("extension.header").remove();
+                    root.getProperty("wicket.behavior").remove();
+                    root.getProperty("wicket.extensions").remove();
+                    root.setProperty("tabs", "service.tab");
+                    root.setProperty("browsers", new String[] { "browser.ie" });
+                    Node ie = root.addNode("browser.ie", "frontend_2_1:pluginconfig");
+                    ie.setProperty("stylesheets", new String[] { "skin/screen_ie.css" });
+                    ie.setProperty("user.agent", "ie");
+                    Node wf = root.addNode("layout.wireframe", "frontend_2_1:pluginconfig");
+                    wf.setProperty("center", "id=tabbed-panel-layout-center,height=1000");
+                    wf.setProperty("left", "id=tabbed-panel-layout-left,width=50");
+                    wf.setProperty("linked.with.parent", true);
+                    wf.setProperty("root.id", "tabbed-panel-layout");
+                    root.getNode("yui.config").remove();
+                }
+                node.getNode("tabLayout").remove();
+                node.getNode("tabTopUnit").remove();
+                node.getNode("tabUnit").remove();
+            }
+        });
+
+        //Documentlisting wide-view update
+
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser/browserPerspective") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if (node.hasProperty("extension.editor")) {
+                    Property prop = node.getProperty("extension.editor");
+                    Value editor = prop.getValue();
+                    prop.remove();
+                    node.setProperty("center", editor);
+                }
+                if (node.hasProperty("extension.navigator")) {
+                    Property prop = node.getProperty("extension.navigator");
+                    Value navigator = prop.getValue();
+                    prop.remove();
+                    node.setProperty("left", navigator);
+                }
+                if (node.hasProperty("wicket.behavior")) {
+                    node.getProperty("wicket.behavior").remove();
+                }
+                if (node.hasProperty("wicket.extensions")) {
+                    node.getProperty("wicket.extensions").remove();
+                }
+                node.setProperty("top", "service.browse.tabscontainer");
+                node.setProperty("model.document", "model.browse.document");
+
+                Node layout = node.addNode("layout.wireframe", "frontend_2_1:pluginconfig");
+                layout.setProperty("center", "id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px 0px 0px 0px");
+                layout.setProperty("left", "id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px 0px 0px 0px,expand.collapse.enabled=true");
+                layout.setProperty("linked.with.parent", true);
+                layout.setProperty("root.id", "browse-perspective-wrapper");
+                layout.setProperty("top", "id=browse-perspective-top,height=25");
+            }
+        });
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser/editorManagerPlugin") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                Node compare = node.addNode("cluster.compare.options", "frontend_2_1:pluginconfig");
+                compare.setProperty("browser.id", "service.browse");
+                compare.setProperty("editor.id", "service.edit");
+                compare.setProperty("wicket.behavior", "service.behavior.editor.tabs.center");
+                compare.setProperty("wicket.id", "service.editor.tab");
+                if (node.hasProperty("cluster.edit.name")) {
+                    node.getProperty("cluster.edit.name").remove();
+                }
+                if (node.hasProperty("cluster.preview.name")) {
+                    node.getProperty("cluster.preview.name").remove();
+                }
+            }
+        });
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser/navigatorLayout") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if(node.hasNode("yui.config")) {
+                    Node config = node.getNode("yui.config");
+                    config.setProperty("left", "id=navigator-left,body=navigator-left-body,width=200,zindex=2,min.width=100,resize=true");
+                    config.setProperty("center", "id=navigator-center,body=navigator-center-body,width=250,min.width=100");
+                    config.getProperty("top").remove();
+                    config.getProperty("units").remove();
+                }
+            }
+        });
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser/tabbedEditorTabs") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                node.getProperty("tabbedpanel.behavior").remove();
+                node.getProperty("wicket.behavior").remove();
+                node.setProperty("tabs.container.id", "service.browse.tabscontainer");
+            }
+        });
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-dashboard/dashboardLayout") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if (node.hasNode("yui.config")) {
+                    node.getProperty("yui.config/center").setValue("id=center,scroll=true,width=33%,body=center-body,gutter=0px 1px 1px 0px");
+                    node.getProperty("yui.config/right").setValue("id=right,width=33%,body=right-body,scroll=true,gutter=0px 1px 1px 0px");
+                    node.getProperty("yui.config/left").setValue("id=left,width=33%,body=left-body,gutter=0px 1px 1px 1px");
+                    node.getProperty("yui.config/top").setValue("id=top,height=24");
+                    node.getProperty("yui.config/units").remove();
+                }
+            }
+        });
+        for (String perspective : new String[] {
+                    "/hippo:configuration/hippo:frontend/cms/cms-editor/editPerspective",
+                    "/hippo:configuration/hippo:frontend/cms/cms-preview/previewPerspective"
+                }) {
+            context.registerVisitor(new PathVisitor(perspective) {
+                @Override
+                protected void leaving(Node node, int level) throws RepositoryException {
+                    Node layout = node.getNode("yui.config");
+                    context.setName(layout, "layout.wireframe");
+                    layout.getProperty("units").remove();
+                }
+            });
+        }
+        for (String workflowPlugin : new String[] {
+                "/hippo:configuration/hippo:frontend/cms/cms-editor/workflowPlugin",
+                "/hippo:configuration/hippo:frontend/cms/cms-preview/workflowPlugin",
+            }) {
+            context.registerVisitor(new PathVisitor(workflowPlugin) {
+                @Override
+                protected void leaving(Node node, int level) throws RepositoryException {
+                    if (node.hasProperty("model.id")) {
+                        node.getProperty("model.id").remove();
+                    }
+                }
+            });
+        }
+//        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-folder-views") {
+//            @Override
+//            protected void leaving(Node node, int level) throws RepositoryException {
+//                for (String type : new String[] { "hippostd:directory", "hippostd:folder" }) {
+//                    Node root = node.getNode(type + "/root");
+//                    root.setProperty("expand.collapse.supported", true);
+//                }
+//            }
+//        });
+
+        context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-folder-views") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if(node.hasNode("hippostd_2_1:directory/root")) {
+                    Node root = node.getNode("hippostd_2_1:directory/root");
+                    root.setProperty("expand.collapse.supported", true);
+                }
+                if (node.hasNode("hippostd_2_1:folder/root")) {
+                    Node root = node.getNode("hippostd_2_1:folder/root");
+                    root.setProperty("expand.collapse.supported", true);
                 }
             }
         });
@@ -275,6 +473,7 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
+        // FIXME: null-pointers waiting to happen
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", "-",
                 new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippo.cnd"))));
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", "-",
@@ -309,7 +508,6 @@ public class Upgrader13a implements UpdaterModule {
                 String newUri = VersionNumber.versionFromURI(oldUri).next().versionToURI(oldUri);
                 log.info("Derived namespace " + subtypedNamespace + " " + oldUri + " -> " + newUri);
                 workspace.getNamespaceRegistry().registerNamespace(subtypedNamespace, newUri);
-                if(subtypedNamespace.equals("defaultcontent"))
                 context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, subtypedNamespace, "-", null));
             }
         } catch (NamespaceException ex) {
