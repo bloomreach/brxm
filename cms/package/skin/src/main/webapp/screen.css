@@ -449,24 +449,39 @@ table.hippo-window-form{width: 100%;}
 .hippo-window-dialog-question{font-weight: bold}
 
 /* Wicket Modal windows overwrite */
-.hippo-root div.wicket-modal div.w_blue div.w_top, 
-.hippo-root div.wicket-modal div.w_blue div.w_bottom,
-.hippo-root div.wicket-modal div.w_blue div.w_topLeft,
-.hippo-root div.wicket-modal div.w_blue div.w_topRight,
-.hippo-root div.wicket-modal div.w_blue div.w_bottomRight,
-.hippo-root div.wicket-modal div.w_blue div.w_bottomLeft,
-.hippo-root div.wicket-modal div.w_blue a.w_close{
-background-image: url(images/box-blue.png);}
+.hippo-root div.wicket-modal div.w_grey div.w_top,
+.hippo-root div.wicket-modal div.w_grey div.w_bottom,
+.hippo-root div.wicket-modal div.w_grey div.w_topLeft,
+.hippo-root div.wicket-modal div.w_grey div.w_topRight,
+.hippo-root div.wicket-modal div.w_grey div.w_bottomRight,
+.hippo-root div.wicket-modal div.w_grey div.w_bottomLeft,
+.hippo-root div.wicket-modal div.w_grey a.w_close{
+background-image: url(images/box-grey.png);}
 
-.hippo-root div.wicket-modal div.w_blue div.w_left,
-.hippo-root div.wicket-modal div.w_blue div.w_right {
-background-image:url(images/box-blue2.png);}
+.hippo-root div.wicket-modal div.w_grey_resize div.w_top,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_bottom,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_topLeft,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_topRight,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_bottomRight,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_bottomLeft,
+.hippo-root div.wicket-modal div.w_grey_resize a.w_close{
+background-image: url(images/box-grey-resizable.png);}
+
+
+.hippo-root div.wicket-modal div.w_grey div.w_left,
+.hippo-root div.wicket-modal div.w_grey div.w_right,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_left,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_right {
+background-image:url(images/box-grey2.png);}
 
 /* .hippo-root div.wicket-modal div.w_caption{background: url("images/box-blue-caption.png") repeat-x; height: 20px; padding: 6px;} */
 .hippo-root div.wicket-modal div.w_caption{height: 24px; background: #999999; text-align: center; color: #f2f2f2}
 .hippo-root div.wicket-modal div.w_caption span{color: white; font-size: 11px; font-weight: bold; margin: 0px; padding: 0px; position: relative;}
-.hippo-root div.w_blue a.w_close{width: 44px; height: 18px; background-position: -154px -48px;}
-.hippo-root div.w_blue a.w_close:hover{background-position: -154px -66px; width: 44px; height: 18px;}
+.hippo-root div.w_grey a.w_close{width: 44px; height: 18px; background-position: -154px -48px;}
+.hippo-root div.w_grey a.w_close:hover{background-position: -154px -66px; width: 44px; height: 18px;}
+.hippo-root div.w_grey_resize a.w_close{width: 44px; height: 18px; background-position: -154px -48px;}
+.hippo-root div.w_grey_resize a.w_close:hover{background-position: -154px -66px; width: 44px; height: 18px;}
+
 .hippo-root div.wicket-modal div.w_content {background: white url("images/box-blue-back.png") repeat-x bottom left;}
 .hippo-root div.wicket-modal div.w_content_3{border: none}
 .hippo-root div.wicket-modal div.w_content_2 {padding-top: 0px}
