@@ -13,26 +13,53 @@ Xinha.Config.prototype.AutoSave =
 {
   'timeoutLength' : 2000,
   'callbackUrl' : ''
-}
+};
 
 function AutoSave(editor) {
     this.editor = editor;
     this.lConfig = editor.config.AutoSave;
     
     this.timeoutID = null;
+
+    //Atach onkeyup and onchange event listeners to textarea for autosaving in htmlmode
+    var txtArea = this.editor._textArea;
+    var me = this;
+    var fn = function(ev) {
+        me.checkChanges();
+    };
+
+    if(YAHOO.util.Event) {
+        YAHOO.util.Event.addListener(txtArea, 'keyup', fn);
+        YAHOO.util.Event.addListener(txtArea, 'cut', fn);
+        YAHOO.util.Event.addListener(txtArea, 'paste', fn);
+    } else {
+        if (txtArea.addEventListener) {
+            txtArea.addEventListener('keyup', fn, false);
+            txtArea.addEventListener('cut', fn, false);
+            txtArea.addEventListener('paste', fn, false);
+        } else if (txtArea.attachEvent) {
+            txtArea.attachEvent('onkeyup', fn);
+            txtArea.attachEvent('cut', fn);
+            txtArea.attachEvent('paste', fn);
+        } else {
+            txtArea['onkeyup'] = fn;
+            txtArea['cut'] = fn;
+            txtArea['paste'] = fn;
+        }
+    }
 }
 
 AutoSave.prototype._lc = function(string) {
     return Xinha._lc(string, 'AutoSave');
-}
+};
 
 AutoSave.prototype.getId = function() {
     return this.editor._textArea.getAttribute("id");
-}
+};
 
 AutoSave.prototype.getContents = function() {
     return this.editor.getInnerHTML();
-}
+};
 
 AutoSave.prototype.save = function() {
     var xmlHttpReq = null;
@@ -41,9 +68,10 @@ AutoSave.prototype.save = function() {
     } else if (window.ActiveXObject) {     // IE
         xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
     }
-    
-    this.editor._textArea.value = this.editor.outwardHtml(this.editor.getHTML());
-    
+
+    if(this.editor._editMode == 'wysiwyg') { //save Iframe html into textarea
+        this.editor._textArea.value = this.editor.outwardHtml(this.editor.getHTML());
+    }
     var callbackUrl = this.editor.config.callbackUrl;
     xmlHttpReq.open('POST', callbackUrl, false);
     xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -53,11 +81,11 @@ AutoSave.prototype.save = function() {
         }
     }
     xmlHttpReq.send(wicketSerialize(Wicket.$(this.getId())));
-}
+};
 
 AutoSave.prototype.onUpdateToolbar = function() {
     this.checkChanges();
-}
+};
 
 AutoSave.prototype.onKeyPress = function(ev) {
     if( ev != null && ev.ctrlKey && this.editor.getKey(ev) == 's') {
@@ -66,7 +94,7 @@ AutoSave.prototype.onKeyPress = function(ev) {
         return true;
     }
     this.checkChanges();
-}
+};
 
 AutoSave.prototype.checkChanges = function() {
     if(this.timeoutID != null) {
@@ -76,7 +104,7 @@ AutoSave.prototype.checkChanges = function() {
     this.timeoutID = window.setTimeout(function() {
         YAHOO.hippo.EditorManager.saveByTextareaId(editorId);   
     }, this.lConfig.timeoutLength);
-}
+};
 
 /**
  * Explicitly replace <p> </p> with general-purpose space (U+0020) with a <p> </p> including a non-breaking space (U+00A0)
@@ -90,4 +118,4 @@ AutoSave.prototype.inwardHtml = function(html) {
         return '<p>&nbsp;</p>';
     });
     return html;
-}
+};
