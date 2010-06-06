@@ -174,6 +174,8 @@ public class Main extends WebApplication {
             resourceSettings.addStringResourceLoader(loader);
         }
 
+        resourceSettings.setAddLastModifiedTimeToResourceReferenceUrl(true);
+
         mount(new AbstractRequestTargetUrlCodingStrategy("binaries") {
 
             public IRequestTarget decode(RequestParameters requestParameters) {
