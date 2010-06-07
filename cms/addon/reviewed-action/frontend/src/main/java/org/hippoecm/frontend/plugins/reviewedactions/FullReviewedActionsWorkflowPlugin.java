@@ -87,8 +87,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
-    private static Pattern END_NUMBER = Pattern.compile(".*\\(([0-9]*?)\\)$");
-
     public String stateSummary = "UNKNOWN";
 
     public String inUseBy = "";
@@ -338,36 +336,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper(getFolder()) {
                 };
+                CopyNameHelper copyNameHelper = new CopyNameHelper(getNodeNameCodec(), new StringResourceModel(
+                        "copyof", FullReviewedActionsWorkflowPlugin.this, null).getString());
                 try {
-                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
-                    String copyOf = new StringResourceModel("copyof", FullReviewedActionsWorkflowPlugin.this, null).getObject();
-                    if (!name.startsWith(copyOf)) {
-                        name = copyOf + " " + name;
-                    } else {
-                        String base;
-                        int number;
-                        if (END_NUMBER.matcher(name).matches()) {
-                            Matcher matcher = END_NUMBER.matcher(name);
-                            matcher.find();
-                            String match = matcher.group(1);
-                            base = name.substring(0, name.lastIndexOf('('));
-                            number = Integer.parseInt(match) + 1;
-                        } else {
-                            base = name + " ";
-                            number = 2;
-                        }
-                        Node folder = destination.getNodeModel().getNode();
-                        if (folder != null) {
-                            StringCodec codec = getNodeNameCodec();
-                            String nodeName;
-                            do {
-                                name = base + "(" + (number++) + ")";
-                                nodeName = codec.encode(name);
-                            } while (folder.hasNode(nodeName));
-                        } else {
-                            name = base + "(" + (number + 1) + ")";
-                        }
-                    }
+                    name = copyNameHelper.getCopyName(((HippoNode) ((WorkflowDescriptorModel) getDefaultModel())
+                            .getNode()).getLocalizedName(), destination.getNodeModel().getNode());
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
                 }
