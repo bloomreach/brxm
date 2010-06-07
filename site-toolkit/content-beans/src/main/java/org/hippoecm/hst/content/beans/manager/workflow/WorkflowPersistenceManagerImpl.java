@@ -311,40 +311,40 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 contentNode = NodeUtils.getCanonicalNode(contentNode, contentNode);
                 Workflow wf = getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
-                //String handleUuid = contentNode.getParent().getUUID();
-                
-                Document document = null;
-                if(customContentNodeBinder != null) {
-                    if (wf instanceof EditableWorkflow) {
-                        EditableWorkflow ewf = (EditableWorkflow) wf;
-                        document = ewf.obtainEditableInstance();
-                        String uuid = document.getIdentity();
-                        
-                        if (uuid != null && !"".equals(uuid)) {
-                            contentNode = session.getNodeByUUID(uuid);
-                        }
-                        boolean changed = customContentNodeBinder.bind(content, contentNode);
-                        
-                        if (changed) {
-                            contentNode.save();
-                            // we need to recreate the EditableWorkflow because the node has changed
-                            ewf = (EditableWorkflow) getWorkflow(documentNodeWorkflowCategory, contentNode);
-                            document = ewf.commitEditableInstance();
+                if (wf != null) {
+                    Document document = null;
+                    if(customContentNodeBinder != null) {
+                        if (wf instanceof EditableWorkflow) {
+                            EditableWorkflow ewf = (EditableWorkflow) wf;
+                            document = ewf.obtainEditableInstance();
+                            String uuid = document.getIdentity();
+                            
+                            if (uuid != null && !"".equals(uuid)) {
+                                contentNode = session.getNodeByUUID(uuid);
+                            }
+                            boolean changed = customContentNodeBinder.bind(content, contentNode);
+                            
+                            if (changed) {
+                                contentNode.save();
+                                // we need to recreate the EditableWorkflow because the node has changed
+                                ewf = (EditableWorkflow) getWorkflow(documentNodeWorkflowCategory, contentNode);
+                                document = ewf.commitEditableInstance();
+                            } else {
+                                document = ewf.disposeEditableInstance();
+                            }
                         } else {
-                            document = ewf.disposeEditableInstance();
+                            throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
                         }
-                    } else {
-                        throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
                     }
-                }
                 
-                if (workflowCallbackHandler != null) {
-                    // recreate the wf 
-                    wf = getWorkflow(documentNodeWorkflowCategory, document);
-                    if (wf != null) {
-                        workflowCallbackHandler.processWorkflow(wf);
-                    } else {
-                        throw new ObjectBeanPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
+                    if (workflowCallbackHandler != null) {
+                        // recreate the wf 
+                        wf = getWorkflow(documentNodeWorkflowCategory, document);
+                        if (wf != null) {
+                            workflowCallbackHandler.processWorkflow(wf);
+                        } else {
+                            throw new ObjectBeanPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -542,11 +542,17 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             
             WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
             return wfm.getWorkflow(category, node);
+        } catch (RepositoryException e) {
+            throw e;
+        } catch (Exception ignore) {
+            // Just ignore other exceptions which are not handled properly in the repository such as NPE.
         } finally {
             if (workspaceClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
         }
+        
+        return null;
     }
     
     public Workflow getWorkflow(String category, Document document) throws RepositoryException {
@@ -562,11 +568,17 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             
             WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
             return wfm.getWorkflow(category, document);
+        } catch (RepositoryException e) {
+            throw e;
+        } catch (Exception ignore) {
+            // Just ignore other exceptions which are not handled properly in the repository such as NPE.
         } finally {
             if (workspaceClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
         }
+        
+        return null;
     }
     
 }
