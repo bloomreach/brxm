@@ -19,9 +19,9 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -42,6 +42,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -67,7 +68,6 @@ import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
@@ -86,6 +86,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     private static final long serialVersionUID = 1L;
 
     static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
+
+    private static Pattern END_NUMBER = Pattern.compile(".*\\(([0-9]*?)\\)$");
 
     public String stateSummary = "UNKNOWN";
 
@@ -325,6 +327,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
             NodeModelWrapper destination = null;
+            String name = null;
 
             @Override
             protected ResourceReference getIcon() {
@@ -335,8 +338,47 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper(getFolder()) {
                 };
-                return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
-                        FullReviewedActionsWorkflowPlugin.this, null), null, null, destination);
+                try {
+                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
+                    String copyOf = new StringResourceModel("copyof", FullReviewedActionsWorkflowPlugin.this, null).getObject();
+                    if (!name.startsWith(copyOf)) {
+                        name = copyOf + " " + name;
+                    } else {
+                        String base;
+                        int number;
+                        if (END_NUMBER.matcher(name).matches()) {
+                            Matcher matcher = END_NUMBER.matcher(name);
+                            matcher.find();
+                            String match = matcher.group(1);
+                            base = name.substring(0, name.lastIndexOf('('));
+                            number = Integer.parseInt(match) + 1;
+                        } else {
+                            base = name + " ";
+                            number = 2;
+                        }
+                        Node folder = destination.getNodeModel().getNode();
+                        if (folder != null) {
+                            StringCodec codec = getNodeNameCodec();
+                            String nodeName;
+                            do {
+                                name = base + "(" + (number++) + ")";
+                                nodeName = codec.encode(name);
+                            } while (folder.hasNode(nodeName));
+                        } else {
+                            name = base + "(" + (number + 1) + ")";
+                        }
+                    }
+                } catch (RepositoryException ex) {
+                    return new ExceptionDialog(ex);
+                }
+                Dialog dialog = new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
+                        FullReviewedActionsWorkflowPlugin.this, null), null, new PropertyModel(this, "name"),
+                        destination) {
+                    {
+                        setOkEnabled(true);
+                    }
+                };
+                return dialog;
             }
 
             @Override
@@ -345,10 +387,19 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if (destination != null) {
                     folderModel = destination.getNodeModel();
                 }
-                String nodeName = (((WorkflowDescriptorModel) getDefaultModel()).getNode()).getName();
+                StringCodec codec = getNodeNameCodec();
+                String nodeName = codec.encode(name);
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+
                 workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
-                browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
+                JcrNodeModel resultModel = new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName);
+                Node result = resultModel.getNode();
+
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", result.getNode(nodeName));
+                defaultWorkflow.localizeName(name);
+
+                browseTo(resultModel);
                 return null;
             }
         });
