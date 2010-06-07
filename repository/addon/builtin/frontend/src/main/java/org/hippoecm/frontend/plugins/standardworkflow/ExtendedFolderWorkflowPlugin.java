@@ -131,6 +131,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 for (String uuid : documents) {
                     try {
                         Node document = session.getNodeByUUID(uuid);
+                        String path = document.getPath();
                         if (document.getDepth() > 0) {
                             Node handle = document.getParent();
                             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -149,8 +150,8 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                         Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
                         if (workflow instanceof FullReviewedActionsWorkflow) {
                             ((FullReviewedActionsWorkflow) workflow).publish();
-                            log.info("published document "+document.getPath()+" ("+uuid+")");
                             ++processed;
+                            log.info("published document "+path+" ("+uuid+")");
                         }
                     } catch (MappingException ex) {
                         log.warn("Publication of {} failed: {}", uuid, ex);
@@ -204,6 +205,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 for (String uuid : documents) {
                     try {
                         Node document = session.getNodeByUUID(uuid);
+                        String path = document.getPath();
                         if (document.getDepth() > 0) {
                             Node handle = document.getParent();
                             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -222,8 +224,8 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                         Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
                         if (workflow instanceof FullReviewedActionsWorkflow) {
                             ((FullReviewedActionsWorkflow) workflow).depublish();
-                            log.info("depublished document "+document.getPath()+" ("+uuid+")");
                             ++processed;
+                            log.info("depublished document "+path+" ("+uuid+")");
                         }
                     } catch (MappingException ex) {
                         log.warn("Depublication of {} failed: {}", uuid, ex);
