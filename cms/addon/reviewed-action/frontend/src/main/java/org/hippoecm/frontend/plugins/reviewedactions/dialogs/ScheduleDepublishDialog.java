@@ -47,7 +47,6 @@ public class ScheduleDepublishDialog extends WorkflowAction.DateDialog {
 
     @Override
     public IValueMap getProperties() {
-        return MEDIUM;
+        return LARGE;
     }
-
 }
