@@ -39,5 +39,6 @@
     <module>projectexport</module>
     <module>development-content</module>
     <module>documentation</module>
+    <module>upgrade</module>
   </modules>
 </project>
