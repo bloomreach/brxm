@@ -989,7 +989,7 @@ margin-top: 10px;
 .hippo-controlpanel {margin-top: 25px;}
 .hippo-controlpanel-panel{padding: 15px;}
 
-.hippo-controlpanel .hippo-feedback{position: absolute; top: 15px; right: 15px; width: 500px;} 
+.hippo-controlpanel .hippo-feedback{top: 15px; right: 15px; width: 500px;} 
 .hippo-controlpanel .hippo-feedback ul{margin-left: 0px; margin-right: 0px}
 
 table.hippo-controlpanel-body { height: 100%; width: 100%; margin-bottom: 25px; }
