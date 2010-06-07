@@ -24,7 +24,6 @@ import static org.junit.Assert.fail;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -80,9 +79,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The relative content path must be '/News/2009' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getRelativeContentPath()+ "'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
@@ -114,10 +111,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
@@ -175,9 +169,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
@@ -209,10 +201,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
@@ -247,10 +236,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
@@ -299,9 +285,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // requestCustom
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(requestCustom), requestCustom.getContextPath(), HstRequestUtils.getRequestPath(requestCustom));
-                requestCustom.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(requestCustom, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(requestCustom, response, mount);
                 ResolvedSiteMapItem customResolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 // because the /preview/services/pipelines/custom matches a sitemap item containing a custom named pipeline
@@ -309,8 +293,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // requestGeneral
                 ResolvedSiteMount mountGeneral = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(requestGeneral), requestGeneral.getContextPath(), HstRequestUtils.getRequestPath(requestGeneral));
-                requestGeneral.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mountGeneral);
-                HstContainerURL hstContainerURL2 = hstURLFactory.getContainerURLProvider().parseURL(requestGeneral, response);
+                HstContainerURL hstContainerURL2 = hstURLFactory.getContainerURLProvider().parseURL(requestGeneral, response, mountGeneral);
                 ResolvedSiteMapItem generalResolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL2);
                 
                 // because the /preview/services/pipelines/general matches a sitemap item NOT containing a custom named pipeline, this having the one
@@ -343,10 +326,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 // since the requestURI is empty, we expect a fallback to the configured homepage:
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                
                 assertTrue("The expected id of the resolved sitemap item is 'home'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
@@ -373,10 +353,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 // this should be the page not found sitemap item
@@ -438,13 +415,12 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // since the requestURI is empty, we expect a fallback to the configured homepage:
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 assertFalse("For port 7979 we do not have a configured a portmount, and thus we should get a mount that is live ", mount.getSiteMount().isPreview());
                 
                 assertTrue("Resolved virtualhost must have the portnumber! ",mount.getResolvedVirtualHost().getPortNumber() == 7979);
                 
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
@@ -477,11 +453,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // since the requestURI is empty, we expect a fallback to the configured homepage:
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
                 
                 assertTrue("For port 8081 we do not have a configured a portmount, and thus we should get a mount that is preview ", mount.getSiteMount().isPreview());
                 
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
@@ -579,8 +554,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
@@ -591,9 +565,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 request.setRequestURI("/site");
                 
                 mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+
                 
                 assertTrue("We expect the parameter 'testparam to resolve to 'myhometest2' ","myhometest2".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
@@ -602,8 +576,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                
                 
                 mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
-                previewRequest.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response);
+                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response, mount);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("We expect the parameter 'testparam to resolve to 'myhometestpreview' but it was '"+resolvedSiteMapItem.getParameter("testparam")+"'","myhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));
@@ -617,8 +590,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // The custompipeline sitemount also has hst:versioninpreviewheader = false
                 assertFalse("The mount for custompipeline should return false for version in preview header but returned true",mount.getSiteMount().isVersionInPreviewHeader());
                 
-                previewRequest.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response);
+                hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response, mount);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("We expect the parameter 'testparam to resolve to 'mycustomhometestpreview' ","mycustomhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));

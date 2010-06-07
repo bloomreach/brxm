@@ -18,6 +18,8 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 /**
  * Pipeline interface.
  * {@link HstRequestProcessor} will invoke the proper {@link Pipeline} instance to serve the request.
@@ -37,31 +39,34 @@ public interface Pipeline
      * Does pre-processing step for the request processing.
      * 
      * @param requestContainerConfig the HstComponent container configuration
+     * @param requestContext
      * @param servletRequest
      * @param servletResponse
      * @throws ContainerException
      */
-    void beforeInvoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
+    void beforeInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
 
     /**
      * Invokes the request processing
      * 
      * @param requestContainerConfig the HstComponent container configuration
+     * @param requestContext
      * @param servletRequest
      * @param servletResponse
      * @throws ContainerException
      */
-    void invoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
+    void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
     
     /**
      * Does post-processing step for the request processing.
      * 
      * @param requestContainerConfig the HstComponent container configuration
+     * @param requestContext
      * @param servletRequest
      * @param servletResponse
      * @throws ContainerException
      */
-    void afterInvoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
+    void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
 
     /**
      * Destroys the pipeline.

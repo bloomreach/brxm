@@ -28,7 +28,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.sitemapitemhandler.AbstractHstSiteMapHandler;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.springframework.web.bind.RequestUtils;
 
 /**
  * Example of a (DUMMY) simple cache handler
@@ -68,12 +67,12 @@ public class PageCachingSiteMapHandler extends AbstractHstSiteMapHandler {
         // we know the request started with /cached if we get here
         String pathInfo = resolvedSiteMapItem.getPathInfo();
         
-        if(pathInfo.startsWith("cached")) {
+        if(pathInfo.startsWith("/cached/")) {
             pathInfo = pathInfo.substring("/cached".length());
             ResolvedSiteMapItem redirectedItem = matchSiteMapItem(request, new HstResponseWrapper(response), resolvedSiteMapItem, pathInfo);
             return redirectedItem;
         } else {
-            throw new HstSiteMapItemHandlerException("the pathInfo should start with /cached for this handler");
+            throw new HstSiteMapItemHandlerException("the pathInfo should start with /cached/ for this handler");
         }
         
         

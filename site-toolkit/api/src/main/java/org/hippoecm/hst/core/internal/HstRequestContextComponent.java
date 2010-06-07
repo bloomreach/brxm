@@ -13,12 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.request;
+package org.hippoecm.hst.core.internal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * Factory component to create HstRequestContext object.
@@ -28,14 +25,13 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 public interface HstRequestContextComponent
 {
     /**
-     * Creates a request context for the given servlet request.
+     * Creates a mutable request context for either a servlet or portlet context.
+     * <b>Note: this does not yet initializes a newly created HstPortletRequestContext.</b>
      * 
-     * @param req
-     * @param resp
-     * @param config
+     * @param portletContext
      * @return
      */
-    HstRequestContext create(HttpServletRequest req, HttpServletResponse resp, ContainerConfiguration config);
+    HstMutableRequestContext create(boolean portletContext);
 
     /**
      * Release a request context back to the context pool.
@@ -43,5 +39,4 @@ public interface HstRequestContextComponent
      * @param context
      */
     void release(HstRequestContext context);
-    
 }

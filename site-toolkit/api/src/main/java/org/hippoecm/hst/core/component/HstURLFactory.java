@@ -30,31 +30,12 @@ public interface HstURLFactory {
     
 
     /**
-     * Returns HstContainerURLProvider for a website. If you need one for a portlet environment, use {@link #getContainerURLProvider(Boolean)} with 
-     * argument false. 
+     * Returns the HstContainerURLProvider.
      * 
      * @return HstContainerURLProvider
      */
     HstContainerURLProvider getContainerURLProvider();
 
-    /**
-     * Returns the HstContainerURLProvider. When <code>website</code> is <code>true</code>, a website  HstContainerURLProvider will be returned, otherwise
-     * a portlet HstContainerURLProvider
-     * 
-     * @return HstContainerURLProvider
-     */
-    HstContainerURLProvider getContainerURLProvider(boolean website);
-
-    /**
-     * Returns the HstContainerURLProvider. When <code>website</code> is <code>true</code>, a website  HstContainerURLProvider will be returned (and the argument <code>isEmbedded</code> is ignored). 
-     * When <code>website</code> is false and <code>isEmbedded</code> is false, a  portlet HstContainerURLProvider is returned. When <code>isEmbedded</code> is true
-     * a embedded portlet HstContainerURLProvider is returned
-     * 
-     * @return HstContainerURLProvider
-     */
-    HstContainerURLProvider getContainerURLProvider(boolean website, boolean isEmbedded);
-    
- 
     /**
      * Returns HstURL for the HstURL type with reference namespace based on the base container URL
      * 

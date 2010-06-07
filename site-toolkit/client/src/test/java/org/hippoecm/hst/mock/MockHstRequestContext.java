@@ -30,7 +30,6 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
-import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -144,7 +143,7 @@ public class MockHstRequestContext implements HstRequestContext {
     }
     
     public HstContainerURLProvider getContainerURLProvider() {
-        return urlFactory != null ? urlFactory.getContainerURLProvider(!this.isPortletContext(), this.isEmbeddedRequest()) : null;
+        return urlFactory != null ? urlFactory.getContainerURLProvider() : null;
     }
 
     public void removeAttribute(String name) {
@@ -173,10 +172,6 @@ public class MockHstRequestContext implements HstRequestContext {
         return null;
     }
 
-    public HstEmbeddedRequestContext getEmbeddedRequestContext() {
-        return null;
-    }
-
     public boolean isEmbeddedRequest() {
         return false;
     }
@@ -192,5 +187,12 @@ public class MockHstRequestContext implements HstRequestContext {
     public void setContextCredentialsProvider(ContextCredentialsProvider contextCredentialsProvider) {
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
-    
+
+	public ResolvedSiteMount getResolvedEmbeddingSiteMount() {
+		return null;
+	}
+
+	public String getTargetComponentPath() {
+		return null;
+	}
 }

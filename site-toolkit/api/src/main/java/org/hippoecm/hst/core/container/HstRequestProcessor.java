@@ -18,10 +18,12 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 /**
- * Request processor. This request processor is called by HstComponent container servlet.
+ * Request processor. This request processor is called by the HstFilter.
  * This request processor can be initialized and run by another web application and its own classloader.
- * So, the HstComponent container servlet or other components should not assume that this
+ * So, the HstFilter or other components should not assume that this
  * request processor is loaded by the same classloader.
  */
 public interface HstRequestProcessor {
@@ -30,32 +32,11 @@ public interface HstRequestProcessor {
      * processes request
      * 
      * @param requestContainerConfig the holder for the servletConfig and classloader of the HST container
+     * @param requestContext the requestContext of the HST request
      * @param servletRequest the servletRequest of the HST request
      * @param servletResponse the servletResponse of the HST response
-     * @throws ContainerException
-     */
-    void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
-    
-    /**
-     * processes request
-     * 
-     * @param requestContainerConfig the holder for the servletConfig and classloader of the HST container
-     * @param servletRequest the servletRequest of the HST request
-     * @param servletResponse the servletResponse of the HST response
-     * @param pathInfo the forced path info for the HST request processing
-     * @throws ContainerException
-     */
-    void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String pathInfo) throws ContainerException;
-    
-    /**
-     * processes request
-     * 
-     * @param requestContainerConfig the holder for the servletConfig and classloader of the HST container
-     * @param servletRequest the servletRequest of the HST request
-     * @param servletResponse the servletResponse of the HST response
-     * @param pathInfo the forced path info for the HST request processing
      * @param namedPipeline the pipeline to use for this request
      * @throws ContainerException
      */
-    void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String pathInfo, String namedPipeline) throws ContainerException;
+    void processRequest(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String namedPipeline) throws ContainerException;
 }

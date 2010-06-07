@@ -51,7 +51,7 @@ public interface VirtualHosts {
      * <p>This method tries to match a hstContainerURL to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
      * {@link ResolvedVirtualHost#matchSiteMount(HstContainerURL)}, which returns the {@link ResolvedSiteMount}. This object
-     * delegates to {@link ResolvedSiteMount#matchSiteMapItem(HstContainerURL)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
+     * delegates to {@link ResolvedSiteMount#matchSiteMapItem(String)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
      * in the chain a match cannot be made a MatchException exception is thrown
      * </p>
      * 

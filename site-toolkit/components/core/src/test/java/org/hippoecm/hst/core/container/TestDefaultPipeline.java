@@ -31,6 +31,7 @@ import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
@@ -94,17 +95,16 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         ((MockHttpServletRequest)servletRequest).setRequestURI(servletRequest.getContextPath() + servletRequest.getServletPath() + servletRequest.getPathInfo());
         
 
-        // need to set the resolved sitemap item on the request
-        resolveRequest(servletRequest, servletResponse);
+        HstRequestContext requestContext = resolveRequest(servletRequest, servletResponse);
         
-        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
+        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         
         try {
-            this.defaultPipeline.invoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.invoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.afterInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         }
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();
@@ -118,17 +118,16 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         ((MockHttpServletRequest)servletRequest).addHeader("Host", servletRequest.getServerName());
         ((MockHttpServletRequest)servletRequest).setRequestURI(servletRequest.getContextPath() + servletRequest.getServletPath() + servletRequest.getPathInfo());
         
-        // need to set the resolved sitemap item on the request
-        resolveRequest(servletRequest, servletResponse);
+        HstRequestContext requestContext = resolveRequest(servletRequest, servletResponse);
         
-        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
+        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         
         try {
-            this.defaultPipeline.invoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.invoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.afterInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         }
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();

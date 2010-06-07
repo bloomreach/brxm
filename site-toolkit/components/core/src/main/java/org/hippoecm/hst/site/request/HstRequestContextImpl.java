@@ -32,10 +32,9 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
-import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -47,13 +46,14 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  * 
  * @version $Id$
  */
-public class HstRequestContextImpl implements HstRequestContext {
+public class HstRequestContextImpl implements HstMutableRequestContext {
 
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
     protected ResolvedSiteMount resolvedSiteMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
+    protected String targetComponentPath;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
     protected String contextNamespace = "";
@@ -63,7 +63,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
-    protected HstEmbeddedRequestContext embeddedRequestContext;
+    protected ResolvedSiteMount resolvedEmbeddingSiteMount;
     
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -116,6 +116,14 @@ public class HstRequestContextImpl implements HstRequestContext {
         return this.resolvedSiteMapItem;
     }
     
+    public void setTargetComponentPath(String targetComponentPath) {
+    	this.targetComponentPath = targetComponentPath;
+    }
+    
+    public String getTargetComponentPath() {
+    	return this.targetComponentPath;
+    }
+    
     public void setBaseURL(HstContainerURL baseURL) {
         this.baseURL = baseURL;
     }
@@ -133,7 +141,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
     
     public HstContainerURLProvider getContainerURLProvider() {
-        return urlFactory != null ? urlFactory.getContainerURLProvider(!isPortletContext(), isEmbeddedRequest()) : null;
+        return urlFactory != null ? urlFactory.getContainerURLProvider() : null;
     }
 
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
@@ -234,16 +242,16 @@ public class HstRequestContextImpl implements HstRequestContext {
        return resolvedSiteMount.getSiteMount().getVirtualHost();
     }
     
-    public HstEmbeddedRequestContext getEmbeddedRequestContext() {
-        return embeddedRequestContext;
-    }
-
-    public void setEmbeddedRequestContext(HstEmbeddedRequestContext embeddedRequestContext) {
-        this.embeddedRequestContext = embeddedRequestContext;
-    }
-
     public boolean isEmbeddedRequest() {
-        return embeddedRequestContext != null;
+        return resolvedEmbeddingSiteMount != null;
+    }
+    
+    public void setResolvedEmbeddingSiteMount(ResolvedSiteMount resolvedEmbeddingSiteMount) {
+    	this.resolvedEmbeddingSiteMount = resolvedEmbeddingSiteMount;
+    }
+    
+    public ResolvedSiteMount getResolvedEmbeddingSiteMount() {
+    	return this.resolvedEmbeddingSiteMount;
     }
 
     public boolean isPortletContext() {

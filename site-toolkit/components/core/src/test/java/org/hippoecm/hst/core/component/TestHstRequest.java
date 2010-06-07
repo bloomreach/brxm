@@ -37,6 +37,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstComponentWindowImpl;
 import org.hippoecm.hst.core.container.HstContainerURLImpl;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.proxy.ProxyFactory;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
@@ -48,7 +49,7 @@ import org.junit.Test;
 public class TestHstRequest extends AbstractSpringTestCase {
     
     protected HttpServletRequest servletRequest;
-    protected HstRequestContextImpl requestContext;
+    protected HstMutableRequestContext requestContext;
 
     @Before
     public void setUp() throws Exception {

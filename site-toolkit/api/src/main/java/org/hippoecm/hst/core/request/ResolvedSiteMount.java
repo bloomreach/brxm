@@ -19,7 +19,6 @@ import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.container.HstContainerURL;
 
 /**
  * Implementations of this interface are a request flyweight instance of the {@link SiteMount} object, where possible wildcard property placeholders have been filled in, similar
@@ -51,12 +50,12 @@ public interface ResolvedSiteMount {
     String getResolvedMountPath();
 
     /**
-     * matches the current hstContainerURL, {@link ResolvedVirtualHost} and {@link ResolvedSiteMount} to a {@link ResolvedSiteMapItem} item or throws a 
+     * matches a pathInfo to a {@link ResolvedSiteMapItem} item or throws a 
      * {@link MatchException} or {@link NotFoundException} when cannot resolve to a sitemap item
-     * @param HstContainerURL hstContainerURL
+     * @param siteMapPathInfo
      * @return the ResolvedSiteMapItem for the current hstContainerURL 
      * @throws MatchException 
      */
-    ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL) throws MatchException;
+    ResolvedSiteMapItem matchSiteMapItem(String siteMapPathInfo) throws MatchException;
     
 }

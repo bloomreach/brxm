@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
@@ -61,23 +60,22 @@ public abstract class AbstractHstSiteMapHandler implements HstSiteMapItemHandler
     public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request,
             HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo) throws MatchException {
         
-        HstContainerURL newContainerUrl = createContainerURL(request, response, currentResolvedSiteMapItem, pathInfo);
-        return currentResolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(newContainerUrl);
+        return currentResolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(pathInfo);
     }
     
-    /**
-     * creates a new website HstContainerURL for <code>pathInfo</code>. Note that for portal or embedded portal requests, this method should be overridden 
-     * as the {@link HstURLFactory#getContainerURLProvider()} returns a website url container
+/* TODO
+     * creates a new website HstContainerURL for <code>pathInfo</code>.
      * @param request
      * @param response
      * @param resolvedSiteMapItem
      * @param pathInfo
      * @return HstContainerURL 
-     */
+     *
     public HstContainerURL createContainerURL(HttpServletRequest request, HttpServletResponse response, ResolvedSiteMapItem resolvedSiteMapItem, String pathInfo) {
         HstURLFactory factory = getURLFactory(resolvedSiteMapItem);
         return factory.getContainerURLProvider().parseURL(request, response, null, pathInfo);
     }
+*/    
     
     /**
      * @param resolvedSiteMapItem

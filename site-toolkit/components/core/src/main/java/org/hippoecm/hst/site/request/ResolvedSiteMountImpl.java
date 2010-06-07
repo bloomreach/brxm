@@ -18,7 +18,6 @@ package org.hippoecm.hst.site.request;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
-import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -58,13 +57,12 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
        return siteMount.getNamedPipeline();
     }
 
-    public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL) throws MatchException {
+    public ResolvedSiteMapItem matchSiteMapItem(String siteMapPathInfo) throws MatchException {
         // test whether this SiteMount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
         if(getSiteMount().getHstSite() == null) {
-            throw new MatchException("No HstSite attached to SiteMount '"+ getSiteMount().getName()+"'. The path '"+hstContainerURL.getRequestPath()+"' thus not be matched to a sitemap item");
+            throw new MatchException("No HstSite attached to SiteMount '"+ getSiteMount().getName()+"'. The path '"+siteMapPathInfo+"' thus not be matched to a sitemap item");
         }
         
-        String siteMapPathInfo = hstContainerURL.getPathInfo();
         if(siteMapPathInfo == null) {
           throw new MatchException("SiteMapPathInfo is not allowed to be null");
         }
@@ -98,5 +96,4 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
         }
         return item; 
     }
-
 }

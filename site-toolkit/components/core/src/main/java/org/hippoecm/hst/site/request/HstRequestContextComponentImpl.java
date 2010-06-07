@@ -16,13 +16,12 @@
 package org.hippoecm.hst.site.request;
 
 import javax.jcr.Repository;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
 /**
  * HstRequestContextComponentImpl
@@ -33,28 +32,24 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
 
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
+    protected ContainerConfiguration config;
 
-    public HstRequestContextComponentImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
+    public HstRequestContextComponentImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider, ContainerConfiguration config) {
         this.repository = repository;
         this.contextCredentialsProvider = contextCredentialsProvider;
+        this.config = config;
     }
 
-    public HstRequestContext create(HttpServletRequest req, HttpServletResponse resp, ContainerConfiguration config) {
-        HstRequestContextImpl rc = null;
-        
-        if (req.getAttribute("javax.portlet.request") != null) {
-            // portlet invoked request context
-            HstPortletRequestContextImpl prc = new HstPortletRequestContextImpl(repository, contextCredentialsProvider);
-            prc.initPortletContext(req, resp);
-            rc = prc;
-        } else {
-            // servlet invoked request context
-            rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
-        }
-            
-        rc.setContainerConfiguration(config);
-        
-        return rc;
+    public HstMutableRequestContext create(boolean portletContext) {
+    	HstMutableRequestContext rc = null;
+    	if (portletContext) {
+        	rc = new HstPortletRequestContextImpl(repository, contextCredentialsProvider);
+    	}
+    	else {
+        	rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
+    	}
+    	rc.setContainerConfiguration(config);
+    	return rc;
     }
     
     public void release(HstRequestContext context) {

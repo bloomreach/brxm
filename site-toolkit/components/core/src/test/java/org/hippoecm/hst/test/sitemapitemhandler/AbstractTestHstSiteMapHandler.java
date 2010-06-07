@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
@@ -47,19 +46,11 @@ public abstract class AbstractTestHstSiteMapHandler implements HstSiteMapItemHan
     
     public ResolvedSiteMapItem resolveToNewSiteMapItem(HttpServletRequest request,
             HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo){
-        
-        HstContainerURL newContainerUrl = createContainerURL(request, response, currentResolvedSiteMapItem, pathInfo);
-        return currentResolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(newContainerUrl);
-    }
-    
-    public HstContainerURL createContainerURL(HttpServletRequest request, HttpServletResponse response, ResolvedSiteMapItem resolvedSiteMapItem, String pathInfo) {
-        HstURLFactory factory = getURLFactory(resolvedSiteMapItem);
-        return factory.getContainerURLProvider().parseURL(request, response, null, pathInfo);
+        return currentResolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(pathInfo);
     }
     
     public HstURLFactory getURLFactory(ResolvedSiteMapItem resolvedSiteMapItem) {
         HstURLFactory factory = resolvedSiteMapItem.getResolvedSiteMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getVirtualHostsManager().getUrlFactory();
         return factory;
     }
-
 }

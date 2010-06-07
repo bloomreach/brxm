@@ -148,7 +148,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
                 throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a site mount");
             }
         }
-        return resolvedSiteMount.matchSiteMapItem(hstContainerURL);
+        return resolvedSiteMount.matchSiteMapItem(hstContainerURL.getPathInfo());
     }
 
     

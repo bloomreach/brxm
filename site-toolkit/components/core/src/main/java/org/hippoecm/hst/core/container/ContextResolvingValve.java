@@ -15,11 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 /**
  * ContextResolvingValve
@@ -32,70 +30,59 @@ public class ContextResolvingValve extends AbstractValve
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
-        HstComponentConfiguration rootComponentConfig = null;
-        
-        
-        HstRequestContextImpl requestContext = (HstRequestContextImpl) context.getServletRequest().getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        
-        ResolvedSiteMapItem resolvedSiteMapItem = (ResolvedSiteMapItem)context.getServletRequest().getAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM);
-        if(resolvedSiteMapItem == null) {
-         // if there is no ResolvedSiteMapItem on the request we cannot continue
-         throw new ContainerException("During the initialization valve, there must be a resolved sitemap item on the request. Cannot continue request processing");
-        }
-        requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-        
-        HstContainerURL baseURL = requestContext.getBaseURL();
-        HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
-        
-        if (erc != null) {
-            // we will use the embedded request context provided ResolvedSiteMapItem and root HstComponentConfiguration
-            requestContext.setResolvedSiteMapItem(erc.getResolvedSiteMapItem());
-            rootComponentConfig = (HstComponentConfiguration)context.getServletRequest().getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT_TARGET);
-            
-            // build and set the embedded component reference contextName needed proper parameter encoding and resolving
-            StringBuilder contextNamespaceBuilder = new StringBuilder();
-            HstComponentConfiguration compConfig = rootComponentConfig;
-            String referenceNameSeparator = getComponentWindowFactory().getReferenceNameSeparator();
-            if (compConfig != erc.getRootComponentConfig()) {
-                do {
-                    contextNamespaceBuilder.insert(0, compConfig.getReferenceName());
-                    compConfig = compConfig.getParent();
-                    if (compConfig == erc.getRootComponentConfig()) {
-                        break;
-                    }
-                    contextNamespaceBuilder.insert(0, referenceNameSeparator);
-                } while (true);
-            }
-            requestContext.setContextNamespace(contextNamespaceBuilder.toString());
-        }
-        else {
-            
-            requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+        HstMutableRequestContext requestContext = (HstMutableRequestContext) context.getRequestContext();
 
-            if (!requestContext.isPortletContext()) {
-                rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
-            } else {
-                rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
-
-                if (rootComponentConfig == null) {
-                    rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        
+        if (resolvedSiteMapItem == null) {
+            // if there is no ResolvedSiteMapItem on the request we cannot continue
+            throw new ContainerException("No resolvedSiteMapItem found for this request. Cannot continue request processing");
+        }
+        
+        HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+        
+        if (!requestContext.isEmbeddedRequest() && requestContext.isPortletContext() && resolvedSiteMapItem.getPortletHstComponentConfiguration() != null) {
+        	rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
+        }
+        
+        if (rootComponentConfig == null) {
+        	// TODO: log ResolvedSiteMapItem.getQualifiedId() as reference)
+            throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved.");
+        }
+        
+        String targetComponentPath = requestContext.getTargetComponentPath();
+        if (targetComponentPath != null) {
+        	HstComponentConfiguration hcc = rootComponentConfig;
+            for ( String pathName : targetComponentPath.split("/"))
+            {
+                hcc = hcc.getChildByName(pathName);
+                if (hcc == null)
+                {
+                    break;
                 }
             }
-         
-        }
+            if (hcc == null) {
+            	// TODO: log ResolvedSiteMapItem.getQualifiedId() as reference or better rootComponentConfig.getQualifiedId())
+            	throw new ContainerNotFoundException("Cannot find target child component configuration '"+targetComponentPath+"'");
+            }
+            rootComponentConfig = hcc;
             
-        if (rootComponentConfig == null) {
-            throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved." + baseURL.getPathInfo());
-        }
-        
-        String targetComponentPath = (String) context.getServletRequest().getAttribute(ContainerConstants.HST_REQUEST_CONTEXT_TARGET_COMPONENT_PATH);
-        
-        if (targetComponentPath != null) {
-            rootComponentConfig = findTargetComponentConfiguration(rootComponentConfig, targetComponentPath);
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Matched root component config for {}: {}", baseURL.getPathInfo(), rootComponentConfig.getId());
+            if (requestContext.isEmbeddedRequest()) {
+                // build and set the embedded component reference contextName needed proper parameter encoding and resolving
+                StringBuilder contextNamespaceBuilder = new StringBuilder();
+                String referenceNameSeparator = getComponentWindowFactory().getReferenceNameSeparator();
+                if (hcc != resolvedSiteMapItem.getHstComponentConfiguration()) {
+                    do {
+                        contextNamespaceBuilder.insert(0, hcc.getReferenceName());
+                        hcc = hcc.getParent();
+                        if (hcc == resolvedSiteMapItem.getHstComponentConfiguration()) {
+                            break;
+                        }
+                        contextNamespaceBuilder.insert(0, referenceNameSeparator);
+                    } while (true);
+                }
+                requestContext.setContextNamespace(contextNamespaceBuilder.toString());
+            }            
         }
         
         try {
@@ -113,37 +100,5 @@ public class ContextResolvingValve extends AbstractValve
         
         // continue
         context.invokeNext();
-    }
-    
-    protected HstComponentConfiguration findTargetComponentConfiguration(HstComponentConfiguration rootComponentConfig, String targetComponentPath) {
-        HstComponentConfiguration targetComponentConfig = null;
-        
-        try {
-            String [] childComponentNames = StringUtils.splitPreserveAllTokens(StringUtils.removeEnd(StringUtils.removeStart(targetComponentPath, "/"), "/"), '/');
-            
-            targetComponentConfig = rootComponentConfig;
-            
-            for (String childComponentName : childComponentNames) {
-                targetComponentConfig = targetComponentConfig.getChildByName(childComponentName);
-                
-                if (targetComponentConfig == null) {
-                    throw new IllegalArgumentException("Invalid child component name: " + childComponentName);
-                }
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to find child component configuration: {}", e.toString(), e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Failed to find child component configuration: {}", e.toString());
-            }
-        }
-        
-        if (targetComponentConfig == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to find target component configuration by " + targetComponentPath + ". The default root component configuration will be used.");
-            }
-        }
-        
-        return (targetComponentConfig != null ? targetComponentConfig : rootComponentConfig);
     }
 }

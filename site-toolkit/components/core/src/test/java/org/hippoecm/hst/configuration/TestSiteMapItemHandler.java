@@ -32,7 +32,6 @@ import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
@@ -79,9 +78,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
@@ -173,9 +170,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
@@ -215,9 +210,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The expected id of the resolved sitemap item is 'multiplehandler_wildcardexample/_default_/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "multiplehandler_example/_default_/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
@@ -287,9 +280,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_browser_redirecttest' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_browser_redirecttest".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
@@ -343,9 +334,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             try {
                 VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();

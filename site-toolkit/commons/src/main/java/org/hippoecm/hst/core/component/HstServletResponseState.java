@@ -27,8 +27,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,7 +44,7 @@ public class HstServletResponseState extends AbstractHstResponseState
         super(request, response);
         this.response = response;
         
-        HstRequestContext requestContext = (HstRequestContext) request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        HstRequestContext requestContext = HstRequestUtils.getHstRequestContext(request);
         
         isActionResponse = (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null);
         isResourceResponse = (requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null);

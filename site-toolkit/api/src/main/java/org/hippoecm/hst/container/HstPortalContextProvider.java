@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,21 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.request;
+package org.hippoecm.hst.container;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.site.HstSite;
+import javax.portlet.PortletRequest;
+
+import org.hippoecm.hst.core.request.HstPortalRequestContext;
 
 /**
  * @version $Id$
  *
  */
-public interface HstEmbeddedRequestContext {
+public interface HstPortalContextProvider {
 
-    String getSitesContentPath();
-    String getContentPath();
-    String getSiteName();
-    HstSite getHstSite();
-    ResolvedSiteMapItem getResolvedSiteMapItem();
-    HstComponentConfiguration getRootComponentConfig();
+	boolean isEmbeddedRequest(PortletRequest request);
+	HstPortalRequestContext getPortalRequestContext(PortletRequest request);
+	String getContentPath(PortletRequest request);
 }

@@ -18,8 +18,6 @@ package org.hippoecm.hst.core.component;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.container.HstContainerURLProviderImpl;
-import org.hippoecm.hst.core.container.HstContainerURLProviderPortletImpl;
-import org.hippoecm.hst.core.container.HstEmbeddedPortletContainerURLProviderImpl;
 import org.hippoecm.hst.core.container.HstNavigationalStateCodec;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -36,10 +34,7 @@ public class HstURLFactoryImpl implements HstURLFactory {
     protected HstNavigationalStateCodec navigationalStateCodec;
     protected boolean portletResourceURLEnabled;
 
-    protected HstContainerURLProvider servletURLProvider;
-    protected HstContainerURLProvider portletURLProvider;
-    protected HstContainerURLProvider embeddedPortletURLProvider;
-
+    protected HstContainerURLProvider containerURLProvider;
 
     public void setUrlNamespacePrefix(String urlNamespacePrefix) {
         this.urlNamespacePrefix = urlNamespacePrefix;
@@ -67,21 +62,15 @@ public class HstURLFactoryImpl implements HstURLFactory {
     
 
     public HstContainerURLProvider getContainerURLProvider() {
-        return getContainerURLProvider(true, false); 
-     }
-    
-    public HstContainerURLProvider getContainerURLProvider(boolean website) {
-       return getContainerURLProvider(website, false);
-     }
-    
-    public HstContainerURLProvider getContainerURLProvider(boolean website, boolean isEmbedded) {
-        if(website) {
-            return getURLProvider();
+        if (containerURLProvider == null) {
+            HstContainerURLProviderImpl provider = new HstContainerURLProviderImpl();
+            provider.setUrlNamespacePrefix(urlNamespacePrefix);
+            provider.setParameterNameComponentSeparator(parameterNameComponentSeparator);
+            provider.setNavigationalStateCodec(navigationalStateCodec);
+            provider.setPortletResourceURLEnabled(portletResourceURLEnabled);
+            containerURLProvider = provider;
         }
-        if(isEmbedded) {
-          return  getEmbeddedPortletURLProvider();
-        }
-        return getPortletURLProvider();
+        return containerURLProvider;
      }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext) {
@@ -92,45 +81,6 @@ public class HstURLFactoryImpl implements HstURLFactory {
             referenceNamespace = "";
         }
         
-        return new HstURLImpl(type, baseContainerURL, referenceNamespace, getContainerURLProvider(!requestContext.isPortletContext(), requestContext.isEmbeddedRequest()), requestContext);
+        return new HstURLImpl(type, baseContainerURL, referenceNamespace, getContainerURLProvider(), requestContext);
     }
-
-    protected HstContainerURLProvider getURLProvider() {
-        if (servletURLProvider == null) {
-            HstContainerURLProviderImpl provider = new HstContainerURLProviderImpl();
-            provider.setUrlNamespacePrefix(urlNamespacePrefix);
-            provider.setParameterNameComponentSeparator(parameterNameComponentSeparator);
-            provider.setNavigationalStateCodec(navigationalStateCodec);
-            servletURLProvider = provider;
-        }
-        
-        return servletURLProvider;
-    }
-    
-    protected HstContainerURLProvider getPortletURLProvider() {
-        if (portletURLProvider == null) {
-            HstContainerURLProviderPortletImpl provider = new HstContainerURLProviderPortletImpl();
-            provider.setUrlNamespacePrefix(urlNamespacePrefix);
-            provider.setParameterNameComponentSeparator(parameterNameComponentSeparator);
-            provider.setNavigationalStateCodec(navigationalStateCodec);
-            provider.setPortletResourceURLEnabled(portletResourceURLEnabled);
-            portletURLProvider = provider;
-        }
-        
-        return portletURLProvider;
-    }
-
-    protected HstContainerURLProvider getEmbeddedPortletURLProvider() {
-        if (embeddedPortletURLProvider == null) {
-            HstEmbeddedPortletContainerURLProviderImpl provider = new HstEmbeddedPortletContainerURLProviderImpl();
-            provider.setUrlNamespacePrefix(urlNamespacePrefix);
-            provider.setParameterNameComponentSeparator(parameterNameComponentSeparator);
-            provider.setNavigationalStateCodec(navigationalStateCodec);
-            provider.setPortletResourceURLEnabled(portletResourceURLEnabled);
-            embeddedPortletURLProvider = provider;
-        }
-        
-        return embeddedPortletURLProvider;
-    }
-
 }

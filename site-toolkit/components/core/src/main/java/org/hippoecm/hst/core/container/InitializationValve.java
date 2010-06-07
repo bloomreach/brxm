@@ -17,11 +17,8 @@ package org.hippoecm.hst.core.container;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
-import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
-import org.hippoecm.hst.site.request.HstRequestContextImpl;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 
 /**
  * InitializationValve
@@ -39,18 +36,12 @@ public class InitializationValve extends AbstractValve
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
-        HttpServletRequest servletRequest = context.getServletRequest();
-        HstRequestContextImpl requestContext = (HstRequestContextImpl) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
 
-        if (requestContext == null) {
-            requestContext = (HstRequestContextImpl)getRequestContextComponent().create(servletRequest, context.getServletResponse(), getContainerConfiguration());
-            servletRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
-        }
-        HstEmbeddedRequestContext erc = (HstEmbeddedRequestContext)servletRequest.getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT);
-        
-        if (erc != null && servletRequest.getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT_TARGET) != null) {
-            requestContext.setEmbeddedRequestContext(erc);
-        }
+        requestContext.setURLFactory(getUrlFactory());
+        requestContext.setLinkCreator(getLinkCreator());
+        requestContext.setSiteMapMatcher(getSiteMapMatcher());
+        requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
         
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {

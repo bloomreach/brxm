@@ -20,8 +20,8 @@ import java.util.List;
 import javax.servlet.ServletRequest;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 /**
  * CleanupValve
@@ -46,7 +46,7 @@ public class CleanupValve extends AbstractValve
         }
         
         ServletRequest servletRequest = context.getServletRequest();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        HstRequestContext requestContext = context.getRequestContext();
         
         if (requestContext != null) {
             String forwardPathInfo = (String) servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
@@ -54,7 +54,7 @@ public class CleanupValve extends AbstractValve
             if (forwardPathInfo == null) {
                 getRequestContextComponent().release(requestContext);
             } else {
-                ((HstRequestContextImpl) requestContext).setSession(null);
+                ((HstMutableRequestContext) requestContext).setSession(null);
             }
         }
         

@@ -18,8 +18,8 @@ package org.hippoecm.hst.core.container;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -50,47 +50,46 @@ public interface HstContainerURLProvider {
     String getParameterNameComponentSeparator();
 
     /**
-     * Parses the current request and create an {@link HstContainerURL} instance.
+     * Parses the current request and creates an {@link HstContainerURL} instance.
      * 
      * @param servletRequest
      * @param servletResponse
+     * @param resolvedSiteMount
      * @return
      */
-    HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse);
+    HstContainerURL parseURL(HttpServletRequest servletRequest, HttpServletResponse servletResponse, ResolvedSiteMount resolvedSiteMount);
     
     /**
-     * Parses the current request with the current {@link HstRequestContext} and create an {@link HstContainerURL} instance.
-     * 
-     * @param servletRequest
-     * @param servletResponse
-     * @param requestContext
-     * @return
-     */
-    HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext);
-    
-    
-    /**
-     * Parses the current request with the current {@link HstRequestContext} and a specified pathInfo
-     * and creates an {@link HstContainerURL} instance.
-     * 
-     * @param servletRequest
-     * @param servletResponse
-     * @param requestContext
-     * @param pathInfo
-     * @return
-     */
-    HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo);
-    
-    /**
-     * Parses a specified requestPath with the current {@link HstRequestContext} and an optional {@link ResolvedSiteMount}
+     * Parses a specified requestPath with the current {@link HstRequestContext} for a new {@link ResolvedSiteMount} and requestPath
      * and creates an {@link HstContainerURL} instance.
      * 
      * @param requestContext
+     * @param mount
+     * @param requestPath
+     * @return
+     */
+    HstContainerURL parseURL(HstRequestContext requestContext, ResolvedSiteMount mount, String requestPath);
+    
+    /**
+     * Parses a request for a specific {@link ResolvedSiteMount} and requestPath
+     * and creates an {@link HstContainerURL} instance.
+     * 
+     * @param request
      * @param requestPath
      * @param mount
      * @return
      */
-    HstContainerURL parseURL(HstRequestContext requestContext, String requestPath, ResolvedSiteMount mount);
+    HstContainerURL parseURL(HttpServletRequest request, ResolvedSiteMount mount, String requestPath);
+    
+    /**
+     * Creates an {@link HstContainerURL} instance for a new pathInfo (without query parameters)
+     * based on the base {@link HstContainerURL} instance
+     * 
+     * @param baseContainerURL
+     * @param pathInfo
+     * @return
+     */
+    HstContainerURL createURL(HstContainerURL baseContainerURL, String pathInfo);
     
     /**
      * Creates an {@link HstContainerURL} instance by merging the information of hstUrl 

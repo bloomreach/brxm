@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
@@ -67,13 +68,22 @@ public class HstRequestUtils {
         
         return hstResponse;
     }
+    
+    /**
+     * Returns <CODE>HstRequestContext</CODE> object found in the servletRequest.
+     * @param servletRequest
+     * @return
+     */
+    public static HstRequestContext getHstRequestContext(HttpServletRequest servletRequest) {
+    	return (HstRequestContext)servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+    }
 
     /**
      * @param request
      * @return the decoded getRequestURI after the context path but before the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request) {
-        return getRequestPath(request, null);
+        return getDecodedPath(null, request, null, false);
     }
     
     /**
@@ -82,7 +92,7 @@ public class HstRequestUtils {
      * @return the decoded getRequestURI after the context path but before the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request, String characterEncoding) {
-        return getDecodedPath(request, characterEncoding, false);
+        return getDecodedPath(null, request, characterEncoding, false);
     }
     
     /**
@@ -90,11 +100,12 @@ public class HstRequestUtils {
      * The  extra path information that comes after the context path and after the (resolved) mountpath but before the query string in the request URL
      * This method extracts and decodes the path information from the request URI returned from
      * <CODE>HttpServletRequest#getRequestURI()</CODE>.
+     * @param resSiteMount
      * @param request
      * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
      */
-    public static String getPathInfo(HttpServletRequest request) {
-        return getPathInfo(request, null);
+    public static String getPathInfo(ResolvedSiteMount resSiteMount, HttpServletRequest request) {
+        return getDecodedPath(resSiteMount, request, null, true);
     }
     
     /**
@@ -104,22 +115,18 @@ public class HstRequestUtils {
      * This method extracts and decodes the path information by the specified character encoding parameter
      * from the request URI.
      * </p>
+     * @param resSiteMount
      * @param request
      * @param characterEncoding
      * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
      */
-    public static String getPathInfo(HttpServletRequest request, String characterEncoding) {
-        return getDecodedPath(request, characterEncoding, true);
+    public static String getPathInfo(ResolvedSiteMount resSiteMount, HttpServletRequest request, String characterEncoding) {
+        return getDecodedPath(resSiteMount, request, characterEncoding, true);
     }
     
-    
-    private static String getDecodedPath(HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
+    private static String getDecodedPath(ResolvedSiteMount resSiteMount, HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
         String encodePathInfo = request.getRequestURI().substring(request.getContextPath().length());
         if(stripMountPath) {
-            ResolvedSiteMount resSiteMount = (ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
-            if(resSiteMount == null) {
-                throw new IllegalStateException("When asking for the request path, there has to be a resolved sitemount on the request");
-            }
             encodePathInfo = encodePathInfo.substring(resSiteMount.getResolvedMountPath().length());
         }
         

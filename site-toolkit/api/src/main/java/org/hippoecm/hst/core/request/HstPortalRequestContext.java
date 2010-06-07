@@ -15,30 +15,12 @@
  */
 package org.hippoecm.hst.core.request;
 
-import javax.portlet.PortletConfig;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-
 /**
- * HstPortletRequestContext extends HstRequestContext to support porlet specific configuration and context.
- * 
  * @version $Id$
+ *
  */
-public interface HstPortletRequestContext extends HstRequestContext {
-    
-    /**
-     * Returns the PortletConfig serving the HstRequest.
-     */
-    PortletConfig getPortletConfig();
-    
-    /**
-     * Returns the PortletRequest serving the HstRequest.
-     */
-    PortletRequest getPortletRequest();
-
-    /**
-     * Returns the PortletResponse serving the HstResponse.
-     */
-    PortletResponse getPortletResponse();
-    
+public interface HstPortalRequestContext {
+    ResolvedSiteMapItem getResolvedSiteMapItem();
+    ResolvedSiteMount getResolvedEmbeddingSiteMount();
+    String getPathInfo();
 }

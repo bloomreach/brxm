@@ -62,6 +62,12 @@ public interface HstRequestContext {
     ResolvedSiteMapItem getResolvedSiteMapItem();
     
     /**
+     * Returns a target component path relative to {@link HstComponentConfiguration} of the {@link #getResolvedSiteMapItem().
+     * If not null the targeted sub component configuration will be used as root component for this request instead.
+     */
+    String getTargetComponentPath();
+    
+    /**
      * @return <code>true</code> when this request is matched to a preview site
      * @see SiteMount#isPreview()
      */
@@ -162,14 +168,16 @@ public interface HstRequestContext {
     ContainerConfiguration getContainerConfiguration();
     
     /**
-     * Returns true if this request is embedded and context resolving and link rewriting needs to be delegated to the HstEmbeddedRequestContext
+     * Returns true if this request is embedded and link rewriting needs to use the {@link #getResolvedEmbeddingSiteMount()}
+     * for the target site mount path and context path (if to be included).
      */
     boolean isEmbeddedRequest();
     
     /**
-     * Returns the embedded HST context if isEmbeddedRequest == true, otherwise null
+     * Returns the ResolvedSiteMount to be used for link rewriting when this request is embedded, otherwise null
+     * @see HstRequestContext#isEmbeddedRequest()
      */
-    HstEmbeddedRequestContext getEmbeddedRequestContext();
+    ResolvedSiteMount getResolvedEmbeddingSiteMount();
     
     /**
      * Returns true if invoked from a Portlet.

@@ -38,6 +38,8 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.Pipeline;
 import org.hippoecm.hst.core.container.Pipelines;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.services.support.jaxrs.content.AbstractJaxrsSpringTestCase;
 import org.hippoecm.hst.site.HstServices;
@@ -62,6 +64,7 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
     protected ServletContext servletContext;
     protected HstContainerConfig hstContainerConfig;
     protected SiteMount siteMount;
+    protected HstMutableRequestContext requestContext;
     protected ResolvedSiteMount resolvedSiteMount;
     
     @Before
@@ -94,6 +97,8 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
         
         EasyMock.replay(siteMount);
         EasyMock.replay(resolvedSiteMount);
+        requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
+        requestContext.setResolvedSiteMount(resolvedSiteMount);
     }
     
     @Test
@@ -153,16 +158,15 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
     }
     
     private void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
-        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, resolvedSiteMount);
-        
-        jaxrsPipeline.beforeInvoke(hstContainerConfig, request, response);
+    	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
+        jaxrsPipeline.beforeInvoke(hstContainerConfig, requestContext, request, response);
         
         try {
-            jaxrsPipeline.invoke(hstContainerConfig, request, response);
+            jaxrsPipeline.invoke(hstContainerConfig, requestContext, request, response);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            jaxrsPipeline.afterInvoke(hstContainerConfig, request, response);
+            jaxrsPipeline.afterInvoke(hstContainerConfig, requestContext, request, response);
         }
     }
     

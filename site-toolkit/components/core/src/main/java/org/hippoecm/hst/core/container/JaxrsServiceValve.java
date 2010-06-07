@@ -74,13 +74,10 @@ public class JaxrsServiceValve extends AbstractValve {
             MethodUtils.invokeStaticMethod(busFactoryClass, "setThreadDefaultBus", new Object[] { bus });
             
             HttpServletRequest request = context.getServletRequest();
-            ResolvedSiteMount resolvedSiteMount = (ResolvedSiteMount) request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
-            if (resolvedSiteMount == null) {
-                throw new IllegalStateException("Sitemount is not resolved for JAX-RS service for " + request.getServletPath());
-            }
+            ResolvedSiteMount resolvedSiteMount = context.getRequestContext().getResolvedSiteMount();
             
             String servletPath = resolvedSiteMount.getResolvedMountPath();
-            String pathInfo = HstRequestUtils.getPathInfo(request);
+            String pathInfo = HstRequestUtils.getPathInfo(resolvedSiteMount, request);
             
             HttpServletRequest adjustedRequest = new PathsAdjustedHttpServletRequestWrapper(context.getServletRequest(), servletPath, pathInfo);
             

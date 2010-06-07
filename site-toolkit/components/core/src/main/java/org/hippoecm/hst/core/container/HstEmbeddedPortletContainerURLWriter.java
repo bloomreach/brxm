@@ -24,7 +24,6 @@ import javax.portlet.PortletURL;
 import javax.portlet.ResourceURL;
 
 import org.hippoecm.hst.container.HstContainerPortlet;
-import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstPortletRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -33,19 +32,16 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * 
  * @version $Id$
  */
-public class HstEmbeddedPortletContainerURLProviderImpl extends HstContainerURLProviderPortletImpl {
+public class HstEmbeddedPortletContainerURLWriter {
     
-    @Override
-    public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
+    public String toContextRelativeURLString(HstContainerURLProviderImpl urlProvider, HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
-        HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
-        String pathInfo = buildHstURLPath(containerURL);
+        String pathInfo = urlProvider.buildHstURLPath(containerURL);
         url.append(pathInfo);
         return url.toString();
     }
     
-    @Override
-    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
+    public String toURLString(HstContainerURLProviderImpl urlProvider, HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
         String urlString = "";
         
         HstPortletRequestContext prc = (HstPortletRequestContext)requestContext;
@@ -69,21 +65,21 @@ public class HstEmbeddedPortletContainerURLProviderImpl extends HstContainerURLP
                     containerURL.setResourceWindowReferenceNamespace(null);
                     ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
                     ((HstContainerURLImpl) containerURL).setParameters(null);
-                    pathInfo = buildHstURLPath(containerURL);
+                    pathInfo = urlProvider.buildHstURLPath(containerURL);
                 } finally {
                     containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                     ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
                     ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
                 }
                 
-                if (!portletResourceURLEnabled) {
+                if (!urlProvider.isPortletResourceURLEnabled()) {
                     if(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl()) {
                         path.append(contextPath);
                     }      
                 }
             }
             else {
-                pathInfo = buildHstURLPath(containerURL);
+                pathInfo = urlProvider.buildHstURLPath(containerURL);
             }
             
             path.append(pathInfo);
@@ -92,7 +88,7 @@ public class HstEmbeddedPortletContainerURLProviderImpl extends HstContainerURLP
                 PortletURL url = ((MimeResponse)prc.getPortletResponse()).createActionURL();
                 url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
                 urlString = url.toString();
-            } else if (resourceWindowReferenceNamespace != null && (!hstContainerResource || portletResourceURLEnabled)) {
+            } else if (resourceWindowReferenceNamespace != null && (!hstContainerResource || urlProvider.isPortletResourceURLEnabled())) {
                 ResourceURL url = ((MimeResponse)prc.getPortletResponse()).createResourceURL();
                 url.setResourceID(path.toString());
                 urlString = url.toString();

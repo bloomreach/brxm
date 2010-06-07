@@ -18,6 +18,8 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 /**
  * HstSitePipeline
  * 
@@ -49,21 +51,21 @@ public class HstSitePipeline implements Pipeline
     public void initialize() throws ContainerException {
     }
     
-    public void beforeInvoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, servletRequest, servletResponse, preInvokingValves);
+    public void beforeInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, preInvokingValves);
     }
 
-    public void invoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, servletRequest, servletResponse, invokingValves);
+    public void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, invokingValves);
     }
     
-    public void afterInvoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, servletRequest, servletResponse, postInvokingValves);
+    public void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, postInvokingValves);
     }
     
-    private void invokeValves(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
+    private void invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
         if (valves != null && valves.length > 0) {
-            new Invocation(requestContainerConfig, servletRequest, servletResponse, valves).invokeNext();
+            new Invocation(requestContainerConfig, requestContext, servletRequest, servletResponse, valves).invokeNext();
         }
     }
 
@@ -79,11 +81,13 @@ public class HstSitePipeline implements Pipeline
         private final HttpServletRequest servletRequest;
         private final HttpServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
+        private final HstRequestContext requestContext;
 
         private int at = 0;
 
-        public Invocation(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
+        public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
             this.requestContainerConfig = requestContainerConfig;
+            this.requestContext = requestContext;
             this.servletRequest = servletRequest;
             this.servletResponse = servletResponse;
             this.valves = valves;
@@ -102,6 +106,9 @@ public class HstSitePipeline implements Pipeline
             return this.requestContainerConfig;
         }
         
+        public HstRequestContext getRequestContext() {
+        	return this.requestContext;
+        }
         public HttpServletRequest getServletRequest() {
             return this.servletRequest;
         }

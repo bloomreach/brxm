@@ -18,6 +18,8 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 
 /**
  * Context information during invoking valves in a pipeline.
@@ -41,6 +43,13 @@ public interface ValveContext
      */
     HstContainerConfig getRequestContainerConfig();
     
+    /**
+     * Returns the current request context.
+     * 
+     * @return
+     */
+    HstRequestContext getRequestContext();
+
     /**
      * Returns the current servlet request.
      * 

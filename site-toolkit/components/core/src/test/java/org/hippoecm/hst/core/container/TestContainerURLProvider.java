@@ -32,8 +32,7 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.component.HstURLFactoryImpl;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.mock.MockHstComponentWindow;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
@@ -46,7 +45,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
     protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;
-    protected HstRequestContext requestContext;
+    protected HstMutableRequestContext requestContext;
     
     protected MockHstComponentWindow rootWindow;
     protected MockHstComponentWindow leftChildWindow;
@@ -58,8 +57,8 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
         this.urlFactory = getComponent(HstURLFactory.class.getName());
         this.requestContext = new HstRequestContextImpl(null);
-        this.urlProvider = this.urlFactory.getContainerURLProvider(!requestContext.isPortletContext(), requestContext.isEmbeddedRequest());
-        ((HstRequestContextImpl) this.requestContext).setURLFactory(urlFactory);
+        this.urlProvider = this.urlFactory.getContainerURLProvider();
+        ((HstMutableRequestContext) this.requestContext).setURLFactory(urlFactory);
         
         rootWindow = new MockHstComponentWindow();
         rootWindow.setReferenceName("root");
@@ -81,8 +80,8 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
         
-        // need to set the resolved sitemount on the request
-        setResolvedSiteMount(request);
+        // need to set the resolved sitemount on the requestContext
+        setResolvedSiteMount(requestContext);
         
         // request.getServletPath() = ""
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
@@ -90,7 +89,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount());
 
         assertNull("action window reference namespace is not null.", containerURL.getActionWindowReferenceNamespace());
         assertNull("resource window reference namespace is not null.", containerURL.getResourceWindowReferenceNamespace());
@@ -104,14 +103,13 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
-        setResolvedSiteMount(request);
+        setResolvedSiteMount(requestContext);
         
         // request.getServletPath() = ""
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
-        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
-        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount());
+        requestContext.setBaseURL(containerURL);
 
         HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL, requestContext);
         url.setParameter("param1", "value1");
@@ -152,11 +150,10 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         
-        setResolvedSiteMount(request);
+        setResolvedSiteMount(requestContext);
         
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
-        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
-        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount());
+        requestContext.setBaseURL(containerURL);
 
         
         ((HstURLFactoryImpl) this.urlFactory).setReferenceNamespaceIgnored(true);
@@ -207,12 +204,12 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
         
-        setResolvedSiteMount(request);
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
-        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
-        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
+        setResolvedSiteMount(requestContext);
+        
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount());
+        requestContext.setBaseURL(containerURL);
 
-        HstContainerURL actionURL = this.urlProvider.parseURL(request, response, requestContext);
+        HstContainerURL actionURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount());
         actionURL.setActionWindowReferenceNamespace("b");
         actionURL.setActionParameter("ap1", "one");
         actionURL.setActionParameter("ap2", "two");
@@ -241,13 +238,13 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
-        setResolvedSiteMount(request);
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
-        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
-        ((HstRequestContextImpl) requestContext).setResolvedSiteMount((ResolvedSiteMount)request.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT));
+        setResolvedSiteMount(requestContext);
+
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount());
+        requestContext.setBaseURL(containerURL);
 
         
-        HstContainerURL resourceURL = this.urlProvider.parseURL(request, response, requestContext);
+        HstContainerURL resourceURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount());
         resourceURL.setResourceWindowReferenceNamespace("b");
         resourceURL.setResourceId("myresource001");
         String resourceURLPathInfo = this.urlProvider.toURLString(resourceURL, requestContext);

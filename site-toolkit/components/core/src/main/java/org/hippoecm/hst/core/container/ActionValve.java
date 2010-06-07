@@ -44,7 +44,7 @@ public class ActionValve extends AbstractValve {
     {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        HstRequestContext requestContext = context.getRequestContext();
         String actionWindowReferenceNamespace = requestContext.getBaseURL().getActionWindowReferenceNamespace();
         
         if (actionWindowReferenceNamespace != null) {
@@ -54,7 +54,7 @@ public class ActionValve extends AbstractValve {
             window = findComponentWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
             
             HstResponseState responseState = null;
-            HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider(!requestContext.isPortletContext(), requestContext.isEmbeddedRequest());
+            HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider();
             
             if (window == null) {
                 if (log.isWarnEnabled()) {
@@ -177,9 +177,8 @@ public class ActionValve extends AbstractValve {
                                 if (!getVirtualHostsManager().getVirtualHosts().isExcluded(location)) {
                                     ResolvedSiteMount mount = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedVirtualHost().matchSiteMount(baseURL.getContextPath(), location);
                                     if (mount != null && mount.getSiteMount().isSiteMount()) {
-                                    	HstContainerURL url = urlProvider.parseURL(requestContext, location, mount);                                    
-                                        if (mount.matchSiteMapItem(url) != null) {
-                                        	// redirectLocation is serviceable as SiteMapItem: the portlet can render it 
+                                        if (mount != null && mount.getSiteMount().isSiteMount()) {
+                                        	// redirectLocation is (at least) matched on a siteMount: the portlet should try to render it 
                                         	((HstPortletResponseState)responseState).setRenderRedirect(true);
                                         }
                                     }

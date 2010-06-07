@@ -35,10 +35,13 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerC
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.container.ServletContextAware;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
@@ -174,197 +177,200 @@ public class HstFilter implements Filter {
     }
     
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-            ServletException {
-        
-        HttpServletRequest req = (HttpServletRequest)request;
-        HttpServletResponse res = (HttpServletResponse)response;
+    ServletException {
 
-        // Cross-context includes are not (yet) supported to be handled directly by HstFilter
-        // Typical use-case for these is within a portal environment where the portal dispatches to a portlet (within in a separate portlet application)
-        // which *might* dispatch to HST. If such portlet dispatches again it most likely will run through this filter (being by default configured against /*)
-        // but in that case the portlet container will have setup a wrapper request as embedded within this web application (not cross-context).
-        if (isCrossContextInclude(req)) {
-            chain.doFilter(request, response);
-            return;
-        }
-        
-        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-        
-        try {
-            if (!HstServices.isAvailable()) {
-                res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                logger.error("The HST Container Services are not initialized yet.");
-                return;
-            }
-            
-            // ensure ClientComponentManager (if defined) is initialized properly
-            if (!initialized) {
-                doInit(filterConfig);
-            }
-            
-            if(this.siteMapItemHandlerFactory == null || this.virtualHostsManager == null) {
-                res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
-                return;
-            }
-            
-            if (this.requestContainerConfig == null) {
-                this.requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
-            }
-            
-            if (this.contextNamespace != null) {
-                req.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, contextNamespace);
-            }
-            
-            if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
-            
-            VirtualHosts vHosts = virtualHostsManager.getVirtualHosts();
-           
-            if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(req))) {
-                chain.doFilter(request, response);
-                return;
-            }
-            
-            if (request.getAttribute(FILTER_DONE_KEY) == null) {
-                request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
-                try {
-                    ResolvedSiteMount mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(req), req.getContextPath() , HstRequestUtils.getRequestPath(req));
-                    if(mount != null) {
-                        
-                        request.setAttribute(ContainerConstants.RESOLVED_SITEMOUNT, mount);
-                        
-                        // now we can parse the url *with* a RESOLVED_SITEMOUNT which is needed!
-                        
-                        HstURLFactory factory = virtualHostsManager.getUrlFactory();
-                        HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(req, res);
-                        req.setAttribute(HstContainerURL.class.getName(), hstContainerURL);
-                        
-                        if(mount.getSiteMount().isSiteMount()) {
-                            ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL);
-                            if(resolvedSiteMapItem == null) {
-                                // should not be possible as when it would be null, an exception should have been thrown
-                                throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
-                            }
-                            
-                            // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
-                            resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, req, res);
-                            if(resolvedSiteMapItem == null) {
-                                // one of the handlers has finished the request already
-                                return;
-                            }
-                            
-                            if (resolvedSiteMapItem.getErrorCode() > 0) {
-                                try {
-                                    if (logger.isDebugEnabled()) {
-                                        logger.debug("The resolved sitemap item for {} has error status: {}", hstContainerURL.getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
-                                    }           
-                                    res.sendError(resolvedSiteMapItem.getErrorCode());
-                                    
-                                } catch (IOException e) {
-                                    if (logger.isDebugEnabled()) {
-                                        logger.warn("Exception invocation on sendError().", e);
-                                    } else if (logger.isWarnEnabled()) {
-                                        logger.warn("Exception invocation on sendError().");
-                                    }
-                                }
-                                // we're done:
-                                return;
-                            } 
+		if (request.getAttribute(FILTER_DONE_KEY) != null) {
+			chain.doFilter(request, response);
+			return;
+		}
+		
+    	HttpServletRequest req = (HttpServletRequest)request;
+    	HttpServletResponse res = (HttpServletResponse)response;
 
-                            /*
-                             * It is mandatory to have the resolved sitemount on the request as an attribute for the hst request processing.
-                             * In case we have a resolved sitemap item, we also store it on the request
-                             */
-                            request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
-                            
-                            HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
-                           
-                            // check whether there was a forward: 
-                            String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
-                            if (forwardPathInfo != null) {
-                                req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
-                                HstContainerURL forwardedHstContainerURL = factory.getContainerURLProvider().parseURL(req, res, null, forwardPathInfo);
-                                req.setAttribute(HstContainerURL.class.getName(), forwardedHstContainerURL);
-                                
-                                resolvedSiteMapItem = mount.matchSiteMapItem(forwardedHstContainerURL);
-                                if(resolvedSiteMapItem == null) {
-                                    // should not be possible as when it would be null, an exception should have been thrown
-                                    throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
-                                }
-                                
-                                // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
-                                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, req, res);
-                                if(resolvedSiteMapItem == null) {
-                                    // one of the handlers has finished the request already
-                                    return;
-                                }
-                                if (resolvedSiteMapItem.getErrorCode() > 0) {
-                                    try {
-                                        if (logger.isDebugEnabled()) {
-                                            logger.debug("The resolved sitemap item for {} has error status: {}", hstContainerURL.getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
-                                        }           
-                                        res.sendError(resolvedSiteMapItem.getErrorCode());
-                                        
-                                    } catch (IOException e) {
-                                        if (logger.isDebugEnabled()) {
-                                            logger.warn("Exception invocation on sendError().", e);
-                                        } else if (logger.isWarnEnabled()) {
-                                            logger.warn("Exception invocation on sendError().");
-                                        }
-                                    }
-                                    // we're done:
-                                    return;
-                                } 
-                                request.setAttribute(ContainerConstants.RESOLVED_SITEMAP_ITEM, resolvedSiteMapItem);
-                                HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, resolvedSiteMapItem.getNamedPipeline());
-                            }
-                            
-                            if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
-                                throw new Exception("Not allowed to have multiple forwards for one request. Request was already forwarded");
-                            }
-                            
-                            return;
-                        } else {
-                            if(mount.getNamedPipeline() == null) {
-                                throw new MatchException("No hstSite and no custom namedPipeline for SiteMount found for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
-                            } 
-                            logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
-                            
-                            
-                            HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res, null, mount.getNamedPipeline());
-                            return;
-                        }
-                    } else {
-                        throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
-                    }
-                } catch (MatchException e) {
-                    logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: {}" , e.getMessage());
-                	res.sendError(HttpServletResponse.SC_NOT_FOUND);
-                } 
-                
-            } else {
-                chain.doFilter(request, response);
-            }
-        } 
-        catch(RepositoryNotAvailableException e) {
-            final String msg = "Fatal error encountered while processing request: " + e.toString();
-            throw new ServletException(msg, e);
-        } 
-        catch (Exception e) {
-        	final String msg = "Fatal error encountered while processing request: " + e.toString();
-            if (logger != null && logger.isDebugEnabled()) {
-            	logger.error(msg, e);
-            }
-            throw new ServletException(msg, e);
-        }
-        finally {
-            if (logger != null && logger.isDebugEnabled()) {
-                long starttick = request.getAttribute(REQUEST_START_TICK_KEY) == null ? 0 : (Long)request.getAttribute(REQUEST_START_TICK_KEY);
-                if(starttick != 0) {
-                    logger.debug( "Handling request took --({})-- ms for '{}'.", (System.nanoTime() - starttick)/1000000, req.getRequestURI());
-                }
-            }
-        }
+    	// Cross-context includes are not (yet) supported to be handled directly by HstFilter
+    	// Typical use-case for these is within a portal environment where the portal dispatches to a portlet (within in a separate portlet application)
+    	// which *might* dispatch to HST. If such portlet dispatches again it most likely will run through this filter (being by default configured against /*)
+    	// but in that case the portlet container will have setup a wrapper request as embedded within this web application (not cross-context).
+    	if (isCrossContextInclude(req)) {
+    		chain.doFilter(request, response);
+    		return;
+    	}
+    	
+		request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
+
+    	Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+    	
+    	try {
+    		if (!HstServices.isAvailable()) {
+    			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+    			logger.error("The HST Container Services are not initialized yet.");
+    			return;
+    		}
+
+    		// ensure ClientComponentManager (if defined) is initialized properly
+    		if (!initialized) {
+    			doInit(filterConfig);
+    		}
+
+    		if(this.siteMapItemHandlerFactory == null || this.virtualHostsManager == null) {
+    			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+    			logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
+    			return;
+    		}
+
+    		synchronized (this) {
+    			if (this.requestContainerConfig == null) {
+    				this.requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
+    			}
+    		}
+
+    		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
+
+    		VirtualHosts vHosts = virtualHostsManager.getVirtualHosts();
+
+    		if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(req))) {
+    			chain.doFilter(request, response);
+    			return;
+    		}
+    		
+    		HstMutableRequestContext requestContext = (HstMutableRequestContext)req.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);    		
+    		if (requestContext == null) {
+        		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent("org.hippoecm.hst.core.internal.HstRequestContextComponent");
+        		requestContext = rcc.create(false);
+        		if (this.contextNamespace != null) {
+        			requestContext.setContextNamespace(contextNamespace);
+        		}
+        		req.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
+    		}
+    		
+    		ResolvedSiteMount mount = requestContext.getResolvedSiteMount();
+    		if (mount == null) {
+    			try {
+    				mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(req), req.getContextPath() , HstRequestUtils.getRequestPath(req));
+    				if(mount != null) {
+    					requestContext.setResolvedSiteMount(mount);
+    				} 
+    				else {
+    					throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
+    				}
+    			} 
+    			catch (MatchException e) {
+    				logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: {}" , e.getMessage());
+    				res.sendError(HttpServletResponse.SC_NOT_FOUND);
+    				return;
+    			} 
+    		}
+    		
+			HstURLFactory factory = virtualHostsManager.getUrlFactory();
+			
+    		HstContainerURL hstContainerURL = requestContext.getBaseURL();
+    		if (hstContainerURL == null) {
+				hstContainerURL = factory.getContainerURLProvider().parseURL(req, res, mount);
+				requestContext.setBaseURL(hstContainerURL);
+    		}
+    		
+    		if (mount.getSiteMount().isSiteMount()) {
+    			ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+    			boolean processSiteMapItemHandlers = false;
+    			
+    			if (resolvedSiteMapItem == null) {
+    				processSiteMapItemHandlers = true;
+					resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
+					if(resolvedSiteMapItem == null) {
+						// should not be possible as when it would be null, an exception should have been thrown
+						logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
+						res.sendError(HttpServletResponse.SC_NOT_FOUND);
+						return;
+					}
+					requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+    			}
+				if (processResolvedSiteMapItem(req, res, requestContext, processSiteMapItemHandlers, logger)) {					
+					// check whether there was a forward: 
+					String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+					if (forwardPathInfo != null) {
+						req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+
+						resolvedSiteMapItem = mount.matchSiteMapItem(forwardPathInfo);
+						if(resolvedSiteMapItem == null) {
+							// should not be possible as when it would be null, an exception should have been thrown
+							throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
+						}
+						requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+						requestContext.setBaseURL(factory.getContainerURLProvider().createURL(hstContainerURL, forwardPathInfo));
+						processResolvedSiteMapItem(req, res, requestContext, true, logger);
+						
+						if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+							throw new Exception("Not allowed to have multiple forwards for one request. Request was already forwarded");
+						}
+					}
+				}
+    		}
+    		else {
+				if(mount.getNamedPipeline() == null) {
+					logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for SiteMount");
+					res.sendError(HttpServletResponse.SC_NOT_FOUND);
+				}
+				else {
+					logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
+					HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, mount.getNamedPipeline());
+				}
+    		}
+    	} 
+    	catch(RepositoryNotAvailableException e) {
+    		final String msg = "Fatal error encountered while processing request: " + e.toString();
+    		throw new ServletException(msg, e);
+    	} 
+    	catch (Exception e) {
+    		final String msg = "Fatal error encountered while processing request: " + e.toString();
+    		if (logger != null && logger.isDebugEnabled()) {
+    			logger.error(msg, e);
+    		}
+    		throw new ServletException(msg, e);
+    	}
+    	finally {
+    		if (logger != null && logger.isDebugEnabled()) {
+    			long starttick = request.getAttribute(REQUEST_START_TICK_KEY) == null ? 0 : (Long)request.getAttribute(REQUEST_START_TICK_KEY);
+    			if(starttick != 0) {
+    				logger.debug( "Handling request took --({})-- ms for '{}'.", (System.nanoTime() - starttick)/1000000, req.getRequestURI());
+    			}
+    		}
+    	}
+    }
+    
+    protected boolean processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
+    	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+
+    	if (processHandlers) {
+        	// run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
+    		resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, req, res);
+    		if(resolvedSiteMapItem == null) {
+    			// one of the handlers has finished the request already
+    			return false;
+    		}
+    		// sync possibly changed ResolvedSiteMapItem
+    		requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+    	}
+
+		if (resolvedSiteMapItem.getErrorCode() > 0) {
+			try {
+				if (logger.isDebugEnabled()) {
+					logger.debug("The resolved sitemap item for {} has error status: {}", requestContext.getBaseURL().getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
+				}           
+				res.sendError(resolvedSiteMapItem.getErrorCode());
+
+			} catch (IOException e) {
+				if (logger.isDebugEnabled()) {
+					logger.warn("Exception invocation on sendError().", e);
+				} else if (logger.isWarnEnabled()) {
+					logger.warn("Exception invocation on sendError().");
+				}
+			}
+			// we're done:
+			return false;
+		} 
+		
+		HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
+		return true;
     }
 
     /**

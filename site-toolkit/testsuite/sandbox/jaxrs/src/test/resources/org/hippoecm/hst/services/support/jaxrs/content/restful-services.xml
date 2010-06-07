@@ -162,7 +162,6 @@
     </property>
     <property name="invokingValves">
       <list>
-        <ref bean="urlValve" />
         <ref bean="securityValve" />
         <ref bean="restfulServicesValve" />
       </list>

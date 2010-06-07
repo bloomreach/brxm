@@ -179,7 +179,8 @@ public class BaseHstContentService {
     }
     
     protected String getSiteContentPath(HttpServletRequest servletRequest) {
-        ResolvedSiteMount resolvedSiteMount = (ResolvedSiteMount) servletRequest.getAttribute(ContainerConstants.RESOLVED_SITEMOUNT);
+    	HstRequestContext requestContext = (HstRequestContext)servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
         return resolvedSiteMount.getSiteMount().getMountPoint() + "/" + HstNodeTypes.NODENAME_HST_CONTENTNODE;
     }
     

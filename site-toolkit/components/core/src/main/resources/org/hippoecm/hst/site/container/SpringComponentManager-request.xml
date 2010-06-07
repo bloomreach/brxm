@@ -32,9 +32,10 @@
   </bean>
   
   <!-- Commons configuration from collab.properties -->
-  <bean id="org.hippoecm.hst.core.request.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl">
+  <bean id="org.hippoecm.hst.core.internal.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl">
     <constructor-arg ref="javax.jcr.Repository" />
     <constructor-arg ref="org.hippoecm.hst.core.request.ContextCredentialsProvider" />
+    <constructor-arg ref="containerConfiguration" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">

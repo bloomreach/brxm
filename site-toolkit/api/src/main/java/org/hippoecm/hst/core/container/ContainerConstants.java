@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
-
-
 /**
  * HstComponent container constants
  * 
@@ -43,50 +40,15 @@ public interface ContainerConstants {
     String HST_REQUEST_CONTEXT = "org.hippoecm.hst.core.request.HstRequestContext";
     
     /**
-     * The attribute name used to set the embedded request context object into the servlet request.
-     */
-    String HST_EMBEDDED_REQUEST_CONTEXT = "org.hippoecm.hst.core.request.HstEmbeddedRequestContext";
-    
-    /**
-     * The attribute name used to set the embedded request context target component configuration object into the servlet request.
-     */
-    String HST_EMBEDDED_REQUEST_CONTEXT_TARGET = "org.hippoecm.hst.core.request.HstEmbeddedRequestContext.target";
-
-    /**
-     * The attribute name used to set a matched resolved sitemap item object into the servlet request.
-     */
-    String RESOLVED_SITEMAP_ITEM = "org.hippoecm.hst.core.request.ResolvedSiteMapItem";
-
-    /**
-     * The attribute name used to set a matched resolved sitemount object into the servlet request.
-     */
-    String RESOLVED_SITEMOUNT = "org.hippoecm.hst.core.request.ResolvedSiteMount";
-    
-    /**
      * The reference namespace for container managed resource url.
      */
     String CONTAINER_REFERENCE_NAMESPACE = "org.hippoecm.hst.container.reference.namespace";
 
     /**
-     * The context namespace attribute name
-     */
-    String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.container.context.namespace";
-    
-    /**
-     * The attribute name used to set the target component configuration path into the servlet/portlet request for the current request context.
-     */
-    String HST_REQUEST_CONTEXT_TARGET_COMPONENT_PATH = "org.hippoecm.hst.core.request.HstRequestContext.target.component.path";
-    
-    /**
      * The key used to set forward path.
      */
     String HST_FORWARD_PATH_INFO = "org.hippoecm.hst.container.forward.path_info";
     
-    /**
-     * The key used to set the entry path for the preview entry node in the repository
-     */
-    String PREVIEW_REPOSITORY_ENTRY_PATH = "preview.repository.entry.path";
-
     /**
      * The key used to set the cms location for the surf and edit 
      */

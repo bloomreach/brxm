@@ -33,19 +33,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * 
  * @version $Id$
  */
-public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLProvider {
+public class HstPortletContainerURLWriter {
     
-    protected boolean portletResourceURLEnabled;
-    
-    public void setPortletResourceURLEnabled(boolean portletResourceURLEnabled) {
-        this.portletResourceURLEnabled = portletResourceURLEnabled;
+    public String toURLString(HstContainerURLProviderImpl urlProvider, HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
+        return toURLString(urlProvider, containerURL, requestContext, null);
     }
     
-    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
-        return toURLString(containerURL, requestContext, null);
-    }
-    
-    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
+    public String toURLString(HstContainerURLProviderImpl urlProvider, HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
         String urlString = "";
         
         HstPortletRequestContext prc = (HstPortletRequestContext)requestContext;
@@ -53,7 +47,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         
         if (PortletRequest.RESOURCE_PHASE.equals(lifecycle) || PortletRequest.RENDER_PHASE.equals(lifecycle)) {
             String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
-            boolean hstContainerResource = !portletResourceURLEnabled && ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
+            boolean hstContainerResource = !urlProvider.isPortletResourceURLEnabled() && ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
             
             StringBuilder path = new StringBuilder(100);
             
@@ -67,7 +61,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                     containerURL.setResourceWindowReferenceNamespace(null);
                     ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
                     ((HstContainerURLImpl) containerURL).setParameters(null);
-                    pathInfo = buildHstURLPath(containerURL);
+                    pathInfo = urlProvider.buildHstURLPath(containerURL);
                 } finally {
                     containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                     ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
@@ -88,7 +82,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                 if(mountPrefix != null) {
                     path.append(mountPrefix);
                 }
-                path.append(buildHstURLPath(containerURL));
+                path.append(urlProvider.buildHstURLPath(containerURL));
                 
                 BaseURL url = null;
                 PortletResponse response = prc.getPortletResponse();
