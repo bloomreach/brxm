@@ -49,12 +49,11 @@ public class CleanupValve extends AbstractValve
         HstRequestContext requestContext = context.getRequestContext();
         
         if (requestContext != null) {
-            String forwardPathInfo = (String) servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+        	// ensure Session isn't tried to reuse again (its closed anyway)
+            ((HstMutableRequestContext) requestContext).setSession(null);
             
-            if (forwardPathInfo == null) {
+            if (servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) == null) {
                 getRequestContextComponent().release(requestContext);
-            } else {
-                ((HstMutableRequestContext) requestContext).setSession(null);
             }
         }
         
