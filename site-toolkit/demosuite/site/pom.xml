@@ -258,6 +258,13 @@
           <artifactId>hst-server-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
+          <exclusions>
+            <exclusion>
+              <!-- poi 3.0.2 pulling this in -->
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <dependency>
           <groupId>org.onehippo.ecm.hst.dependencies</groupId>
@@ -286,6 +293,13 @@
           <artifactId>hst-server-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
+          <exclusions>
+            <exclusion>
+              <!-- poi 3.0.2 pulling this in -->
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <dependency>
           <groupId>org.onehippo.ecm.hst.dependencies</groupId>
@@ -462,6 +476,64 @@
         </plugins>
       </build>
     </profile>
+
+  <profile>
+    <!-- a minimal profile to build a -min.war classified war usable for deployments side-by-side a portal/cms etc. -->
+    <id>minimal</id>
+    <properties>
+      <site.log.dir.name>${org.apache.portals.logdir}</site.log.dir.name>
+    </properties>
+    <dependencies>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+        <artifactId>hst-shared-dependencies</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+        <artifactId>hst-client-dependencies</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-api</artifactId>
+        <version>${hippoecm.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+        <version>${hippoecm.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+        <version>${hippoecm.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <configuration>
+            <classifier>min</classifier>
+            <webappDirectory>${project.build.directory}/${project.build.finalName}-j2</webappDirectory>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
     
   </profiles>
 
