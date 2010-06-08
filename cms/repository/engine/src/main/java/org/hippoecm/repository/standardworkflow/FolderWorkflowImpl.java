@@ -662,12 +662,23 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot duplicate document when duplicate already exists");
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            source = source.getParent();
+            Node handle = userSubject.addNode(targetName, HippoNodeType.NT_HANDLE);
+            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
+            ((HippoSession)userSession).copy(source, handle.getPath() + "/" + targetName);
+            renameChildDocument(handle);
+        } else {
+            renameChildDocument(((HippoSession)userSubject.getSession()).copy(source, userSubject.getPath() + "/" + targetName));
         }
-        renameChildDocument(((HippoSession)userSubject.getSession()).copy(source, userSubject.getPath() + "/" + targetName));
         userSubject.save();
         return new Document(userSubject.getNode(targetName).getUUID());
     }
+
+    /**
+     * implemented copy semantics:
+     * - when offspring is a variant, create a new bonsai tree with a copy of the variant
+     * - when it is a handle, copy it with all its variants; the target folder should be different
+     * - otherwise, copy recursively
+     */
 
     public Document copy(String relPath, String absPath)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -694,6 +705,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return copyFrom(offspring, targetFolder, targetName, arguments);
     }
 
+    /**
+     * implemented move semantics:
+     * - when offspring is a variant, create a new bonsai tree with the variant
+     * - when it is a handle, move it with all its variants; the folder should be different
+     * - otherwise, move the node and all its descendants
+     */
+
     public Document move(String relPath, String absPath)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         return move(relPath, absPath, null);
@@ -719,6 +737,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return moveFrom(offspring, targetFolder, targetName, arguments);
     }
 
+    // EmbedWorkflow
+    
     public Document copyFrom(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = userSubject.getPath().substring(1);
@@ -742,13 +762,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot copy document when document with same name exists");
         }
         Node source = userSession.getNodeByUUID(offspring.getIdentity());
-        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            source = source.getParent();
-        }
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
-        renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            Node handle = folder.addNode(targetName, HippoNodeType.NT_HANDLE);
+            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
+            ((HippoSession)folder.getSession()).copy(source, handle.getPath() + "/" + targetName);
+            renameChildDocument(handle);
+        } else {
+            renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
+        }
         folder.save();
         ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
         return new Document(folder.getNode(targetName).getUUID());
@@ -763,10 +787,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         String path = userSubject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         Node destination = userSession.getNodeByUUID(targetFolder.getIdentity());
-        if (folder.isSame(destination)) {
+        Node source = userSession.getNodeByUUID(offspring.getIdentity());
+        if (folder.isSame(destination)
+                && !(source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE))) {
             throw new WorkflowException("Cannot move document to same folder");
         }
-        Node source = userSession.getNodeByUUID(offspring.getIdentity());
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
@@ -775,7 +800,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         return null;
     }
-
     public Document moveTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = userSubject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
@@ -783,15 +807,23 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot move document when document with same name exists");
         }
         Node source = userSession.getNodeByUUID(offspring.getIdentity());
-        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            source = source.getParent();
-        }
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
-        folder.getSession().getWorkspace().move(source.getPath(), folder.getPath() + "/" + targetName);
-        renameChildDocument(folder, targetName);
-        folder.save();
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            Node handle = folder.addNode(targetName, HippoNodeType.NT_HANDLE);
+            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
+            folder.getSession().move(source.getPath(), handle.getPath() + "/" + targetName);
+            renameChildDocument(folder, targetName);
+            folder.getSession().save();
+        } else {
+            if (folder.isSame(userSubject))
+                throw new WorkflowException("Cannot move document to same folder");
+
+            folder.getSession().getWorkspace().move(source.getPath(), folder.getPath() + "/" + targetName);
+            renameChildDocument(folder, targetName);
+            folder.save();
+        }
         ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).moveOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
         return new Document(folder.getNode(targetName).getUUID());
     }
@@ -799,4 +831,5 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document moveOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
         return result;
     }
+
 }
