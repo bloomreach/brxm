@@ -35,6 +35,7 @@ import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.FacetSearchObserver;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.JcrObservationManager;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
 import org.hippoecm.frontend.WebApplicationHelper;
@@ -264,6 +265,7 @@ public class UserSession extends WebSession {
                 jcrSessions.remove(this);
             }
         }
+        JcrObservationManager.getInstance().detachSession();
         if (oldModel != null) {
             oldModel.detach();
         }
