@@ -150,7 +150,9 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
         };
         IModel<String> decoratedCurrent = new PrefixingModel(currentModel, currentDecorator);
 
-        return new BrowsableModel(new DiffModel(decoratedBase, decoratedCurrent), previewLinksBehavior);
+        return new BrowsableModel(
+                new DiffModel(new StripScriptModel(decoratedBase), new StripScriptModel(decoratedCurrent)),
+                previewLinksBehavior);
     }
 
     @Override
@@ -158,7 +160,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
         IRichTextImageFactory imageFactory = new JcrRichTextImageFactory((JcrNodeModel) getModel());
         IRichTextLinkFactory linkFactory = new JcrRichTextLinkFactory((JcrNodeModel) getModel());
         IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory);
-        return new BrowsableModel(new PrefixingModel(getValueModel(), urlProvider), previewLinksBehavior);
+        return new BrowsableModel(new PrefixingModel(super.newViewModel(), urlProvider), previewLinksBehavior);
     }
 
     @Override
