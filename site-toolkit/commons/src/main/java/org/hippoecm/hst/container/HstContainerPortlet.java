@@ -147,7 +147,7 @@ public class HstContainerPortlet extends GenericPortlet {
         
         if (!PortletConfigUtils.isEmpty(dispatchPage)) {
             try {
-                getPortletContext().getRequestDispatcher(dispatchPage).include(request, response);
+                dispatch(getPortletContext().getRequestDispatcher(dispatchPage), request, response, true);
             } catch (Exception e) {
                 Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
                 if (logger != null) {
@@ -163,7 +163,8 @@ public class HstContainerPortlet extends GenericPortlet {
         
         if (!PortletConfigUtils.isEmpty(dispatchPage)) {
             try {
-                getPortletContext().getRequestDispatcher(dispatchPage).include(request, response);
+            	request.setAttribute(ContainerConstants.HST_RESET_FILTER, Boolean.TRUE);
+                dispatch(getPortletContext().getRequestDispatcher(dispatchPage), request, response, true);
             } catch (Exception e) {
                 Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
                 if (logger != null) {
@@ -179,9 +180,8 @@ public class HstContainerPortlet extends GenericPortlet {
     public void serveResource(ResourceRequest request, ResourceResponse response) throws PortletException, IOException {
         if (!PortletConfigUtils.isEmpty(request.getResourceID())) {
             // only handle serveResource by ResourceID parameter
-        	HstMutablePortletRequestContext prc = getHstRequestContext(request, response);
+        	HstMutablePortletRequestContext prc = createHstRequestContext(request, response);
         	if (prc != null) {
-        		prc.setContextNamespace(response.getNamespace());
                 HstPortletResponseState portletResponseState = new HstPortletResponseState(request, response);
                 processMimeResponseRequest(request, response, request.getResourceID(), portletResponseState);
         	}
@@ -222,7 +222,7 @@ public class HstContainerPortlet extends GenericPortlet {
     
     protected void processRequest(PortletRequest request, PortletResponse response) throws PortletException, IOException {
         
-    	HstMutablePortletRequestContext prc = getHstRequestContext(request, response);
+    	HstMutablePortletRequestContext prc = createHstRequestContext(request, response);
     	if (prc != null) {
     		
             boolean isEditMode = PortletMode.EDIT.equals(request.getPortletMode());
@@ -309,11 +309,7 @@ public class HstContainerPortlet extends GenericPortlet {
             String hstDispUrl = getHstDispatchUrl(request, response, hstSiteMountPath, hstPathInfo, !portalContentPathBased);
             
             HstPortletResponseState portletResponseState = new HstPortletResponseState(request, response);
-    // TODO: investigate if this could/should be added to HstRequestContext instead of being set as request attribute
             request.setAttribute(HstResponseState.class.getName(), portletResponseState);
-
-        	prc.setContextNamespace(response.getNamespace());
-        	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, prc);
         	
             if (portletResponseState.isActionResponse()) {
                 processActionResponseState((ActionRequest) request, (ActionResponse) response, hstDispUrl, portletResponseState);
@@ -333,7 +329,7 @@ public class HstContainerPortlet extends GenericPortlet {
         
         PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(hstDispUrl);
         if (dispatcher != null) {
-            dispatcher.include(request, response);
+            dispatch(dispatcher, request, response, true);
             portletResponseState.flush();
         }
     }
@@ -342,7 +338,7 @@ public class HstContainerPortlet extends GenericPortlet {
 
     	PortletRequestDispatcher dispatcher = getPortletContext().getRequestDispatcher(hstDispUrl);
         if (dispatcher != null) {
-            dispatcher.include(request, response); 
+            dispatch(dispatcher, request, response, true);
         	// write out Cookies to ActionResponse
             portletResponseState.flush();
             String redirectLocationUrl = portletResponseState.getRedirectLocation();
@@ -366,15 +362,16 @@ public class HstContainerPortlet extends GenericPortlet {
     	return null;
     }
     
-    protected HstMutablePortletRequestContext getHstRequestContext(PortletRequest request, PortletResponse response) {
+    protected HstMutablePortletRequestContext createHstRequestContext(PortletRequest request, PortletResponse response) {
     	HstMutablePortletRequestContext prc = null;
     	if (HstServices.isAvailable()) {
     		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent("org.hippoecm.hst.core.internal.HstRequestContextComponent");
     		prc = (HstMutablePortletRequestContext)rcc.create(true);
-			prc.setContextNamespace((String)request.getAttribute(response.getNamespace()));
+			prc.setContextNamespace(response.getNamespace());
 			prc.setPortletConfig(getPortletConfig());
 			prc.setPortletRequest(request);
 			prc.setPortletResponse(response);
+        	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, prc);
     	}
     	return prc;
     }
@@ -404,5 +401,20 @@ public class HstContainerPortlet extends GenericPortlet {
         }
         
         return hstDispUrl.toString();
+    }
+    
+    protected void dispatch(PortletRequestDispatcher dispatcher, PortletRequest request, PortletResponse response, boolean include) throws IOException, PortletException {
+    	request.setAttribute(ContainerConstants.HST_RESET_FILTER, Boolean.TRUE);
+    	try {
+    		if (include) {
+        		dispatcher.include(request, response);
+    		}
+    		else {
+    			dispatcher.forward(request, response);
+    		}
+    	}
+    	finally {
+    		request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
+    	}
     }
 }

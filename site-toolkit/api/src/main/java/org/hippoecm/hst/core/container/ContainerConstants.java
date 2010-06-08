@@ -50,6 +50,10 @@ public interface ContainerConstants {
     String HST_FORWARD_PATH_INFO = "org.hippoecm.hst.container.forward.path_info";
     
     /**
+     * The key to indicate HstFilter should "reset" itself from being done, allowing multiple invokations.
+     */
+    String HST_RESET_FILTER = "org.hippoecm.hst.container.HstFilter.reset";
+    /**
      * The key used to set the cms location for the surf and edit 
      */
     String CMS_LOCATION = "cms.location";
@@ -68,5 +72,4 @@ public interface ContainerConstants {
      * The parameter name for custom error handler class name in the root component configuration
      */
     String CUSTOM_ERROR_HANDLER_PARAM_NAME = "org.hippoecm.hst.core.container.custom.errorhandler";  
-    
 }

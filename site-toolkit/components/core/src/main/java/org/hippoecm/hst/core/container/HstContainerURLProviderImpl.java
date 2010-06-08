@@ -439,10 +439,10 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
     	if (requestContext.isPortletContext()) {
     		if (requestContext.isEmbeddedRequest()) {
-    			getEmbeddedPortletContainerURLWriter().toURLString(this, containerURL, requestContext, contextPath);
+    			return getEmbeddedPortletContainerURLWriter().toURLString(this, containerURL, requestContext, contextPath);
     		}
     		else {
-    			getPortletContainerURLWriter().toURLString(this, containerURL, requestContext, contextPath);
+    			return getPortletContainerURLWriter().toURLString(this, containerURL, requestContext, contextPath);
     		}
     	}
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
