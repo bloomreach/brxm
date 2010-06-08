@@ -141,8 +141,14 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
             if (state.unpublished != null) {
                 return state.unpublished;
             }
-            return state.published;
+            if (state.published != null) {
+                return state.published;
+            }
+            return state.draft;
         default:
+            if (state.draft != null) {
+                return state.draft;
+            }
             if (state.unpublished == null || state.published == null) {
                 throw new EditorException("Can only compare when both unpublished and published are present");
             }
@@ -282,8 +288,15 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
         WorkflowState wfState = getWorkflowState(nodeModel.getObject());
 
         // select draft if it exists
-        if (wfState.draft != null && wfState.isHolder) {
-            return Mode.EDIT;
+        if (wfState.draft != null) {
+            if (wfState.isHolder) {
+                return Mode.EDIT;
+            } else {
+                if (wfState.published != null) {
+                    return Mode.COMPARE;
+                }
+                return Mode.VIEW;
+            }
         }
 
         // show preview
