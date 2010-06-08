@@ -311,6 +311,9 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                 String nodeName = getNodeNameCodec().encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
+                if ("".equals(nodeName)) {
+                    throw new IllegalArgumentException("You need to enter a name");
+                }
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
