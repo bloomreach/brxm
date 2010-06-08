@@ -45,7 +45,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         Map<String,Serializable> info = super.hints();
         info.put("rename", info.get("delete"));
         info.put("move", info.get("delete"));
-        info.put("copy", info.get("delete"));
+        info.put("copy", unpublishedDocument != null || publishedDocument != null);
         return info;
     }
 
@@ -104,23 +104,31 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         ReviewedActionsWorkflowImpl.log.info("copy document");
-        if(current != null)
-            throw new WorkflowException("cannot copy document with pending publication request");
-        if(current2 != null)
-            throw new WorkflowException("cannot copy document with pending depublication request");
-        if(current3 != null)
-            throw new WorkflowException("cannot copy document with pending delete request");
-        if(publishedDocument != null)
-            throw new WorkflowException("cannot copy published document");
-        if(draftDocument != null)
-            throw new WorkflowException("cannot copy document being edited");
 
-        Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
-        if(workflow instanceof FolderWorkflow)
-            ((FolderWorkflow)workflow).copy(unpublishedDocument, destination, newName);
-        else
-            throw new WorkflowException("cannot copy document which is not contained in a folder");
+        if(publishedDocument == null && unpublishedDocument == null)
+            throw new WorkflowException("cannot copy unsaved document");
+
+        if (unpublishedDocument == null) {
+            try {
+                unpublishedDocument = (PublishableDocument) publishedDocument.clone();
+                unpublishedDocument.state = "unpublished";
+                Document folder = getWorkflowContext().getDocument("embedded", publishedDocument.getIdentity());
+                Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+                if(workflow instanceof FolderWorkflow)
+                    ((FolderWorkflow)workflow).move(unpublishedDocument, destination, newName);
+                else
+                    throw new WorkflowException("cannot copy document which is not contained in a folder");
+            } catch (CloneNotSupportedException e) {
+                throw new WorkflowException("cannot clone published document for copying");
+            }
+        } else {
+            Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
+            Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+            if(workflow instanceof FolderWorkflow)
+                ((FolderWorkflow)workflow).copy(unpublishedDocument, destination, newName);
+            else
+                throw new WorkflowException("cannot copy document which is not contained in a folder");
+        }
     }
 
     public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
