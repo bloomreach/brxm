@@ -280,6 +280,9 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                 }
                                 String nodeName = getNodeNameCodec().encode(uriName);
                                 String localName = getLocalizeCodec().encode(targetName);
+                                if ("".equals(nodeName)) {
+                                    throw new IllegalArgumentException("You need to enter a name");
+                                }
                                 String path = workflow.add(category, prototype, nodeName);
                                 ((UserSession) Session.get()).getJcrSession().refresh(true);
                                 JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
