@@ -1022,12 +1022,38 @@ public class JcrObservationManager implements ObservationManager {
                 } catch (RepositoryException ex) {
                     log.error("Failed to refresh session", ex);
                 }
+            } else {
+                log.info("No root not found; cleaning up listeners");
+                synchronized (listeners) {
+                    for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext(); ) {
+                        JcrListener listener = iter.next();
+                        if (listener.getSession() == session) {
+                            iter.remove();
+                        }
+                    }
+                }
             }
         } else {
             log.error("No session found");
         }
     }
 
+    public void detachSession() {
+        cleanup();
+
+        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        if (session != null) {
+            synchronized (listeners) {
+                for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext(); ) {
+                    JcrListener listener = iter.next();
+                    if (listener.getSession() == session) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
+    
     void processEvents() {
         cleanup();
 
