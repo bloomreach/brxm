@@ -164,6 +164,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         }
                     }
                 }
+                if (path.contains("-")) {
+                    throw new TypeException("Hyphens are not allowed in field path");
+                }
             }
 
             String oldPath = delegate.getPath();
