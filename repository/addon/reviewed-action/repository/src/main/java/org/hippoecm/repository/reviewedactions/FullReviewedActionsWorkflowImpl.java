@@ -45,7 +45,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         Map<String,Serializable> info = super.hints();
         info.put("rename", info.get("delete"));
         info.put("move", info.get("delete"));
-        info.put("copy", unpublishedDocument != null || publishedDocument != null);
+        info.put("copy", (unpublishedDocument != null && PublishableDocument.UNPUBLISHED.equals(state))
+                || (unpublishedDocument == null && publishedDocument != null && PublishableDocument.PUBLISHED.equals(state)));
         return info;
     }
 
