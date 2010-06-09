@@ -37,6 +37,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
@@ -84,6 +85,28 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
 
+    protected static class PersistentFeedbackMessagesModel extends FeedbackMessagesModel {
+        private static final long serialVersionUID = 1L;
+        private List<FeedbackMessage> messages;
+
+        private PersistentFeedbackMessagesModel(Component component) {
+            super(component);
+        }
+
+        protected void reset() {
+            messages = null;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected List processMessages(final List messages) {
+            if (this.messages == null) {
+                this.messages = messages;
+            }
+            return this.messages;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
         private static final long serialVersionUID = 1L;
@@ -128,12 +151,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     protected class ExceptionFeedbackPanel extends FeedbackPanel {
         private static final long serialVersionUID = 1L;
 
-        boolean expanded;
+        boolean expanded = false;
 
         protected ExceptionFeedbackPanel(String id) {
             super(id);
             setOutputMarkupId(true);
-            expanded = false;
         }
 
         protected class ExceptionLabel extends Panel {
@@ -145,6 +167,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             protected ExceptionLabel(String id, IModel<String> model, Exception ex, boolean escape) {
                 super(id);
                 setOutputMarkupId(true);
+
                 add(link = new AjaxLink<String>("message") {
                     private static final long serialVersionUID = 1L;
 
@@ -155,6 +178,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                         //   target.addComponent(details);
                         // so instead here we remember the previous state in the parent
                         expanded = !expanded;
+                        details.setVisible(expanded);
                         target.addComponent(ExceptionFeedbackPanel.this);
                     }
                 });
@@ -163,7 +187,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 label.setEscapeModelStrings(escape);
                 add(details = new WebMarkupContainer("details"));
                 details.setVisible(expanded); // use workaround iso: details.setVisible(false);
-                details.setOutputMarkupId(true);
                 if (ex != null) {
                     ByteArrayOutputStream ostream = new ByteArrayOutputStream();
                     ex.printStackTrace(new PrintStream(ostream));
@@ -207,25 +230,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         @Override
         protected FeedbackMessagesModel newFeedbackMessagesModel() {
-            return new FeedbackMessagesModel(this) {
-                private static final long serialVersionUID = 1L;
-
-                private List<FeedbackMessage> messages;
-
-                @SuppressWarnings("unchecked")
-                @Override
-                protected List processMessages(final List messages) {
-                    this.messages = messages;
-                    return messages;
-                }
-
-                @Override
-                public void detach() {
-                    if (messages == null || messages.size() == 0) {
-                        super.detach();
-                    }
-                }
-            };
+            return AbstractDialog.this.getFeedbackMessagesModel();
         }
     }
 
@@ -351,6 +356,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AbstractDialog.class,
             "ajax-loader.gif");
 
+    protected PersistentFeedbackMessagesModel fmm;
     protected FeedbackPanel feedback;
     private Component focusComponent;
 
@@ -434,8 +440,23 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         });
     }
 
+    @Override
+    protected void onDetach() {
+        if (fmm != null) {
+            fmm.detach();
+        }
+        super.onDetach();
+    }
+
     protected FeedbackPanel newFeedbackPanel(String id) {
         return new ExceptionFeedbackPanel(id);
+    }
+
+    protected final FeedbackMessagesModel getFeedbackMessagesModel() {
+        if (fmm == null) {
+            fmm = new PersistentFeedbackMessagesModel(this);
+        }
+        return fmm;
     }
 
     public String getAjaxIndicatorMarkupId() {
@@ -540,6 +561,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     protected final void onSubmit() {
         Page page = findParent(Page.class);
         if (page != null) {
+            if (fmm != null) {
+                fmm.reset();
+            }
             IFormSubmittingComponent submitButton = findSubmittingButton();
             if (submitButton == null) {
                 handleSubmit();
