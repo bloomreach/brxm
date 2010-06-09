@@ -445,6 +445,17 @@
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>new</sv:value>
           </sv:property>
+          <sv:node sv:name="defaultcontent:address">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>defaultcontent:address</sv:value>
+            </sv:property>
+            <sv:property sv:name="defaultcontent:street" sv:type="String">
+              <sv:value>Dolomieten</sv:value>
+            </sv:property>
+            <sv:property sv:name="defaultcontent:number" sv:type="Long">
+              <sv:value>4</sv:value>
+            </sv:property>
+          </sv:node>
           <sv:node sv:name="defaultcontent:date">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:date</sv:value>

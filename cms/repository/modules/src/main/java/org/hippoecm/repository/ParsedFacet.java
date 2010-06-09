@@ -20,7 +20,7 @@ import java.util.List;
 
 import net.sf.json.JSONArray;
 
-import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
 import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
 
 public class ParsedFacet {
@@ -64,7 +64,7 @@ public class ParsedFacet {
                         + "'. Valid format is for example '" + VALID_RANGE_EXAMPLE + "'", e);
             }
         }
-        Name qName = provider.resolveName(jcrPropertyName);
+        Path qName = provider.resolvePath(jcrPropertyName);
         this.namespacedProperty = qName.toString();
         if (facetRanges != null) {
             for (FacetRange range : facetRanges) {
