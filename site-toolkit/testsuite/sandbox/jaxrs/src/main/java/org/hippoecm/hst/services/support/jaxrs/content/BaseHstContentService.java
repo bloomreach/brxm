@@ -25,9 +25,13 @@ import java.util.Set;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -53,10 +57,15 @@ import org.hippoecm.hst.content.beans.standard.HippoTranslation;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.MatchedMapping;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -270,6 +279,47 @@ public class BaseHstContentService {
     
     protected String[] getFallBackJcrNodeTypes(){
         return new String[] { "hippo:facetselect", "hippo:mirror", "hippostd:directory", "hippostd:folder", "hippo:resource", "hippo:request", "hippostd:html", "hippo:document" };
+    }
+    
+    protected boolean isPreview(final HttpServletRequest servletRequest) {
+        HstRequestContext requestContext = getHstRequestContext(servletRequest);
+        return Boolean.TRUE == requestContext.getAttribute(ContainerConstants.IS_PREVIEW);
+    }
+    
+    protected String createPagePathByCanonicalUuid(final HttpServletRequest servletRequest, final HttpServletResponse sevletResponse, final String canonicalUuid) {
+        if (StringUtils.isBlank(canonicalUuid)) {
+            return null;
+        }
+        
+        HstRequestContext requestContext = getHstRequestContext(servletRequest);
+        
+        if (requestContext != null) {
+            try {
+                String sitesManagerComponentBaseName = HstSitesManager.class.getName();
+                HstSitesManager sitesManager = HstServices.getComponentManager().getComponent(sitesManagerComponentBaseName + (isPreview(servletRequest) ? ".preview" : ".live"));
+                HstSite hstSite = sitesManager.getSites().getSite(requestContext.getMatchedMapping().getSiteName());
+                HstSiteMapMatcher siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
+                ResolvedSiteMapItem resolvedSiteMapItem = siteMapMatcher.match("/", hstSite);
+                HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, requestContext.getSession(), resolvedSiteMapItem);
+                HstContainerURL navURL = requestContext.getContainerURLProvider().parseURL(servletRequest, sevletResponse, requestContext, hstLink.getPath());
+                navURL.setParameters(null);
+                HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext);
+                String pagePath = hstUrl.toString();
+                String basePath = servletRequest.getContextPath() + servletRequest.getServletPath();
+                if (pagePath.startsWith(basePath)) {
+                    pagePath = pagePath.substring(basePath.length());
+                }
+                return pagePath;
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to create hst link.", e);
+                } else {
+                    log.warn("Failed to create hst link. " + e);
+                }
+            }
+        }
+        
+        return null;
     }
     
     private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs,
