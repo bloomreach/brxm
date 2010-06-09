@@ -27,6 +27,7 @@ import javax.jcr.Property;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -75,7 +76,7 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/query/{path:.*}")
-    public HippoBeanContentCollection queryContentItems(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, 
+    public HippoBeanContentCollection queryContentItems(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @QueryParam("fulljcrquery") String fullJcrQuery,
             @PathParam("path") List<PathSegment> pathSegments, 
             @QueryParam("type") Set<String> nodeTypes,
@@ -177,6 +178,7 @@ public class ContentService extends BaseHstContentService {
                 if (bean != null) {
                     HippoBeanContent beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
                     beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
+                    beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
                     list.add(beanContent);
                     count++;
                 }
@@ -202,7 +204,7 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/uuid/{uuid}/")
-    public HippoBeanContent getContentNodeByUUID(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("uuid") String uuid, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
+    public HippoBeanContent getContentNodeByUUID(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("uuid") String uuid, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
@@ -215,6 +217,7 @@ public class ContentService extends BaseHstContentService {
                 String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
                 beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
                 beanContent.buildChildUris(urlBase, getSiteContentPath(servletRequest), encoding);
+                beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -231,7 +234,7 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/{path:.*}")
-    public ItemContent getContentItem(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
+    public ItemContent getContentItem(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         ItemContent itemContent = new ItemContent();
         
@@ -252,6 +255,7 @@ public class ContentService extends BaseHstContentService {
                     String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
                     beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
                     beanContent.buildChildUris(urlBase, getSiteContentPath(servletRequest), encoding);
+                    beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
                     itemContent = beanContent;
                 }
             } else {
@@ -278,7 +282,7 @@ public class ContentService extends BaseHstContentService {
     
     @DELETE
     @Path("/{path:.*}")
-    public Response deleteContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
+    public Response deleteContentNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
@@ -309,7 +313,7 @@ public class ContentService extends BaseHstContentService {
     
     @POST
     @Path("/{path:.*}")
-    public Response createContentDocument(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
+    public Response createContentDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
         String parentPath = getContentItemPath(servletRequest, pathSegments);
         String itemPath = parentPath + "/" + documentBeanContent.getName();
         
@@ -331,6 +335,7 @@ public class ContentService extends BaseHstContentService {
             }
             
             documentBeanContent = (HippoDocumentBeanContent) createHippoBeanContent(bean, null);
+            documentBeanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, documentBeanContent.getCanonicalUuid()));
             return Response.status(Response.Status.CREATED).entity(documentBeanContent).build();
         } catch (WebApplicationException e) {
             throw e;
@@ -347,7 +352,7 @@ public class ContentService extends BaseHstContentService {
     
     @POST
     @Path("/node/{path:.*}")
-    public Response createContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
+    public Response createContentNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
         String parentPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
@@ -384,6 +389,7 @@ public class ContentService extends BaseHstContentService {
             node.getSession().save();
             bean = (HippoBean) cpm.getObject(parentPath);
             beanContent = createHippoBeanContent(bean, null);
+            beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
             
             return Response.status(Response.Status.CREATED).entity(beanContent).build();
         } catch (WebApplicationException e) {
@@ -401,7 +407,7 @@ public class ContentService extends BaseHstContentService {
     
     @PUT
     @Path("/{path:.*}")
-    public Response updateContentProperty(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, PropertyContent propertyContent) {
+    public Response updateContentProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, PropertyContent propertyContent) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {

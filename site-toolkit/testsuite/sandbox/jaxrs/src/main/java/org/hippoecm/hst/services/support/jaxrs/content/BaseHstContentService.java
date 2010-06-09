@@ -25,10 +25,13 @@ import java.util.Set;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -54,8 +57,13 @@ import org.hippoecm.hst.content.beans.standard.HippoTranslation;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
@@ -179,7 +187,7 @@ public class BaseHstContentService {
     }
     
     protected String getSiteContentPath(HttpServletRequest servletRequest) {
-    	HstRequestContext requestContext = (HstRequestContext)servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+    	HstRequestContext requestContext = getHstRequestContext(servletRequest);
         ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
         return resolvedSiteMount.getSiteMount().getMountPoint() + "/" + HstNodeTypes.NODENAME_HST_CONTENTNODE;
     }
@@ -234,6 +242,52 @@ public class BaseHstContentService {
     
     protected String[] getFallBackJcrNodeTypes(){
         return new String[] { "hippo:facetselect", "hippo:mirror", "hippostd:directory", "hippostd:folder", "hippo:resource", "hippo:request", "hippostd:html", "hippo:document" };
+    }
+    
+    protected boolean isPreview(final HttpServletRequest servletRequest) {
+        HstRequestContext requestContext = getHstRequestContext(servletRequest);
+        SiteMount siteMount = requestContext.getResolvedSiteMount().getSiteMount();
+        return siteMount.isPreview();
+    }
+    
+    protected String createPagePathByCanonicalUuid(final HttpServletRequest servletRequest, final HttpServletResponse sevletResponse, final String canonicalUuid) {
+        if (StringUtils.isBlank(canonicalUuid)) {
+            return null;
+        }
+        
+        HstRequestContext requestContext = getHstRequestContext(servletRequest);
+        
+        if (requestContext != null) {
+            try {
+                ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
+                HstSiteMapMatcher siteMapMatcher = resolvedSiteMount.getSiteMount().getHstSiteMapMatcher();
+                //TODO: Ard, do you know why the next statement throws NPE.
+                //      I guess it's because the rest pipelines does not have HstSite from resolvedSiteMount.getSiteMount().getHstSite().
+                //      Anyway, could you review this? I need to create hst link to provide page path info to REST API clients.
+                ResolvedSiteMapItem resolvedSiteMapItem = siteMapMatcher.match("/", resolvedSiteMount);
+                if (resolvedSiteMapItem == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cannot resolve sitemap item on /.");
+                    }
+                    return null;
+                }
+                HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, requestContext.getSession(), resolvedSiteMapItem);
+                HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(requestContext.getBaseURL(), hstLink.getPath());
+                HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext);
+                String pagePath = hstUrl.toString();
+                String basePath = servletRequest.getContextPath() + servletRequest.getServletPath();
+                if (pagePath.startsWith(basePath)) {
+                    pagePath = pagePath.substring(basePath.length());
+                }
+                return pagePath;
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Page link is not available. ", e);
+                }
+            }
+        }
+        
+        return null;
     }
     
     private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs,

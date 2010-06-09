@@ -31,6 +31,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 public class HippoBeanContent extends NodeContent {
     
     private String canonicalUuid;
+    private String pagePath;
     
     public HippoBeanContent() {
         super();
@@ -51,9 +52,7 @@ public class HippoBeanContent extends NodeContent {
     public HippoBeanContent(HippoBean bean, final Set<String> propertyNamesFilledWithValues) throws RepositoryException {
         super(bean.getNode(), propertyNamesFilledWithValues);
         
-        if (bean.getNode().isNodeType("mix:referenceable")) {
-            this.canonicalUuid = bean.getCanonicalUUID();
-        }
+        this.canonicalUuid = bean.getCanonicalUUID();
     }
     
     public String getCanonicalUuid() {
@@ -62,6 +61,14 @@ public class HippoBeanContent extends NodeContent {
     
     public void setCanonicalUuid(String canonicalUuid) {
         this.canonicalUuid = canonicalUuid;
+    }
+    
+    public String getPagePath() {
+        return pagePath;
+    }
+    
+    public void setPagePath(String pagePath) {
+        this.pagePath = pagePath;
     }
     
 }
