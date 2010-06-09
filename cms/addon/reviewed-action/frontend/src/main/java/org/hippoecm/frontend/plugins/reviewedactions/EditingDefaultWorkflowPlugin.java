@@ -15,21 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.repository.api.Workflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -47,6 +49,7 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             public void postClose(Object object) {
                 // nothing to do
             }
+
             public Object preClose() {
                 try {
                     ((WorkflowDescriptorModel) getDefaultModel()).getNode().save();
@@ -58,10 +61,35 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         }, context.getReference(editor).getServiceId());
 
-        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(), null) {
+        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(),
+                new ResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png")) {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 ((WorkflowDescriptorModel) getDefaultModel()).getNode().save();
+                return null;
+            }
+        });
+
+        add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(),
+                new ResourceReference(getClass(), "document-done-16.png")) {
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                Node docNode = ((WorkflowDescriptorModel) EditingDefaultWorkflowPlugin.this.getDefaultModel())
+                        .getNode();
+                IEditorManager editorMgr = getPluginContext().getService(
+                        getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
+                if (editorMgr != null) {
+                    JcrNodeModel docModel = new JcrNodeModel(docNode);
+                    IEditor editor = editorMgr.getEditor(docModel);
+                    if (editor == null) {
+                        editorMgr.openEditor(docModel);
+                    } else {
+                        editor.setMode(Mode.VIEW);
+                    }
+                } else {
+                    log.warn("No editor found to edit {}", docNode.getPath());
+                }
                 return null;
             }
         });
