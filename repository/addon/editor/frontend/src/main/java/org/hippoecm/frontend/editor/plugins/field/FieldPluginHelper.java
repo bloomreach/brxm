@@ -72,7 +72,7 @@ public class FieldPluginHelper implements IDetachable {
                     }
                     field = type.getField(fieldName);
                     if (field == null) {
-                        log.error("Could not resolve field for name " + fieldName);
+                        log.warn("Could not find field with name " + fieldName + "; has the field been added without running update-all-content?");
                     } else if ("*".equals(field.getPath())) {
                         log.error("Field path * is not supported, field name is " + fieldName);
                         field = null;
