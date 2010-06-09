@@ -53,10 +53,15 @@ public class StringConverter implements IModel<String> {
 
     public void setObject(String object) {
         try {
-            ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
-            String string = object == null ? "" : object.toString();
-            int type = decorated.getType();
-            Value value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+            Value value;
+            if (object != null) {
+                String string = object == null ? "" : object.toString();
+                int type = decorated.getType();
+                ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+                value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+            } else {
+                value = null;
+            }
             decorated.setValue(value);
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());

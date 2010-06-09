@@ -50,6 +50,7 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
 
     private static final Logger log = LoggerFactory.getLogger(PropertyValueProvider.class);
 
+    private boolean autocreate = false;
     private IFieldDescriptor descriptor;
     private ITypeDescriptor type;
 
@@ -94,7 +95,7 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                 newValues[oldValues.length] = value;
 
                 node.setProperty(relPath, newValues);
-            } else {
+            } else if (!descriptor.getValidators().contains("required")){
                 if (node.hasProperty(relPath)) {
                     log.error("cannot add more than one value to single-valued property");
                     return;
@@ -103,6 +104,10 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                     index = JcrPropertyValueModel.NO_INDEX;
                 }
                 node.setProperty(relPath, value);
+            } else {
+                index = JcrPropertyValueModel.NO_INDEX;
+                value = null;
+                autocreate = true;
             }
 
             elements.addLast(new JcrPropertyValueModel(index, value, new JcrPropertyModel(getItemModel())));
@@ -113,6 +118,7 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
 
     @Override
     public void remove(JcrPropertyValueModel model) {
+        autocreate = false;
         load();
         Iterator<JcrPropertyValueModel> iterator = elements.iterator();
         int newIndex = 0;
@@ -228,6 +234,9 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+        }
+        if (elements.size() == 0 && autocreate) {
+            elements.add(new JcrPropertyValueModel(new JcrPropertyModel(getItemModel())));
         }
     }
 
