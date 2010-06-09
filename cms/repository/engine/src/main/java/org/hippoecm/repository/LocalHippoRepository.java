@@ -591,18 +591,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 Node node = initializeItems.nextNode();
                 log.info("Initializing configuration from " + node.getName());
                 try {
-                    // Delete content
-                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Found content delete configuration");
-                        }
-                        Property p = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE);
-                        String path = p.getString();
-                        log.info("Delete content in initialization: " + node.getName() + " " + path);
-                        removeNodecontent(rootSession, path);
-                        p.remove();
-                    }
-
                     // Namespace
                     if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
                         if (log.isDebugEnabled()) {
@@ -673,6 +661,23 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                             initializeNodetypes(workspace, cndStream, cndName);
                             p.remove();
                         }
+                    }
+
+                    // Delete content
+                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found content delete configuration");
+                        }
+                        Property p = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE);
+                        String path = p.getString();
+                        boolean immediateSave;
+                        if(node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) || node.hasProperty(HippoNodeType.HIPPO_CONTENT))
+                            immediateSave = false;
+                        else
+                            immediateSave = true;
+                        log.info("Delete content in initialization: " + node.getName() + " " + path);
+                        removeNodecontent(rootSession, path, immediateSave);
+                        p.remove();
                     }
 
                     // Content from file
@@ -877,7 +882,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-    private void removeNodecontent(Session session, String absPath) {
+    private void removeNodecontent(Session session, String absPath, boolean save) {
         if ("".equals(absPath) || "/".equals(absPath)) {
             log.warn("Not allowed to delete rootNode from initialization.");
             return;
@@ -887,7 +892,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         try {
             if (relpath.length() > 0 && session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().getNode(relpath).remove();
-                session.save();
+                if (save) {
+                    session.save();
+                }
             }
         } catch (RepositoryException ex) {
             if (log.isDebugEnabled()) {
