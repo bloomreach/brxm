@@ -300,6 +300,12 @@ public class BaseHstContentService {
                 HstSite hstSite = sitesManager.getSites().getSite(requestContext.getMatchedMapping().getSiteName());
                 HstSiteMapMatcher siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
                 ResolvedSiteMapItem resolvedSiteMapItem = siteMapMatcher.match("/", hstSite);
+                if (resolvedSiteMapItem == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cannot resolve sitemap item on /.");
+                    }
+                    return null;
+                }
                 HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, requestContext.getSession(), resolvedSiteMapItem);
                 HstContainerURL navURL = requestContext.getContainerURLProvider().parseURL(servletRequest, sevletResponse, requestContext, hstLink.getPath());
                 navURL.setParameters(null);
@@ -312,9 +318,7 @@ public class BaseHstContentService {
                 return pagePath;
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Failed to create hst link.", e);
-                } else {
-                    log.warn("Failed to create hst link. " + e);
+                    log.debug("Page link is not available. ", e);
                 }
             }
         }
