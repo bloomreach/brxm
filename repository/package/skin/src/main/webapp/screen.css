@@ -250,8 +250,7 @@ padding-right: 9px;
 .hippo-list-details th {cursor: pointer}
 .hippo-list-details th a {color: #666666;}
 
-.hippo-list-details tr.even.hippo-list-selected td{background: #fff6e0}
-.hippo-list-details tr.odd.hippo-list-selected td{background: #fff6e0}
+.hippo-list-details tr.even.hippo-list-selected td, .hippo-list-details tr.odd.hippo-list-selected td {background: #ffe29a; }
 
 .hippo-list-details .hippo-list-order-ascending{background: url('images/icons/arrow-sort-down-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-descending {background: url('images/icons/arrow-sort-up-16.png') center right no-repeat; padding-right: 20px;}
