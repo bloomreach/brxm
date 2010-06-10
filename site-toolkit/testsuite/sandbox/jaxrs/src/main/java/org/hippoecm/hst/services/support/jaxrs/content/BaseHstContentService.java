@@ -286,7 +286,7 @@ public class BaseHstContentService {
         return Boolean.TRUE == requestContext.getAttribute(ContainerConstants.IS_PREVIEW);
     }
     
-    protected String createPagePathByCanonicalUuid(final HttpServletRequest servletRequest, final HttpServletResponse sevletResponse, final String canonicalUuid) {
+    protected String getPageUriByCanonicalUuid(final HttpServletRequest servletRequest, final HttpServletResponse sevletResponse, final String canonicalUuid) {
         if (StringUtils.isBlank(canonicalUuid)) {
             return null;
         }
@@ -296,7 +296,8 @@ public class BaseHstContentService {
         if (requestContext != null) {
             try {
                 String sitesManagerComponentBaseName = HstSitesManager.class.getName();
-                HstSitesManager sitesManager = HstServices.getComponentManager().getComponent(sitesManagerComponentBaseName + (isPreview(servletRequest) ? ".preview" : ".live"));
+                boolean previewMode = isPreview(servletRequest);
+                HstSitesManager sitesManager = HstServices.getComponentManager().getComponent(sitesManagerComponentBaseName + (previewMode ? ".preview" : ".live"));
                 HstSite hstSite = sitesManager.getSites().getSite(requestContext.getMatchedMapping().getSiteName());
                 HstSiteMapMatcher siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
                 ResolvedSiteMapItem resolvedSiteMapItem = siteMapMatcher.match("/", hstSite);
@@ -307,15 +308,28 @@ public class BaseHstContentService {
                     return null;
                 }
                 HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, requestContext.getSession(), resolvedSiteMapItem);
+                String previewServletPath = HstServices.getComponentManager().getContainerConfiguration().getString("preview.servlet.path");
+                String liveServletPath = HstServices.getComponentManager().getContainerConfiguration().getString("live.servlet.path");
                 HstContainerURL navURL = requestContext.getContainerURLProvider().parseURL(servletRequest, sevletResponse, requestContext, hstLink.getPath());
                 navURL.setParameters(null);
                 HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext);
-                String pagePath = hstUrl.toString();
-                String basePath = servletRequest.getContextPath() + servletRequest.getServletPath();
-                if (pagePath.startsWith(basePath)) {
-                    pagePath = pagePath.substring(basePath.length());
+                String pageUri = hstUrl.toString();
+                String baseServletPath = StringUtils.removeStart(servletRequest.getServletPath(), liveServletPath);
+                String baseUri = servletRequest.getContextPath() + baseServletPath;
+                if (pageUri.startsWith(baseUri)) {
+                    if (previewMode) {
+                        pageUri = servletRequest.getContextPath() + previewServletPath + pageUri.substring(baseUri.length());
+                    } else {
+                        pageUri = servletRequest.getContextPath() + pageUri.substring(baseUri.length());
+                    }
+                } else if (pageUri.startsWith(baseServletPath)) {
+                    if (previewMode) {
+                        pageUri = previewServletPath + pageUri.substring(baseServletPath.length());
+                    } else {
+                        pageUri = pageUri.substring(baseServletPath.length());
+                    }
                 }
-                return pagePath;
+                return pageUri;
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Page link is not available. ", e);

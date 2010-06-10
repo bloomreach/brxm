@@ -63,7 +63,10 @@ public class SiteResolvingValve extends AbstractValve {
         }
         
         // temp solution to know whether we are in preview
-        if (StringUtils.equals(baseURL.getServletPath(), getContainerConfiguration().getString("preview.servlet.path"))) {
+        String previewServletPath = getContainerConfiguration().getString("preview.servlet.path");
+        if (StringUtils.equals(baseURL.getServletPath(), previewServletPath)) {
+            requestContext.setAttribute(ContainerConstants.IS_PREVIEW, Boolean.TRUE);
+        } else if (StringUtils.startsWith(baseURL.getServletPath(), previewServletPath + "/")) {
             requestContext.setAttribute(ContainerConstants.IS_PREVIEW, Boolean.TRUE);
         } else {
             requestContext.setAttribute(ContainerConstants.IS_PREVIEW, Boolean.FALSE);
