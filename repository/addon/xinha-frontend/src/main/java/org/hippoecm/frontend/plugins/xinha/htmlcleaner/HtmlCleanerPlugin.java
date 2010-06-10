@@ -35,12 +35,14 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
 
     private IPluginConfig htmlCleanerConfig;
     private transient HtmlCleanerTemplate htmlCleanerTemplate;
+    private boolean lenient;
 
     public HtmlCleanerPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         htmlCleanerConfig = config.getPluginConfig("cleaner.config");
         if (htmlCleanerConfig != null) {
+            lenient = htmlCleanerConfig.getAsBoolean("lenient", true);
             try {
                 context.registerService(this, IHtmlCleanerService.class.getName());
             } catch (Exception ex) {
@@ -54,15 +56,27 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
             try {
                 htmlCleanerTemplate = new JCRHtmlCleanerTemplateBuilder().buildTemplate(htmlCleanerConfig);
             } catch (Exception ex) {
-                log.error("Exception whole creating HTMLCleaner template:", ex);
+                if (lenient) {
+                    log.warn("Returning uncleaned HTML because cleaner component could not create new HtmlCleanerTemplate: " + ex.getMessage());
+                } else {
+                    throw ex;
+                }
             }
         }
 
         if (htmlCleanerTemplate != null) {
-            return new HtmlCleaner(htmlCleanerTemplate).cleanToString(value);
-        } else {
-            return value;
+            HtmlCleaner cleaner = new HtmlCleaner(htmlCleanerTemplate);
+            try {
+                return cleaner.cleanToString(value);
+            } catch (Exception e) {
+                if(lenient) {
+                    log.warn("Returning uncleaned HTML because cleaner component produced an error: " + e.getMessage());
+                } else {
+                    throw e;
+                }
+            }
         }
+        return value;
     }
 
 }

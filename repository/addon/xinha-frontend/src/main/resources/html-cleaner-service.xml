@@ -26,6 +26,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippohtmlcleaner:config</sv:value>
     </sv:property>
+    <sv:property sv:name="lenient" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
     <sv:node sv:name="hippohtmlcleaner:cleanup">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippohtmlcleaner:cleanup</sv:value>
