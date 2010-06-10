@@ -31,7 +31,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 public class HippoBeanContent extends NodeContent {
     
     private String canonicalUuid;
-    private String pagePath;
+    private String pageUri;
     
     public HippoBeanContent() {
         super();
@@ -63,12 +63,12 @@ public class HippoBeanContent extends NodeContent {
         this.canonicalUuid = canonicalUuid;
     }
     
-    public String getPagePath() {
-        return pagePath;
+    public String getPageUri() {
+        return pageUri;
     }
     
-    public void setPagePath(String pagePath) {
-        this.pagePath = pagePath;
+    public void setPageUri(String pageUri) {
+        this.pageUri = pageUri;
     }
     
 }

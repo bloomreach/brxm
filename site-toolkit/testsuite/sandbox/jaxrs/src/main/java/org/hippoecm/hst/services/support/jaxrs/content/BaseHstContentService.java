@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +35,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -65,6 +69,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -250,7 +255,7 @@ public class BaseHstContentService {
         return siteMount.isPreview();
     }
     
-    protected String createPagePathByCanonicalUuid(final HttpServletRequest servletRequest, final HttpServletResponse sevletResponse, final String canonicalUuid) {
+    protected String getPageUriByCanonicalUuid(final HttpServletRequest servletRequest, final HttpServletResponse sevletResponse, final String canonicalUuid) {
         if (StringUtils.isBlank(canonicalUuid)) {
             return null;
         }
@@ -260,26 +265,37 @@ public class BaseHstContentService {
         if (requestContext != null) {
             try {
                 ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
-                HstSiteMapMatcher siteMapMatcher = resolvedSiteMount.getSiteMount().getHstSiteMapMatcher();
-                //TODO: Ard, do you know why the next statement throws NPE.
-                //      I guess it's because the rest pipelines does not have HstSite from resolvedSiteMount.getSiteMount().getHstSite().
-                //      Anyway, could you review this? I need to create hst link to provide page path info to REST API clients.
-                ResolvedSiteMapItem resolvedSiteMapItem = siteMapMatcher.match("/", resolvedSiteMount);
-                if (resolvedSiteMapItem == null) {
+                SiteMount siteMount = resolvedSiteMount.getSiteMount();
+                final SiteMount parentSiteMount = siteMount.getParent();
+                HstSiteMapMatcher parentSiteMapMatcher = parentSiteMount.getHstSiteMapMatcher();
+                VirtualHost virtualHost = parentSiteMount.getVirtualHost();
+                ResolvedVirtualHost resolvedVirtualHost = virtualHost.getVirtualHosts().matchVirtualHost(virtualHost.getName());
+                ResolvedSiteMount parentResolvedSiteMount = resolvedVirtualHost.matchSiteMount(servletRequest.getContextPath(), parentSiteMount.getMountPath());
+                ResolvedSiteMapItem parentResolvedSiteMapItem = parentSiteMapMatcher.match("/", parentResolvedSiteMount);
+                if (parentResolvedSiteMapItem == null) {
                     if (log.isDebugEnabled()) {
                         log.debug("Cannot resolve sitemap item on /.");
                     }
                     return null;
                 }
-                HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, requestContext.getSession(), resolvedSiteMapItem);
-                HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(requestContext.getBaseURL(), hstLink.getPath());
+                HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, requestContext.getSession(), parentResolvedSiteMapItem);
+                final HstContainerURL baseURL = requestContext.getBaseURL();
+                HstContainerURL adjustedBaseURL = 
+                    (HstContainerURL) Proxy.newProxyInstance(
+                            Thread.currentThread().getContextClassLoader(), 
+                            new Class [] { HstContainerURL.class }, 
+                            new InvocationHandler() {
+                                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                                    if ("getResolvedMountPath".equals(method.getName())) {
+                                        return parentSiteMount.getMountPath();
+                                    } else {
+                                        return method.invoke(baseURL, args);
+                                    }
+                                }
+                            });
+                HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(adjustedBaseURL, hstLink.getPath());
                 HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext);
-                String pagePath = hstUrl.toString();
-                String basePath = servletRequest.getContextPath() + servletRequest.getServletPath();
-                if (pagePath.startsWith(basePath)) {
-                    pagePath = pagePath.substring(basePath.length());
-                }
-                return pagePath;
+                return hstUrl.toString();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Page link is not available. ", e);

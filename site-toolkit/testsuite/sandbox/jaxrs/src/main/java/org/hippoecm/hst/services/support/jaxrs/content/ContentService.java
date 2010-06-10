@@ -178,7 +178,7 @@ public class ContentService extends BaseHstContentService {
                 if (bean != null) {
                     HippoBeanContent beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
                     beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
-                    beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
+                    beanContent.setPageUri(getPageUriByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
                     list.add(beanContent);
                     count++;
                 }
@@ -217,7 +217,7 @@ public class ContentService extends BaseHstContentService {
                 String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
                 beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
                 beanContent.buildChildUris(urlBase, getSiteContentPath(servletRequest), encoding);
-                beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
+                beanContent.setPageUri(getPageUriByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -255,7 +255,7 @@ public class ContentService extends BaseHstContentService {
                     String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
                     beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
                     beanContent.buildChildUris(urlBase, getSiteContentPath(servletRequest), encoding);
-                    beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
+                    beanContent.setPageUri(getPageUriByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
                     itemContent = beanContent;
                 }
             } else {
@@ -335,7 +335,7 @@ public class ContentService extends BaseHstContentService {
             }
             
             documentBeanContent = (HippoDocumentBeanContent) createHippoBeanContent(bean, null);
-            documentBeanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, documentBeanContent.getCanonicalUuid()));
+            documentBeanContent.setPageUri(getPageUriByCanonicalUuid(servletRequest, servletResponse, documentBeanContent.getCanonicalUuid()));
             return Response.status(Response.Status.CREATED).entity(documentBeanContent).build();
         } catch (WebApplicationException e) {
             throw e;
@@ -389,7 +389,7 @@ public class ContentService extends BaseHstContentService {
             node.getSession().save();
             bean = (HippoBean) cpm.getObject(parentPath);
             beanContent = createHippoBeanContent(bean, null);
-            beanContent.setPagePath(createPagePathByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
+            beanContent.setPageUri(getPageUriByCanonicalUuid(servletRequest, servletResponse, beanContent.getCanonicalUuid()));
             
             return Response.status(Response.Status.CREATED).entity(beanContent).build();
         } catch (WebApplicationException e) {
