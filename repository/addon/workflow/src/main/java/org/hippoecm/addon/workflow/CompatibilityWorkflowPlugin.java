@@ -351,7 +351,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 control.start();
 
-                String modelServiceId = decorated.getString("wicket.model.folder");
+                String modelServiceId = decorated.getString("model.folder");
                 context.registerTracker(new ServiceTracker<IModelReference>(IModelReference.class) {
                     
                     IModelReference modelRef;

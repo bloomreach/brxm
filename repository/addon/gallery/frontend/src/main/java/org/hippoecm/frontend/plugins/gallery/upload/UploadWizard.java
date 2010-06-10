@@ -101,7 +101,7 @@ public class UploadWizard extends Wizard {
             IClusterConfig cluster = pluginConfigService.getCluster("cms-pickers/folders");
             IClusterControl control = uploadDialog.pluginContext.newCluster(cluster, uploadDialog.pluginConfig.getPluginConfig("cluster.options"));
             IClusterConfig decorated = control.getClusterConfig();
-            String modelServiceId = decorated.getString("wicket.model.folder");
+            String modelServiceId = decorated.getString("model.folder");
             ModelReference<Node> modelService = new ModelReference<Node>(modelServiceId, UploadWizard.this.getModel()) {
                 private static final long serialVersionUID = 1L;
 

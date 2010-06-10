@@ -60,14 +60,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
         mode = config.getString("mode", "view");
         if ("edit".equals(mode)) {
-            final List<String> nodetypes = new ArrayList<String>();
-            if (config.getStringArray("nodetypes") != null) {
-                String[] nodeTypes = config.getStringArray("nodetypes");
-                nodetypes.addAll(Arrays.asList(nodeTypes));
-            }
-            if (nodetypes.size() == 0) {
-                log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
-            }
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 
@@ -96,7 +88,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                         public void detach() {
                             docbaseModel.detach();
                         }
-                    }, nodetypes);
+                    });
                 }
             };
             add(new ClearableDialogLink("docbase", displayModel, dialogFactory, getDialogService()) {

@@ -163,17 +163,9 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
                 }
             };
             if ("edit".equals(mode)) {
-                final List<String> nodetypes = new ArrayList<String>();
-                if (config.getStringArray("nodetypes") != null) {
-                    String[] nodeTypes = config.getStringArray("nodetypes");
-                    nodetypes.addAll(Arrays.asList(nodeTypes));
-                }
-                if (nodetypes.size() == 0) {
-                    log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
-                }
                 final IModel<String> docbaseModel = new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(node
                         .getProperty("hippo:docbase")));
-                //add(new TextFieldWidget("docbase", docbaseModel));
+
                 IDialogFactory dialogFactory = new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
@@ -201,7 +193,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
                             public void detach() {
                                 docbaseModel.detach();
                             }
-                        }, nodetypes);
+                        });
                     }
                 };
 
