@@ -49,7 +49,7 @@ public class RichTextModel implements IModel<String> {
             }
             valueModel.setObject(cleanedValue);
         } catch (Exception e) {
-            log.warn("Exception caught during editor creation while cleaning value: " + value, e);
+            log.error("Exception caught while trying to clean value: " + value, e);
         }
     }
 

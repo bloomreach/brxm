@@ -52,5 +52,6 @@
 + hippohtmlcleaner:cleanupElement (hippohtmlcleaner:cleanupElement) multiple
 
 [hippohtmlcleaner:config] > frontend:pluginconfig
+- hippohtmlcleaner:lenient (boolean)
 + hippohtmlcleaner:cleanup (hippohtmlcleaner:cleanup) mandatory
 + hippohtmlcleaner:serialization (hippohtmlcleaner:serialization) mandatory

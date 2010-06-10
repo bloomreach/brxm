@@ -262,7 +262,14 @@ public class Upgrader13a implements UpdaterModule {
                             }
                         }
                     }
-                    
+
+                    //HREPTWO-3952 : HtmlCleaner is lenient by default
+                    if(node.hasNode("htmlCleanerService/cleaner.config")) {
+                        Node conf = node.getNode("htmlCleanerService/cleaner.config");
+                        if(!conf.hasProperty("lenient")) {
+                            conf.setProperty("lenient", true);
+                        }
+                    }
                 }
             }
         });
