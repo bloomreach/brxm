@@ -576,7 +576,12 @@
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
+          <sv:value>cluster.name</sv:value>
           <sv:value>nodetypes</sv:value>
+          <sv:value>base.uuid</sv:value>
+          <sv:value>last.visited.key</sv:value>
+          <sv:value>last.visited.enabled</sv:value>
+          <sv:value>last.visited.nodetypes</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:references" sv:type="String">
           <sv:value>wicket.model</sv:value>
@@ -590,7 +595,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="cluster.name" sv:type="String">
-            <sv:value>cms-pickers/documents</sv:value>
+            <sv:value>${cluster.name}</sv:value>
           </sv:property>
           <sv:property sv:name="engine" sv:type="String">
             <sv:value>${engine}</sv:value>
@@ -615,6 +620,18 @@
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
+          </sv:property>
+          <sv:property sv:name="base.uuid" sv:type="String">
+            <sv:value>${base.uuid}</sv:value>
+          </sv:property>
+          <sv:property sv:name="last.visited.key" sv:type="String">
+            <sv:value>${last.visited.key}</sv:value>
+          </sv:property>
+          <sv:property sv:name="last.visited.enabled" sv:type="String">
+            <sv:value>${last.visited.enabled}</sv:value>
+          </sv:property>
+          <sv:property sv:name="last.visited.nodetypes" sv:type="String">
+            <sv:value>${last.visited.nodetypes}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

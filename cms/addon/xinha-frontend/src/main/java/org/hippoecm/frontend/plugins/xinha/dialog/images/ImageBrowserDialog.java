@@ -39,7 +39,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
@@ -138,8 +137,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                         HippoNode node = null;
                         try {
                             //Get the selected folder from the folderReference Service
-                            Node folderNode = ((JcrNodeModel) folderReference.getModel()).getNode();
-
+                            Node folderNode = getFolderModel().getObject();
 
                             //TODO replace shortcuts with custom workflow category(?)
                             GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("shortcuts", folderNode);
@@ -234,13 +232,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     }
 
     private StringCodec getNodeNameCodec() {
-        ISettingsService settingsService = this.context.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.node");
     }
 
     private StringCodec getLocalizeCodec() {
-        ISettingsService settingsService = context.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.display");
     }

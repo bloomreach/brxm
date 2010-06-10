@@ -85,14 +85,6 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
         };
 
         if ("edit".equals(config.getString("mode", "view"))) {
-            if (config.getStringArray("nodetypes") != null) {
-                String[] nodeTypes = config.getStringArray("nodetypes");
-                nodetypes.addAll(Arrays.asList(nodeTypes));
-            }
-            if (nodetypes.size() == 0) {
-                log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
-            }
-
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 
@@ -121,7 +113,7 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
                             valueModel.detach();
                         }
 
-                    }, nodetypes);
+                    });
                 }
             };
             
