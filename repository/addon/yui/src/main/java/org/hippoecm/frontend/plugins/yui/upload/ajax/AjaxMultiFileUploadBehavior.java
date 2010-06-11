@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
-import net.sf.json.JsonConfig;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -23,8 +22,6 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.JsFunction;
-import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
@@ -53,12 +50,6 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
                 return settings;
             }
 
-            @Override
-            public JsonConfig getJsonConfig() {
-                JsonConfig jsonConfig = new JsonConfig();
-                jsonConfig.registerJsonValueProcessor(JsFunction.class, new JsFunctionProcessor());
-                return jsonConfig;
-            }
         };
     }
 

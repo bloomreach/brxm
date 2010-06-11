@@ -22,6 +22,14 @@ if (!YAHOO.hippo.Upload) {
         };
 
         YAHOO.hippo.UploadImpl.prototype = {
+
+            probe : function(config) {
+                var hasFlash = true;
+                var url = config.callbackUrl + '&flash=' + hasFlash;
+                config.callbackFunction(url);
+                console.log('Callback sent');
+            },
+
             register : function(id, config) {
                 if(!this.entries.containsKey(id)) {
                     this.entries.put(id, {id: id, config: config});
