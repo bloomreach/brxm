@@ -40,6 +40,7 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -57,7 +58,6 @@ import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
@@ -246,7 +246,8 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
             NodeModelWrapper destination = null;
-            
+            String name = null;
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "copy-16.png");
@@ -256,8 +257,23 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper(getFolder()) {
                 };
-                return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
-                        DefaultWorkflowPlugin.this, null), null, null, destination);
+                CopyNameHelper copyNameHelper = new CopyNameHelper(getNodeNameCodec(), new StringResourceModel(
+                        "copyof", DefaultWorkflowPlugin.this, null).getString());
+                try {
+                    name = copyNameHelper.getCopyName(((HippoNode) ((WorkflowDescriptorModel) getDefaultModel())
+                            .getNode()).getLocalizedName(), destination.getNodeModel().getNode());
+                } catch (RepositoryException ex) {
+                    return new ExceptionDialog(ex);
+                }
+                return new WorkflowAction.DestinationDialog(
+                        new StringResourceModel("copy-title", DefaultWorkflowPlugin.this, null),
+                        new StringResourceModel("copy-name", DefaultWorkflowPlugin.this, null),
+                        new PropertyModel(this, "name"),
+                        destination) {
+                    {
+                        setOkEnabled(true);
+                    }
+                };
             }
 
             @Override
@@ -266,7 +282,9 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (destination != null) {
                     folderModel = destination.getNodeModel();
                 }
-                String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
+                StringCodec codec = getNodeNameCodec();
+                String nodeName = codec.encode(name);
+
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
                 workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
                 browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
@@ -309,8 +327,12 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         //refresh session before IBrowseService.browse is called
         ((UserSession) org.apache.wicket.Session.get()).getJcrSession().refresh(false);
 
-        getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class)
-                .browse(nodeModel);
+        IBrowseService service = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
+        if (service != null) {
+            service.browse(nodeModel);
+        } else {
+            log.warn("No browser service found, cannot open document");
+        }
     }
 
     IModel<String> getDocumentName() {

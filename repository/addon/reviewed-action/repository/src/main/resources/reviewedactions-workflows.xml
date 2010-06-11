@@ -393,6 +393,9 @@
       <sv:property sv:name="editor.id" sv:type="String">
         <sv:value>${editor.id}</sv:value>
       </sv:property>
+      <sv:property sv:name="browser.id" sv:type="String">
+        <sv:value>${browser.id}</sv:value>
+      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.reviewedactions.DefaultWorkflowPlugin</sv:value>
       </sv:property>

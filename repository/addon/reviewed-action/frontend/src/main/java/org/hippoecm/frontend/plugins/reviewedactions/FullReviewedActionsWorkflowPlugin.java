@@ -347,8 +347,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
                 }
-                Dialog dialog = new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
-                        FullReviewedActionsWorkflowPlugin.this, null), null, new PropertyModel(this, "name"),
+                Dialog dialog = new WorkflowAction.DestinationDialog(
+                        new StringResourceModel("copy-title", FullReviewedActionsWorkflowPlugin.this, null),
+                        new StringResourceModel("copy-name", FullReviewedActionsWorkflowPlugin.this, null),
+                        new PropertyModel(this, "name"),
                         destination) {
                     {
                         setOkEnabled(true);
