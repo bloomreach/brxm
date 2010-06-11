@@ -22,12 +22,16 @@ import java.util.Arrays;
 import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -36,7 +40,9 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -114,7 +120,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
     private void createUploadForm(final IPluginConfig config) {
         Form uploadForm = new Form("uploadForm");
-
 
         uploadForm.setOutputMarkupId(true);
         final FileUploadField uploadField = new FileUploadField("uploadField");
@@ -209,6 +214,16 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         uploadForm.add(uploadButton);
 
         add(uploadForm);
+
+        //OMG: hack.. Input[type=file] is rendered differently on OSX in all browsers..
+        WebRequestCycle requestCycle = (WebRequestCycle) RequestCycle.get();
+        HttpServletRequest httpServletReq = requestCycle.getWebRequest().getHttpServletRequest();
+        String ua = httpServletReq.getHeader("User-Agent");
+        if (ua.indexOf("Macintosh") > -1) {
+            uploadField.add(new AttributeAppender("class", true, new Model<String>("browse-button-osx"), " "));
+            uploadButton.add(new AttributeAppender("class", true, new Model<String>("upload-button-osx"), " "));
+        }
+
     }
 
     @Override

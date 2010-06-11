@@ -16,9 +16,11 @@
 package org.hippoecm.frontend.plugins.gallery;
 
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.string.StringValueConversionException;
+import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -35,29 +37,54 @@ public class ImageContainer extends Panel {
     private static final long serialVersionUID = 1L;
 
     private JcrResourceStream stream;
+    private int width;
 
     public ImageContainer(String wicketId, JcrNodeModel model, IPluginContext pluginContext,
             final IPluginConfig pluginConfig) {
         super(wicketId, model);
 
-        stream = new JcrResourceStream(model);
-        NonCachingImage img = new NonCachingImage("image", new JcrResource(stream)) {
-            private static final long serialVersionUID = 1L;
+        try {
+            width = pluginConfig.getInt("gallery.thumbnail.size");
+        } catch (StringValueConversionException e) {
+            width = 0;
+        }
 
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                int width;
-                try {
-                    width = pluginConfig.getInt("gallery.thumbnail.size");
-                } catch (StringValueConversionException e) {
-                    width = 0;
+        stream = new JcrResourceStream(model);
+
+        Image img;
+        final Time lastModified = stream.lastModifiedTime();
+
+        if(lastModified == null) {
+            img = new NonCachingImage("image", new JcrResource(stream)) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onComponentTag(ComponentTag tag) {
+                    super.onComponentTag(tag);
+
+                    if (width > 0) {
+                        tag.put("width", width);
+                    }
                 }
-                if (width > 0) {
-                    tag.put("width", width);
+            };
+        } else {
+            img = new Image("image", new JcrResource(stream)) {
+                @Override
+                protected void onComponentTag(ComponentTag tag) {
+                    super.onComponentTag(tag);
+
+                    if (width > 0) {
+                        tag.put("width", width);
+                    }
+
+                    String url = tag.getAttributes().getString("src");
+                    url = url + ((url.indexOf("?") >= 0) ? "&amp;" : "?");
+                    url = url + "w:lm=" + (lastModified.getMilliseconds() / 1000);
+                    tag.put("src", url);
                 }
-            }
-        };
+            };
+
+        }
         img.add(new ImageNodeDragBehavior(new DragSettings(YuiPluginHelper.getConfig(pluginConfig)), model));
         add(img);
     }

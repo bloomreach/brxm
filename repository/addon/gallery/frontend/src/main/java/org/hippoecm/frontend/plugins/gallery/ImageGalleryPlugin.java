@@ -15,17 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
+import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -35,10 +29,12 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RefreshingView;
+import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -54,6 +50,15 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.hippoecm.repository.api.HippoNodeType;
 
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeaderContributor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -65,46 +70,36 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
 
     private static final String IMAGE_FOLDER_TYPE = "hippogallery:stdImageGallery";
 
-    private JcrNodeModel model;
-    private WebMarkupContainer galleryList;
-    private IPluginContext pluginContext;
-    private IPluginConfig pluginConfig;
-
     private String viewMode = "LIST";
+
+    private WebMarkupContainer galleryList;
     private AjaxLink<String> toggleLink;
     private Image toggleImage;
-    private GalleryItemView galleryItemView;
-
 
     public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
         super(context, config);
-        this.model = (JcrNodeModel) getModel();
-        this.pluginContext = context;
-        this.pluginConfig = config;
-        galleryList = new WebMarkupContainer("gallery-list");
+
+        dataTable.setOutputMarkupId(true);
+
+        add(galleryList = new WebMarkupContainer("gallery-list"));
         galleryList.setOutputMarkupId(true);
         galleryList.setVisible(false);
-        galleryItemView = new GalleryItemView("gallery-item");
-        galleryItemView.setOutputMarkupId(true);
-        galleryList.add(galleryItemView);
-        add(galleryList);
 
-        toggleImage = new Image("toggleimg", TOGGLE_LIST_IMG);
+        galleryList.add(new GalleryItemView("gallery-item"));
 
-        toggleImage.setOutputMarkupId(true);
-
-        toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
+        add(toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 viewMode = "LIST".equals(viewMode) ? "THUMBNAILS" : "LIST";
                 redraw();
 
             }
-        };
+        });
         toggleLink.setOutputMarkupId(true);
+
+        toggleImage = new Image("toggleimg", TOGGLE_LIST_IMG);
+        toggleImage.setOutputMarkupId(true);
         toggleLink.add(toggleImage);
-        add(toggleLink);
-        this.dataTable.setOutputMarkupId(true);
     }
 
 
@@ -125,27 +120,27 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
     }
 
     @Override
-    public TableDefinition getTableDefinition() {
-        List<ListColumn> columns = new ArrayList<ListColumn>();
+    public TableDefinition<Node> getTableDefinition() {
+        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
 
-        ListColumn column = new ListColumn(new Model<String>(""), null);
-        column.setRenderer(new EmptyRenderer());
+        ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), null);
+        column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new GalleryFolderAttributeModifier());
         columns.add(column);
 
 
-        column = new ListColumn(new StringResourceModel("gallery-name", this, null), "name");
+        column = new ListColumn<Node>(new StringResourceModel("gallery-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
 
-        return new TableDefinition(columns);
+        return new TableDefinition<Node>(columns);
     }
 
     @Override
-    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
-                                             ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
+    protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
+                                             ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
                                              ListPagingDefinition pagingDefinition) {
-        ListDataTable ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+        ListDataTable<Node> ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
         ldt.add(new TableHelperBehavior());
         return ldt;
     }
@@ -155,19 +150,22 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         response.renderCSSReference(cssResourceReference);
     }
 
-    /**
-     * Gallery Item View
-     */
+    @Override
+    protected void onSelectionChanged(IModel<Node> model) {
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null && viewMode.equals("THUMBNAILS")) {
+            target.addComponent(galleryList);
+        }
+    }
+
     private class GalleryItemView extends RefreshingView<Node> {
 
         public GalleryItemView(String id) {
             super(id);
-        }
 
+            setOutputMarkupId(true);
 
-        @Override
-        protected void onModelChanged() {
-            super.onModelChanged();
+            setItemReuseStrategy(new ReuseIfModelsEqualStrategy());
         }
 
         @Override
@@ -177,7 +175,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
             final NodeIterator iterator;
             try {
 
-                iterator = model.getNode().getNodes();
+                iterator = ImageGalleryPlugin.this.getModelObject().getNodes();
                 while (iterator.hasNext()) {
                     javax.jcr.Node node = iterator.nextNode();
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -211,11 +209,19 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         }
 
         @Override
-        protected void populateItem(final org.apache.wicket.markup.repeater.Item listItem) {
+        protected void populateItem(final org.apache.wicket.markup.repeater.Item<Node> listItem) {
+
+            listItem.add(new AttributeAppender("class", true, new Model<String>("selected"), " ") {
+                @Override
+                public boolean isEnabled(Component component) {
+                    IModel<Node> selected = getSelectedModel();
+                    return selected != null && selected.equals(listItem.getDefaultModel());
+                }
+            });
+            listItem.setOutputMarkupId(true);
 
             final JcrNodeModel imgNodeModel = (JcrNodeModel) listItem.getDefaultModel();
             Node node = imgNodeModel.getNode();
-
 
             try {
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -228,26 +234,19 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                                     AjaxLink itemLink = new AjaxLink("itemLink") {
                                         @Override
                                         public void onClick(AjaxRequestTarget target) {
-
-                                            IPluginConfig config = getPluginConfig();
-                                            if (config.getString("model.document") != null) {
-                                                IModelReference<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
-                                                        IModelReference.class);
-                                                if (documentService != null) {
-                                                    documentService.setModel((IModel<IModel>) listItem.getDefaultModel());
-                                                }
-                                            }
-
+                                            setSelectedModel(listItem.getModel());
+                                            target.addComponent(GalleryItemView.this.getParent());
                                         }
                                     };
+
                                     Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
                                     folderIcon.setVisible(false);
                                     itemLink.add(folderIcon);
                                     itemLink.add(new ImageContainer("thumbnail", new JcrNodeModel((Node) primItem), getPluginContext(), getPluginConfig()));
-                                    itemLink.add(new Label("title", new Model<String>(node.getName())));
+
+                                    itemLink.add(new Label("title",
+                                            new NodeTranslator(new JcrNodeModel(node)).getNodeName()));
                                     listItem.add(itemLink);
-
-
                                 } else {
                                     Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                                 }
@@ -262,16 +261,8 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                     AjaxLink itemLink = new AjaxLink("itemLink") {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-
-                            IPluginConfig config = getPluginConfig();
-                            if (config.getString("model.document") != null) {
-                                IModelReference<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
-                                        IModelReference.class);
-                                if (documentService != null) {
-                                    documentService.setModel((IModel<IModel>) listItem.getDefaultModel());
-                                }
-                            }
-
+                            setSelectedModel(listItem.getModel());
+                            target.addComponent(GalleryItemView.this.getParent());
                         }
                     };
 
@@ -279,7 +270,8 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                     Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
                     itemLink.add(folderIcon);
                     itemLink.add(thumbnail);
-                    itemLink.add(new Label("title", new Model<String>(node.getName())));
+                    itemLink.add(new Label("title",
+                            new NodeTranslator(new JcrNodeModel(node)).getNodeName()));
                     listItem.add(itemLink);
                 }
 
@@ -288,13 +280,5 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
 
             }
         }
-    }
-
-    @Override
-    public void onModelChanged() {
-        this.model = (JcrNodeModel) getModel();
-        galleryItemView.onModelChanged();
-        super.onModelChanged();
-
     }
 }
