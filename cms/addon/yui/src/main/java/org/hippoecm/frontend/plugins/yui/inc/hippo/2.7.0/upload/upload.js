@@ -24,10 +24,15 @@ if (!YAHOO.hippo.Upload) {
         YAHOO.hippo.UploadImpl.prototype = {
 
             probe : function(config) {
-                var hasFlash = true;
-                var url = config.callbackUrl + '&flash=' + hasFlash;
-                config.callbackFunction(url);
-                console.log('Callback sent');
+                var xx = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion();
+
+                var isValid = '';
+                if(!Lang.isUndefined(xx) && xx != null && xx.major >= 9) {
+                    isValid = '&flash=true';
+                } else {
+                    isValid = '&flash=false';
+                }
+                config.callbackFunction(config.callbackUrl + isValid);
             },
 
             register : function(id, config) {

@@ -126,7 +126,8 @@ public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
 
     public JsonConfig getJsonConfig() {
         JsonConfig config = new JsonConfig();
-        if(configuration instanceof IAjaxSettings) {
+        Serializable settings = getSettings();
+        if(settings != null && settings instanceof IAjaxSettings) {
             config.registerJsonValueProcessor(JsFunction.class, new JsFunctionProcessor());
         }
         return config;
