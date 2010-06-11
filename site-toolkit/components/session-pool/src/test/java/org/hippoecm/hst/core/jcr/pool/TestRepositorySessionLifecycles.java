@@ -47,8 +47,8 @@ public class TestRepositorySessionLifecycles extends AbstractSessionPoolSpringTe
         super.setUp();
         poolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName());
         assertNotNull(poolingRepository);
-        recordingLogger = new WarningRecordingLogger(BasicPoolingRepository.log);
-        BasicPoolingRepository.log = recordingLogger;
+        recordingLogger = new WarningRecordingLogger(poolingRepository.getLogger());
+        poolingRepository.setLogger(recordingLogger);
     }
     
     @Test

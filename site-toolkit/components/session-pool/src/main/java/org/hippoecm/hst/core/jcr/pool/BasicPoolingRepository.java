@@ -42,29 +42,37 @@ import org.slf4j.LoggerFactory;
  */
 public class BasicPoolingRepository implements PoolingRepository, MultipleRepositoryAware {
     
-    protected static Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
+    private Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
     
-    protected Repository repository;
-    protected Credentials defaultCredentials;           // credentials provided by the configuration or the user
-    protected Credentials internalDefaultCredentials;   // credentials used for real JCR API invocations.
-    protected boolean isSimpleDefaultCredentials;
-    protected SessionDecorator sessionDecorator;
+    private Repository repository;
+    private Credentials defaultCredentials;           // credentials provided by the configuration or the user
+    private Credentials internalDefaultCredentials;   // credentials used for real JCR API invocations.
+    private boolean isSimpleDefaultCredentials;
+    private SessionDecorator sessionDecorator;
     
-    protected String repositoryProviderClassName = "org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider";
-    protected JcrRepositoryProvider jcrRepositoryProvider;
-    protected String repositoryAddress;
-    protected String defaultCredentialsUserID;
-    protected String defaultCredentialsUserIDSeparator = "@";
-    protected char [] defaultCredentailsPassword;
-    protected String defaultWorkspaceName;
+    private String repositoryProviderClassName = "org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider";
+    private JcrRepositoryProvider jcrRepositoryProvider;
+    private String repositoryAddress;
+    private String defaultCredentialsUserID;
+    private String defaultCredentialsUserIDSeparator = "@";
+    private char [] defaultCredentailsPassword;
+    private String defaultWorkspaceName;
     
-    protected boolean refreshOnPassivate = true;
-    protected long maxRefreshIntervalOnPassivate;
-    protected boolean keepChangesOnRefresh = false;
-    protected long sessionsRefreshPendingTimeMillis; 
-    protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
-    protected MultipleRepository multipleRepository;
-
+    private boolean refreshOnPassivate = true;
+    private long maxRefreshIntervalOnPassivate;
+    private boolean keepChangesOnRefresh = false;
+    private long sessionsRefreshPendingTimeMillis; 
+    private ResourceLifecycleManagement pooledSessionLifecycleManagement;
+    private MultipleRepository multipleRepository;
+    
+    public void setLogger(Logger log) {
+        this.log = log;
+    }
+    
+    public Logger getLogger() {
+        return log;
+    }
+    
     public void setRepositoryProviderClassName(String repositoryProviderClassName) {
         this.repositoryProviderClassName = repositoryProviderClassName;
     }
@@ -91,7 +99,8 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
 
     public void setDefaultCredentials(Credentials defaultCredentials) {
         isSimpleDefaultCredentials = (defaultCredentials != null && (defaultCredentials instanceof SimpleCredentials));
-        internalDefaultCredentials = this.defaultCredentials = defaultCredentials;
+        this.defaultCredentials = defaultCredentials;
+        internalDefaultCredentials = defaultCredentials;
         
         if (isSimpleDefaultCredentials) {
             String userID = ((SimpleCredentials) defaultCredentials).getUserID();
@@ -124,11 +133,22 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
     
     public void setDefaultCredentialsPassword(char [] defaultCredentailsPassword) {
-        this.defaultCredentailsPassword = defaultCredentailsPassword;
+        if (defaultCredentailsPassword == null) {
+            this.defaultCredentailsPassword = null;
+        } else {
+            this.defaultCredentailsPassword = new char [defaultCredentailsPassword.length];
+            System.arraycopy(defaultCredentailsPassword, 0, this.defaultCredentailsPassword, 0, defaultCredentailsPassword.length);
+        }
     }
     
     public char [] getDefaultCredentialsPassword() {
-        return this.defaultCredentailsPassword;
+        if (defaultCredentailsPassword == null) {
+            return null;
+        }
+        
+        char [] value = new char[defaultCredentailsPassword.length];
+        System.arraycopy(defaultCredentailsPassword, 0, value, 0, defaultCredentailsPassword.length);
+        return value;
     }
     
     public void setDefaultWorkspaceName(String defaultWorkspaceName) {
@@ -186,8 +206,10 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     public void setResourceLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
         this.pooledSessionLifecycleManagement = pooledSessionLifecycleManagement;
         
-        if (this.pooledSessionLifecycleManagement != null && this.pooledSessionLifecycleManagement instanceof PoolingRepositoryAware) {
-            ((PoolingRepositoryAware) this.pooledSessionLifecycleManagement).setPoolingRepository(this);
+        if (this.pooledSessionLifecycleManagement != null) {
+            if (this.pooledSessionLifecycleManagement instanceof PoolingRepositoryAware) {
+                ((PoolingRepositoryAware) this.pooledSessionLifecycleManagement).setPoolingRepository(this);
+            }
         }
     }
     
@@ -328,22 +350,22 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     /**
      * The object pool that internally manages our sessions.
      */
-    protected GenericObjectPool sessionPool;
+    private GenericObjectPool sessionPool;
     /**
      * The maximum number of active sessions that can be allocated from
      * this pool at the same time, or negative for no limit.
      */
-    protected int maxActive = GenericObjectPool.DEFAULT_MAX_ACTIVE;
+    private int maxActive = GenericObjectPool.DEFAULT_MAX_ACTIVE;
     /**
      * The maximum number of sessions that can remain idle in the
      * pool, without extra ones being released, or negative for no limit.
      */
-    protected int maxIdle = GenericObjectPool.DEFAULT_MAX_IDLE;
+    private int maxIdle = GenericObjectPool.DEFAULT_MAX_IDLE;
     /**
      * The minimum number of active sessions that can remain idle in the
      * pool, without extra ones being created, or 0 to create none.
      */
-    protected int minIdle = GenericObjectPool.DEFAULT_MIN_IDLE;
+    private int minIdle = GenericObjectPool.DEFAULT_MIN_IDLE;
     /**
      * The behavior of borrowing a session when the pool is exhausted.
      * <ul>
@@ -366,51 +388,51 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      *   </li>
      * </ul> 
      */
-    protected String whenExhaustedAction = WHEN_EXHAUSTED_BLOCK;
+    private String whenExhaustedAction = WHEN_EXHAUSTED_BLOCK;
     /**
      * The initial number of sessions that are created when the pool
      * is started.
      */
-    protected int initialSize = 0;
+    private int initialSize = 0;
     /**
      * The maximum number of milliseconds that the pool will wait (when there
      * are no available sessions) for a session to be returned before
      * throwing an exception, or <= 0 to wait indefinitely.
      */
-    protected long maxWait = GenericObjectPool.DEFAULT_MAX_WAIT;
+    private long maxWait = GenericObjectPool.DEFAULT_MAX_WAIT;
     /**
      * The indication of whether objects will be validated before being
      * borrowed from the pool.  If the object fails to validate, it will be
      * dropped from the pool, and we will attempt to borrow another.
      */
-    protected boolean testOnBorrow = true;
+    private boolean testOnBorrow = true;
     /**
      * The indication of whether objects will be validated before being
      * returned to the pool.
      */
-    protected boolean testOnReturn = false;
+    private boolean testOnReturn = false;
     /**
      * The number of milliseconds to sleep between runs of the idle object
      * evictor thread.  When non-positive, no idle object evictor thread will
      * be run.
      */
-    protected long timeBetweenEvictionRunsMillis = GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
+    private long timeBetweenEvictionRunsMillis = GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
     /**
      * The number of objects to examine during each run of the idle object
      * evictor thread (if any).
      */
-    protected int numTestsPerEvictionRun = GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN;
+    private int numTestsPerEvictionRun = GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN;
     /**
      * The minimum amount of time an object may sit idle in the pool before it
      * is eligable for eviction by the idle object evictor (if any).
      */
-    protected long minEvictableIdleTimeMillis = GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS;
+    private long minEvictableIdleTimeMillis = GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS;
     /**
      * The indication of whether objects will be validated by the idle object
      * evictor (if any).  If an object fails to validate, it will be dropped
      * from the pool.
      */
-    protected boolean testWhileIdle = false;
+    private boolean testWhileIdle = false;
     /**
      * The query that will be used to validate sessions from this pool
      * before returning them to the caller.  If specified, this query
@@ -418,21 +440,21 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      */
     protected String validationQuery = null;
     
-    public synchronized void initialize() throws Exception {
+    public synchronized void initialize() throws RepositoryException {
         doClose();
         doInitialize();
     }
     
-    private void doInitialize() throws Exception {
+    private void doInitialize() throws RepositoryException {
         if (getRepository() == null && getRepositoryProviderClassName() != null) {
             try {
                 this.jcrRepositoryProvider = (JcrRepositoryProvider) Class.forName(getRepositoryProviderClassName()).newInstance();
             } catch (Exception e) {
-                throw new RepositoryException("Cannot create an instance of JcrRepositoryProvider: " + getRepositoryProviderClassName());
+                throw new RepositoryException("Cannot create an instance of JcrRepositoryProvider: " + getRepositoryProviderClassName(), e);
             }
             
-            Repository repository = this.jcrRepositoryProvider.getRepository(getRepositoryAddress());
-            setRepository(repository);
+            Repository jcrrepository = this.jcrRepositoryProvider.getRepository(getRepositoryAddress());
+            setRepository(jcrrepository);
         }
         
         if (getDefaultCredentials() == null && getDefaultCredentialsUserID() != null) {
@@ -472,7 +494,11 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         sessionPool.setTestWhileIdle(testWhileIdle);
 
         if (initialSize > 0) {
-            PoolUtils.prefill(sessionPool, initialSize);
+            try {
+                PoolUtils.prefill(sessionPool, initialSize);
+            } catch (Exception e) {
+                throw new RepositoryException("Failed to prefill initial sessions.", e);
+            }
         }
     }
 
@@ -500,11 +526,11 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * been closed, no more sessions can be obtained.
      * @throws Exception 
      */
-    public synchronized void close() throws Exception {
+    public synchronized void close() {
         doClose();
     }
     
-    private void doClose() throws Exception {
+    private void doClose() {
         if (this.sessionPool != null) {
             try {
                 this.sessionPool.close();
@@ -543,7 +569,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @return the maximum number of active connections
      */
-    public synchronized int getMaxActive() {
+    public int getMaxActive() {
         return this.maxActive;
     }
 
@@ -554,7 +580,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @param maxActive the new value for maxActive
      * @see #getMaxActive()
      */
-    public synchronized void setMaxActive(int maxActive) {
+    public void setMaxActive(int maxActive) {
         this.maxActive = maxActive;
 
         if (sessionPool != null) {
@@ -570,7 +596,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @return the maximum number of idle connections
      */
-    public synchronized int getMaxIdle() {
+    public int getMaxIdle() {
         return this.maxIdle;
     }
 
@@ -581,7 +607,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @see #getMaxIdle()
      * @param maxIdle the new value for maxIdle
      */
-    public synchronized void setMaxIdle(int maxIdle) {
+    public void setMaxIdle(int maxIdle) {
         this.maxIdle = maxIdle;
 
         if (sessionPool != null) {
@@ -595,7 +621,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @return the minimum number of idle connections
      * @see GenericObjectPool#getMinIdle()
      */
-    public synchronized int getMinIdle() {
+    public int getMinIdle() {
         return this.minIdle;
     }
 
@@ -605,7 +631,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @param minIdle the new value for minIdle
      * @see GenericObjectPool#setMinIdle(int)
      */
-    public synchronized void setMinIdle(int minIdle) {
+    public void setMinIdle(int minIdle) {
         this.minIdle = minIdle;
 
         if (sessionPool != null) {
@@ -618,7 +644,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @return the number of connections created when the pool is initialized
      */
-    public synchronized int getInitialSize() {
+    public int getInitialSize() {
         return this.initialSize;
     }
 
@@ -633,7 +659,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @param initialSize the number of connections created when the pool
      * is initialized
      */
-    public synchronized void setInitialSize(int initialSize) {
+    public void setInitialSize(int initialSize) {
         this.initialSize = initialSize;
     }
 
@@ -646,7 +672,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @return the maxWait property value
      */
-    public synchronized long getMaxWait() {
+    public long getMaxWait() {
         return this.maxWait;
     }
 
@@ -659,7 +685,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @param maxWait the new value for maxWait
      * @see #getMaxWait()
      */
-    public synchronized void setMaxWait(long maxWait) {
+    public void setMaxWait(long maxWait) {
         this.maxWait = maxWait;
 
         if (sessionPool != null) {
@@ -675,7 +701,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @see #testOnBorrow
      */
-    public synchronized boolean getTestOnBorrow() {
+    public boolean getTestOnBorrow() {
         return this.testOnBorrow;
     }
 
@@ -687,7 +713,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @param testOnBorrow new value for testOnBorrow property
      */
-    public synchronized void setTestOnBorrow(boolean testOnBorrow) {
+    public void setTestOnBorrow(boolean testOnBorrow) {
         this.testOnBorrow = testOnBorrow;
 
         if (sessionPool != null) {
@@ -702,7 +728,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * pool
      * @see #testOnReturn
      */
-    public synchronized boolean getTestOnReturn() {
+    public boolean getTestOnReturn() {
         return this.testOnReturn;
     }
 
@@ -714,7 +740,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @param testOnReturn new value for testOnReturn property
      */
-    public synchronized void setTestOnReturn(boolean testOnReturn) {
+    public void setTestOnReturn(boolean testOnReturn) {
         this.testOnReturn = testOnReturn;
 
         if (sessionPool != null) {
@@ -729,7 +755,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @return the time (in miliseconds) between evictor runs
      * @see #timeBetweenEvictionRunsMillis
      */
-    public synchronized long getTimeBetweenEvictionRunsMillis() {
+    public long getTimeBetweenEvictionRunsMillis() {
         return this.timeBetweenEvictionRunsMillis;
     }
 
@@ -739,7 +765,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @param timeBetweenEvictionRunsMillis the new time between evictor runs
      * @see #timeBetweenEvictionRunsMillis
      */
-    public synchronized void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
+    public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
         this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
 
         if (sessionPool != null) {
@@ -754,7 +780,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * runs
      * @see #numTestsPerEvictionRun
      */
-    public synchronized int getNumTestsPerEvictionRun() {
+    public int getNumTestsPerEvictionRun() {
         return this.numTestsPerEvictionRun;
     }
 
@@ -765,7 +791,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * value
      * @see #numTestsPerEvictionRun
      */
-    public synchronized void setNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
+    public void setNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
 
         if (sessionPool != null) {
@@ -779,7 +805,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @return the value of the {@link #minEvictableIdleTimeMillis} property
      * @see #minEvictableIdleTimeMillis
      */
-    public synchronized long getMinEvictableIdleTimeMillis() {
+    public long getMinEvictableIdleTimeMillis() {
         return this.minEvictableIdleTimeMillis;
     }
 
@@ -790,7 +816,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * may sit idle in the pool 
      * @see #minEvictableIdleTimeMillis
      */
-    public synchronized void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
+    public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
         this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
 
         if (sessionPool != null) {
@@ -805,7 +831,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * validated
      * @see #testWhileIdle
      */
-    public synchronized boolean getTestWhileIdle() {
+    public boolean getTestWhileIdle() {
         return this.testWhileIdle;
     }
 
@@ -817,7 +843,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @param testWhileIdle new value for testWhileIdle property
      */
-    public synchronized void setTestWhileIdle(boolean testWhileIdle) {
+    public void setTestWhileIdle(boolean testWhileIdle) {
         this.testWhileIdle = testWhileIdle;
 
         if (sessionPool != null) {
@@ -831,7 +857,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @return the current number of active connections
      */
-    public synchronized int getNumActive() {
+    public int getNumActive() {
         if (sessionPool != null) {
             return sessionPool.getNumActive();
         } else {
@@ -845,7 +871,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @return the current number of idle connections
      */
-    public synchronized int getNumIdle() {
+    public int getNumIdle() {
         if (sessionPool != null) {
             return sessionPool.getNumIdle();
         } else {
@@ -860,7 +886,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @return the SQL validation query
      * @see #validationQuery
      */
-    public synchronized String getValidationQuery() {
+    public String getValidationQuery() {
         return this.validationQuery;
     }
 
@@ -874,7 +900,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @param validationQuery the new value for the validation query
      */
-    public synchronized void setValidationQuery(String validationQuery) {
+    public void setValidationQuery(String validationQuery) {
         this.validationQuery = (validationQuery != null ? validationQuery.trim() : null);
     }
 
@@ -885,7 +911,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @return the action when the pool is exhausted
      * @see #whenExhaustedAction
      */
-    public synchronized String getWhenExhaustedAction() {
+    public String getWhenExhaustedAction() {
         return this.whenExhaustedAction;
     }
     
@@ -894,7 +920,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * 
      * @param whenExhaustedAction the new value for the action when the pool is exhausted
      */
-    public synchronized void setWhenExhaustedAction(String whenExhaustedAction) {
+    public void setWhenExhaustedAction(String whenExhaustedAction) {
         this.whenExhaustedAction = (whenExhaustedAction != null ? whenExhaustedAction.trim() : WHEN_EXHAUSTED_BLOCK);
     }
     
@@ -909,7 +935,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     private class SessionFactory implements PoolableObjectFactory {
         
-        public void activateObject(Object object) throws Exception {
+        public void activateObject(Object object) throws RepositoryException {
             // If sessionRefreshPendingAfter is set to specific time millis,
             // each session should be refreshed if it is not refreshed after the time millis.
             if (object instanceof PooledSession) {
@@ -924,7 +950,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             }
         }
 
-        public void destroyObject(Object object) throws Exception {
+        public void destroyObject(Object object) throws RepositoryException {
             Session session = (Session) object;
 
             try {
@@ -947,7 +973,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             }
         }
 
-        public Object makeObject() throws Exception {
+        public Object makeObject() throws RepositoryException {
             Session session = null;
             
             if (internalDefaultCredentials == null && defaultWorkspaceName == null) {
@@ -967,7 +993,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             return session;
         }
 
-        public void passivateObject(Object object) throws Exception {
+        public void passivateObject(Object object) throws RepositoryException {
             Session session = (Session) object;
             
             if (session instanceof PooledSession) {
@@ -1000,16 +1026,16 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
                 return validated;
             }
             
-            String validationQuery = getValidationQuery();
+            String validationQueryValue = getValidationQuery();
 
-            if (validationQuery != null) {
+            if (validationQueryValue != null) {
                 Node nodeFound = null;
 
                 try {
-                    if ("".equals(validationQuery)) {
+                    if ("".equals(validationQueryValue)) {
                         nodeFound = session.getRootNode();
                     } else {
-                        nodeFound = session.getRootNode().getNode(validationQuery);
+                        nodeFound = session.getRootNode().getNode(validationQueryValue);
                     }
                 } catch (Exception e) {
                     if (log.isDebugEnabled()) {
