@@ -100,6 +100,15 @@ public class PluginContextTest {
         }
     }
 
+    public static class ServicingTestPlugin extends Plugin {
+
+        public ServicingTestPlugin(IPluginContext context, IPluginConfig config) {
+            super(context, config);
+
+            context.registerService(new IClusterable() {}, config.getString("test.id"));
+        }
+    }
+
     protected HippoTester tester;
     private Home home;
     protected IPluginContext context;
@@ -177,6 +186,36 @@ public class PluginContextTest {
         assertNull(context.getService("service.test", IClusterable.class));
     }
 
+    @Test
+    public void testCleanupServiceForwarders() {
+        JavaPluginConfig config = new JavaPluginConfig("test");
+        config.put("plugin.class", ServicingTestPlugin.class.getName());
+        config.put("test.id", "${test.id}");
+        JavaClusterConfig cluster = new JavaClusterConfig();
+        cluster.addReference("test.id");
+        cluster.addService("test.id");
+        cluster.addPlugin(config);
+        JavaPluginConfig params = new JavaPluginConfig();
+        params.add("test.id", "service.test");
+
+        IClusterable service = new IClusterable() {};
+        context.registerService(service, "service.test");
+
+        IClusterControl control = context.newCluster(cluster, params);
+        control.start();
+
+        assertEquals(2, context.getServices("service.test", IClusterable.class).size());
+        String id = context.getReference(context.getServices("service.test", IClusterable.class).get(1)).getServiceId();
+        assertNotNull(context.getService(id, IClusterable.class));
+        assertEquals(context.getService(id, IClusterable.class), context.getServices("service.test", IClusterable.class).get(1));
+
+        control.stop();
+
+        assertEquals(1, context.getServices("service.test", IClusterable.class).size());
+        assertEquals(service, context.getService("service.test", IClusterable.class));
+        assertNull(context.getService(id, IClusterable.class));
+    }
+    
     @Test
     public void testServiceIsInvisibleDuringConstruction() {
         ServiceTracker<ITestService> tracker = new ServiceTracker<ITestService>(ITestService.class) {
