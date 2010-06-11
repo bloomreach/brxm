@@ -526,7 +526,9 @@ height: 20px;
 background-image: url("images/hippo-picker-navigation-breadcrumb.png"); background-repeat: no-repeat;
 background-position: right 0px;
 padding-right: 27px; 
-line-height: 18px;}
+line-height: 18px;
+color: #333333;
+}
 
 .hippo-picker-navigation-breadcrumbs li.firstlast em,
 .hippo-picker-navigation-breadcrumbs li.firstlast a{background-position: right -40px}
