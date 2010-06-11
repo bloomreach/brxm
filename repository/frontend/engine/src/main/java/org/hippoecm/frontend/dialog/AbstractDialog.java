@@ -278,6 +278,16 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                             ButtonWrapper.this.onSubmit();
                         }
                     }
+
+                    @Override
+                    public boolean isVisible() {
+                        return visible;
+                    }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return enabled;
+                    }
                 };
                 button.setModel(label);
                 return button;
@@ -290,6 +300,18 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                         if (!closing) {
                             ButtonWrapper.this.onSubmit();
                         }
+                    }
+
+
+
+                    @Override
+                    public boolean isVisible() {
+                        return visible;
+                    }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return enabled;
                     }
                 };
                 button.setModel(label);
