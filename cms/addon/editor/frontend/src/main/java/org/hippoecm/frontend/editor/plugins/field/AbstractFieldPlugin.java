@@ -408,6 +408,9 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         IFieldDescriptor field = getFieldHelper().getField();
         String caption = getPluginConfig().getString("caption");
         String captionKey = field != null ? field.getName() : caption;
+        if (captionKey == null) {
+            return new Model("undefined");
+        }
         if (caption == null && field != null && field.getName().length() >= 1) {
             caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
         }
