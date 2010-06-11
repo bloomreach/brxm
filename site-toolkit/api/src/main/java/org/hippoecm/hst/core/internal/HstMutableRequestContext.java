@@ -57,6 +57,8 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory);
 
 	public void setContainerConfiguration(ContainerConfiguration containerConfiguration);
+	
+	public void setEmbeddingContextPath(String embeddingContextPath);
 
 	public void setResolvedEmbeddingSiteMount(ResolvedSiteMount resolvedEmbeddingSiteMount);
 }

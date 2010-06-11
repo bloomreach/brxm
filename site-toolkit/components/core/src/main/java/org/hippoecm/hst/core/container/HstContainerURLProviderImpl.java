@@ -231,11 +231,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
     
     public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
-    	if (requestContext.isEmbeddedRequest() && requestContext.isPortletContext()) {
-    		return getEmbeddedPortletContainerURLWriter().toContextRelativeURLString(this, containerURL, requestContext);
-    	}
         StringBuilder url = new StringBuilder(100);
-        String mountPrefix = containerURL.getResolvedMountPath();
+        String mountPrefix = requestContext.isEmbeddedRequest() ? requestContext.getResolvedEmbeddingSiteMount().getResolvedMountPath() : containerURL.getResolvedMountPath();
         if(mountPrefix != null) {
             url.append(mountPrefix);
         }
@@ -445,6 +442,15 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     			return getPortletContainerURLWriter().toURLString(this, containerURL, requestContext, contextPath);
     		}
     	}
+    	
+        StringBuilder urlBuilder = new StringBuilder(100);
+        if(contextPath != null) {
+            urlBuilder.append(contextPath);
+        } 
+        else if (requestContext.getVirtualHost().isContextPathInUrl()) {
+            urlBuilder.append(containerURL.getContextPath());
+        }
+        
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
         String path = null;
         
@@ -464,26 +470,12 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
             }
         } else {
+            urlBuilder.append(containerURL.getResolvedMountPath());
             path = buildHstURLPath(containerURL);
-        }
-        
-        StringBuilder urlBuilder = new StringBuilder(100);
-        if(contextPath != null) {
-            urlBuilder.append(contextPath);
-        } else if(requestContext.getVirtualHost().isContextPathInUrl()) {
-            urlBuilder.append(containerURL.getContextPath());
-        }
-        
-        if(!ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
-            String mountPrefix = containerURL.getResolvedMountPath();
-            if(mountPrefix != null) {
-                urlBuilder.append(mountPrefix);
-            }
         }
         
         urlBuilder.append(path);
         
         return urlBuilder.toString();
     }
-    
 }

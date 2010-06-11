@@ -63,6 +63,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
+    protected String embeddingContextPath;
     protected ResolvedSiteMount resolvedEmbeddingSiteMount;
     
     public HstRequestContextImpl(Repository repository) {
@@ -244,6 +245,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     
     public boolean isEmbeddedRequest() {
         return resolvedEmbeddingSiteMount != null;
+    }
+    
+    public void setEmbeddingContextPath(String embeddingContextPath) {
+    	this.embeddingContextPath = embeddingContextPath;
+    }
+    
+    public String getEmbeddingContextPath() {
+    	return this.embeddingContextPath;
     }
     
     public void setResolvedEmbeddingSiteMount(ResolvedSiteMount resolvedEmbeddingSiteMount) {

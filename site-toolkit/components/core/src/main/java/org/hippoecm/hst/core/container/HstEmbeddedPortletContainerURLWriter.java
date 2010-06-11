@@ -34,13 +34,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public class HstEmbeddedPortletContainerURLWriter {
     
-    public String toContextRelativeURLString(HstContainerURLProviderImpl urlProvider, HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
-        StringBuilder url = new StringBuilder(100);
-        String pathInfo = urlProvider.buildHstURLPath(containerURL);
-        url.append(pathInfo);
-        return url.toString();
-    }
-    
     public String toURLString(HstContainerURLProviderImpl urlProvider, HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
         String urlString = "";
         
@@ -73,29 +66,48 @@ public class HstEmbeddedPortletContainerURLWriter {
                 }
                 
                 if (!urlProvider.isPortletResourceURLEnabled()) {
-                    if(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl()) {
+                    if(contextPath != null) {
                         path.append(contextPath);
-                    }      
+                    } 
+                    else if (requestContext.getVirtualHost().isContextPathInUrl()) {
+                        path.append(containerURL.getContextPath());
+                    }
                 }
+                path.append(pathInfo);
+                urlString = path.toString();
             }
             else {
                 pathInfo = urlProvider.buildHstURLPath(containerURL);
+                if (actionWindowReferenceNamespace != null) {
+                    PortletURL url = ((MimeResponse)prc.getPortletResponse()).createActionURL();
+                    url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, pathInfo);
+                    urlString = url.toString();
+                } else if (resourceWindowReferenceNamespace != null) {
+                	if (urlProvider.isPortletResourceURLEnabled()) {
+                        ResourceURL url = ((MimeResponse)prc.getPortletResponse()).createResourceURL();
+                        url.setResourceID(pathInfo);
+                        urlString = url.toString();
+                	}
+                	else {
+                        if(contextPath != null) {
+                            path.append(contextPath);
+                        } 
+                        else if (requestContext.getVirtualHost().isContextPathInUrl()) {
+                            path.append(containerURL.getContextPath());
+                        }
+                        path.append(containerURL.getResolvedMountPath());
+                        path.append(pathInfo);
+                        urlString = path.toString();
+                	}
+                } else {
+                    // Embedded render URL
+                	path.append(prc.getEmbeddingContextPath());
+                	path.append(prc.getResolvedEmbeddingSiteMount().getResolvedMountPath());
+                	path.append(pathInfo);
+                    urlString = path.toString();
+                }
             }
             
-            path.append(pathInfo);
-
-            if (actionWindowReferenceNamespace != null) {
-                PortletURL url = ((MimeResponse)prc.getPortletResponse()).createActionURL();
-                url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
-                urlString = url.toString();
-            } else if (resourceWindowReferenceNamespace != null && (!hstContainerResource || urlProvider.isPortletResourceURLEnabled())) {
-                ResourceURL url = ((MimeResponse)prc.getPortletResponse()).createResourceURL();
-                url.setResourceID(path.toString());
-                urlString = url.toString();
-            } else {
-                // Embedded render URL
-                urlString = path.toString();
-            }
         } else {
             // should not be allowed to come here: throw IllegalStateException?
         } 

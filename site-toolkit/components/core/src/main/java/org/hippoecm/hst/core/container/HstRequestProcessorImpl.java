@@ -48,9 +48,14 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         
         Pipeline pipeline = (namedPipeline != null ? pipelines.getPipeline(namedPipeline) : pipelines.getDefaultPipeline());
         
-        if (namedPipeline != null && pipeline == null)
+        if (pipeline == null)
         {
-            pipeline = pipelines.getDefaultPipeline();
+        	if (namedPipeline != null) {
+            	throw new ContainerException("Unknown namedPipeline "+namedPipeline+". Request processing cannot continue.");
+        	}
+        	else {
+            	throw new ContainerException("No default pipeline defined. Request processing cannot continue.");
+        	}
         }
         
         try {

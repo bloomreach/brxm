@@ -27,11 +27,13 @@ public class HstPortalRequestContextImpl implements HstPortalRequestContext
 {
     private ResolvedSiteMapItem resolvedSiteMapItem;
     private ResolvedSiteMount resolvedEmbeddingSiteMount;
+    private String embeddingContextPath;
     private String pathInfo;
     
     
-	public HstPortalRequestContextImpl(ResolvedSiteMapItem resolvedSiteMapItem, ResolvedSiteMount resolvedEmbeddingSiteMount, String pathInfo) {
+	public HstPortalRequestContextImpl(ResolvedSiteMapItem resolvedSiteMapItem, String embeddingContextPath, ResolvedSiteMount resolvedEmbeddingSiteMount, String pathInfo) {
 		this.resolvedSiteMapItem = resolvedSiteMapItem;
+		this.embeddingContextPath = embeddingContextPath;
 		this.resolvedEmbeddingSiteMount = resolvedEmbeddingSiteMount;
 		this.pathInfo = pathInfo;
 	}
@@ -39,7 +41,11 @@ public class HstPortalRequestContextImpl implements HstPortalRequestContext
 	public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
 		this.resolvedSiteMapItem = resolvedSiteMapItem;
 	}
-
+	
+	public void setEmbeddingContextPath(String embeddingContextPath) {
+		this.embeddingContextPath = embeddingContextPath;
+	}
+	
 	public void setResolvedEmbeddingSiteMount(
 			ResolvedSiteMount resolvedEmbeddingSiteMount) {
 		this.resolvedEmbeddingSiteMount = resolvedEmbeddingSiteMount;
@@ -53,6 +59,10 @@ public class HstPortalRequestContextImpl implements HstPortalRequestContext
 		return resolvedSiteMapItem;
 	}
 	
+	public String getEmbeddingContextPath() {
+		return embeddingContextPath;
+	}
+
 	public ResolvedSiteMount getResolvedEmbeddingSiteMount() {
 		return resolvedEmbeddingSiteMount;
 	}

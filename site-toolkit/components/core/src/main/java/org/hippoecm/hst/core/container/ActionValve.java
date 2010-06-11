@@ -31,6 +31,7 @@ import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 
 /**
  * ActionValve
@@ -175,12 +176,12 @@ public class ActionValve extends AbstractValve {
                                     throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
                                 }
                                 if (!getVirtualHostsManager().getVirtualHosts().isExcluded(location)) {
-                                    ResolvedSiteMount mount = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedVirtualHost().matchSiteMount(baseURL.getContextPath(), location);
+                                	ResolvedVirtualHost rvh = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedVirtualHost();
+                                	String targetContextPath = requestContext.isEmbeddedRequest() ? requestContext.getEmbeddingContextPath() : baseURL.getContextPath();
+                                	ResolvedSiteMount mount = rvh.matchSiteMount(targetContextPath, location);
                                     if (mount != null && mount.getSiteMount().isSiteMount()) {
-                                        if (mount != null && mount.getSiteMount().isSiteMount()) {
-                                        	// redirectLocation is (at least) matched on a siteMount: the portlet should try to render it 
-                                        	((HstPortletResponseState)responseState).setRenderRedirect(true);
-                                        }
+                                    	// redirectLocation is (at least) matched on a siteMount: the portlet should try to render it 
+                                    	((HstPortletResponseState)responseState).setRenderRedirect(true);
                                     }
                                 }
                             }

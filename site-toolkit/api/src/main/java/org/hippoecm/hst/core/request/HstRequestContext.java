@@ -174,6 +174,12 @@ public interface HstRequestContext {
     boolean isEmbeddedRequest();
     
     /**
+     * Returns the contextPath of the embedding application for an embedded request, otherwise null
+     * @see HstRequestContext#isEmbeddedRequest()
+     */
+    String getEmbeddingContextPath();
+    
+    /**
      * Returns the ResolvedSiteMount to be used for link rewriting when this request is embedded, otherwise null
      * @see HstRequestContext#isEmbeddedRequest()
      */

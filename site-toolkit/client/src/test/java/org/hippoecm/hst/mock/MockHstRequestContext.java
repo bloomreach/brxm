@@ -188,6 +188,10 @@ public class MockHstRequestContext implements HstRequestContext {
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
 
+    public String getEmbeddingContextPath() {
+    	return null;
+    }
+    
 	public ResolvedSiteMount getResolvedEmbeddingSiteMount() {
 		return null;
 	}

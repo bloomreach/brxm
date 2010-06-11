@@ -68,20 +68,16 @@ public class HstPortletContainerURLWriter {
                     ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
                 }
                 
-                if(contextPath != null && requestContext.getVirtualHost().isContextPathInUrl()) {
+                if(contextPath != null) {
                     path.append(contextPath);
-                }
-                else {
-                	path.append(containerURL.getContextPath());
+                } else if(requestContext.getVirtualHost().isContextPathInUrl()) {
+                    path.append(containerURL.getContextPath());
                 }
                 path.append(pathInfo);
                 urlString = path.toString();
                 
             } else {
-                String mountPrefix = containerURL.getResolvedMountPath();
-                if(mountPrefix != null) {
-                    path.append(mountPrefix);
-                }
+                path.append(containerURL.getResolvedMountPath());
                 path.append(urlProvider.buildHstURLPath(containerURL));
                 
                 BaseURL url = null;
