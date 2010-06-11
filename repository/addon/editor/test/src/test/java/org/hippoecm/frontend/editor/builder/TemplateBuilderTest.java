@@ -75,11 +75,13 @@ public class TemplateBuilderTest extends PluginTest {
     }
 
     // the tests will modify templates, so reinitialize for each test
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp(true);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown(true);
@@ -199,7 +201,9 @@ public class TemplateBuilderTest extends PluginTest {
         }, IObserver.class.getName());
 
         // remove a field plugin
-        plugins.remove(1);
+        List<IPluginConfig> newPlugins = new LinkedList<IPluginConfig>(plugins);
+        newPlugins.remove(1);
+        config.setPlugins(newPlugins);
 
         home.processEvents();
 
@@ -226,7 +230,9 @@ public class TemplateBuilderTest extends PluginTest {
         node.addNode("test:nt_unstructured", "nt:unstructured");
 
         // remove the field plugin
-        plugins.remove(3);
+        List<IPluginConfig> newPlugins = new LinkedList<IPluginConfig>(plugins);
+        newPlugins.remove(3);
+        config.setPlugins(newPlugins);
         home.processEvents();
 
         // the field should be removed from the type, the child node should have

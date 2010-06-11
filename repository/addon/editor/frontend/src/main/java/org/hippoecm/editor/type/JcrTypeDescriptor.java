@@ -196,7 +196,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
             detach();
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 

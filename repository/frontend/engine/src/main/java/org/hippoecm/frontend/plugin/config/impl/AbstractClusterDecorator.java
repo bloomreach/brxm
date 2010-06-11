@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,16 +48,20 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
         return (List<IPluginConfig>) wrap(getUpstream().getPlugins());
     }
 
-    public List<String> getProperties() {
-        return getUpstream().getProperties();
+    public void setPlugins(List<IPluginConfig> plugins) {
+        throw new UnsupportedOperationException("Modifying a readonly cluster configuration");
     }
 
-    public List<String> getReferences() {
-        return getUpstream().getReferences();
+    public final List<String> getProperties() {
+        return Collections.unmodifiableList(getUpstream().getProperties());
     }
 
-    public List<String> getServices() {
-        return getUpstream().getServices();
+    public final List<String> getReferences() {
+        return Collections.unmodifiableList(getUpstream().getReferences());
+    }
+
+    public final List<String> getServices() {
+        return Collections.unmodifiableList(getUpstream().getServices());
     }
 
     @SuppressWarnings("unchecked")

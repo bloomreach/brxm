@@ -18,18 +18,23 @@ package org.hippoecm.frontend.plugin.config.impl;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.AbstractSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
+import javax.jcr.version.VersionException;
 
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -168,7 +173,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
                     notifyObservers();
                 } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+                    log.error(ex.getMessage(), ex);
                 }
             } else {
                 throw new IllegalArgumentException("Index too large");
@@ -283,11 +288,48 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     public JcrClusterConfig(JcrNodeModel nodeModel) {
         super(nodeModel);
         configs = new PluginList();
-
     }
 
     public List<IPluginConfig> getPlugins() {
-        return configs;
+        return Collections.unmodifiableList(configs);
+    }
+
+    public void setPlugins(List<IPluginConfig> plugins) {
+        Set<String> newNames = new TreeSet<String>();
+        for (IPluginConfig config : plugins) {
+            newNames.add(config.getName());
+        }
+
+        // clean up
+        Set<String> oldNames = new TreeSet<String>();
+        Iterator<IPluginConfig> iter = configs.iterator();
+        while (iter.hasNext()) {
+            IPluginConfig config = iter.next();
+            if (!newNames.contains(config.getName())) {
+                iter.remove();
+            } else {        
+                oldNames.add(config.getName());
+            }
+        }
+
+        // add
+        for (IPluginConfig config : plugins) {
+            if (!oldNames.contains(config.getName())) {
+                configs.add(config);
+            }
+        }
+
+        // reorder
+        if (plugins.size() >= 2) {
+            try {
+                Node node = getNodeModel().getNode();
+                for (int i = plugins.size() - 2; i >= 0; i--) {
+                    node.orderBefore(plugins.get(i).getName(), plugins.get(i + 1).getName());
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
     }
 
     public List<String> getServices() {

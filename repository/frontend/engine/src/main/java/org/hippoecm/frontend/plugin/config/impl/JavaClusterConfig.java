@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,7 +68,11 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
     }
 
     public List<IPluginConfig> getPlugins() {
-        return plugins;
+        return Collections.unmodifiableList(plugins);
+    }
+
+    public void setPlugins(List<IPluginConfig> plugins) {
+        throw new UnsupportedOperationException();
     }
 
     public void addService(String key) {

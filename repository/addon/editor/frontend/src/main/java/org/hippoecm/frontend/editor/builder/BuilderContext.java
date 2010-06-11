@@ -108,7 +108,7 @@ public class BuilderContext implements IClusterable {
 
     public void delete() {
         IClusterConfig clusterConfig = getTemplate();
-        List<IPluginConfig> plugins = clusterConfig.getPlugins();
+        List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
         for (IPluginConfig config : plugins) {
             if (config.getName().equals(getPluginId())) {
                 IModelReference pluginRef = context
@@ -121,6 +121,7 @@ public class BuilderContext implements IClusterable {
                 break;
             }
         }
+        clusterConfig.setPlugins(plugins);
     }
 
     public void focus() {

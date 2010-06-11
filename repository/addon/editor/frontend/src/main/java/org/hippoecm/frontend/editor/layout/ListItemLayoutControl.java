@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.frontend.editor.builder.BuilderContext;
 import org.hippoecm.frontend.editor.builder.ILayoutAware;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,30 +55,31 @@ public class ListItemLayoutControl extends LayoutControl {
 
     protected void moveUp(int id) {
         IClusterConfig clusterConfig = builder.getTemplate();
-        List<IPluginConfig> plugins = clusterConfig.getPlugins();
-        IPluginConfig previous = null;
+        List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
+        int previous = -1;
         int siblingCount = 0;
+        int index = 0;
         for (IPluginConfig config : plugins) {
             String pluginWicketId = config.getString("wicket.id");
             if (pluginWicketId != null && pluginWicketId.equals(wicketId)) {
                 if (siblingCount == id) {
-                    if (previous != null) {
-                        IPluginConfig backup = new JavaPluginConfig(config);
-                        config.clear();
-                        config.putAll(previous);
-
-                        previous.clear();
-                        previous.putAll(backup);
+                    if (previous != -1) {
+                        plugins.add(previous, plugins.remove(index));
+                        if (index != (previous + 1)) {
+                            plugins.add(index, plugins.remove(previous + 1));
+                        }
                     } else {
                         log.warn("Unable to move the first plugin further up");
                     }
                     break;
                 } else {
-                    previous = config;
+                    previous = index;
                 }
                 siblingCount++;
             }
+            index++;
         }
+        clusterConfig.setPlugins(plugins);
     }
 
     protected IPluginConfig getEditablePluginConfig() {
