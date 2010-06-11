@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.layout;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,7 +36,6 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -150,10 +150,12 @@ public class TwoColumnTest extends PluginTest {
     @Test
     public void testMovePlugin() throws Exception {
         List<IPluginConfig> plugins = editedCluster.getPlugins();
+        LinkedList<IPluginConfig> newPlugins = new LinkedList<IPluginConfig>(plugins);
         JavaPluginConfig newConfig = new JavaPluginConfig("test");
         newConfig.put("plugin.class", RenderPlugin.class.getName());
         newConfig.put("wicket.id", "${cluster.id}.left.item");
-        plugins.add(newConfig);
+        newPlugins.add(newConfig);
+        editedCluster.setPlugins(newPlugins);
 
         restartCluster();
 

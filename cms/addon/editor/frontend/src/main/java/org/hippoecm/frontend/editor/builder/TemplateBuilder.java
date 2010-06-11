@@ -19,13 +19,16 @@ import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -55,7 +58,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.AbstractClusterDecorator;
+import org.hippoecm.frontend.plugin.config.impl.AbstractPluginDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -206,6 +209,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             boolean containsNewName = false;
             int position = -1;
+            List<IPluginConfig> newPlugins = new LinkedList<IPluginConfig>();
             List<IPluginConfig> plugins = clusterConfig.getPlugins();
             for (int i = 0; i < plugins.size(); i++) {
                 IPluginConfig plugin = plugins.get(i);
@@ -214,15 +218,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         plugin.put("field", newName);
                     }
                     position = i;
+                    JavaPluginConfig newPlugin = new JavaPluginConfig(newName);
+                    newPlugin.putAll(plugins.get(position));
+                    newPlugins.add(newPlugin);
+                } else {
+                    newPlugins.add(plugin);
                 }
                 if (newName.equals(plugin.getName())) {
                     containsNewName = true;
                 }
             }
             if (!containsNewName) {
-                JavaPluginConfig newPlugin = new JavaPluginConfig(newName);
-                newPlugin.putAll(plugins.get(position));
-                plugins.set(position, newPlugin);
+                clusterConfig.setPlugins(newPlugins);
             }
         }
 
@@ -465,63 +472,49 @@ public class TemplateBuilder implements IDetachable, IObservable {
     class BuilderPluginList extends AbstractList<IPluginConfig> implements IDetachable {
         private static final long serialVersionUID = 1L;
 
-        private List<IPluginConfig> plugins;
-        private transient Map<String, IFieldDescriptor> removedFields;
-
-        BuilderPluginList(List<IPluginConfig> plugins) {
-            this.plugins = plugins;
+        @Override
+        public IPluginConfig get(int index) {
+            return clusterConfig.getPlugins().get(index);
         }
 
         @Override
         public void add(int index, IPluginConfig config) {
+            List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
             plugins.add(index, config);
-
-            if (config.getString("field") != null) {
-                String field = config.getString("field");
-                if (removedFields != null) {
-                    IFieldDescriptor descriptor = removedFields.remove(field);
-                    if (descriptor != null) {
-                        try {
-                            typeDescriptor.addField(descriptor);
-                        } catch (TypeException e) {
-                            log.error("Failed to add field to type", e);
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public IPluginConfig remove(int index) {
-            IPluginConfig config = plugins.remove(index);
-            String field = config.getString("field");
-            if (field != null) {
-                if (removedFields == null) {
-                    removedFields = new TreeMap<String, IFieldDescriptor>();
-                }
-                removedFields.put(field, new JavaFieldDescriptor(typeDescriptor.getField(field)));
-                try {
-                    typeDescriptor.removeField(field);
-                } catch (TypeException e) {
-                    log.error("Failed to remove field from type", e);
-                }
-                updatePrototype();
-            }
-            return config;
-        }
-
-        @Override
-        public IPluginConfig get(int index) {
-            return plugins.get(index);
+            clusterConfig.setPlugins(plugins);
         }
 
         @Override
         public int size() {
-            return plugins.size();
+            return clusterConfig.getPlugins().size();
         }
 
+        void replaceAll(List<IPluginConfig> configs) {
+            Set<String> names = new TreeSet<String>();
+            for (IPluginConfig plugin : configs) {
+                names.add(plugin.getName());
+            }
+
+            List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
+            for (IPluginConfig plugin : plugins) {
+                if (!names.contains(plugin.getName())) {
+                    String field = plugin.getString("field");
+                    if (field != null) {
+                        try {
+                            typeDescriptor.removeField(field);
+                        } catch (TypeException e) {
+                            log.error("Failed to remove field from type", e);
+                        }
+                        updatePrototype();
+                    }
+                }
+            }
+
+            clusterConfig.setPlugins(configs);
+        }
+        
         public void detach() {
-            for (IPluginConfig config : plugins) {
+            for (IPluginConfig config : clusterConfig.getPlugins()) {
                 if (config instanceof IDetachable) {
                     ((IDetachable) config).detach();
                 }
@@ -530,19 +523,21 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     }
 
-    private static class BuilderClusterDecorator extends AbstractClusterDecorator {
+    private class BuilderClusterDecorator extends AbstractPluginDecorator implements IClusterConfig {
         private static final long serialVersionUID = 1L;
 
-        List<IPluginConfig> plugins;
+        private IObserver<IClusterConfig> observer;
 
-        private BuilderClusterDecorator(IClusterConfig upstream, List<IPluginConfig> plugins) {
+        private BuilderClusterDecorator(IClusterConfig upstream) {
             super(upstream);
-            this.plugins = plugins;
         }
 
-        @Override
         public List<IPluginConfig> getPlugins() {
-            return plugins;
+            return Collections.unmodifiableList(TemplateBuilder.this.getPlugins());
+        }
+
+        public void setPlugins(List<IPluginConfig> plugins) {
+            TemplateBuilder.this.getPlugins().replaceAll(plugins);
         }
 
         @Override
@@ -550,6 +545,58 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return object;
         }
 
+        public List<String> getProperties() {
+            return ((IClusterConfig) upstream).getProperties();
+        }
+
+        public List<String> getReferences() {
+            return ((IClusterConfig) upstream).getReferences();
+        }
+
+        public List<String> getServices() {
+            return ((IClusterConfig) upstream).getServices();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected IObservationContext<IClusterConfig> getObservationContext() {
+            return (IObservationContext<IClusterConfig>) super.getObservationContext();
+        }
+        
+        @Override
+        public void startObservation() {
+            super.startObservation();
+            final IObservationContext<IClusterConfig> obContext = getObservationContext();
+            obContext.registerObserver(observer = new IObserver<IClusterConfig>() {
+                private static final long serialVersionUID = 1L;
+
+                public IClusterConfig getObservable() {
+                    return (IClusterConfig) upstream;
+                }
+
+                public void onEvent(Iterator<? extends IEvent<IClusterConfig>> events) {
+                    EventCollection<IEvent<IClusterConfig>> collection = new EventCollection<IEvent<IClusterConfig>>();
+                    while (events.hasNext()) {
+                        IEvent<IClusterConfig> event = events.next();
+                        if (event instanceof ClusterConfigEvent) {
+                            ClusterConfigEvent cce = (ClusterConfigEvent) event;
+                            collection.add(new ClusterConfigEvent(BuilderClusterDecorator.this, wrapConfig(cce.getPlugin()), cce.getType()));
+                        }
+                    }
+                    if (collection.size() > 0) {
+                        obContext.notifyObservers(collection);
+                    }
+                }
+                
+            });
+        }
+
+        @Override
+        public void stopObservation() {
+            IObservationContext<IClusterConfig> obContext = getObservationContext();
+            obContext.unregisterObserver(observer);
+            super.stopObservation();
+        }
     }
 
     private String type;
@@ -680,16 +727,16 @@ public class TemplateBuilder implements IDetachable, IObservable {
         return new BuilderTypeDescriptor();
     }
 
-    protected final List<IPluginConfig> getPlugins() {
+    protected final BuilderPluginList getPlugins() {
         if (plugins == null) {
-            plugins = new BuilderPluginList(clusterConfig.getPlugins());
+            plugins = new BuilderPluginList();
         }
         return plugins;
     }
 
     public IClusterConfig getTemplate() throws BuilderException {
         if (clusterConfig != null) {
-            return new BuilderClusterDecorator(clusterConfig, getPlugins());
+            return new BuilderClusterDecorator(clusterConfig);
         }
         throw new BuilderException("No template exists");
     }

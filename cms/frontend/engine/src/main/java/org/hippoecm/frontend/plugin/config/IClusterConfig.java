@@ -42,22 +42,35 @@ public interface IClusterConfig extends IPluginConfig {
 
     /**
      * The plugin configurations in the cluster.
+     * Returns an immutable list of plugins.
      */
     List<IPluginConfig> getPlugins();
 
     /**
+     * Update the plugins in the cluster.  Only available when the the configuration is used as a
+     * template for the cluster configuration.
+     */
+    void setPlugins(List<IPluginConfig> plugins);
+    
+    /**
      * The list of keys for services.  Since service types are not available, it is recommended to
      * always use well-known keys when they exist.  I.e. use "wicket.id" to identify an {@link IRenderService}.
+     * <p>
+     * The returned list is only mutable when the configuration is used as a template.
      */
     List<String> getServices();
 
     /**
      * The keys for services that are used by plugins in the cluster.
+     * <p>
+     * The returned list is only mutable when the configuration is used as a template.
      */
     List<String> getReferences();
 
     /**
      * Properties that specify additional plugin behavior.
+     * <p>
+     * The returned list is only mutable when the configuration is used as a template.
      */
     List<String> getProperties();
 

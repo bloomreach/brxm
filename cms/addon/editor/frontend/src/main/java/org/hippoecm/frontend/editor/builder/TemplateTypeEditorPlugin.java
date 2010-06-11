@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.editor.builder;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,6 +27,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.IModelReference;
@@ -216,6 +219,26 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         }
     }
 
+    private List<String> names = null;
+    
+    @Override
+    public void render(PluginRequestTarget target) {
+        try {
+            List<IPluginConfig> plugins = builder.getTemplate().getPlugins();
+            List<String> newNames = new LinkedList<String>();
+            for (IPluginConfig config : plugins) {
+                newNames.add(config.getName());
+            }
+            if ((this.names == null || !this.names.equals(newNames))) {
+                modelChanged();
+            }
+            this.names = newNames;
+        } catch (BuilderException e) {
+            log.error("could not determine whether to repaint", e);
+        }
+        super.render(target);
+    }
+    
     @Override
     protected void onDetach() {
         // null-check; if plugin has registered its render-service and then throws

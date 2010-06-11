@@ -55,6 +55,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor, IDetachable {
     }
 
     public JavaFieldDescriptor(IFieldDescriptor source) {
+        this.name = source.getName();
         this.type = source.getTypeDescriptor();
         this.path = source.getPath();
         this.excluded = source.getExcluded();
