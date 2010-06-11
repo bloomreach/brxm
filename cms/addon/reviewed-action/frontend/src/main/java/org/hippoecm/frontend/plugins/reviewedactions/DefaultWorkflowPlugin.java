@@ -127,49 +127,6 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(deleteAction = new WorkflowAction("delete",
-                new StringResourceModel("delete-label", this, null).getString(), null) {
-            @Override
-            protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "delete-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                final IModel<String> docName = getDocumentName();
-                IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null,
-                        new Object[] { getDocumentName() });
-                IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null,
-                        new Object[] { getDocumentName() });
-                return new DeleteDialog(title, message, this, getEditorManager());
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                ((DefaultWorkflow) wf).delete();
-                return null;
-            }
-        });
-
-        add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
-                .getString(), null) {
-            @Override
-            protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "where-used-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
-                return new WhereUsedDialog(wdm, getEditorManager());
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                return null;
-            }
-        });
-
         add(renameAction = new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
             public String targetName;
             public String uriName;
@@ -211,35 +168,6 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
                 }
-                return null;
-            }
-        });
-
-        add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
-            public NodeModelWrapper destination = null;
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "move-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                destination = new NodeModelWrapper(getFolder()) {
-                };
-                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
-                        DefaultWorkflowPlugin.this, null), null, null, destination);
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                JcrNodeModel folderModel = new JcrNodeModel("/");
-                if (destination != null) {
-                    folderModel = destination.getNodeModel();
-                }
-                String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
-                DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.move(new Document(folderModel.getNode().getUUID()), nodeName);
                 return null;
             }
         });
@@ -288,6 +216,78 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
                 workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
                 browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
+                return null;
+            }
+        });
+        
+        add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
+            public NodeModelWrapper destination = null;
+            
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "move-16.png");
+            }
+            
+            @Override
+            protected Dialog createRequestDialog() {
+                destination = new NodeModelWrapper(getFolder()) {
+                };
+                return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
+                        DefaultWorkflowPlugin.this, null), null, null, destination);
+            }
+            
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                JcrNodeModel folderModel = new JcrNodeModel("/");
+                if (destination != null) {
+                    folderModel = destination.getNodeModel();
+                }
+                String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
+                DefaultWorkflow workflow = (DefaultWorkflow) wf;
+                workflow.move(new Document(folderModel.getNode().getUUID()), nodeName);
+                return null;
+            }
+        });
+
+        add(deleteAction = new WorkflowAction("delete",
+                new StringResourceModel("delete-label", this, null).getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "delete-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                final IModel<String> docName = getDocumentName();
+                IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null,
+                        new Object[] { getDocumentName() });
+                IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null,
+                        new Object[] { getDocumentName() });
+                return new DeleteDialog(title, message, this, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                ((DefaultWorkflow) wf).delete();
+                return null;
+            }
+        });
+
+        add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
+                .getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "where-used-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                return new WhereUsedDialog(wdm, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
                 return null;
             }
         });
