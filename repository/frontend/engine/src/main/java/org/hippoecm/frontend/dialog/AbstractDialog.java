@@ -105,6 +105,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
             return this.messages;
         }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -571,6 +572,17 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
     }
 
+    @Override
+    protected final void onError() {
+        Page page = findParent(Page.class);
+        if (page != null) {
+            if (fmm != null) {
+                fmm.reset();
+            }
+        }
+        super.onError();
+    }
+    
     protected void onOk() {
     }
 
