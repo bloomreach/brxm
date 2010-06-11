@@ -66,6 +66,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
     protected HstContainerConfig hstContainerConfig;
     protected SiteMount siteMount;
     protected ResolvedSiteMount resolvedSiteMount;
+    protected HstMutableRequestContext requestContext;
     
     @Before
     public void setUp() throws Exception {
@@ -97,6 +98,9 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         
         EasyMock.replay(siteMount);
         EasyMock.replay(resolvedSiteMount);
+        
+        requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
+        requestContext.setResolvedSiteMount(resolvedSiteMount);
     }
     
     @Test
@@ -616,8 +620,6 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
     }
     
     private void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
-        HstMutableRequestContext requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
-        requestContext.setResolvedSiteMount(resolvedSiteMount);
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         jaxrsPipeline.beforeInvoke(hstContainerConfig, requestContext, request, response);
         
