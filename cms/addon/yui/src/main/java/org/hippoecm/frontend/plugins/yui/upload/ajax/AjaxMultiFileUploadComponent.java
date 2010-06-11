@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
@@ -24,11 +23,9 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.IBehaviorListener;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
@@ -36,16 +33,15 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.upload.DiskFileItemFactory;
 import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.upload.FileUploadException;
-import org.hippoecm.frontend.plugins.yui.upload.IUploadComponent;
+
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.LinkedList;
 
-public abstract class AjaxMultiFileUploadComponent extends Panel implements IUploadComponent {
+public abstract class AjaxMultiFileUploadComponent extends Panel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -69,7 +65,7 @@ public abstract class AjaxMultiFileUploadComponent extends Panel implements IUpl
                             }
                         });
                 for (FileItem fi : multipartServletWebRequest.getFiles().values()) {
-                    processFileUpload(new FileUpload(fi));
+                    onFileUpload(new FileUpload(fi));
                     fi.delete();
                     onUploadSuccess();
                 }
@@ -139,21 +135,10 @@ public abstract class AjaxMultiFileUploadComponent extends Panel implements IUpl
         super.onBeforeRender();
     }
 
-    protected abstract void processFileUpload(FileUpload fileUpload);
+    protected abstract void onFileUpload(FileUpload fileUpload);
 
     protected abstract void onFinish(AjaxRequestTarget target);
 
     protected abstract void onUploadSuccess();
 
-    public Component getFocusComponent() {
-        return this;
-    }
-
-    public Component getComponent() {
-        return this;
-    }
-
-    public Collection<FileUpload> getUploads() {
-        return null;
-    }
 }

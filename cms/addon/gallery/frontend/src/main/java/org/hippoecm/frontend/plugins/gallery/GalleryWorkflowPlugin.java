@@ -32,6 +32,7 @@ import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
+import org.hippoecm.frontend.plugins.yui.upload.MultiFileUploadDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -49,13 +50,14 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
+public class
+        GalleryWorkflowPlugin extends FolderWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
-    public class UploadDialog extends org.hippoecm.frontend.plugins.yui.upload.UploadDialog {
+    public class UploadDialog extends MultiFileUploadDialog {
         private static final long serialVersionUID = 1L;
 
         public UploadDialog(String[] fileExtensions) {
@@ -206,12 +208,8 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         if(getPluginConfig().containsKey("file.extensions")) {
             fileExtensions = getPluginConfig().getStringArray("file.extensions");
         }
-        UploadDialog dialog = new UploadDialog(fileExtensions) {
-            @Override
-            protected void onOk() {
-                onModelChanged();
-            }
-        };
+        
+        UploadDialog dialog = new UploadDialog(fileExtensions);
         dialog.add(typeComponent);
         return dialog;
     }

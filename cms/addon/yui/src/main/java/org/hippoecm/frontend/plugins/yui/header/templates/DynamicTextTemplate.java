@@ -16,12 +16,8 @@
 
 package org.hippoecm.frontend.plugins.yui.header.templates;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
-
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -29,7 +25,13 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
+import org.hippoecm.frontend.plugins.yui.JsFunction;
+import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
+
+import java.io.Serializable;
+import java.util.Map;
 
 public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
     @SuppressWarnings("unused")
@@ -123,7 +125,11 @@ public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
     }
 
     public JsonConfig getJsonConfig() {
-        return new JsonConfig();
+        JsonConfig config = new JsonConfig();
+        if(configuration instanceof IAjaxSettings) {
+            config.registerJsonValueProcessor(JsFunction.class, new JsFunctionProcessor());
+        }
+        return config;
     }
 
 }
