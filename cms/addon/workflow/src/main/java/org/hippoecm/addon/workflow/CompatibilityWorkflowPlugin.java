@@ -15,6 +15,7 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.wicket.ResourceReference;
@@ -27,6 +28,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.apache.wicket.validation.validator.DateValidator;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
@@ -434,8 +436,11 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 super();
 
                 add(new Label("question", question));
-                add(new YuiDateTimeField("value", dateModel));
+                YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
+                ydtf.add(DateValidator.minimum(new Date()));
+                add(ydtf);
                 setFocusOnCancel();
+
             }
 
             @Override

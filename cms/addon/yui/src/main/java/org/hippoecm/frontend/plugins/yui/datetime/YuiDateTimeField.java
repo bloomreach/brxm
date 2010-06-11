@@ -28,6 +28,7 @@ import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -103,6 +104,7 @@ public class YuiDateTimeField extends DateTimeField {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
+                ((FormComponent<Date>) YuiDateTimeField.this.get("date")).clearInput();
                 MutableDateTime date = new MutableDateTime(new Date());
                 boolean use12HourFormat = use12HourFormat();
                 int hours = date.getHourOfDay() % (use12HourFormat ? 12 : 24);
