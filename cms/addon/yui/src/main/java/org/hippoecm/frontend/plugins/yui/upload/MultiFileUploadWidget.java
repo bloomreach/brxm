@@ -15,10 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.plugins.yui.flash.ProbeFlashBehavior;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
 import org.hippoecm.frontend.plugins.yui.upload.multifile.MultiFileUploadComponent;
@@ -43,7 +46,13 @@ public class MultiFileUploadWidget extends Panel implements ProbeFlashBehavior.I
 
         this.fileExtensions = fileExtensions;
 
-        add(probeBehavior = new ProbeFlashBehavior(this));
+        add(probeBehavior = new ProbeFlashBehavior(this) {
+
+            @Override
+            protected boolean isValid(Flash flash) {
+                return flash.isAvailable() && flash.isValid(9, 0, 45);
+            }
+        });
         add(panel = new EmptyPanel(COMPONENT_ID));
     }
 
@@ -59,6 +68,7 @@ public class MultiFileUploadWidget extends Panel implements ProbeFlashBehavior.I
 
         AjaxMultiFileUploadSettings settings = new AjaxMultiFileUploadSettings();
         settings.setFileExtensions(fileExtensions);
+        settings.setAjaxIndicatorId(getAjaxIndicatorId());
         replace(panel = new AjaxMultiFileUploadComponent(COMPONENT_ID, settings) {
 
             @Override
@@ -78,6 +88,17 @@ public class MultiFileUploadWidget extends Panel implements ProbeFlashBehavior.I
 
         remove(probeBehavior);
         target.addComponent(this);
+    }
+
+    protected String getAjaxIndicatorId() {
+        Component c = this;
+        while(c != null) {
+            if(IAjaxIndicatorAware.class.isAssignableFrom(c.getClass())) {
+                return ((IAjaxIndicatorAware)c).getAjaxIndicatorMarkupId();
+            }
+            c = c.getParent();
+        }
+        return null;
     }
 
     protected void onFinishAjaxUpload(AjaxRequestTarget target) {

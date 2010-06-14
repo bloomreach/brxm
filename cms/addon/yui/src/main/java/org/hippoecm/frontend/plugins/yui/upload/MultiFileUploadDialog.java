@@ -35,15 +35,14 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
 
     @Override
     protected void onOk() {
-        if (!widget.isFlash()) {
-            widget.handleNonFlashSubmit();
-        } else {
+        if (widget.isFlash()) {
             AjaxRequestTarget target = AjaxRequestTarget.get();
-            if(target != null) {
+            if (target != null) {
                 ajaxButton.setEnabled(false);
                 target.addComponent(ajaxButton);
             }
-
+        } else {
+            widget.handleNonFlashSubmit();
         }
     }
 
@@ -61,7 +60,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 //TODO: add AjaxBusyIndicator
                 target.appendJavascript("YAHOO.hippo.Upload.upload();");
-                setEnabled(false);
+                //setEnabled(false);
                 target.addComponent(this);
             }
         };
@@ -99,6 +98,11 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
                 setOkVisible(true);
 
                 target.addComponent(MultiFileUploadDialog.this);
+            }
+
+            @Override
+            protected String getAjaxIndicatorId() {
+                return super.getAjaxIndicatorId();
             }
         };
         add(widget);
