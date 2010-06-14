@@ -223,6 +223,7 @@
             </manifest>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Hippo-Modules>org.hippoecm.repository.LoadInitializationModule</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
