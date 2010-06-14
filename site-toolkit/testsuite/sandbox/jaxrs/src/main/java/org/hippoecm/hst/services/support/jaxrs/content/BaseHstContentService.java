@@ -255,6 +255,11 @@ public class BaseHstContentService {
         return siteMount.isPreview();
     }
     
+    /*
+     * TODO: This method is responsble for returning normal hst site url.
+     *       Currently, the solution is too hacky based on proxying.
+     *       A proper solution should be provided from the API side.
+     */
     protected String getPageUriByCanonicalUuid(final HttpServletRequest servletRequest, final HttpServletResponse sevletResponse, final String canonicalUuid) {
         if (StringUtils.isBlank(canonicalUuid)) {
             return null;
