@@ -37,6 +37,13 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
     protected void onOk() {
         if (!widget.isFlash()) {
             widget.handleNonFlashSubmit();
+        } else {
+            AjaxRequestTarget target = AjaxRequestTarget.get();
+            if(target != null) {
+                ajaxButton.setEnabled(false);
+                target.addComponent(ajaxButton);
+            }
+
         }
     }
 
@@ -48,18 +55,19 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         setOkEnabled(false);
         setOkVisible(false);
 
-//        ajaxButton = new AjaxButton(getButtonId(), new Model<String>("Ok")) {
-//
-//            @Override
-//            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-//                //TODO: add AjaxBusyIndicator
-//                target.appendJavascript("YAHOO.hippo.Upload.upload();");
-//            }
-//        };
-//        ajaxButton.setEnabled(false);
-//        ajaxButton.setVisible(false);
-//        addButton(ajaxButton);
+        ajaxButton = new AjaxButton(getButtonId(), new Model<String>("Ok")) {
 
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                //TODO: add AjaxBusyIndicator
+                target.appendJavascript("YAHOO.hippo.Upload.upload();");
+                setEnabled(false);
+                target.addComponent(this);
+            }
+        };
+        ajaxButton.setEnabled(false);
+        ajaxButton.setVisible(false);
+        addButton(ajaxButton);
 
         widget = new MultiFileUploadWidget("uploadWidget", fileExtensions) {
 
@@ -77,20 +85,8 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
             public void handleFlash(AjaxRequestTarget target) {
                 super.handleFlash(target);
 
-                ajaxButton = new AjaxButton(getButtonId(), new Model<String>("Ok")) {
-
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        //TODO: add AjaxBusyIndicator
-                        target.appendJavascript("YAHOO.hippo.Upload.upload();");
-                    }
-                };
-                ajaxButton.setEnabled(false);
-                ajaxButton.setVisible(false);
-                addButton(ajaxButton);
-
-//                ajaxButton.setEnabled(true);
-//                ajaxButton.setVisible(true);
+                ajaxButton.setEnabled(true);
+                ajaxButton.setVisible(true);
 
                 target.addComponent(MultiFileUploadDialog.this);
             }

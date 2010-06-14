@@ -302,8 +302,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                         }
                     }
 
-
-
                     @Override
                     public boolean isVisible() {
                         return visible;
@@ -321,9 +319,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         public Button getButton() {
             if (button == null) {
-                button = createButton();
+                button = decorate(createButton());
             }
-            return decorate(button);
+            return button;
         }
 
         protected Button decorate(Button button) {
