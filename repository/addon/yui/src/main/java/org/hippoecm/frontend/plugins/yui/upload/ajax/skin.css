@@ -1,3 +1,7 @@
+#selectLink {
+  text-decoration: underline;
+}
+
 .yau-progressbar {height:5px;background-color:#F00;}
 .yau-progressbar-container {height:5px;width:100px;background-color:#CCC;}
 

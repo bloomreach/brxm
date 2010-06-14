@@ -4,7 +4,7 @@
  * Provides a singleton upload helper
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, hippoajax, uploader, datatable, button 
+ * @requires yahoo, dom, hippoajax, uploader, datatable, button, ajaxindicator
  * @module upload
  * @beta
  */
@@ -22,18 +22,6 @@ if (!YAHOO.hippo.Upload) {
         };
 
         YAHOO.hippo.UploadImpl.prototype = {
-
-            probe : function(config) {
-                var xx = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion();
-
-                var isValid = '';
-                if(!Lang.isUndefined(xx) && xx != null && xx.major >= 9) {
-                    isValid = '&flash=true';
-                } else {
-                    isValid = '&flash=false';
-                }
-                config.callbackFunction(config.callbackUrl + isValid);
-            },
 
             register : function(id, config) {
                 if(!this.entries.containsKey(id)) {
@@ -71,6 +59,10 @@ if (!YAHOO.hippo.Upload) {
             this.id = id;
             this.config = config;
 
+            if(this.config.ajaxIndicatorId != null) {
+                this.indicator = new YAHOO.hippo.AjaxIndicator(this.config.ajaxIndicatorId);
+            }
+
             YAHOO.widget.Uploader.SWFURL = config.flashUrl;
 
             var uiLayer = YAHOO.util.Dom.getRegion('selectLink');
@@ -103,7 +95,12 @@ if (!YAHOO.hippo.Upload) {
         YAHOO.hippo.UploadWidget.prototype = {
 
             upload : function() {
-                this.uploader.uploadAll(this.config.uploadUrl);
+                if(this.fileList != null) {
+                    if(this.indicator != null) {
+                        this.indicator.show();
+                    }
+                    this.uploader.uploadAll(this.config.uploadUrl);
+                }
             },
 
             onFileSelect : function(event) {
@@ -114,6 +111,9 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onUploadStart : function(event) {
+                if(this.indicator != null) {
+                    this.indicator.show();
+                }
                 this.numberOfUploads++;
             },
 
@@ -142,6 +142,10 @@ if (!YAHOO.hippo.Upload) {
 
             onAfterUpload : function() {
                 if(this.numberOfUploads == 0) {
+                    if(this.indicator != null) {
+                        this.indicator.hide();
+                    }
+                    
                     var url = this.config.callbackUrl + "&finished=true";
                     this.config.callbackFunction.call(this, url);
                 }
@@ -256,7 +260,7 @@ if (!YAHOO.hippo.Upload) {
 
    YAHOO.hippo.Upload = new YAHOO.hippo.UploadImpl();
 
-   YAHOO.register("Upload", YAHOO.hippo.Upload, {
+   YAHOO.register("upload", YAHOO.hippo.Upload, {
        version: "2.8.1", build: "19"
    });
 }

@@ -35,6 +35,9 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
     //Max number of simultaneous uploads 
     private int simultaneousUploadLimit = 3;
 
+    //Id of the ajaxIndicatorObject
+    private String ajaxIndicatorId;
+
     public boolean isAllowMultipleFiles() {
         return allowMultipleFiles;
     }
@@ -74,4 +77,15 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
     public void setFlashUrl(String flashUrl) {
         this.flashUrl = flashUrl;
     }
+
+    public String getAjaxIndicatorId() {
+        return ajaxIndicatorId;
+    }
+
+    public void setAjaxIndicatorId(String ajaxIndicatorId) {
+        this.ajaxIndicatorId = ajaxIndicatorId;
+    }
+
+
+    
 }
