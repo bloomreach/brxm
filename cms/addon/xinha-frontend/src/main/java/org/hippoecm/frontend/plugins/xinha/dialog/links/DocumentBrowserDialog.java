@@ -24,7 +24,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.model.DocumentLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.frontend.widgets.ThrottledTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ public class DocumentBrowserDialog<T extends DocumentLink> extends AbstractBrows
     public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
         super(context, config, model);
 
-        add(new TextFieldWidget("title", new StringPropertyModel(model, DocumentLink.TITLE)) {
+        add(new ThrottledTextFieldWidget("title", new StringPropertyModel(model, DocumentLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override

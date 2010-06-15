@@ -18,6 +18,7 @@ package org.hippoecm.frontend.widgets;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.time.Duration;
 
 public class TextFieldWidget extends AjaxUpdatingWidget<String> {
     @SuppressWarnings("unused")
@@ -30,9 +31,13 @@ public class TextFieldWidget extends AjaxUpdatingWidget<String> {
     public TextFieldWidget(String id, IModel<String> model) {
         this(id, model, null);
     }
-    
+
     public TextFieldWidget(String id, IModel<String> model, IModel<String> labelModel) {
-        super(id, model);
+        this(id, model, labelModel, null);
+    }
+
+    public TextFieldWidget(String id, IModel<String> model, IModel<String> labelModel, Duration throttleDelay) {
+        super(id, model, throttleDelay);
         TextField<String> t;
         addFormField(t = new TextField<String>("widget", model) {
             private static final long serialVersionUID = 1L;
