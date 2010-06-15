@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.PathSegment;
@@ -78,7 +80,9 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseHstContentService {
     
-    public static final String SITE_CONTENT_PATH = "org.hippoecm.hst.services.support.site.content.path"; 
+    public static final String SITE_CONTENT_PATH = "org.hippoecm.hst.services.support.site.content.path";
+    
+    private static final String IMPERSONATED_SESSION_ATTRIBUTE = BaseHstContentService.class.getName() + ".impersonatedSession";
 
     private static Logger log = LoggerFactory.getLogger(BaseHstContentService.class);
 
@@ -87,6 +91,10 @@ public class BaseHstContentService {
     
     private List<Class<? extends HippoBean>> annotatedClasses;
     
+    private boolean impersonatingJcrSession;
+    
+    private String impersonatingJcrCredentialAttributeName; 
+    
     public BaseHstContentService() {
     }
     
@@ -94,12 +102,44 @@ public class BaseHstContentService {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
     
+    protected Session getJcrSession(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
+        HstRequestContext requestContext = getHstRequestContext(servletRequest);
+        Session jcrSession = requestContext.getSession();
+        
+        if (impersonatingJcrSession && impersonatingJcrCredentialAttributeName != null) {
+            Session impersonatedJcrSession = (Session) servletRequest.getAttribute(IMPERSONATED_SESSION_ATTRIBUTE);
+            
+            if (impersonatedJcrSession == null) {
+                Credentials impersonatingCreds = (Credentials) servletRequest.getAttribute(impersonatingJcrCredentialAttributeName);
+                
+                if (impersonatingCreds == null) {
+                    javax.servlet.http.HttpSession httpSession = servletRequest.getSession(false);
+                    
+                    if (httpSession != null) {
+                        impersonatingCreds = (Credentials) httpSession.getAttribute(impersonatingJcrCredentialAttributeName);
+                    }
+                }
+                
+                if (impersonatingCreds != null) {
+                    impersonatedJcrSession = jcrSession.impersonate(impersonatingCreds);
+                    servletRequest.setAttribute(IMPERSONATED_SESSION_ATTRIBUTE, impersonatedJcrSession);
+                }
+            }
+            
+            if (impersonatedJcrSession != null) {
+                return impersonatedJcrSession;
+            }
+        }
+        
+        return jcrSession;
+    }
+    
     protected ObjectBeanPersistenceManager getContentPersistenceManager(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
-        return new WorkflowPersistenceManagerImpl(getHstRequestContext(servletRequest).getSession(), getObjectConverter());
+        return new WorkflowPersistenceManagerImpl(getJcrSession(servletRequest), getObjectConverter());
     }
     
     protected WorkflowPersistenceManager createWorkflowPersistenceManager(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
-        return new WorkflowPersistenceManagerImpl(getHstRequestContext(servletRequest).getSession(), getObjectConverter());
+        return new WorkflowPersistenceManagerImpl(getJcrSession(servletRequest), getObjectConverter());
     }
     
     protected ObjectConverter getObjectConverter() {
@@ -277,6 +317,22 @@ public class BaseHstContentService {
         this.annotatedClasses = annotatedClasses;
     }
     
+    public boolean isImpersonatingJcrSession() {
+        return impersonatingJcrSession;
+    }
+    
+    public void setImpersonatingJcrSession(boolean impersonatingJcrSession) {
+        this.impersonatingJcrSession = impersonatingJcrSession;
+    }
+    
+    public String getImpersonatingJcrCredentialAttributeName() {
+        return impersonatingJcrCredentialAttributeName;
+    }
+    
+    public void setImpersonatingJcrCredentialAttributeName(String impersonatingJcrCredentialAttributeName) {
+        this.impersonatingJcrCredentialAttributeName = impersonatingJcrCredentialAttributeName;
+    }
+    
     protected String[] getFallBackJcrNodeTypes(){
         return new String[] { "hippo:facetselect", "hippo:mirror", "hippostd:directory", "hippostd:folder", "hippo:resource", "hippo:request", "hippostd:html", "hippo:document" };
     }
@@ -307,7 +363,7 @@ public class BaseHstContentService {
                     }
                     return null;
                 }
-                HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, requestContext.getSession(), resolvedSiteMapItem);
+                HstLink hstLink = requestContext.getHstLinkCreator().create(canonicalUuid, getJcrSession(servletRequest), resolvedSiteMapItem);
                 String previewServletPath = HstServices.getComponentManager().getContainerConfiguration().getString("preview.servlet.path");
                 String liveServletPath = HstServices.getComponentManager().getContainerConfiguration().getString("live.servlet.path");
                 HstContainerURL navURL = requestContext.getContainerURLProvider().parseURL(servletRequest, sevletResponse, requestContext, hstLink.getPath());
