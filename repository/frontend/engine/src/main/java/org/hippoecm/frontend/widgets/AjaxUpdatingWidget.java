@@ -18,9 +18,11 @@ package org.hippoecm.frontend.widgets;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.time.Duration;
 
 public abstract class AjaxUpdatingWidget<T> extends Panel {
     private static final long serialVersionUID = 1L;
@@ -28,9 +30,15 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
     private final static String SVN_ID = "$Id$";
 
     private FormComponent<? extends T> focus;
+    private Duration throttleDelay;
 
     public AjaxUpdatingWidget(String id, IModel<T> model) {
         super(id, model);
+    }
+
+    public AjaxUpdatingWidget(String id, IModel<T> model, Duration throttleDelay) {
+        super(id, model);
+        this.throttleDelay = throttleDelay;
     }
 
     @SuppressWarnings("unchecked")
@@ -48,20 +56,36 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
     protected void addFormField(FormComponent<? extends T> component) {
         add(focus = component);
         component.setOutputMarkupId(true);
-        component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-            private static final long serialVersionUID = 1L;
+        if(throttleDelay == null) {
+            component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                AjaxUpdatingWidget.this.onUpdate(target);
-            }
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    AjaxUpdatingWidget.this.onUpdate(target);
+                }
 
-            @Override
-            protected String getChannelName() {
-                return "auc|s";
-            }
-        });
+                @Override
+                protected String getChannelName() {
+                    return "auc|s";
+                }
+            });
+        } else {
+            component.add(new OnChangeAjaxBehavior() {
 
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    AjaxUpdatingWidget.this.onUpdate(target);
+                }
+
+                @Override
+                protected String getChannelName() {
+                    return "auc|s";
+                }
+
+            }.setThrottleDelay(throttleDelay));
+
+        }
     }
 
     public Component getFocusComponent() {

@@ -42,10 +42,7 @@ public abstract class DocumentLink extends XinhaLink {
 
     @Override
     public boolean hasChanged() {
-        if (selectedModel.equals(initialModel)) {
-            return super.hasChanged();
-        }
-        return true;
+        return !selectedModel.equals(initialModel) || super.hasChanged();
     }
 
     @Override
