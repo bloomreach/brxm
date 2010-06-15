@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>demosuite</artifactId>
-    <version>2.10.00-SNAPSHOT</version>
+    <version>2.10.00</version>
   </parent>
 
   <name>Hippo Site Toolkit Demo Suite SITE Application</name>
@@ -454,10 +454,8 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
-                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties"
-                                   match="^#\s*(\w+\.repository\.address\s*=\s*vm://)" replace="\1" byline="true" />
-                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties"
-                                   match="^(\s*\w+\.repository\.address\s*=\s*rmi://)" replace="#\1" byline="true" />
+                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties" match="^#\s*(\w+\.repository\.address\s*=\s*vm://)" replace="\1" byline="true" />
+                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties" match="^(\s*\w+\.repository\.address\s*=\s*rmi://)" replace="#\1" byline="true" />
                   </tasks>
                 </configuration>
                 <goals>
