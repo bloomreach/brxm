@@ -289,24 +289,9 @@ public class HstFilter implements Filter {
 					}
 					requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
     			}
-				if (processResolvedSiteMapItem(req, res, requestContext, processSiteMapItemHandlers, logger)) {					
+    			
+				processResolvedSiteMapItem(req, res, requestContext, processSiteMapItemHandlers, logger);				
 					
-				    // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem: 
-					while(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
-    				    String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
-						req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
-
-						resolvedSiteMapItem = mount.matchSiteMapItem(forwardPathInfo);
-						if(resolvedSiteMapItem == null) {
-							// should not be possible as when it would be null, an exception should have been thrown
-							throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
-						}
-						requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-						requestContext.setBaseURL(factory.getContainerURLProvider().createURL(hstContainerURL, forwardPathInfo));
-						
-						processResolvedSiteMapItem(req, res, requestContext, true, logger);
-					}
-				}
     		}
     		else {
 				if(mount.getNamedPipeline() == null) {
@@ -340,7 +325,7 @@ public class HstFilter implements Filter {
     	}
     }
     
-    protected boolean processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
+    protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
     	if (processHandlers) {
@@ -348,7 +333,7 @@ public class HstFilter implements Filter {
     		resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, req, res);
     		if(resolvedSiteMapItem == null) {
     			// one of the handlers has finished the request already
-    			return false;
+    			return;
     		}
     		// sync possibly changed ResolvedSiteMapItem
     		requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
@@ -369,11 +354,28 @@ public class HstFilter implements Filter {
 				}
 			}
 			// we're done:
-			return false;
+			return;
 		} 
 		
 		HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
-		return true;
+		
+		 // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem: 
+         if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+            String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+            req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+
+            resolvedSiteMapItem = resolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(forwardPathInfo);
+            if(resolvedSiteMapItem == null) {
+                // should not be possible as when it would be null, an exception should have been thrown
+                throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
+            }
+            requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+            requestContext.setBaseURL(virtualHostsManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
+            
+            processResolvedSiteMapItem(req, res, requestContext, true, logger);
+        }
+		
+		return;
     }
 
     /**
