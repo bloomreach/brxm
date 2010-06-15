@@ -20,6 +20,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 /**
  * Factory component to create HstRequestContext object.
  * 
+ * This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from client code
+ * 
  * @version $Id$
  */
 public interface HstRequestContextComponent

@@ -29,6 +29,8 @@ import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 /**
+ * This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from client code
+ * 
  * @version $Id$
  *
  */
