@@ -50,6 +50,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextArea;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.json.JsonParser;
@@ -129,7 +130,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     protected abstract JcrPropertyValueModel getBaseModel();
 
     protected IModel<String> newCompareModel() {
-        return new DiffModel(new StripScriptModel(getBaseModel()), new StripScriptModel(getValueModel()));
+        return new HtmlDiffModel(new StripScriptModel(getBaseModel()), new StripScriptModel(getValueModel()));
     }
 
     protected IModel<String> newViewModel() {
@@ -168,7 +169,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
         });
         if (IEditor.Mode.COMPARE == mode) {
-            fragment.add(CSSPackageResource.getHeaderContribution(AbstractXinhaPlugin.class, "diff.css"));
+            fragment.add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css"));
         }
         return fragment;
     }

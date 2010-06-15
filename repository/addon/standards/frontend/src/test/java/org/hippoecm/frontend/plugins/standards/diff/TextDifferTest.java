@@ -13,10 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.compare;
+package org.hippoecm.frontend.plugins.standards.diff;
 
 import static org.junit.Assert.assertEquals;
 
+import org.hippoecm.frontend.plugins.standards.diff.TextDiffer;
 import org.junit.Test;
 
 public class TextDifferTest {

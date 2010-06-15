@@ -44,6 +44,11 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
+      <artifactId>htmldiff</artifactId>
+      <version>1.01.00</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>2.15.01-SNAPSHOT</version>
       <scope>provided</scope>

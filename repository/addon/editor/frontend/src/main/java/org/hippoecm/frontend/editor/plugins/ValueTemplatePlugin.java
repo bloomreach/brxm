@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.editor.compare.TextDiffer;
+import org.hippoecm.frontend.plugins.standards.diff.TextDiffModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
@@ -51,19 +49,10 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else if (IEditor.Mode.COMPARE == mode) {
-            final TextDiffer differ = new TextDiffer();
             final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
                     IModelReference.class).getModel();
-            IModel<String> compareModel = new LoadableDetachableModel<String>() {
-                private static final long serialVersionUID = 1L;
 
-                @Override
-                protected String load() {
-                    return differ.diffText(baseModel.getObject(), stringModel.getObject());
-                }
-
-            };
-            add(new Label("value", compareModel).setEscapeModelStrings(false));
+            add(new Label("value", new TextDiffModel(baseModel, stringModel)).setEscapeModelStrings(false));
         } else {
             add(new Label("value", stringModel));
         }

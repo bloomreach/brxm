@@ -17,9 +17,10 @@ package org.hippoecm.frontend.editor.plugins;
 
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.editor.compare.TextDiffer;
+import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -52,21 +53,70 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else if (IEditor.Mode.COMPARE == mode) {
-            final TextDiffer differ = new TextDiffer();
+            add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css"));
+
             final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
                     IModelReference.class).getModel();
-            IModel<String> compareModel = new LoadableDetachableModel<String>() {
-                private static final long serialVersionUID = 1L;
 
-                @Override
-                protected String load() {
-                    return differ.diffText(baseModel.getObject(), valueModel.getObject());
-                }
-
-            };
+            IModel<String> compareModel = new HtmlDiffModel(new ValidHtmlModel(new NewLinesToBrModel(baseModel)),
+                    new ValidHtmlModel(new NewLinesToBrModel(valueModel)));
             add(new Label("value", compareModel).setEscapeModelStrings(false));
         } else {
-            add(new Label("value", valueModel));
+            add(new Label("value", new NewLinesToBrModel(valueModel)).setEscapeModelStrings(false));
+        }
+    }
+
+    class ValidHtmlModel extends AbstractReadOnlyModel<String> {
+
+        IModel<String> wrapped;
+
+        ValidHtmlModel(IModel<String> wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public String getObject() {
+            if (wrapped != null) {
+                String value = wrapped.getObject();
+                if (value != null) {
+                    if(!value.trim().startsWith("<html>")) {
+                        return "<html><body>" + value + "</body></html>";
+                    }
+                }
+                return value;
+            }
+            return null;
+        }
+
+        @Override
+        public void detach() {
+            if (wrapped != null) {
+                wrapped.detach();
+            }
+        }
+    }
+
+    class NewLinesToBrModel extends AbstractReadOnlyModel<String> {
+
+        IModel<String> wrapped;
+
+        NewLinesToBrModel(IModel<String> wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public String getObject() {
+            if(wrapped != null) {
+                return Strings.replaceAll(wrapped.getObject(), "\n", "<br/>").toString();
+            }
+            return null;
+        }
+
+        @Override
+        public void detach() {
+            if(wrapped != null) {
+                wrapped.detach();
+            }
         }
     }
 }
