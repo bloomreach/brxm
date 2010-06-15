@@ -23,6 +23,7 @@ import org.apache.wicket.util.upload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,12 +40,16 @@ public class MagicMimeTypeFileItem implements FileItem {
     private FileItem delegate;
     private String contentType;
     private static final String MAGIC_MIME_DETECTOR = "eu.medsea.mimeutil.detector.MagicMimeMimeDetector";
+    private static final String EXTENSIONS_MIME_DETECTOR = "eu.medsea.mimeutil.detector.ExtensionMimeDetector";
 
     public MagicMimeTypeFileItem(FileItem delegate) {
         this.delegate = delegate;
 
         if(MimeUtil.getMimeDetector(MAGIC_MIME_DETECTOR) == null) {
             MimeUtil.registerMimeDetector(MAGIC_MIME_DETECTOR);
+        }
+        if(MimeUtil.getMimeDetector(EXTENSIONS_MIME_DETECTOR) == null) {
+            MimeUtil.registerMimeDetector(EXTENSIONS_MIME_DETECTOR);
         }
     }
 
@@ -56,15 +61,24 @@ public class MagicMimeTypeFileItem implements FileItem {
             InputStream inputStream = null;
             try {
                 inputStream = fileItem.getInputStream();
-                mimeTypes = MimeUtil.getMimeTypes(inputStream);
+                mimeTypes = MimeUtil.getMimeTypes(new BufferedInputStream(inputStream));
             } catch (IOException e) {
                 log.warn("IOException prevented retrieval of mimetype; using default", e);
             } finally {
                 try {
-                    inputStream.close();
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
                 } catch (IOException e) {
                     log.warn("Could not close inputstream after retrieving mimetype", e);
                 }
+            }
+        }
+        if (mimeTypes != null && mimeTypes.size() == 1) {
+            MimeType mimeType = (MimeType) mimeTypes.iterator().next();
+            if (mimeType.getMediaType().equals("application") && mimeType.getSubType().equals("msword")) {
+                //Don't trust this and check again on fileName extension...
+                mimeTypes = MimeUtil.getMimeTypes(fileItem.getName());
             }
         }
         if(mimeTypes != null && mimeTypes.size() > 0) {

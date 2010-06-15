@@ -1072,9 +1072,19 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
 .icon-48 a{background-repeat: no-repeat; background-position: 8px 8px;}
 .icon-128 a{background-repeat: no-repeat; background-position: 8px 8px;}
 
-.mimetype-application-vnd-ms-excel-16{background-image:url("images/icons/mimetype-excel-16.png")}
+.mimetype-application-vnd-ms-excel-16,
+.mimetype-application-excel-16,
+.mimetype-application-x-excel-16,
+.mimetype-application-vndms-excel-16,
+.mimetype-application-x-msexcel-16{background-image:url("images/icons/mimetype-excel-16.png")}
 .mimetype-application-pdf-16{background-image:url("images/icons/mimetype-pdf-16.png")}
-.mimetype-application-vnd-ms-powerpoint-16{background-image:url("images/icons/mimetype-powerpoint-16.png")}
+
+.mimetype-application-vnd-ms-powerpoint-16,
+.mimetype-application-vndms-powerpoint-16,
+.mimetype-application-mspowerpoint-16,
+.mimetype-application-powerpoint-16,
+.mimetype-application-x-mspowerpoint-16{background-image:url("images/icons/mimetype-powerpoint-16.png")}
+
 .mimetype-application-msword-16{background-image:url("images/icons/mimetype-word-16.png")}
 .mimetype-application-zip-16{background-image:url("images/icons/mimetype-zip-16.png")}
 .mimetype-application-rtf-16{background-image:url("images/icons/mimetype-rtf-16.png")}
