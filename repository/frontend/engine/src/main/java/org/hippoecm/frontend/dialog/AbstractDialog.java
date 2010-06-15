@@ -332,10 +332,28 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         public void setEnabled(boolean isset) {
             enabled = isset;
+            if(button != null) {
+                button.setEnabled(isset);
+                if (ajax) {
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(button);
+                    }
+                }
+            }
         }
 
         public void setVisible(boolean isset) {
             visible = isset;
+            if (button != null) {
+                button.setVisible(isset);
+                if(ajax) {
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(button);
+                    }
+                }
+            }
         }
 
         public void setAjax(boolean c) {
