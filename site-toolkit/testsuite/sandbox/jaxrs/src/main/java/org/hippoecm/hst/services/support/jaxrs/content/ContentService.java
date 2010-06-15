@@ -107,11 +107,11 @@ public class ContentService extends BaseHstContentService {
         try {
             String scopeItemPath = getContentItemPath(servletRequest, pathSegments);
             
-            if (!getHstRequestContext(servletRequest).getSession().itemExists(scopeItemPath)) {
+            if (!getJcrSession(servletRequest).itemExists(scopeItemPath)) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
             
-            Item item = getHstRequestContext(servletRequest).getSession().getItem(scopeItemPath);
+            Item item = getJcrSession(servletRequest).getItem(scopeItemPath);
             
             if (!item.isNode()) {
                 throw new IllegalArgumentException("Invalid scope node path: " + scopeItemPath);
@@ -239,11 +239,11 @@ public class ContentService extends BaseHstContentService {
         ItemContent itemContent = new ItemContent();
         
         try {
-            if (!getHstRequestContext(servletRequest).getSession().itemExists(itemPath)) {
+            if (!getJcrSession(servletRequest).itemExists(itemPath)) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
             
-            Item item = getHstRequestContext(servletRequest).getSession().getItem(itemPath);
+            Item item = getJcrSession(servletRequest).getItem(itemPath);
             
             if (item.isNode()) {
                 ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
@@ -478,7 +478,7 @@ public class ContentService extends BaseHstContentService {
             String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
             String encoding = servletRequest.getCharacterEncoding();
             
-            Query query = getHstRequestContext(servletRequest).getSession().getWorkspace().getQueryManager().createQuery(fullJcrQuery, queryLanguage);
+            Query query = getJcrSession(servletRequest).getWorkspace().getQueryManager().createQuery(fullJcrQuery, queryLanguage);
             
             if (query instanceof HippoQuery) {
                 ((HippoQuery) query).setLimit(end);
