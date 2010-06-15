@@ -405,8 +405,8 @@ public class HstFilter implements Filter {
                    return null;
                }
            } catch (HstSiteMapItemHandlerException e){
-               logger.warn("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'", e);
-               throw new MatchException("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'. Cannot process request");
+               logger.error("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'");
+               throw e;
            }
         }
         return newResolvedSiteMapItem;
