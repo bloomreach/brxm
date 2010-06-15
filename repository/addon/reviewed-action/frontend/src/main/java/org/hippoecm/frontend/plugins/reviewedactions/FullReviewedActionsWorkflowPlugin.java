@@ -38,6 +38,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -647,7 +648,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                         target.addComponent(uriComponent);
                     }
                 }
-            });
+            }.setThrottleDelay(Duration.milliseconds(500)));
             nameComponent.setOutputMarkupId(true);
             setFocus(nameComponent);
             add(nameComponent);
