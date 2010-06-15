@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha;
+package org.hippoecm.frontend.plugins.standards.diff;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.htmldiff.DiffHelper;
 import org.outerj.daisy.diff.DaisyDiff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,19 +36,19 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class DiffModel extends LoadableDetachableModel<String> {
+public class HtmlDiffModel extends LoadableDetachableModel<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(DiffModel.class);
+    static final Logger log = LoggerFactory.getLogger(HtmlDiffModel.class);
 
     IModel<String> original;
     IModel<String> current;
 
-    public DiffModel(IModel<String> orig, IModel<String> current) {
-        this.original = orig;
+    public HtmlDiffModel(IModel<String> original, IModel<String> current) {
+        this.original = original;
         this.current = current;
     }
 
@@ -56,25 +57,10 @@ public class DiffModel extends LoadableDetachableModel<String> {
         if (original == null || current == null) {
             return null;
         }
-        InputSource oldSource = new InputSource();
-        oldSource.setCharacterStream(new StringReader(original.getObject()));
 
-        InputSource newSource = new InputSource();
-        newSource.setCharacterStream(new StringReader(current.getObject()));
-
-        SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        TransformerHandler handler;
         try {
-            handler = tf.newTransformerHandler();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            StreamResult dr = new StreamResult(baos);
-            handler.setResult(dr);
-            handler.startDocument();
-            handler.startElement(null, "html", "html", new AttributesImpl());
-            DaisyDiff.diffHTML(oldSource, newSource, handler, null, Session.get().getLocale());
-            handler.endElement(null, "html", "html");
-            handler.endDocument();
-
+            DiffHelper.diffHtml(original.getObject(), current.getObject(), new StreamResult(baos), Session.get().getLocale());
             return baos.toString();
         } catch (TransformerConfigurationException e) {
             log.error(e.getMessage(), e);
@@ -88,8 +74,12 @@ public class DiffModel extends LoadableDetachableModel<String> {
 
     @Override
     public void detach() {
-        original.detach();
-        current.detach();
+        if(original != null) {
+            original.detach();
+        }
+        if(current != null) {
+            current.detach();
+        }
         super.detach();
     }
 }

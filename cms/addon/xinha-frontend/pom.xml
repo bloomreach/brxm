@@ -71,7 +71,6 @@
       <version>2.15.01-SNAPSHOT</version>
     </dependency>
 
-
     <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
@@ -98,37 +97,6 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
       <version>2.15.01-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.core</groupId>
-      <artifactId>runtime</artifactId>
-      <version>3.3.100-v20070530</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse</groupId>
-          <artifactId>osgi</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.core</groupId>
-          <artifactId>jobs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.equinox</groupId>
-          <artifactId>registry</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.equinox</groupId>
-          <artifactId>preferences</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.core</groupId>
-          <artifactId>contenttype</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.equinox</groupId>
-          <artifactId>app</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- test -->

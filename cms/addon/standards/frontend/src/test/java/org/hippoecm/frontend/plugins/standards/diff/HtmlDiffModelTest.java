@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha;
+package org.hippoecm.frontend.plugins.standards.diff;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +34,7 @@ import org.outerj.daisy.diff.helper.SaxBuffer.StartElement;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class DiffModelTest {
+public class HtmlDiffModelTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -72,7 +72,7 @@ public class DiffModelTest {
     public void removedImageIsShown() throws Exception {
         IModel<String> oldModel = new Model<String>("<html><body><img src=\"a\">abc</img></body></html>");
         IModel<String> newModel = new Model<String>("<html><body></body></html>");
-        DiffModel dm = new DiffModel(oldModel, newModel);
+        HtmlDiffModel dm = new HtmlDiffModel(oldModel, newModel);
         String content = dm.getObject();
         assertEquals(1, countImages(content));
     }
@@ -81,7 +81,7 @@ public class DiffModelTest {
     public void addedImageIsShownOnce() throws Exception {
         IModel<String> oldModel = new Model<String>("<html><body></body></html>");
         IModel<String> newModel = new Model<String>("<html><body><img src=\"a\" /></body></html>");
-        DiffModel dm = new DiffModel(oldModel, newModel);
+        HtmlDiffModel dm = new HtmlDiffModel(oldModel, newModel);
 
         String content = dm.getObject();
         assertEquals(1, countImages(content));
@@ -91,9 +91,10 @@ public class DiffModelTest {
     public void constantImageIsShownOnce() throws Exception {
         IModel<String> oldModel = new Model<String>("<html><body><img src=\"a\" /></body></html>");
         IModel<String> newModel = new Model<String>("<html><body><img src=\"a\" /></body></html>");
-        DiffModel dm = new DiffModel(oldModel, newModel);
+        HtmlDiffModel dm = new HtmlDiffModel(oldModel, newModel);
 
         String content = dm.getObject();
         assertEquals(1, countImages(content));
     }
+    
 }

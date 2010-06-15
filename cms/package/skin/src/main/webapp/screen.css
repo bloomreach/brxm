@@ -759,7 +759,7 @@ font-weight: bold;
 .hippo-preview-document .hippo-editor-field h3.hippo-editor-field-title span{font-size: 11px;}
 .hippo-preview-document div.odd  .hippo-editor-field {border-bottom: 1px dotted #afafaf}
 .hippo-preview-document div.even .hippo-editor-field {border-bottom: 1px dotted #afafaf}
-.hippo-preview-document .hippo-editor-field-textarea{min-height: 150px}
+.hippo-preview-document .hippo-editor-field-textarea, .hippo-preview-document .hippo-editor-field-html-preview{min-height: 75px}
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield{background-image: none}
 
 .hippo-preview-document .hippo-editor-field {overflow: auto;}

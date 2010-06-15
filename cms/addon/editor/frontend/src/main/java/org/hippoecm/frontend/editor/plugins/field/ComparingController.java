@@ -28,7 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
-import org.hippoecm.frontend.editor.compare.LCS;
+import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
