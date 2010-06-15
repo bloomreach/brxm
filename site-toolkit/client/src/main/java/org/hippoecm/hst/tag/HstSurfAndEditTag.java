@@ -104,7 +104,7 @@ public class HstSurfAndEditTag extends TagSupport {
 
         HstRequestContext hstRequestContext = hstRequest.getRequestContext();
           
-        if(hstRequestContext.isPreview()) {
+        if(!hstRequestContext.isPreview()) {
             log.debug("Skipping surf & edit link because not in preview.");
             return EVAL_PAGE;
         }
