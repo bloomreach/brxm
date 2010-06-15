@@ -839,7 +839,7 @@
         <version>2.0-beta-8</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmCommentPrefix>HREPTWO-1130:</scmCommentPrefix>
+          <scmCommentPrefix>HSTTWO-1130:</scmCommentPrefix>
           <tag>Release-HSTTWO-v2_10_00</tag>
           <preparationGoals>clean</preparationGoals>
         </configuration>
