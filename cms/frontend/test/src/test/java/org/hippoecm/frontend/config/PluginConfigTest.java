@@ -252,15 +252,22 @@ public class PluginConfigTest extends PluginTest {
 
         IClusterConfig config = getClusterConfig();
         List<IPluginConfig> plugins = config.getPlugins();
-        plugins.add(new JavaPluginConfig("abc"));
+        {
+            ArrayList<IPluginConfig> newList = new ArrayList<IPluginConfig>(plugins);
+            newList.add(new JavaPluginConfig("abc"));
+            config.setPlugins(newList);
+        }
         
         assertEquals(2, plugins.size());
 
         Node node = root.getNode("test/cluster/abc");
         assertEquals("frontend:plugin", node.getPrimaryNodeType().getName());
 
-        IPluginConfig first = plugins.set(0, plugins.remove(1));
-        plugins.add(1, first);
+        ArrayList<IPluginConfig> newList = new ArrayList<IPluginConfig>(plugins);
+        IPluginConfig first = newList.set(0, newList.remove(1));
+        newList.add(1, first);
+        config.setPlugins(newList);
+
         assertEquals(2, plugins.size());
 
         assertEquals("abc", plugins.get(0).getName());
