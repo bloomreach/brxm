@@ -568,7 +568,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                         target.addComponent(uriComponent);
                     }
                 }
-            });
+            }.setThrottleDelay(Duration.milliseconds(500)));
+
             nameComponent.setOutputMarkupId(true);
             setFocus(nameComponent);
             add(nameComponent);
