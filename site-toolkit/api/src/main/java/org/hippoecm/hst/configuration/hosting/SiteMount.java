@@ -18,7 +18,9 @@ package org.hippoecm.hst.configuration.hosting;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
@@ -114,10 +116,8 @@ public interface SiteMount {
     String getName();
     
     /**
-     * When this returns <code>true</code>, this SiteMount is referring to a {@link HstSite}. When it is <code>false</code>, it is referring
-     * to a content location when {@link #getMountPoint()} is not <code>null</code> or empty. When having the value <code>false</code>, you most
-     * like invoke some specific pipeline through {@link #getNamedPipeline()}
-     * @return <code>true</code> when this SiteMount is referring to a {@link HstSite}
+     * When this SiteMount is not using a {@link HstSite} for the request processing, this method returns <code>true</code>. When it returns <code>true</code>, then 
+     * {@link #getNamedPipeline()} should also be configured, and a pipeline should be invoked that is independent of the {@link ResolvedSiteMapItem} as their won't be one.
      */
     boolean isSiteMount();
     
