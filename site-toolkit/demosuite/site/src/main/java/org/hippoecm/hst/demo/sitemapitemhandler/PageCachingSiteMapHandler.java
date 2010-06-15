@@ -64,11 +64,11 @@ public class PageCachingSiteMapHandler extends AbstractHstSiteMapHandler {
             cache.put(key,dummy);
         }
         
-        // we know the request started with /cached if we get here
+        // we know the request started with 'cached' if we get here
         String pathInfo = resolvedSiteMapItem.getPathInfo();
         
-        if(pathInfo.startsWith("/cached/")) {
-            pathInfo = pathInfo.substring("/cached".length());
+        if(pathInfo.startsWith("cached/")) {
+            pathInfo = pathInfo.substring("cached/".length());
             ResolvedSiteMapItem redirectedItem = matchSiteMapItem(request, new HstResponseWrapper(response), resolvedSiteMapItem, pathInfo);
             return redirectedItem;
         } else {
