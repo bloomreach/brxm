@@ -15,6 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
@@ -32,6 +41,7 @@ import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -47,19 +57,9 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public abstract class AbstractXinhaPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -114,7 +114,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         load();
         super.onStart();
     }
-    
+
     protected IEditor.Mode getMode() {
         return mode;
     }
@@ -249,7 +249,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 @Override
                 protected Map<String, Object> getVariables() {
                     final Page page = getPluginContext().getService(Home.class.getName(), Home.class);
-                    String url = HeaderContributorHelper.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
+                    String url = WebApplication.get().getRequestCycleProcessor().getRequestCodingStrategy()
+                            .rewriteStaticRelativeUrl("xinha/xinha/");
                     String lang = page.getLocale().getLanguage();
                     String skin = configuration.getSkin();
 

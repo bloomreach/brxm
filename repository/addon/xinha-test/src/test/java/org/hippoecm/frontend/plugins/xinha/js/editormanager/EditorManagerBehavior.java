@@ -24,6 +24,7 @@ import net.sf.json.JSONObject;
 import org.apache.wicket.Page;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 import org.hippoecm.frontend.plugins.xinha.XinhaNamespace;
@@ -31,7 +32,6 @@ import org.hippoecm.frontend.plugins.xinha.js.editormanager.XinhaExtension.ListE
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 
 public class EditorManagerBehavior extends AbstractYuiBehavior {
     @SuppressWarnings("unused")
@@ -55,7 +55,8 @@ public class EditorManagerBehavior extends AbstractYuiBehavior {
             @Override
             protected Map<String, Object> getVariables() {
                 final Page page = getComponent().getPage();
-                String url = HeaderContributorHelper.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
+                String url = WebApplication.get().getRequestCycleProcessor().getRequestCodingStrategy()
+                        .rewriteStaticRelativeUrl("xinha/xinha/");
                 String lang = page.getLocale().getLanguage();
                 String skin = "hippo-lite";
 

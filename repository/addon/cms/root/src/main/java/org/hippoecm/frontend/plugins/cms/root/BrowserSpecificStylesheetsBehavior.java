@@ -22,7 +22,6 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.request.ClientInfo;
-import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +43,7 @@ public class BrowserSpecificStylesheetsBehavior extends HeaderContributor {
                     for (StylesheetConfiguration ssc : configurations) {
                         if (loadStylesheets(userBrowser, ssc)) {
                             for (String location : ssc.styleSheets) {
-                                //TODO: add rel/abs path option
-                                response.renderCSSReference(HeaderContributorHelper.returnFixedRelativePath(location));
+                                HeaderContributor.forCss(location).renderHead(response);
                             }
                         }
                     }

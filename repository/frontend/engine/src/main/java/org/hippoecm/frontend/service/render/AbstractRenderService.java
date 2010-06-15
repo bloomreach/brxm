@@ -185,7 +185,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         String[] skins = config.getStringArray(SKIN_ID);
         if (skins != null) {
             for (String skin : skins) {
-                HeaderContributor cssContributor = HeaderContributorHelper.forCss(skin);
+                HeaderContributor cssContributor = HeaderContributor.forCss(skin);
                 add(cssContributor);
                 context.registerService(cssContributor, IDialogService.class.getName());
             }
