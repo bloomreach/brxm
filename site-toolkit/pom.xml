@@ -841,6 +841,7 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <scmCommentPrefix>HREPTWO-1130:</scmCommentPrefix>
           <tag>Release-HSTTWO-v2_10_00</tag>
+          <preparationGoals>clean</preparationGoals>
         </configuration>
       </plugin>
       <plugin>
