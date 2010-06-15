@@ -67,6 +67,9 @@ public class MixinPlugin extends RenderPlugin {
         controllers = new HashMap<String, IClusterControl>();
 
         mode = config.getString(ITemplateEngine.MODE, "view");
+        if ("compare".equals(mode)) {
+            mode = "view";
+        }
 
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
 
