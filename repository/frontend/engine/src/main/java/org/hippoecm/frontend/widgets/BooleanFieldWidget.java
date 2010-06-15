@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.time.Duration;
 
 public class BooleanFieldWidget extends AjaxUpdatingWidget<Boolean> {
     @SuppressWarnings("unused")
@@ -26,6 +29,12 @@ public class BooleanFieldWidget extends AjaxUpdatingWidget<Boolean> {
 
     public BooleanFieldWidget(String id, IModel<Boolean> model) {
         super(id, model);
-        addFormField(new CheckBox("widget", model));
+        addFormField(new AjaxCheckBox("widget", model) {
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                BooleanFieldWidget.this.onUpdate(target);
+            }
+        });
     }
 }
