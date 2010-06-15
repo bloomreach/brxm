@@ -40,7 +40,7 @@ public class PathUtils {
     /**
      * remove trailing and leading slashes
      * @param path
-     * @return normalized path 
+     * @return normalized path which is the original path with all leading and trailing slashes removed
      */
     
     public static String normalizePath(String path) {
