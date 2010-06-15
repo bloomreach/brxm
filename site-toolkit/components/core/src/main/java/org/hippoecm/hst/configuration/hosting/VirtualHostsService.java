@@ -257,7 +257,12 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
                this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
            } catch (ServiceException e) {
                log.warn("Unable to initialize VirtualHost for '{}'. Skipping. {}", virtualHostNode.getPath(), e.getMessage());
-           }
+           } catch (IllegalArgumentException e) {
+               log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
+                       + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
+                       + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
+              throw e;
+          }
        }
        
     }

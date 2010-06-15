@@ -31,10 +31,7 @@ public class DuplicateKeyNotAllowedHashMap<K, V> extends HashMap<K, V> {
     public V put(K key, V value) {
         V prev = get(key);
         if (prev != null) {
-            throw new IllegalArgumentException(
-                    "VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
-                            + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
-                            + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
+            throw new IllegalArgumentException("DuplicateKeyNotAllowedHashMap is not allowed to have duplicate keys: The key '"+key+"' is already present");
         }
         return super.put(key, value);
     }
