@@ -290,9 +290,10 @@ public class HstFilter implements Filter {
 					requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
     			}
 				if (processResolvedSiteMapItem(req, res, requestContext, processSiteMapItemHandlers, logger)) {					
-					// check whether there was a forward: 
-					String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
-					if (forwardPathInfo != null) {
+					
+				    // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem: 
+					while(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+    				    String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
 						req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
 
 						resolvedSiteMapItem = mount.matchSiteMapItem(forwardPathInfo);
@@ -302,11 +303,8 @@ public class HstFilter implements Filter {
 						}
 						requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
 						requestContext.setBaseURL(factory.getContainerURLProvider().createURL(hstContainerURL, forwardPathInfo));
-						processResolvedSiteMapItem(req, res, requestContext, true, logger);
 						
-						if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
-							throw new Exception("Not allowed to have multiple forwards for one request. Request was already forwarded");
-						}
+						processResolvedSiteMapItem(req, res, requestContext, true, logger);
 					}
 				}
     		}
