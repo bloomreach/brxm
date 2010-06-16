@@ -22,8 +22,8 @@ ul.gallery-list li a {
 }
 
 ul.gallery-list {
-   display: block;
-   overflow: auto;
+  display: block;
+  overflow: auto;
 }
 
 ul.gallery-list li {
