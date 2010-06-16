@@ -25,12 +25,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SizeRenderer extends AbstractNodeRenderer {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    static final Logger log = LoggerFactory.getLogger(SizeRenderer.class);
 
     ByteSizeFormatter formatter = new ByteSizeFormatter(1);
 
@@ -44,10 +48,10 @@ public class SizeRenderer extends AbstractNodeRenderer {
                     long length = ((Node) primItem).getProperty("jcr:data").getLength();
                     return new Label(id, formatter.format(length));
                 } else {
-                    Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
+                    log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                 }
             } catch (ItemNotFoundException e) {
-                Gallery.log.warn("ImageSet must have a primary item. " + node.getPath()
+                log.warn("ImageSet must have a primary item. " + node.getPath()
                         + " probably not of correct image set type");
             }
         }

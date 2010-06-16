@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,14 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery;
+package org.hippoecm.frontend.plugins.gallery.model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * Exception thrown when the image processor processes the image.
+ */
+public class GalleryException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-public interface Gallery {
-    final static String SVN_ID = "$Id$";
+    public GalleryException(String message) {
+        super(message);
+    }
 
-    public static final Logger log = LoggerFactory.getLogger(Gallery.class);
-    public static final int DEFAULT_THUMBNAIL_SIZE = 60;
+    public GalleryException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

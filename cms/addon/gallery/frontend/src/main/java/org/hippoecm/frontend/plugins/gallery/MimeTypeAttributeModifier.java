@@ -31,12 +31,16 @@ import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(MimeTypeAttributeModifier.class);
+    
     static class MimeTypeAttributeModel extends LoadableDetachableModel implements IObservable {
         private static final long serialVersionUID = 1L;
 
@@ -69,7 +73,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                             if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                                 observable.setTarget(new JcrNodeModel((Node) primItem));
                                 if (!((Node) primItem).hasProperty("jcr:mimeType")) {
-                                    Gallery.log.warn("Unset mime type of document");
+                                    log.warn("Unset mime type of document");
                                     return null;
                                 }
                                 String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
@@ -85,20 +89,20 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                                 }
                                 return "mimetype-" + cssClass + "-16";
                             } else {
-                                Gallery.log.warn("primary item of image set must be of type "
+                                log.warn("primary item of image set must be of type "
                                         + HippoNodeType.NT_RESOURCE);
                             }
                         } catch (ItemNotFoundException e) {
-                            Gallery.log.warn("ImageSet must have a primary item. " + node.getPath()
+                            log.warn("ImageSet must have a primary item. " + node.getPath()
                                     + " probably not of correct image set type");
                         }
                     } else if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")) {
                         return "folder-16";
                     } else {
-                        Gallery.log.warn("Node " + node.getPath() + " is not a handle or a folder");
+                        log.warn("Node " + node.getPath() + " is not a handle or a folder");
                     }
                 } catch (RepositoryException ex) {
-                    Gallery.log.error("Unable to determine mime type of document", ex);
+                    log.error("Unable to determine mime type of document", ex);
                 }
             }
             return null;

@@ -15,6 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,7 +45,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -44,24 +53,19 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.hippoecm.repository.api.HippoNodeType;
-
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeaderContributor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    final static Logger log = LoggerFactory.getLogger(ImageGalleryPlugin.class);
 
     private static final long serialVersionUID = 1L;
     private static final String IMAGE_GALLERY_CSS = "ImageGalleryPlugin.css";
@@ -102,7 +106,6 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         toggleLink.add(toggleImage);
     }
 
-
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
@@ -128,7 +131,6 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         column.setAttributeModifier(new GalleryFolderAttributeModifier());
         columns.add(column);
 
-
         column = new ListColumn<Node>(new StringResourceModel("gallery-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
@@ -138,9 +140,10 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
 
     @Override
     protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-                                             ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
-                                             ListPagingDefinition pagingDefinition) {
-        ListDataTable<Node> ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
+            ListPagingDefinition pagingDefinition) {
+        ListDataTable<Node> ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
+                triState, pagingDefinition);
         ldt.add(new TableHelperBehavior());
         return ldt;
     }
@@ -187,23 +190,23 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                                     if (((javax.jcr.Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                                         nodeModels.add(new JcrNodeModel(node));
                                     } else {
-                                        Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
+                                        log.warn("primary item of image set must be of type "
+                                                + HippoNodeType.NT_RESOURCE);
                                     }
                                 }
                             } catch (ItemNotFoundException e) {
-                                Gallery.log.debug("ImageSet must have a primary item. " + node.getPath()
+                                log.debug("ImageSet must have a primary item. " + node.getPath()
                                         + " probably not of correct image set type");
                             }
                         }
                     } else if (node.isNodeType(IMAGE_FOLDER_TYPE)) {
                         nodeModels.add(new JcrNodeModel(node));
                     } else {
-                        Gallery.log.info("invalid node type, not adding to the list of items");
+                        log.info("invalid node type, not adding to the list of items");
                     }
                 }
             } catch (RepositoryException e) {
-                Gallery.log.error(e.getMessage());
-
+                log.error(e.getMessage());
             }
             return nodeModels.iterator();
         }
@@ -242,17 +245,18 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                                     Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
                                     folderIcon.setVisible(false);
                                     itemLink.add(folderIcon);
-                                    itemLink.add(new ImageContainer("thumbnail", new JcrNodeModel((Node) primItem), getPluginContext(), getPluginConfig()));
+                                    itemLink.add(new ImageContainer("thumbnail", new JcrNodeModel((Node) primItem),
+                                            getPluginContext(), getPluginConfig()));
 
-                                    itemLink.add(new Label("title",
-                                            new NodeTranslator(new JcrNodeModel(node)).getNodeName()));
+                                    itemLink.add(new Label("title", new NodeTranslator(new JcrNodeModel(node))
+                                            .getNodeName()));
                                     listItem.add(itemLink);
                                 } else {
-                                    Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
+                                    log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                                 }
                             }
                         } catch (ItemNotFoundException e) {
-                            Gallery.log.debug("ImageSet must have a primary item. " + node.getPath()
+                            log.debug("ImageSet must have a primary item. " + node.getPath()
                                     + " probably not of correct image set type");
                         }
                     }
@@ -270,8 +274,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                     Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
                     itemLink.add(folderIcon);
                     itemLink.add(thumbnail);
-                    itemLink.add(new Label("title",
-                            new NodeTranslator(new JcrNodeModel(node)).getNodeName()));
+                    itemLink.add(new Label("title", new NodeTranslator(new JcrNodeModel(node)).getNodeName()));
                     listItem.add(itemLink);
                 }
 

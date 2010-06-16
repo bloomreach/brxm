@@ -13,15 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery;
+package org.hippoecm.frontend.plugins.gallery.model;
 
 import java.io.InputStream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-public interface GalleryProcessor {
+import org.apache.wicket.IClusterable;
+
+public interface GalleryProcessor extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws RepositoryException;
+    void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
+            RepositoryException;
 }
