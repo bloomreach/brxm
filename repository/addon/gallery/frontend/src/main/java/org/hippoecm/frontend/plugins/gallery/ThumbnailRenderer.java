@@ -27,11 +27,15 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThumbnailRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(ThumbnailRenderer.class);
 
     private IPluginContext pluginContext;
     private IPluginConfig pluginConfig;
@@ -50,18 +54,19 @@ public class ThumbnailRenderer extends AbstractNodeRenderer {
                     Item primItem = imageSet.getPrimaryItem();
                     if (primItem.isNode()) {
                         if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                            return new ImageContainer(id, new JcrNodeModel((Node) primItem), pluginContext, pluginConfig);
+                            return new ImageContainer(id, new JcrNodeModel((Node) primItem), pluginContext,
+                                    pluginConfig);
                         } else {
-                            Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
+                            log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                         }
                     }
                 } catch (ItemNotFoundException e) {
-                    Gallery.log.debug("ImageSet must have a primary item. " + node.getPath()
+                    log.debug("ImageSet must have a primary item. " + node.getPath()
                             + " probably not of correct image set type");
                 }
             }
         } else {
-            Gallery.log.debug("Node " + node.getPath() + " is not a hippo:handle");
+            log.debug("Node " + node.getPath() + " is not a hippo:handle");
         }
         return new Label(id);
     }

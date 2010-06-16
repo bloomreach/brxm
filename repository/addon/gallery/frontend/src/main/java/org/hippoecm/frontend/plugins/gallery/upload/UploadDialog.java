@@ -28,7 +28,6 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;
@@ -36,12 +35,16 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UploadDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    static final Logger log = LoggerFactory.getLogger(UploadDialog.class);
 
     UploadWizard wizard;
     IPluginConfig pluginConfig;
@@ -72,13 +75,15 @@ public class UploadDialog extends AbstractDialog {
     }
 
     protected StringCodec getLocalizeCodec() {
-        ISettingsService settingsService = pluginContext.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = pluginContext
+                .getService(ISettingsService.SERVICE_ID, ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.display");
     }
 
     protected StringCodec getNodeNameCodec() {
-        ISettingsService settingsService = pluginContext.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        ISettingsService settingsService = pluginContext
+                .getService(ISettingsService.SERVICE_ID, ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.node");
     }
@@ -117,9 +122,9 @@ public class UploadDialog extends AbstractDialog {
                 }
             }
         } catch (PathNotFoundException e) {
-            Gallery.log.error("Cannot locate default upload directory " + e.getMessage());
+            log.error("Cannot locate default upload directory " + e.getMessage());
         } catch (RepositoryException e) {
-            Gallery.log.error("Error while accessing upload directory " + e.getMessage());
+            log.error("Error while accessing upload directory " + e.getMessage());
         }
         return node;
     }

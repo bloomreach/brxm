@@ -15,6 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.rmi.RemoteException;
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
@@ -31,6 +38,9 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
 import org.hippoecm.frontend.plugins.yui.upload.MultiFileUploadDialog;
 import org.hippoecm.frontend.session.UserSession;
@@ -44,14 +54,9 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.rmi.RemoteException;
-import java.util.List;
+public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
+    private static final long serialVersionUID = 1L;
 
-public class
-        GalleryWorkflowPlugin extends FolderWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -93,15 +98,13 @@ public class
             try {
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                         .getDefaultModel();
-                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(
-                        GalleryWorkflowPlugin.this
-                                .getPluginConfig().getString("workflow.categories"),
-                        workflowDescriptorModel.getNode());
+                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
+                        .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
                 String nodeName = getNodeNameCodec().encode(filename);
                 String localName = getLocalizeCodec().encode(filename);
                 Document document = workflow.createGalleryItem(nodeName, type);
-                node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(
-                        document.getIdentity());
+                node = (HippoNode) (((UserSession) Session.get())).getJcrSession()
+                        .getNodeByUUID(document.getIdentity());
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
@@ -118,15 +121,13 @@ public class
             }
             if (node != null) {
                 try {
-                    ImageUtils.galleryProcessor(getPluginConfig()).makeImage(node, istream, mimetype,
-                            filename);
+                    getGalleryProcessor().makeImage(node, istream, mimetype, filename);
                     node.getSession().save();
-                } catch (RepositoryException ex) {
+                } catch (GalleryException ex) {
                     GalleryWorkflowPlugin.log.error(ex.getMessage());
                     error(ex);
                     try {
-                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core",
-                                node);
+                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                         defaultWorkflow.delete();
                     } catch (WorkflowException e) {
                         GalleryWorkflowPlugin.log.error(e.getMessage());
@@ -140,14 +141,26 @@ public class
                     } catch (RepositoryException e) {
                         // deliberate ignore
                     }
+                } catch (RepositoryException ex) {
+                    GalleryWorkflowPlugin.log.error(ex.getMessage());
+                    error(ex);
                 }
             }
         } catch (IOException ex) {
             GalleryWorkflowPlugin.log.info("upload of image truncated");
-            error((new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this,
-                    null).getString()));
+            error((new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this, null).getString()));
         }
 
+    }
+
+    protected GalleryProcessor getGalleryProcessor() {
+        IPluginContext context = getPluginContext();
+        GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
+                "gallery.processor.service"), GalleryProcessor.class);
+        if (processor != null) {
+            return processor;
+        }
+        return new DefaultGalleryProcessor();
     }
 
     @Override
@@ -205,10 +218,10 @@ public class
         }
 
         String[] fileExtensions = new String[0];
-        if(getPluginConfig().containsKey("file.extensions")) {
+        if (getPluginConfig().containsKey("file.extensions")) {
             fileExtensions = getPluginConfig().getStringArray("file.extensions");
         }
-        
+
         UploadDialog dialog = new UploadDialog(fileExtensions);
         dialog.add(typeComponent);
         return dialog;
