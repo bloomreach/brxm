@@ -53,6 +53,17 @@ public class MagicMimeTypeFileItem implements FileItem {
         }
     }
 
+    /**
+     * Microsoft and OpenOffice files aren't correctly detected based on Magic bytes, so fall back on extensions
+     * detection for these mimetypes. Also, do a second detection run based on extesion for
+     * mimetype=application/octen-stream
+     *
+     * .odt, .ods and .odp are detected as application/zip
+     * .xsl and .ppt are detected as application/msword
+     *
+     * @param fileItem
+     * @return The best matching mimetype for this fileItem
+     */
     private String resolveMimeType(FileItem fileItem) {
         Collection<?> mimeTypes = null;
         if(fileItem instanceof DiskFileItem && !fileItem.isInMemory()) {
@@ -76,9 +87,13 @@ public class MagicMimeTypeFileItem implements FileItem {
         }
         if (mimeTypes != null && mimeTypes.size() == 1) {
             MimeType mimeType = (MimeType) mimeTypes.iterator().next();
-            if (mimeType.getMediaType().equals("application") && mimeType.getSubType().equals("msword")) {
-                //Don't trust this and check again on fileName extension...
-                mimeTypes = MimeUtil.getMimeTypes(fileItem.getName());
+            if (mimeType.getMediaType().equals("application")) {
+                if(mimeType.getSubType().equals("msword") || mimeType.getSubType().equals("zip") || mimeType.getSubType().equals("octet-stream")) {
+                    Collection<?> extensionBasedMimeTypes = MimeUtil.getMimeTypes(fileItem.getName());
+                    if(extensionBasedMimeTypes != null && extensionBasedMimeTypes.size() > 0) {
+                        mimeTypes = extensionBasedMimeTypes;
+                    }
+                }
             }
         }
         if(mimeTypes != null && mimeTypes.size() > 0) {
