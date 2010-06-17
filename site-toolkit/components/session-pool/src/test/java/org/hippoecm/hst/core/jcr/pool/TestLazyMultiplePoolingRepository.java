@@ -49,22 +49,23 @@ public class TestLazyMultiplePoolingRepository {
     private SimpleCredentials nonExistingUserCreds = new SimpleCredentials("non-existing-user", "non-existing-user-password".toCharArray());
     private SimpleCredentials defaultCreds = new SimpleCredentials("admin@onehippo.org", "admin".toCharArray());
     private SimpleCredentials wikiCreds = new SimpleCredentials("admin@wiki.onehippo.org", "admin".toCharArray());
+    private SimpleCredentials disposableWikiCreds = new SimpleCredentials("admin@wiki.onehippo.org;disposable", "admin".toCharArray());
     private MultipleRepository multipleRepository;
     
     @Before
     public void setUp() {
         basicPoolConfigMap.put("repositoryAddress", "");
         basicPoolConfigMap.put("maxActive", "4");
-        basicPoolConfigMap.put("maxIdle", "2");
+        basicPoolConfigMap.put("maxIdle", "0");
         basicPoolConfigMap.put("minIdle", "0");
         basicPoolConfigMap.put("initialSize", "1");
         basicPoolConfigMap.put("maxWait", "10000");
         basicPoolConfigMap.put("testOnBorrow", "true");
         basicPoolConfigMap.put("testOnReturn", "false");
         basicPoolConfigMap.put("testWhileIdle", "false");
-        basicPoolConfigMap.put("timeBetweenEvictionRunsMillis", "60000");
+        basicPoolConfigMap.put("timeBetweenEvictionRunsMillis", "2000");
         basicPoolConfigMap.put("numTestsPerEvictionRun", "1");
-        basicPoolConfigMap.put("minEvictableIdleTimeMillis", "60000");
+        basicPoolConfigMap.put("minEvictableIdleTimeMillis", "0");
         basicPoolConfigMap.put("refreshOnPassivate", "true");
         
         multipleRepository = new LazyMultipleRepositoryImpl(defaultCreds, basicPoolConfigMap);
@@ -151,6 +152,32 @@ public class TestLazyMultiplePoolingRepository {
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());
         assertEquals("Active session count is not zero.", 0, defaultRepository.getNumActive());
         assertEquals("Active session count is not zero.", 0, wikiRepository.getNumActive());
+    }
+    
+    @Test
+    public void testAutomaticDisposing() throws Exception {
+        ((LazyMultipleRepositoryImpl) multipleRepository).setTimeBetweenEvictionRunsMillis(5000);
+        ((LazyMultipleRepositoryImpl) multipleRepository).setDisposableUserIDPattern(".*;disposable");
+        
+        Session session = multipleRepository.login(wikiCreds);
+        assertNotNull(session);
+        Repository wikiRepo = multipleRepository.getRepositoryByCredentials(wikiCreds);
+        assertNotNull(wikiRepo);
+        session.logout();
+        
+        session = multipleRepository.login(disposableWikiCreds);
+        assertNotNull(session);
+        Repository disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWikiCreds);
+        assertNotNull(disposableWikiRepo);
+        session.logout();
+        
+        Thread.sleep(15000L);
+        
+        wikiRepo = multipleRepository.getRepositoryByCredentials(wikiCreds);
+        assertNotNull(wikiRepo);
+        
+        disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWikiCreds);
+        assertNull(disposableWikiRepo);
     }
     
     @Ignore
