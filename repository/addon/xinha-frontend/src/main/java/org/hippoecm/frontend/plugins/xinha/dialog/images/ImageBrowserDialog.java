@@ -49,6 +49,7 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
@@ -73,7 +74,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ImageBrowserDialog.class);
+    static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
     public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
 
@@ -158,13 +159,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                                 defaultWorkflow.localizeName(localName);
                             }
                         } catch (WorkflowException ex) {
-                            LOGGER.error(ex.getMessage());
+                            log.error(ex.getMessage());
                             error(ex);
                         } catch (MappingException ex) {
-                            LOGGER.error(ex.getMessage());
+                            log.error(ex.getMessage());
                             error(ex);
                         } catch (RepositoryException ex) {
-                            LOGGER.error(ex.getMessage());
+                            log.error(ex.getMessage());
                             error(ex);
                         }
                         if (node != null) {
@@ -174,27 +175,30 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                                 uploadField.setModel(null);
                                 target.addComponent(uploadField);
                             } catch (RepositoryException ex) {
-                                LOGGER.error(ex.getMessage());
+                                log.error(ex.getMessage());
                                 error(ex);
                                 try {
                                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                                     defaultWorkflow.delete();
                                 } catch (WorkflowException e) {
-                                    LOGGER.error(e.getMessage());
+                                    log.error(e.getMessage());
                                 } catch (MappingException e) {
-                                    LOGGER.error(e.getMessage());
+                                    log.error(e.getMessage());
                                 } catch (RepositoryException e) {
-                                    LOGGER.error(e.getMessage());
+                                    log.error(e.getMessage());
                                 }
                                 try {
                                     node.getSession().refresh(false);
                                 } catch (RepositoryException e) {
                                     // deliberate ignore
                                 }
+                            } catch (GalleryException ex) {
+                                log.error(ex.getMessage());
+                                error(ex);
                             }
                         }
                     } catch (IOException ex) {
-                        LOGGER.info("upload of image truncated");
+                        log.info("upload of image truncated");
                         error("Unable to read the uploaded image");
                     }
                 } else {
