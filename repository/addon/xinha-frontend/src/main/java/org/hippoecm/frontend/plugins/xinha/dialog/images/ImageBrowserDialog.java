@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,8 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.gallery.ImageUtils;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.service.ISettingsService;
@@ -167,7 +169,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                         }
                         if (node != null) {
                             try {
-                                ImageUtils.galleryProcessor(config).makeImage(node, istream, mimetype, filename);
+                                getGalleryProcessor().makeImage(node, istream, mimetype, filename);
                                 node.getSession().save();
                                 uploadField.setModel(null);
                                 target.addComponent(uploadField);
@@ -244,6 +246,16 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     @Override
     public IValueMap getProperties() {
         return new ValueMap("width=845,height=525");
+    }
+
+    protected GalleryProcessor getGalleryProcessor() {
+        IPluginContext context = getPluginContext();
+        GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
+                "gallery.processor.service"), GalleryProcessor.class);
+        if (processor != null) {
+            return processor;
+        }
+        return new DefaultGalleryProcessor();
     }
 
     private StringCodec getNodeNameCodec() {
