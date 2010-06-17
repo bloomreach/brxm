@@ -39,6 +39,13 @@ public interface MultipleRepository extends Repository {
     void addRepository(Credentials credentials, Repository repository);
     
     /**
+     * Removes an internal repository with a credentials as key
+     * @param credentials
+     * @return removed
+     */
+    boolean removeRepository(Credentials credentials);
+    
+    /**
      * Returns the internal repository map.
      * 
      * @return
