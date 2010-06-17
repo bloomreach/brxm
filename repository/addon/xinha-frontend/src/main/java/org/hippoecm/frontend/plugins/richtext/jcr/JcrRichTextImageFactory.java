@@ -172,15 +172,18 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
 
             RichTextImage rti = new RichTextImage(node.getPath(), name);
 
+            //FIXME: Because our Image picker doesn't allow users to choose between the child-node-definitions
+            // (thumbnail, original, etc) we work around this by selecting the original by default, which is NOT
+            //the primaryItemDefinition because that represents the thumbnail..
             String primaryItemDefinition = node.getPrimaryItem().getName();
             List<String> resourceDefinitions = new LinkedList<String>();
-            resourceDefinitions.add(primaryItemDefinition);
             for (NodeDefinition nd : node.getPrimaryNodeType().getChildNodeDefinitions()) {
                 if (!nd.getName().equals(primaryItemDefinition) && nd.getDefaultPrimaryType() != null
                         && nd.getDefaultPrimaryType().isNodeType("hippo:resource")) {
                     resourceDefinitions.add(nd.getName());
                 }
             }
+            resourceDefinitions.add(primaryItemDefinition);
             rti.setResourceDefinitions(resourceDefinitions);
             if (selectedResource != null) {
                 rti.setSelectedResourceDefinition(selectedResource);
