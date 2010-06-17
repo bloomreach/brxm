@@ -1083,9 +1083,19 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
 .mimetype-application-mspowerpoint-16,
 .mimetype-application-powerpoint-16,
 .mimetype-application-x-mspowerpoint-16{background-image:url("images/icons/mimetypes/mimetype-ppt-16.png")}
-.mimetype-application-msword-16{background-image:url("images/icons/mimetypes/mimetype-word-16.png")}
+.mimetype-application-msword-16{background-image:url("images/icons/mimetypes/mimetype-doc-16.png")}
 
-/* OpenOffice mimetypes */
+/* Microsoft Open XML mimetypes */
+.mimetype-application-vnd-openxmlformats-officedocument-wordprocessingml-document-16{background-image:url("images/icons/mimetypes/mimetype-docx-16.png")}
+.mimetype-application-vnd-openxmlformats-officedocument-spreadsheetml-sheet-16{background-image:url("images/icons/mimetypes/mimetype-xlsx-16.png")}
+.mimetype-application-vnd-openxmlformats-officedocument-presentationml-presentation-16{background-image:url("images/icons/mimetypes/mimetype-pptx-16.png")}
+
+/* OpenOffice 1 mimetypes */
+.mimetype-application-vnd-sun-xml-writer-16{background-image:url("images/icons/mimetypes/mimetype-sxw-16.png")}
+.mimetype-application-vnd-sun-xml-calc-16{background-image:url("images/icons/mimetypes/mimetype-sxc-16.png")}
+.mimetype-application-vnd-sun-xml-impress-16{background-image:url("images/icons/mimetypes/mimetype-sxi-16.png")}
+
+/* OpenOffice 2 mimetypes */
 .mimetype-application-opendocument-16,
 .mimetype-application-vnd-oasis-opendocument-text-16{background-image:url("images/icons/mimetypes/mimetype-odt-16.png")}
 .mimetype-application-vnd-oasis-opendocument-spreadsheet-16{background-image:url("images/icons/mimetypes/mimetype-ods-16.png")}
