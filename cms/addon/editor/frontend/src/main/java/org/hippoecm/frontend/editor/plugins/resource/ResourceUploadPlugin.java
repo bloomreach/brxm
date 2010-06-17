@@ -34,7 +34,8 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.gallery.ImageUtils;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
+import org.hippoecm.frontend.plugins.gallery.model.ResourceHelper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,12 +109,15 @@ public class ResourceUploadPlugin extends RenderPlugin {
                         node.setProperty("jcr:mimeType", mimeType);
                         node.setProperty("jcr:data", upload.getInputStream());
                         node.setProperty("jcr:lastModified", Calendar.getInstance());
-                        new ImageUtils().validateResource(node, fileName);
+                        ResourceHelper.validateResource(node, fileName);
                     } catch (RepositoryException ex) {
                         error(ex);
                         log.error(ex.getMessage());
                     } catch (IOException ex) {
                         // FIXME: report back to user
+                        log.error(ex.getMessage());
+                    } catch (GalleryException ex) {
+                        error(ex);
                         log.error(ex.getMessage());
                     }
                 }
