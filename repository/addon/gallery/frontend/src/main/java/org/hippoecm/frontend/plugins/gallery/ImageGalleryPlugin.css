@@ -50,6 +50,13 @@ ul.gallery-list li.selected {
 }
 
 .title {
-    margin-top: 10px;
+  width: 100px;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+  overflow: hidden;
+  -moz-binding: url('ellipsis.xml#ellipsis');
 }
 
