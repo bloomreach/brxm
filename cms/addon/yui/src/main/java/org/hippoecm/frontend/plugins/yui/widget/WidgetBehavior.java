@@ -16,9 +16,12 @@
 
 package org.hippoecm.frontend.plugins.yui.widget;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
 public class WidgetBehavior extends AbstractYuiBehavior{
     private static final long serialVersionUID = 1L;
@@ -26,8 +29,36 @@ public class WidgetBehavior extends AbstractYuiBehavior{
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    Component component;
+    WidgetTemplate template;
+
+    public WidgetBehavior() {
+        template = new WidgetTemplate() {
+
+            @Override
+            public String getId() {
+                return getComponent().getMarkupId();
+            }
+
+        };
+    }
+
+    @Override
+    public void bind(Component component) {
+        super.bind(component);
+        this.component = component;
+    }
+
+
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "hippowidget");
+        context.addTemplate(template);
+        context.addOnWinLoad("YAHOO.hippo.WidgetManager.render();");
     }
+
+    public String getMarkupId() {
+        return component.getMarkupId();
+    }
+
 }
