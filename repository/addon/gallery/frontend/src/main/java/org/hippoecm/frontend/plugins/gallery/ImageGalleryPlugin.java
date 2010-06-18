@@ -56,19 +56,22 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
+import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
+import org.hippoecm.frontend.widgets.LabelWithTitle;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeaderContributor {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     final static Logger log = LoggerFactory.getLogger(ImageGalleryPlugin.class);
-
-    private static final long serialVersionUID = 1L;
     private static final String IMAGE_GALLERY_CSS = "ImageGalleryPlugin.css";
     private static final String TOGGLE_LIST_IMG = "toggle_list.png";
     private static final String TOGGLE_THUMBNAIL_IMG = "toggle_thumb.png";
@@ -89,9 +92,12 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         add(galleryList = new WebMarkupContainer("gallery-list"));
         galleryList.setOutputMarkupId(true);
         galleryList.setVisible(false);
-
         galleryList.add(new GalleryItemView("gallery-item"));
-        galleryList.add(new WidgetBehavior());
+
+        WidgetSettings settings = new WidgetSettings();
+        settings.setCalculateWidthAndHeight(new JsFunction(
+                "function(sizes) {return {width: sizes.wrap.w, height: sizes.wrap.h-25};}"));
+        galleryList.add(new WidgetBehavior(settings));
 
         add(toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
             @Override
@@ -250,7 +256,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                                     itemLink.add(new ImageContainer("thumbnail", new JcrNodeModel((Node) primItem),
                                             getPluginContext(), getPluginConfig()));
 
-                                    itemLink.add(new Label("title", new NodeTranslator(new JcrNodeModel(node))
+                                    itemLink.add(new LabelWithTitle("title", new NodeTranslator(new JcrNodeModel(node))
                                             .getNodeName()));
                                     listItem.add(itemLink);
                                 } else {
