@@ -80,15 +80,15 @@ public class WidgetTemplate implements IHeaderContributor, IDetachable {
     }
 
     private JsonConfig internalGetJsonConfig(Serializable serializable) {
-        JsonConfig jsonConfig = decorateJsonConfig(new JsonConfig());
+        JsonConfig jsonConfig = new JsonConfig();
+        decorateJsonConfig(jsonConfig);
         if (serializable != null && serializable instanceof IAjaxSettings) {
             jsonConfig.registerJsonValueProcessor(JsFunction.class, new JsFunctionProcessor());
         }
         return jsonConfig;
     }
 
-    protected JsonConfig decorateJsonConfig(JsonConfig jsonConfig) {
-        return jsonConfig;
+    protected void decorateJsonConfig(JsonConfig jsonConfig) {
     }
 
     public void setId(String id) {

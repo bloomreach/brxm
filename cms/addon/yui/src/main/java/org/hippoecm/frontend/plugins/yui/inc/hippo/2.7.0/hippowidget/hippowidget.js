@@ -23,10 +23,8 @@ if (!YAHOO.hippo.Widget) {
         YAHOO.hippo.WidgetManagerImpl.prototype = {
 
             register : function(id, config) {
-                console.log('Manager.register[' + id + ']');
                 this.queue.registerFunction(function() {
                     var widget = Dom.get(id);
-                    console.log('Manager.create[' + id + ' widget=' + widget);
                     if(widget == null) {
                         return;
                     }
@@ -38,7 +36,6 @@ if (!YAHOO.hippo.Widget) {
             },
 
             render : function() {
-                console.log('Manager.render()');
                 this.queue.handleQueue();
             }
         };
@@ -46,6 +43,10 @@ if (!YAHOO.hippo.Widget) {
         YAHOO.hippo.Widget = function(id, config) {
             this.id = id;
             this.config = config;
+
+            if(Lang.isFunction(this.config.calculateWidthAndHeight)) {
+                this._calculateHeightAndWidth = this.config.calculateWidthAndHeight;
+            }
 
             this.helper = new YAHOO.hippo.DomHelper();
 
@@ -62,8 +63,6 @@ if (!YAHOO.hippo.Widget) {
         YAHOO.hippo.Widget.prototype = {
 
         	  resize: function(sizes) {
-                console.log('Resize: ' + Lang.dump(sizes));
-
                 var dim = this._calculateHeightAndWidth(sizes);
                 var el = Dom.get(this.id);
                 Dom.setStyle(el, 'width', dim.width + 'px');
@@ -71,7 +70,6 @@ if (!YAHOO.hippo.Widget) {
         	  },
 
             render : function() {
-                console.log('render[' + this.id + ']');
                 var el = Dom.get(this.id);
                 var unit = YAHOO.hippo.LayoutManager.findLayoutUnit(el);
                 if(unit != null) {
@@ -92,12 +90,11 @@ if (!YAHOO.hippo.Widget) {
             },
 
             destroy : function() {
-                console.log('Destroy[' + this.id + ']');
                 YAHOO.hippo.LayoutManager.unregisterResizeListener(Dom.get(this.id), this);
             },
 
             _calculateHeightAndWidth : function(sizes) {
-                return {width: sizes.wrap.w, height: sizes.wrap.h-25};
+                return {width: sizes.wrap.w, height: sizes.wrap.h};
             }
         }
     })();

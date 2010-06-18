@@ -16,10 +16,13 @@
 
 package org.hippoecm.frontend.plugins.yui.widget;
 
+import net.sf.json.JsonConfig;
 import org.apache.wicket.Component;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
+import org.hippoecm.frontend.plugins.yui.JsFunction;
+import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
@@ -33,6 +36,10 @@ public class WidgetBehavior extends AbstractYuiBehavior{
     WidgetTemplate template;
 
     public WidgetBehavior() {
+        this(new WidgetSettings());
+    }
+
+    public WidgetBehavior(WidgetSettings settings) {
         template = new WidgetTemplate() {
 
             @Override
@@ -40,7 +47,12 @@ public class WidgetBehavior extends AbstractYuiBehavior{
                 return getComponent().getMarkupId();
             }
 
+            @Override
+            protected void decorateJsonConfig(JsonConfig jsonConfig) {
+                jsonConfig.registerJsonValueProcessor(JsFunction.class, new JsFunctionProcessor());
+            }
         };
+        template.setConfiguration(settings);
     }
 
     @Override
