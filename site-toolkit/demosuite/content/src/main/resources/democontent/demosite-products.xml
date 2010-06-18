@@ -47,7 +47,7 @@
     </sv:property>
     <sv:node sv:name="Alfa Romeo">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>demosite:product</sv:value>
+        <sv:value>demosite:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
@@ -125,7 +125,7 @@
     </sv:property>
     <sv:node sv:name="Alfa Romeo2">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>demosite:product</sv:value>
+        <sv:value>demosite:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
@@ -204,7 +204,7 @@
     </sv:property>
     <sv:node sv:name="Nissan">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>demosite:product</sv:value>
+        <sv:value>demosite:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
@@ -282,7 +282,7 @@
     </sv:property>
     <sv:node sv:name="Opel">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>demosite:product</sv:value>
+        <sv:value>demosite:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>

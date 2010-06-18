@@ -15,10 +15,10 @@
  */
  
 <'testproject'='http://www.hippoecm.org/hst/nt/testproject/1.0'>
-<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.1'>
 <'hst'='http://www.hippoecm.org/hst/nt/2.0'>
-<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.1'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.1'>
 
 [testproject:sitemenuitem] > hst:sitemenuitem
 - testproject:title 

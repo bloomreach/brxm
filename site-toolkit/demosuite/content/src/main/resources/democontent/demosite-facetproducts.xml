@@ -40,7 +40,7 @@
             <sv:value>tags${limit:10}</sv:value>
         </sv:property>
         <sv:property sv:name="hippofacnav:filters" sv:type="String">
-            <sv:value>jcr:primaryType=demosite:product</sv:value>
+            <sv:value>jcr:primaryType=demosite:productdocument</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="index page">
@@ -73,7 +73,7 @@
             <sv:value>brand${after:'index'}</sv:value>
         </sv:property>
         <sv:property sv:name="hippofacnav:filters" sv:type="String">
-            <sv:value>jcr:primaryType=demosite:product</sv:value>
+            <sv:value>jcr:primaryType=demosite:productdocument</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="faceted navigation">
@@ -131,7 +131,7 @@
                 ]</sv:value>
         </sv:property>
         <sv:property sv:name="hippofacnav:filters" sv:type="String">
-            <sv:value>jcr:primaryType=demosite:product</sv:value>
+            <sv:value>jcr:primaryType=demosite:productdocument</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

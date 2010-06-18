@@ -73,7 +73,7 @@
                 </sv:property>
                 <sv:node sv:name="launch CMS 7">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -241,7 +241,7 @@
                 </sv:property>
                 <sv:node sv:name="appointing EVP">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -331,7 +331,7 @@
                 </sv:property>
                 <sv:node sv:name="named vendor to watch">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -456,7 +456,7 @@
                 </sv:property>
                 <sv:node sv:name="partner event">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -569,7 +569,7 @@
                 </sv:property>
                 <sv:node sv:name="fastest growing">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -668,7 +668,7 @@
                 </sv:property>
                 <sv:node sv:name="ninth Apache commiter">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -783,7 +783,7 @@
                 </sv:property>
                 <sv:node sv:name="website onsoranje.nl">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -897,7 +897,7 @@
                 </sv:property>
                 <sv:node sv:name="takeover">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1014,7 +1014,7 @@
                 </sv:property>
                 <sv:node sv:name="apachecon">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1120,7 +1120,7 @@
                 </sv:property>
                 <sv:node sv:name="2007 succes year">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1279,7 +1279,7 @@
                 </sv:property>
                 <sv:node sv:name="Emerce image top 10">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1374,7 +1374,7 @@
                 </sv:property>
                 <sv:node sv:name="open source">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1470,7 +1470,7 @@
                 </sv:property>
                 <sv:node sv:name="search engine optimalisation">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1589,7 +1589,7 @@
                 </sv:property>
                 <sv:node sv:name="Hippo Gold Sponsor ApacheCon EU">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1686,7 +1686,7 @@
                 </sv:property>
                 <sv:node sv:name="council of justice website">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1772,7 +1772,7 @@
                 </sv:property>
                 <sv:node sv:name="partnership with Lost Boys">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1854,7 +1854,7 @@
                 </sv:property>
                 <sv:node sv:name="autocompas traffic">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -1927,7 +1927,7 @@
                 </sv:property>
                 <sv:node sv:name="roc eindhoven life">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -2040,7 +2040,7 @@
                 </sv:property>
                 <sv:node sv:name="levi9">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -2150,7 +2150,7 @@
                 </sv:property>
                 <sv:node sv:name="open source fast 50">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -2280,7 +2280,7 @@
                 </sv:property>
                 <sv:node sv:name="website finance ministery">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>
@@ -2393,7 +2393,7 @@
                 </sv:property>
                 <sv:node sv:name="municipal Schijndel">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>demosite:newspage</sv:value>
+                        <sv:value>demosite:newsdocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                         <sv:value>hippo:harddocument</sv:value>

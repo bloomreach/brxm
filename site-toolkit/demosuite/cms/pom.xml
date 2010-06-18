@@ -44,6 +44,14 @@
       <type>war</type>
     </dependency>
     
+    <!--  TODO : this dep is temporary fix. Remove after HREPTWO-4268 is fixed. See HSTTWO-1134 -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-ldap-repository</artifactId>
+      <version>${hippoecm.version}</version>
+      <type>jar</type>
+    </dependency>
+    
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
       <artifactId>hst-addon-cnd</artifactId>
@@ -58,7 +66,7 @@
       <type>jar</type>
     </dependency>
     
-    <dependency>
+    <!-- dependency>
       <groupId>org.onehippo.ecm</groupId>
       <artifactId>hst-addon-configuration-editor-frontend</artifactId>
       <version>${hst-configuration-editor.version}</version>
@@ -70,7 +78,7 @@
       <artifactId>hst-addon-configuration-editor-repository</artifactId>
       <version>${hst-configuration-editor.version}</version>
       <type>jar</type>
-    </dependency>
+    </dependency -->
   
     <dependency>
       <groupId>org.onehippo.ecm.hst.demosuite</groupId>
@@ -91,7 +99,7 @@
     <dependency>
       <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
       <artifactId>gallerypicker</artifactId>
-      <version>1.04.00</version>
+      <version>1.06.02</version>
       <type>jar</type>
       <exclusions>
         <exclusion>

@@ -1,33 +1,33 @@
 <'demosite'='http://www.hippoecm.org/hst/nt/demosite/1.0'>
-<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
-<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
-<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.1'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.1'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.1'>
+<'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.1'>
 
-[demosite:basedocument] > hippostdpubwf:document, hippostd:publishableSummary, hippo:document
+[demosite:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
 
 [demosite:commentlink] > hippo:facetselect
 
-[demosite:textpage] > demosite:basedocument
-  - demosite:summary (string)
-  - demosite:title (string)
-  + demosite:body (hippostd:html)
-  
-[demosite:newspage] > demosite:textpage
-  - demosite:date (date)
-  + demosite:image (hippogallerypicker:imagelink)
-  
-[demosite:comment] > demosite:textpage
- - demosite:date (date)
- + demosite:commentlink (demosite:commentlink)
- 
- [demosite:product] > demosite:basedocument
-  - demosite:color (string)
-  - demosite:product (string)
-  - demosite:brand (string)
-  - demosite:constructiondate (date)
-  - demosite:created (date)
-  - demosite:mileage (long)
-  - demosite:price (double)
-  + demosite:body (hippostd:html)
- 
+
+[demosite:textdocument] > demosite:basedocument
+- demosite:title (string)
+- demosite:summary (string)
++ demosite:body (hippostd:html)
+
+[demosite:newsdocument] > demosite:textdocument
+- demosite:date (date)
++ demosite:image (hippogallerypicker:imagelink)
+
+[demosite:commentdocument] > demosite:textdocument
+- demosite:date (date)
++ demosite:commentlink (demosite:commentlink)
+
+[demosite:productdocument] > demosite:basedocument
+- demosite:constructiondate (date)
+- demosite:brand (string)
+- demosite:color (string)
+- demosite:created (date)
+- demosite:mileage (long)
+- demosite:price (double)
+- demosite:product (string)
++ demosite:body (hippostd:html)
