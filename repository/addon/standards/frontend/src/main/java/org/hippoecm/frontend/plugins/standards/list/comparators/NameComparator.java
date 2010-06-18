@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list.comparators;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class NameComparator extends NodeComparator {
@@ -27,26 +28,27 @@ public class NameComparator extends NodeComparator {
 
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
-        try {
-            Node n1 = o1.getNode();
-            Node n2 = o2.getNode();
-            if (n1 == null) {
-                if (n2 == null) {
-                    return 0;
+        String name1 = new NodeTranslator(o1).getNodeName().getObject();
+        String name2 = new NodeTranslator(o2).getNodeName().getObject();
+
+        int result;
+        if ((result = String.CASE_INSENSITIVE_ORDER.compare(name1, name2)) == 0) {
+            try {
+                Node n1 = o1.getNode();
+                Node n2 = o2.getNode();
+                if (n1 == null) {
+                    if (n2 == null) {
+                        return 0;
+                    }
+                    return 1;
+                } else if (n2 == null) {
+                    return -1;
                 }
-                return 1;
-            } else if (n2 == null) {
-                return -1;
-            }
-            String name1 = n1.getName();
-            String name2 = n2.getName();
-            int result;
-            if((result = String.CASE_INSENSITIVE_ORDER.compare(name1, name2)) == 0) {
                 return n1.getIndex() - n2.getIndex();
-            } else {
-                return result;
+            } catch (RepositoryException e) {
             }
-        } catch (RepositoryException e) {
+        } else {
+            return result;
         }
         return 0;
     }
