@@ -71,7 +71,7 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
 
         add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(),
-                new ResourceReference(getClass(), "document-done-16.png")) {
+                new ResourceReference(getClass(), "document-saveclose-16.png")) {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
