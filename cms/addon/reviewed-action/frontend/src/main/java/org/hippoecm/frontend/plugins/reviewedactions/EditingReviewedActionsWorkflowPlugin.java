@@ -216,7 +216,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
         });
 
         add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(),
-                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-done-16.png")) {
+                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png")) {
             @Override
             public String execute(Workflow wf) throws Exception {
                 validate();
