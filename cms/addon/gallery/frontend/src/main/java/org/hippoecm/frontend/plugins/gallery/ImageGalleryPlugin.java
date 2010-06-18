@@ -57,6 +57,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefiniti
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
+import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         galleryList.setVisible(false);
 
         galleryList.add(new GalleryItemView("gallery-item"));
+        galleryList.add(new WidgetBehavior());
 
         add(toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
             @Override
