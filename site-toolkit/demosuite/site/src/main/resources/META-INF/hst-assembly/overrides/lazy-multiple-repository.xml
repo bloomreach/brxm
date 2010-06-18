@@ -61,6 +61,16 @@
         <entry key="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
       </map>
     </constructor-arg>
+    
+    <!- - Only when the 'timeBetweenEvictionRunsMillis' is greater than zero, this auto-disposing option is enabled. - ->
+    <property name="timeBetweenEvictionRunsMillis" value="600000" />
+    <!- - If the following property is set with regex pattern string, then the repositories having userID matched will be disposed.
+           By default, it tries to dispose all if the repository has no idle sessions.
+           By the way, the idle session count will be managed by the properties of BasicSessionPoolingRepository:
+                     maxIdle, minIdle, timeBetweenEvictionRunsMillis, and minEvictableIdleTimeMillis.
+     - ->
+    <property name="disposableUserIDPattern" value=".*;disposable" />
+  
   </bean>
   
   -->
