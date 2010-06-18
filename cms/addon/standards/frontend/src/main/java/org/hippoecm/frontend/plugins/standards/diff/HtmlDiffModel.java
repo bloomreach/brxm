@@ -15,26 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.standards.diff;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.wicket.Session;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.htmldiff.DiffHelper;
-import org.outerj.daisy.diff.DaisyDiff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
+
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class HtmlDiffModel extends LoadableDetachableModel<String> {
     @SuppressWarnings("unused")
@@ -48,8 +41,8 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
     IModel<String> current;
 
     public HtmlDiffModel(IModel<String> original, IModel<String> current) {
-        this.original = original;
-        this.current = current;
+        this.original = new ValidHtmlModel(original);
+        this.current = new ValidHtmlModel(current);
     }
 
     @Override
@@ -60,7 +53,8 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DiffHelper.diffHtml(original.getObject(), current.getObject(), new StreamResult(baos), Session.get().getLocale());
+            DiffHelper.diffHtml(original.getObject(), current.getObject(), new StreamResult(baos),
+                    Session.get().getLocale());
             return baos.toString();
         } catch (TransformerConfigurationException e) {
             log.error(e.getMessage(), e);
@@ -74,12 +68,46 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
 
     @Override
     public void detach() {
-        if(original != null) {
+        if (original != null) {
             original.detach();
         }
-        if(current != null) {
+        if (current != null) {
             current.detach();
         }
         super.detach();
+    }
+
+    /**
+     * This model ensures the value is surrounded with <html><body>..value..</body></html>
+     * This is required by the DiffHelper.diffHtml method.
+     */
+    public static class ValidHtmlModel extends AbstractReadOnlyModel<String> {
+
+        IModel<String> wrapped;
+
+        ValidHtmlModel(IModel<String> wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public String getObject() {
+            if (wrapped != null) {
+                String value = wrapped.getObject();
+                if (value != null) {
+                    if (!value.trim().startsWith("<html>")) {
+                        return "<html><body>" + value + "</body></html>";
+                    }
+                }
+                return value;
+            }
+            return null;
+        }
+
+        @Override
+        public void detach() {
+            if (wrapped != null) {
+                wrapped.detach();
+            }
+        }
     }
 }
