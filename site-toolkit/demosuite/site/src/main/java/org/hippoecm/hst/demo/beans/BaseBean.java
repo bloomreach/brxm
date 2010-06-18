@@ -28,7 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Node(jcrType="demosite:base")
+@Node(jcrType="demosite:basedocument")
 public class BaseBean extends HippoDocument implements ContentNodeBinder{
     
     public static final Logger log = LoggerFactory.getLogger(BaseBean.class);
@@ -71,7 +71,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     }
     
    /**
-    * to be overridden by beans having a date. By having it in the generalpage as well, 
+    * to be overridden by beans having a date. By having it in the basebean as well, 
     * the jsp el can always try a var.date without getting an expression language exception
     * @return Calendar obj of the bean or <code>null</code>
     */
@@ -80,7 +80,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     }
     
     /**
-     * to be overridden by beans having an image. By having it in the generalpage as well, 
+     * to be overridden by beans having an image. By having it in the basebean as well, 
      * the jsp el can always try a var.image without getting an expression language exception
      * @return
      */

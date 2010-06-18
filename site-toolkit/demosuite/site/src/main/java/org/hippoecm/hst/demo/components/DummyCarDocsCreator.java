@@ -69,7 +69,7 @@ public class DummyCarDocsCreator {
             
             Node handle = crFolder.addNode("car-"+cal.getTimeInMillis(), "hippo:handle"); 
             handle.addMixin("hippo:hardhandle");
-            Node doc = handle.addNode("car-"+cal.getTimeInMillis(), "demosite:product");
+            Node doc = handle.addNode("car-"+cal.getTimeInMillis(), "demosite:productdocument");
             doc.addMixin("hippo:harddocument");
          
             
@@ -155,7 +155,7 @@ public class DummyCarDocsCreator {
         addCars(availableCars, "Cadillac", 2, 10000, 200000, 1, 200000, new String[] {"US", "luxury", "high quality", "Henry Ford","Leland", "William Durant"});
         addCars(availableCars, "Chevrolet", 4, 10000, 40000, 1,200000, new String[] {"US", "General Motors", "large quantity","William Durant", "Louis Chevrolet", "big three US"});
         addCars(availableCars, "Chrysler", 4, 10000, 50000, 1, 200000,new String[] {"US", "Walter Chrysler", "big three US", "Daimler-Benz","DaimlerChrysler", "Cerberus", "Fiat"});
-        addCars(availableCars, "Citroën", 8, 10000, 30000, 1, 200000,new String[] {"French", "Mors", "Ssalomon", "cheap"});
+        addCars(availableCars, "Citroï¿½n", 8, 10000, 30000, 1, 200000,new String[] {"French", "Mors", "Ssalomon", "cheap"});
         addCars(availableCars, "Daewoo", 6, 10000, 30000, 1, 200000, new String[] {"South-Korean", "General Motors", "Saenara Motor", "GM Deawoo" });
         addCars(availableCars, "Daihatsu", 6, 10000, 30000, 1, 200000, new String[] {"Japanese", "kei cars", " Hatsudoki", "Toyota", "cheap",});
         addCars(availableCars, "Ferrari", 1, 40000, 900000, 1, 300000, new String[] {"Italian", "FIAT Group", "exclusive", "sportsmanlike", "fast", "Enzo Ferrari"});

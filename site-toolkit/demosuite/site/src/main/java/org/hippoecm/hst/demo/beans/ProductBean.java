@@ -17,7 +17,7 @@ package org.hippoecm.hst.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;
 
-@Node(jcrType="demosite:product")
+@Node(jcrType="demosite:productdocument")
 public class ProductBean extends TextBean{
 
     public String getBrand(){
