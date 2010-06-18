@@ -68,6 +68,17 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         refreshResourceLifecycleManagements();
     }
     
+    public boolean removeRepository(Credentials credentials) {
+        Repository removed = repositoryMap.remove(new CredentialsWrapper(credentials));
+        
+        if (removed != null) {
+            refreshResourceLifecycleManagements();
+            return true;
+        }
+        
+        return false;
+    }
+    
     public boolean containsRepositoryByCredentials(Credentials credentials) {
         return repositoryMap.containsKey(new CredentialsWrapper(credentials));
     }

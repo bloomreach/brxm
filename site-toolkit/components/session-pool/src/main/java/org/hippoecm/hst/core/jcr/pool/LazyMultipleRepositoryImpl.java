@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -32,8 +35,12 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.ResourceVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
+    
+    private static final Logger log = LoggerFactory.getLogger(LazyMultipleRepositoryImpl.class);
     
     private Map<String, Map<String, PoolingRepository>> repositoriesMapByCredsDomain = Collections.synchronizedMap(new HashMap<String, Map<String, PoolingRepository>>());
     
@@ -41,6 +48,10 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     private Map<String, String> defaultConfigMap;
     private boolean pooledSessionLifecycleManagementActive = true;
     private String credentialsDomainSeparator = "@";
+    
+    private long timeBetweenEvictionRunsMillis;
+    private Pattern disposableUserIDPatternObject;
+    private InactiveRepositoryDisposer inactiveRepositoryDisposer;
     
     private ResourceLifecycleManagement [] lazyResourceLifecycleManagements;
     
@@ -72,6 +83,18 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         this.credentialsDomainSeparator = credentialsDomainSeparator;
     }
     
+    public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
+        if (timeBetweenEvictionRunsMillis < 0) {
+            throw new IllegalArgumentException("timeBetweenEvictionRunsMillis cannot be a negative value.");
+        }
+        
+        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    }
+    
+    public void setDisposableUserIDPattern(String disposableUserIDPattern) {
+        this.disposableUserIDPatternObject = Pattern.compile(disposableUserIDPattern);
+    }
+    
     @Override
     public ResourceLifecycleManagement [] getResourceLifecycleManagements() {
         int size = (resourceLifecycleManagements != null ? resourceLifecycleManagements.length : 0);
@@ -88,6 +111,51 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         }
         
         return lazyResourceLifecycleManagements;
+    }
+    
+    public Map<String, Map<String, PoolingRepository>> cloneRepositoriesMapByCredsDomain() {
+        Map<String, Map<String, PoolingRepository>> clonedRepositoriesMapByCredsDomain = new HashMap<String, Map<String, PoolingRepository>>();
+        
+        List<String> credsDomains = new LinkedList<String>();
+        
+        if (repositoriesMapByCredsDomain == null || repositoriesMapByCredsDomain.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        
+        synchronized (repositoriesMapByCredsDomain) {
+            Iterator<String> it = repositoriesMapByCredsDomain.keySet().iterator();
+            while (it.hasNext()) {
+                credsDomains.add(it.next());
+            }
+        }
+        
+        for (String credsDomain : credsDomains) {
+            Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
+            
+            if (repoMap != null && !repoMap.isEmpty()) {
+                List<String> userIDs = new LinkedList<String>();
+                
+                synchronized (repoMap) {
+                    Iterator<String> it = repoMap.keySet().iterator();
+                    while (it.hasNext()) {
+                        userIDs.add(it.next());
+                    }
+                }
+                
+                Map<String, PoolingRepository> clonedRepoMap = new HashMap<String, PoolingRepository>();
+                
+                for (String userID : userIDs) {
+                    PoolingRepository repo = repoMap.get(userID);
+                    if (repo != null) {
+                        clonedRepoMap.put(userID, repo);
+                    }
+                }
+                
+                clonedRepositoriesMapByCredsDomain.put(credsDomain, clonedRepoMap);
+            }
+        }
+        
+        return clonedRepositoriesMapByCredsDomain;
     }
     
     @Override
@@ -152,6 +220,11 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         
         lazyResourceLifecycleManagements = null;
         repositoryMap.put(credentialsWrapper, repository);
+        
+        if (timeBetweenEvictionRunsMillis > 0L && inactiveRepositoryDisposer == null) {
+            inactiveRepositoryDisposer = new InactiveRepositoryDisposer();
+            inactiveRepositoryDisposer.start();
+        }
     }
     
     private class DelegatingResourceLifecycleManagements implements ResourceLifecycleManagement {
@@ -262,6 +335,75 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             }
             
             return resourceLifecycleManagements;
+        }
+    }
+    
+    private class InactiveRepositoryDisposer extends Thread {
+        
+        private boolean stopped;
+        
+        private InactiveRepositoryDisposer() {
+            super("InactiveRepositoryDisposer");
+            setDaemon(true);
+        }
+        
+        private void setStopped(boolean stopped) {
+            this.stopped = stopped;
+        }
+        
+        public void run() {
+            
+            synchronized (this) {
+                try {
+                    wait(timeBetweenEvictionRunsMillis);
+                } catch (InterruptedException e) {
+                    stopped = true;
+                }
+            }
+            
+            while (!stopped) {
+                Map<String, Map<String, PoolingRepository>> clonedRepositoriesMapByCredsDomain = cloneRepositoriesMapByCredsDomain();
+                
+                for (Map.Entry<String, Map<String, PoolingRepository>> entry1 : clonedRepositoriesMapByCredsDomain.entrySet()) {
+                    String credsDomain = entry1.getKey();
+                    Map<String, PoolingRepository> clonedRepoMap = entry1.getValue();
+                    
+                    for (Map.Entry<String, PoolingRepository> entry2: clonedRepoMap.entrySet()) {
+                        String userID = entry2.getKey();
+                        
+                        if (disposableUserIDPatternObject != null && !disposableUserIDPatternObject.matcher(userID).matches()) {
+                            continue;
+                        }
+                        
+                        PoolingRepository poolingRepo = entry2.getValue();
+                        
+                        if (poolingRepo.getNumIdle() <= 0) {
+                            Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
+                            
+                            if (repoMap != null) {
+                                PoolingRepository removed = repoMap.remove(userID);
+                                
+                                if (removed != null) {
+                                    removeRepository(((BasicPoolingRepository) removed).getDefaultCredentials());
+                                    
+                                    if (repoMap.isEmpty()) {
+                                        Map<String, PoolingRepository> removedMap = repositoriesMapByCredsDomain.remove(credsDomain);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                synchronized (this) {
+                    try {
+                        wait(timeBetweenEvictionRunsMillis);
+                    } catch (InterruptedException e) {
+                        stopped = true;
+                        break;
+                    }
+                }
+            }
         }
     }
     
