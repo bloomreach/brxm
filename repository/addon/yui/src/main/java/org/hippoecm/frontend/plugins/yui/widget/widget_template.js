@@ -1,0 +1,1 @@
+${namespace}.${class}.${method}('${id}', ${config});

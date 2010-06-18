@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
+import org.hippoecm.frontend.plugins.yui.widget.WidgetTemplate;
 import org.onehippo.yui.YuiNamespace;
 
 /**
@@ -70,6 +71,7 @@ public interface IYuiContext extends IHeaderContributor {
      * @param template
      *            {@link TextTemplate} that will be added to the response.
      */
+    @Deprecated
     void addTemplate(FinalTextTemplate template);
 
     /**
@@ -78,7 +80,14 @@ public interface IYuiContext extends IHeaderContributor {
      * @param template
      *            {@link DynamicTextTemplate} that will be added to the response.
      */
+    @Deprecated
     void addTemplate(DynamicTextTemplate template);
+
+    /**
+     * Add a generic template to the header response. This method should replace the other add*Template methods.
+     * @param template
+     */
+    void addTemplate(IHeaderContributor template);
 
     /**
      * Add static javascript <code>String</code> that will be executed on the browsers' window-load event

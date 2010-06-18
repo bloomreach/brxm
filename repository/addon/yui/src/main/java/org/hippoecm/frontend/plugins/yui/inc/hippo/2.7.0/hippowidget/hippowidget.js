@@ -4,7 +4,7 @@
  * Hippowidgets register with their ancestor layout units for rendering, resizing en destroying
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, layoutmanager, hippoajax
+ * @requires yahoo, dom, functionqueue, layoutmanager, hippoajax
  * @module hippowidget
  * @beta
  */
@@ -17,16 +17,29 @@ if (!YAHOO.hippo.Widget) {
 
         YAHOO.hippo.WidgetManagerImpl = function() {
             this.NAME = 'HippoWidget';
+            this.queue = new YAHOO.hippo.FunctionQueue();
         };
 
         YAHOO.hippo.WidgetManagerImpl.prototype = {
 
             register : function(id, config) {
-                var widget = Dom.get(id);
-                if(Lang.isUndefined(widget[this.NAME])) {
-                    widget[this.NAME] = new YAHOO.hippo.Widget(id, config);
-                }
-                widget[this.NAME].render();
+                console.log('Manager.register[' + id + ']');
+                this.queue.registerFunction(function() {
+                    var widget = Dom.get(id);
+                    console.log('Manager.create[' + id + ' widget=' + widget);
+                    if(widget == null) {
+                        return;
+                    }
+                    if(Lang.isUndefined(widget[this.NAME])) {
+                        widget[this.NAME] = new YAHOO.hippo.Widget(id, config);
+                    }
+                    widget[this.NAME].render();
+                });
+            },
+
+            render : function() {
+                console.log('Manager.render()');
+                this.queue.handleQueue();
             }
         };
 
@@ -34,46 +47,58 @@ if (!YAHOO.hippo.Widget) {
             this.id = id;
             this.config = config;
 
+            this.helper = new YAHOO.hippo.DomHelper();
+
             var el = Dom.get(id);
             var me = this;
             YAHOO.hippo.LayoutManager.registerResizeListener(el, this, function(sizes) {
                 me.resize(sizes);
             }, false);
             YAHOO.hippo.HippoAjax.registerDestroyFunction(el, function() {
-                YAHOO.hippo.LayoutManager.unregisterResizeListener(el, me);
+                me.destroy();
             }, this);
         };
 
         YAHOO.hippo.Widget.prototype = {
 
         	  resize: function(sizes) {
-        	      this.update(sizes);
+                console.log('Resize: ' + Lang.dump(sizes));
+
+                var dim = this._calculateHeightAndWidth(sizes);
+                var el = Dom.get(this.id);
+                Dom.setStyle(el, 'width', dim.width + 'px');
+                Dom.setStyle(el, 'height', dim.height + 'px');
         	  },
 
             render : function() {
-                var table = Dom.get(this.id);
-                var unit = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                console.log('render[' + this.id + ']');
+                var el = Dom.get(this.id);
+                var unit = YAHOO.hippo.LayoutManager.findLayoutUnit(el);
                 if(unit != null) {
-                    this.update(unit.getSizes());
+                    this.resize(unit.getSizes());
                 } else {
                     //We're not inside a layout unit to provide us with dimension details, thus the
                     //resize event will never be called. For providing an initial size, the first ancestor
                     //with a classname is used.
-                    var parent = Dom.getAncestorBy(table, function(node) {
+                    var parent = Dom.getAncestorBy(el, function(node) {
                        return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
                     });
                     if(parent != null) {
                         var reg = Dom.getRegion(parent);
                         var margin = this.helper.getMargin(parent);
-                        this.update({wrap: {w: reg.width, h: reg.height}});
+                        this.resize({wrap: {w: reg.width, h: reg.height}});
                     }
                 }
             },
 
-            update: function(sizes) {
-    	        	var table = Dom.get(this.id);
-	            	var rows = table.rows;
-	        	}
+            destroy : function() {
+                console.log('Destroy[' + this.id + ']');
+                YAHOO.hippo.LayoutManager.unregisterResizeListener(Dom.get(this.id), this);
+            },
+
+            _calculateHeightAndWidth : function(sizes) {
+                return {width: sizes.wrap.w, height: sizes.wrap.h-25};
+            }
         }
     })();
 

@@ -105,6 +105,10 @@ public class YuiContext implements IYuiContext {
         templates.add(template);
     }
 
+    public void addTemplate(IHeaderContributor template) {
+        templates.add(template);
+    }
+
     public void addCssReference(ResourceReference reference) {
         refs.add(cache.getCssReference(reference));
     }
