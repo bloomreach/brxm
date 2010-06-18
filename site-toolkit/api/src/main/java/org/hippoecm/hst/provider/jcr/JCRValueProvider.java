@@ -18,6 +18,7 @@ package org.hippoecm.hst.provider.jcr;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.provider.ValueProvider;
+import org.hippoecm.repository.api.HippoNode;
 
 public interface JCRValueProvider extends ValueProvider{
 
@@ -27,6 +28,11 @@ public interface JCRValueProvider extends ValueProvider{
      * @return the jcr node 
      */
     Node getJcrNode();
+    
+    /**
+     * @return the locallized name of the backing jcr node according {@link HippoNode#getLocalizedName()}
+     */
+    String getLocalizedName();
     
     /**
      * returns the parent {@link Node} of this value provider or <code>null</code> when the node is detached.
@@ -56,5 +62,6 @@ public interface JCRValueProvider extends ValueProvider{
      * Flushes all fetched data kept in instance variables
      */
     void flush();
+
    
 }

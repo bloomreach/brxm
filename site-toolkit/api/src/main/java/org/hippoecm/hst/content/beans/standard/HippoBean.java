@@ -19,10 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.hippoecm.repository.api.HippoNode;
 
 public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<HippoBean> {
 
@@ -41,6 +43,14 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @return the node name of the backing jcr node. This method never returns <code>null</code>
      */
     String getName();
+    
+    /**
+     * This returns the localized node name of the backing jcr node for this bean. If it is a {@link HippoNode} is returns {@link HippoNode#getLocalizedName()}, 
+     * otherwise {@link Node#getName()}
+     * 
+     * @return the localized node name of the backing jcr node and <code>null</code> when some {@link RepositoryException} happens
+     */
+    String getLocalizedName();
 
     /**
      * This returns the absolute path of the backing jcr node for this bean, for example /documents/content/myprojec/news/article

@@ -77,6 +77,10 @@ public class HippoItem implements HippoBean {
     public String getName() {
         return valueProvider.getName();
     }
+    
+    public String getLocalizedName() {
+        return valueProvider.getLocalizedName();
+    }
 
     public String getPath() {
         if (this.path == null && valueProvider != null) {
