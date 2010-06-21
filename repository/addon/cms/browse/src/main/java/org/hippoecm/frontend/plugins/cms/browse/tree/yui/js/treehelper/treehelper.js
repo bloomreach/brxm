@@ -97,7 +97,8 @@ if (!YAHOO.hippo.TreeHelper) {
                     var computedWidth = 0;
                     var computedHeight = 0;
                     var items = Dom.getElementsByClassName('a_', 'div', id);
-                    
+
+                    //Calculate width&height of items and save largest computedWidth value in var 'width'
                     var isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());
                     for(var i=0; i<items.length; i++) {
                         var item = items[i];
@@ -121,12 +122,9 @@ if (!YAHOO.hippo.TreeHelper) {
                         //tree content overflows container element, browser will render scrollbars, so change width
                         width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
                     }
-                    
-                    if(el.treeHelper.cfg.workflowEnabled) {
-                        width += 30;
-                    } else {
-                        width += 10;
-                    }
+
+                    //Add magic width
+                    width += 30;
                 }
                 if(width > 0) {
                     //try to set width to child element with classname 'hippo-tree'. We can't directly take 
