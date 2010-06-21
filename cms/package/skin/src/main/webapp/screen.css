@@ -1459,6 +1459,7 @@ div.rte-preview-style { overflow: auto; min-height: 175px; }
 /* Workflow reject request dialog: textarea styling */
 .hippo-window-form textarea.text-dialog-textarea { width: 420px; height: 150px; }
 
+/* Document diff styling */
 span.hippo-diff-removed {
   text-decoration: line-through;
   background-color: #fdc6c6; /* light red */
@@ -1467,6 +1468,7 @@ span.hippo-diff-removed {
 div.hippo-diff-removed {
   text-decoration: line-through;
   background-color: #fdc6c6; /* light red */
+  float: left;
 }
 
 span.hippo-diff-removed img {
@@ -1479,12 +1481,28 @@ span.hippo-diff-added {
 
 div.hippo-diff-added {
   background-color: #ccffcc; /* light green */
+  float: left;
 }
 
 span.hippo-diff-added img {
   border: 5px solid #ccffcc;
 }
 
+table.compare td.compare-base {
+    padding-right: 15px;
+}
+
+table.compare div.hippo-diff-removed, table.compare div.hippo-diff-added {
+    float: left;
+    padding: 0 10px 0 10px;
+}
+
+div.hippo-diff-removed div.resource-values, div.hippo-diff-added div.resource-values {
+    padding: 0 10px 0 10px;
+    display: inline;
+}
+
+/* Xinha dialo styling */
 .hippo-root > .dialog {
   text-align: left;
   background-color: buttonface;
@@ -1526,4 +1544,3 @@ span.hippo-diff-added img {
   text-align: right;
   width: 7em;
 }
-
