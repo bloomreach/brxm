@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.i18n.model;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jcr.ItemNotFoundException;
@@ -101,10 +103,14 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
         private static final long serialVersionUID = 1L;
 
         private IObservationContext<NodeNameModel> obContext;
-        private IObserver<JcrNodeModel> observer;
+        private Set<IObserver<JcrNodeModel>> observers = new HashSet<IObserver<JcrNodeModel>>();
+        private transient Set<JcrNodeModel> accessed;
 
         @Override
         protected String load() {
+            accessed = new HashSet<JcrNodeModel>();
+            accessed.add(nodeModel.getParentModel());
+
             Node node = nodeModel.getObject();
             String name = "node name";
             if (node != null) {
@@ -112,9 +118,10 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                     // return the name specified by the hippo:translated mixin,
                     // falling back to the decoded node name itself.
                     name = NodeNameCodec.decode(node.getName());
-                    if (!node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.isNodeType(HippoNodeType.NT_DOCUMENT) &&
-                        node.getParent().isNodeType(HippoNodeType.NT_HANDLE) &&
-                        node.getParent().isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                    accessed.add(new JcrNodeModel(node));
+                    if (!node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.isNodeType(HippoNodeType.NT_DOCUMENT)
+                            && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)
+                            && node.getParent().isNodeType(HippoNodeType.NT_TRANSLATED)) {
                         node = node.getParent();
                     }
                     if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
@@ -122,6 +129,7 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                         NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
                         while (nodes.hasNext()) {
                             Node child = nodes.nextNode();
+                            accessed.add(new JcrNodeModel(child));
                             if (child.isNodeType(HippoNodeType.NT_TRANSLATION)
                                     && !child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
                                 String language = child.getProperty("hippo:language").getString();
@@ -173,8 +181,8 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
-            } else if (nodeModel instanceof JcrNodeModel) {
-                String path = ((JcrNodeModel) nodeModel).getItemModel().getPath();
+            } else {
+                String path = nodeModel.getItemModel().getPath();
                 if (path != null) {
                     name = path.substring(path.lastIndexOf('/') + 1);
                     if (name.indexOf('[') > 0) {
@@ -192,6 +200,7 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
 
         @Override
         public void onDetach() {
+            accessed = null;
             NodeTranslator.this.detach();
         }
 
@@ -201,32 +210,53 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
         }
 
         public void startObservation() {
-            final JcrNodeModel parentModel = ((JcrNodeModel) nodeModel).getParentModel();
-            obContext.registerObserver(observer = new IObserver<JcrNodeModel>() {
-                private static final long serialVersionUID = 1L;
+            reregisterObservers();
+        }
 
-                public JcrNodeModel getObservable() {
-                    return parentModel;
-                }
+        private void reregisterObservers() {
+            if (!isAttached()) {
+                getObject();
+            }
 
-                public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
-                    IEvent<NodeNameModel> event = new IEvent<NodeNameModel>() {
+            for (IObserver observer : observers) {
+                obContext.unregisterObserver(observer);
+            }
+            observers.clear();
 
-                        public NodeNameModel getSource() {
-                            return NodeNameModel.this;
-                        }
-                        
-                    };
-                    EventCollection<IEvent<NodeNameModel>> collection = new EventCollection<IEvent<NodeNameModel>>();
-                    collection.add(event);
-                    obContext.notifyObservers(collection);
-                }
+            for (final JcrNodeModel model : accessed) {
+                IObserver observer = new IObserver<JcrNodeModel>() {
+                    private static final long serialVersionUID = 1L;
 
-            });
+                    public JcrNodeModel getObservable() {
+                        return model;
+                    }
+
+                    public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
+                        IEvent<NodeNameModel> event = new IEvent<NodeNameModel>() {
+
+                            public NodeNameModel getSource() {
+                                return NodeNameModel.this;
+                            }
+
+                        };
+                        EventCollection<IEvent<NodeNameModel>> collection = new EventCollection<IEvent<NodeNameModel>>();
+                        collection.add(event);
+                        obContext.notifyObservers(collection);
+                        reregisterObservers();
+                    }
+
+                };
+
+                obContext.registerObserver(observer);
+                observers.add(observer);
+            }
         }
 
         public void stopObservation() {
-            obContext.unregisterObserver(observer);
+            for (IObserver observer : observers) {
+                obContext.unregisterObserver(observer);
+            }
+            observers.clear();
         }
 
     }

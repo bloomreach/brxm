@@ -28,6 +28,7 @@ import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
@@ -69,9 +70,23 @@ class ListCell extends Panel {
         });
 
         if (renderer == null) {
-            add(new NameRenderer().getRenderer("renderer", model));
-        } else {
-            add(renderer.getRenderer("renderer", model));
+            renderer = new NameRenderer();
+        }
+        add(renderer.getRenderer("renderer", model));
+        final IObservable observable = renderer.getObservable(model);
+        if (observable != null) {
+            IObserver observer = new Observer(observable) {
+
+                public void onEvent(Iterator events) {
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(ListCell.this);
+                    }
+                }
+                
+            };
+            context.registerService(observer, IObserver.class.getName());
+            observers.add(observer);
         }
 
         if (attributeModifier != null) {

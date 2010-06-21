@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.IObservable;
 
 public class EmptyRenderer<T> implements IListCellRenderer<T> {
     @SuppressWarnings("unused")
@@ -27,6 +28,10 @@ public class EmptyRenderer<T> implements IListCellRenderer<T> {
 
     public Component getRenderer(String id, IModel<T> model) {
         return new Label(id);
+    }
+
+    public IObservable getObservable(IModel<T> model) {
+        return null;
     }
 
 }
