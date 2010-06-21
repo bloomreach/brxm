@@ -176,6 +176,10 @@ public class TabsPlugin extends RenderPlugin {
         return variation;
     }
 
+    public boolean hasOpenTabs() {
+        return this.tabs.size() > 0;
+    }
+
     Panel getEmptyPanel() {
         return emptyPanel;
     }

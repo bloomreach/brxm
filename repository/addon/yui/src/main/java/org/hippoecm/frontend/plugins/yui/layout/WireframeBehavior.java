@@ -268,10 +268,10 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         target.appendJavascript(
                 jsMethod + "('" + this.settings.getRootId().getElementId() + "', '" + position + "');");
         unitSettings.setExpanded(expand);
-        onToggle(expand, position, target);
+        onToggle(expand, position);
     }
 
-    protected void onToggle(boolean expand, String position, AjaxRequestTarget target) {
+    protected void onToggle(boolean expand, String position) {
     }
 
     public void collapseAll() {
@@ -283,6 +283,34 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
                 }
             }
         }
+    }
+
+    public void expandDefault() {
+        String defaultExpandedUnit = settings.getDefaultExpandedUnit();
+        if(defaultExpandedUnit != null) {
+            UnitSettings defaultSettings = settings.getUnit(defaultExpandedUnit);
+            if(defaultSettings == null) {
+                return;
+            }
+            if (defaultSettings.isExpandCollapseEnabled()) {
+                for (UnitSettings unit : settings.getUnits()) {
+                    if (unit.isExpanded()) {
+                        return;
+                    }
+                }
+
+                AjaxRequestTarget target = AjaxRequestTarget.get();
+                if(target != null) {
+                    String jsMethod = "YAHOO.hippo.LayoutManager.expandUnit" + "('" + this.settings.getRootId().getElementId() + "', '" + defaultSettings.getPosition() + "');";
+                    target.appendJavascript(jsMethod);
+                }
+                defaultSettings.setExpanded(true);
+                onExpandDefault();
+            }
+        }
+    }
+
+    protected void onExpandDefault() {
     }
 
     public boolean hasExpandableUnit() {
