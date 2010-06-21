@@ -24,6 +24,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
@@ -55,6 +56,13 @@ public class NamespaceListingPlugin extends AbstractListingPlugin {
 
             public Component getRenderer(String id, IModel<Node> model) {
                 return new Label(id, new StringResourceModel("nslisting-ns", NamespaceListingPlugin.this, null));
+            }
+
+            public IObservable getObservable(IModel<Node> model) {
+                if (model instanceof IObservable) {
+                    return (IObservable) model;
+                }
+                return null;
             }
         });
         columns.add(column);

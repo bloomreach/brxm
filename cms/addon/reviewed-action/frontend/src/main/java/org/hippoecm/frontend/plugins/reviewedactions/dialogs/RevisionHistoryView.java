@@ -38,6 +38,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
@@ -174,6 +175,10 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 return new Label(id, nameModel);
             }
 
+            public IObservable getObservable(IModel model) {
+                return null;
+            }
+
         });
         column.setAttributeModifier(new RevisionDocumentAttributeModifier());
         columns.add(column);
@@ -199,6 +204,10 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                     }
                 };
                 return new Label(id, labelModel);
+            }
+
+            public IObservable getObservable(IModel model) {
+                return null;
             }
 
         });

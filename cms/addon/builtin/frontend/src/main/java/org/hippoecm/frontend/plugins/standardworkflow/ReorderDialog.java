@@ -43,6 +43,7 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
@@ -233,6 +234,15 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                 public Component getRenderer(String id, IModel<ListItem> model) {
                     ListItem item = model.getObject();
                     return new Label(id, item.getDisplayName());
+                }
+
+                public IObservable getObservable(IModel<ListItem> model) {
+                    ListItem item = model.getObject();
+                    IModel<String> displayName = item.getDisplayName();
+                    if (displayName instanceof IObservable) {
+                        return (IObservable) displayName;
+                    }
+                    return null;
                 }
             });
             columns.add(column);
