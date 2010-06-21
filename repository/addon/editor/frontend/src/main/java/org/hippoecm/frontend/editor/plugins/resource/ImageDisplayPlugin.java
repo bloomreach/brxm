@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Response;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -33,6 +32,7 @@ import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
@@ -56,7 +56,8 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
         IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
         if (mode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
-            IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"), IModelReference.class);
+            IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"),
+                    IModelReference.class);
             boolean doCompare = false;
             if (baseModelRef != null) {
                 IModel<Node> baseModel = baseModelRef.getModel();
@@ -109,15 +110,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
                 String category = mimeType.substring(0, mimeType.indexOf('/'));
                 if ("image".equals(category)) {
                     fragment = new Fragment(id, "image", this);
-                    fragment.add(new NonCachingImage("image", new JcrResource(resource)) {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected void onDetach() {
-                            resource.detach();
-                            super.onDetach();
-                        }
-                    });
+                    fragment.add(new JcrImage("image", resource));
                 } else {
                     fragment = new Fragment(id, "embed", this);
                     fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length()))));
