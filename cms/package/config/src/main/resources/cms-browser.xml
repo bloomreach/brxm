@@ -68,6 +68,9 @@
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
+      <sv:property sv:name="default.expanded.unit" sv:type="String">
+        <sv:value>left</sv:value>
+      </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>browse-perspective-wrapper</sv:value>
       </sv:property>
