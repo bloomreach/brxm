@@ -199,9 +199,6 @@ Xinha.prototype._fullscreenCompatible = function(resize)
     var ancestor = this._htmlArea;
     while((ancestor = ancestor.parentNode) && ancestor.style)
     {
-      ancestor._xinha_fullScreenOldPosition = ancestor.style.position;
-      ancestor.style.position = 'static';
-      
       if(ancestor.className == 'yui-layout-doc') {
           for(var i=0; i < ancestor.childNodes.length; i++) {
               var c = ancestor.childNodes[i];
@@ -209,6 +206,8 @@ Xinha.prototype._fullscreenCompatible = function(resize)
               c.style.position = 'static';
           }
       }
+      ancestor._xinha_fullScreenOldPosition = ancestor.style.position;
+      ancestor.style.position = 'static';
     }
     
     this._iframe.classNameOld = this._iframe.className;
