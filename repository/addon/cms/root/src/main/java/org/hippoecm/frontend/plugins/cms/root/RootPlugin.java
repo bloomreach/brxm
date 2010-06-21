@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -31,6 +34,8 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.widgets.Pinger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RootPlugin extends TabsPlugin {
     @SuppressWarnings("unused")
@@ -38,6 +43,8 @@ public class RootPlugin extends TabsPlugin {
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
+    
     private boolean rendered = false;
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
@@ -54,7 +61,7 @@ public class RootPlugin extends TabsPlugin {
         add(new AjaxIndicatorBehavior());
 
         String[] browsers = config.getStringArray("browsers");
-        StylesheetConfiguration[] configurations = new StylesheetConfiguration[browsers.length];
+        List<StylesheetConfiguration> configurations = new ArrayList<StylesheetConfiguration>(browsers.length);
         for (int i = 0; i < browsers.length; i++) {
             if (config.containsKey(browsers[i])) {
                 IPluginConfig browserConf = config.getPluginConfig(browsers[i]);
@@ -62,10 +69,12 @@ public class RootPlugin extends TabsPlugin {
                 Browser browser = new Browser(UserAgent.valueOf(ua), browserConf.getInt("major.version", -1),
                         browserConf.getInt("minor.version", -1));
 
-                configurations[i] = new StylesheetConfiguration(browser, browserConf.getStringArray("stylesheets"));
+                configurations.add(new StylesheetConfiguration(browser, browserConf.getStringArray("stylesheets")));
+            } else {
+                log.warn("Browser " + browsers[i] + " listed, but no configuration is provided");
             }
         }
-        add(new BrowserSpecificStylesheetsBehavior(configurations));
+        add(new BrowserSpecificStylesheetsBehavior(configurations.toArray(new StylesheetConfiguration[configurations.size()])));
 
         get("tabs").add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
         get("tabs:panel-container").add(new UnitBehavior("center"));
