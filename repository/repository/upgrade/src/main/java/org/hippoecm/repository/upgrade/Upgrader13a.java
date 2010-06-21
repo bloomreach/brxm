@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
@@ -481,33 +482,21 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
-        // FIXME: null-pointers waiting to happen
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", "-",
                 new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippo.cnd"))));
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", "-",
                 new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposys.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippofacnav", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippofacnav.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostd", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippostd.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostdpubwf", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippostdpubwf.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposched", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposched.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippoldap", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippoldap.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippogallery.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "frontend", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("frontend.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "editor", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("editor.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippohtmlcleaner", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "reporting", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("reporting.cnd"))));
+        safeRegisterNamespaceVisitor(context, "hipposysedit", "hipposysedit.cnd");
+        safeRegisterNamespaceVisitor(context, "hippofacnav", "hippofacnav.cnd");
+        safeRegisterNamespaceVisitor(context, "hippostd", "hippostd.cnd");
+        safeRegisterNamespaceVisitor(context, "hippostdpubwf", "hippostdpubwf.cnd");
+        safeRegisterNamespaceVisitor(context, "hipposched", "hipposched.cnd");
+        safeRegisterNamespaceVisitor(context, "hippoldap", "hippoldap.cnd");
+        safeRegisterNamespaceVisitor(context, "hippogallery", "hippogallery.cnd");
+        safeRegisterNamespaceVisitor(context, "frontend", "frontend.cnd");
+        safeRegisterNamespaceVisitor(context, "editor", "editor.cnd");
+        safeRegisterNamespaceVisitor(context, "hippohtmlcleaner", "hippohtmlcleaner.cnd");
+        safeRegisterNamespaceVisitor(context, "reporting", "reporting.cnd");
 
         try {
             Workspace workspace = context.getWorkspace();
@@ -567,6 +556,12 @@ public class Upgrader13a implements UpdaterModule {
         });
     }
 
+    private void safeRegisterNamespaceVisitor(UpdaterContext context, String ns, String cnd) {
+        InputStream is = getClass().getClassLoader().getResourceAsStream(cnd);
+        if (is != null) {
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, ns, "-", new InputStreamReader(is)));
+        }
+    }
 
     private Collection<String> subTypedNamespaces(Workspace workspace) throws RepositoryException {
         Set<String> knownNamespaces = new HashSet<String>();
