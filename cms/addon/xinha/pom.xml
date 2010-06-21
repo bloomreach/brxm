@@ -47,6 +47,46 @@
       </resource>
     </resources>
     <plugins>
+      <!-- For now patches are not applied to Xinha during mvn build because Windows
+      doesn't have the patch utility installed by default, see: http://maven.apache.org/plugins/maven-patch-plugin/faq.html
+      Instead we patch them manually and override Xinha's files during the war build.. -->
+      <!--<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-patch-plugin</artifactId>
+        <version>1.1.1</version>
+        <configuration>
+          <targetDirectory>${basedir}</targetDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>bugfix-patches</id>
+            <configuration>
+              <patchDirectory>src/main/patches/bugfix</patchDirectory>
+              <patchTrackingFile>${project.build.directory}/optimization-files/bugfix/patches-applied.txt
+              </patchTrackingFile>
+              <naturalOrderProcessing>true</naturalOrderProcessing>
+            </configuration>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>enhancement-patches</id>
+            <configuration>
+              <patchDirectory>src/main/patches/enhancement</patchDirectory>
+              <patchTrackingFile>${project.build.directory}/optimization-files/enhancement/patches-applied.txt
+              </patchTrackingFile>
+              <naturalOrderProcessing>true</naturalOrderProcessing>
+            </configuration>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
