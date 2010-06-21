@@ -760,6 +760,16 @@ font-weight: bold;
 .hippo-preview-document div.odd  .hippo-editor-field {border-bottom: 1px dotted #afafaf}
 .hippo-preview-document div.even .hippo-editor-field {border-bottom: 1px dotted #afafaf}
 .hippo-preview-document .hippo-editor-field-textarea, .hippo-preview-document .hippo-editor-field-html-preview{min-height: 75px}
+
+/* Wrap the content of pre elements in document preview mode */
+.hippo-preview-document .hippo-editor-field-html-preview pre{
+ white-space: pre-wrap; /* css-3 */
+ white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+ white-space: -pre-wrap; /* Opera 4-6 */
+ white-space: -o-pre-wrap; /* Opera 7 */
+ word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield{background-image: none}
 
 .hippo-preview-document .hippo-editor-field {overflow: auto;}
