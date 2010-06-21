@@ -18,10 +18,13 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.IObservable;
 
 public interface IListCellRenderer<T> extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    public Component getRenderer(String id, IModel<T> model);
+    Component getRenderer(String id, IModel<T> model);
+
+    IObservable getObservable(IModel<T> model);
 
 }

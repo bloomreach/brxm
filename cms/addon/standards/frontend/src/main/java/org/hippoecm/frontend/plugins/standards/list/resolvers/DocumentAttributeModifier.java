@@ -35,7 +35,15 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DocumentAttributeModifier.class);
-    
+
+    @Override
+    public AttributeModifier[] getCellAttributeModifiers(IModel<Node> model) {
+        if (model.getObject() == null) {
+            return new AttributeModifier[] { null };
+        }
+        return super.getCellAttributeModifiers(model);
+    }
+
     @Override
     public AttributeModifier getCellAttributeModifier(Node node) {
         IModel<String> documentType = null;

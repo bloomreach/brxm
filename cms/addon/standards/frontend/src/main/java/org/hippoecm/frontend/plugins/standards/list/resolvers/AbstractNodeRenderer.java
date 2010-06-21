@@ -22,6 +22,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,13 @@ public abstract class AbstractNodeRenderer implements IListCellRenderer<Node> {
         return new Label(id);
     }
 
+    public IObservable getObservable(final IModel<Node> model) {
+        if (model instanceof IObservable) {
+            return (IObservable) model;
+        }
+        return null;
+    }
+    
     protected abstract Component getViewer(String id, Node node) throws RepositoryException;
 
 }
