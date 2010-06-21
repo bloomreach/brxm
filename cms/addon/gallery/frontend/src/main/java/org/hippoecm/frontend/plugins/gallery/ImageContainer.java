@@ -17,17 +17,15 @@ package org.hippoecm.frontend.plugins.gallery;
 
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.string.StringValueConversionException;
-import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.ImageNodeDragBehavior;
-import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 
 public class ImageContainer extends Panel {
@@ -51,40 +49,18 @@ public class ImageContainer extends Panel {
 
         stream = new JcrResourceStream(model);
 
-        Image img;
-        final Time lastModified = stream.lastModifiedTime();
+        Image img = new JcrImage("image", stream) {
+            private static final long serialVersionUID = 1L;
 
-        if(lastModified == null) {
-            img = new NonCachingImage("image", new JcrResource(stream)) {
-                private static final long serialVersionUID = 1L;
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
 
-                @Override
-                protected void onComponentTag(ComponentTag tag) {
-                    super.onComponentTag(tag);
-
-                    if (width > 0) {
-                        tag.put("width", width);
-                    }
+                if (width > 0) {
+                    tag.put("width", width);
                 }
-            };
-        } else {
-            img = new Image("image", new JcrResource(stream)) {
-                @Override
-                protected void onComponentTag(ComponentTag tag) {
-                    super.onComponentTag(tag);
-
-                    if (width > 0) {
-                        tag.put("width", width);
-                    }
-
-                    String url = tag.getAttributes().getString("src");
-                    url = url + ((url.indexOf("?") >= 0) ? "&amp;" : "?");
-                    url = url + "w:lm=" + (lastModified.getMilliseconds() / 1000);
-                    tag.put("src", url);
-                }
-            };
-
-        }
+            }
+        };
         img.add(new ImageNodeDragBehavior(new DragSettings(YuiPluginHelper.getConfig(pluginConfig)), model));
         add(img);
     }
