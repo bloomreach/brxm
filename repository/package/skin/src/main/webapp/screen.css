@@ -1474,3 +1474,46 @@ div.hippo-diff-added {
 span.hippo-diff-added img {
   border: 5px solid #ccffcc;
 }
+
+.hippo-root > .dialog {
+  text-align: left;
+  background-color: buttonface;
+}
+
+.hippo-root > .dialog table, .hippo-root > .dialog td, .hippo-root > .dialog tr {
+  padding: 1px;
+}
+
+.hippo-root > .dialog > h1 {
+  padding: 3px 10px;
+  margin-bottom: 10px;
+}
+
+.hippo-root > .dialog fieldset {
+  border: 2px groove #F0F0F0;
+  padding: 0.2em 0.5em;
+  margin: 0px 2px 0px 2px;
+}
+
+.hippo-root > .dialog div.buttons {
+  text-align: right;
+}
+
+.hippo-root > .dialog div.space {
+  padding: 2px;
+}
+
+.hippo-root > .dialog div.fl {
+  float: left;
+  padding: 2px 5px;
+  text-align: right;
+  width: 4em;
+}
+
+.hippo-root > .dialog div.fr {
+  float: left;
+  padding: 2px 5px;
+  text-align: right;
+  width: 7em;
+}
+
