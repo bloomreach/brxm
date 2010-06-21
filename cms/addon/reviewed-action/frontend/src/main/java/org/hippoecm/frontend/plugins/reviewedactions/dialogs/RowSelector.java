@@ -23,6 +23,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
 public class RowSelector<T> implements IListCellRenderer<T> {
@@ -78,6 +79,10 @@ public class RowSelector<T> implements IListCellRenderer<T> {
             setOutputMarkupId(true);
         }
 
+    }
+
+    public IObservable getObservable(IModel<T> model) {
+        return null;
     }
 
 }
