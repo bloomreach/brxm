@@ -67,6 +67,8 @@ public class WireframeSettings extends AjaxSettings {
 
     private String clientClassName = "YAHOO.hippo.Wireframe";
 
+    private String defaultExpandedUnit;
+
     public WireframeSettings(IPluginConfig config) {
         units = new ArrayList<UnitSettings>(5);
         for (String position : new String[] {"top", "left", "center", "right", "bottom"}) {
@@ -130,6 +132,14 @@ public class WireframeSettings extends AjaxSettings {
             }
         }
         return null;
+    }
+
+    public String getDefaultExpandedUnit() {
+        return defaultExpandedUnit;
+    }
+
+    public void setDefaultExpandedUnit(String defaultExpandedUnit) {
+        this.defaultExpandedUnit = defaultExpandedUnit;
     }
 
 }

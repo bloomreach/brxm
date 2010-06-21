@@ -68,6 +68,8 @@ public class BrowserPerspective extends Perspective {
 
                 if(listing == null || !listing.isSupported()) {
                     wireframe.collapseAll();
+                } else if (tabs != null && !tabs.hasOpenTabs() && wireframe != null) {
+                    wireframe.expandDefault();
                 }
             }
 
@@ -115,9 +117,14 @@ public class BrowserPerspective extends Perspective {
                             //Prevent calling toggle twice in a single request: we will end up here after
                             //the onToggle override below sets the documentModel to null to remove the selected
                             //state from the doclisting
-                            if (service != null && !service.getModel().equals(NULL_MODEL)) {
-                                wireframe.collapseAll();
+                            if (service != null) {
+                                if(!service.getModel().equals(NULL_MODEL)) {
+                                    wireframe.collapseAll();
+                                } else if(!tabs.hasOpenTabs() && listing.isSupported()){
+                                    wireframe.expandDefault();
+                                }
                             }
+
                         }
                     }, IObserver.class.getName());
                 }
@@ -139,9 +146,11 @@ public class BrowserPerspective extends Perspective {
         String browserId = config.getString("browser.id");
         context.registerService(this, browserId);
 
-        add(wireframe = new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))) {
+        WireframeSettings s = new WireframeSettings(config.getPluginConfig("layout.wireframe"));
+        s.setDefaultExpandedUnit("left");
+        add(wireframe = new WireframeBehavior(s) {
             @Override
-            protected void onToggle(boolean expand, String position, AjaxRequestTarget target) {
+            protected void onToggle(boolean expand, String position/*, AjaxRequestTarget target*/) {
                 if(listing != null && listing.isSupported()) {
                     if (expand) {
                         listing.expand();
@@ -167,9 +176,24 @@ public class BrowserPerspective extends Perspective {
                         modelReference.setModel(previousSelection);
                     }
                 }
+            }
 
+            @Override
+            protected void onExpandDefault() {
+                if (listing != null && listing.isSupported()) {
+                    listing.expand();
+                }
             }
         });
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+
+        if(!tabs.hasOpenTabs()) {
+            wireframe.expandDefault();
+        }
     }
 
     @Override
