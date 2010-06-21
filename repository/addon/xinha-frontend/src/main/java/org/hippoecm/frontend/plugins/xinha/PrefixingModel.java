@@ -46,7 +46,11 @@ public class PrefixingModel implements IModel<String> {
     }
 
     public void setObject(String object) {
-        bare.setObject(RichTextProcessor.restoreFacets(object));
+        if (object != null) {
+            bare.setObject(RichTextProcessor.restoreFacets(object));
+        } else {
+            bare.setObject(null);
+        }
     }
 
     public void detach() {
