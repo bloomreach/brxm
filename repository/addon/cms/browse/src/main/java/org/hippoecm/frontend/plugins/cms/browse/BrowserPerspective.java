@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -120,7 +119,7 @@ public class BrowserPerspective extends Perspective {
                             if (service != null) {
                                 if(!service.getModel().equals(NULL_MODEL)) {
                                     wireframe.collapseAll();
-                                } else if(!tabs.hasOpenTabs() && listing.isSupported()){
+                                } else if(tabs != null && !tabs.hasOpenTabs() && listing != null && listing.isSupported()){
                                     wireframe.expandDefault();
                                 }
                             }
@@ -146,9 +145,7 @@ public class BrowserPerspective extends Perspective {
         String browserId = config.getString("browser.id");
         context.registerService(this, browserId);
 
-        WireframeSettings s = new WireframeSettings(config.getPluginConfig("layout.wireframe"));
-        s.setDefaultExpandedUnit("left");
-        add(wireframe = new WireframeBehavior(s) {
+        add(wireframe = new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))) {
             @Override
             protected void onToggle(boolean expand, String position/*, AjaxRequestTarget target*/) {
                 if(listing != null && listing.isSupported()) {

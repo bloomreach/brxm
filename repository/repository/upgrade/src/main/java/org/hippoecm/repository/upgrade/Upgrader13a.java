@@ -362,6 +362,7 @@ public class Upgrader13a implements UpdaterModule {
                 layout.setProperty("linked.with.parent", true);
                 layout.setProperty("root.id", "browse-perspective-wrapper");
                 layout.setProperty("top", "id=browse-perspective-top,height=25");
+                layout.setProperty("default.expanded.unit", "left");
             }
         });
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser/editorManagerPlugin") {
