@@ -92,14 +92,15 @@ if (!YAHOO.hippo.TreeHelper) {
                 if(el == null) {
                     return;
                 }
-                
+
+                this._setWidth(el, id, 2000);
+
                 if(el.treeHelper.cfg.treeAutowidth) {
                     var computedWidth = 0;
                     var computedHeight = 0;
                     var items = Dom.getElementsByClassName('a_', 'div', id);
 
                     //Calculate width&height of items and save largest computedWidth value in var 'width'
-                    var isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());
                     for(var i=0; i<items.length; i++) {
                         var item = items[i];
                         var itemChildNodes = Dom.getChildren(item);
@@ -124,28 +125,37 @@ if (!YAHOO.hippo.TreeHelper) {
                     }
 
                     //Add magic width
-                    width += 30;
+                     if(el.treeHelper.cfg.workflowEnabled) {
+                        width += 25;
+                    } else {
+                        width += 10;
+                    }
                 }
                 if(width > 0) {
-                    //try to set width to child element with classname 'hippo-tree'. We can't directly take 
-                    //the childnode of 'id' because of the wicket:panel elements in dev-mode
-                    var ar = Dom.getElementsByClassName(el.treeHelper.cfg.setWidthToClassname, 'div', id);
-                    if(!Lang.isUndefined(ar.length) && ar.length > 0) {
-                        //Also check if the maxFound width in the tree isn't smaller than the layoutMax width
-                        var layoutMax = this.getLayoutMax(el);
-                        if(layoutMax != null && layoutMax > width) {
-                            width = layoutMax;
-                        }
+                    this._setWidth(el, id, width);
+                }
+            },
 
-                        var regionTree = Dom.getRegion(ar[0]);
-                        var regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'hippo-accordion-unit-center'));
-                        if(regionTree.height > regionUnitCenter.height) {
-                            //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
-                            width -= (isWin ? 17: 15);
-                        }
-
-                        Dom.setStyle(ar[0], 'width', width + 'px');
+            _setWidth : function(el, id, width) {
+                //try to set width to child element with classname 'hippo-tree'. We can't directly take
+                //the childnode of 'id' because of the wicket:panel elements in dev-mode
+                var ar = Dom.getElementsByClassName(el.treeHelper.cfg.setWidthToClassname, 'div', id);
+                if(!Lang.isUndefined(ar.length) && ar.length > 0) {
+                    //Also check if the maxFound width in the tree isn't smaller than the layoutMax width
+                    var layoutMax = this.getLayoutMax(el);
+                    if(layoutMax != null && layoutMax > width) {
+                        width = layoutMax;
                     }
+
+                    var regionTree = Dom.getRegion(ar[0]);
+                    var regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'hippo-accordion-unit-center'));
+                    if(regionTree.height > regionUnitCenter.height) {
+                        //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
+                        var isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());
+                        width -= (isWin ? 17: 15);
+                    }
+
+                    Dom.setStyle(ar[0], 'width', width + 'px');
                 }
             },
             
