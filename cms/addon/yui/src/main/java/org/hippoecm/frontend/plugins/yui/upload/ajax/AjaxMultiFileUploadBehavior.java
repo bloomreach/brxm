@@ -55,7 +55,7 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
     @Override
     public void addHeaderContribution(IYuiContext context) {
-        context.addCssReference(new ResourceReference(AjaxMultiFileUploadBehavior.class, "skin.css"));
+        context.addCssReference(new ResourceReference(AjaxMultiFileUploadBehavior.class, "res/skin.css"));
         context.addModule(HippoNamespace.NS, "upload");
         context.addTemplate(template);
         context.addOnWinLoad("YAHOO.hippo.Upload.render()");

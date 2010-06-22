@@ -1,5 +1,20 @@
-#selectLink {
-  text-decoration: underline;
+#selectFilesLink {
+    width: 244px;
+    height: 26px;
+}
+
+#selectFilesLink.i18n-en {
+    background-image: url("select_upload_en.png");
+}
+#selectFilesLink.i18n-nl{
+    background-image: url("select_upload_nl.png");
+}
+
+#selectFilesLink.i18n-en.rollover {
+    background-image: url("select_upload_en_hover.png");
+}
+#selectFilesLink.i18n-nl.rollover {
+    background-image: url("select_upload_nl_hover.png");
 }
 
 .yau-progressbar {height:5px;background-color:#F00;}
@@ -9,6 +24,17 @@
 .yau-select-link-rollover {color: #000000; background-color: #FFFFFF;}
 
 #dataTableContainer {margin-top: 10px;}
+
+#dataTableContainer .remove_file {
+    background-image: url("delete-small-16.png");
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.hippo-root .yui-dt td.yui-dt-last {
+    border-right: 0;
+}
 
 /* Datatable skin */
 
@@ -39,7 +65,7 @@ version: 2.8.1
 }
 
 .hippo-root .yui-dt th {
-    background:#D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0; /* header gradient */
+    background:#D8D8DA url(sprite.png) repeat-x 0 0; /* header gradient */
 }
 .hippo-root .yui-dt th,
 .hippo-root .yui-dt th a {
@@ -59,7 +85,7 @@ version: 2.8.1
 }
 .hippo-root .yui-dt-liner {
     margin:0;padding:0;
-    padding:4px 10px 4px 10px; /* cell padding */
+    padding:3px 10px 3px 10px; /* cell padding */
 }
 .hippo-root .yui-dt-coltarget {
     width: 5px;
@@ -99,7 +125,7 @@ version: 2.8.1
 /* sortable columns */
 .hippo-root th.yui-dt-asc,
 .hippo-root th.yui-dt-desc {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -100px; /* sorted header gradient */
+    background:url(sprite.png) repeat-x 0 -100px; /* sorted header gradient */
 }
 .hippo-root th.yui-dt-sortable .yui-dt-label {
     margin-right:10px;
@@ -128,33 +154,33 @@ tbody .yui-dt-editable {
     padding-top:6px;text-align:right;
 }
 .yui-dt-editor .yui-dt-button button {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+    background:url(sprite.png) repeat-x 0 0;
     border:1px solid #999;
     width:4em;height:1.8em;
     margin-left:6px;
 }
 .yui-dt-editor .yui-dt-button button.yui-dt-default {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1400px;
+    background:url(sprite.png) repeat-x 0 -1400px;
     background-color: #5584E0;
     border:1px solid #304369;
     color:#FFF
 }
 .yui-dt-editor .yui-dt-button button:hover {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1300px;
+    background:url(sprite.png) repeat-x 0 -1300px;
     color:#000;
 }
 .yui-dt-editor .yui-dt-button button:active {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1700px;
+    background:url(sprite.png) repeat-x 0 -1700px;
     color:#000;
 }
 
 /* striping */
 .hippo-root tr.yui-dt-even { background-color:#FFF; } /* white */
 .hippo-root tr.yui-dt-odd { background-color:#EDF5FF; } /* light blue */
-.hippo-root tr.yui-dt-even td.yui-dt-asc,
-.hippo-root tr.yui-dt-even td.yui-dt-desc { background-color:#EDF5FF; } /* light blue sorted */
-.hippo-root tr.yui-dt-odd td.yui-dt-asc,
-.hippo-root tr.yui-dt-odd td.yui-dt-desc { background-color:#DBEAFF; } /* dark blue sorted */
+/*.hippo-root tr.yui-dt-even td.yui-dt-asc,
+.hippo-root tr.yui-dt-even td.yui-dt-desc { background-color:#EDF5FF; }*/ /* light blue sorted */
+/*.hippo-root tr.yui-dt-odd td.yui-dt-asc,
+.hippo-root tr.yui-dt-odd td.yui-dt-desc { background-color:#DBEAFF; }*/ /* dark blue sorted */
 
 /* disable striping in list mode */
 .hippo-root .yui-dt-list tr.yui-dt-even { background-color:#FFF; } /* white */
