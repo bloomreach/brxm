@@ -26,6 +26,8 @@ public class ExpandCollapseLink<T> extends AjaxLink<T> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    private Boolean hasExpandableParent;
+
     public ExpandCollapseLink(String id) {
         super(id);
     }
@@ -37,19 +39,32 @@ public class ExpandCollapseLink<T> extends AjaxLink<T> {
 
     @Override
     public boolean isVisible() {
-        MarkupContainer parent = getParent();
-        while (parent != null) {
-            for (IBehavior behavior : parent.getBehaviors()) {
-                if (behavior instanceof WireframeBehavior) {
-                    WireframeBehavior wireframe = (WireframeBehavior) behavior;
-                    if (wireframe.hasExpandableUnit()) {
-                        return true;
+        return hasExpandableParent();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return hasExpandableParent();
+    }
+
+    private boolean hasExpandableParent() {
+        if(hasExpandableParent == null) {
+            hasExpandableParent = false;
+            MarkupContainer parent = getParent();
+            while (parent != null) {
+                for (IBehavior behavior : parent.getBehaviors()) {
+                    if (behavior instanceof WireframeBehavior) {
+                        WireframeBehavior wireframe = (WireframeBehavior) behavior;
+                        if (wireframe.hasExpandableUnit()) {
+                            hasExpandableParent = true;
+                            break;
+                        }
                     }
                 }
+                parent = parent.getParent();
             }
-            parent = parent.getParent();
         }
-        return false;
+        return hasExpandableParent;
     }
 
     @Override
@@ -68,5 +83,11 @@ public class ExpandCollapseLink<T> extends AjaxLink<T> {
                 return script;
             }
         };
+    }
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        hasExpandableParent = null;
     }
 }

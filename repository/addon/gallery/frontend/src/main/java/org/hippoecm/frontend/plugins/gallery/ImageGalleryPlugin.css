@@ -1,10 +1,3 @@
-.toggle-button {
-    float: right;
-    margin-bottom: 3px;
-    padding-top: 2px;
-    padding-right: 2px;
-    position: static;
-}
 
 .gallery-wrapper {
     margin-left:auto;
@@ -24,6 +17,10 @@ ul.gallery-list li a {
 ul.gallery-list {
   display: block;
   overflow: auto;
+}
+
+.hippo-picker-list-details ul.gallery-list {
+  overflow: visible;
 }
 
 ul.gallery-list li {

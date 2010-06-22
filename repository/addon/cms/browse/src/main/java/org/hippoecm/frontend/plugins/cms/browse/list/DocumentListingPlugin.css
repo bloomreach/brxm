@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-.toggle-button {
-    float: right;
-    margin-bottom: 3px;
-    padding-top: 2px;
-    padding-right: 2px;
-    position: static;
-}
-
 .doclisting-icon { width:15px; }
 
 .doclisting-state { width: 40px; }
