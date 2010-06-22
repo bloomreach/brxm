@@ -55,7 +55,7 @@ import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.frontend.widgets.ThrottledTextFieldWidget;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.MappingException;
@@ -83,7 +83,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
         createUploadForm(config);
 
-        add(new TextFieldWidget("alt", new StringPropertyModel(model, XinhaImage.ALT)) {
+        add(new ThrottledTextFieldWidget("alt", new StringPropertyModel(model, XinhaImage.ALT)) {
             private static final long serialVersionUID = 1L;
 
             @Override
