@@ -129,13 +129,27 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
         mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
         if (IEditor.Mode.COMPARE == mode) {
-            IModelReference<P> compareToModelRef = context.getService(config.getString("model.compareTo"),
-                    IModelReference.class);
-            if (compareToModelRef != null) {
-                // TODO: add observer
-                compareTo = compareToModelRef.getModel();
+            if (config.containsKey("model.compareTo")) {
+                IModelReference<P> compareToModelRef = context.getService(config.getString("model.compareTo"),
+                        IModelReference.class);
+                if (compareToModelRef != null) {
+                    // TODO: add observer
+                    compareTo = compareToModelRef.getModel();
+                    if (compareTo == null) {
+                        log.warn("compareTo model is null, falling back to view mode");
+                    }
+                } else {
+                    log.warn("No compareTo.model configured, falling back to view mode");
+                }
+            } else {
+                log.warn("No compareTo model available; this is required in compare mode");
             }
-
+            if (compareTo == null) {
+                mode = IEditor.Mode.VIEW;
+            }
+        }
+        
+        if (IEditor.Mode.COMPARE == mode) {
             IComparer comparer;
             ITypeDescriptor type = helper.getField().getTypeDescriptor();
             if (type.isNode()) {
