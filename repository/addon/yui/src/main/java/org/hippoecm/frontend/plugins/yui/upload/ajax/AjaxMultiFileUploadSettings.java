@@ -38,6 +38,9 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
     //Id of the ajaxIndicatorObject
     private String ajaxIndicatorId;
 
+    //Locale shortcut for i18n css
+    private String locale;
+
     public boolean isAllowMultipleFiles() {
         return allowMultipleFiles;
     }
@@ -86,6 +89,12 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
         this.ajaxIndicatorId = ajaxIndicatorId;
     }
 
+    public String getLocale() {
+        return locale;
+    }
 
-    
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
 }

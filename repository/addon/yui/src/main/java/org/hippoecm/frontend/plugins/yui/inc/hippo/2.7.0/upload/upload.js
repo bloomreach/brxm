@@ -52,6 +52,12 @@ if (!YAHOO.hippo.Upload) {
                 if(this.latest != null) {
                     this.latest.upload();
                 }
+            },
+
+            removeItem : function(oRecord) {
+                if(this.latest != null) {
+                    this.latest.removeItem(oRecord);
+                }
             }
         };
 
@@ -65,11 +71,15 @@ if (!YAHOO.hippo.Upload) {
 
             YAHOO.widget.Uploader.SWFURL = config.flashUrl;
 
-            var uiLayer = YAHOO.util.Dom.getRegion('selectLink');
-            var overlay = YAHOO.util.Dom.get('uploaderOverlay');
-            YAHOO.util.Dom.setStyle(overlay, 'width', uiLayer.right-uiLayer.left + "px");
-            YAHOO.util.Dom.setStyle(overlay, 'height', uiLayer.bottom-uiLayer.top + "px");
+            var selectFilesLink = Dom.get('selectFilesLink');
+            Dom.addClass(selectFilesLink, 'i18n-' + this.config.locale);
 
+            var uiLayer = Dom.getRegion(selectFilesLink);
+            var overlay = Dom.get('uploaderOverlay');
+
+            Dom.setStyle(overlay, 'width', uiLayer.right-uiLayer.left + "px");
+
+            Dom.setStyle(overlay, 'height', uiLayer.bottom-uiLayer.top + "px");
             this.uploader = new YAHOO.widget.Uploader( "uploaderOverlay" );
             this.fileList = null;
             this.numberOfUploads = 0;
@@ -168,14 +178,18 @@ if (!YAHOO.hippo.Upload) {
                     this.uploader.setFileFilters(new Array({description:"Files", extensions:allowedExtensions}));
                 }
 
+  	            // Add the custom formatter to the shortcuts
+      	        YAHOO.widget.DataTable.Formatter.titleFormatter = this._titleFormatter;
+      	        YAHOO.widget.DataTable.Formatter.bytesFormatter = this._bytesFormatter;
+                YAHOO.widget.DataTable.Formatter.removeFormatter = this._removeFormatter;
             },
 
             handleRollOver : function() {
-                Dom.replaceClass(Dom.get('selectLink'), 'yau-select-link-rollout', 'yau-select-link-rollover');
+                Dom.addClass(Dom.get('selectFilesLink'), 'rollover');
             },
 
             handleRollOut : function() {
-                Dom.replaceClass(Dom.get('selectLink'), 'yau-select-link-rollover', 'yau-select-link-rollout');
+                Dom.removeClass(Dom.get('selectFilesLink'), 'rollover');
             },
 
             handleClick : function() {
@@ -190,11 +204,21 @@ if (!YAHOO.hippo.Upload) {
 
             },
 
+            removeItem : function(oRecord) {
+                this.uploader.removeFile(oRecord._oData.id);
+                this.datatable.deleteRow(oRecord._sId);
+            },
+
             _updateDatatable : function(event) {
-                var rowNum = this.fileIdHash[event["id"]];
-                var prog = Math.round(100*(event["bytesLoaded"]/event["bytesTotal"]));
-                var progbar = '<div class="yau-progressbar-container"><div class="yau-progressbar" style="width:' + prog + 'px;"></div></div>';
-                this.singleSelectDataTable.updateRow(rowNum, {name: this.dataArr[rowNum]["name"], size: this.dataArr[rowNum]["size"], progress: progbar});
+                var recordSet = this.datatable.getRecordSet();
+                for (var j = 0; j < recordSet.getLength(); j++) {
+                    var r = recordSet.getRecord(j);
+                    if(r._oData["id"] == event["id"]) {
+                        var prog = Math.round(100*(event["bytesLoaded"]/event["bytesTotal"]));
+                        var progbar = '<div class="yau-progressbar-container"><div class="yau-progressbar" style="width:' + prog + 'px;"></div></div>';
+                        this.datatable.updateRow(j, {name: progbar, size: r._oData["size"]});
+                    }
+                }
             },
 
             _createDatatable : function(entries) {
@@ -207,39 +231,121 @@ if (!YAHOO.hippo.Upload) {
                     this.dataArr.unshift(entry);
                 }
 
-                for (var j = 0; j < this.dataArr.length; j++) {
-                    this.fileIdHash[this.dataArr[j].id] = j;
-                }
+//                for (var j = 0; j < this.dataArr.length; j++) {
+//                    this.fileIdHash[this.dataArr[j].id] = j;
+//                }
 
-                var nameWidth = this.dataArr.length > 10 ? 222: 235;
+                var nameWidth = this.dataArr.length < 12 ? 315 : 315 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
 
                 var myColumnDefs = [
-                    {key:"name", label: "File Name", sortable:false, width: nameWidth},
-                    {key:"size", label: "Size", sortable:false, width: 40},
-                    {key:"progress", label: "Upload progress", sortable:false, width: 100}
+                    {key:"name", label: "File Name", sortable:true, width: nameWidth, formatter:"titleFormatter"},
+                    {key:"size", label: "Size", sortable:true, width: 40, formatter: "bytesFormatter"},
+                    {key:"id", label: "", sortable:false, width: 20, formatter: "removeFormatter"}
+                    /*{key:"progress", label: "Upload progress", sortable:false, width: 100}*/
                 ];
 
                 var myDataSource = new YAHOO.util.DataSource(this.dataArr);
                 myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
                 myDataSource.responseSchema = {
-                  fields: ["id","name","created","modified","type", "size", "progress"]
+                  fields: ["id",{key:"name", parser:"string"},"created","modified","type", {key:"size", parser:"number"}, "progress"]
                 };
 
-                if(this.dataArr.length > 10) {
-                    this.singleSelectDataTable = new YAHOO.widget.ScrollingDataTable(
+
+                var sortedBy = {key:'name', dir: YAHOO.widget.DataTable.CLASS_ASC};
+                if(this.datatable != null) {
+                    var state = this.datatable.getState();
+                    sortedBy.key = state.sortedBy.key;
+                    sortedBy.dir = state.sortedBy.dir;
+                }
+                this.dataArr.sort(function(a, b) {
+                    if(sortedBy.key == 'name') {
+                        a = a.name.toLowerCase();
+                        b = b.name.toLowerCase();
+                    } else if(sortedBy.key == 'size') {
+                        a = a.size;
+                        b = b.size;
+                    }
+                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                });
+                if(sortedBy.dir == YAHOO.widget.DataTable.CLASS_DESC) {
+                    this.dataArr.reverse();
+                }
+                if(this.dataArr.length > 12) {
+                    this.datatable = new YAHOO.widget.ScrollingDataTable(
                         "dataTableContainer",
                         myColumnDefs, myDataSource, {
                         selectionMode:"single",
                         width: '440px',
-                        height: '216px'
+                        height: '236px',
+                        sortedBy: sortedBy
                     });
                 } else {
-                    this.singleSelectDataTable = new YAHOO.widget.DataTable(
+                    this.datatable = new YAHOO.widget.DataTable(
                         "dataTableContainer",
                         myColumnDefs, myDataSource, {
-                        selectionMode:"single"
+                        selectionMode:"single",
+                        sortedBy: sortedBy
                     });
                 }
+                this.datatable.subscribe("columnSortEvent", this._refreshFileIdHash, null, this);
+                //this.singleSelectDataTable.hideColumn('progress');
+            },
+
+            _refreshFileIdHash : function() {
+                var recordSet = this.datatable.getRecordSet();
+                for (var j = 0; j < recordSet.getLength(); j++) {
+                    var r = recordSet.getRecord(j);
+                    this.fileIdHash[r._oData.id] = j;
+                }
+            },
+
+            _titleFormatter : function(elLiner, oRecord, oColumn, oData) {
+                elLiner.innerHTML = '<span title="' + oData + '">' + oData + '</span>';
+            },
+
+            _bytesFormatter : function(elLiner, oRecord, oColumn, oData) {
+                var number_format = function(number, decimals, dec_point, thousands_sep) {
+                    // http://kevin.vanzonneveld.net
+                    // +   original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+                    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+                    // +     bugfix by: Michael White (http://crestidg.com)
+                    // +     bugfix by: Benjamin Lupton
+                    // +     bugfix by: Allan Jensen (http://www.winternet.no)
+                    // +    revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+                    // *     example 1: number_format(1234.5678, 2, '.', '');
+                    // *     returns 1: 1234.57
+
+                    var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
+                    var d = dec_point == undefined ? "," : dec_point;
+                    var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
+                    var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+
+                    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+                };
+                var filesize = oData;
+                if (filesize >= 1073741824) {
+                    filesize = number_format(filesize / 1073741824, 2, '.', '') + ' Gb';
+                } else {
+                    if (filesize >= 1048576) {
+                        filesize = number_format(filesize / 1048576, 2, '.', '') + ' Mb';
+                    } else {
+                        if (filesize >= 1024) {
+                            filesize = number_format(filesize / 1024, 0) + ' Kb';
+                        } else {
+                            filesize = number_format(filesize, 0) + ' bytes';
+                        }
+                    }
+                }
+                elLiner.innerHTML = filesize;
+            },
+
+            _removeFormatter : function(elLiner, oRecord, oColumn, oData) {
+                var el = document.createElement('div');
+                Dom.addClass(el, 'remove_file');
+                elLiner.appendChild(el);
+                YAHOO.util.Event.addListener(el, "click", function() {
+                    YAHOO.hippo.Upload.removeItem(oRecord);
+                }, this);
             },
 
             destroy : function() {

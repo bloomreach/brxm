@@ -47,7 +47,7 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
 
     private static final Logger log = LoggerFactory.getLogger(AjaxMultiFileUploadComponent.class);
 
-    private final ResourceReference flashResource = new ResourceReference(AjaxMultiFileUploadComponent.class, "uploader.swf");
+    private final ResourceReference flashResource = new ResourceReference(AjaxMultiFileUploadComponent.class, "res/uploader.swf");
 
     private class UploadBehavior extends AbstractAjaxBehavior {
 
@@ -113,6 +113,7 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
         setOutputMarkupId(true);
         
         settings.setFlashUrl(urlFor(flashResource).toString());
+        settings.setLocale(Session.get().getLocale().getLanguage());
 
         add(new AjaxMultiFileUploadBehavior(settings) {
 
