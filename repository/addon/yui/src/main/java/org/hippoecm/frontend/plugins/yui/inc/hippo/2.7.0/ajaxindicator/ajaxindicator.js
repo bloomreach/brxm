@@ -49,7 +49,7 @@
     
     show: function() {
         if(this.calls == 0) {
-            timerID = self.setTimeout("document.body.style.cursor = 'wait';", 750);
+            this.timerID = self.setTimeout("document.body.style.cursor = 'wait';", 750);
         }
         this.calls++;
         Dom.setStyle(this.getElement(), 'display', 'block');
@@ -60,7 +60,7 @@
             this.calls--;
         } 
         if (this.calls == 0) {
-            self.clearTimeout(timerID);
+            self.clearTimeout(this.timerID);
             document.body.style.cursor = 'default';
             Dom.setStyle(this.getElement(),'display', 'none');
         }  

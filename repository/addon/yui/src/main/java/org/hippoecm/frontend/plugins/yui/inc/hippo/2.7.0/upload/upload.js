@@ -74,12 +74,10 @@ if (!YAHOO.hippo.Upload) {
             var selectFilesLink = Dom.get('selectFilesLink');
             Dom.addClass(selectFilesLink, 'i18n-' + this.config.locale);
 
-            var uiLayer = Dom.getRegion(selectFilesLink);
             var overlay = Dom.get('uploaderOverlay');
+            Dom.setStyle(overlay, 'width', "244px");
+            Dom.setStyle(overlay, 'height', "26px");
 
-            Dom.setStyle(overlay, 'width', uiLayer.right-uiLayer.left + "px");
-
-            Dom.setStyle(overlay, 'height', uiLayer.bottom-uiLayer.top + "px");
             this.uploader = new YAHOO.widget.Uploader( "uploaderOverlay" );
             this.fileList = null;
             this.numberOfUploads = 0;
@@ -97,7 +95,6 @@ if (!YAHOO.hippo.Upload) {
             this.uploader.addListener('click', this.handleClick, this, true);
             this.uploader.addListener('mouseDown', this.handleMouseDown, this, true);
             this.uploader.addListener('mouseUp', this.handleMouseUp, this, true);
-
 
             YAHOO.hippo.HippoAjax.registerDestroyFunction(Dom.get(this.id), this.destroy, this);
         };
@@ -235,11 +232,11 @@ if (!YAHOO.hippo.Upload) {
 //                    this.fileIdHash[this.dataArr[j].id] = j;
 //                }
 
-                var nameWidth = this.dataArr.length < 12 ? 315 : 315 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                var nameWidth = this.dataArr.length < 12 ? 305 : 305 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
 
                 var myColumnDefs = [
                     {key:"name", label: "File Name", sortable:true, width: nameWidth, formatter:"titleFormatter"},
-                    {key:"size", label: "Size", sortable:true, width: 40, formatter: "bytesFormatter"},
+                    {key:"size", label: "Size", sortable:true, width: 50, formatter: "bytesFormatter"},
                     {key:"id", label: "", sortable:false, width: 20, formatter: "removeFormatter"}
                     /*{key:"progress", label: "Upload progress", sortable:false, width: 100}*/
                 ];
@@ -356,6 +353,10 @@ if (!YAHOO.hippo.Upload) {
                 if(this.uploader != null) {
                     this.uploader.destroy();
                     this.uploader = null;
+                }
+
+                if(this.indicator != null) {
+                    this.indicator.hide();
                 }
 
                 this.config = null;
