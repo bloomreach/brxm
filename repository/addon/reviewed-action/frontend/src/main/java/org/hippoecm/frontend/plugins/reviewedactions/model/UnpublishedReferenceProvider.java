@@ -88,11 +88,10 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
                     String uuid = upstream.next();
                     try {
                         Node node = session.getNodeByUUID(uuid);
-                        if (session.getRootNode().isSame(node)) {
-                            continue;
-                        }
-                        boolean valid = false;
+                        boolean valid = true;
                         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            valid = false;
+
                             NodeIterator docs = node.getNodes(node.getName());
                             while (docs.hasNext()) {
                                 Node document = docs.nextNode();
