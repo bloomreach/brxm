@@ -76,28 +76,37 @@ if (!YAHOO.hippo.TableHelper) {
             },
             
             update: function(sizes) {
-	        	var table = Dom.get(this.id);
-	        	var rows = table.rows;
-	        	
-	        	//ie8 standards mode fails on rows/cols/cells attributes..
-	        	if(YAHOO.env.ua.ie == 8 && rows.length == 0) {
-	        	    var r = Dom.getRegion(table);
-	        	    if((r.height-40) > sizes.wrap.h) {
-	        	        var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-	        	        if(un) {
-	        	            un.set('scroll', true);
-	        	        }
-	        	    }
-	        	    return; //don't bother
-	        	}
-	        	
-	        	if(rows.length <= 1) {
-	        	    return; //no rows in body
-	        	}
-	        	
-	        	//if table has top margin, add it to table minheight
+                var table = Dom.get(this.id);
+                var rows = table.rows;
+
+                //ie8 standards mode fails on rows/cols/cells attributes..
+                if(YAHOO.env.ua.ie == 8 && rows.length == 0) {
+                    var r = Dom.getRegion(table);
+                    if((r.height-40) > sizes.wrap.h) {
+                        var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                        if(un) {
+                            un.set('scroll', true);
+                        }
+                    }
+                    return; //don't bother
+                }
+
+                if(rows.length <= 1) {
+                    return; //no rows in body
+                }
+
+                //if table has top margin, add it to table minheight
                 //plus add header height to table minheight
-                var nonBodyHeight = this.helper.getMargin(table).h + Dom.getRegion(rows[0].parentNode).height;
+                //Detect toggle-button and add height if needed
+                var ch = Dom.getChildrenBy(table.parentNode, function(node) {
+                    return node != table;
+                });
+                var sibHeight = 0;
+                for(var j=0; j<ch.length; ++j) {
+                    sibHeight += Dom.getRegion(ch[j]).height;
+                }
+
+                var nonBodyHeight = this.helper.getMargin(table).h + Dom.getRegion(rows[0].parentNode).height + sibHeight;
 
                 var lastRowParentTag = rows[rows.length-1].parentNode.tagName;
                 if(lastRowParentTag.toLowerCase() == 'tfoot') {
@@ -112,75 +121,89 @@ if (!YAHOO.hippo.TableHelper) {
                 var thead = rows[0].parentNode;
                 var tbody = rows[rows.length-1].parentNode;
 
-	        	var prevHeight = Dom.getStyle(tbody, 'height');
-	        	Dom.setStyle(tbody, 'height', 'auto');
+                var prevHeight = Dom.getStyle(tbody, 'height');
+                Dom.setStyle(tbody, 'height', 'auto');
 
-	        	var tbodyRegion = Dom.getRegion(tbody);
-	        	var availableHeight = sizes.wrap.h - nonBodyHeight;
-	        	
-	        	var scrolling = tbodyRegion.height > availableHeight;
-	        	
-	        	if (YAHOO.env.ua.ie > 0) {
-	        	    if(scrolling) {
-                        //Couldn't get the scrolling of a tbody working in IE so set the whole
-                        //unit to scrolling
-                        //TODO: ask Hippo Services
-                        var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                        un.set('scroll', true);
-	        	    } else {
-                        Dom.setStyle(tbody, 'height', prevHeight);
-	        	    }
-	        	} else if (YAHOO.env.ua.webkit) {
-                    Dom.setStyle(table, 'width', '100%');
-                    Dom.setStyle(tbody, 'height', availableHeight + 'px');
-                    
-                    if(Lang.isUndefined(table.previousScrolling)) {
-                        table.previousScrolling != scrolling;
-                    }
-                    
+                var tbodyRegion = Dom.getRegion(tbody);
+                var availableHeight = sizes.wrap.h - nonBodyHeight;
+
+                var scrolling = tbodyRegion.height > availableHeight;
+
+                //For now fallback to unit scrolling behavior, not the best looking option, but by far most reliable
+                // across browsers
+                if(scrolling) {
+                    //Couldn't get the scrolling of a tbody working in IE so set the whole
+                    //unit to scrolling
+                    //TODO: ask Hippo Services
+                    var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                    un.set('scroll', true);
+                } else {
+                    Dom.setStyle(tbody, 'height', prevHeight);
+                }
+
+                /*
+                if (YAHOO.env.ua.ie > 0 || true) {
                     if(scrolling) {
-                        if(table.previousScrolling) {
-                            Dom.setStyle(tbody, 'width', (sizes.wrap.w-0) + 'px');
-                        } else {
-                            Dom.setStyle(tbody, 'width', (sizes.wrap.w-0) + 'px');
-                            var row = table.rows[1];
-
-                            //save dimensions of columns
-                            var colSizes = [row.cells.length];
-                            for(var i=0; i<row.cells.length; i++) {
-                                colSizes[i] = Dom.getRegion(row.cells[i]);
-                            }
-                            
-                            //header will be broken after setting these 
-                            Dom.setStyle(table.rows[0], 'display', 'block');
-                            Dom.setStyle(table.rows[0], 'position', 'relative');
-                            Dom.setStyle(tbody, 'display', 'block'); //make body scrollable
-                            
-                            //restore header dimensions
-                            for(var i=0; i<colSizes.length; i++) {
-                                Dom.setStyle(table.rows[0].cells[i], 'width', colSizes[i].width + 'px');
-                            }
-                        }
+                            //Couldn't get the scrolling of a tbody working in IE so set the whole
+                            //unit to scrolling
+                            //TODO: ask Hippo Services
+                            var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                            un.set('scroll', true);
                     } else {
-                        //reset
-                        Dom.setStyle(table.rows[0], 'display', 'table-row');
-                        Dom.setStyle(table.rows[0], 'position', 'static');
-                        Dom.setStyle(tbody, 'display', 'table-row-group');
-                        for(var i=0; i<table.rows[0].cells.length; i++) {
-                            Dom.setStyle(table.rows[0].cells[i], 'width', 'auto');
+                            Dom.setStyle(tbody, 'height', prevHeight);
+                    }
+                } else if (YAHOO.env.ua.webkit) {
+                        Dom.setStyle(table, 'width', '100%');
+                        Dom.setStyle(tbody, 'height', availableHeight + 'px');
+
+                        if(Lang.isUndefined(table.previousScrolling)) {
+                            table.previousScrolling != scrolling;
                         }
 
-                    }
-                    table.previousScrolling = scrolling;
-	        	} else {
-	        	    //firefox
-	        	    if(scrolling) {
+                        if(scrolling) {
+                            if(table.previousScrolling) {
+                                Dom.setStyle(tbody, 'width', (sizes.wrap.w-0) + 'px');
+                            } else {
+                                Dom.setStyle(tbody, 'width', (sizes.wrap.w-0) + 'px');
+                                var row = table.rows[1];
+
+                                //save dimensions of columns
+                                var colSizes = [row.cells.length];
+                                for(var i=0; i<row.cells.length; i++) {
+                                    colSizes[i] = Dom.getRegion(row.cells[i]);
+                                }
+
+                                //header will be broken after setting these
+                                Dom.setStyle(table.rows[0], 'display', 'block');
+                                Dom.setStyle(table.rows[0], 'position', 'relative');
+                                Dom.setStyle(tbody, 'display', 'block'); //make body scrollable
+
+                                //restore header dimensions
+                                for(var i=0; i<colSizes.length; i++) {
+                                    Dom.setStyle(table.rows[0].cells[i], 'width', colSizes[i].width + 'px');
+                                }
+                            }
+                        } else {
+                            //reset
+                            Dom.setStyle(table.rows[0], 'display', 'table-row');
+                            Dom.setStyle(table.rows[0], 'position', 'static');
+                            Dom.setStyle(tbody, 'display', 'table-row-group');
+                            for(var i=0; i<table.rows[0].cells.length; i++) {
+                                Dom.setStyle(table.rows[0].cells[i], 'width', 'auto');
+                            }
+
+                        }
+                        table.previousScrolling = scrolling;
+                } else {
+                    //firefox
+                    if(scrolling) {
                         Dom.setStyle(tbody, 'height', availableHeight + 'px');
-	        	    } else {
-	        	        Dom.setStyle(tbody, 'height', tbodyRegion.height + 'px');   
-	        	    }
-	        	}
-        	}
+                    } else {
+                        Dom.setStyle(tbody, 'height', tbodyRegion.height + 'px');
+                    }
+                }
+                */
+        	  }
         }
     })();
 
