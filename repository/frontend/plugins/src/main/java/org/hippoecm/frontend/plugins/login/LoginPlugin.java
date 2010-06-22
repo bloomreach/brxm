@@ -30,6 +30,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
@@ -39,6 +40,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.IFormVisitorParticipant;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
@@ -125,8 +128,10 @@ public class LoginPlugin extends RenderPlugin {
                 }
             }
 
-            add(usernameTextField = new RequiredTextField("username", new PropertyModel<String>(LoginPlugin.this, "username")));
-            add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this, "password")));
+            add(usernameTextField = new RequiredTextField("username", new PropertyModel<String>(LoginPlugin.this,
+                    "username")));
+            add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this,
+                    "password")));
             add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales));
 
             passwordTextField.setResetPassword(false);
@@ -204,6 +209,16 @@ public class LoginPlugin extends RenderPlugin {
                 throw new RestartResponseException(InvalidLoginPage.class);
             }
             if (parameters != null) {
+                visitFormComponents(new FormComponent.IVisitor() {
+                    public Object formComponent(IFormVisitorParticipant formComponent) {
+                        if (formComponent instanceof FormComponent) {
+                            parameters.remove(((FormComponent<?>) formComponent).getInputName());
+                        }
+
+                        return Component.IVisitor.CONTINUE_TRAVERSAL;
+                    }
+                });
+                parameters.remove(getHiddenFieldId());
                 setResponsePage(Home.class, new PageParameters(parameters));
             } else {
                 setResponsePage(Home.class);
@@ -211,11 +226,11 @@ public class LoginPlugin extends RenderPlugin {
         }
 
         public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            for(Callback callback : callbacks) {
-                if(callback instanceof NameCallback) {
+            for (Callback callback : callbacks) {
+                if (callback instanceof NameCallback) {
                     NameCallback nameCallback = (NameCallback) callback;
                     nameCallback.setName(username);
-                } else if(callback instanceof PasswordCallback) {
+                } else if (callback instanceof PasswordCallback) {
                     PasswordCallback passwordCallback = (PasswordCallback) callback;
                     passwordCallback.setPassword(password.toCharArray());
                 }
