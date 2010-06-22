@@ -372,9 +372,7 @@ class BufferedStringValue implements TextValue {
         } else if (tmpFile != null) {
             try {
                 writer.close();
-                if (tmpFile.delete()) {
-                    log.warn("Unable to delete file: " + tmpFile.getAbsolutePath());
-                }
+                tmpFile.delete();
                 tmpFile = null;
                 writer = null;
             } catch (IOException e) {
