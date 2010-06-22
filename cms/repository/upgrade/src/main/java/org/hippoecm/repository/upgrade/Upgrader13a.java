@@ -314,10 +314,14 @@ public class Upgrader13a implements UpdaterModule {
                     root.getProperty("wicket.behavior").remove();
                     root.getProperty("wicket.extensions").remove();
                     root.setProperty("tabs", "service.tab");
-                    root.setProperty("browsers", new String[] { "browser.ie" });
+                    root.setProperty("browsers", new String[] { "browser.ie", "browser.ie7" });
                     Node ie = root.addNode("browser.ie", "frontend_2_1:pluginconfig");
                     ie.setProperty("stylesheets", new String[] { "skin/screen_ie.css" });
                     ie.setProperty("user.agent", "ie");
+                    Node ie7 = root.addNode("browser.ie7", "frontend_2_1:pluginconfig");
+                    ie7.setProperty("stylesheets", new String[]{"skin/screen_ie7.css"});
+                    ie7.setProperty("user.agent", "ie");
+                    ie7.setProperty("major.version", "7");
                     Node wf = root.addNode("layout.wireframe", "frontend_2_1:pluginconfig");
                     wf.setProperty("center", "id=tabbed-panel-layout-center,height=1000");
                     wf.setProperty("left", "id=tabbed-panel-layout-left,width=50");

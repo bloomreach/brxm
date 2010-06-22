@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.Model;
@@ -70,9 +71,24 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new ExpandCollapseLink<String>("toggleFullscreen").add(
-                new Image("toggleFullscreenImage", TOGGLE_FULLSCREEN_IMG)));
+        final ExpandCollapseLink<String> link = new ExpandCollapseLink<String>("toggleFullscreen");
+        link.add(new Image("toggleFullscreenImage", TOGGLE_FULLSCREEN_IMG));
 
+        WebMarkupContainer c = new WebMarkupContainer("toggleContainer") {
+
+            @Override
+            public boolean isVisible() {
+                return link.isVisible();
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return link.isEnabled();
+            }
+        };
+
+        c.add(link);
+        add(c);
     }
 
     public void collapse() {
