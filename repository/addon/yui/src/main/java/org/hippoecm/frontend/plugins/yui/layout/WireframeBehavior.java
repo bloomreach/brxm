@@ -252,11 +252,14 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         final RequestCycle requestCycle = RequestCycle.get();
         String position = requestCycle.getRequest().getParameter("position");
         if (!Strings.isEmpty(position)) {
-            toggle(position, target);
+            onToggleFromClient(position, toggle(position, target));
         }
     }
 
-    public void toggle(String position, AjaxRequestTarget target) {
+    protected void onToggleFromClient(String position, boolean expand) {
+    }
+
+    public boolean toggle(String position, AjaxRequestTarget target) {
         UnitSettings unitSettings = settings.getUnit(position);
         if (unitSettings == null) {
             throw new IllegalArgumentException(
@@ -269,6 +272,7 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
                 jsMethod + "('" + this.settings.getRootId().getElementId() + "', '" + position + "');");
         unitSettings.setExpanded(expand);
         onToggle(expand, position);
+        return expand;
     }
 
     protected void onToggle(boolean expand, String position) {

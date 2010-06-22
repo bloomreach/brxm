@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -48,6 +49,7 @@ public class BrowserPerspective extends Perspective {
     private IModel previousSelection;
 
     private final WireframeBehavior wireframe;
+    private boolean clientOverride = false;
 
     public BrowserPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -67,8 +69,8 @@ public class BrowserPerspective extends Perspective {
 
                 if(listing == null || !listing.isSupported()) {
                     wireframe.collapseAll();
-                } else if (tabs != null && !tabs.hasOpenTabs() && wireframe != null) {
-                    wireframe.expandDefault();
+                } else {
+                    checkExpandDefault();
                 }
             }
 
@@ -119,8 +121,8 @@ public class BrowserPerspective extends Perspective {
                             if (service != null) {
                                 if(!service.getModel().equals(NULL_MODEL)) {
                                     wireframe.collapseAll();
-                                } else if(tabs != null && !tabs.hasOpenTabs() && listing != null && listing.isSupported()){
-                                    wireframe.expandDefault();
+                                } else {
+                                    checkExpandDefault();
                                 }
                             }
 
@@ -147,7 +149,7 @@ public class BrowserPerspective extends Perspective {
 
         add(wireframe = new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))) {
             @Override
-            protected void onToggle(boolean expand, String position/*, AjaxRequestTarget target*/) {
+            protected void onToggle(boolean expand, String position) {
                 if(listing != null && listing.isSupported()) {
                     if (expand) {
                         listing.expand();
@@ -181,14 +183,23 @@ public class BrowserPerspective extends Perspective {
                     listing.expand();
                 }
             }
+
+            @Override
+            protected void onToggleFromClient(String position, boolean expand) {
+                clientOverride = !expand;
+            }
         });
     }
 
     @Override
-    protected void onBeforeRender() {
-        super.onBeforeRender();
+    public void render(PluginRequestTarget target) {
+        super.render(target);
 
-        if(!tabs.hasOpenTabs()) {
+        checkExpandDefault();
+    }
+
+    private void checkExpandDefault() {
+        if (!clientOverride && tabs != null && !tabs.hasOpenTabs() && listing != null && listing.isSupported() && wireframe != null) {
             wireframe.expandDefault();
         }
     }
