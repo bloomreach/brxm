@@ -42,6 +42,9 @@ public class RichTextModel implements IModel<String> {
     }
 
     public void setObject(String value) {
+        if (log.isDebugEnabled()) {
+            log.debug("Cleaning value {}", value);
+        }
         try {
             String cleanedValue = clean(value);
             if (cleanedValue != null) {
@@ -49,7 +52,7 @@ public class RichTextModel implements IModel<String> {
             }
             valueModel.setObject(cleanedValue);
         } catch (Exception e) {
-            log.error("Exception caught while trying to clean value: " + value, e);
+            log.info("Value not set because the Html cleaning failed.");
         }
     }
 
@@ -79,6 +82,7 @@ public class RichTextModel implements IModel<String> {
     private String clean(final String value) throws Exception {
         if (cleaner != null) {
             return cleaner.clean(value);
+
         }
         return value;
     }
