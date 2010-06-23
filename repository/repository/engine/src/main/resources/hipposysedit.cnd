@@ -15,7 +15,7 @@
  */
 
 <nt='http://www.jcp.org/jcr/nt/1.0'>
-<hippo='http://www.onehippo.org/jcr/hippo/nt/2.1'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hipposysedit='http://www.onehippo.org/jcr/hipposysedit/nt/1.2'>
 
 // mixin on nodetype and prototype nodes for a particular version

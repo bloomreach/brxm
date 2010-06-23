@@ -69,7 +69,7 @@
           <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.1</sv:value>
+          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -294,7 +294,7 @@
           <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.1</sv:value>
+          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>true</sv:value>

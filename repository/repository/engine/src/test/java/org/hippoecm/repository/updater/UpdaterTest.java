@@ -121,7 +121,7 @@ public class UpdaterTest extends TestCase {
         UpdaterModule module = new UpdaterModule() {
             String newTest  = 
                 "<test='http://www.onehippo.org/jcr/hippo/test/nt/1.1'>"+
-                "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.1'>"+
+                "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"+
                 "[test:target] > hippo:document "+
                 "[test:referrer] > hippo:document - * (reference) + * (hippo:facetselect)";
 

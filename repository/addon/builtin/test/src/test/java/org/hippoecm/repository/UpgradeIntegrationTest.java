@@ -58,10 +58,6 @@ public class UpgradeIntegrationTest
     }
 
     @Ignore
-    public void dummy() {
-    }
-
-    @Ignore
     public void dump() throws RepositoryException, IOException {
         delete(new File("storage"));
         HippoRepository repository = HippoRepositoryFactory.getHippoRepository("storage");
