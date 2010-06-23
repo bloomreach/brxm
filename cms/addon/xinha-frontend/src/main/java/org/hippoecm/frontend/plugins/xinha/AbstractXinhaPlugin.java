@@ -87,6 +87,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     //preview behaviors
     private IBehavior startEditorBehavior;
     private IBehavior previewStyle;
+    private IBehavior tabIndex;
 
     //editor behaviors
     private ExternalLinkBehavior externalLinkBehavior;
@@ -175,7 +176,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     }
 
     protected Fragment createEditablePreview(String fragmentId) {
-        add(startEditorBehavior = new AjaxEventBehavior("onclick") {
+        add(startEditorBehavior = new AjaxEventBehavior("onfocus") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -187,6 +188,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
         });
         add(previewStyle = new AttributeAppender("class", true, new Model<String>("rte-preview-area"), " "));
+        add(tabIndex = new AttributeAppender("tabindex", true, new Model<String>("0"), " "));
         return createPreview(fragmentId);
     }
 
@@ -195,6 +197,10 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         if (previewStyle != null) {
             remove(previewStyle);
             previewStyle = null;
+        }
+        if (tabIndex != null) {
+            remove(tabIndex);
+            tabIndex = null;
         }
         if (startEditorBehavior != null) {
             remove(startEditorBehavior);
