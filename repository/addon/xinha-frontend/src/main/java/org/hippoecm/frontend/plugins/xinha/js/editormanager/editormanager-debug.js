@@ -457,6 +457,8 @@ if (!YAHOO.hippo.EditorManager) {
                 this.xinha._onGenerate = function() {
                     YAHOO.hippo.EditorManager.editorLoaded(_name);
                 }
+
+                Dom.setStyle(this.name, 'visibility', 'hidden');
                 Xinha.startEditors([this.xinha]);
             },
             
@@ -586,7 +588,7 @@ if (!YAHOO.hippo.EditorManager) {
                     text: this.getProperty("previewTooltipText", defaultText)
                 });
             },
-            
+
             hideTooltip : function() {
                 if(this.tooltip != null) {
                     if(!Lang.isNull(this.tooltip.showProcId)) {
@@ -648,14 +650,16 @@ if (!YAHOO.hippo.EditorManager) {
                     w = pr.width - marges.w;
                     h = pr.height - marges.h;
                 } else {
-                    var dim = this.getDimensions(c, this.config)
+                    var dim = this.getDimensions(c, this.config);
                     w = dim.w;
                     h = dim.h;
                 }
                 this.setSize(w, h);
                 
                 this.lastData = this.xinha.getInnerHTML();
-                
+
+                Dom.setStyle(this.name, 'visibility', 'visible');
+
                 //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960
                 //Test if IE8, than set&remove focus on Xinha to prevent UI lockup
                 if(YAHOO.env.ua.ie >= 8) {
