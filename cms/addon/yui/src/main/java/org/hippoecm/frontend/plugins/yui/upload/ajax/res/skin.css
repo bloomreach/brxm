@@ -36,6 +36,15 @@
     border-right: 0;
 }
 
+.finished {
+  background-color: #CCFFCC;
+  border-bottom: 1px;
+}
+
+.yui-dt-last .finished {
+  border-bottom: 0;
+}
+
 /*
 Copyright (c) 2010, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
@@ -175,6 +184,10 @@ version: 2.8.1
 }
 
 /* scrolling */
+.hippo-root .yui-dt-scrollable {
+  overflow: hidden;
+}
+
 .hippo-root .yui-dt-scrollable table {border:none;}
 .hippo-root .yui-dt-scrollable .yui-dt-hd {border-left:1px solid #7F7F7F;border-top:1px solid #7F7F7F;border-right:1px solid #7F7F7F;}
 .hippo-root .yui-dt-scrollable .yui-dt-bd {border-left:1px solid #7F7F7F;border-bottom:1px solid #7F7F7F;border-right:1px solid #7F7F7F;background-color:#FFF;}

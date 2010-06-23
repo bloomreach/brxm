@@ -107,7 +107,6 @@ if (!YAHOO.hippo.Upload) {
                     if(this.indicator != null) {
                         this.indicator.show();
                     }
-                    //this.datatable.hideColumn('id');
                     this.uploader.uploadAll(this.config.uploadUrl);
                 }
             },
@@ -125,30 +124,26 @@ if (!YAHOO.hippo.Upload) {
                 }
                 var record = this._getRecordById(event["id"]);
                 var id = 'yui-progressbar-' + event["id"];
-                var name = record.getData()["name"];
                 record.setData("progress", 0);
-                this.datatable.updateCell(record, "name", name);
-                try{
-                    var nameWidth = this.datatable.getRecordSet().getLength() < 12 ? 305 : 305 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
-                    var pb = new YAHOO.widget.ProgressBar({value:0, maxValue: 100, width: nameWidth, height: 16, anim: true});
-                    pb.render(id);
-                    this.progressBars.put(event["id"], pb);
-                }catch(e) {
-                    alert(e);
-                }
+                this.datatable.updateCell(record, "name", record.getData("name"));
+                this.datatable.updateCell(record, "id", record.getData("id"));
+
+                var nameWidth = this.datatable.getRecordSet().getLength() < 10 ? 305 : 305 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                var pb = new YAHOO.widget.ProgressBar({value:1, maxValue: 100, width: nameWidth, height: 12, anim: true});
+                pb.render(id);
+                this.progressBars.put(event["id"], pb);
                 this.numberOfUploads++;
             },
 
             onUploadProgress : function(event) {
+                var id = event["id"];
+                var record = this._getRecordById(id);
                 var prog = Math.round(100*(event["bytesLoaded"]/event["bytesTotal"]));
-
-                var record = this._getRecordById(event["id"]);
                 record.setData("progress", prog);
-                if(this.progressBars.containsKey(event["id"])) {
-                    var pb = this.progressBars.get(event["id"]);
+                if(this.progressBars.containsKey(id)) {
+                    var pb = this.progressBars.get(id);
                     pb.set('value', prog);
                 }
-
             },
 
             onUploadCancel : function() {
@@ -157,12 +152,14 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onUploadComplete  : function(event) {
-                var record = this._getRecordById(event["id"]);
+                var id = event["id"];
+                var record = this._getRecordById(id);
                 record.setData("progress", 100);
-                var name = record.getData("name");
-                this.datatable.updateCell(record, "name", name);
-
-                //this._updateDatatable(event);
+                if(this.progressBars.containsKey(id)) {
+                    var pb = this.progressBars.get(id);
+                    pb.set('value', 100);
+                }
+                this.datatable.updateCell(record, "name", record.getData("name"));
                 this.numberOfUploads--;
                 this.onAfterUpload();
             },
@@ -245,14 +242,6 @@ if (!YAHOO.hippo.Upload) {
                 return null;
             },
 
-            _updateDatatable : function(event) {
-                if(this.progressBars.containsKey(event["id"])) {
-                    var pb = this.progressBars.get(event["id"]);
-                    var prog = Math.round(100*(event["bytesLoaded"]/event["bytesTotal"]));
-                    pb.set('value', prog);
-                }
-            },
-
             _createDatatable : function(entries) {
                 this.dataArr = [];
                 for(var i in entries) {
@@ -261,7 +250,10 @@ if (!YAHOO.hippo.Upload) {
                     this.dataArr.unshift(entry);
                 }
 
-                var nameWidth = this.dataArr.length < 12 ? 305 : 305 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                var nameWidth = 305;
+                if(this.dataArr.length > 10) {
+                    nameWidth -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                }
 
                 var myColumnDefs = [
                     {key:"name", label: "File Name", sortable:true, width: nameWidth, formatter:"titleFormatter"},
@@ -274,7 +266,6 @@ if (!YAHOO.hippo.Upload) {
                 myDataSource.responseSchema = {
                   fields: ["id",{key:"name", parser:"string"},"created","modified","type", {key:"size", parser:"number"}, "progress"]
                 };
-
 
                 var sortedBy = {key:'name', dir: YAHOO.widget.DataTable.CLASS_ASC};
                 if(this.datatable != null) {
@@ -295,7 +286,7 @@ if (!YAHOO.hippo.Upload) {
                 if(sortedBy.dir == YAHOO.widget.DataTable.CLASS_DESC) {
                     this.dataArr.reverse();
                 }
-                if(this.dataArr.length > 12) {
+                if(this.dataArr.length > 10) {
                     this.datatable = new YAHOO.widget.ScrollingDataTable(
                         "dataTableContainer",
                         myColumnDefs, myDataSource, {
@@ -316,7 +307,8 @@ if (!YAHOO.hippo.Upload) {
 
             _titleFormatter : function(elLiner, oRecord, oColumn, oData) {
                 if(oRecord._oData.progress == 100) {
-                    elLiner.innerHTML = '<span title="' + oData + '">OK: ' + oData + '</span>'
+                    Dom.addClass(elLiner, 'finished');
+                    elLiner.innerHTML = '<span style="font-weight: bold;">OK: </span><span title="' + oData + '">' + oData + '</span>';
                 }else if(oRecord._oData.progress > -1) {
                     elLiner.innerHTML = '<div id="yui-progressbar-' + oRecord._oData.id + '"/>';// + oData + '</div';
                 } else {
@@ -361,12 +353,16 @@ if (!YAHOO.hippo.Upload) {
             },
 
             _removeFormatter : function(elLiner, oRecord, oColumn, oData) {
-                var el = document.createElement('div');
-                Dom.addClass(el, 'remove_file');
-                elLiner.appendChild(el);
-                YAHOO.util.Event.addListener(el, "click", function() {
-                    YAHOO.hippo.Upload.removeItem(oRecord);
-                }, this);
+                if(oRecord._oData.progress > -1) {
+                    elLiner.innerHTML = '';
+                } else {
+                    var el = document.createElement('div');
+                    Dom.addClass(el, 'remove_file');
+                    elLiner.appendChild(el);
+                    YAHOO.util.Event.addListener(el, "click", function() {
+                        YAHOO.hippo.Upload.removeItem(oRecord);
+                    }, this);
+                }
             },
 
             destroy : function() {
@@ -382,6 +378,11 @@ if (!YAHOO.hippo.Upload) {
                 if(this.indicator != null) {
                     this.indicator.hide();
                 }
+
+                this.progressBars.forEach(this, function(k, v) {
+                    v.destroy()
+                });
+                this.progressBars.clear();
 
                 this.config = null;
                 this.id = null;
