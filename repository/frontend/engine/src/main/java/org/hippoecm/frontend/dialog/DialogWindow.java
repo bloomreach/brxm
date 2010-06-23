@@ -90,12 +90,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     public void close() {
-        IRequestTarget target = RequestCycle.get().getRequestTarget();
-        if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
-            close((AjaxRequestTarget) target);
-        } else {
-            close(null);
-        }
+        close(AjaxRequestTarget.get());
     }
 
     public void render(PluginRequestTarget target) {
