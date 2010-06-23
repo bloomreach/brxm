@@ -36,6 +36,64 @@
     border-right: 0;
 }
 
+/*
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 2.8.1
+*/
+.yui-pb-bar {
+	background-color:blue;
+}
+
+.yui-pb {
+	border: thin solid #808080
+}
+
+.hippo-root .yui-pb {
+	background-color: transparent;
+	border: solid #808080;
+	border-width:1px 0;
+}
+
+.hippo-root .yui-pb-rtl,.hippo-root .yui-pb-ltr {
+	background-image: url(back-h.png);
+	background-repeat:repeat-x;
+}
+
+.hippo-root .yui-pb-ttb,.hippo-root .yui-pb-btt {
+	background-image: url(back-v.png);
+	background-repeat:repeat-y;
+}
+.hippo-root  .yui-pb-bar{
+	background-color:transparent;
+}
+
+.hippo-root .yui-pb-ltr .yui-pb-bar,.hippo-root .yui-pb-rtl .yui-pb-bar {
+	background-image:url(bar-h.png);
+	background-repeat:repeat-x;
+}
+.hippo-root .yui-pb-ttb .yui-pb-bar,.hippo-root .yui-pb-btt .yui-pb-bar {
+	background-image:url(bar-v.png);
+	background-repeat:repeat-y;
+}
+
+.hippo-root .yui-pb-mask {
+	border: solid #808080;
+	border-width:0 1px;
+	margin: 0 -1px;
+}
+
+.hippo-root .yui-pb-caption {
+	color:#000;
+	text-align:center;
+	margin:0 auto;
+}
+ .hippo-root .yui-pb-range {
+	color:#a6a6a6;
+}
+
+
 /* Datatable skin */
 
 /*
