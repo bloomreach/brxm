@@ -170,7 +170,7 @@
           <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippostdpubwf/nt/1.1</sv:value>
+          <sv:value>http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:mixin" sv:type="Boolean">
           <sv:value>true</sv:value>
