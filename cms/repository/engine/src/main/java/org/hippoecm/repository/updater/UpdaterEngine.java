@@ -140,9 +140,17 @@ public class UpdaterEngine {
         public void registerVisitor(ItemVisitor visitor) {
             try {
                 if (visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
-                    visitor = new NamespaceVisitorImpl(session.getWorkspace().getNamespaceRegistry(), (UpdaterItemVisitor.NamespaceVisitor)visitor);
+                    UpdaterItemVisitor.NamespaceVisitor namespaceVisitor = (UpdaterItemVisitor.NamespaceVisitor) visitor;
+                    if (namespaceVisitor.cndName == null && namespaceVisitor.cndReader == null) {
+                        log.warn("no new definition of namespace "+namespaceVisitor.prefix+" found, ignoring registration of upgrading visitor");
+			visitor = null;
+                    } else {
+                        visitor = new NamespaceVisitorImpl(session.getWorkspace().getNamespaceRegistry(), namespaceVisitor);
+                    }
                 }
-                visitors.add(visitor);
+                if (visitor != null) {
+                    visitors.add(visitor);
+                }
             } catch (RepositoryException ex) {
                 log.error("error while registering visitor", ex);
             } catch (ParseException ex) {

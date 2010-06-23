@@ -486,21 +486,19 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippo.cnd"))));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposys.cnd"))));
-        safeRegisterNamespaceVisitor(context, "hipposysedit", "hipposysedit.cnd");
-        safeRegisterNamespaceVisitor(context, "hippofacnav", "hippofacnav.cnd");
-        safeRegisterNamespaceVisitor(context, "hippostd", "hippostd.cnd");
-        safeRegisterNamespaceVisitor(context, "hippostdpubwf", "hippostdpubwf.cnd");
-        safeRegisterNamespaceVisitor(context, "hipposched", "hipposched.cnd");
-        safeRegisterNamespaceVisitor(context, "hippoldap", "hippoldap.cnd");
-        safeRegisterNamespaceVisitor(context, "hippogallery", "hippogallery.cnd");
-        safeRegisterNamespaceVisitor(context, "frontend", "frontend.cnd");
-        safeRegisterNamespaceVisitor(context, "editor", "editor.cnd");
-        safeRegisterNamespaceVisitor(context, "hippohtmlcleaner", "hippohtmlcleaner.cnd");
-        safeRegisterNamespaceVisitor(context, "reporting", "reporting.cnd");
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", getClass().getClassLoader().getResourceAsStream("hippo.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", getClass().getClassLoader().getResourceAsStream("hipposys.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippofacnav", getClass().getClassLoader().getResourceAsStream("hippofacnav.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostd", getClass().getClassLoader().getResourceAsStream("hippostd.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostdpubwf", getClass().getClassLoader().getResourceAsStream("hippostdpubwf.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposched", getClass().getClassLoader().getResourceAsStream("hipposched.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippoldap", getClass().getClassLoader().getResourceAsStream("hippoldap.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", getClass().getClassLoader().getResourceAsStream("hippogallery.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "frontend", getClass().getClassLoader().getResourceAsStream("frontend.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "editor", getClass().getClassLoader().getResourceAsStream("editor.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippohtmlcleaner", getClass().getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd")));
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "reporting", getClass().getClassLoader().getResourceAsStream("reporting.cnd")));
 
         try {
             Workspace workspace = context.getWorkspace();
@@ -558,13 +556,6 @@ public class Upgrader13a implements UpdaterModule {
                 }
             }
         });
-    }
-
-    private void safeRegisterNamespaceVisitor(UpdaterContext context, String ns, String cnd) {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(cnd);
-        if (is != null) {
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, ns, "-", new InputStreamReader(is)));
-        }
     }
 
     private Collection<String> subTypedNamespaces(Workspace workspace) throws RepositoryException {
