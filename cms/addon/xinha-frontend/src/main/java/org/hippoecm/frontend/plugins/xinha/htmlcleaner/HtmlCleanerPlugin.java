@@ -70,7 +70,10 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
                 return cleaner.cleanToString(value);
             } catch (Exception e) {
                 if(lenient) {
-                    log.warn("Returning uncleaned HTML because cleaner component produced an error: " + e.getMessage());
+                    log.warn("Returning uncleaned HTML because cleaner component produced an error.");
+                    if(log.isDebugEnabled()) {
+                        log.debug("Cleanup attempt error message is: {}", e.getMessage());
+                    }
                 } else {
                     throw e;
                 }
