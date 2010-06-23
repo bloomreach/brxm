@@ -358,7 +358,7 @@ public class ModalWindow extends Panel
 			+ "}\n"
 			+ "if (typeof(win) != \"undefined\" && typeof(win.current) != \"undefined\") {\n"
 			+ " var close = function(w) { w.setTimeout(function() {\n"
-			+ "		win.current.close();\n"
+			+ "		if(win.current != null) {win.current.close();}\n"
 			+ "	}, 0);  } \n"
 			+ "	try { close(window.parent); } catch (ignore) { close(window); };\n" + "}";
 	}
