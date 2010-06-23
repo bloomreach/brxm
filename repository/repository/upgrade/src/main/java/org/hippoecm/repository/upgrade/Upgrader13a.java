@@ -69,7 +69,7 @@ public class Upgrader13a implements UpdaterModule {
                     for(NodeIterator iter=node.getNode("hippo:log").getNodes(); iter.hasNext(); ) {
                         iter.nextNode().remove();
                     }
-                    context.setName(node.getNode("hippo:log"), "hippo_2_1:log");
+                    context.setName(node.getNode("hippo:log"), "hippo:log");
                 }
             }
         });
@@ -82,9 +82,9 @@ public class Upgrader13a implements UpdaterModule {
                 for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
                     Node field = iter.nextNode();
                     context.setPrimaryNodeType(field, "hipposysedit_1_2:field");
-                    if(field.hasProperty("hipposysedit:name")) {
-                        Property nameProperty = field.getProperty("hipposysedit:name");
-                        if(field.getName().equals("hipposysedit:field")) {
+                    if(field.hasProperty("hipposysedit_1_2:name")) {
+                        Property nameProperty = field.getProperty("hipposysedit_1_2:name");
+                        if(field.getName().equals("hipposysedit_1_2:field")) {
                             context.setName(field, nameProperty.getString());
                         }
                         nameProperty.remove();
@@ -168,21 +168,6 @@ public class Upgrader13a implements UpdaterModule {
             } 
         });
 
-        context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(hipposysedit:prototype,nt:unstructured)", Query.XPATH) {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                for (PropertyIterator properties = node.getProperties(); properties.hasNext();) {
-                    Property property = properties.nextProperty();
-                    String name = property.getName();
-                    if (name.startsWith("hippostd:")) {
-                        context.setName(property, "hippostd_2_1:" + name.substring("hippostd:".length()));
-                    } else if (name.startsWith("hippostdpubwf:")) {
-                        context.setName(property, "hippostdpubwf_1_1:" + name.substring("hippostdpubwf:".length()));
-                    }
-                }
-            } 
-        });
-
         //Picker Update
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:initialize") {
             @Override
@@ -232,9 +217,9 @@ public class Upgrader13a implements UpdaterModule {
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-services") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                Node settings = node.addNode("settingsService", "frontend_2_1:plugin");
+                Node settings = node.addNode("settingsService", "frontend:plugin");
                 settings.setProperty("plugin.class", "org.hippoecm.frontend.service.settings.SettingsStorePlugin");
-                Node codecs = settings.addNode("codecs", "frontend_2_1:pluginconfig");
+                Node codecs = settings.addNode("codecs", "frontend:pluginconfig");
                 codecs.setProperty("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
                 codecs.setProperty("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
                 
@@ -278,17 +263,17 @@ public class Upgrader13a implements UpdaterModule {
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-static") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                Node translations = node.getNode("configTranslator/hippostd_2_1:translations");
+                Node translations = node.getNode("configTranslator/hippostd:translations");
                 Node sectionTranslation = translations.getNode("section-configuration");
                 /* {
-                    Node en = sectionTranslation.addNode("hippo_2_1:translation", "hippo_2_1:translation");
-                    en.setProperty("hippo_2_1:language", "en");
-                    en.setProperty("hippo_2_1:message", "Configuration");
+                    Node en = sectionTranslation.addNode("hippo:translation", "hippo:translation");
+                    en.setProperty("hippo:language", "en");
+                    en.setProperty("hippo:message", "Configuration");
                 } */
                 {
-                    Node nl = sectionTranslation.addNode("hippo_2_1:translation", "hippo_2_1:translation");
-                    nl.setProperty("hippo_2_1:language", "nl");
-                    nl.setProperty("hippo_2_1:message", "Configuratie");
+                    Node nl = sectionTranslation.addNode("hippo:translation", "hippo:translation");
+                    nl.setProperty("hippo:language", "nl");
+                    nl.setProperty("hippo:message", "Configuratie");
                 }
                 node.getNode("headerPlugin").remove();
                 node.getNode("footerPlugin").remove();
@@ -300,7 +285,7 @@ public class Upgrader13a implements UpdaterModule {
                 {
                     Node adminPerspective = node.getNode("adminPerspective");
                     adminPerspective.getProperty("wicket.behavior").remove();
-                    Node layout = adminPerspective.addNode("layout.wireframe", "frontend_2_1:pluginconfig");
+                    Node layout = adminPerspective.addNode("layout.wireframe", "frontend:pluginconfig");
                     layout.setProperty("center", "id=hippo-controlpanel-perspective-center,body=hippo-controlpanel-perspective-center-body,scroll=true");
                     layout.setProperty("linked.with.parent", true);
                     layout.setProperty("root.id", "hippo-controlpanel-perspective-wrapper");
@@ -315,14 +300,14 @@ public class Upgrader13a implements UpdaterModule {
                     root.getProperty("wicket.extensions").remove();
                     root.setProperty("tabs", "service.tab");
                     root.setProperty("browsers", new String[] { "browser.ie", "browser.ie7" });
-                    Node ie = root.addNode("browser.ie", "frontend_2_1:pluginconfig");
+                    Node ie = root.addNode("browser.ie", "frontend:pluginconfig");
                     ie.setProperty("stylesheets", new String[] { "skin/screen_ie.css" });
                     ie.setProperty("user.agent", "ie");
-                    Node ie7 = root.addNode("browser.ie7", "frontend_2_1:pluginconfig");
+                    Node ie7 = root.addNode("browser.ie7", "frontend:pluginconfig");
                     ie7.setProperty("stylesheets", new String[]{"skin/screen_ie7.css"});
                     ie7.setProperty("user.agent", "ie");
                     ie7.setProperty("major.version", "7");
-                    Node wf = root.addNode("layout.wireframe", "frontend_2_1:pluginconfig");
+                    Node wf = root.addNode("layout.wireframe", "frontend:pluginconfig");
                     wf.setProperty("center", "id=tabbed-panel-layout-center,height=1000");
                     wf.setProperty("left", "id=tabbed-panel-layout-left,width=50");
                     wf.setProperty("linked.with.parent", true);
@@ -361,7 +346,7 @@ public class Upgrader13a implements UpdaterModule {
                 node.setProperty("top", "service.browse.tabscontainer");
                 node.setProperty("model.document", "model.browse.document");
 
-                Node layout = node.addNode("layout.wireframe", "frontend_2_1:pluginconfig");
+                Node layout = node.addNode("layout.wireframe", "frontend:pluginconfig");
                 layout.setProperty("center", "id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px 0px 0px 0px");
                 layout.setProperty("left", "id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px 0px 0px 0px,expand.collapse.enabled=true");
                 layout.setProperty("linked.with.parent", true);
@@ -373,7 +358,7 @@ public class Upgrader13a implements UpdaterModule {
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-browser/editorManagerPlugin") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                Node compare = node.addNode("cluster.compare.options", "frontend_2_1:pluginconfig");
+                Node compare = node.addNode("cluster.compare.options", "frontend:pluginconfig");
                 compare.setProperty("browser.id", "service.browse");
                 compare.setProperty("editor.id", "service.edit");
                 compare.setProperty("wicket.behavior", "service.behavior.editor.tabs.center");
@@ -457,12 +442,12 @@ public class Upgrader13a implements UpdaterModule {
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:frontend/cms/cms-folder-views") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                if(node.hasNode("hippostd_2_1:directory/root")) {
-                    Node root = node.getNode("hippostd_2_1:directory/root");
+                if(node.hasNode("hippostd:directory/root")) {
+                    Node root = node.getNode("hippostd:directory/root");
                     root.setProperty("expand.collapse.supported", true);
                 }
-                if (node.hasNode("hippostd_2_1:folder/root")) {
-                    Node root = node.getNode("hippostd_2_1:folder/root");
+                if (node.hasNode("hippostd:folder/root")) {
+                    Node root = node.getNode("hippostd:folder/root");
                     root.setProperty("expand.collapse.supported", true);
                 }
             }
@@ -486,19 +471,8 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", getClass().getClassLoader().getResourceAsStream("hippo.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", getClass().getClassLoader().getResourceAsStream("hipposys.cnd")));
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippofacnav", getClass().getClassLoader().getResourceAsStream("hippofacnav.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostd", getClass().getClassLoader().getResourceAsStream("hippostd.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostdpubwf", getClass().getClassLoader().getResourceAsStream("hippostdpubwf.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposched", getClass().getClassLoader().getResourceAsStream("hipposched.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippoldap", getClass().getClassLoader().getResourceAsStream("hippoldap.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", getClass().getClassLoader().getResourceAsStream("hippogallery.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "frontend", getClass().getClassLoader().getResourceAsStream("frontend.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "editor", getClass().getClassLoader().getResourceAsStream("editor.cnd")));
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippohtmlcleaner", getClass().getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd")));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "reporting", getClass().getClassLoader().getResourceAsStream("reporting.cnd")));
 
         try {
             Workspace workspace = context.getWorkspace();
@@ -524,7 +498,7 @@ public class Upgrader13a implements UpdaterModule {
                     Node sibling = iter.nextNode();
                     if (!sibling.getName().equals(node.getName()))
                         continue;
-                    String siblingState = sibling.getProperty("hippostd_2_0:state").getString();
+                    String siblingState = sibling.getProperty("hippostd:state").getString();
                     if (siblingState.equals("published")) {
                         isPublished = true;
                     }
@@ -532,7 +506,7 @@ public class Upgrader13a implements UpdaterModule {
                         isUnpublished = true;
                     }
                 }
-                String state = node.getProperty("hippostd_2_0:state").getString();
+                String state = node.getProperty("hippostd:state").getString();
                 if (state.equals("published")) {
                     if (isUnpublished) {
                         node.setProperty("hippo:availability", new String[] {"live"});
@@ -562,20 +536,8 @@ public class Upgrader13a implements UpdaterModule {
         Set<String> knownNamespaces = new HashSet<String>();
         LinkedList<String> subtypedNamespaces = new LinkedList<String>();
         Set<String> skippedNamespaces = new HashSet<String>();
-        knownNamespaces.add("hippo");
-        skippedNamespaces.add("hippo");
-        skippedNamespaces.add("hipposys");
-        skippedNamespaces.add("hipposysedit");
-        skippedNamespaces.add("hippofacnav");
-        skippedNamespaces.add("hippostd");
-        skippedNamespaces.add("hippostdpubwf");
-        skippedNamespaces.add("hipposched");
-        skippedNamespaces.add("hippoldap1");
-        skippedNamespaces.add("hippogallery");
-        skippedNamespaces.add("frontend");
-        skippedNamespaces.add("editor");
-        skippedNamespaces.add("hippohtmlcleaner");
-        skippedNamespaces.add("reporting");
+        knownNamespaces.add("hipposysedit");
+        knownNamespaces.add("hippohtmlcleaner");
         skippedNamespaces.addAll(knownNamespaces);
         NodeTypeManager ntMgr = workspace.getNodeTypeManager();
         boolean rerun;
