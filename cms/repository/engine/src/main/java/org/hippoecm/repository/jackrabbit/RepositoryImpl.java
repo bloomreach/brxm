@@ -79,7 +79,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs) throws RepositoryException {
         NamespaceRegistryImpl nsReg = super.createNamespaceRegistry(fs);
         log.info("Initializing hippo namespace");
-        safeRegisterNamespace(nsReg, "hippo", "http://www.onehippo.org/jcr/hippo/nt/2.0.1");
+        safeRegisterNamespace(nsReg, "hippo", "http://www.onehippo.org/jcr/hippo/nt/2.0.2");
         log.info("Initializing hipposys namespace");
         safeRegisterNamespace(nsReg, "hipposys", "http://www.onehippo.org/jcr/hipposys/nt/1.0");
         log.info("Initializing hipposysedit namespace");
