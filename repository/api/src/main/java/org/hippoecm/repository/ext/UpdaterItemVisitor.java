@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.ext;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -450,16 +452,48 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         public UpdaterContext context;
 
         /**
-         * 
-         * @param context
-         * @param prefix
-         * @param cndName
-         * @param cndReader
+         * @param context the passed context to the UpdaterModel.register()
+         * @param prefix the prefix of the namespace to visit
+         * @param cndName the name of the CND file
+         * @param cndReader a reader of the CND file
+         * @deprecated
          */
+        @Deprecated
         public NamespaceVisitor(UpdaterContext context, String prefix, String cndName, Reader cndReader) {
             this.prefix = prefix;
             this.cndName = cndName;
             this.cndReader = cndReader;
+            this.context = context;
+        }
+
+        /**
+         * @param context the passed context to the UpdaterModel.register()
+         * @param prefix the prefix of the namespace to visit
+         * @param istream should not be null, if null this namespace visitor will be ignored and a warning will be logged.  If the CND is to be autocreated, instead of passing null use the other constructor.
+         */
+        public NamespaceVisitor(UpdaterContext context, String prefix, InputStream istream) {
+            this.prefix = prefix;
+            if(istream == null) {
+                /* having both cndName and cndReader as null will signal an missing
+                 * stream.
+                 */
+                this.cndName = null;
+                this.cndReader = null;
+            } else {
+                this.cndName = "-";
+                this.cndReader = new InputStreamReader(istream);
+            }
+            this.context = context;
+        }
+
+        /**
+         * @param context the passed context to the UpdaterModel.register()
+         * @param prefix the prefix of the namespace to visit
+         */
+        public NamespaceVisitor(UpdaterContext context, String prefix) {
+            this.prefix = prefix;
+            this.cndName = "-";
+            this.cndReader = null;
             this.context = context;
         }
 
