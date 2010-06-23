@@ -319,23 +319,65 @@ if (!YAHOO.hippo.EditorManager) {
                 //Fix for https://issues.onehippo.com/browse/HREPTWO-3990
                 //IE7 can't handle innerHTML without rewriting relative links to absolute links.
                 Xinha.prototype.setHTML = function(html) {
+                    var editor = this;
                     if ( !this.config.fullPage ) {
                         if(Xinha.is_ie && Xinha.ie_version == 7) {
-                            try {
+                            var input = html;
+                            html = '';
+                            //try {
                                 var reac = this.editorIsActivated();
                                 if (reac) {
                                   this.deactivateEditor();
                                 }
-                                var html_re = /<html>((.|\n)*?)<\/html>/i;
-                                html = html.replace(html_re, "$1");
                                 this._doc.open("text/html","replace");
+                                var doctype;
+                                if ( editor.config.browserQuirksMode === false ) {
+                                    doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+                                } else if ( editor.config.browserQuirksMode === true ) {
+                                    doctype = '';
+                                } else {
+                                    doctype = Xinha.getDoctype(document);
+                                }
+
+                                html += doctype + "\n";
+                                html += "<html>\n";
+                                html += "<head>\n";
+                                html += "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + editor.config.charSet + "\">\n";
+                                if ( typeof editor.config.baseHref != 'undefined' && editor.config.baseHref !== null ) {
+                                  html += "<base href=\"" + editor.config.baseHref + "\"/>\n";
+                                }
+
+                                html += Xinha.addCoreCSS();
+
+                                if ( typeof editor.config.pageStyleSheets !== 'undefined' ) {
+                                    for ( var i = 0; i < editor.config.pageStyleSheets.length; i++ ) {
+                                        if ( editor.config.pageStyleSheets[i].length > 0 ) {
+                                            html += "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + editor.config.pageStyleSheets[i] + "\">";
+                                        }
+                                    }
+                                }
+
+                                if ( editor.config.pageStyle )  {
+                                    html += "<style type=\"text/css\">\n" + editor.config.pageStyle + "\n</style>";
+                                }
+
+                                html += "</head>\n";
+                                html += "<body" + (editor.config.bodyID ? (" id=\"" + editor.config.bodyID + "\"") : '') + (editor.config.bodyClass ? (" class=\"" + editor.config.bodyClass + "\"") : '') + ">\n";
+
+                                var html_re = /<html>((.|\n)*?)<\/html>/i;
+                                html += input.replace(html_re, "$1");
+                                html += "</body>\n";
+                                html += "</html>";
+
                                 this._doc.write(html);
                                 this._doc.close();
                                 if (reac) {
                                   this.activateEditor();
                                 }
                                 this.setEditorEvents();
-                          }catch(e){}
+//                            }catch (e) {
+//                                alert(e);
+//                            }
                         } else {
                             this._doc.body.innerHTML = html;
                         }
@@ -345,6 +387,20 @@ if (!YAHOO.hippo.EditorManager) {
                     this._textArea.value = html;
                 };
               
+                //Fix for HREPTWO-4060: Xinha undo action broken under Internet Explorer
+                //Sometimes an event is passed that will throw an error when ev.type is accessed. Wrap the call with a
+                //test for ev.type.
+                if(Xinha.is_ie && Xinha.ie_version == 7) {
+                    var delegate = Xinha.prototype._editorEvent;
+                    Xinha.prototype._editorEvent = function(ev) {
+                        try {
+                            if(!Lang.isUndefined(ev.type)) {
+                                delegate.call(this, ev)
+                            }
+                        }catch(ignore){}
+                    }
+                }
+
                 //Xinha registers a resize event handler on the window.. not configurable so hack it out! And send patch to Xinha
                 var func = Xinha.addDom0Event;
                 Xinha.addDom0Event = function(el, ev, fn) {
@@ -571,16 +627,12 @@ if (!YAHOO.hippo.EditorManager) {
                 var w,h;
                 if(Dom.hasClass(c, 'rte-preview-style')) {
                     Dom.removeClass(c, 'rte-preview-style');
-
-                    var pr = Dom.getRegion(c);
-                    var marges = YAHOO.hippo.Dom.getMargin(c);
-                    w = pr.width - marges.w;
-                    h = pr.height - marges.h;
-                } else {
-                    var dim = this.getDimensions(c, this.config);
-                    w = dim.w;
-                    h = dim.h;
                 }
+                var pr = Dom.getRegion(c);
+                var marges = YAHOO.hippo.Dom.getMargin(c);
+                w = pr.width - marges.w;
+                h = pr.height - marges.h;
+
                 this.setSize(w, h);
                 
                 this.lastData = this.xinha.getInnerHTML();
