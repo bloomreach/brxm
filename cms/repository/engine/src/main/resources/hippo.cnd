@@ -18,7 +18,7 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.1'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
 
 [rep:jarFile] mixin
 - rep:jarExpanded (date) mandatory copy
@@ -31,6 +31,7 @@
 - jcr:mimeType (string) mandatory
 - jcr:data (binary) primary mandatory
 - jcr:lastModified (date) mandatory ignore
+- hippo:text (binary)
 
 [hippo:query] > nt:query
 
@@ -48,6 +49,7 @@
 [hippo:request] > nt:base
 
 [hippo:document] > nt:base
+- hippo:availability (string) multiple ignore
 
 [hippo:handle] > nt:base
 - hippo:discriminator (string) multiple
