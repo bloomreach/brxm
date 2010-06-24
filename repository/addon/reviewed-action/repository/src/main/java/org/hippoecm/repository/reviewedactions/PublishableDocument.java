@@ -29,16 +29,17 @@ public class PublishableDocument extends Document {
     final public static String STALE = "stale";
 
     String state;
-    String availability; // String[] availability;
     String username;
     Date publicationDate;
     String lastModifiedBy;
     Date lastModificationDate;
     Date creationDate;
     String createdBy;
+    String[] availability;
 
     public PublishableDocument() {
         this.state = UNPUBLISHED;
+	this.availability = null;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class PublishableDocument extends Document {
         clonedDocument.lastModificationDate = lastModificationDate;
         clonedDocument.lastModifiedBy = lastModifiedBy;
         clonedDocument.publicationDate = null;
-        clonedDocument.availability = "none"; // new String[0];
+        clonedDocument.availability = new String[0];
         return clonedDocument;
     }
 

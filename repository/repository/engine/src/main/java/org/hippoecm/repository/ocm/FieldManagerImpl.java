@@ -893,66 +893,6 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
     }
-    public void storeStringArrayField(int fieldNumber, String[] value) {
-        AbstractClassMetaData cmd = sm.getClassMetaData();
-        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
-            cmd = cmd.getSuperAbstractClassMetaData();
-        }
-        fieldNumber -= cmd.getNoOfInheritedManagedFields();
-        String field = cmd.getField(fieldNumber).getColumn();
-        if (log.isDebugEnabled())
-            log.debug("store \"" + field);
-        if (field != null && !field.equals("jcr:uuid")) {
-            try {
-                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null) {
-                    if ("{.}".equals(last.relPath) || "{_name}".equals(last.relPath)) {
-                        // if(!last.node.getParent().isCheckedOut()) {
-                        //     checkoutNode(last.node.getParent());
-                        // }
-                        // last.node.getSession().move(last.node.getPath(), last.node.getParent().getPath() + "/" + value);
-                        throw new JPOXDataStoreException("Node renaming is not supported");
-                    } else {
-                        if(!last.node.isCheckedOut()) {
-                            checkoutNode(last.node);
-                        }
-                        property = last.node.setProperty(last.relPath, value);
-                    }
-                } else {
-                    if(!property.getParent().isCheckedOut()) {
-                        checkoutNode(property.getParent());
-                    }
-                    property.setValue(value);
-                }
-            } catch (ValueFormatException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("ValueFormatException", ex, value);
-            } catch (VersionException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("VersionException", ex, value);
-            } catch (ConstraintViolationException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
-            } catch (LockException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("LockException", ex, value);
-            } catch (RepositoryException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("RepositoryException", ex, value);
-            }
-        }
-    }
 
     public String fetchStringField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
@@ -963,7 +903,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         String field = cmd.getField(fieldNumber).getColumn();
         String value = "";
         if (log.isDebugEnabled()) {
-            log.debug("fetching \"" + (cmd.getField(fieldNumber) != null ?
+            log.debug("fetching " + fieldNumber + "\"" + (cmd.getField(fieldNumber) != null ?
                                     cmd.getField(fieldNumber).getFullFieldName() : "unknown")
                                  + "\" = \"" + field + "\" = \"" + value + "\"");
         }
@@ -1029,78 +969,9 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
-                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-                                 + "\" = \"" + field + "\" = \"" + value + "\"");
-        }
-        return value;
-    }
-
-    public String[] fetchStringArrayField(int fieldNumber) {
-        AbstractClassMetaData cmd = sm.getClassMetaData();
-        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
-            cmd = cmd.getSuperAbstractClassMetaData();
-        }
-        fieldNumber -= cmd.getNoOfInheritedManagedFields();
-        String field = cmd.getField(fieldNumber).getColumn();
-        String[] value = null;
-        if (log.isDebugEnabled()) {
-            log.debug("fetching \"" + (cmd.getField(fieldNumber) != null ?
+            log.debug("fetch \"" + (cmd.getField(fieldNumber) != null ?
                                     cmd.getField(fieldNumber).getFullFieldName() : "unknown")
                                  + "\" = \"" + field + "\" = \"" + value + "\"");
-        }
-        if (field != null) {
-            JCROID oid = (JCROID) sm.getExternalObjectId(null);
-            try {
-                Node node = oid.getNode(session);
-                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field);
-                if (property != null) {
-                    Value[] propertyValues = property.getValues();
-                    value = new String[propertyValues.length];
-                    for(int i=0; i<propertyValues.length; i++) {
-                        value[i] = propertyValues[i].getString();
-                    }
-                } else {
-                    Node ref = node;
-                    String prop = field;
-                    if (field.lastIndexOf('/') > -1) {
-                        ref = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node,
-                                field.substring(0, field.lastIndexOf('/')));
-                        prop = field.substring(field.lastIndexOf('/') + 1);
-                    }
-                    value = null;
-                }
-            } catch (ValueFormatException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("ValueFormatException", ex);
-            } catch (VersionException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("VersionException", ex);
-            } catch (ConstraintViolationException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("ConstraintViolationException", ex);
-            } catch (LockException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("LockException", ex);
-            } catch (RepositoryException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("failed", ex);
-                }
-                throw new JPOXDataStoreException("RepositoryException", ex);
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
-                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-                                 + "\" = \"" + field);
         }
         return value;
     }
@@ -1151,7 +1022,50 @@ class FieldManagerImpl extends AbstractFieldManager {
             // throw new NullPointerException();
         }
         if(value instanceof String[]) {
-            storeStringArrayField(fieldNumber, (String[]) value);
+            try {
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
+                if (property == null) {
+                    if ("{.}".equals(last.relPath) || "{_name}".equals(last.relPath)) {
+                        throw new JPOXDataStoreException("Node renaming is not supported");
+                    } else {
+                        if(!last.node.isCheckedOut()) {
+                            checkoutNode(last.node);
+                        }
+                        property = last.node.setProperty(last.relPath, (String[]) value);
+                    }
+                } else {
+                    if (!property.getParent().isCheckedOut()) {
+                        checkoutNode(property.getParent());
+                    }
+                    property.setValue((String[])value);
+                }
+            } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
             return;
         }
         StateManager valueSM = sm.getObjectManager().findStateManager((PersistenceCapable) value);
@@ -1247,18 +1161,36 @@ class FieldManagerImpl extends AbstractFieldManager {
         fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         Object value = null;
+        if (log.isDebugEnabled()) {
+            log.debug("fetching \"" + (cmd.getField(fieldNumber) != null ?
+                                    cmd.getField(fieldNumber).getFullFieldName() : "unknown")
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                Item child = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field);
-                if (child != null) {
-                    Class clazz = cmd.getField(fieldNumber).getType();
-                    if(Date.class.isAssignableFrom(clazz)) {
-                        value = new Date(((Property)child).getLong());
-                    } else if(String[].class.isAssignableFrom(clazz)) {
-                        value = fetchStringArrayField(fieldNumber);
+                Class clazz = cmd.getField(fieldNumber).getType();
+                if (Date.class.isAssignableFrom(clazz)) {
+                    Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field);
+                    if (property != null) {
+                        value = new Date(property.getLong());
+                    }
+                } else if (clazz.isArray() && String.class.isAssignableFrom(clazz.getComponentType())) {
+                    Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field);
+                    if (property != null) {
+                        Value[] propertyValues = property.getValues();
+                        String[] strings = new String[propertyValues.length];
+                        for (int i=0; i<propertyValues.length; i++) {
+                            strings[i] = propertyValues[i].getString();
+                        }
+                        value = strings;
                     } else {
+                        value = null;
+                    }
+                } else {
+                    Item child = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field);
+                    if (child != null) {
                         Object id = new JCROID(((Node)child).getUUID(), clazz.getName());
                         StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
                         //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));

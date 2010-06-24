@@ -123,7 +123,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                     draftDocument = (PublishableDocument) publishedDocument.clone();
                 }
                 draftDocument.state = PublishableDocument.DRAFT;
-                draftDocument.availability = "none"; // new String[0];
+                draftDocument.availability = new String[0];
                 draftDocument.setOwner(getWorkflowContext().getUserIdentity());
                 if (unpublishedDocument != null) {
                     unpublishedDocument.setOwner(getWorkflowContext().getUserIdentity());
@@ -148,10 +148,10 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         if (draftDocument != null) {
             unpublishedDocument = null;
             draftDocument.setState(PublishableDocument.UNPUBLISHED);
-            draftDocument.availability = "preview"; // new String[] { "preview" };
+            draftDocument.availability = new String[] { "preview" };
             draftDocument.setModified(getWorkflowContext().getUserIdentity());
             if (publishedDocument != null) {
-                publishedDocument.availability = "live"; // new String[] { "live" };
+                publishedDocument.availability = new String[] { "live" };
             }
             return draftDocument;
         } else {
