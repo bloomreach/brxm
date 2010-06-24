@@ -70,9 +70,9 @@ if (!YAHOO.hippo.DateTime) {
             this.containerId = Dom.generateId();
             this.config.dp = this.containerId;
 
-            var container = document.createElement("div");
-            container.id = this.containerId;
-            document.body.appendChild(container);
+            this.container = document.createElement("div");
+            this.container.id = this.containerId;
+            document.body.appendChild(this.container);
 
             YAHOO.util.Event.addListener(this.config.icon, "click", this.onIconClicked, this, true);
             YAHOO.hippo.HippoAjax.registerDestroyFunction(Dom.get(this.id), this.destroy, this);
@@ -131,6 +131,9 @@ if (!YAHOO.hippo.DateTime) {
                     this.picker.destroy();
                     this.picker = null;
                 }
+                try {
+                    document.body.removeChild(this.container);
+                } catch(ignore) {}
 
                 this.config = null;
                 this.id = null;
