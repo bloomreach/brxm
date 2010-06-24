@@ -31,6 +31,34 @@ if (!YAHOO.hippo.FeedbackManager) {
 	(function() {
 		var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
+		YAHOO.hippo.FeedbackPanel = function(id, config) {
+			this.id = id;
+			this.config = config;
+			this.module = null;
+		};
+		
+		YAHOO.hippo.FeedbackPanel.prototype = {
+			show: function() {
+				if (this.module == null) {
+					this.module = new YAHOO.widget.Module(this.id, this.config);
+				}
+				var element = Dom.get(this.id);
+				this.module.render(element.parentNode);
+				YAHOO.util.Event.addListener(this.id, "click", this.module.hide, this.module, true);
+				this.module.show();
+			},
+
+			hide: function() {
+				this.module.hide();
+			},
+			
+			cleanup: function() {
+				if (this.module != null) {
+					this.module.destroy();
+				}
+			}
+		};
+		
 		YAHOO.hippo.FeedbackManagerImpl = function() {
 		};
 
@@ -38,25 +66,28 @@ if (!YAHOO.hippo.FeedbackManager) {
 			instances : new YAHOO.hippo.HashMap(),
 
 			create : function(id, config) {
+				if (this.instances.containsKey(id)) {
+					YAHOO.log("Feedback panel [" + id + "] was already registered", "warn", "FeedbackManager");
+					return;
+				}
+
 				YAHOO.log("Creating feedback panel [" + id + "]", "info", "FeedbackManager");
-				this._add(id, config, this.instances);
+				this.instances.put(id, new YAHOO.hippo.FeedbackPanel(id, config));
 			},
 
 			get : function(id) {
-				YAHOO.log("Retrieving feedback panel [" + id + "]", "info", "FeedbackManager");
+				this._cleanup();
 				return this.instances.get(id);
 			},
 
-			_add : function(id, config, map) {
-				var module = new YAHOO.widget.Module(id, config);
-				map.put(id, module);
-
-				module.render(document.body);
-				YAHOO.util.Event.addListener(id, "click", module.hide, module, true);
+			delayedHide : function(id, delay) {
+				var module = this.instances.get(id);
+				module.show();
+                YAHOO.lang.later(delay, module, 'hide');
 			},
-
+			
 			_cleanup : function() {
-				var ids = map.keySet();
+				var ids = this.instances.keySet();
 				var toRemove = [];
 				for (var i = 0; i < ids.length; i++) {
 					var id = ids[i];
@@ -65,7 +96,8 @@ if (!YAHOO.hippo.FeedbackManager) {
 					}
 				}
 				for (var i = 0; i < toRemove.length; i++) {
-					map.remove(toRemove[i]);
+					var panel = this.instances.remove(toRemove[i]);
+					panel.cleanup();
 				}
 			}
 		};

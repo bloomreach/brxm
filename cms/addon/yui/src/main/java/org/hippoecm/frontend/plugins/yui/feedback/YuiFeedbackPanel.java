@@ -19,9 +19,9 @@ import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
@@ -59,7 +59,7 @@ public class YuiFeedbackPanel extends Panel {
     public boolean hasMessages() {
         return feedback.anyMessage();
     }
-    
+
     class NotifyUserBehavior extends AbstractYuiBehavior {
         private static final long serialVersionUID = 1L;
 
@@ -67,19 +67,21 @@ public class YuiFeedbackPanel extends Panel {
         public void addHeaderContribution(IYuiContext helper) {
             helper.addModule(HippoNamespace.NS, "feedbackmanager");
 
-            Map<String, Object> params = new MiniMap(1);
-            params.put("id", getMarkupId());
+            Map<String, Object> params = new MiniMap<String,Object>(1);
+            params.put("id", feedback.getMarkupId());
             helper.addTemplate(YuiFeedbackPanel.class, "feedback.js", params);
-        }
+            helper.addOnWinLoad(new LoadableDetachableModel<String>() {
+                private static final long serialVersionUID = 1L;
 
-        @Override
-        public void onRenderHead(IHeaderResponse response) {
-            super.onRenderHead(response);
+                @Override
+                protected String load() {
+                    if (feedback.anyMessage()) {
+                        return "YAHOO.hippo.FeedbackManager.delayedHide(\"" + feedback.getMarkupId() + "\", 4000);";
+                    }
+                    return "";
+                }
+            });
 
-            if (feedback.anyMessage()) {
-                response.renderJavascript("var module = YAHOO.hippo.FeedbackManager.get(\"" + getMarkupId() + "\"); "
-                        + "module.show(); YAHOO.lang.later(4000, module, 'hide');", "feedback-" + getMarkupId());
-            }
         }
     };
 
