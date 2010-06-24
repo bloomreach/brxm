@@ -21,39 +21,35 @@ if (!YAHOO.hippo.TableHelper) {
         YAHOO.hippo.TableHelperImpl.prototype = {
             id: 'tableHelper',
             
-            register : function(id) {
+            register : function(id, config) {
                 var tableEl = Dom.get(id);
                 if(Lang.isUndefined(tableEl['tableHelper'])) {
-                    tableEl['tableHelper'] = new YAHOO.hippo.Table(id);
+                    tableEl['tableHelper'] = new YAHOO.hippo.Table(id, config);
                 }
                 tableEl['tableHelper'].render();
             }
         }
         
-        YAHOO.hippo.Table = function(id) {
-            this.init(id);
+        YAHOO.hippo.Table = function(id, config) {
+            this.id = id;
+            this.config = config;
+            this.helper = new YAHOO.hippo.DomHelper();
+
+            var table = Dom.get(id);
+            var me = this;
+            YAHOO.hippo.LayoutManager.registerResizeListener(table, this, function(sizes) {
+                me.resize(sizes);
+            }, false);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(table, function() {
+                YAHOO.hippo.LayoutManager.unregisterResizeListener(table, me);
+            }, this);
         }
         
         YAHOO.hippo.Table.prototype = {
-            id: null,
-            helper: new YAHOO.hippo.DomHelper(),
-        	
-        	init: function(id) {
-                this.id = id;
 
-                var table = Dom.get(id);
-                var me = this;
-                YAHOO.hippo.LayoutManager.registerResizeListener(table, this, function(sizes) {
-                    me.resize(sizes);
-                }, false);
-                YAHOO.hippo.HippoAjax.registerDestroyFunction(table, function() {
-                    YAHOO.hippo.LayoutManager.unregisterResizeListener(table, me);
-                }, this);
-        	},
-        	
-        	resize: function(sizes) {
-        	    this.update(sizes);
-        	},
+        	  resize: function(sizes) {
+        	      this.update(sizes);
+        	  },
         	
             render : function() {
                 var table = Dom.get(this.id);
@@ -77,6 +73,12 @@ if (!YAHOO.hippo.TableHelper) {
             
             update: function(sizes) {
                 var table = Dom.get(this.id);
+
+                if(YAHOO.env.ua.gecko > 0) {
+                    this._updateGecko(sizes);
+                    return;
+                }
+
                 var rows = table.rows;
 
                 //ie8 standards mode fails on rows/cols/cells attributes..
@@ -125,24 +127,12 @@ if (!YAHOO.hippo.TableHelper) {
                 Dom.setStyle(tbody, 'height', 'auto');
 
                 var tbodyRegion = Dom.getRegion(tbody);
+                console.log('TBOdy height: ' + Lang.dump(tbodyRegion))
                 var availableHeight = sizes.wrap.h - nonBodyHeight;
 
                 var scrolling = tbodyRegion.height > availableHeight;
 
-                //For now fallback to unit scrolling behavior, not the best looking option, but by far most reliable
-                // across browsers
-                if(scrolling) {
-                    //Couldn't get the scrolling of a tbody working in IE so set the whole
-                    //unit to scrolling
-                    //TODO: ask Hippo Services
-                    var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                    un.set('scroll', true);
-                } else {
-                    Dom.setStyle(tbody, 'height', prevHeight);
-                }
-
-                /*
-                if (YAHOO.env.ua.ie > 0 || true) {
+                if (YAHOO.env.ua.ie > 0) {
                     if(scrolling) {
                             //Couldn't get the scrolling of a tbody working in IE so set the whole
                             //unit to scrolling
@@ -197,13 +187,113 @@ if (!YAHOO.hippo.TableHelper) {
                 } else {
                     //firefox
                     if(scrolling) {
+                        console.log('set height with scrolling: ' + availableHeight);
                         Dom.setStyle(tbody, 'height', availableHeight + 'px');
                     } else {
+                        console.log('set height without scrolling: ' + tbodyRegion);
                         Dom.setStyle(tbody, 'height', tbodyRegion.height + 'px');
                     }
                 }
-                */
-        	  }
+        	  },
+
+            _updateGecko : function(sizes) {
+                var table = Dom.get(this.id);
+                if(table.rows.length <= 1) {
+                     return; //no rows in body
+                }
+
+                var thead = this._getThead(table);
+                var tbody = this._getTbody(table);
+
+                var prevHeight = Dom.getStyle(tbody, 'height');
+                Dom.setStyle(tbody, 'height', 'auto');
+
+                var rows = table.rows;
+
+                var ths = Dom.getElementsByClassName('headers' , 'tr' , thead);
+                if(ths.length > 0) {
+                    var header = ths[0];
+                    var dim = {w: 0, h: 0};
+                    for(var i=0; i< header.children.length; i++) {
+                        var child = header.children[i];
+                        if(!Dom.hasClass(child, 'doclisting-name')) {
+                            var region = Dom.getRegion(child);
+                            dim.w += region.width;
+                        }
+                    }
+
+                    var tds = Dom.getElementsByClassName('doclisting-name' , 'td' , tbody);
+                    if(tds.length > 0) {
+                        var margin = this.helper.getMargin(tds[0]);
+                        dim.w += margin.w;
+                    }
+
+                    console.log('Unit width=' + sizes.wrap.w + ', other tds width=' + dim.w);
+                    var tdWidth = sizes.wrap.w - dim.w;
+                    for(var i=0; i<tds.length; ++i) {
+                        var td = tds[i];
+                        Dom.setStyle(td, 'width', tdWidth + 'px');
+                        Dom.setStyle(td, 'display', 'block');
+                        Dom.setStyle(td, 'overflow', 'hidden');
+                    }
+                }
+
+                var availableHeight = sizes.wrap.h;
+
+                //first subtract height of table siblings
+                var siblings = Dom.getChildren(table.parentNode);
+                for(var i=0; i<siblings.length; ++i) {
+                    var sibling = siblings[i];
+                    if(sibling != table) {
+                        availableHeight -= Dom.getRegion(sibling).height;
+                    }
+                }
+
+                //then substract margin/padding/border value of table and height of header
+                var nonBodyHeight = this.helper.getMargin(table).h + Dom.getRegion(thead).height;
+                availableHeight -= nonBodyHeight;
+
+                //then try to detect paging element and subtract height which is a hard-coded value of 65 px
+                //TODO: calculate footer height
+                var lastRowParentTag = rows[rows.length-1].parentNode.tagName;
+                if(lastRowParentTag.toLowerCase() == 'tfoot') {
+                    availableHeight -= 65;
+                } else {
+                    //Wicket 1.4 introduces a datatable with two tbody elements instead of thead/tfoot....
+                    var pagingRow = Dom.getElementsByClassName ( 'hippo-list-paging', 'tr', table);
+                    if(Lang.isArray(pagingRow) && pagingRow.length > 0) {
+                        availableHeight -= 65;
+                    }
+                }
+
+                var tbodyRegion = Dom.getRegion(tbody);
+
+                console.log('Tbody: previous height: ' + prevHeight + ', current height: ' + tbodyRegion.height);
+                //var availableHeight = sizes.wrap.h - nonBodyHeight;
+
+                var scrolling = tbodyRegion.height > availableHeight;
+                if(scrolling) {
+                    console.log('set height with scrolling: ' + availableHeight);
+                    Dom.setStyle(tbody, 'height', availableHeight + 'px');
+                } else {
+                    console.log('set height without scrolling: ' + tbodyRegion);
+                    Dom.setStyle(tbody, 'height', tbodyRegion.height + 'px');
+                }
+
+            },
+
+            _getTbody : function(table) {
+                var tbodies = Dom.getElementsByClassName('datatable-tbody', 'tbody', table);
+                if(tbodies.length > 0) {
+                    return tbodies[0];
+                }
+                return table.rows[table.rows.length-1].parentNode;
+            },
+
+            _getThead : function(table) {
+                return table.rows[0].parentNode;
+            }
+
         }
     })();
 

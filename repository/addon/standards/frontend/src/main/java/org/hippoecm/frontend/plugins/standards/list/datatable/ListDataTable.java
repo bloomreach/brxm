@@ -100,6 +100,8 @@ public class ListDataTable<T> extends DataTable<T> {
                 ListDataTable.this.destroyItem(item);
             }
         });
+
+        setTableBodyCss("datatable-tbody");
     }
     
     @Override
