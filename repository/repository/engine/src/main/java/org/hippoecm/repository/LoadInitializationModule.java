@@ -86,7 +86,6 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
     public void shutdown() {
         // stop all listeners on refreshSession
         if (session != null && session.isLive()) {
-            session.logout();
             try {
                 ObservationManager obMgr = session.getWorkspace().getObservationManager();
                 EventListenerIterator elIter = obMgr.getRegisteredEventListeners();
@@ -98,6 +97,7 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
             } catch (Exception ex) {
                 log.error("Error while removing listener: " + ex.getMessage(), ex);
             }
+            session.logout();
         }
         doCycle = false;
         keepRunning = false;
