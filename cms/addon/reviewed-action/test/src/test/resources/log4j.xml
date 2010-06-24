@@ -44,6 +44,10 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
+  <category additivity="false" name="org.hippoecm.repository.ocm">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
 
   <category additivity="false" name="org.hippoecm.frontend">
     <level value="warn"/>

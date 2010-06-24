@@ -59,13 +59,13 @@ public class FailingWorkflowTest extends TestCase {
         "jcr:mixinTypes", "hippo:harddocument",
         "/test/folder/document", "hippo:handle",
         "jcr:mixinTypes", "hippo:hardhandle",
-        "/test/folder/document/document", "hippo:testpublishabledocument",
+        "/test/folder/document/document", "hippostdpubwf:test",
         "hippostdpubwf:createdBy", "admin",
-        "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00</sv:value>",
+        "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
         "hippostdpubwf:lastModifiedBy", "admin",
         "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00",
         "jcr:mixinTypes", "hippo:harddocument",
-        "hippostd:folder", "admin",
+        "hippostd:holder", "admin",
         "hippostd:state", "published"
     };
 

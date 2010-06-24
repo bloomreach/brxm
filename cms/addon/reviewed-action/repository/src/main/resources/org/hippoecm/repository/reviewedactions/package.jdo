@@ -56,13 +56,15 @@
     <class name="PublishableDocument" detachable="true" table="documents">
       <inheritance strategy="new-table"/>
       <field name="state" column="hippostd:state"/>
-      <field name="availability" column="hippo:availability"/>
       <field name="username" column="hippostd:holder"/>
       <field name="lastModificationDate" column="hippostdpubwf:lastModificationDate"/>
       <field name="lastModifiedBy" column="hippostdpubwf:lastModifiedBy"/>
       <field name="publicationDate" column="hippostdpubwf:publicationDate"/>
       <field name="createdBy" column="hippostdpubwf:createdBy"/>
       <field name="creationDate" column="hippostdpubwf:creationDate"/>
+      <field name="availability" column="hippo:availability" embedded="true" serialized="true">
+        <array embedded-element="true" />
+      </field>
     </class>
     <class name="PublicationRequest" detachable="true" table="documents">
       <datastore-identity strategy="native"/>

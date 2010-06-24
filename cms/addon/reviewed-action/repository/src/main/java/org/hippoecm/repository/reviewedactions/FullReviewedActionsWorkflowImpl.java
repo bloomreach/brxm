@@ -192,7 +192,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         publishedDocument = null;
         unpublishedDocument.setState(PublishableDocument.PUBLISHED);
         unpublishedDocument.setPublicationDate(new Date());
-        unpublishedDocument.availability = "live,preview"; // new String[] { "live", "preview" };
+        unpublishedDocument.availability = new String[] { "live", "preview" };
         try {
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             versionWorkflow.version();
@@ -223,7 +223,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             VersionWorkflow versionWorkflow;
             if(unpublishedDocument == null) {
                 publishedDocument.state = PublishableDocument.UNPUBLISHED;
-                publishedDocument.availability = "preview"; // new String[] { "preview" };
+                publishedDocument.availability = new String[] { "preview" };
                 versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
             } else {
                 publishedDocument = null;

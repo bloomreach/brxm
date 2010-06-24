@@ -145,8 +145,18 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         return null; // impossible because of hasNode statement
                     }
                 } else {
-                    if(logger.isDebugEnabled()) {
-                        logger.debug("could not resolve non-conditional path "+relPath);
+                    if (pathIdx+1 == pathEltsLength && node.hasProperty(relPath)) {
+                        try {
+                            node = node.getNode(relPath);
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("resolved relPath as non-conditional item " + node.getPath());
+                            }
+                        } catch (PathNotFoundException ex) {
+                            return null; // impossible because of hasNode statement
+                        }
+                    }
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("could not resolve non-conditional path " + relPath);
                     }
                     return null;
                 }

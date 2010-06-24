@@ -54,11 +54,12 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         node = root.addNode("test");
         node = node.addNode("myarticle", "hippo:handle");
         node.addMixin("mix:referenceable");
-        node = node.addNode("myarticle", "hippo:testpublishabledocument");
+        node = node.addNode("myarticle", "hippostdpubwf:test");
         node.addMixin("hippo:harddocument");
-        node.setProperty("content", LOREM);
+        node.setProperty("hippostdpubwf:content", LOREM);
         node.setProperty("hippostd:holder", "admin");
-        node.setProperty("hippostd:state", "draft");
+        node.setProperty("hippostd:state", "unpublished");
+        node.setProperty("hippo:availability", new String[] { "preview" });
         node.setProperty("hippostdpubwf:createdBy", "admin");
         node.setProperty("hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00");
         node.setProperty("hippostdpubwf:lastModifiedBy", "admin");
@@ -76,6 +77,14 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         }
         root.save();
         super.tearDown();
+    }
+
+    @Test
+    public void testBasic() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node node, root = session.getRootNode();
+        node = getNode("test/myarticle/myarticle");
+        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+	workflow.publish();
     }
 
     @Test
@@ -105,7 +114,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.refresh(true);
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             assertTrue(node.getUUID().equals(document.getIdentity()));
-            Property prop = node.getProperty("content");
+            Property prop = node.getProperty("hippostdpubwf:content");
             prop.setValue(prop.getString() + ",");
             session.save();
             session.refresh(true);
@@ -152,7 +161,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.save();
             session.refresh(true);
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
-            Property prop = node.getProperty("content");
+            Property prop = node.getProperty("hippostdpubwf:content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + "!");
 
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
@@ -187,7 +196,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.refresh(true);
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             assertTrue(node.getUUID().equals(document.getIdentity()));
-            Property prop = node.getProperty("content");
+            Property prop = node.getProperty("hippostdpubwf:content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();
             session.refresh(true);
@@ -429,5 +438,4 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.save();
         }
     }
-
 }

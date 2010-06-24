@@ -22,8 +22,5 @@
 <hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
-[hippo:ntunstructured] > nt:unstructured
-
-[hippo:testpublishabledocument] > hippo:document, hippostdpubwf:document
-+ * = hippo:ntunstructured multiple
-- *
+[hippostdpubwf:test] > hippo:document, hippostdpubwf:document
+- hippostdpubwf:content (string)
