@@ -40,15 +40,19 @@ if (!YAHOO.hippo.DataTable) {
         YAHOO.extend(YAHOO.hippo.DataTable, YAHOO.hippo.Widget, {
 
         	  resize: function(sizes) {
+                var table = Dom.get(this.id);
+                if(table.rows.length <= 1) {
+                     return; //no rows in body
+                }
+
                 if(YAHOO.env.ua.gecko > 0 || YAHOO.env.ua.webkit > 0) {
-                    this._updateGecko(sizes);
+                    this._updateGecko(sizes, table);
                 } else {
-                    this.update(sizes);
+                    this._updateIE(sizes, table);
                 }
         	  },
         	
-            update: function(sizes) {
-                var table = Dom.get(this.id);
+            _updateIE: function(sizes, table) {
                 var rows = table.rows;
 
                 //ie8 standards mode fails on rows/cols/cells attributes..
@@ -61,10 +65,6 @@ if (!YAHOO.hippo.DataTable) {
                         }
                     }
                     return; //don't bother
-                }
-
-                if(rows.length <= 1) {
-                    return; //no rows in body
                 }
 
                 //if table has top margin, add it to table minheight
@@ -90,88 +90,29 @@ if (!YAHOO.hippo.DataTable) {
                         nonBodyHeight += 65;
                     }
                 }
-                var thead = rows[0].parentNode;
-                var tbody = rows[rows.length-1].parentNode;
+
+                var tbody = this._getTbody();
 
                 var prevHeight = Dom.getStyle(tbody, 'height');
                 Dom.setStyle(tbody, 'height', 'auto');
 
                 var tbodyRegion = Dom.getRegion(tbody);
-                console.log('TBOdy height: ' + Lang.dump(tbodyRegion))
                 var availableHeight = sizes.wrap.h - nonBodyHeight;
 
                 var scrolling = tbodyRegion.height > availableHeight;
 
-                if (YAHOO.env.ua.ie > 0) {
-                    if(scrolling) {
-                            //Couldn't get the scrolling of a tbody working in IE so set the whole
-                            //unit to scrolling
-                            //TODO: ask Hippo Services
-                            var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                            un.set('scroll', true);
-                    } else {
-                            Dom.setStyle(tbody, 'height', prevHeight);
-                    }
-                } else if (YAHOO.env.ua.webkit) {
-                        Dom.setStyle(table, 'width', '100%');
-                        Dom.setStyle(tbody, 'height', availableHeight + 'px');
-
-                        if(Lang.isUndefined(table.previousScrolling)) {
-                            table.previousScrolling != scrolling;
-                        }
-
-                        if(scrolling) {
-                            if(table.previousScrolling) {
-                                Dom.setStyle(tbody, 'width', (sizes.wrap.w-0) + 'px');
-                            } else {
-                                Dom.setStyle(tbody, 'width', (sizes.wrap.w-0) + 'px');
-                                var row = table.rows[1];
-
-                                //save dimensions of columns
-                                var colSizes = [row.cells.length];
-                                for(var i=0; i<row.cells.length; i++) {
-                                    colSizes[i] = Dom.getRegion(row.cells[i]);
-                                }
-
-                                //header will be broken after setting these
-                                Dom.setStyle(table.rows[0], 'display', 'block');
-                                Dom.setStyle(table.rows[0], 'position', 'relative');
-                                Dom.setStyle(tbody, 'display', 'block'); //make body scrollable
-
-                                //restore header dimensions
-                                for(var i=0; i<colSizes.length; i++) {
-                                    Dom.setStyle(table.rows[0].cells[i], 'width', colSizes[i].width + 'px');
-                                }
-                            }
-                        } else {
-                            //reset
-                            Dom.setStyle(table.rows[0], 'display', 'table-row');
-                            Dom.setStyle(table.rows[0], 'position', 'static');
-                            Dom.setStyle(tbody, 'display', 'table-row-group');
-                            for(var i=0; i<table.rows[0].cells.length; i++) {
-                                Dom.setStyle(table.rows[0].cells[i], 'width', 'auto');
-                            }
-
-                        }
-                        table.previousScrolling = scrolling;
+                if(scrolling) {
+                        //Couldn't get the scrolling of a tbody working in IE so set the whole
+                        //unit to scrolling
+                        //TODO: ask Hippo Services
+                        var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                        un.set('scroll', true);
                 } else {
-                    //firefox
-                    if(scrolling) {
-                        console.log('set height with scrolling: ' + availableHeight);
-                        Dom.setStyle(tbody, 'height', availableHeight + 'px');
-                    } else {
-                        console.log('set height without scrolling: ' + tbodyRegion);
-                        Dom.setStyle(tbody, 'height', tbodyRegion.height + 'px');
-                    }
+                        Dom.setStyle(tbody, 'height', prevHeight);
                 }
         	  },
 
-            _updateGecko : function(sizes) {
-
-                var table = Dom.get(this.id);
-                if(table.rows.length <= 1) {
-                     return; //no rows in body
-                }
+            _updateGecko : function(sizes, table) {
 
                 var thead = this._getThead(table);
                 var headers = Dom.getElementsByClassName('headers' , 'tr' , thead);
@@ -188,17 +129,23 @@ if (!YAHOO.hippo.DataTable) {
                 var widthData = this.getWidthData(headers, cells, sizes);
                 if(widthData.changed) {
                     this._setColsWidth(headers, widthData.headerWidth, cells, widthData.columnWidth);
-                } else {
-                    console.log('no width changes!');
                 }
 
                 var heightData = this.getHeightData(table, thead, tbody, sizes, widthData.changed);
-                Dom.setStyle(tbody, 'height', heightData.tbodyHeight + 'px');
-//                if(widthData.changed && heightData.scrolling) {
-//                    console.log('Fixing width because of scrolling');
-//                    var scrollWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
-//                    this._setColsWidth(headers, widthData.headerWidth, cells, widthData.columnWidth - scrollWidth);
-//                }
+                //if(heightData.changed) {
+                    Dom.setStyle(tbody, 'height', heightData.tbodyHeight + 'px');
+                //}
+                if(widthData.changed && heightData.scrolling) {
+                    var scrollWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
+//                    for(var i=0; i<cells.length; ++i) {
+//                        var td = cells[i];
+//                        Dom.setStyle(td, 'width', (widthData.columnWidth - scrollWidth) + 'px');
+//                        Dom.setStyle(td, 'display', 'block');
+//                        Dom.setStyle(td, 'overflow', 'hidden');
+//                    }
+
+                   // this._setColsWidth(headers, widthData.headerWidth - scrollWidth, cells, widthData.columnWidth - scrollWidth);
+                }
 
                 if(YAHOO.env.ua.webkit > 0) {
                       Dom.setStyle(headers[0], 'display', 'block');
@@ -212,7 +159,6 @@ if (!YAHOO.hippo.DataTable) {
                 var prevColumnWidth = this.data.columnWidth;
 
                 if(this.data.nrOfCols != nrOfCols) {
-                    console.log('Calculating width sizes');
 
                     //Number of columns changed, recalculate width
                     this.data.fixedHeaderWidth = 0;
@@ -222,9 +168,10 @@ if (!YAHOO.hippo.DataTable) {
                     //Dom.setStyle(tbody, 'height', 'auto');
 
                     //reset tds width for correct calculation
-                    for(var i=0; i<cells.length; ++i) {
-                        Dom.setStyle(cells[i], 'width', '');
-                    }
+//                    for(var i=0; i<cells.length; ++i) {
+//                        Dom.setStyle(cells[i], 'width', '');
+//                        Dom.setStyle(cells[i], 'display', '');
+//                    }
                     //reset header as well
                     var className = this.config.autoWidthClassName;
                     var h = Dom.getElementBy(function(node) { return Dom.hasClass(node, className); }, 'th', headers[0]);
@@ -276,29 +223,21 @@ if (!YAHOO.hippo.DataTable) {
 
                 var pagingTr = Dom.getElementsByClassName('hippo-list-paging', 'tr', table);
                 if(pagingTr.length > 0) {
-                    //TODO: calculate height
-                    this.data.pagingHeight = 65;
+                    this.data.pagingHeight = Dom.getRegion(pagingTr).height;
                 } else {
                     this.data.pagingHeight = 0;
                 }
 
-                this.data.tableHeight = sizes.wrap.h - (this.data.fixedTableHeight + this.data.pagingHeight);
-
-                if(this.data.nrOfRows != table.rows || widthChanged) {
-                    //Number of rows changed, recalculate height
-                    Dom.setStyle(tbody, 'height', 'auto');
-
-                    var tbodyRegion = Dom.getRegion(tbody);
-                    this.data.scrolling = tbodyRegion.height > this.data.tableHeight;
-                    this.data.nrOfRows = table.rows;
-
-                    if(!this.data.scrolling) {
-                        this.data.tableHeight = tbodyRegion.height;
-                    }
-                }
+                var prevHeight = this.data.tbodyHeight;
+                var availableHeight = sizes.wrap.h - (this.data.fixedTableHeight + this.data.pagingHeight);
+                Dom.setStyle(tbody, 'height', 'auto');
+                var tbodyHeight = Dom.getRegion(tbody).height;
+                this.data.scrolling = tbodyHeight > availableHeight;
+                this.data.tbodyHeight = this.data.scrolling ?  availableHeight : tbodyHeight;
 
                 return {
-                    tbodyHeight: this.data.tableHeight,
+                    changed: prevHeight != this.data.tbodyHeight && true,
+                    tbodyHeight: this.data.tbodyHeight,
                     scrolling: this.data.scrolling
                 }
             },
@@ -319,8 +258,10 @@ if (!YAHOO.hippo.DataTable) {
                 var className = this.config.autoWidthClassName;
                 var h = Dom.getElementBy(function(node) { return Dom.hasClass(node, className); }, 'th', headers[0]);
                 Dom.setStyle(h, 'width', headerWidth + 'px');
-                Dom.setStyle(h, 'display', 'block');
-                Dom.setStyle(h, 'overflow', 'hidden');
+                if(YAHOO.env.ua.gecko > 0) {
+                    //Dom.setStyle(h, 'display', 'block');
+                    //Dom.setStyle(h, 'overflow', 'hidden');
+                }
 
                 for(var i=0; i<cells.length; ++i) {
                     var td = cells[i];
