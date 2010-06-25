@@ -272,7 +272,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         
     }
     
-    private void appendFacetSelectClauses(Session jcrSession, HippoNode node, StringBuilder facetSelectClauses, boolean traversUp) throws HstContextualizeException{
+    private void appendFacetSelectClauses(Session jcrSession, HippoNode node, StringBuilder facetSelectClauses, boolean traverseUp) throws HstContextualizeException{
         try {
             if(node == null || node.isSame(jcrSession.getRootNode())) {
                 return;
