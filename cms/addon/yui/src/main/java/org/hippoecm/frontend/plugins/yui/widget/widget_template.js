@@ -1,1 +1,1 @@
-${namespace}.${class}.${method}('${id}', ${config});
+${namespace}.${class}.${method}('${id}', ${config}, ${instance});

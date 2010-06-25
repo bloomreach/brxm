@@ -42,9 +42,10 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
-import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
@@ -268,7 +269,9 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
 
         ListDataTable<Node> datatable = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
                 triState, pagingDefinition);
-        datatable.add(new TableHelperBehavior());
+        DataTableSettings settings = new DataTableSettings();
+        settings.setAutoWidthColumnClassname("doclisting-name");
+        datatable.add(new DataTableBehavior(settings));
         return datatable;
     }
 

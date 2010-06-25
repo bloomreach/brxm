@@ -45,8 +45,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeM
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
-import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,7 +182,7 @@ public class SearchDocumentListingPlugin extends RenderPlugin<BrowserSearchResul
             ListPagingDefinition pagingDefinition) {
         ListDataTable<Node> table = new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener,
                 true, pagingDefinition);
-        table.add(new TableHelperBehavior());
+        table.add(new DataTableBehavior());
         return table;
     }
 

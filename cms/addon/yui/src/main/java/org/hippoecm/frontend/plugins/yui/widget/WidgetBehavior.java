@@ -73,4 +73,8 @@ public class WidgetBehavior extends AbstractYuiBehavior{
         return component.getMarkupId();
     }
 
+    protected WidgetTemplate getTemplate() {
+        return template;
+    }
+
 }
