@@ -127,7 +127,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
             this.galleryList.setVisible(true);
             toggleImage = new Image("toggleimg", TOGGLE_THUMBNAIL_IMG);
         }
-
+        
         toggleLink.replace(toggleImage);
     }
 
@@ -169,11 +169,13 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
     protected void onSelectionChanged(IModel<Node> model) {
         AjaxRequestTarget target = AjaxRequestTarget.get();
         if (target != null && viewMode.equals("THUMBNAILS")) {
-            target.addComponent(galleryList);
+            //target.addComponent(galleryList);
         }
     }
 
     private class GalleryItemView extends RefreshingView<Node> {
+
+        private org.apache.wicket.markup.repeater.Item<Node> previousSelected;
 
         public GalleryItemView(String id) {
             super(id);
@@ -225,12 +227,15 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
 
         @Override
         protected void populateItem(final org.apache.wicket.markup.repeater.Item<Node> listItem) {
-
             listItem.add(new AttributeAppender("class", true, new Model<String>("selected"), " ") {
                 @Override
                 public boolean isEnabled(Component component) {
-                    IModel<Node> selected = getSelectedModel();
-                    return selected != null && selected.equals(listItem.getDefaultModel());
+                    IModel<Node> selectedModel = getSelectedModel();
+                    boolean selected = selectedModel != null && selectedModel.equals(listItem.getDefaultModel());
+                    if(selected && previousSelected == null) {
+                        previousSelected = listItem;
+                    }
+                    return selected;
                 }
             });
             listItem.setOutputMarkupId(true);
@@ -249,8 +254,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                                     AjaxLink itemLink = new AjaxLink("itemLink") {
                                         @Override
                                         public void onClick(AjaxRequestTarget target) {
-                                            setSelectedModel(listItem.getModel());
-                                            target.addComponent(GalleryItemView.this.getParent());
+                                            handleSelect(listItem, target);
                                         }
                                     };
 
@@ -277,8 +281,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                     AjaxLink itemLink = new AjaxLink("itemLink") {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-                            setSelectedModel(listItem.getModel());
-                            target.addComponent(GalleryItemView.this.getParent());
+                            handleSelect(listItem, target);
                         }
                     };
 
@@ -294,6 +297,18 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
                 listItem.add(new EmptyPanel("thumbnail"));
 
             }
+        }
+
+        private void handleSelect(org.apache.wicket.markup.repeater.Item<Node> listItem, AjaxRequestTarget target) {
+            setSelectedModel(listItem.getModel());
+
+            if (previousSelected != null) {
+                target.addComponent(previousSelected);
+            }
+            target.addComponent(listItem);
+            target.focusComponent(listItem);
+
+            previousSelected = listItem;
         }
     }
 }

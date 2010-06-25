@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -47,6 +48,8 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
 
     public AssetGalleryPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        add(CSSPackageResource.getHeaderContribution(AssetGalleryPlugin.class, "AssetGalleryPlugin.css"));
     }
 
     @Override
@@ -57,6 +60,7 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new MimeTypeAttributeModifier());
         column.setComparator(new MimeTypeComparator());
+        column.setCssClass("assetgallery-type");
         columns.add(column);
 
         column = new ListColumn(new StringResourceModel("assetgallery-name", this, null), "name");
@@ -67,6 +71,7 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
         column = new ListColumn(new StringResourceModel("assetgallery-size", this, null), "size");
         column.setRenderer(new SizeRenderer());
         column.setComparator(new SizeComparator());
+        column.setCssClass("assetgallery-size");
         columns.add(column);
 
         return new TableDefinition(columns);

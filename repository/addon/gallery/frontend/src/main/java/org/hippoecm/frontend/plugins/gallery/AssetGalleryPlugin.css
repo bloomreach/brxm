@@ -1,0 +1,8 @@
+
+th.assetgallery-type, td.assetgallery-type {
+    width: 30px;
+}
+th.assetgallery-size, td.assetgallery-size {
+    width: 60px;
+    white-space:nowrap;
+}
