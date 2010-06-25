@@ -81,7 +81,7 @@ public class ComparingController<C extends IModel> implements IDetachable {
 
             IPluginConfig config = getPluginConfig();
 
-            cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.VIEW);
+            cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.VIEW, model);
             addExtensionPoint("cmp");
 
             String oldModelId = cmpTpl.getClusterConfig().getString(RenderService.MODEL_ID);
@@ -100,7 +100,7 @@ public class ComparingController<C extends IModel> implements IDetachable {
             IPluginConfig config = getPluginConfig();
 
             if (useCompareWhenPossible && oldModel != null && newModel != null) {
-                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.COMPARE);
+                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.COMPARE, null);
                 if (!cmpTpl.getClusterConfig().getReferences().contains("model.compareTo")) {
                     cmpTpl = null;
                 }
@@ -123,10 +123,10 @@ public class ComparingController<C extends IModel> implements IDetachable {
                 addExtensionPoint("old");
                 addExtensionPoint("new");
 
-                IClusterControl oldTemplate = factory.newTemplate(config.getString("old"), IEditor.Mode.VIEW);
+                IClusterControl oldTemplate = factory.newTemplate(config.getString("old"), IEditor.Mode.VIEW, oldModel);
                 oldFir = new FieldItem<C>(sc, oldModel, null, oldTemplate, null);
 
-                IClusterControl newTemplate = factory.newTemplate(config.getString("new"), IEditor.Mode.VIEW);
+                IClusterControl newTemplate = factory.newTemplate(config.getString("new"), IEditor.Mode.VIEW, newModel);
                 newFir = new FieldItem<C>(sc, newModel, null, newTemplate, null);
 
                 get("old").add(new AttributeAppender("class", new Model("hippo-diff-removed"), " "));
@@ -135,19 +135,24 @@ public class ComparingController<C extends IModel> implements IDetachable {
             } else {
                 addExtensionPoint("cmp");
 
-                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.VIEW);
+                IModel model = null;
+                if (oldModel != null) {
+                    model = oldModel;
+                } else {
+                    model = newModel;
+                }
+                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.VIEW, model);
 
                 String modelId = cmpTpl.getClusterConfig().getString(RenderService.MODEL_ID);
-                ModelReference modelRef;
+                ModelReference modelRef = new ModelReference(modelId, model);
+                modelRef.init(sc);
+
                 String cssClass;
                 if (oldModel != null) {
                     cssClass = "hippo-diff-removed";
-                    modelRef = new ModelReference(modelId, oldModel);
                 } else {
                     cssClass = "hippo-diff-added";
-                    modelRef = new ModelReference(modelId, newModel);
                 }
-                modelRef.init(sc);
 
                 cmpTpl.start();
 
