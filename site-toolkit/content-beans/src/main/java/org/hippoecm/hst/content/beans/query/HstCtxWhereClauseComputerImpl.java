@@ -308,7 +308,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 }
             }
             
-            if(traversUp) {
+            if(traverseUp) {
                 HippoNode parent = (HippoNode)node.getParent();
                 Node canonicalParent = parent.getCanonicalNode();
                 if(canonicalParent != null) {
@@ -319,7 +319,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                             appendFacetSelectClauses(jcrSession,(HippoNode)node.getParent(),  facetSelectClauses, false);
                         }
                     } else {
-                        appendFacetSelectClauses(jcrSession, (HippoNode)node.getParent(),  facetSelectClauses, traversUp);
+                        appendFacetSelectClauses(jcrSession, (HippoNode)node.getParent(),  facetSelectClauses, traverseUp);
                     }
                 } 
                 
