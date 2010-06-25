@@ -79,71 +79,66 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
 
     public void logEvent(String who, String className, String methodName) {
         log(who, className, methodName);
-        try {
-            applyAppender();
-            addLogNode(who, className, methodName);
-            logFolder.save();
-        } catch (RepositoryException ex) {
-            log
-                    .warn("Event logging failed: [" + who + " -> " + className + "." + methodName + "] : "
-                            + ex.getMessage());
-            try {
-                logFolder.refresh(false);
-            } catch (RepositoryException ex2) {
-                log.error("Event logging fails in failure: " + ex2.getMessage(), ex2);
-            }
-        }
+        addLogNode(who, className, methodName);
     }
 
     public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject,
             String documentPath) {
-        String returnType = null;
-        String returnValue = null;
-        String[] arguments = null;
+        String returnType = getReturnType(returnObject);
+        String returnValue = getReturnValue(returnObject);
+        String[] arguments = replaceObjectsWithStrings(args);
 
-        if (returnObject instanceof Document) {
-            StringBuffer sb = new StringBuffer();
-            Document document = (Document) returnObject;
-            sb.append("document[uuid=");
-            sb.append(document.getIdentity());
-            sb.append(",path='");
-            try {
-                sb.append(logFolder.getSession().getNodeByUUID(document.getIdentity()).getPath());
-            } catch (RepositoryException e) {
-                sb.append("error:").append(e.getMessage());
-            }
-            sb.append("']");
-            returnType = "document";
-            returnValue = sb.toString();
-        } else if (returnObject != null) {
-            returnType = returnObject.getClass().getName();
-            returnValue = returnObject.toString();
-        }
-
-        if (args != null) {
-            arguments = new String[args.length];
-            for (int i = 0; i < args.length; i++) {
-                if (args[i] != null) {
-                    arguments[i] = args[i].toString();
-                } else {
-                    arguments[i] = "<null>";
-                }
-            }
-        }
         log(who, className, methodName, documentPath, returnType, returnValue, arguments);
- 
-        try {
-            applyAppender();
-            addLogNode(who, className, methodName, documentPath, returnType, returnValue, arguments);
-            logFolder.save();
-        } catch (RepositoryException ex) {
-            log.warn("Event logging failed: " + ex.getMessage(), ex);
-            try {
-                logFolder.refresh(false);
-            } catch (RepositoryException ex2) {
-                log.error("Event logging fails in failure: " + ex2.getMessage(), ex2);
+        addLogNode(who, className, methodName, documentPath, returnType, returnValue, arguments);
+    }
+
+    private String getReturnValue(Object returnObject) {
+        if (returnObject != null) {
+            if (returnObject instanceof Document) {
+                StringBuffer sb = new StringBuffer();
+                Document document = (Document) returnObject;
+                sb.append("document[uuid=");
+                sb.append(document.getIdentity());
+                sb.append(",path='");
+                try {
+                    sb.append(logFolder.getSession().getNodeByUUID(document.getIdentity()).getPath());
+                } catch (RepositoryException e) {
+                    sb.append("error:").append(e.getMessage());
+                }
+                sb.append("']");
+                return sb.toString();
+            } else if (returnObject != null) {
+                return returnObject.toString();
+            }
+
+        }
+        return null;
+    }
+
+    private String getReturnType(Object returnObject) {
+        if (returnObject != null) {
+            if (returnObject instanceof Document) {
+                return "document";
+            } else if (returnObject != null) {
+                return returnObject.getClass().getName();
             }
         }
+        return null;
+    }
+
+    private String[] replaceObjectsWithStrings(Object[] args) {
+        if (args == null) {
+            return null;
+        }
+        String[] arguments = new String[args.length];
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] != null) {
+                arguments[i] = args[i].toString();
+            } else {
+                arguments[i] = "<null>";
+            }
+        }
+        return arguments;
     }
 
     private void log(String who, String className, String methodName) {
@@ -169,39 +164,48 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
         log.info(logMessage.toString());
     }
 
-    private void addLogNode(String who, String className, String methodName) throws RepositoryException {
+    private void addLogNode(String who, String className, String methodName) {
         addLogNode(who, className, methodName, null, null, null, null);
     }
 
     private void addLogNode(String who, String className, String methodName, String documentPath, String returnType,
-            String returnValue, String[] arguments) throws RepositoryException {
+            String returnValue, String[] arguments) {
         if (!enabled) {
             return;
         }
-        long timestamp = System.currentTimeMillis();
-        Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
-        logNode.setProperty("hippolog:timestamp", timestamp);
-        logNode.setProperty("hippolog:eventUser", who == null ? "null" : who);
-        logNode.setProperty("hippolog:eventClass", className == null ? "null" : className);
-        logNode.setProperty("hippolog:eventMethod", methodName == null ? "null" : methodName);
+        try {
+            applyAppender();
+            long timestamp = System.currentTimeMillis();
+            Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
+            logNode.setProperty("hippolog:timestamp", timestamp);
+            logNode.setProperty("hippolog:eventUser", who == null ? "null" : who);
+            logNode.setProperty("hippolog:eventClass", className == null ? "null" : className);
+            logNode.setProperty("hippolog:eventMethod", methodName == null ? "null" : methodName);
 
-        // conditional properties
-        if (documentPath != null) {
-            logNode.setProperty("hippolog:eventDocument", documentPath);
+            // conditional properties
+            if (documentPath != null) {
+                logNode.setProperty("hippolog:eventDocument", documentPath);
+            }
+            if (returnType != null) {
+                logNode.setProperty("hippolog:eventReturnType", returnType);
+                logNode.setProperty("hippolog:eventReturnValue", returnValue);
+            }
+            if (arguments != null) {
+                logNode.setProperty("hippolog:eventArguments", arguments);
+            }
+            logFolder.save();
+        } catch (RepositoryException ex) {
+            log.warn("Event logging failed: " + ex.getMessage(), ex);
+            try {
+                logFolder.refresh(false);
+            } catch (RepositoryException ex2) {
+                log.error("Event logging fails in failure: " + ex2.getMessage(), ex2);
+            }
         }
-        if (returnType != null) {
-            logNode.setProperty("hippolog:eventReturnType", returnType);
-            logNode.setProperty("hippolog:eventReturnValue", returnValue);
-        }
-        if (arguments != null) {
-            logNode.setProperty("hippolog:eventArguments", arguments);
-        }
+
     }
 
     private void applyAppender() {
-        if (!enabled) {
-            return;
-        }
         if (appender.equals("folding")) {
             log.warn("Folding appender not implemented yet, falling back to rolling appender");
         }
