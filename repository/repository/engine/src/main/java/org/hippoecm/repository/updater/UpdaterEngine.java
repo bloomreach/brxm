@@ -58,9 +58,12 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.ObservationManager;
+import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
@@ -606,16 +609,17 @@ public class UpdaterEngine {
     }
 
     private void upgrade() throws RepositoryException {
-        log.info("upgrade cycle starting");
+        log.info("upgrade cycle starting (phases 4 and 5 usually take longer and provide intermediate logging of progress)");
+        log.info("upgrade cycle (phase 1 of 5) preprocessing modules");
         preprocess();
-        log.info("upgrade cycle traverse process");
+        log.info("upgrade cycle (phase 2 of 5) traverse process");
         process();
-        log.info("upgrade cycle traverse process commit");
+        log.debug("upgrade cycle traverse process commit");
         updaterSession.commit();
         updaterSession.flush();
-        log.info("upgrade cycle traverse process save");
+        log.debug("upgrade cycle traverse process save");
         session.save();
-        log.info("upgrade cycle iterated process");
+        log.info("upgrade cycle (phase 3 of 5) iterated process");
         Map<UpdaterPath,List<UpdaterItemVisitor>> totalBatch = new HashMap<UpdaterPath,List<UpdaterItemVisitor>>();
         UpdaterException exception = null;
         for (ModuleRegistration module : modules) {
@@ -649,7 +653,7 @@ public class UpdaterEngine {
             }
         }
         Collection<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch, false);
-        log.info("upgrade cycle iterated process breath first iteration");
+        log.info("upgrade cycle (phase 4 of 5) iterated process breath first iteration");
         if(log.isDebugEnabled()) {
             log.debug("update batch plan breath first iteration");
             int batchCount = 0;
@@ -666,7 +670,9 @@ public class UpdaterEngine {
                 }
             }
         }
+        int count = 0;
         for (Map<UpdaterPath, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
+            log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" starting entry "+currentBatch.keySet().iterator().next());
             for (Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
                 String path = entry.getKey().toString();
                 Node node = updaterSession.getRootNode();
@@ -690,14 +696,14 @@ public class UpdaterEngine {
                     // deliberate ignore
                 }
             }
-            log.info("upgrade cycle iterated process intermediate commit");
+            log.debug("upgrade cycle iterated process intermediate commit");
             updaterSession.commit();
             updaterSession.flush();
-            log.info("upgrade cycle iterated process intermediate save");
+            log.debug("upgrade cycle iterated process intermediate save");
             session.save();
         }
         partitionedBatch = partition(totalBatch, true);
-        log.info("upgrade cycle iterated process depth first iteration");
+        log.info("upgrade cycle (phase 5 of 5) iterated process depth first iteration");
         if(log.isDebugEnabled()) {
             log.debug("update batch plan depth first iteration");
             int batchCount = 0;
@@ -714,7 +720,9 @@ public class UpdaterEngine {
                 }
             }
         }
+        count = 0;
         for (Map<UpdaterPath, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
+            log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" starting entry "+currentBatch.keySet().iterator().next());
             for (Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
                 String path = entry.getKey().toString();
                 Node node = updaterSession.getRootNode();
@@ -740,20 +748,20 @@ public class UpdaterEngine {
                     // deliberate ignore
                 }
             }
-            log.info("upgrade cycle iterated process intermediate commit");
+            log.debug("upgrade cycle iterated process intermediate commit");
             updaterSession.commit();
             updaterSession.flush();
-            log.info("upgrade cycle iterated process intermediate save");
+            log.debug("upgrade cycle iterated process intermediate save");
             session.save();
         }
         if (exception != null) {
             throw exception;
         }
-        log.info("upgrade cycle iterated process commit");
+        log.debug("upgrade cycle iterated process commit");
         updaterSession.commit();
-        log.info("upgrade cycle iterated process save");
+        log.debug("upgrade cycle iterated process save");
         session.save();
-        log.info("upgrade cycle saved");
+        log.info("upgrade cycle done");
     }
 
     protected Collection<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> partition(Map<UpdaterPath, List<UpdaterItemVisitor>> totalBatch, boolean reverse) {
@@ -911,7 +919,7 @@ public class UpdaterEngine {
         UpdaterContext context;
         boolean isCollecting = false;
         boolean isExecuting = false;
-        Set<Node> collection = new HashSet<Node>();
+        //Set<Node> collection = new HashSet<Node>();
         NamespaceVisitorImpl lastNamespaceVisitor = null;
 
         NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
@@ -986,11 +994,27 @@ public class UpdaterEngine {
         }
 
         public NodeIterator iterator(Session session) throws RepositoryException {
+            final Set<Node> collection = new HashSet<Node>();
             isCollecting = true;
             isExecuting = false;
-            session.getRootNode().accept(this);
+            //session.getRootNode().accept(this);
             isCollecting = false;
             isExecuting = true;
+            collection.clear();
+            for (NodeTypeIterator iter = session.getWorkspace().getNodeTypeManager().getAllNodeTypes(); iter.hasNext();) {
+                NodeType nodeType = iter.nextNodeType();
+                if (nodeType.getName().startsWith(namespace + ":")) {
+                    Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM " + nodeType.getName(), Query.SQL);
+                    QueryResult result = query.execute();
+                    log.debug("upgrade querying for namespace "+namespace+": "+query.getStatement());
+                    for (NodeIterator nodeIter = result.getNodes(); nodeIter.hasNext();) {
+                        Node candidate = nodeIter.nextNode();
+                        if (isMatch(candidate)) {
+                            collection.add(candidate);
+                        }
+                    }
+                }
+            }
             final Iterator<Node> iterator = collection.iterator();
             return new NodeIterator() {
                 int position = 0;
@@ -1047,7 +1071,7 @@ public class UpdaterEngine {
                     entering(node, currentLevel);
                 }
                 if (isCollecting) {
-                    collection.add(node);
+                    //collection.add(node);
                 }
             }
             ++currentLevel;
