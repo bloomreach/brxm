@@ -58,6 +58,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 import org.hippoecm.frontend.widgets.LabelWithTitle;
@@ -141,6 +142,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
 
         column = new ListColumn<Node>(new StringResourceModel("gallery-name", this, null), "name");
         column.setComparator(new NameComparator());
+        column.setCssClass("gallery-name");
         columns.add(column);
 
         return new TableDefinition<Node>(columns);
@@ -152,7 +154,9 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
             ListPagingDefinition pagingDefinition) {
         ListDataTable<Node> ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
                 triState, pagingDefinition);
-        ldt.add(new DataTableBehavior());
+        DataTableSettings settings = new DataTableSettings();
+        settings.setAutoWidthClassName("gallery-name");
+        ldt.add(new DataTableBehavior(settings));
         return ldt;
     }
 

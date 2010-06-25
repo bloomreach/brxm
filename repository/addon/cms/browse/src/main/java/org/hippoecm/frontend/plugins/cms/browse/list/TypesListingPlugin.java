@@ -50,6 +50,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -130,8 +131,10 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         private TypesDataTable(String id, TableDefinition<Node> tableDefinition, ISortableDataProvider<Node> dataProvider,
                 TableSelectionListener<Node> selectionListener, boolean triState, IPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
-            
-            add(new DataTableBehavior());
+
+            DataTableSettings settings = new DataTableSettings();
+            settings.setAutoWidthClassName("typeslisting-name");
+            add(new DataTableBehavior(settings));
         }
 
         void redraw(Item<Node> item) {

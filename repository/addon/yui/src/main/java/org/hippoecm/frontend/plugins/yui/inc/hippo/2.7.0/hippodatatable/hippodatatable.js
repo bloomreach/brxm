@@ -18,10 +18,23 @@ if (!YAHOO.hippo.DataTable) {
         YAHOO.hippo.DataTable = function(id, config) {
             YAHOO.hippo.DataTable.superclass.constructor.apply(this, arguments);
 
-            this.autoWidthColumnMargin = null;
-            this.widthOtherColumns = null;
+            this.data = {
+                nrOfCols: -1,
+                nrOfRows: -1,
 
-            this.numberOfColumns = 0;
+                headerWidth: 0,
+                columnWidth: 0,
+
+                fixedHeaderWidth: 0,
+                fixedColumnWidth: 0,
+
+                fixedTableHeight: 0,
+                tableHeight: 0,
+                pagingHeight: 0,
+
+                scrolling: false
+            };
+
         };
         
         YAHOO.extend(YAHOO.hippo.DataTable, YAHOO.hippo.Widget, {
@@ -154,167 +167,139 @@ if (!YAHOO.hippo.DataTable) {
         	  },
 
             _updateGecko : function(sizes) {
+
                 var table = Dom.get(this.id);
                 if(table.rows.length <= 1) {
                      return; //no rows in body
                 }
-                var rows = table.rows;
+
                 var thead = this._getThead(table);
-                var tbody = this._getTbody(table);
-
-                var heightBeforeUpdate = Dom.getStyle(tbody, 'height');
-                Dom.setStyle(tbody, 'height', 'auto');
-
-                var availableWidth = sizes.wrap.w;
-
                 var headers = Dom.getElementsByClassName('headers' , 'tr' , thead);
                 if(headers.length == 0) {
                     return;
                 }
-                var nrOfCols = headers[0].children.length;
-                this.validateCache(nrOfCols);
-                this.numberOfColumns = nrOfCols;
 
-                if(YAHOO.env.ua.webkit > 0) {
-//                    Dom.setStyle(headers[0], 'display', 'table-row');
-//                    Dom.setStyle(tbody, 'display', 'table-row-group');
-                }
-
-
-                var autoWidthCols = Dom.getElementsByClassName(this.config.autoWidthColumnClassname , 'td' , tbody);
-                if(autoWidthCols.length == 0) {
+                var tbody = this._getTbody(table);
+                var cells = Dom.getElementsByClassName(this.config.autoWidthClassName , 'td' , tbody);
+                if(cells.length == 0) {
                     return;
                 }
 
-                //reset tds width for correct calculation
-                for(var i=0; i<autoWidthCols.length; ++i) {
-                    Dom.setStyle(autoWidthCols[i], 'width', 'auto');
-                }
-
-                //calculate own margin if not set
-                if(this.getAutoWidthColumnMargin() == null) {
-                    var margin = this.helper.getMargin(autoWidthCols[0]);
-                    availableWidth -= margin.w;
-                    this.setAutoWidthColumnMargin(margin);
+                var widthData = this.getWidthData(headers, cells, sizes);
+                if(widthData.changed) {
+                    this._setColsWidth(headers, widthData.headerWidth, cells, widthData.columnWidth);
                 } else {
-                    var margin = this.getAutoWidthColumnMargin();
-                    availableWidth -= margin.w;
+                    console.log('no width changes!');
                 }
 
-                if(this.getWidthOtherColumns() == null) {
-                    var header = headers[0];
-                    var othersWidth = 0;
-                    for(var i=0; i< header.children.length; i++) {
-                        var child = header.children[i];
-                        if(!Dom.hasClass(child, this.config.autoWidthColumnClassname)) {
-                            var region = Dom.getRegion(child);
-                            othersWidth += region.width;
-                        }
-                    }
-                    console.log('Other width ' + othersWidth);
-                    this.setWidthOtherColumns(othersWidth);
-                    availableWidth -= othersWidth;
-                } else {
-                    availableWidth -= this.getWidthOtherColumns();
-                }
-
-                for(var i=0; i<autoWidthCols.length; ++i) {
-                    var td = autoWidthCols[i];
-                    Dom.setStyle(td, 'width', availableWidth + 'px');
-                    Dom.setStyle(td, 'display', 'block');
-                    Dom.setStyle(td, 'overflow', 'hidden');
-                }
+                var heightData = this.getHeightData(table, thead, tbody, sizes, widthData.changed);
+                Dom.setStyle(tbody, 'height', heightData.tbodyHeight + 'px');
+//                if(widthData.changed && heightData.scrolling) {
+//                    console.log('Fixing width because of scrolling');
+//                    var scrollWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
+//                    this._setColsWidth(headers, widthData.headerWidth, cells, widthData.columnWidth - scrollWidth);
+//                }
 
                 if(YAHOO.env.ua.webkit > 0) {
-                    var cols = Dom.getElementsByClassName(this.config.autoWidthColumnClassname , 'th' , thead);
-                    Dom.setStyle(cols[0], 'width', availableWidth + 'px');
-                }
-
-                //do height
-                var availableHeight = sizes.wrap.h;
-
-                //first subtract height of table siblings
-                var siblings = Dom.getChildren(table.parentNode);
-                for(var i=0; i<siblings.length; ++i) {
-                    var sibling = siblings[i];
-                    if(sibling != table) {
-                        availableHeight -= Dom.getRegion(sibling).height;
-                    }
-                }
-
-                //then substract margin/padding/border value of table and height of header
-                var nonBodyHeight = this.helper.getMargin(table).h + Dom.getRegion(thead).height;
-                availableHeight -= nonBodyHeight;
-
-                //then try to detect paging element and subtract height which is a hard-coded value of 65 px
-                //TODO: calculate footer height
-                var lastRowParentTag = rows[rows.length-1].parentNode.tagName;
-                if(lastRowParentTag.toLowerCase() == 'tfoot') {
-                    availableHeight -= 65;
-                } else {
-                    //Wicket 1.4 introduces a datatable with two tbody elements instead of thead/tfoot....
-                    var pagingRow = Dom.getElementsByClassName ( 'hippo-list-paging', 'tr', table);
-                    if(Lang.isArray(pagingRow) && pagingRow.length > 0) {
-                        availableHeight -= 65;
-                    }
-                }
-
-                var tbodyRegion = Dom.getRegion(tbody);
-
-                console.log('Tbody: previous height: ' + heightBeforeUpdate + ', current height: ' + tbodyRegion.height);
-                //var availableHeight = sizes.wrap.h - nonBodyHeight;
-
-                var scrolling = tbodyRegion.height > availableHeight;
-                if(scrolling) {
-                    availableWidth -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
-                    for(var i=0; i<autoWidthCols.length; ++i) {
-                        var td = autoWidthCols[i];
-                        Dom.setStyle(td, 'width', availableWidth + 'px');
-                    }
-
-                    console.log('set height with scrolling: ' + availableHeight);
-                    Dom.setStyle(tbody, 'height', availableHeight + 'px');
-                } else {
-                    console.log('set height without scrolling: ' + tbodyRegion);
-                    Dom.setStyle(tbody, 'height', tbodyRegion.height + 'px');
-                }
-
-                if(YAHOO.env.ua.webkit > 0) {
-//                    window.setTimeout(function() {
                       Dom.setStyle(headers[0], 'display', 'block');
                       Dom.setStyle(tbody, 'display', 'block');
-//                    }, 200);
-                }
-
-            },
-
-            getAutoWidthColumnMargin : function() {
-                return this.autoWidthColumnMargin;
-            },
-
-            setAutoWidthColumnMargin : function(margin) {
-                if(this.config.cacheEnabled) {
-                    this.autoWidthColumnMargin = margin;
                 }
             },
 
-            getWidthOtherColumns: function() {
-                return this.widthOtherColumns;
-            },
+            getWidthData : function(headers, cells, sizes) {
+                var nrOfCols = headers[0].children.length;
+                var prevHeaderWidth = this.data.headerWidth;
+                var prevColumnWidth = this.data.columnWidth;
 
-            setWidthOtherColumns: function(w) {
-                if(this.config.cacheEnabled) {
-                    this.widthOtherColumns = w;
+                if(this.data.nrOfCols != nrOfCols) {
+                    console.log('Calculating width sizes');
+
+                    //Number of columns changed, recalculate width
+                    this.data.fixedHeaderWidth = 0;
+                    this.data.fixedColumnWidth = 0;
+
+                    //TODO: should this before height calc or here?
+                    //Dom.setStyle(tbody, 'height', 'auto');
+
+                    //reset tds width for correct calculation
+                    for(var i=0; i<cells.length; ++i) {
+                        Dom.setStyle(cells[i], 'width', '');
+                    }
+                    //reset header as well
+                    var className = this.config.autoWidthClassName;
+                    var h = Dom.getElementBy(function(node) { return Dom.hasClass(node, className); }, 'th', headers[0]);
+                    Dom.setStyle(h, 'width', '');
+
+                    this.data.fixedHeaderWidth += this.helper.getMargin(h).w;
+                    this.data.fixedColumnWidth += this.helper.getMargin(cells[0]).w;
+
+                    var header = headers[0];
+                    for(var i=0; i< header.children.length; i++) {
+                        var child = header.children[i];
+                        if(!Dom.hasClass(child, this.config.autoWidthClassName)) {
+                            var region = Dom.getRegion(child);
+                            this.data.fixedHeaderWidth += region.width;
+                            this.data.fixedColumnWidth += region.width;
+                        }
+                    }
+
+                    this.data.nrOfCols = nrOfCols;
+                }
+
+                this.data.headerWidth = sizes.wrap.w - this.data.fixedHeaderWidth;
+                this.data.columnWidth = sizes.wrap.w - this.data.fixedColumnWidth;
+
+                return {
+                    headerWidth: this.data.headerWidth,
+                    columnWidth: this.data.columnWidth,
+                    changed: prevHeaderWidth != this.data.headerWidth && prevColumnWidth != this.data.columnWidth
                 }
             },
 
-            validateCache : function(nrOfCols) {
-                if(this.numberOfColumns > 0 && this.numberOfColumns != nrOfCols) {
-                    this.autoWidthColumnMargin = null;
-                    this.widthOtherColumns = null;
-                    console.log('cache invalidated');
+            getHeightData : function(table, thead, tbody, sizes, widthChanged) {
+                var siblings = Dom.getChildren(table.parentNode);
+                if(this.data.nrOfTableSiblings != siblings.length) {
+                    //calculate height of table siblings
+                    for(var i=0; i<siblings.length; ++i) {
+                        var sibling = siblings[i];
+                        if(sibling != table) {
+                            this.data.fixedTableHeight += Dom.getRegion(sibling).height;
+                        }
+                    }
+                    //add margin/padding/border value of table
+                    this.data.fixedTableHeight += this.helper.getMargin(table).h;
+                    //add height of header
+                    this.data.fixedTableHeight += Dom.getRegion(thead).height;
+
+                    this.data.nrOfTableSiblings = siblings.length;
+                }
+
+                var pagingTr = Dom.getElementsByClassName('hippo-list-paging', 'tr', table);
+                if(pagingTr.length > 0) {
+                    //TODO: calculate height
+                    this.data.pagingHeight = 65;
                 } else {
-                    console.log('cache ok ' + nrOfCols);
+                    this.data.pagingHeight = 0;
+                }
+
+                this.data.tableHeight = sizes.wrap.h - (this.data.fixedTableHeight + this.data.pagingHeight);
+
+                if(this.data.nrOfRows != table.rows || widthChanged) {
+                    //Number of rows changed, recalculate height
+                    Dom.setStyle(tbody, 'height', 'auto');
+
+                    var tbodyRegion = Dom.getRegion(tbody);
+                    this.data.scrolling = tbodyRegion.height > this.data.tableHeight;
+                    this.data.nrOfRows = table.rows;
+
+                    if(!this.data.scrolling) {
+                        this.data.tableHeight = tbodyRegion.height;
+                    }
+                }
+
+                return {
+                    tbodyHeight: this.data.tableHeight,
+                    scrolling: this.data.scrolling
                 }
             },
 
@@ -328,6 +313,22 @@ if (!YAHOO.hippo.DataTable) {
 
             _getThead : function(table) {
                 return table.rows[0].parentNode;
+            },
+
+            _setColsWidth : function(headers, headerWidth, cells, cellWidth) {
+                var className = this.config.autoWidthClassName;
+                var h = Dom.getElementBy(function(node) { return Dom.hasClass(node, className); }, 'th', headers[0]);
+                Dom.setStyle(h, 'width', headerWidth + 'px');
+                Dom.setStyle(h, 'display', 'block');
+                Dom.setStyle(h, 'overflow', 'hidden');
+
+                for(var i=0; i<cells.length; ++i) {
+                    var td = cells[i];
+                    Dom.setStyle(td, 'width', cellWidth + 'px');
+                    Dom.setStyle(td, 'display', 'block');
+                    Dom.setStyle(td, 'overflow', 'hidden');
+                }
+
             }
 
         });
