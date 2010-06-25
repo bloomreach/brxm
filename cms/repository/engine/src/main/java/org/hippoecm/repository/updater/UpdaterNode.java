@@ -266,7 +266,12 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     String[] primaryType = getInternalProperty("jcr:primaryType");
                     if (primaryType != null && primaryType.length > 0) {
                         try {
-                            origin = ((Node)parent.origin).addNode(nodeName, primaryType[0]);
+                            try {
+                                origin = ((Node)parent.origin).addNode(nodeName, primaryType[0]);
+                            } catch (ConstraintViolationException ex) {
+                                UpdaterEngine.log.error("failed to create " + getPath() + " in " + ((Node)parent.origin).getPath() + " (primary type " + ((Node)parent.origin).getProperty("jcr:primaryType").getString() + ") type " + getInternalProperty("jcr:primaryType")[0], ex);
+                                throw ex;
+                            }
                             noSameNameSiblingWorkaround = null;
                             // remove any autocreated non-protected nodes and properties
                             for (NodeIterator autoCreatedIter = ((Node)origin).getNodes(); autoCreatedIter.hasNext();) {
