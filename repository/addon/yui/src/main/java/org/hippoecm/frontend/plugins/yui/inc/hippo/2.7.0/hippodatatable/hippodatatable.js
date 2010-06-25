@@ -4,81 +4,38 @@
  * Provides a singleton tables helper
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, layoutmanager, hippoajax
+ * @requires yahoo, dom, layoutmanager, hippoajax, hippowidget
  * @module tables
  * @beta
  */
 
 YAHOO.namespace('hippo');
 
-if (!YAHOO.hippo.TableHelper) {
+if (!YAHOO.hippo.DataTable) {
     (function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
-        YAHOO.hippo.TableHelperImpl = function() {
+        YAHOO.hippo.DataTable = function(id, config) {
+            YAHOO.hippo.DataTable.superclass.constructor.apply(this, arguments);
+
+            this.autoWidthColumnMargin = null;
+            this.widthOtherColumns = null;
+
+            this.numberOfColumns = 0;
         };
-
-        YAHOO.hippo.TableHelperImpl.prototype = {
-            id: 'tableHelper',
-            
-            register : function(id, config) {
-                var tableEl = Dom.get(id);
-                if(Lang.isUndefined(tableEl['tableHelper'])) {
-                    tableEl['tableHelper'] = new YAHOO.hippo.Table(id, config);
-                }
-                tableEl['tableHelper'].render();
-            }
-        }
         
-        YAHOO.hippo.Table = function(id, config) {
-            this.id = id;
-            this.config = config;
-            this.helper = new YAHOO.hippo.DomHelper();
-
-            var table = Dom.get(id);
-            var me = this;
-            YAHOO.hippo.LayoutManager.registerResizeListener(table, this, function(sizes) {
-                me.resize(sizes);
-            }, false);
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(table, function() {
-                YAHOO.hippo.LayoutManager.unregisterResizeListener(table, me);
-            }, this);
-        }
-        
-        YAHOO.hippo.Table.prototype = {
+        YAHOO.extend(YAHOO.hippo.DataTable, YAHOO.hippo.Widget, {
 
         	  resize: function(sizes) {
-        	      this.update(sizes);
+                if(YAHOO.env.ua.gecko > 0 || YAHOO.env.ua.webkit > 0) {
+                    this._updateGecko(sizes);
+                } else {
+                    this.update(sizes);
+                }
         	  },
         	
-            render : function() {
-                var table = Dom.get(this.id);
-                var unit = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                if(unit != null) {
-                    this.update(unit.getSizes());
-                } else {
-                    //We're not inside a layout unit to provide us with dimension details, thus the 
-                    //resize event will never be called. For providing an initial size, the first ancestor
-                    //with a classname is used.
-                    var parent = Dom.getAncestorBy(table, function(node) {
-                       return Lang.isValue(node.className) && Lang.trim(node.className).length > 0; 
-                    });
-                    if(parent != null) {
-                        var reg = Dom.getRegion(parent);
-                        var margin = this.helper.getMargin(parent);
-                        this.update({wrap: {w: reg.width, h: reg.height}});
-                    }
-                }
-            },
-            
             update: function(sizes) {
                 var table = Dom.get(this.id);
-
-                if(YAHOO.env.ua.gecko > 0) {
-                    this._updateGecko(sizes);
-                    return;
-                }
-
                 var rows = table.rows;
 
                 //ie8 standards mode fails on rows/cols/cells attributes..
@@ -208,50 +165,72 @@ if (!YAHOO.hippo.TableHelper) {
                 var heightBeforeUpdate = Dom.getStyle(tbody, 'height');
                 Dom.setStyle(tbody, 'height', 'auto');
 
-                var ownMargin = this.getOwnMargin();
+                var availableWidth = sizes.wrap.w;
 
-                var autoWidthTds = Dom.getElementsByClassName('doclisting-name' , 'td' , tbody);
-                if(autoWidthTds.length > 0) {
-                    //reset tds width for correct calculation
-                    for(var i=0; i<autoWidthTds.length; ++i) {
-                        var td = autoWidthTds[i];
-                        Dom.setStyle(td, 'width', 'auto');
-                    }
-                    if(ownMargin == null) {
-                        ownMargin = this.helper.getMargin(autoWidthTds[0]);
-                        //dim.w += margin.w;
-                    }
+                var headers = Dom.getElementsByClassName('headers' , 'tr' , thead);
+                if(headers.length == 0) {
+                    return;
+                }
+                var nrOfCols = headers[0].children.length;
+                this.validateCache(nrOfCols);
+                this.numberOfColumns = nrOfCols;
+
+                if(YAHOO.env.ua.webkit > 0) {
+//                    Dom.setStyle(headers[0], 'display', 'table-row');
+//                    Dom.setStyle(tbody, 'display', 'table-row-group');
                 }
 
 
-                var ths = Dom.getElementsByClassName('headers' , 'tr' , thead);
-                if(ths.length > 0) {
-                    var header = ths[0];
-                    var dim = {w: 0, h: 0};
+                var autoWidthCols = Dom.getElementsByClassName(this.config.autoWidthColumnClassname , 'td' , tbody);
+                if(autoWidthCols.length == 0) {
+                    return;
+                }
+
+                //reset tds width for correct calculation
+                for(var i=0; i<autoWidthCols.length; ++i) {
+                    Dom.setStyle(autoWidthCols[i], 'width', 'auto');
+                }
+
+                //calculate own margin if not set
+                if(this.getAutoWidthColumnMargin() == null) {
+                    var margin = this.helper.getMargin(autoWidthCols[0]);
+                    availableWidth -= margin.w;
+                    this.setAutoWidthColumnMargin(margin);
+                } else {
+                    var margin = this.getAutoWidthColumnMargin();
+                    availableWidth -= margin.w;
+                }
+
+                if(this.getWidthOtherColumns() == null) {
+                    var header = headers[0];
+                    var othersWidth = 0;
                     for(var i=0; i< header.children.length; i++) {
                         var child = header.children[i];
-                        if(!Dom.hasClass(child, 'doclisting-name')) {
+                        if(!Dom.hasClass(child, this.config.autoWidthColumnClassname)) {
                             var region = Dom.getRegion(child);
-                            dim.w += region.width;
+                            othersWidth += region.width;
                         }
                     }
-
-                    var tds = Dom.getElementsByClassName('doclisting-name' , 'td' , tbody);
-                    if(tds.length > 0) {
-                        var margin = this.helper.getMargin(tds[0]);
-                        dim.w += margin.w;
-                    }
-
-                    console.log('Unit width=' + sizes.wrap.w + ', other tds width=' + dim.w);
-                    var tdWidth = sizes.wrap.w - dim.w;
-                    for(var i=0; i<tds.length; ++i) {
-                        var td = tds[i];
-                        Dom.setStyle(td, 'width', tdWidth + 'px');
-                        Dom.setStyle(td, 'display', 'block');
-                        Dom.setStyle(td, 'overflow', 'hidden');
-                    }
+                    console.log('Other width ' + othersWidth);
+                    this.setWidthOtherColumns(othersWidth);
+                    availableWidth -= othersWidth;
+                } else {
+                    availableWidth -= this.getWidthOtherColumns();
                 }
 
+                for(var i=0; i<autoWidthCols.length; ++i) {
+                    var td = autoWidthCols[i];
+                    Dom.setStyle(td, 'width', availableWidth + 'px');
+                    Dom.setStyle(td, 'display', 'block');
+                    Dom.setStyle(td, 'overflow', 'hidden');
+                }
+
+                if(YAHOO.env.ua.webkit > 0) {
+                    var cols = Dom.getElementsByClassName(this.config.autoWidthColumnClassname , 'th' , thead);
+                    Dom.setStyle(cols[0], 'width', availableWidth + 'px');
+                }
+
+                //do height
                 var availableHeight = sizes.wrap.h;
 
                 //first subtract height of table siblings
@@ -287,6 +266,12 @@ if (!YAHOO.hippo.TableHelper) {
 
                 var scrolling = tbodyRegion.height > availableHeight;
                 if(scrolling) {
+                    availableWidth -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                    for(var i=0; i<autoWidthCols.length; ++i) {
+                        var td = autoWidthCols[i];
+                        Dom.setStyle(td, 'width', availableWidth + 'px');
+                    }
+
                     console.log('set height with scrolling: ' + availableHeight);
                     Dom.setStyle(tbody, 'height', availableHeight + 'px');
                 } else {
@@ -294,11 +279,42 @@ if (!YAHOO.hippo.TableHelper) {
                     Dom.setStyle(tbody, 'height', tbodyRegion.height + 'px');
                 }
 
+                if(YAHOO.env.ua.webkit > 0) {
+//                    window.setTimeout(function() {
+                      Dom.setStyle(headers[0], 'display', 'block');
+                      Dom.setStyle(tbody, 'display', 'block');
+//                    }, 200);
+                }
+
             },
 
             getAutoWidthColumnMargin : function() {
-                if(this.config.cacheEnabled) {
+                return this.autoWidthColumnMargin;
+            },
 
+            setAutoWidthColumnMargin : function(margin) {
+                if(this.config.cacheEnabled) {
+                    this.autoWidthColumnMargin = margin;
+                }
+            },
+
+            getWidthOtherColumns: function() {
+                return this.widthOtherColumns;
+            },
+
+            setWidthOtherColumns: function(w) {
+                if(this.config.cacheEnabled) {
+                    this.widthOtherColumns = w;
+                }
+            },
+
+            validateCache : function(nrOfCols) {
+                if(this.numberOfColumns > 0 && this.numberOfColumns != nrOfCols) {
+                    this.autoWidthColumnMargin = null;
+                    this.widthOtherColumns = null;
+                    console.log('cache invalidated');
+                } else {
+                    console.log('cache ok ' + nrOfCols);
                 }
             },
 
@@ -314,12 +330,10 @@ if (!YAHOO.hippo.TableHelper) {
                 return table.rows[0].parentNode;
             }
 
-        }
+        });
     })();
 
-    YAHOO.hippo.TableHelper = new YAHOO.hippo.TableHelperImpl();
-    
-    YAHOO.register("TableHelper", YAHOO.hippo.TableHelper, {
+    YAHOO.register("HippoDataTable", YAHOO.hippo.DataTable, {
         version: "2.8.1", build: "19"
     });
 }

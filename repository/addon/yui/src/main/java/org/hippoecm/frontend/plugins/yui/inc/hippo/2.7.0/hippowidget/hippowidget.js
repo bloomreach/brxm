@@ -22,14 +22,19 @@ if (!YAHOO.hippo.Widget) {
 
         YAHOO.hippo.WidgetManagerImpl.prototype = {
 
-            register : function(id, config) {
+            register : function(id, config, instance) {
                 this.queue.registerFunction(function() {
                     var widget = Dom.get(id);
                     if(widget == null) {
                         return;
                     }
                     if(Lang.isUndefined(widget[this.NAME])) {
-                        widget[this.NAME] = new YAHOO.hippo.Widget(id, config);
+                        try {
+                            widget[this.NAME] = new instance(id, config);
+                        } catch(e) {
+                            YAHOO.log('Could not instantiate widget of type ' + instance, 'error');
+                            return;
+                        }
                     }
                     widget[this.NAME].render();
                 });
@@ -45,7 +50,7 @@ if (!YAHOO.hippo.Widget) {
             this.config = config;
 
             if(Lang.isFunction(this.config.calculateWidthAndHeight)) {
-                this._calculateHeightAndWidth = this.config.calculateWidthAndHeight;
+                this.calculateWidthAndHeight = this.config.calculateWidthAndHeight;
             }
 
             this.helper = new YAHOO.hippo.DomHelper();
@@ -63,11 +68,15 @@ if (!YAHOO.hippo.Widget) {
         YAHOO.hippo.Widget.prototype = {
 
         	  resize: function(sizes) {
-                var dim = this._calculateHeightAndWidth(sizes);
+                var dim = this.calculateWidthAndHeight(sizes);
+                this.performResize(dim);
+        	  },
+
+            performResize : function(dim) {
                 var el = Dom.get(this.id);
                 Dom.setStyle(el, 'width', dim.width + 'px');
                 Dom.setStyle(el, 'height', dim.height + 'px');
-        	  },
+            },
 
             render : function() {
                 var el = Dom.get(this.id);
@@ -93,7 +102,7 @@ if (!YAHOO.hippo.Widget) {
                 YAHOO.hippo.LayoutManager.unregisterResizeListener(Dom.get(this.id), this);
             },
 
-            _calculateHeightAndWidth : function(sizes) {
+            calculateWidthAndHeight : function(sizes) {
                 return {width: sizes.wrap.w, height: sizes.wrap.h};
             }
         }

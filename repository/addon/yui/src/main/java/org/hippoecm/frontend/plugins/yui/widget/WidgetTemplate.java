@@ -29,6 +29,7 @@ public class WidgetTemplate implements IHeaderContributor, IDetachable {
     private String method;
     private String id;
     private Serializable configuration;
+    private String instance;
 
     public WidgetTemplate() {
         PackagedTextTemplate template = new PackagedTextTemplate(WidgetTemplate.class, "widget_template.js");
@@ -45,6 +46,7 @@ public class WidgetTemplate implements IHeaderContributor, IDetachable {
         namespace = "YAHOO.hippo";
         clazz = "WidgetManager";
         method = "register";
+        instance = "YAHOO.hippo.Widget";
     }
 
     public void renderHead(IHeaderResponse response) {
@@ -57,17 +59,17 @@ public class WidgetTemplate implements IHeaderContributor, IDetachable {
 
     protected Map<String, Object> getVariables() {
         if (variables == null) {
-            variables = new MiniMap<String, Object>(5);
+            variables = new MiniMap<String, Object>(6);
         }
 
         variables.put("namespace", getNamespace());
         variables.put("class", getClazz());
         variables.put("method", getMethod());
         variables.put("id", getId());
-
         Serializable serializable = getConfiguration();
         JsonConfig jsonConfig = internalGetJsonConfig(serializable);
         variables.put("config", getAsJSON(serializable, jsonConfig));
+        variables.put("instance", getInstance());
         return variables;
     }
 
@@ -129,6 +131,14 @@ public class WidgetTemplate implements IHeaderContributor, IDetachable {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public void setInstance(String instance) {
+        this.instance = instance;
+    }
+
+    public String getInstance() {
+        return instance;
     }
 
 }
