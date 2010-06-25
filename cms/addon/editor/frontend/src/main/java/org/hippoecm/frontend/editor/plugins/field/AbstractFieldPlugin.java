@@ -447,7 +447,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
     }
 
-    public IClusterControl newTemplate(String id, IEditor.Mode mode) throws TemplateEngineException {
+    public IClusterControl newTemplate(String id, IEditor.Mode mode, IModel<?> model) throws TemplateEngineException {
         if (mode == null) {
             mode = this.mode;
         }

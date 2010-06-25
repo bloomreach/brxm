@@ -85,8 +85,11 @@ public class TemplateController<C extends IModel> implements IDetachable {
     }
 
     private void addModel(final C model, ModelPathElement element) {
+        if (log.isDebugEnabled()) {
+            log.debug("adding model " + model + ", retrieving template from " + factory.getClass());
+        }
         try {
-            IClusterControl control = factory.newTemplate(itemId, null);
+            IClusterControl control = factory.newTemplate(itemId, null, model);
             childTemplates.put(model, new FieldItem<C>(context, model, validationModel, control, element));
         } catch (TemplateEngineException ex) {
             log.error("Failed to open editor for new model", ex);
