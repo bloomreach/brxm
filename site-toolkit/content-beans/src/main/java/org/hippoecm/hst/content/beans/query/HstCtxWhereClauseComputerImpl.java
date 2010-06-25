@@ -205,7 +205,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                    String scopeUUID = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                    facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
-                   getFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , false);
+                   appendFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , false);
                 } else {
                     // We are not searching in a virtual structure: the context where is the scope of the node
                     if(log.isDebugEnabled()) {
@@ -219,7 +219,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 // when we can get a canonical, we know for sure it is referenceable
                 String scopeUUID =  canonical.getUUID();
                 facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
-                getFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , true);
+                appendFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , true);
             }
         } catch (RepositoryException e) {
            log.warn("Unable to get Context where clause: '{}'", e);
@@ -272,7 +272,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         
     }
     
-    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuilder facetSelectClauses, boolean traversUp) throws HstContextualizeException{
+    private void appendFacetSelectClauses(Session jcrSession, HippoNode node, StringBuilder facetSelectClauses, boolean traversUp) throws HstContextualizeException{
         try {
             if(node == null || node.isSame(jcrSession.getRootNode())) {
                 return;
@@ -316,10 +316,10 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                     if(parent.isSame(canonicalParent)) {
                     // if the parent is physical, we do need to further traverse up
                         if(parent.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                            getFacetSelectClauses(jcrSession,(HippoNode)node.getParent(),  facetSelectClauses, false);
+                            appendFacetSelectClauses(jcrSession,(HippoNode)node.getParent(),  facetSelectClauses, false);
                         }
                     } else {
-                        getFacetSelectClauses(jcrSession, (HippoNode)node.getParent(),  facetSelectClauses, traversUp);
+                        appendFacetSelectClauses(jcrSession, (HippoNode)node.getParent(),  facetSelectClauses, traversUp);
                     }
                 } 
                 
