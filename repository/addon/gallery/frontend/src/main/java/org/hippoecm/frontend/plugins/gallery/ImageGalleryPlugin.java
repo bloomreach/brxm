@@ -57,7 +57,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefiniti
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
-import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 import org.hippoecm.frontend.widgets.LabelWithTitle;
@@ -152,7 +152,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
             ListPagingDefinition pagingDefinition) {
         ListDataTable<Node> ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
                 triState, pagingDefinition);
-        ldt.add(new TableHelperBehavior());
+        ldt.add(new DataTableBehavior());
         return ldt;
     }
 
