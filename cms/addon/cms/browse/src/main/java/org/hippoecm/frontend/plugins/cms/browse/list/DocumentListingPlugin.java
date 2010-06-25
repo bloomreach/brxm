@@ -270,7 +270,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
         ListDataTable<Node> datatable = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
                 triState, pagingDefinition);
         DataTableSettings settings = new DataTableSettings();
-        settings.setAutoWidthColumnClassname("doclisting-name");
+        settings.setAutoWidthClassName("doclisting-name");
         datatable.add(new DataTableBehavior(settings));
         return datatable;
     }

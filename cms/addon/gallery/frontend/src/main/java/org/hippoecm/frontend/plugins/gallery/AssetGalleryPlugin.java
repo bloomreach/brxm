@@ -35,6 +35,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 
@@ -60,6 +61,7 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
 
         column = new ListColumn(new StringResourceModel("assetgallery-name", this, null), "name");
         column.setComparator(new NameComparator());
+        column.setCssClass("assetgallery-name");
         columns.add(column);
 
         column = new ListColumn(new StringResourceModel("assetgallery-size", this, null), "size");
@@ -84,8 +86,10 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
         public DraggableListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
                 TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
-            
-            add(new DataTableBehavior());
+
+            DataTableSettings settings = new DataTableSettings();
+            settings.setAutoWidthClassName("assetgallery-name");
+            add(new DataTableBehavior(settings));
         }
 
         @Override

@@ -6,14 +6,14 @@ public class DataTableSettings extends WidgetSettings {
     final static String SVN_ID = "$Id$";
 
     private boolean cacheEnabled = true;
-    private String autoWidthColumnClassname;
+    private String autoWidthClassName;
 
-    public String getAutoWidthColumnClassname() {
-        return autoWidthColumnClassname;
+    public String getAutoWidthClassName() {
+        return autoWidthClassName;
     }
 
-    public void setAutoWidthColumnClassname(String autoWidthColumnClassname) {
-        this.autoWidthColumnClassname = autoWidthColumnClassname;
+    public void setAutoWidthClassName(String autoWidthClassName) {
+        this.autoWidthClassName = autoWidthClassName;
     }
 
     public boolean isCacheEnabled() {
