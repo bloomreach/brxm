@@ -150,15 +150,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
         
         if (IEditor.Mode.COMPARE == mode) {
-            IComparer comparer;
-            ITypeDescriptor type = helper.getField().getTypeDescriptor();
-            if (type.isNode()) {
-                comparer = new NodeComparer(type);
-            } else {
-                comparer = new ObjectComparer();
-            }
-
-            comparingController = new ComparingController<C>(context, config, this, comparer, getItemId());
+            comparingController = new ComparingController<C>(context, config, this, getComparer(), getItemId());
 
             if (helper.getField().isMultiple()) {
                 // always use managed compare for multi-valued properties
@@ -216,6 +208,17 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 }
             }
         }
+    }
+
+    protected IComparer<?> getComparer() {
+        IComparer comparer;
+        ITypeDescriptor type = helper.getField().getTypeDescriptor();
+        if (type.isNode()) {
+            comparer = new NodeComparer(type);
+        } else {
+            comparer = new ObjectComparer();
+        }
+        return comparer;
     }
 
     @Override
