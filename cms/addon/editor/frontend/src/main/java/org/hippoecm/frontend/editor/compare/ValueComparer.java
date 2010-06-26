@@ -35,7 +35,7 @@ public class ValueComparer extends TypedComparer<Value> {
 
     private StreamComparer streamComparer;
     
-    protected ValueComparer(ITypeDescriptor type) {
+    public ValueComparer(ITypeDescriptor type) {
         super(type);
         if (type.isNode()) {
             throw new RuntimeException("type corresponds to a node type");
