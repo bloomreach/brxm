@@ -16,10 +16,12 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -68,6 +70,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
     private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";
 
     boolean isExpanded = false;
+    private DataTableBehavior datatableBehavior;
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -271,8 +274,16 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
                 triState, pagingDefinition);
         DataTableSettings settings = new DataTableSettings();
         settings.setAutoWidthClassName("doclisting-name");
-        datatable.add(new DataTableBehavior(settings));
+        datatable.add(datatableBehavior = new DataTableBehavior(settings));
         return datatable;
     }
 
+    @Override
+    protected void onSelectionChanged(IModel<Node> model) {
+        super.onSelectionChanged(model);
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if(target != null) {
+            target.appendJavascript(datatableBehavior.getUpdateScript());
+        }
+    }
 }

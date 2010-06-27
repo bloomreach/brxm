@@ -23,25 +23,39 @@ if (!YAHOO.hippo.Widget) {
         YAHOO.hippo.WidgetManagerImpl.prototype = {
 
             register : function(id, config, instance) {
+                var name = this.NAME;
                 this.queue.registerFunction(function() {
                     var widget = Dom.get(id);
                     if(widget == null) {
                         return;
                     }
-                    if(Lang.isUndefined(widget[this.NAME])) {
+                    if(Lang.isUndefined(widget[name])) {
                         try {
-                            widget[this.NAME] = new instance(id, config);
+                            widget[name] = new instance(id, config);
                         } catch(e) {
                             YAHOO.log('Could not instantiate widget of type ' + instance, 'error');
                             return;
                         }
                     }
-                    widget[this.NAME].render();
+                    widget[name].render();
                 });
             },
 
             render : function() {
                 this.queue.handleQueue();
+            },
+
+            update : function(id) {
+                console.log('ID: ' + id);
+                var widget = Dom.get(id);
+                if(widget == null) {
+                    return;
+                }
+                if(!Lang.isUndefined(widget[this.NAME])) {
+                   widget[this.NAME].update();
+                } else {
+                    console.log('vaag')
+                }
             }
         };
 
@@ -97,6 +111,8 @@ if (!YAHOO.hippo.Widget) {
                     }
                 }
             },
+
+            update : function() {},
 
             destroy : function() {
                 YAHOO.hippo.LayoutManager.unregisterResizeListener(Dom.get(this.id), this);

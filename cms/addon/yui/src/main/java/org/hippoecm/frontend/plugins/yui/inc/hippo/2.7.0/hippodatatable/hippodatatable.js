@@ -51,6 +51,12 @@ if (!YAHOO.hippo.DataTable) {
                     this._updateIE(sizes, table);
                 }
         	  },
+
+            update : function() {
+                var table = Dom.get(this.id);
+                var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                this.resize(un.getSizes());
+            },
         	
             _updateIE: function(sizes, table) {
                 var rows = table.rows;
@@ -113,13 +119,11 @@ if (!YAHOO.hippo.DataTable) {
         	  },
 
             _updateGecko : function(sizes, table) {
-
                 var thead = this._getThead(table);
                 var headers = Dom.getElementsByClassName('headers' , 'tr' , thead);
                 if(headers.length == 0) {
                     return;
                 }
-
                 var tbody = this._getTbody(table);
                 var cells = Dom.getElementsByClassName(this.config.autoWidthClassName , 'td' , tbody);
                 if(cells.length == 0) {
@@ -127,9 +131,9 @@ if (!YAHOO.hippo.DataTable) {
                 }
 
                 var widthData = this.getWidthData(headers, cells, sizes);
-                if(widthData.changed) {
+                //if(widthData.changed) {
                     this._setColsWidth(headers, widthData.headerWidth, cells, widthData.columnWidth);
-                }
+                //}
 
                 var heightData = this.getHeightData(table, thead, tbody, sizes, widthData.changed);
                 //if(heightData.changed) {
