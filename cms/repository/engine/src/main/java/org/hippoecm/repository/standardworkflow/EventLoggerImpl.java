@@ -148,8 +148,7 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     private void log(String who, String className, String methodName, String documentPath, String returnType,
             String returnValue, String[] arguments) {
         StringBuffer logMessage = new StringBuffer();
-        logMessage.append("Event log:");
-        logMessage.append(" user=[").append(who).append("]");
+        logMessage.append("user=[").append(who).append("]");
         logMessage.append(" method=[").append(className).append('.').append(methodName).append("]");
         if (returnType != null) {
             logMessage.append(" returnType=[").append(returnType).append("]");
@@ -159,7 +158,7 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
             logMessage.append(" documentPath=[").append(documentPath).append("]");
         }
         if (arguments != null) {
-            logMessage.append(" arguments=[").append(StringUtils.join(arguments)).append("]");
+            logMessage.append(" arguments=[").append(StringUtils.join(arguments, ", ")).append("]");
         }
         log.info(logMessage.toString());
     }
