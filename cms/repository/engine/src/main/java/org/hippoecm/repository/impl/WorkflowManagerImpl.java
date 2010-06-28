@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.security.AccessControlException;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +67,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ext.WorkflowInvocation;
-import org.hippoecm.repository.ext.WorkflowModule;
+import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 import org.hippoecm.repository.quartz.SchedulerWorkflowModule;
 import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
 
@@ -581,21 +580,20 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
     private abstract class WorkflowChainHandler implements InvocationHandler {
         protected Node workflowNode;
-        WorkflowModule module;
+        WorkflowInvocationHandlerModule module;
 
-        WorkflowChainHandler(Node workflowNode, WorkflowModule module) {
+        WorkflowChainHandler(Node workflowNode, WorkflowInvocationHandlerModule module) {
             this.workflowNode = workflowNode;
             this.module = module;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            invoke(method, args);
-            return null;
+            return invoke(method, args);
         }
 
-        abstract void invoke(Method method, Object[] args) throws RepositoryException;
+        abstract Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException;
 
-        public void submit(WorkflowManager workflowManager, WorkflowInvocationImpl invocation) {
+        public void submit(WorkflowManager workflowManager, WorkflowInvocationImpl invocation) throws RepositoryException, WorkflowException {
             module.submit(workflowManager, invocation);
         }
     }
@@ -621,12 +619,19 @@ public class WorkflowManagerImpl implements WorkflowManager {
             parameterTypes = null;
         }
         WorkflowInvocationImpl(Node workflowNode, Document workflowSubject, Method method, Object[] args)
-          throws RepositoryException {
+        throws RepositoryException {
             this.workflowNode = workflowNode;
             this.workflowSubject = workflowSubject;
             this.method = method;
             this.arguments = (args!=null ? args.clone() : args);
             this.workflowSubjectNode = null;
+            try {
+                String uuid = workflowSubject.getIdentity();
+                if(uuid != null && !"".equals(uuid)) {
+                    this.workflowSubjectNode = workflowNode.getSession().getNodeByUUID(uuid);
+                }
+            } catch(ItemNotFoundException ex) {
+            }
             this.category = workflowNode.getParent().getName();
             this.methodName = method.getName();
             this.parameterTypes = method.getParameterTypes();
@@ -853,19 +858,20 @@ public class WorkflowManagerImpl implements WorkflowManager {
     private abstract class WorkflowContextImpl implements WorkflowContext {
         Session subjectSession;
         Node workflowDefinition;
-        WorkflowModule module;
+        WorkflowInvocationHandlerModule module;
 
         WorkflowContextImpl(Node workflowNode, Session subjectSession) {
             this(workflowNode, subjectSession, null);
         }
 
-        WorkflowContextImpl(Node workflowNode, Session subjectSession, WorkflowModule module) {
+        WorkflowContextImpl(Node workflowNode, Session subjectSession, WorkflowInvocationHandlerModule module) {
             this.workflowDefinition = workflowNode;
             this.subjectSession = subjectSession;
             if(module == null) {
-                this.module = new WorkflowModule() {
-                        public void submit(WorkflowManager manager, WorkflowInvocation invocation) {
+                this.module = new WorkflowInvocationHandlerModule() {
+                        public Object submit(WorkflowManager manager, WorkflowInvocation invocation) {
                             invocationIndex.add(invocation);
+                            return null;
                         }
                     };
             } else {
@@ -879,7 +885,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } else if(specification instanceof Document) {
                 String uuid = ((Document)specification).getIdentity();
                 Node node = subjectSession.getNodeByUUID(uuid);
-                return newContext(workflowDefinition, subjectSession, node);
+                return new WorkflowContextNodeImpl(workflowDefinition, subjectSession, node, module);
+            } else if(specification == null) {
+                return newContext(workflowDefinition, subjectSession, new WorkflowInvocationHandlerModule() {
+                    public Object submit(WorkflowManager workflowManager, WorkflowInvocation invocation) throws RepositoryException, WorkflowException {
+                        return invocation.invoke(subjectSession);
+                    }
+                });
             }
             log.debug("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
             throw new MappingException("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
@@ -895,8 +907,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 return WorkflowManagerImpl.this.getWorkflow(workflowNode,
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
-                           public void invoke(Method method, Object[] args) throws RepositoryException {
-                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, document, method, args));
+                           public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, document, method, args));
                            }
                        });
             }
@@ -904,11 +916,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             throw new MappingException("Workflow for category "+category+" on document is not available");
         }
 
-        protected abstract WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowModule specification);
-
-        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, Node newSubject) {
-            return new WorkflowContextNodeImpl(workflowDefinition, subjectSession, newSubject, module);
-        }
+        protected abstract WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification);
         
         public abstract Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
 
@@ -940,7 +948,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.subject = subject;
         }
 
-        WorkflowContextNodeImpl(Node workflowNode, Session subjectSession, Node subject, WorkflowModule module) {
+        WorkflowContextNodeImpl(Node workflowNode, Session subjectSession, Node subject, WorkflowInvocationHandlerModule module) {
             super(workflowNode, subjectSession, module);
             this.subject = subject;
         }
@@ -951,8 +959,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 return WorkflowManagerImpl.this.getWorkflow(workflowNode,
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
-                           public void invoke(Method method, Object[] args) throws RepositoryException {
-                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
+                           public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
                            }
                        });
             }
@@ -960,7 +968,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             throw new MappingException("Workflow for category "+category+" on document is not available");
         }
         
-        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowModule specification) {
+        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification) {
             return new WorkflowContextNodeImpl(workflowDefinition, subjectSession, subject, specification);
         }
     }
@@ -973,7 +981,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.subject = subject;
         }
 
-        WorkflowContextDocumentImpl(Node workflowNode, Session subjectSession, Document subject, WorkflowModule module) {
+        WorkflowContextDocumentImpl(Node workflowNode, Session subjectSession, Document subject, WorkflowInvocationHandlerModule module) {
             super(workflowNode, subjectSession, module);
             this.subject = subject;
         }
@@ -984,8 +992,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 return WorkflowManagerImpl.this.getWorkflow(workflowNode,
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
-                           public void invoke(Method method, Object[] args) throws RepositoryException {
-                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
+                           public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
                            }
                        });
             }
@@ -993,7 +1001,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             throw new MappingException("Workflow for category "+category+" on document is not available");
         }
         
-        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowModule specification) {
+        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification) {
             return new WorkflowContextDocumentImpl(workflowDefinition, subjectSession, subject, specification);
         }
     }

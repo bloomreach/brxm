@@ -28,9 +28,9 @@ import org.quartz.SimpleTrigger;
 
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.WorkflowInvocation;
-import org.hippoecm.repository.ext.WorkflowModule;
+import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 
-public class SchedulerWorkflowModule implements WorkflowModule {
+public class SchedulerWorkflowModule implements WorkflowInvocationHandlerModule {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -40,7 +40,7 @@ public class SchedulerWorkflowModule implements WorkflowModule {
         this.timestamp = timestamp;
     }
 
-    public void submit(WorkflowManager manager, WorkflowInvocation invocation) {
+    public Object submit(WorkflowManager manager, WorkflowInvocation invocation) {
         try {
             if(SchedulerModule.log.isDebugEnabled()) {
                 SchedulerModule.log.debug("Storing scheduled workflow {}",invocation.toString());
@@ -67,5 +67,6 @@ public class SchedulerWorkflowModule implements WorkflowModule {
         } catch (SchedulerException ex) {
             SchedulerModule.log.error("failure storing scheduled workflow", ex);
         }
+	return null;
     }
 }
