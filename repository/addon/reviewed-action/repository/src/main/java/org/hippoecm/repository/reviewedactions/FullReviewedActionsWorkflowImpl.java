@@ -110,18 +110,14 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot copy unsaved document");
 
         if (unpublishedDocument == null) {
-            try {
-                unpublishedDocument = (PublishableDocument) publishedDocument.clone();
-                unpublishedDocument.state = "unpublished";
-                Document folder = getWorkflowContext().getDocument("embedded", publishedDocument.getIdentity());
-                Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
-                if(workflow instanceof FolderWorkflow)
-                    ((FolderWorkflow)workflow).move(unpublishedDocument, destination, newName);
-                else
-                    throw new WorkflowException("cannot copy document which is not contained in a folder");
-            } catch (CloneNotSupportedException e) {
-                throw new WorkflowException("cannot clone published document for copying");
-            }
+            Document folder = getWorkflowContext().getDocument("embedded", publishedDocument.getIdentity());
+            Workflow workflow = getWorkflowContext(null).getWorkflow("internal", folder);
+            if (workflow instanceof FolderWorkflow) {
+                Document copy = ((FolderWorkflow)workflow).copy(publishedDocument, destination, newName);
+                FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext(null).getWorkflow("default", copy);
+                copiedDocumentWorkflow.depublish();
+            } else
+                throw new WorkflowException("cannot copy document which is not contained in a folder");
         } else {
             Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
             Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);

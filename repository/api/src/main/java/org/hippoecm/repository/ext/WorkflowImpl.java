@@ -22,6 +22,9 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 
@@ -58,6 +61,10 @@ public abstract class WorkflowImpl implements Remote, Workflow
      */
     final protected WorkflowContext getWorkflowContext() {
         return context;
+    }
+
+    final protected WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
+        return context.getWorkflowContext(specification);
     }
 
     /**

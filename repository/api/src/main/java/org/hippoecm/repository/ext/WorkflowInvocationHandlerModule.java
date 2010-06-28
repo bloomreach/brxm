@@ -15,22 +15,20 @@
  */
 package org.hippoecm.repository.ext;
 
+import javax.jcr.RepositoryException;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
 /**
- * 
- * @author berry
+ * Future interface to implement pluggable workflow engine implementations.
+ * This API has not been stabalized, and currently cannot be plugged in
+ * without modifying the repository implementation.
  */
-public interface WorkflowModule {
+public interface WorkflowInvocationHandlerModule {
     /**
-     * 
+     * @exclude
      */
     final static String SVN_ID = "$Id$";
 
-    /**
-     * 
-     * @param workflowManager
-     * @param invocation
-     */
-    public void submit(WorkflowManager workflowManager, WorkflowInvocation invocation);
+    public Object submit(WorkflowManager workflowManager, WorkflowInvocation invocation) throws RepositoryException, WorkflowException;
 }
