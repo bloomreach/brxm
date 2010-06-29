@@ -18,10 +18,11 @@ package org.hippoecm.frontend.plugins.richtext.jcr;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.Session;
@@ -33,7 +34,6 @@ import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImage;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,7 +131,37 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         }
     }
 
-    public boolean isValid(IDetachable targetId) {
+    public boolean isValid(IDetachable targetId, String facetSelectPath) {
+        if (!isValid(targetId)) {
+            return false;
+        }
+        if (facetSelectPath == null) {
+            return false;
+        }
+        if (facetSelectPath.indexOf('/') <= 0) {
+            return false;
+        }
+        String docsub = facetSelectPath.substring(facetSelectPath.indexOf('/') + 1);
+        if (!docsub.startsWith("{_document}/")) {
+            return false;
+        }
+        String resource = docsub.substring(docsub.indexOf('/') + 1);
+        if (resource.indexOf('/') > 0) {
+            return false;
+        }
+
+        JcrNodeModel selectedModel = (JcrNodeModel) targetId;
+        Node node = selectedModel.getObject();
+        try {
+            node = node.getNode(node.getName());
+            return node.hasNode(resource);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return false;
+    }
+
+    private boolean isValid(IDetachable targetId) {
         if (!(targetId instanceof JcrNodeModel)) {
             return false;
         }
@@ -144,11 +174,42 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
             return false;
         }
         try {
-            return !node.isNodeType("hippostd:folder");
+            if (node.isNodeType("hippo:handle")) {
+                Node doc = node.getNode(node.getName());
+                Item primary = doc.getPrimaryItem();
+                return (primary.isNode() && ((Node) primary).isNodeType("hippo:resource"));
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
-            return false;
         }
+        return false;
+    }
+
+    public String getDefaultFacetSelectPath(IDetachable targetId) {
+        if (!isValid(targetId)) {
+            return null;
+        }
+        JcrNodeModel selectedModel = (JcrNodeModel) targetId;
+        Node node = selectedModel.getObject();
+        try {
+            if (node.isNodeType("hippo:handle")) {
+                node = node.getNode(node.getName());
+                Item primary = node.getPrimaryItem();
+                for (NodeIterator children = node.getNodes(); children.hasNext();) {
+                    Node child = children.nextNode();
+                    if (primary.isSame(child)) {
+                        continue;
+                    }
+                    if (child.isNodeType("hippo:resource")) {
+                        return node.getName() + "/{_document}/" + child.getName();
+                    }
+                }
+                return node.getName() + "/{_document}/" + primary.getName();
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return null;
     }
 
     /**
@@ -170,24 +231,34 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
                 }
             }
 
-            RichTextImage rti = new RichTextImage(node.getPath(), name);
-
-            //FIXME: Because our Image picker doesn't allow users to choose between the child-node-definitions
-            // (thumbnail, original, etc) we work around this by selecting the original by default, which is NOT
-            //the primaryItemDefinition because that represents the thumbnail..
-            String primaryItemDefinition = node.getPrimaryItem().getName();
             List<String> resourceDefinitions = new LinkedList<String>();
-            for (NodeDefinition nd : node.getPrimaryNodeType().getChildNodeDefinitions()) {
-                if (!nd.getName().equals(primaryItemDefinition) && nd.getDefaultPrimaryType() != null
-                        && nd.getDefaultPrimaryType().isNodeType("hippo:resource")) {
-                    resourceDefinitions.add(nd.getName());
+            Item primary = node.getPrimaryItem();
+            if (!primary.isNode() || !((Node) primary).isNodeType("hippo:resource")) {
+                throw new RichTextException("Invalid image document");
+            }
+
+            for (NodeIterator children = node.getNodes(); children.hasNext();) {
+                Node child = children.nextNode();
+                if (primary.isSame(child)) {
+                    continue;
+                }
+                if (child.isNodeType("hippo:resource")) {
+                    resourceDefinitions.add(child.getName());
                 }
             }
-            resourceDefinitions.add(primaryItemDefinition);
+            resourceDefinitions.add(primary.getName());
+            if (resourceDefinitions.size() == 0) {
+                throw new RichTextException("No child resource found");
+            }
+
+            RichTextImage rti = new RichTextImage(node.getPath(), name);
             rti.setResourceDefinitions(resourceDefinitions);
             if (selectedResource != null) {
                 rti.setSelectedResourceDefinition(selectedResource);
+            } else {
+                rti.setSelectedResourceDefinition(resourceDefinitions.get(0));
             }
+
             if (isNew) {
                 save(rti);
             }

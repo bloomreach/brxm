@@ -68,7 +68,13 @@ public class XinhaImageService implements IDetachable {
 
             @Override
             public boolean isValid() {
-                return super.isValid() && factory.isValid(getLinkTarget());
+                return super.isValid() && factory.isValid(getLinkTarget(), getFacetSelectPath());
+            }
+
+            @Override
+            public void setLinkTarget(IDetachable model) {
+                super.setLinkTarget(model);
+                setFacetSelectPath(factory.getDefaultFacetSelectPath(model));
             }
 
             public void save() {
@@ -81,7 +87,11 @@ public class XinhaImageService implements IDetachable {
                     }
                     try {
                         RichTextImage item = createImageItem(getLinkTarget());
-                        setFacetSelectPath(item.getFacetSelectPath());
+                        String facetSelect = getFacetSelectPath();
+                        if (facetSelect != null) {
+                            String resource = facetSelect.substring(facetSelect.lastIndexOf('/') + 1);
+                            item.setSelectedResourceDefinition(resource);
+                        }
                         setUrl(item.getUrl());
                     } catch (RichTextException e) {
                         log.error("Could not create link");

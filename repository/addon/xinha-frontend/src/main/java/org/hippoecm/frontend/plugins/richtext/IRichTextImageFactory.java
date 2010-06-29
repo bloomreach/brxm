@@ -18,11 +18,12 @@ package org.hippoecm.frontend.plugins.richtext;
 import org.apache.wicket.model.IDetachable;
 
 public interface IRichTextImageFactory extends IDetachable {
-    @SuppressWarnings("unused")
     final String SVN_ID = "$Id$";
 
-    boolean isValid(IDetachable targetId);
+    boolean isValid(IDetachable targetId, String facetSelectPath);
 
+    String getDefaultFacetSelectPath(IDetachable targetId);
+    
     RichTextImage loadImageItem(String path) throws RichTextException;
 
     RichTextImage createImageItem(IDetachable model) throws RichTextException;
