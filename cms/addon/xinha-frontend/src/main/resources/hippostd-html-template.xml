@@ -216,6 +216,9 @@
           <sv:property sv:name="last.visited.nodetypes.allowed" sv:type="String">
             <sv:value>hippogallery:stdImageGallery</sv:value>
           </sv:property>         
+          <sv:property sv:name="preferred.resource.names" sv:type="String">
+            <sv:value>hippogallery:picture</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="Xinha.plugins.CreateLink">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

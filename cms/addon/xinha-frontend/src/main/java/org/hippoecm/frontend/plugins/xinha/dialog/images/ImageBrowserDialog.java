@@ -78,8 +78,15 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
     public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
 
+    private ImagePickerSettings settings;
+
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<XinhaImage> model) {
         super(context, config, model);
+
+        settings = new ImagePickerSettings();
+        if (config.containsKey("preferred.resource.names")) {
+            settings.setPreferredResourceNames(config.getStringArray("preferred.resource.names"));
+        }
 
         createUploadForm(config);
 
@@ -121,14 +128,17 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         checkState();
     }
 
+    @SuppressWarnings("unchecked")
     private void createUploadForm(final IPluginConfig config) {
-        Form uploadForm = new Form("uploadForm");
+        Form<?> uploadForm = new Form("uploadForm");
 
         uploadForm.setOutputMarkupId(true);
         final FileUploadField uploadField = new FileUploadField("uploadField");
         uploadField.setOutputMarkupId(true);
 
         final AjaxButton uploadButton = new AjaxButton("uploadButton", uploadForm) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 
@@ -209,6 +219,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
         uploadButton.setOutputMarkupId(true);
         uploadField.add(new AjaxEventBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 uploadButton.setEnabled(true);
@@ -234,13 +246,33 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
     @Override
     protected void onOk() {
-        if (getModelObject().isValid()) {
-            getModelObject().save();
+        XinhaImage image = getModelObject();
+
+        //FIXME: Because our Image picker doesn't allow users to choose between the child-node-definitions
+        // (thumbnail, original, etc) we work around this by selecting the "preferred" by default.
+        String facetSelect = image.getFacetSelectPath();
+        if (facetSelect != null && facetSelect.indexOf('/') > 0) {
+            String basePath = facetSelect.substring(0, facetSelect.lastIndexOf('/') + 1);
+            boolean match = false;
+            for (String resourceName : settings.getPreferredResourceNames()) {
+                image.setFacetSelectPath(basePath + resourceName);
+                if (image.isValid()) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                image.setFacetSelectPath(facetSelect);
+            }
+        }
+        if (image.isValid()) {
+            image.save();
         } else {
             error("Please select an image");
         }
     }
 
+    @Override
     public void renderHead(IHeaderResponse response) {
         final String IMAGE_BROWSER_DIALOG_CSS = "ImageBrowserDialog.css";
         ResourceReference dialogCSS = new ResourceReference(ImageBrowserDialog.class, IMAGE_BROWSER_DIALOG_CSS);

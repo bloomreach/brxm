@@ -52,6 +52,7 @@ import org.hippoecm.frontend.plugins.richtext.RichTextArea;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerSettings;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.json.JsonParser;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
@@ -213,9 +214,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         editor.setHeight(getPluginConfig().getString("height", "1px"));
         configuration.setTextareaName(editor.getMarkupId());
 
-        IPluginContext context = getPluginContext();
-        IPluginConfig config = getPluginConfig();
-        editor.add(externalLinkBehavior = new ExternalLinkBehavior(context, config));
+        editor.add(externalLinkBehavior = new ExternalLinkBehavior(getPluginContext(), getPluginConfig()));
         return fragment;
     }
 
