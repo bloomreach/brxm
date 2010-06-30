@@ -42,7 +42,7 @@ public class DefaultPageErrorHandler implements PageErrorHandler {
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception found on " + componentInfo.getComponentClassName(), componentException);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception found on {}. ", componentInfo.getComponentClassName(), componentException.toString());
+                    log.warn("Component exception found on {}. ", componentInfo.getComponentClassName(), componentException.getMessage());
                 }
             }
         }
