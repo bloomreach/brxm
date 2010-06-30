@@ -42,7 +42,7 @@ public class Upgrader12a implements UpdaterModule {
     public void register(final UpdaterContext context) {
         context.registerName("upgrade-v12a");
         context.registerStartTag("v20902");
-        context.registerEndTag("v12a");
+        context.registerEndTag("v12b");
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
             protected void leaving(final Node node, int level) throws RepositoryException {
@@ -230,6 +230,16 @@ public class Upgrader12a implements UpdaterModule {
                 pubwfReqType.setProperty("hipposys:filter", false);
                 pubwfReqType.setProperty("hipposys:type", "Name");
                 pubwfReqType.setProperty("hipposys:value", "hippostdpubwf:request");
+
+                Node readwrite = node.getNode("defaultwrite");
+                Node translation = readwrite.addNode("hippo-translation", "hipposys:domainrule");
+                Node translationType = translation.addNode("type-hippo-translation", "hipposys:facetrule");
+                translationType.setProperty("hipposys:equals", true);
+                translationType.setProperty("hipposys:facet", "jcr:primaryType");
+                translationType.setProperty("hipposys:filter", false);
+                translationType.setProperty("hipposys:type", "Name");
+                translationType.setProperty("hipposys:value", "hippo:translation");
+
             }
         });
 
