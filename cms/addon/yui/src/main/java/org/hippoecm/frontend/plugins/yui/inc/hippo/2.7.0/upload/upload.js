@@ -108,6 +108,7 @@ if (!YAHOO.hippo.Upload) {
                         this.indicator.show();
                     }
                     this.uploader.uploadAll(this.config.uploadUrl);
+                    this.numberOfUploads+=this.dataArr.length;
                 }
             },
 
@@ -132,7 +133,6 @@ if (!YAHOO.hippo.Upload) {
                 var pb = new YAHOO.widget.ProgressBar({value:1, maxValue: 100, width: nameWidth, height: 12, anim: true});
                 pb.render(id);
                 this.progressBars.put(event["id"], pb);
-                this.numberOfUploads++;
             },
 
             onUploadProgress : function(event) {

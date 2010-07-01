@@ -77,7 +77,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
 
             @Override
             protected void onFinishAjaxUpload(AjaxRequestTarget target) {
-                MultiFileUploadDialog.this.handleSubmit();
+                MultiFileUploadDialog.super.handleSubmit();
             }
 
             @Override
@@ -108,6 +108,10 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         add(widget);
     }
 
+    @Override
+    protected final void handleSubmit() {
+    }
+    
     @Override
     public IValueMap getProperties() {
         return MEDIUM;
