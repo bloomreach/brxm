@@ -4,6 +4,10 @@
 html, body { border: none; }
 body {padding: 4px;}
 
+h1, h2, h3, h4, h5, h6, p {
+    margin-bottom: 1em;
+}
+
 /* default font settings */
 body, table tr td, table tr th{
 font-family: arial, sans-serif, helvetica, serif;
