@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -462,15 +462,6 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
-        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:document") {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                if (!node.hasProperty("hippo:availability")) {
-                    node.setProperty("hippo:availability", new String[] {"live", "preview"});
-                }
-            }
-        });
-
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd")));
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippohtmlcleaner", getClass().getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd")));
 
@@ -488,38 +479,6 @@ public class Upgrader13a implements UpdaterModule {
         } catch (RepositoryException ex) {
             log.error("failure in conversion script", ex);
         }
-
-        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostdpubwf:document") {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                boolean isPublished = false;
-                boolean isUnpublished = false;
-                for (NodeIterator iter = node.getParent().getNodes(); iter.hasNext();) {
-                    Node sibling = iter.nextNode();
-                    if (!sibling.getName().equals(node.getName()))
-                        continue;
-                    String siblingState = sibling.getProperty("hippostd:state").getString();
-                    if (siblingState.equals("published")) {
-                        isPublished = true;
-                    }
-                    if (siblingState.equals("unpublished")) {
-                        isUnpublished = true;
-                    }
-                }
-                String state = node.getProperty("hippostd:state").getString();
-                if (state.equals("published")) {
-                    if (isUnpublished) {
-                        node.setProperty("hippo:availability", new String[] {"live"});
-                    } else {
-                        node.setProperty("hippo:availability", new String[] {"live", "preview"});
-                    }
-                } else if (state.equals("unpublished")) {
-                    node.setProperty("hippo:availability", new String[] {"preview"});
-                } else {
-                    node.setProperty("hippo:availability", new String[0]);
-                }
-            }
-        });
 
         //HREPTWO-4159 - implement AjaxUpload; new Flash upload can be restricted to only allow files with certain extensions           
         context.registerVisitor(new PathVisitor("/hippo:configuration/hippo:workflows/threepane/image-gallery/frontend:renderer") {
