@@ -54,6 +54,7 @@ public class Upgrader13a implements UpdaterModule {
     public void register(final UpdaterContext context) {
         context.registerName("upgrade-v13a");
         context.registerStartTag("v12a");
+        context.registerStartTag("v12b");
         context.registerEndTag("v13a");
 
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
