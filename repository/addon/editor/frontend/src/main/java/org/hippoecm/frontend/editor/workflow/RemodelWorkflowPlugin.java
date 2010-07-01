@@ -194,7 +194,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
                         String newPath = draftItem.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         String oldPath = currentItem.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         if (!newPath.equals(oldPath)) {
-                            changeList.add(new Change(ChangeType.RENAMED, newPath, oldPath));
+                            changeList.add(new Change(ChangeType.RENAMED, oldPath, newPath));
                             log.info("remodelling rule renamed " + oldPath +" to " + newPath);
                         }
                         if (draftItem.hasProperty(HippoNodeType.HIPPO_MANDATORY) && draftItem.getProperty(HippoNodeType.HIPPO_MANDATORY).getBoolean() &&
