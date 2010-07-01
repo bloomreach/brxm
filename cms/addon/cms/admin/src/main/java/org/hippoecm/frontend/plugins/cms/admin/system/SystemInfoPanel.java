@@ -62,6 +62,17 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
                 target.addComponent(SystemInfoPanel.this);
             }
         });
+        
+        add(new AjaxFallbackLink("gc") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                System.gc();
+                memoryInfo.refresh();
+                target.addComponent(SystemInfoPanel.this);
+            }
+        });
     }
 
     public IModel getTitle(Component component) {
