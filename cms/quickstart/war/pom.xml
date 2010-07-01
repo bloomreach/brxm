@@ -447,7 +447,6 @@
           <jettyEnvXml>jetty-config/jetty-env.xml</jettyEnvXml>
           <webAppConfig>
             <contextPath>/cms</contextPath>
-            <extraClasspath>../../repository/application/target/classes/;../../repository/engine/target/classes/;../../repository/modules/target/classes/;../../frontend/engine/target/classes;../../frontend/plugins/target/classes/;</extraClasspath>
             <serverClasses>
               <!-- Copied from WebAppContext with SLF4J removed -->
               <filter>-org.mortbay.jetty.plus.jaas.</filter>
