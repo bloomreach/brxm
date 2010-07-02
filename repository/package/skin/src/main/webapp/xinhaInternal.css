@@ -5,7 +5,8 @@ html, body { border: none; }
 body {padding: 4px;}
 
 h1, h2, h3, h4, h5, h6, p {
-    margin-bottom: 1em;
+    margin-top: 0.7em;
+    margin-bottom: 0.3em; 
 }
 
 /* default font settings */
