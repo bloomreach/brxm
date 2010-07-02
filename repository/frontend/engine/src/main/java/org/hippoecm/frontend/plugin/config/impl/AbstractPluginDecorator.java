@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
@@ -103,6 +104,11 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     }
 
     @Override
+    public boolean containsKey(Object key) {
+        return get(key) != null;
+    }
+
+    @Override
     public Object get(Object key) {
         Object obj = upstream.get(key);
         if (obj == null) {
@@ -121,34 +127,47 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
                 final Iterator<Map.Entry<String, Object>> origIter = orig.iterator();
                 return new Iterator<Map.Entry<String, Object>>() {
 
+                    Entry<String, Object> next = null;
+
                     public boolean hasNext() {
-                        return origIter.hasNext();
+                        fetchNext();
+                        return next != null;
                     }
 
                     public Map.Entry<String, Object> next() {
-                        final Entry<String, Object> entry = origIter.next();
-                        if (entry != null) {
-                            return new Map.Entry<String, Object>() {
-
-                                public String getKey() {
-                                    return entry.getKey();
-                                }
-
-                                public Object getValue() {
-                                    return AbstractPluginDecorator.this.get(entry.getKey());
-                                }
-
-                                public Object setValue(Object value) {
-                                    return AbstractPluginDecorator.this.put(entry.getKey(), value);
-                                }
-
-                            };
+                        if (next != null) {
+                            Map.Entry<String, Object> ret = next;
+                            next = null;
+                            return ret;
                         }
-                        return null;
+                        throw new NoSuchElementException();
+                    }
+
+                    protected void fetchNext() {
+                        while (next == null && origIter.hasNext()) {
+                            final Entry<String, Object> entry = origIter.next();
+                            if (entry != null && AbstractPluginDecorator.this.containsKey(entry.getKey())) {
+                                next = new Map.Entry<String, Object>() {
+
+                                    public String getKey() {
+                                        return entry.getKey();
+                                    }
+
+                                    public Object getValue() {
+                                        return AbstractPluginDecorator.this.get(entry.getKey());
+                                    }
+
+                                    public Object setValue(Object value) {
+                                        return AbstractPluginDecorator.this.put(entry.getKey(), value);
+                                    }
+
+                                };
+                            }
+                        }
                     }
 
                     public void remove() {
-                        origIter.remove();
+                        throw new UnsupportedOperationException();
                     }
 
                 };
@@ -156,7 +175,13 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
             @Override
             public int size() {
-                return orig.size();
+                int count = 0;
+                Iterator<?> iter = iterator();
+                while (iter.hasNext()) {
+                    iter.next();
+                    count++;
+                }
+                return count;
             }
 
         };
@@ -165,7 +190,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     @Override
     public boolean isImmutable() {
         // FIXME: shouldn't this be true?
-        return false;
+        return true;
     }
 
     @Override
@@ -222,7 +247,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     protected IObservationContext<? extends IPluginConfig> getObservationContext() {
         return obContext;
     }
-    
+
     public void startObservation() {
         obContext.registerObserver(observer = new IObserver<IPluginConfig>() {
             private static final long serialVersionUID = 1L;
@@ -234,11 +259,12 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
             public void onEvent(Iterator<? extends IEvent<IPluginConfig>> events) {
                 EventCollection<IEvent<IPluginConfig>> collection = new EventCollection<IEvent<IPluginConfig>>();
                 if (events.hasNext()) {
-                    collection.add(new PluginConfigEvent(AbstractPluginDecorator.this, PluginConfigEvent.EventType.CONFIG_CHANGED));
+                    collection.add(new PluginConfigEvent(AbstractPluginDecorator.this,
+                            PluginConfigEvent.EventType.CONFIG_CHANGED));
                 }
                 obContext.notifyObservers(collection);
             }
-            
+
         });
     }
 
