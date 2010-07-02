@@ -1373,8 +1373,6 @@ body.hippo-root div.yui-log-container {
 .hippo-editor-field-html-preview h1 { font-size: 2em; }
 .hippo-editor-field-html-preview h2 { font-size: 1.5em; }
 .hippo-editor-field-html-preview h3 { font-size: 1.17em; }
-.hippo-editor-field-html-preview h4,
-.hippo-editor-field-html-preview p,
 .hippo-editor-field-html-preview blockquote, 
 .hippo-editor-field-html-preview ul,
 .hippo-editor-field-html-preview fieldset, 
@@ -1382,13 +1380,15 @@ body.hippo-root div.yui-log-container {
 .hippo-editor-field-html-preview ol, 
 .hippo-editor-field-html-preview dl,
 .hippo-editor-field-html-preview dir,
+.hippo-editor-field-html-preview menu { margin-top: 3px; margin-bottom: 3px; }
+
 .hippo-editor-field-html-preview h1,
 .hippo-editor-field-html-preview h2,
 .hippo-editor-field-html-preview h3,
 .hippo-editor-field-html-preview h4,
 .hippo-editor-field-html-preview h5,
 .hippo-editor-field-html-preview h6,
-.hippo-editor-field-html-preview menu { margin-top: 3px; margin-bottom: 3px; }
+.hippo-editor-field-html-preview p { margin-top: 0.7em; margin-bottom: 0.3em; }
 
 .hippo-editor-field-html-preview h5 { font-size: .83em; }
 .hippo-editor-field-html-preview h6 { font-size: .75em; }
