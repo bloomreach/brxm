@@ -216,7 +216,16 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
                 workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
-                browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
+                JcrNodeModel copyMode = new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName);
+                HippoNode node = (HippoNode) copyMode.getNode().getNode(nodeName);
+
+                String localName = getLocalizeCodec().encode(name);
+                if (!node.getLocalizedName().equals(localName)) {
+                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                    defaultWorkflow.localizeName(localName);
+                }
+                browseTo(copyMode);
                 return null;
             }
         });

@@ -376,7 +376,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", result.getNode(nodeName));
-                defaultWorkflow.localizeName(name);
+                defaultWorkflow.localizeName(getLocalizeCodec().encode(name));
 
                 browseTo(resultModel);
                 return null;
