@@ -63,6 +63,9 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
     }
 
     public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException {
+        // FIXME: this implementation is totally hardcoded and unlike the workflow in the FolderWorkflowImpl cannot be
+        // customized with auto created properties, like user, current time, and -most importantly- also not the
+        // hippo:availability property.  This implementation should be revoked entirely.
         Node document, node, folder = rootSession.getNodeByUUID(subject.getUUID());
         Date date = new Date();
         Calendar timestamp = Calendar.getInstance();
@@ -73,6 +76,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
         node.setProperty("hippo:discriminator", new Value[0]);
         node = document = node.addNode(name, type);
         node.addMixin("hippo:harddocument");
+        node.setProperty("hippo:availability", new String[] { "live", "preview" });
         node = (Node) node.getPrimaryItem();
         node.setProperty("jcr:data", "");
         node.setProperty("jcr:mimeType", "text/plain");
