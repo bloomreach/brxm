@@ -74,7 +74,7 @@ class ListCell extends Panel {
         }
         add(renderer.getRenderer("renderer", model));
         final IObservable observable = renderer.getObservable(model);
-        if (observable != null) {
+        if (context != null && observable != null) {
             IObserver observer = new Observer(observable) {
 
                 public void onEvent(Iterator events) {
