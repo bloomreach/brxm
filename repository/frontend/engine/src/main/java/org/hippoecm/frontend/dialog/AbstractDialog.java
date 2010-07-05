@@ -37,7 +37,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
@@ -422,6 +421,16 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
 
+        add(new AjaxButton("default-submit") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                AbstractDialog.this.onDefaultSubmit();
+            }
+            
+        });
+        
         feedback = new ExceptionFeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
         add(feedback);
@@ -487,6 +496,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         super.onDetach();
     }
 
+    protected void onDefaultSubmit() {
+        handleSubmit();
+    }
+    
     protected FeedbackPanel newFeedbackPanel(String id) {
         return new ExceptionFeedbackPanel(id);
     }
