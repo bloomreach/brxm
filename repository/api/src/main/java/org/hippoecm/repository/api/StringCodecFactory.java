@@ -208,8 +208,6 @@ public class StringCodecFactory {
                             break; // +
                         case 0x2C:
                             break; // ,
-                        case 0x2E:
-                            break; // .
                         case 0x2F:
                             sb.append("-");
                             break; // /
