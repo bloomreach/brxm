@@ -945,11 +945,10 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield-item{margin: 0; border: 0px; }
 
 /* sub sub fields */
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: white; border: none; width: auto; margin-bottom: 4px; position: relative;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: white; border: none; width: auto; margin-bottom: 0; position: relative; margin-right: 100px; padding: 4px 0 4px 1px;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: transparent; border: 1px solid #b2b2b2;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .add-16{}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield-item{right: 100px;}
 
 /* threepanes in editor */
 .hippo-editor .hippo-editor-threepane{width: 100%}
@@ -1356,9 +1355,9 @@ body.hippo-root div.yui-log-container {
 .resource-values .simple-editor-value { float: left; color: #666; }
 .resource-values a { text-decoration: underline; }
 
-.resource-values ul { display: inline; }
-.resource-values ul li { list-style: none; display: inline; }
-.resource-values ul li > span { padding-right: 50px; }
+.resource-values ul { overflow: auto; }
+.resource-values ul li { list-style: none; float: left; min-width: 180px;}
+.resource-values ul li > span { padding-right: 5px; }
 
 .hippo-preview-document .resource-values { padding-left: 0px; }
 
@@ -1479,7 +1478,6 @@ span.hippo-diff-removed {
 div.hippo-diff-removed {
   text-decoration: line-through;
   background-color: #fdc6c6; /* light red */
-  float: left;
 }
 
 span.hippo-diff-removed img {
@@ -1492,7 +1490,11 @@ span.hippo-diff-added {
 
 div.hippo-diff-added {
   background-color: #ccffcc; /* light green */
-  float: left;
+}
+
+div.hippo-diff-added div.hippo-editor-field-textarea,
+div.hippo-diff-removed div.hippo-editor-field-textarea {
+  min-height: 0;
 }
 
 span.hippo-diff-added img {
@@ -1510,7 +1512,7 @@ table.compare div.hippo-diff-removed, table.compare div.hippo-diff-added {
 
 div.hippo-diff-removed div.resource-values, div.hippo-diff-added div.resource-values {
     padding: 0 10px 0 10px;
-    display: inline;
+    clear: both;
 }
 
 /* Xinha dialo styling */

@@ -19,7 +19,9 @@ table.hippo-search-section .hippo-search-section-input input {
 	margin: 2px 20px 2px 10px;
 }
 
-.apelul {display: block;}
+.hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield {
+  position: static;
+}
 
 .toggle-button {
   padding-bottom: 1px;
