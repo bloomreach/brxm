@@ -233,7 +233,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
         add(uploadForm);
 
-        //OMG: hack.. Input[type=file] is rendered differently on OSX in all browsers..
+        //OMG: ugly workaround.. Input[type=file] is rendered differently on OSX in all browsers..
         WebRequestCycle requestCycle = (WebRequestCycle) RequestCycle.get();
         HttpServletRequest httpServletReq = requestCycle.getWebRequest().getHttpServletRequest();
         String ua = httpServletReq.getHeader("User-Agent");
@@ -241,7 +241,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
             uploadField.add(new AttributeAppender("class", true, new Model<String>("browse-button-osx"), " "));
             uploadButton.add(new AttributeAppender("class", true, new Model<String>("upload-button-osx"), " "));
         }
-
     }
 
     @Override

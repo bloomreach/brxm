@@ -59,4 +59,13 @@ public abstract class XinhaImage extends DocumentLink {
     public String getFacetSelectPath() {
         return get(FACET_SELECT);
     }
+
+    @Override
+    public void setLinkTarget(IDetachable model) {
+        super.setLinkTarget(model);
+        if(model != null && !model.equals(getInitialModel())) {
+            put(WIDTH, "");
+            put(HEIGHT, "");
+        }
+    }
 }
