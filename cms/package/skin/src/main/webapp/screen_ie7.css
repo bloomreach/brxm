@@ -23,6 +23,10 @@ table.hippo-search-section .hippo-search-section-input input {
   position: static;
 }
 
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .hippo-editor-field-subfield-item{margin-bottom: 2px;}
+
+.hippo-editor .hippo-editor-field a.add-16 {position:relative; z-index: 1;}
+
 .toggle-button {
   padding-bottom: 1px;
 }
