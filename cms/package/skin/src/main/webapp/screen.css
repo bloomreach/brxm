@@ -950,7 +950,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .add-16{}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
 
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield.dialog-link {padding: 4px 0 4px 1px;margin-right: 100px;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield.dialog-link {padding: 2px 0 2px 1px;margin-right: 100px;}
 
 /* threepanes in editor */
 .hippo-editor .hippo-editor-threepane{width: 100%}
