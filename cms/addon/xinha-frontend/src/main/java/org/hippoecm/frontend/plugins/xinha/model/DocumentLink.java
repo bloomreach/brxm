@@ -50,6 +50,10 @@ public abstract class DocumentLink extends XinhaLink {
         return initialModel != null;
     }
 
+    public IDetachable getInitialModel() {
+        return initialModel;
+    }
+
     public boolean isReplacing() {
         if (selectedModel != null && initialModel != null && !selectedModel.equals(initialModel)) {
             return true;
