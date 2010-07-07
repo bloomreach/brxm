@@ -45,7 +45,11 @@ public class RootPlugin extends RenderPlugin {
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new Pinger("pinger"));
+        if (config.containsKey("pinger.interval")) {
+            add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
+        } else {
+            add(new Pinger("pinger"));
+        }
 
         if (config.getString(RenderService.MODEL_ID) != null) {
             String modelId = config.getString(RenderService.MODEL_ID);

@@ -50,7 +50,11 @@ public class RootPlugin extends TabsPlugin {
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new Pinger("pinger"));
+        if (config.containsKey("pinger.interval")) {
+            add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
+        } else {
+            add(new Pinger("pinger"));
+        }
         add(new LogoutLink("logout"));
 
         PageLayoutSettings plSettings = new PageLayoutSettings();
