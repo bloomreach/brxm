@@ -26,12 +26,38 @@ import org.apache.wicket.util.time.Duration;
 public class Pinger extends Label {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
+    private final int DEFAULT_INTERVAL = 20;
+
+    /**
+     * Starts a default ping wicket components which uses a default frequency between ping intervals.
+     * After the elapse of each interval a roundtrip to the server is made using an Ajax call.
+     * @param id the wicket id to use
+     * @param duration the time to wait between ping interfals
+     */
     public Pinger(String id) {
         super(id);
+        add(new PingBehavior(Duration.seconds(DEFAULT_INTERVAL)));
+    }
 
-        add(new PingBehavior(Duration.seconds(20)));
+    /**
+     * Starts a default ping wicket components which uses the indicated duration between ping intervals.
+     * After the elapse of each interval a roundtrip to the server is made using an Ajax call.
+     * When the duration is negative, this wicket component behaves like a plain Label widget.
+     * @param id the wicket id to use
+     * @param duration the time to wait between ping interfals
+     */
+    public Pinger(String id, Duration interval) {
+        super(id);
+        if(interval != null) {
+            if (interval.greaterThan(0L)) {
+                add(new PingBehavior(interval));
+            }
+        } else {
+            add(new PingBehavior(Duration.seconds(DEFAULT_INTERVAL)));
+        }
     }
 
     private static class PingBehavior extends AbstractAjaxTimerBehavior {
@@ -46,5 +72,4 @@ public class Pinger extends Label {
             target.addComponent(getComponent());
         }
     }
-
 }
