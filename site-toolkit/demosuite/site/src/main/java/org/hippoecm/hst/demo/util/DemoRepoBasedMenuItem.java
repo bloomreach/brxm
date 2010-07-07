@@ -26,7 +26,7 @@ public class DemoRepoBasedMenuItem extends EditableMenuItemImpl {
     public DemoRepoBasedMenuItem(HippoFolderBean repoItem, EditableMenuItem parentItem, HstRequest request,
             HippoBean currentContentBean) {
         super(parentItem);
-        this.name = repoItem.getName();
+        this.name = repoItem.getLocalizedName();
         this.depth = parentItem.getDepth() - 1;
         this.repositoryBased = true;
         this.properties = repoItem.getProperties();
