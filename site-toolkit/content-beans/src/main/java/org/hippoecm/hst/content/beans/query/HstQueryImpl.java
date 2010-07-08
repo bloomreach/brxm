@@ -224,6 +224,19 @@ public class HstQueryImpl implements HstQuery {
         return query.toString();
     }
     
+    
+    @Override
+    public String toString() {
+        String query = null; 
+        try { 
+            query =  this.getQuery();
+        } catch (QueryException e) {
+            // already logged, only log message here
+            log.warn("cannot get query : ", e.getMessage());
+        }
+        return super.toString() + " = " + query;
+    }
+
     public HstQueryResult execute() throws QueryException {
         String query = getQuery();
         try {
