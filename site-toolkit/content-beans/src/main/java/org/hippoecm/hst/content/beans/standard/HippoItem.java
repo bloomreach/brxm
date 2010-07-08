@@ -413,10 +413,8 @@ public class HippoItem implements HippoBean {
             log.warn("Cannot compare the HippoBeans as one as a path that is null. Return false.");
             return false;
         }
-        if (compare.getPath().startsWith(this.getPath())) {
-            if (!isSelf(compare)) {
-                return true;
-            }
+        if (compare.getPath().startsWith(this.getPath()+"/")) {
+           return true;
         }
         return false;
     }
@@ -438,10 +436,8 @@ public class HippoItem implements HippoBean {
             log.warn("Cannot compare the HippoBeans as one as a path that is null. Return false.");
             return false;
         }
-        if (this.getPath().startsWith(compare.getPath())) {
-            if (!isSelf(compare)) {
-                return true;
-            }
+        if (this.getPath().startsWith(compare.getPath() + "/")) {
+            return true;
         }
         return false;
     }
