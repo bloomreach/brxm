@@ -32,7 +32,7 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
     //Set to true if Browse dialog should allow multiple file selection
     private boolean allowMultipleFiles = true;
 
-    //Max number of simultaneous uploads 
+    //Max number of simultaneous uploads
     private int simultaneousUploadLimit = 3;
 
     //Id of the ajaxIndicatorObject
@@ -40,6 +40,13 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
     //Locale shortcut for i18n css
     private String locale;
+
+    //If set every file selected will be directly uploaded
+    private boolean uploadAfterSelect;
+
+    private boolean clearAfterUpload;
+
+    private int clearTimeout;
 
     public boolean isAllowMultipleFiles() {
         return allowMultipleFiles;
@@ -97,4 +104,27 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
         this.locale = locale;
     }
 
+    public void setUploadAfterSelect(boolean uploadAfterSelect) {
+        this.uploadAfterSelect = uploadAfterSelect;
+    }
+
+    public boolean isUploadAfterSelect() {
+        return uploadAfterSelect;
+    }
+
+    public void setClearAfterUpload(boolean clearAfterUpload) {
+        this.clearAfterUpload = clearAfterUpload;
+    }
+
+    public boolean isClearAfterUpload() {
+        return clearAfterUpload;
+    }
+
+    public void setClearTimeout(int clearTimeout) {
+        this.clearTimeout = clearTimeout;
+    }
+
+    public int getClearTimeout() {
+        return clearTimeout;
+    }
 }
