@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.QueryManager;
 
-import javax.security.auth.callback.CallbackHandler;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Request;
@@ -42,7 +41,6 @@ import org.hippoecm.frontend.WebApplicationHelper;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPlugin;
-import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -197,7 +195,8 @@ public class UserSession extends WebSession {
 
     /**
      * Release the JCR {@link javax.jcr.Session} that is bound to the Wicket session.  The session
-     * model will take care of saving any pending changes.
+     * model will take care of saving any pending changes.  Event listeners will remain registered and
+     * will reregister with a new session.
      */
     public void releaseJcrSession() {
         IModel<Session> sessionModel = getJcrSessionModel();
@@ -265,10 +264,10 @@ public class UserSession extends WebSession {
                 jcrSessions.remove(this);
             }
         }
-        JcrObservationManager.getInstance().detachSession();
         if (oldModel != null) {
             oldModel.detach();
         }
+        JcrObservationManager.getInstance().cleanupListeners(this);
 
         dirty();
         throw new RestartResponseException(WebApplication.get().getHomePage());
@@ -326,14 +325,20 @@ public class UserSession extends WebSession {
         super.detach();
     }
 
+    @SuppressWarnings("unused")
+    private boolean bound = false;
+
+    void onBind() {
+        bound = true;
+    }
+
     void unbind() {
-        JcrSessionReference ref;
-        synchronized (jcrSessions) {
-            ref = jcrSessions.remove(this);
-        }
-        if (ref != null) {
-            ref.jcrSession.detach();
-        }
+        releaseJcrSession();
+
+        JcrObservationManager.getInstance().cleanupListeners(this);
+        JcrSessionReference.cleanup();
+
+        bound = false;
     }
     
     /**
