@@ -26,7 +26,7 @@
 - hst:renderpath (string)
 - hst:containers (string) multiple
 
-[hst:templates]
+[hst:templates] orderable
 + * (hst:template)
 
 [hst:component] > nt:base, hst:descriptive orderable
