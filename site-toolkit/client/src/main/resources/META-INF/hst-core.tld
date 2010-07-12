@@ -242,6 +242,14 @@
             <type>java.lang.Boolean</type>
             <description>If the link that is created should be the canonical link, use this attr with value true</description>
         </attribute>
+        <attribute>
+            <name>contextRelative</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+            <description>If the link should be created for the virtual location of the jcr node behind the bean, use this attr with value true. When having canonical='true', this 
+            attribute is ignored.</description>
+        </attribute>
         <example><![CDATA[
         <!-- In a body component: A list of document names with summaries and links to those documents: -->
 
@@ -296,7 +304,7 @@
         <body-content>JSP</body-content>
         <description>This sitemapitem tag can nested into a hst link tag to provide a preferred sitemap item to create the link for. You can define the 
         preferred sitemap item by choosing one (no more) of these attributes: preferItem, preferItemId, preferItemPath or preferItemByPath. Optionally 
-        add a fallback attr which is a boolean true or false</description>
+        add a fallback attr which is a boolean true or false. Default fallback is true</description>
         <attribute>
             <name>preferItem</name>
             <required>false</required>
@@ -385,6 +393,17 @@
             <rtexprvalue>true</rtexprvalue>
             <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
             <description>A HippoFacetSubNavigation object.</description>
+        </attribute>
+        <attribute>
+            <name>removeByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean path of a HippoFacetSubNavigation object which can be retrieved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
+                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
+            </description>
         </attribute>
         <attribute>
             <name>removeList</name>

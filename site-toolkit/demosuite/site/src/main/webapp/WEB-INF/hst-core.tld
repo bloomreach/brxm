@@ -242,6 +242,14 @@
             <type>java.lang.Boolean</type>
             <description>If the link that is created should be the canonical link, use this attr with value true</description>
         </attribute>
+        <attribute>
+            <name>contextRelative</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+            <description>If the link should be created for the virtual location of the jcr node behind the bean, use this attr with value true. When having canonical='true', this 
+            attribute is ignored.</description>
+        </attribute>
         <example><![CDATA[
         <!-- In a body component: A list of document names with summaries and links to those documents: -->
 

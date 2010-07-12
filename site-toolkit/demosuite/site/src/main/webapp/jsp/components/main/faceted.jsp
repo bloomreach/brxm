@@ -75,8 +75,8 @@
             <br />
             <c:forEach var="result" items="${resultset}">
               <ul class="list-overview">
-                <hst:link var="link" hippobean="${result}">
-                <hst:sitemapitem preferPath="/faceted"/>
+                <hst:link var="link" hippobean="${result}" contextRelative="true" >
+                  <hst:sitemapitem preferPath="/faceted" />
                 </hst:link>
                 <li class="title">
                    <c:choose>
