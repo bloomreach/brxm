@@ -284,6 +284,9 @@ public class JcrObservationManager implements ObservationManager {
 
         void dispose() {
             if (session != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("disposing listener " + this);
+                }
                 try {
                     unsubscribe();
                 } catch (RepositoryException ex) {
@@ -551,6 +554,8 @@ public class JcrObservationManager implements ObservationManager {
             if (session == null) {
                 throw new ObservationException("Listener " + this + " is no longer registerd");
             } else if (!session.isLive()) {
+                log.info("resubscribing listener " + this);
+
                 // events have references to the session, so they are useless now
                 events.clear();
                 try {
@@ -1038,22 +1043,20 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
-    public void detachSession() {
+    public void cleanupListeners(UserSession session) {
         cleanup();
 
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
-        if (session != null) {
-            synchronized (listeners) {
-                for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext(); ) {
-                    JcrListener listener = iter.next();
-                    if (listener.getSession() == session) {
-                        iter.remove();
-                    }
+        synchronized (listeners) {
+            for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext(); ) {
+                JcrListener listener = iter.next();
+                if (listener.getSession() == session) {
+                    iter.remove(); 
+                    listener.dispose();
                 }
-            }
-        }
-    }
-    
+            }       
+        }           
+    }                   
+
     void processEvents() {
         cleanup();
 

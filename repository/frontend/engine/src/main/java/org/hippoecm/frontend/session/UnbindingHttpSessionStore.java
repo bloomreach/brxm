@@ -68,6 +68,7 @@ public class UnbindingHttpSessionStore extends HttpSessionStore {
             HttpSession httpSession = getHttpSession(webRequest);
 
             sessions.put(httpSession.getId(), new WeakReference<UserSession>((UserSession) newSession));
+            ((UserSession) newSession).onBind();
         }
     }
 
