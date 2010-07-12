@@ -15,13 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.repository.api.HippoNodeType;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 public class TypeRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
@@ -31,29 +33,14 @@ public class TypeRenderer extends AbstractNodeRenderer {
 
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
-        String label;
+        return new Label(id, getLabelModel(node));
+    }
 
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            label = node.getPrimaryNodeType().getName();
-            NodeIterator nodeIt = node.getNodes();
-            while (nodeIt.hasNext()) {
-                Node childNode = nodeIt.nextNode();
-                if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    label = childNode.getPrimaryNodeType().getName();
-                    break;
-                }
-            }
-        } else if (node.isNodeType("hippostd:folder")) {
-            label = "orderable folder";
-        } else if (node.isNodeType("hippostd:directory")) {
-            label = "simple folder";
-        } else {
-            label = node.getPrimaryNodeType().getName();
+    private IModel<String> getLabelModel(Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
+            node = node.getNode(node.getName());
         }
-        if (label.indexOf(":") > -1) {
-            label = label.substring(label.indexOf(":") + 1);
-        }
-        return new Label(id, label);
+        return new TypeTranslator(new JcrNodeTypeModel(node.getPrimaryNodeType())).getTypeName();
     }
 
 }
