@@ -106,9 +106,15 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem,
             boolean fallback) {
+        return this.create(node, resolvedSiteMapItem, preferredItem, fallback, false);
+    }
+    
+    public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem,
+            boolean fallback, boolean contextRelative) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
         linkResolver.preferredItem = preferredItem;
         linkResolver.fallback = fallback;
+        linkResolver.contextRelative = contextRelative;
         return linkResolver.resolve();
     }
     
@@ -237,10 +243,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         HstSiteService hstSite;
         
         HstSiteMapItem preferredItem;
-        boolean onlyVirtual;
+        boolean virtual;
         boolean canonicalLink;
         boolean representsDocument;
         boolean fallback;
+        boolean contextRelative;
         
         
         /**
@@ -275,8 +282,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             String pathInfo = null;
             boolean postProcess = true;
             
-            Node canonicalNode = JCRUtilities.getCanonical(node);
-           
+            Node canonicalNode = null;
+            
+            if(!contextRelative) {
+                // not context relative, so we try to compute a link wrt the canonical location of the jcr node. If the canonical location is null (virtual only nodes)
+                // we'll continue with the non canonical node
+                canonicalNode = JCRUtilities.getCanonical(node);
+            }
+            
             try {
                 if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
                     /*
@@ -301,26 +314,30 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     if(canonicalNode != null) {
                         node = canonicalNode;
                     } else {
-                        onlyVirtual = true;
+                        virtual = true;
                     }
                     nodePath = node.getPath();
                     if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
                         node = JCRUtilities.getDeref(node);
                         if( node == null ) {
                             log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
-                            return null;
+                            return pageNotFoundLink(hstSite);
                         }
                     }
         
-                    if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                        node = node.getParent();
+                    if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            representsDocument = true;
+                        } else if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                            node = node.getParent();
+                            representsDocument = true;
+                        } else if (node.getParent().isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                            representsDocument = true;
+                        } 
                     }
                     
                     nodePath = node.getPath();
-                    if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        representsDocument = true;
-                    }
-                    
+                  
                     if(isBinaryLocation(nodePath)) {
                         log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
@@ -329,13 +346,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         return new HstLinkImpl(pathInfo, hstSite, containerResource);
                         
                     } else {
-                        if(!onlyVirtual && nodePath.startsWith(hstSite.getCanonicalContentPath())) {
+                        if(!virtual && nodePath.startsWith(hstSite.getCanonicalContentPath())) {
                             nodePath = nodePath.substring(hstSite.getCanonicalContentPath().length());
-                        } else if (onlyVirtual && nodePath.startsWith(hstSite.getContentPath())) { 
+                        } else if (virtual && nodePath.startsWith(hstSite.getContentPath())) { 
                             nodePath = nodePath.substring(hstSite.getContentPath().length());
                         } else {
                             log.warn("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), nodePath);
-                            // TODO try subsites
+                            // TODO try subsites CROSS-SITE/DOMAIN-LINKING!!!
                             return pageNotFoundLink(hstSite);
                         }
                         

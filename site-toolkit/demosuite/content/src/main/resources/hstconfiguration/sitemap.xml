@@ -269,6 +269,17 @@
                 <sv:value>faceted/${1}</sv:value>
             </sv:property>
         </sv:node>
+        <sv:node sv:name="_any_.html">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/faceted_detailpage</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>faceted/${1}</sv:value>
+            </sv:property>
+        </sv:node>
     </sv:node>
     <sv:node sv:name="products">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -286,6 +297,8 @@
             </sv:property>
         </sv:node>
     </sv:node>
+    
+    <!-- Example how to use sitemap item handlers -->
     <sv:node sv:name="cached">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
