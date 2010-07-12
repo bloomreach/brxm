@@ -875,7 +875,7 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 
 .hippo-editor-field-html-preview a { text-decoration: underline; }
 
-.default-textarea textarea { width: 500px; height: 150px; }
+.default-textarea textarea { width: 100%; height: 150px; }
 
 /* Xinha modal windows */
 /*div.wicket-modal div.link-picker select { margin-bottom:10px;}
