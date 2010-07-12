@@ -36,6 +36,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.jackrabbit.util.ISO8601;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;
 import org.quartz.ObjectAlreadyExistsException;
@@ -357,11 +358,15 @@ public class JCRJobStore implements JobStore {
         if(log.isDebugEnabled()) {
             log.trace("acquireNextTrigger({})",noLaterThan);
         }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date(noLaterThan));
         try {
             Session session = getSession(ctxt);
             session.refresh(true);
             QueryManager qMgr = session.getWorkspace().getQueryManager();
-            Query query = qMgr.createQuery("SELECT * FROM hipposched:trigger ORDER BY hipposched:nextFireTime", Query.SQL);
+            Query query = qMgr.createQuery(
+                    "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
+                            + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
             QueryResult result = query.execute();
             Node triggerNode = null;
             for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
