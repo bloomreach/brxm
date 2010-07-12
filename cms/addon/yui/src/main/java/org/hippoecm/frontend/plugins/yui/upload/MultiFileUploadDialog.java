@@ -30,7 +30,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
-    private MultiFileUploadWidget widget;
+    private FileUploadWidget widget;
     private AjaxButton ajaxButton;
 
     @Override
@@ -59,7 +59,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 //TODO: add AjaxBusyIndicator
-                target.appendJavascript("YAHOO.hippo.Upload.upload();");
+                target.appendJavascript(widget.getStartAjaxUploadScript());
                 //setEnabled(false);
                 target.addComponent(this);
             }
@@ -68,7 +68,10 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         ajaxButton.setVisible(false);
         addButton(ajaxButton);
 
-        widget = new MultiFileUploadWidget("uploadWidget", fileExtensions) {
+        FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
+        settings.setFileExtensions(fileExtensions);
+        settings.setMaxNumberOfFiles(25);
+        widget = new FileUploadWidget("uploadWidget", settings) {
 
             @Override
             protected void onFileUpload(FileUpload file) {

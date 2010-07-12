@@ -22,7 +22,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -36,6 +37,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.ResourceHelper;
+import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
+import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,55 +75,82 @@ public class ResourceUploadPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         private FileUploadField fileUploadField;
+        private FileUploadWidget widget;
 
         public FileUploadForm(String name) {
             super(name);
 
-            add(fileUploadField = new FileUploadField("fileInput"));
+            FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
+            settings.setAutoUpload(true);
+            settings.setClearAfterUpload(true);
+            settings.setClearTimeout(1000);
 
-            add(new Button("submit", new StringResourceModel("upload", ResourceUploadPlugin.this, null)));
+            add(widget = new FileUploadWidget("multifile", settings) {
+
+                @Override
+                protected void onFileUpload(FileUpload fileUpload) {
+                    super.onFileUpload(fileUpload);
+                    handleUpload(fileUpload);
+                }
+
+            });
+//            add(new AjaxButton("ajaxsubmit") {
+//
+//                @Override
+//                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+//                    target.appendJavascript(widget.getStartAjaxUploadScript());
+//                }
+//            });
+
+
+    //            add(fileUploadField = new FileUploadField("fileInput"));
+    //
+    //            add(new Button("submit", new StringResourceModel("upload", ResourceUploadPlugin.this, null)));
         }
 
         @Override
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {
-                String fileName = upload.getClientFileName();
-                String mimeType = upload.getContentType();
+            }
+        }
+    }
 
-                String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+    private void handleUpload(FileUpload upload) {
+        String fileName = upload.getClientFileName();
+        String mimeType = upload.getContentType();
 
-                // check if obligatory types/file extensions are set and matched
-                if (types != null && types.getString(extension.toLowerCase()) == null) {
-                    String extensions = StringUtils.join(types.keySet().toArray(), ", ");
-                    getDialogService().show(
-                            new ExceptionDialog(new StringResourceModel("unrecognized", ResourceUploadPlugin.this,
-                                    null, new Object[] { extension, extensions }).getString()) {
-                                public IValueMap getProperties() {
-                                    return SMALL;
-                                }
+        String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
 
-                            });
-                    log.warn("Unrecognised file type");
-                } else {
-                    JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
-                    Node node = nodeModel.getNode();
-                    try {
-                        node.setProperty("jcr:mimeType", mimeType);
-                        node.setProperty("jcr:data", upload.getInputStream());
-                        node.setProperty("jcr:lastModified", Calendar.getInstance());
-                        ResourceHelper.validateResource(node, fileName);
-                    } catch (RepositoryException ex) {
-                        error(ex);
-                        log.error(ex.getMessage());
-                    } catch (IOException ex) {
-                        // FIXME: report back to user
-                        log.error(ex.getMessage());
-                    } catch (GalleryException ex) {
-                        error(ex);
-                        log.error(ex.getMessage());
-                    }
-                }
+        // check if obligatory types/file extensions are set and matched
+        if (types != null && types.getString(extension.toLowerCase()) == null) {
+            String extensions = StringUtils.join(types.keySet().toArray(), ", ");
+            getDialogService().show(
+                    new ExceptionDialog(new StringResourceModel("unrecognized", ResourceUploadPlugin.this,
+                            null, new Object[]{extension, extensions}).getString()) {
+                        public IValueMap getProperties() {
+                            return SMALL;
+                        }
+
+                    });
+            log.warn("Unrecognised file type");
+        } else {
+            JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
+            Node node = nodeModel.getNode();
+            try {
+                node.setProperty("jcr:mimeType", mimeType);
+                node.setProperty("jcr:data", upload.getInputStream());
+                node.setProperty("jcr:lastModified", Calendar.getInstance());
+                ResourceHelper.validateResource(node, fileName);
+            } catch (RepositoryException ex) {
+                error(ex);
+                log.error(ex.getMessage());
+            } catch (IOException ex) {
+                // FIXME: report back to user
+                log.error(ex.getMessage());
+            } catch (GalleryException ex) {
+                error(ex);
+                log.error(ex.getMessage());
             }
         }
     }

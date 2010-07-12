@@ -28,23 +28,23 @@ import org.hippoecm.frontend.plugins.yui.upload.multifile.MultiFileUploadCompone
 
 import java.util.Collection;
 
-public class MultiFileUploadWidget extends Panel implements ProbeFlashBehavior.IProbeFlashHandler {
+public class FileUploadWidget extends Panel implements ProbeFlashBehavior.IProbeFlashHandler {
     final static String SVN_ID = "$Id$";
 
     private static final String COMPONENT_ID = "component";
 
-    private String[] fileExtensions;
+    private FileUploadWidgetSettings settings;
     private boolean isFlash;
 
     private Panel panel;
 
     ProbeFlashBehavior probeBehavior;
 
-    public MultiFileUploadWidget(String id, String[] fileExtensions) {
+    public FileUploadWidget(String id, FileUploadWidgetSettings settings) {
         super(id);
         setOutputMarkupId(true);
 
-        this.fileExtensions = fileExtensions;
+        this.settings = settings;
 
         add(probeBehavior = new ProbeFlashBehavior(this) {
 
@@ -66,19 +66,23 @@ public class MultiFileUploadWidget extends Panel implements ProbeFlashBehavior.I
     public void handleFlash(AjaxRequestTarget target) {
         isFlash = true;
 
-        AjaxMultiFileUploadSettings settings = new AjaxMultiFileUploadSettings();
-        settings.setFileExtensions(fileExtensions);
-        settings.setAjaxIndicatorId(getAjaxIndicatorId());
-        replace(panel = new AjaxMultiFileUploadComponent(COMPONENT_ID, settings) {
+        AjaxMultiFileUploadSettings ajaxMultiFileUploadSettings = new AjaxMultiFileUploadSettings();
+        ajaxMultiFileUploadSettings.setFileExtensions(settings.getFileExtensions());
+        ajaxMultiFileUploadSettings.setAllowMultipleFiles(settings.getMaxNumberOfFiles() > 1);
+        ajaxMultiFileUploadSettings.setUploadAfterSelect(settings.isAutoUpload());
+        ajaxMultiFileUploadSettings.setClearAfterUpload(settings.isClearAfterUpload());
+        ajaxMultiFileUploadSettings.setClearTimeout(settings.getClearTimeout());
+        ajaxMultiFileUploadSettings.setAjaxIndicatorId(getAjaxIndicatorId());
+        replace(panel = new AjaxMultiFileUploadComponent(COMPONENT_ID, ajaxMultiFileUploadSettings) {
 
             @Override
             protected void onFileUpload(FileUpload fileUpload) {
-                MultiFileUploadWidget.this.onFileUpload(fileUpload);
+                FileUploadWidget.this.onFileUpload(fileUpload);
             }
 
             @Override
             protected void onFinish(AjaxRequestTarget target) {
-                MultiFileUploadWidget.this.onFinishAjaxUpload(target);
+                FileUploadWidget.this.onFinishAjaxUpload(target);
             }
 
             @Override
@@ -126,32 +130,36 @@ public class MultiFileUploadWidget extends Panel implements ProbeFlashBehavior.I
     }
 
     private boolean fileUploadIsValid(FileUpload upload) {
-        if (fileExtensions == null || fileExtensions.length == 0) {
+        if (settings.getFileExtensions() == null || settings.getFileExtensions().length == 0) {
             return true;
         }
 
         String fileName = upload.getClientFileName();
         int dotIndex = fileName.lastIndexOf('.');
         if(dotIndex == -1 || dotIndex == fileName.length()-1) {
-            error("No extension found on uploaded file " + fileName + ". Extension allowed: " + fileExtensions);
+            error("No extension found on uploaded file " + fileName + ". Extension allowed: " + settings.getFileExtensions());
             return false;
         }
         String uploadExt = fileName.substring(dotIndex + 1).toLowerCase();
-        for (String extension : fileExtensions) {
+        for (String extension : settings.getFileExtensions()) {
             extension = extension.toLowerCase();
             int extDotIndex = extension.lastIndexOf('.');
             if(extDotIndex > -1) {
                 extension = extension.substring(extDotIndex + 1);
             }
             if(uploadExt.equals(extension)) {
-                return true;
             }
+            return true;
         }
         StringBuilder sb = new StringBuilder();
-        for (String extension : fileExtensions) {
+        for (String extension : settings.getFileExtensions()) {
             sb.append(extension + " ");
         }
         error("The file you've uploaded contains an extension we don't allow. Allowed extensions are: " + sb.toString());
         return false;
+    }
+
+    public String getStartAjaxUploadScript() {
+        return "YAHOO.hippo.Upload.upload();";
     }
 }
