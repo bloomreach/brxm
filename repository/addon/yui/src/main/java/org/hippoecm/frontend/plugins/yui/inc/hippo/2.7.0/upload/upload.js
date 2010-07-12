@@ -117,6 +117,9 @@ if (!YAHOO.hippo.Upload) {
 	                  this.fileList = event.fileList;
     	              this._createDatatable(this.fileList);
                 }
+                if(this.config.uploadAfterSelect === true) {
+                    this.upload();
+                }
             },
 
             onUploadStart : function(event) {
@@ -180,6 +183,15 @@ if (!YAHOO.hippo.Upload) {
                     
                     var url = this.config.callbackUrl + "&finished=true";
                     this.config.callbackFunction.call(this, url);
+
+                    console.log('1 ' + Lang.dump(this.config));
+                    if(this.config.clearAfterUpload === true) {
+                        console.log('2')
+                        YAHOO.later(config.clearTimeout, this, function() {
+                            console.log('3')
+                            this._removeDatatable();
+                        });
+                    }
                 }
             },
 
@@ -305,6 +317,11 @@ if (!YAHOO.hippo.Upload) {
                 }
             },
 
+            _removeDatatable : function() {
+                this.datatable.destroy();
+                this.datatable = null;
+            },
+
             _titleFormatter : function(elLiner, oRecord, oColumn, oData) {
                 if(oRecord._oData.progress == 100) {
                     Dom.addClass(elLiner, 'finished');
@@ -377,6 +394,9 @@ if (!YAHOO.hippo.Upload) {
 
                 if(this.indicator != null) {
                     this.indicator.hide();
+                }
+                if(this.datatable != null) {
+                    this.datatable.destroy();
                 }
 
                 this.progressBars.forEach(this, function(k, v) {
