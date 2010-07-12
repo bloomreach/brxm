@@ -46,7 +46,6 @@ if (!YAHOO.hippo.Widget) {
             },
 
             update : function(id) {
-                console.log('ID: ' + id);
                 var widget = Dom.get(id);
                 if(widget == null) {
                     return;
@@ -54,7 +53,7 @@ if (!YAHOO.hippo.Widget) {
                 if(!Lang.isUndefined(widget[this.NAME])) {
                    widget[this.NAME].update();
                 } else {
-                    console.log('vaag')
+                    //console.log('vaag')
                 }
             }
         };
