@@ -19,7 +19,6 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
@@ -376,24 +375,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             String nodeName = handleNode.getName();
             HippoBean folderBean = contentBean.getParentBean();
             Node folderNode = NodeUtils.getCanonicalNode(folderBean.getNode());
-            
-            // TODO when HREPTWO-2844 is fixed, this code can be removed
-            if(handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                handleNode.checkout();
-                NodeIterator it = handleNode.getNodes();
-                while(it.hasNext()) {
-                    Node doc = it.nextNode();
-                    if(doc == null) { 
-                        continue;
-                    }
-                    if(doc.isNodeType("mix:versionable")) {
-                        doc.checkout();
-                    }
-                }
-            } else {
-                // TODO : check for childs all being checked out??
-            }
-                
+               
             Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
             
             if (wf instanceof FolderWorkflow) {
