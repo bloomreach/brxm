@@ -65,8 +65,19 @@ public class HstLinkTag extends TagSupport {
     protected String scope;
 
     protected boolean external;
-    
+
+    /**
+     * boolean indicating whether the link that will be created is the canonical link. The canonical link is always the same, regardless the current context, in other 
+     * words, regardless the current URL. 
+     */
     protected boolean canonical;
+    
+    /**
+     * boolean indicating whether the link that will be created is wrt the virtual location of the jcr Node backing the HippoBean or wrt the canonical location.
+     * Note that this is different then the variable <code>canonical</code> : <code>canonical</code> true or false refers to whether the link should be
+     * created wrt the current url or not. 
+     */
+    protected boolean contextRelative;
     
     protected boolean skipTag; 
 
@@ -134,7 +145,7 @@ public class HstLinkTag extends TagSupport {
             if(canonical) {
                 this.link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem);
             } else {
-                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem, fallback);
+                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem, fallback, contextRelative);
             }
         }
         
@@ -189,6 +200,7 @@ public class HstLinkTag extends TagSupport {
         preferSiteMapItem = null;
         fallback = true;
         canonical = false;
+        contextRelative = false;
         
         return EVAL_PAGE;
     }
@@ -245,8 +257,14 @@ public class HstLinkTag extends TagSupport {
     public void setPath(String path) {
         this.path = path;
     }
+    
     public void setCanonical(boolean canonical) {
         this.canonical = canonical;
+    }
+    
+    
+    public void setContextRelative(boolean contextRelative) {
+        this.contextRelative = contextRelative;
     }
     
     public void setHippobean(HippoBean hippoBean) {

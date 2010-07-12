@@ -16,7 +16,9 @@
 package org.hippoecm.hst.demo.components;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
+import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetNavigation;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -32,6 +34,14 @@ public class FacetedRight extends AbstractSearchComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
        
         HippoBean currentBean = this.getContentBean(request);
+        
+        if(currentBean instanceof HippoDocumentBean && currentBean.getParentBean() instanceof HippoResultSetBean) {
+            // get the current faceted navigation bean
+            currentBean = currentBean.getParentBean().getParentBean();
+        }else if(currentBean instanceof HippoResultSetBean) {
+            // get the current faceted navigation bean
+            currentBean = currentBean.getParentBean(); 
+        }
         
         if(currentBean instanceof HippoFacetNavigation || currentBean instanceof HippoFacetChildNavigationBean) {
             request.setAttribute("facetnav", currentBean);
