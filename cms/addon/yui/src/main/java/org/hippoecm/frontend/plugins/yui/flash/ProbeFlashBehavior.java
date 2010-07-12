@@ -64,6 +64,7 @@ public abstract class ProbeFlashBehavior extends AbstractYuiAjaxBehavior {
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "flash");
         context.addTemplate(template);
+        context.addOnDomLoad("YAHOO.hippo.Flash.probe();");
     }
 
 

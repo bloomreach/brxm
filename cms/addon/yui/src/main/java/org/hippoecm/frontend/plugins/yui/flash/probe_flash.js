@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-YAHOO.hippo.Flash.probe(${config});
+YAHOO.hippo.Flash.register(${config});

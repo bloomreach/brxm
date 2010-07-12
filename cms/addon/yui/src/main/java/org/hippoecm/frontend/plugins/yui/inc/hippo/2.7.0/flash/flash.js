@@ -15,14 +15,21 @@ if (!YAHOO.hippo.Flash) {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
         YAHOO.hippo.FlashImpl = function() {
+            this.config = null;
         };
 
         YAHOO.hippo.FlashImpl.prototype = {
 
-            probe : function(config) {
-                var playerVersion = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion();
-                var url = config.callbackUrl + '&major=' + playerVersion.major + '&minor=' + playerVersion.minor + '&rev=' + playerVersion.rev;
-                config.callbackFunction(url);
+            register : function(config) {
+                this.config = config;
+            },
+
+            probe : function() {
+                if(this.config != null) {
+                    var playerVersion = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion();
+                    var url = this.config.callbackUrl + '&major=' + playerVersion.major + '&minor=' + playerVersion.minor + '&rev=' + playerVersion.rev;
+                    this.config.callbackFunction(url);
+                }
             }
         };
 
