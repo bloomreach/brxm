@@ -27,9 +27,6 @@ public class StripScriptTest {
 
     @Test
     public void stripJavascriptTest() throws Exception {
-        String nullModel = null;
-        assertEquals(nullModel, new StripScriptModel(null).getObject());
-
         String nullValue = null;
         assertEquals(nullValue, new StripScriptModel(new Model<String>(nullValue)).getObject());
 
@@ -41,6 +38,9 @@ public class StripScriptTest {
 
         String simple = "<html><body><script type=\"text/javascript\">alert('hello world');</script></body></html>";
         assertEquals("<html><body></body></html>", new StripScriptModel(new Model<String>(simple)).getObject());
+
+        String noclose = "<html><body><script type=\"text/javascript\" src=\"http://example.com/\"/></body></html>";
+        assertEquals("<html><body></body></html>", new StripScriptModel(new Model<String>(noclose)).getObject());
 
         String multiLine = "<html><body>" +
                 "<p>Some text <script type=\"text/javascript\">alert('hello world');</script></p>" +
