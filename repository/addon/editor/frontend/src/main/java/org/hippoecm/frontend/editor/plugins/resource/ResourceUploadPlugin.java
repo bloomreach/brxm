@@ -84,28 +84,16 @@ public class ResourceUploadPlugin extends RenderPlugin {
             settings.setAutoUpload(true);
             settings.setClearAfterUpload(true);
             settings.setClearTimeout(1000);
+            settings.setHideBrowseDuringUpload(true);
 
             add(widget = new FileUploadWidget("multifile", settings) {
 
                 @Override
                 protected void onFileUpload(FileUpload fileUpload) {
-                    super.onFileUpload(fileUpload);
                     handleUpload(fileUpload);
                 }
 
             });
-//            add(new AjaxButton("ajaxsubmit") {
-//
-//                @Override
-//                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-//                    target.appendJavascript(widget.getStartAjaxUploadScript());
-//                }
-//            });
-
-
-    //            add(fileUploadField = new FileUploadField("fileInput"));
-    //
-    //            add(new Button("submit", new StringResourceModel("upload", ResourceUploadPlugin.this, null)));
         }
 
         @Override

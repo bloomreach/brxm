@@ -147,6 +147,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     protected void onModelChanged() {
         replace(createResourceFragment("fragment", getModel()));
         super.onModelChanged();
+        redraw();
     }
 
 }

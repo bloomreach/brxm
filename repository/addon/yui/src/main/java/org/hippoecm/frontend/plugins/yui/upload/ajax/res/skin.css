@@ -1,19 +1,22 @@
-#selectFilesLink {
+
+.resource-values {overflow:auto;}
+
+.selectFilesLink {
     width: 244px;
     height: 26px;
 }
 
-#selectFilesLink.i18n-en {
+.i18n-en {
     background-image: url("select_upload_en.png");
 }
-#selectFilesLink.i18n-nl{
+.i18n-nl{
     background-image: url("select_upload_nl.png");
 }
 
-#selectFilesLink.i18n-en.rollover {
+.i18n-en.rollover {
     background-image: url("select_upload_en_hover.png");
 }
-#selectFilesLink.i18n-nl.rollover {
+.i18n-nl.rollover {
     background-image: url("select_upload_nl_hover.png");
 }
 
@@ -23,9 +26,9 @@
 .yau-select-link-rollout  {color: #0000CC; background-color: #FFFFFF; }
 .yau-select-link-rollover {color: #000000; background-color: #FFFFFF;}
 
-#dataTableContainer {margin-top: 10px;}
+.dataTableContainer {margin-top: 10px;}
 
-#dataTableContainer .remove_file {
+.dataTableContainer .remove_file {
     background-image: url("delete-small-16.png");
     width: 16px;
     height: 16px;
