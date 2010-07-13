@@ -138,6 +138,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), null);
         column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new GalleryFolderAttributeModifier());
+        column.setCssClass("image-gallery-icon");
         columns.add(column);
 
         column = new ListColumn<Node>(new StringResourceModel("gallery-name", this, null), "name");

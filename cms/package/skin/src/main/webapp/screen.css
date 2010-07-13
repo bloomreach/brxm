@@ -252,6 +252,7 @@ padding-right: 9px;
 .hippo-list-details th a {color: #666666;}
 
 .hippo-list-details tr.even.hippo-list-selected td, .hippo-list-details tr.odd.hippo-list-selected td {background: #ffe29a; }
+.hippo-list-details tr.even.hippo-list-selected, .hippo-list-details tr.odd.hippo-list-selected {background: #ffe29a; }
 
 .hippo-list-details .hippo-list-order-ascending{background: url('images/icons/arrow-sort-down-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-descending {background: url('images/icons/arrow-sort-up-16.png') center right no-repeat; padding-right: 20px;}
@@ -499,10 +500,10 @@ background-image:url(images/box-grey2.png);}
 .hippo-root div.wicket-mask-dark{opacity: 0.5; filter:alpha(opacity=50);}
 
 /* Picker General Styling */
-.hippo-picker{background: url("images/picker-back.png") repeat-y; height: 356px;}
-.hippo-picker-tree{width: 193px; float: left;} 
+.hippo-picker{/*background: url("images/picker-back.png") repeat-y;*/ height: 356px;}
+.hippo-picker-tree{width: 193px; float: left; border-right: 1px solid #afafaf;}
 .hippo-picker-tree .hippo-tree{ width: 193px; }
-.hippo-picker-list-details{height: 331px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto; position: relative; overflow: auto}
+.hippo-picker-list-details{height: 331px; margin-left: 0px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto; position: relative; overflow: auto}
 .hippo-picker-properties{clear:both; height: 35px; padding: 10px; margin-top:0px; border-top: 1px solid #afafaf;}
 .hippo-picker .hippo-list-details .hippo-list-paging td{width: 630px; text-align: right;}
 .hippo-picker .hippo-window-form td input{width: 200px}
@@ -1298,8 +1299,13 @@ table.hippo-list-details > tbody {
   overflow-y: auto;
 }
 
-.navigator-center-body table.hippo-list-documents, .navigator-center-body table.hippo-gallery-images, .navigator-center-body table.hippo-gallery-assets,
-.hippo-dialog-picker table.hippo-list-documents, .hippo-dialog-picker table.hippo-gallery-images, .hippo-dialog-picker table.hippo-gallery-assets {
+.navigator-center-body table.hippo-list-documents,
+.navigator-center-body table.hippo-gallery-images,
+.navigator-center-body table.hippo-gallery-assets,
+.navigator-center-body table.hippo-typeslist,
+.hippo-dialog-picker table.hippo-list-documents,
+.hippo-dialog-picker table.hippo-gallery-images,
+.hippo-dialog-picker table.hippo-gallery-assets {
   border-collapse: inherit;
   background-color: #fff;
 }
