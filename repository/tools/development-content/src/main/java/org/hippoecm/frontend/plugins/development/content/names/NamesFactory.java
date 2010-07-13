@@ -33,9 +33,9 @@ public class NamesFactory {
     static final Logger log = LoggerFactory.getLogger(NamesFactory.class);
 
     /** Reads the list of names from the given source into the specified set. */
-    public Names newNames() {
+    public static Names newNames() {
         // read names from source
-        InputStream in = this.getClass().getResourceAsStream("dist-all-last.properties");
+        InputStream in = NamesFactory.class.getResourceAsStream("dist-all-last.properties");
         BufferedReader fin = new BufferedReader(new InputStreamReader(in));
         HashSet<String> names = new HashSet<String>();
         String line;

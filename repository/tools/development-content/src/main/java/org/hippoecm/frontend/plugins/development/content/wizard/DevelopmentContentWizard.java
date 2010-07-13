@@ -16,8 +16,6 @@
 
 package org.hippoecm.frontend.plugins.development.content.wizard;
 
-import java.util.Collection;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardModel;
@@ -34,7 +32,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.validation.validator.NumberValidator;
+import org.apache.wicket.validation.validator.RangeValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.DocumentSettings;
@@ -43,6 +41,9 @@ import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NameSett
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NodeTypeSettings;
 import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 import org.hippoecm.frontend.plugins.yui.tree.YuiJcrTree;
+
+import java.util.Collection;
+import java.util.List;
 
 public abstract class DevelopmentContentWizard extends AjaxWizard {
     private static final long serialVersionUID = 1L;
@@ -73,13 +74,13 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             String title = getStepTitle();
             if (title != null) {
-                setTitleModel(new Model(title));
+                setTitleModel(new Model<String>(title));
 
             }
 
             String sum = getStepSummary();
             if (sum != null) {
-                setSummaryModel(new Model(sum));
+                setSummaryModel(new Model<String>(sum));
 
             }
         }
@@ -100,9 +101,9 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
     protected abstract class ChooseFolderStep extends Step {
         private static final long serialVersionUID = 1L;
 
-        IModel model;
+        IModel<String> model;
 
-        public ChooseFolderStep(IDynamicWizardStep previousStep, IModel model) {
+        public ChooseFolderStep(IDynamicWizardStep previousStep, IModel<String> model) {
             super(previousStep);
 
             this.model = model;
@@ -147,7 +148,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             container.setOutputMarkupId(true);
             add(container);
 
-            CheckGroup group = new CheckGroup("typesGroup", new PropertyModel(settings, "types")) {
+            CheckGroup group = new CheckGroup<String>("typesGroup", new PropertyModel<Collection<String>>(settings, "types")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -159,7 +160,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             container.add(group);
 
             //group.add(new CheckGroupSelector("groupselector"));
-            final ListView typesListView = new ListView("types", getTypesModel()) {
+            final ListView<String> typesListView = new ListView<String>("types", getTypesModel()) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -188,18 +189,18 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             return false;
         }
 
-        private IModel getTypesModel() {
-            return new AbstractReadOnlyModel() {
+        private IModel<List<String>> getTypesModel() {
+            return new AbstractReadOnlyModel<List<String>>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Object getObject() {
+                public List<String> getObject() {
                     return getTypes();
                 }
             };
         }
 
-        protected abstract Collection<String> getTypes();
+        protected abstract List<String> getTypes();
     }
 
     protected abstract class NameSettingsStep extends Step {
@@ -208,12 +209,12 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         public NameSettingsStep(IDynamicWizardStep previousStep, NameSettings nameSettings) {
             super(previousStep);
 
-            RequiredTextField tf;
-            add(tf = new RequiredTextField("minLength", new PropertyModel(nameSettings, "minLength"), Integer.class));
-            tf.add(NumberValidator.range(1, 256));
+            RequiredTextField<Integer> tf;
+            add(tf = new RequiredTextField<Integer>("minLength", new PropertyModel<Integer>(nameSettings, "minLength"), Integer.class));
+            tf.add(new RangeValidator<Integer>(1, 256));
 
-            add(tf = new RequiredTextField("maxLength", new PropertyModel(nameSettings, "maxLength"), Integer.class));
-            tf.add(NumberValidator.range(1, 256));
+            add(tf = new RequiredTextField<Integer>("maxLength", new PropertyModel<Integer>(nameSettings, "maxLength"), Integer.class));
+            tf.add(new RangeValidator<Integer>(1, 256));
         }
     }
 
@@ -223,17 +224,17 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         public FolderSettingsStep(IDynamicWizardStep previousStep, FolderSettings folderSettings) {
             super(previousStep);
 
-            RequiredTextField tf;
-            add(tf = new RequiredTextField("depth", new PropertyModel(folderSettings, "depth"), Integer.class));
-            tf.add(NumberValidator.range(0, 35));
+            RequiredTextField<Integer> tf;
+            add(tf = new RequiredTextField<Integer>("depth", new PropertyModel<Integer>(folderSettings, "depth"), Integer.class));
+            tf.add(new RangeValidator<Integer>(0, 35));
 
-            add(tf = new RequiredTextField("minimumChildNodes", new PropertyModel(folderSettings, "minimumChildNodes"),
+            add(tf = new RequiredTextField<Integer>("minimumChildNodes", new PropertyModel<Integer>(folderSettings, "minimumChildNodes"),
                     Integer.class));
-            tf.add(NumberValidator.range(1, 256));
+            tf.add(new RangeValidator<Integer>(1, 256));
 
-            add(tf = new RequiredTextField("maximumChildNodes", new PropertyModel(folderSettings, "maximumChildNodes"),
+            add(tf = new RequiredTextField<Integer>("maximumChildNodes", new PropertyModel<Integer>(folderSettings, "maximumChildNodes"),
                     Integer.class));
-            tf.add(NumberValidator.range(1, 256));
+            tf.add(new RangeValidator<Integer>(1, 256));
         }
 
     }
@@ -244,9 +245,17 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         public DocumentSettingsStep(IDynamicWizardStep previousStep, DocumentSettings documentSettings) {
             super(previousStep);
 
-            RequiredTextField tf;
-            add(tf = new RequiredTextField("amount", new PropertyModel(documentSettings, "amount"), Integer.class));
-            tf.add(NumberValidator.range(0, 500));
+            RequiredTextField<Integer> tf;
+            add(tf = new RequiredTextField<Integer>("amount", new PropertyModel<Integer>(documentSettings, "amount"), Integer.class));
+            tf.add(new RangeValidator<Integer>(0, 500));
+
+            AjaxCheckBox checkbox = new AjaxCheckBox("addTags", new PropertyModel<Boolean>(documentSettings, "addTags")) {
+
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                }
+            };
+            add(checkbox);
         }
     }
 }
