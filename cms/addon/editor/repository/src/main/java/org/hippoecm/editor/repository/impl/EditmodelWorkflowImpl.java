@@ -32,6 +32,7 @@ import javax.jcr.nodetype.PropertyDefinition;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
@@ -142,6 +143,9 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     child.remove();
                 }
             }
+        }
+        if (target.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+            target.removeMixin(HippoNodeType.NT_TRANSLATED);
         }
 
         target.getParent().save();
