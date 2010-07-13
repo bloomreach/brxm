@@ -164,10 +164,48 @@
           <sv:value>${cluster.id}.field</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+          <sv:value>org.hippoecm.frontend.editor.layout.TwoColumn</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>${wicket.id}</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.extensions" sv:type="String">
+          <sv:value>extension.left</sv:value>
+          <sv:value>extension.right</sv:value>
+        </sv:property>
+        <sv:property sv:name="extension.left" sv:type="String">
+          <sv:value>${cluster.id}.left</sv:value>
+        </sv:property>
+        <sv:property sv:name="extension.right" sv:type="String">
+          <sv:value>${cluster.id}.right</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="left">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="item" sv:type="String">
+          <sv:value>${cluster.id}.left.item</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${cluster.id}.left</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="right">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="item" sv:type="String">
+          <sv:value>${cluster.id}.right.item</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${cluster.id}.right</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="title">
@@ -193,7 +231,7 @@
           <sv:value>hippo-template-default-title</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
+          <sv:value>${cluster.id}.left.item</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
@@ -225,7 +263,7 @@
           <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
+          <sv:value>${cluster.id}.right.item</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
@@ -257,7 +295,7 @@
           <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
+          <sv:value>${cluster.id}.left.item</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
@@ -297,7 +335,7 @@
           <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
+          <sv:value>${cluster.id}.left.item</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
@@ -337,7 +375,7 @@
           <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
+          <sv:value>${cluster.id}.left.item</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
