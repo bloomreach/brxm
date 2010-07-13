@@ -29,11 +29,10 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
-import org.hippoecm.hst.content.beans.standard.HippoRequest;
+import org.hippoecm.hst.content.beans.standard.HippoRequestBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class TodoList extends BaseHstComponent {
     
     private static final Logger log = LoggerFactory.getLogger(Home.class);
     
-    protected static final String DEFAULT_TODO_ITEMS_QUERY = "//*[jcr:primaryType='" + HippoNodeType.NT_REQUEST + "']";
+    protected static final String DEFAULT_TODO_ITEMS_QUERY = "//element(*, hippostdpubwf:request)";
     
     protected static final long DEFAULT_QUERY_LIMIT = 10;
     
@@ -82,13 +81,13 @@ public class TodoList extends BaseHstComponent {
                 }
             });
             
-            HippoRequest requestBean = (HippoRequest) wpm.getObject(requestPath);
+            HippoRequestBean requestBean = (HippoRequestBean) wpm.getObject(requestPath);
             wpm.update(requestBean);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to process action.", e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Failed to process action. {}", e.toString());
+                log.warn("Failed to process action. {}", e.getMessage());
             }
             
             if (wpm != null) {
@@ -124,7 +123,7 @@ public class TodoList extends BaseHstComponent {
                 queryLimit = Long.parseLong(param);
             }
             
-            List<HippoRequest> todoList = new ArrayList<HippoRequest>();
+            List<HippoRequestBean> todoList = new ArrayList<HippoRequestBean>();
             
             Query query = request.getRequestContext().getSession().getWorkspace().getQueryManager().createQuery(todoItemsQuery, Query.XPATH);
             
@@ -139,7 +138,7 @@ public class TodoList extends BaseHstComponent {
                 
                 if (requestNode != null) {
                     try {
-                        HippoRequest requestBean = (HippoRequest) getObjectConverter().getObject(requestNode);
+                        HippoRequestBean requestBean = (HippoRequestBean) getObjectConverter().getObject(requestNode);
                         todoList.add(requestBean);
                     }  catch (ObjectBeanManagerException e) {
                         if (log.isDebugEnabled()) {

@@ -19,7 +19,6 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
@@ -329,21 +328,26 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                                 // we need to recreate the EditableWorkflow because the node has changed
                                 ewf = (EditableWorkflow) getWorkflow(documentNodeWorkflowCategory, contentNode);
                                 document = ewf.commitEditableInstance();
+                                if (workflowCallbackHandler != null) {
+                                    // recreate the wf because now the is changed
+                                    wf = getWorkflow(documentNodeWorkflowCategory, document);
+                                    if (wf != null) {
+                                        workflowCallbackHandler.processWorkflow(wf);
+                                    } else {
+                                        throw new ObjectBeanPersistenceException("Workflow callback cannot be called because the workflow is null. ");
+                                    }
+                                }
                             } else {
                                 document = ewf.disposeEditableInstance();
                             }
                         } else {
                             throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
-                        }
-                    }
-                
-                    if (workflowCallbackHandler != null) {
-                        // recreate the wf 
-                        wf = getWorkflow(documentNodeWorkflowCategory, document);
+                        } 
+                    } else if (workflowCallbackHandler != null) {
                         if (wf != null) {
                             workflowCallbackHandler.processWorkflow(wf);
                         } else {
-                            throw new ObjectBeanPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
+                            throw new ObjectBeanPersistenceException("Workflow callback cannot be called because the workflow is null. ");
                         }
                     }
                 }
@@ -376,24 +380,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             String nodeName = handleNode.getName();
             HippoBean folderBean = contentBean.getParentBean();
             Node folderNode = NodeUtils.getCanonicalNode(folderBean.getNode());
-            
-            // TODO when HREPTWO-2844 is fixed, this code can be removed
-            if(handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                handleNode.checkout();
-                NodeIterator it = handleNode.getNodes();
-                while(it.hasNext()) {
-                    Node doc = it.nextNode();
-                    if(doc == null) { 
-                        continue;
-                    }
-                    if(doc.isNodeType("mix:versionable")) {
-                        doc.checkout();
-                    }
-                }
-            } else {
-                // TODO : check for childs all being checked out??
-            }
-                
+               
             Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
             
             if (wf instanceof FolderWorkflow) {
