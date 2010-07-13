@@ -19,7 +19,8 @@ function AutoSave(editor) {
     this.editor = editor;
     this.lConfig = editor.config.AutoSave;
     
-    this.timeoutID = null;
+    this.timeoutID = null; // timeout ID, editor is dirty when non-null
+    this.saving = false;   // whether a save is in progress
 
     //Atach onkeyup and onchange event listeners to textarea for autosaving in htmlmode
     var txtArea = this.editor._textArea;
@@ -61,8 +62,26 @@ AutoSave.prototype.getContents = function() {
     return this.editor.getInnerHTML();
 };
 
-AutoSave.prototype.save = function() {
-    var xmlHttpReq = null;
+// Save the contents of the xinha field.  Only one throttled request is executed concurrently.
+AutoSave.prototype.save = function(throttled) {
+	// nothing to do if editor is not dirty
+	if (this.timeoutID == null) {
+		return;
+	} else {
+		window.clearTimeout(this.timeoutID);
+	}
+
+	if (throttled) {
+		// reschedule when a save is already in progress
+		if (this.saving) {
+			checkChanges();
+			return;
+		}
+		this.saving = true;
+	}
+
+	this.timeoutID = null;
+	var xmlHttpReq = null;
     if (window.XMLHttpRequest) {    // Mozilla/Safari
         xmlHttpReq = new XMLHttpRequest();
     } else if (window.ActiveXObject) {     // IE
@@ -72,12 +91,17 @@ AutoSave.prototype.save = function() {
     if(this.editor._editMode == 'wysiwyg') { //save Iframe html into textarea
         this.editor._textArea.value = this.editor.outwardHtml(this.editor.getHTML());
     }
+    var self = this;
     var callbackUrl = this.editor.config.callbackUrl;
-    xmlHttpReq.open('POST', callbackUrl, false);
+    xmlHttpReq.open('POST', callbackUrl, true);
     xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xmlHttpReq.setRequestHeader('Wicket-Ajax', "true");
     xmlHttpReq.onreadystatechange = function() {
         if (xmlHttpReq.readyState == 4) {
             //console.log('AJAX-UPDATE: ' + self.xmlHttpReq.responseText);
+        	if (throttled) {
+        		self.saving = false;
+        	}
         }
     }
     xmlHttpReq.send(wicketSerialize(Wicket.$(this.getId())));
@@ -89,7 +113,7 @@ AutoSave.prototype.onUpdateToolbar = function() {
 
 AutoSave.prototype.onKeyPress = function(ev) {
     if( ev != null && ev.ctrlKey && this.editor.getKey(ev) == 's') {
-        this.save();
+        this.save(true);
         Xinha._stopEvent(ev);
         return true;
     }
@@ -100,6 +124,7 @@ AutoSave.prototype.checkChanges = function() {
     if(this.timeoutID != null) {
         window.clearTimeout(this.timeoutID);
     }
+    var self = this;
     var editorId = this.getId(); 
     this.timeoutID = window.setTimeout(function() {
         YAHOO.hippo.EditorManager.saveByTextareaId(editorId);   
