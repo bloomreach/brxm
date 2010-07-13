@@ -56,3 +56,6 @@ ul.gallery-list li.selected {
   -moz-binding: url('ellipsis.xml#ellipsis');
 }
 
+.hippo-list-details tr td.image-gallery-icon,
+.hippo-list-details tr th.image-gallery-icon { width:16px; }
+

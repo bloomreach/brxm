@@ -93,20 +93,24 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         column.setComparator(new TypeComparator());
         column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new IconAttributeModifier());
+        column.setCssClass("typeslisting-icon");
         columns.add(column);
 
         column = new ListColumn<Node>(new StringResourceModel("typeslisting-name", this, null), "name");
         column.setComparator(new NameComparator());
+        column.setCssClass("typeslisting-name");
         columns.add(column);
 
         column = new ListColumn<Node>(new StringResourceModel("typeslisting-type", this, null), null);
         column.setRenderer(new TemplateTypeRenderer(typeLocator));
+        column.setCssClass("typeslisting-type");
         columns.add(column);
 
         column = new ListColumn<Node>(new StringResourceModel("typeslisting-state", this, null), "state");
         column.setComparator(new StateComparator());
         column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new TemplateTypeIconAttributeModifier());
+        column.setCssClass("typeslisting-state");
         columns.add(column);
 
         return new TableDefinition<Node>(columns);
