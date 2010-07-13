@@ -103,6 +103,7 @@ public class SecurityManager implements JackrabbitSecurityManager {
     private String adminID;
     private String anonymID;
     private SecurityConfig config;
+    private boolean maintenanceMode;
     private PrincipalProviderRegistry principalProviderRegistry;
 
     private AuthContextProvider authCtxProvider;
@@ -115,7 +116,7 @@ public class SecurityManager implements JackrabbitSecurityManager {
         groupsPath = configNode.getProperty(HippoNodeType.HIPPO_GROUPSPATH).getString();
         rolesPath = configNode.getProperty(HippoNodeType.HIPPO_ROLESPATH).getString();
         domainsPath = configNode.getProperty(HippoNodeType.HIPPO_DOMAINSPATH).getString();
-        SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath, domainsPath);
+        SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath, domainsPath, maintenanceMode);
 
         StringBuffer statement = new StringBuffer();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_SECURITYPROVIDER);
@@ -228,6 +229,9 @@ public class SecurityManager implements JackrabbitSecurityManager {
             }
             if (moduleConfig[i].containsKey(LoginModuleConfig.PARAM_ANONYMOUS_ID)) {
                 anonymID = moduleConfig[i].getProperty(LoginModuleConfig.PARAM_ANONYMOUS_ID);
+            }
+            if (moduleConfig[i].containsKey("maintenanceMode")) {
+                maintenanceMode = Boolean.parseBoolean(moduleConfig[i].getProperty("maintenanceMode"));
             }
         }
         // fallback:

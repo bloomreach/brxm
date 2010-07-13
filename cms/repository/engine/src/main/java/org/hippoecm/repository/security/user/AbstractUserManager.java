@@ -86,6 +86,8 @@ public abstract class AbstractUserManager implements UserManager {
      */
     private final boolean useQueries = false;
 
+    private boolean maintenanceMode = false;
+
     /**
      * Logger
      */
@@ -100,6 +102,7 @@ public abstract class AbstractUserManager implements UserManager {
         this.usersPath = context.getPath();
         this.providerId = context.getProviderId();
         this.providerPath = context.getProviderPath();
+        this.maintenanceMode = context.isMaintenanceMode();
         setDirLevels();
         initManager(context);
     }
@@ -167,6 +170,17 @@ public abstract class AbstractUserManager implements UserManager {
                     return user;
                 } else {
                     return null;
+                }
+            } else {
+                if (maintenanceMode) {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("User not one of existing users:");
+                    for (NodeIterator nodeIter = session.getRootNode().getNode(usersPath).getNodes(); nodeIter.hasNext(); ) {
+	                Node userNode = nodeIter.nextNode();
+                        sb.append(" ");
+                        sb.append(userNode.getName());
+                    }
+                    log.warn(new String(sb));
                 }
             }
         }

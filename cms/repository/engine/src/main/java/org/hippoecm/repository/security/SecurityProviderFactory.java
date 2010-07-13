@@ -33,13 +33,15 @@ public class SecurityProviderFactory {
     private final String groupsPath;
     private final String rolesPath;
     private final String domainsPath;
+    private boolean isMaintenance = false;
 
-    public SecurityProviderFactory(String securityPath, String usersPath, String groupsPath, String rolesPath, String domainsPath) {
+    public SecurityProviderFactory(String securityPath, String usersPath, String groupsPath, String rolesPath, String domainsPath, boolean isMaintenance) {
         this.securityPath = securityPath;
         this.usersPath = usersPath;
         this.groupsPath = groupsPath;
         this.rolesPath = rolesPath;
         this.domainsPath = domainsPath;
+	this.isMaintenance = isMaintenance;
     }
 
     /**
@@ -63,7 +65,7 @@ public class SecurityProviderFactory {
 
         // create new session for each provider
         Session providerSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
-        SecurityProviderContext context = new SecurityProviderContext(providerSession, providerId, securityPath, usersPath, groupsPath, rolesPath, domainsPath);
+        SecurityProviderContext context = new SecurityProviderContext(providerSession, providerId, securityPath, usersPath, groupsPath, rolesPath, domainsPath, isMaintenance);
         sp.init(context);
         return sp;
     }
