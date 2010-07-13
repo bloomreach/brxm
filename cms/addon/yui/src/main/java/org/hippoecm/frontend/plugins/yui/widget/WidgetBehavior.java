@@ -77,4 +77,8 @@ public class WidgetBehavior extends AbstractYuiBehavior{
         return template;
     }
 
+    public String getUpdateScript() {
+        return "YAHOO.hippo.WidgetManager.update('" + getMarkupId() + "');";
+    }
+
 }
