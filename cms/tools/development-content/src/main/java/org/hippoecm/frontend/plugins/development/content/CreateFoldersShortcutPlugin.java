@@ -1,3 +1,4 @@
+
 /*
  *  Copyright 2008 Hippo.
  * 
@@ -16,8 +17,6 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
-import java.util.Collection;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
@@ -34,6 +33,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.FolderSettings;
 import org.hippoecm.frontend.plugins.development.content.wizard.DevelopmentContentWizard;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+
+import java.util.List;
 
 public class CreateFoldersShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -128,7 +129,7 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
                     }
 
                     @Override
-                    protected Collection<String> getTypes() {
+                    protected List<String> getTypes() {
                         return builder.getFolderTypes(settings.folderUUID);
                     }
                 };

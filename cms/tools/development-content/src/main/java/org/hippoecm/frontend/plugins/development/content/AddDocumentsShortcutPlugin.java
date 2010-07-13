@@ -16,7 +16,7 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -127,7 +127,7 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
                     }
 
                     @Override
-                    protected Collection<String> getTypes() {
+                    protected List<String> getTypes() {
                         return builder.getDocumentTypes(settings.folderUUID);
                     }
 
