@@ -48,6 +48,8 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
     private int clearTimeout;
 
+    private boolean hideBrowseDuringUpload;
+
     public boolean isAllowMultipleFiles() {
         return allowMultipleFiles;
     }
@@ -127,4 +129,13 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
     public int getClearTimeout() {
         return clearTimeout;
     }
+
+    public boolean isHideBrowseDuringUpload() {
+        return hideBrowseDuringUpload;
+    }
+
+    public void setHideBrowseDuringUpload(boolean hideBrowseDuringUpload) {
+        this.hideBrowseDuringUpload = hideBrowseDuringUpload;
+    }
+
 }

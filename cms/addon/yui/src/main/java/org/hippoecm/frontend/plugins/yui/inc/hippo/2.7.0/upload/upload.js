@@ -54,6 +54,12 @@ if (!YAHOO.hippo.Upload) {
                 }
             },
 
+            restoreScrollPosition : function(posY) {
+                if(this.latest != null) {
+                    this.latest.restoreScrollPosition(posY);
+                }
+            },
+
             removeItem : function(oRecord) {
                 if(this.latest != null) {
                     this.latest.removeItem(oRecord);
@@ -64,7 +70,9 @@ if (!YAHOO.hippo.Upload) {
         YAHOO.hippo.UploadWidget = function(id, config) {
             this.id = id;
             this.config = config;
+            this.scrollData = null;
             this.progressBars = new YAHOO.hippo.HashMap();
+            this.elements = {uiElements: null};
 
             if(this.config.ajaxIndicatorId != null) {
                 this.indicator = new YAHOO.hippo.AjaxIndicator(this.config.ajaxIndicatorId);
@@ -72,14 +80,36 @@ if (!YAHOO.hippo.Upload) {
 
             YAHOO.widget.Uploader.SWFURL = config.flashUrl;
 
-            var selectFilesLink = Dom.get('selectFilesLink');
-            Dom.addClass(selectFilesLink, 'i18n-' + this.config.locale);
+            var root = new YAHOO.util.Element(Dom.get(id));
+            this.elements.uiElements = new YAHOO.util.Element(document.createElement('div'));
+            Dom.setStyle(this.elements.uiElements, 'display', 'inline');
+            root.appendChild(this.elements.uiElements);
 
-            var overlay = Dom.get('uploaderOverlay');
-            Dom.setStyle(overlay, 'width', "244px");
-            Dom.setStyle(overlay, 'height', "26px");
+            this.elements.datatableContainer = new YAHOO.util.Element(document.createElement('div'));
+            Dom.addClass(this.elements.datatableContainer, 'dataTableContainer');
+            root.appendChild(this.elements.datatableContainer);
 
-            this.uploader = new YAHOO.widget.Uploader( "uploaderOverlay" );
+            this.elements.uploaderContainer = new YAHOO.util.Element(document.createElement('div'));
+            this.elements.uiElements.appendChild(this.elements.uploaderContainer);
+
+            this.elements.uploaderOverlay = new YAHOO.util.Element(document.createElement('div'));
+            Dom.setStyle(this.elements.uploaderOverlay, 'position', 'absolute');
+            Dom.setStyle(this.elements.uploaderOverlay, 'z-index', 2);
+            this.elements.uploaderContainer.appendChild(this.elements.uploaderOverlay);
+
+            this.elements.selectFiles = new YAHOO.util.Element(document.createElement('div'));
+            Dom.setStyle(this.elements.selectFiles, 'z-index', 1);
+            this.elements.uploaderContainer.appendChild(this.elements.selectFiles);
+
+            this.elements.selectFilesLink = new YAHOO.util.Element(document.createElement('div'));
+            this.elements.selectFiles.appendChild(this.elements.selectFilesLink);
+            Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');    
+            Dom.addClass(this.elements.selectFilesLink, 'i18n-' + this.config.locale);
+
+            Dom.setStyle(this.elements.uploaderOverlay, 'width', "244px");
+            Dom.setStyle(this.elements.uploaderOverlay, 'height', "26px");
+
+            this.uploader = new YAHOO.widget.Uploader(this.elements.uploaderOverlay);
             this.fileList = null;
             this.numberOfUploads = 0;
 
@@ -97,18 +127,32 @@ if (!YAHOO.hippo.Upload) {
             this.uploader.addListener('mouseDown', this.handleMouseDown, this, true);
             this.uploader.addListener('mouseUp', this.handleMouseUp, this, true);
 
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(Dom.get(this.id), this.destroy, this);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(root, this.destroy, this);
         };
 
         YAHOO.hippo.UploadWidget.prototype = {
 
             upload : function() {
                 if(this.fileList != null) {
+                    if(this.config.hideBrowseDuringUpload) {
+                        //Dom.setStyle(this.elements.uploaderContainer, 'display', 'none');
+                    }
                     if(this.indicator != null) {
                         this.indicator.show();
                     }
                     this.uploader.uploadAll(this.config.uploadUrl);
-                    this.numberOfUploads+=this.dataArr.length;
+                    this.numberOfUploads += this.dataArr.length;
+
+                    if(this.layoutUnit != null && this.layoutUnit.get('scroll') === true) {
+                        //save scroll position
+                        var sizes = this.layoutUnit.getSizes();
+                        var el = this.layoutUnit.body;
+                        var offsetY = el.pageYOffset || el.scrollTop;
+                        var sc = offsetY + sizes.wrap.h;
+                        var pixFromBottom = el.scrollHeight - sc;
+                        this.scrollData = '&scrollPosY=' + pixFromBottom;
+                    }
+
                 }
             },
 
@@ -180,19 +224,47 @@ if (!YAHOO.hippo.Upload) {
                     if(this.indicator != null) {
                         this.indicator.hide();
                     }
-                    
-                    var url = this.config.callbackUrl + "&finished=true";
-                    this.config.callbackFunction.call(this, url);
 
-                    console.log('1 ' + Lang.dump(this.config));
                     if(this.config.clearAfterUpload === true) {
-                        console.log('2')
-                        YAHOO.later(config.clearTimeout, this, function() {
-                            console.log('3')
-                            this._removeDatatable();
+                        this.clearAfterUpload();
+                    }
+                    if(this.config.hideBrowseDuringUpload === true) {
+                        //Dom.setStyle(this.elements.uploaderContainer, 'display', 'block');
+                    }
+
+                    var url = this.config.callbackUrl + "&finished=true";
+                    if(this.scrollData != null) {
+                        url = url + this.scrollData;
+                        this.scrollData = null;
+                    }
+                    this.config.callbackFunction.call(this, url);
+                }
+            },
+
+            restoreScrollPosition : function(posY) {
+                var el = Dom.get(this.id);
+                /*if(Lang.isFunction(el.scrollIntoView)) {
+
+                    YAHOO.lang.later(200, this, function() {
+                        el.scrollIntoView();
+                    });
+                } else {*/
+                    if(this.layoutUnit != null && this.layoutUnit.get('scroll') === true) {
+                        YAHOO.lang.later(200, this, function() {
+                            var el = this.layoutUnit.body;
+                            var sh = (el.scrollHeight - el.offsetHeight) + posY;
+                             var attributes = {
+	                              scroll: { to: [el.scrollTop, sh] }
+                             };
+                              var anim = new YAHOO.util.Scroll(el, attributes, 0);
+                            anim.animate();
                         });
                     }
-                }
+                /*}*/
+            },
+
+            clearAfterUpload : function() {
+                YAHOO.lang.later(this.config.clearTimeout, this, '_removeDatatable');
             },
 
             handleContentReady  : function() {
@@ -216,14 +288,16 @@ if (!YAHOO.hippo.Upload) {
       	        YAHOO.widget.DataTable.Formatter.titleFormatter = this._titleFormatter;
       	        YAHOO.widget.DataTable.Formatter.bytesFormatter = this._bytesFormatter;
                 YAHOO.widget.DataTable.Formatter.removeFormatter = this._removeFormatter;
+
+                this.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(Dom.get(this.id));
             },
 
             handleRollOver : function() {
-                Dom.addClass(Dom.get('selectFilesLink'), 'rollover');
+                Dom.addClass(this.elements.selectFilesLink, 'rollover');
             },
 
             handleRollOut : function() {
-                Dom.removeClass(Dom.get('selectFilesLink'), 'rollover');
+                Dom.removeClass(this.elements.selectFilesLink, 'rollover');
             },
 
             handleClick : function() {
@@ -300,7 +374,7 @@ if (!YAHOO.hippo.Upload) {
                 }
                 if(this.dataArr.length > 10) {
                     this.datatable = new YAHOO.widget.ScrollingDataTable(
-                        "dataTableContainer",
+                        this.elements.datatableContainer,
                         myColumnDefs, myDataSource, {
                         selectionMode:"single",
                         width: '440px',
@@ -309,7 +383,7 @@ if (!YAHOO.hippo.Upload) {
                     });
                 } else {
                     this.datatable = new YAHOO.widget.DataTable(
-                        "dataTableContainer",
+                        this.elements.datatableContainer,
                         myColumnDefs, myDataSource, {
                         selectionMode:"single",
                         sortedBy: sortedBy

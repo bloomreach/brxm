@@ -65,6 +65,10 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
     protected void respond(AjaxRequestTarget ajaxRequestTarget) {
         HttpServletRequest r = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
         if(r.getParameter("finished") != null && r.getParameter("finished").equals("true")) {
+            if(r.getParameter("scrollPosY") != null) {
+                ajaxRequestTarget.appendJavascript("YAHOO.hippo.Upload.restoreScrollPosition(" + r.getParameter(
+                        "scrollPosY") + ");");
+            }
             onFinish(ajaxRequestTarget);
         }
     }
