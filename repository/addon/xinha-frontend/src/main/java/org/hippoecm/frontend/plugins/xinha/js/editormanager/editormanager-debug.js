@@ -193,7 +193,7 @@ if (!YAHOO.hippo.EditorManager) {
             
             saveEditors : function() {
                 this.activeEditors.forEach(this, function(k, v) {
-                    v.save();
+                    v.save(false);
                 });
             },
 
@@ -201,7 +201,7 @@ if (!YAHOO.hippo.EditorManager) {
             saveByTextareaId : function(id) {
                 var editor = this.getEditorByWidgetId(id);
                 if(editor != null) {
-                    editor.save();
+                    editor.save(true);
                     this.info("Saved!");
                 }
             },
@@ -243,7 +243,7 @@ if (!YAHOO.hippo.EditorManager) {
                 this.info('Base class render');
             },
             
-            save : function() {
+            save : function(throttled) {
                 this.info('Base class save');
             },
             
@@ -725,12 +725,12 @@ if (!YAHOO.hippo.EditorManager) {
                 }
             },
             
-            save : function() {
+            save : function(throttled) {
                 if(this.xinha.plugins['AutoSave']) {
                     try {
                         var data = this.xinha.getInnerHTML();
                         if(data != this.lastData) {
-                            this.xinha.plugins['AutoSave'].instance.save();
+                            this.xinha.plugins['AutoSave'].instance.save(throttled);
                             this.lastData = data;
                             
                             this.info('Content saved.');
