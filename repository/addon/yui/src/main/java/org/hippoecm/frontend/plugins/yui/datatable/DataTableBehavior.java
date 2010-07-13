@@ -42,9 +42,4 @@ public class DataTableBehavior extends WidgetBehavior {
         super.addHeaderContribution(context);
     }
 
-    public String getUpdateScript() {
-        return "YAHOO.hippo.WidgetManager.update('" + getMarkupId() + "');";
-    }
-
-
 }
