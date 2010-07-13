@@ -30,8 +30,8 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoRequest;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
+import org.hippoecm.hst.content.beans.standard.HippoStdPubWfRequest;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.test.AbstractHstTestCase;
  
@@ -57,7 +57,7 @@ public abstract class AbstractBeanTestCase extends AbstractHstTestCase{
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoResource.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoRequest.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoStdPubWfRequest.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, PersistableTextPage.class, false);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, PersistableTextPageCopy.class, true);
         

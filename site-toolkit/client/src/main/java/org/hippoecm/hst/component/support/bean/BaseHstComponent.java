@@ -53,8 +53,8 @@ import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoImage;
 import org.hippoecm.hst.content.beans.standard.HippoMirror;
-import org.hippoecm.hst.content.beans.standard.HippoRequest;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
+import org.hippoecm.hst.content.beans.standard.HippoStdPubWfRequest;
 import org.hippoecm.hst.content.beans.standard.HippoTranslation;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetNavigation;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetResult;
@@ -438,7 +438,7 @@ public class BaseHstComponent extends GenericHstComponent {
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoResource.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoRequest.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoStdPubWfRequest.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoAsset.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoImage.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoTranslation.class, true);
