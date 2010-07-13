@@ -50,6 +50,8 @@ public class ManagerContext {
      */
     private final String path;
 
+    private boolean maintenanceMode;
+
     /**
      * Initialize the context for the repository based authentication and authorization.
      * @param session Session The system/root session
@@ -57,11 +59,12 @@ public class ManagerContext {
      * @param providerPath the path to the configuration of this provider
      * @param session the providers own session
      */
-    public ManagerContext(Session session, String providerPath, String path) throws RepositoryException {
+    public ManagerContext(Session session, String providerPath, String path, boolean maintenanceMode) throws RepositoryException {
         this.session = session;
         this.providerPath = providerPath;
         this.providerId = providerPath.substring(providerPath.lastIndexOf('/') + 1);
         this.path = path;
+        this.maintenanceMode = maintenanceMode;
     }
 
     /**
@@ -92,5 +95,13 @@ public class ManagerContext {
      */
     public String getPath() {
         return path;
+    }
+
+    /**
+     * Get the path to expose information for this context eg. hippo:users, hippo:groups, etc.
+     * @return
+     */
+    public boolean isMaintenanceMode() {
+        return maintenanceMode;
     }
 }

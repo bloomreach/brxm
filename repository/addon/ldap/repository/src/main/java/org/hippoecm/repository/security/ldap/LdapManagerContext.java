@@ -44,7 +44,7 @@ public class LdapManagerContext extends ManagerContext {
      * @param session the provider's session
      */
     public LdapManagerContext(LdapContextFactory lcf, Session session, String providerPath, String path) throws RepositoryException {
-        super(session, providerPath, path);
+        super(session, providerPath, path, false);
         this.lcf = lcf;
     }
 

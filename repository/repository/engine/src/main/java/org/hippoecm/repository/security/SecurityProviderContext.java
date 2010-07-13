@@ -35,9 +35,10 @@ public class SecurityProviderContext {
     private final String groupsPath;
     private final String rolesPath;
     private final String domainsPath;
+    private final boolean isMaintenanceMode;
 
     public SecurityProviderContext(Session session, String providerId, String securityPath, String usersPath,
-            String groupsPath, String rolesPath, String domainsPath) throws RepositoryException {
+            String groupsPath, String rolesPath, String domainsPath, boolean isMaintenanceMode) throws RepositoryException {
         this.session = session;
         this.providerId = providerId;
         this.securityPath = securityPath;
@@ -46,6 +47,7 @@ public class SecurityProviderContext {
         this.groupsPath = groupsPath;
         this.rolesPath = rolesPath;
         this.domainsPath = domainsPath;
+        this.isMaintenanceMode = isMaintenanceMode;
     }
 
     public Session getSession() {
@@ -78,5 +80,9 @@ public class SecurityProviderContext {
 
     public String getDomainsPath() {
         return domainsPath;
+    }
+
+    public boolean isMaintenanceMode() {
+        return isMaintenanceMode;
     }
 }

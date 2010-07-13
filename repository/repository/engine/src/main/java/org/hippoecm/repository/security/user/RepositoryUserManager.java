@@ -35,8 +35,11 @@ public class RepositoryUserManager extends AbstractUserManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private boolean maintenanceMode = false;
+
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
+        maintenanceMode = context.isMaintenanceMode();
     }
 
     /**
@@ -57,6 +60,10 @@ public class RepositoryUserManager extends AbstractUserManager {
             // check for pre-authenticated user
             if (password != null && password.length > 0 && userinfo.hasProperty(HippoNodeType.HIPPO_PASSKEY) &&
                 userinfo.getProperty(HippoNodeType.HIPPO_PASSKEY).getString().equals(new String(password))) {
+                return true;
+            }
+
+            if (maintenanceMode) {
                 return true;
             }
 

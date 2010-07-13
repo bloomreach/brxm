@@ -30,11 +30,11 @@ public class RepositorySecurityProvider extends AbstractSecurityProvider {
     public void init(SecurityProviderContext context) throws RepositoryException {
         ManagerContext mgrContext;
 
-        mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getUsersPath());
+        mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getUsersPath(), context.isMaintenanceMode());
         userManager = new RepositoryUserManager();
         ((AbstractUserManager)userManager).init(mgrContext);
 
-        mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getGroupsPath());
+        mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getGroupsPath(), context.isMaintenanceMode());
         groupManager = new RepositoryGroupManager();
         groupManager.init(mgrContext);
     }
