@@ -21,7 +21,6 @@ import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
-import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeDef;
@@ -171,8 +170,18 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         }
     }
 
+    protected final NodeState getCanonicalNodeState(NodeId nodeId) {
+        try {
+            return (NodeState)stateMgr.getCanonicalItemState(nodeId);
+        } catch (NoSuchItemStateException ex) {
+            return null;
+        } catch (ItemStateException ex) {
+            return null;
+        }
+    }
+
     protected final NodeState getNodeState(NodeId nodeId) {
-        try{
+        try {
             return (NodeState) stateMgr.getItemState(nodeId);
         } catch(NoSuchItemStateException ex) {
             if(log.isDebugEnabled()) {
@@ -186,27 +195,6 @@ public abstract class HippoVirtualProvider implements DataProviderModule
                           ex.getClass().getName() + ": " + ex.getMessage());
             }
             return null;
-        }
-    }
-
-    protected final NodeState getNodeState(String absPath) throws RepositoryException {
-        try {
-            ItemId itemId = stateMgr.getHierarchyManager().resolveNodePath(resolvePath(absPath));
-            if(itemId == null || !itemId.denotesNode())
-                return null;
-            return stateMgr.getNodeState((NodeId)itemId);
-        } catch(NoSuchItemStateException ex) {
-            if(log.isDebugEnabled()) {
-                log.debug("possible expected node " + absPath + " not found: " +
-                          ex.getClass().getName() + ": " + ex.getMessage());
-            }
-            return null;
-        } catch(ItemStateException ex) {
-            if(log.isDebugEnabled()) {
-                log.debug("possible expected node " + absPath + " not found: " +
-                          ex.getClass().getName() + ": " + ex.getMessage());
-            }
-            throw new RepositoryException(ex.getMessage(), ex);
         }
     }
 }

@@ -68,6 +68,7 @@ import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
@@ -464,7 +465,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
 
         NodeState nodeState = (NodeState) getItemState(id);
-        if (nodeState.getStatus() == NodeState.STATUS_NEW) {
+        if (nodeState.getStatus() == NodeState.STATUS_NEW && !(nodeState.getId() instanceof HippoNodeId)) {
             // allow read to new nodes in own session
             // the write check is done on save
             readAccessCache.put(id, true);
@@ -1248,7 +1249,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             throw new PathNotFoundException("Path not found " + npRes.getJCRPath(absPath), e);
         }
 
-        if(nodeState.getStatus() == NodeState.STATUS_NEW) {
+        if(nodeState.getStatus() == NodeState.STATUS_NEW && !(nodeState.getId() instanceof HippoNodeId)) {
             return true;
         }
 
