@@ -653,7 +653,7 @@ public class UpdaterEngine {
             }
         }
         Collection<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch, false);
-        log.info("upgrade cycle (phase 4 of 5) iterated process breath first iteration");
+        log.info("upgrade cycle (phase 4 of 5) iterated process breath first iteration batchsize="+LocalHippoRepository.batchThreshold);
         if(log.isDebugEnabled()) {
             log.debug("update batch plan breath first iteration");
             int batchCount = 0;
@@ -789,7 +789,7 @@ public class UpdaterEngine {
                 currentBatch = new TreeMap<UpdaterPath, List<UpdaterItemVisitor>>(comparator);
             }
             currentBatch.put(entry.getKey(), entry.getValue());
-            if(currentBatch.size() >= LocalHippoRepository.BATCH_THRESHOLD) {
+            if(currentBatch.size() >= LocalHippoRepository.batchThreshold) {
                 partitionedBatch.add(currentBatch);
                 currentBatch = null;
             }

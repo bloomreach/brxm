@@ -189,7 +189,7 @@ public class DerivedDataEngine {
             Node node = iter.nextNode();
             if(compute(valueFactory, derivatesFolder, node)) {
                 ++changedCount;
-                if((changedCount % LocalHippoRepository.BATCH_THRESHOLD) == 0) {
+                if((changedCount % LocalHippoRepository.batchThreshold) == 0) {
                     session.save();
                 }
             }
