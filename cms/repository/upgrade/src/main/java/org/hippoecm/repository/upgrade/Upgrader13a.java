@@ -40,7 +40,6 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.ext.UpdaterItemVisitor.PathVisitor;
-import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.VersionNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,7 +227,6 @@ public class Upgrader13a implements UpdaterModule {
                     Node cleanup = node.getNode("htmlCleanerService/cleaner.config/hippohtmlcleaner_2_1:cleanup");
                     for (NodeIterator elements = cleanup.getNodes("hippohtmlcleaner_2_1:cleanupElement"); elements.hasNext();) {
                         Node element = elements.nextNode();
-                        Utilities.dump(element);
                         if ("img".equals(element.getProperty("hippohtmlcleaner_2_1:name").getString()) && element.hasProperty("hippohtmlcleaner_2_1:attributes")) {
                             Property attrs = element.getProperty("hippohtmlcleaner_2_1:attributes");
                             Value[] values = attrs.getValues();
