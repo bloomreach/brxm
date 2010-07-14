@@ -19,20 +19,19 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Localized;
-import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -208,9 +207,15 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
                 }
             }
         } else {
+            if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
+                node.checkout();
+            }
             node.addMixin(HippoNodeType.NT_TRANSLATED);
         }
         if (translationNode == null) {
+            if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
+                node.checkout();
+            }
             translationNode = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
             localized.setTranslation(translationNode);
         }
