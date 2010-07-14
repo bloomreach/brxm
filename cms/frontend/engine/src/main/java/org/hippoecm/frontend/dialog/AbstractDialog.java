@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,7 +30,6 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -44,11 +41,11 @@ import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.MarkupException;
 import org.apache.wicket.markup.MarkupNotFoundException;
 import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -151,8 +148,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     protected class ExceptionFeedbackPanel extends FeedbackPanel {
         private static final long serialVersionUID = 1L;
 
-        boolean expanded = false;
-
         protected ExceptionFeedbackPanel(String id) {
             super(id);
             setOutputMarkupId(true);
@@ -161,43 +156,22 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         protected class ExceptionLabel extends Panel {
             private static final long serialVersionUID = 1L;
 
-            private WebMarkupContainer details;
-            private AjaxLink<String> link;
-
-            protected ExceptionLabel(String id, IModel<String> model, Exception ex, boolean escape) {
+            protected ExceptionLabel(String id, IModel<String> model, final Exception ex, boolean escape) {
                 super(id);
                 setOutputMarkupId(true);
 
-                add(link = new AjaxLink<String>("message") {
+                Link<String> link = new Link<String>("message") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    public void onClick(final AjaxRequestTarget target) {
-                        // the following does not work as the list is re-created
-                        //   details.setVisible(!details.isVisible());
-                        //   target.addComponent(details);
-                        // so instead here we remember the previous state in the parent
-                        expanded = !expanded;
-                        details.setVisible(expanded);
-                        target.addComponent(ExceptionFeedbackPanel.this);
+                    public void onClick() {
+                        RequestCycle.get().setRequestTarget(new ErrorDownloadRequestTarget(ex));
                     }
-                });
-                Label label;
-                link.add(label = new Label("label", model));
+                };
+                Label label = new Label("label", model);
                 label.setEscapeModelStrings(escape);
-                add(details = new WebMarkupContainer("details"));
-                details.setVisible(expanded); // use workaround iso: details.setVisible(false);
-                if (ex != null) {
-                    ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-                    ex.printStackTrace(new PrintStream(ostream));
-                    details.add(new Label("exceptionClass", ex.getClass().getName()));
-                    details.add(new Label("exceptionMessage", ex.getLocalizedMessage()));
-                    details.add(new Label("exceptionTrace", ostream.toString()));
-                } else {
-                    details.add(new Label("exceptionClass"));
-                    details.add(new Label("exceptionMessage"));
-                    details.add(new Label("exceptionTrace"));
-                }
+                link.add(label);
+                add(link);
             }
         }
 
