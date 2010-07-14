@@ -330,6 +330,10 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                         ((Node)origin).setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
                     }
                 }
+            } catch (ConstraintViolationException ex) {
+                // happens in case of mandatory node that was kept left behind.
+                origin = ((Node)parent.origin).getNode(name);
+                UpdaterEngine.log.warn("dropping old mandatory node"+((Node)parent.origin).getPath());
             } catch(ItemExistsException ex) {
                 origin = ((Node)parent.origin).getNode(name);
             }
@@ -458,6 +462,8 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     /* let the node exists (will probably be removed later, in case of a mandatory node.1 */
                     if(!((Node)oldOrigin).getDefinition().isMandatory() || ((Node)oldOrigin).getDefinition().allowsSameNameSiblings()) {
                         oldOrigin.remove();
+                    } else {
+                        UpdaterEngine.log.warn("not removing mandatory node "+((Node)oldOrigin).getPath());
                     }
                 } catch (RepositoryException ex) {
                     try {

@@ -552,7 +552,7 @@ public class UpdaterEngine {
             do {
                 Session subSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
                 // in case of migrating the hippo namespace the following line may be relevant
-                // ((org.hippoecm.repository.impl.SessionDecorator)subSession).postDerivedData(false);
+                ((org.hippoecm.repository.impl.SessionDecorator)subSession).postDerivedData(false);
                 UpdaterEngine engine = new UpdaterEngine(subSession);
                 updates = engine.prepare();
                 if (updates) {
