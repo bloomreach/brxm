@@ -32,12 +32,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.Home;
@@ -271,6 +273,24 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
                     ps.print(session.getJcrSession().getUserID());
                     ps.println();
                 }
+
+                HttpServletRequest hsr = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
+                ps.print("server  : ");
+                ps.print(hsr.getServerName());
+                ps.println();
+
+                String node = System.getProperty("org.apache.jackrabbit.core.cluster.node_id");
+                if (node != null) {
+                    ps.print("node    : ");
+                    ps.print(hsr.getServerName());
+                    ps.println();
+                }
+
+                ps.print("java    : ");
+                ps.print(System.getProperty("java.version"));
+                ps.println();
+
+                ps.println();
 
                 ps.println("error   :");
                 ps.print(ex.getClass().getName());
