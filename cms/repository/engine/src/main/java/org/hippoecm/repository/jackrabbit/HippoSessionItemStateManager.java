@@ -72,7 +72,7 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
                 for (Iterator iter = getDescendantTransientItemStates(rootNodeId); iter.hasNext(); iter.next()) {
                     ++count;
                 }
-                return count >= LocalHippoRepository.BATCH_THRESHOLD;
+                return count >= LocalHippoRepository.batchThreshold;
             } catch (InvalidItemStateException ex) {
                 return true;
             } catch (RepositoryException ex) {
