@@ -223,18 +223,20 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
     
     @Override
     public void render(PluginRequestTarget target) {
-        try {
-            List<IPluginConfig> plugins = builder.getTemplate().getPlugins();
-            List<String> newNames = new LinkedList<String>();
-            for (IPluginConfig config : plugins) {
-                newNames.add(config.getName());
+        if (builder != null) {
+            try {
+                List<IPluginConfig> plugins = builder.getTemplate().getPlugins();
+                List<String> newNames = new LinkedList<String>();
+                for (IPluginConfig config : plugins) {
+                    newNames.add(config.getName());
+                }
+                if ((this.names == null || !this.names.equals(newNames))) {
+                    modelChanged();
+                }
+                this.names = newNames;
+            } catch (BuilderException e) {
+                log.error("could not determine whether to repaint", e);
             }
-            if ((this.names == null || !this.names.equals(newNames))) {
-                modelChanged();
-            }
-            this.names = newNames;
-        } catch (BuilderException e) {
-            log.error("could not determine whether to repaint", e);
         }
         super.render(target);
     }
