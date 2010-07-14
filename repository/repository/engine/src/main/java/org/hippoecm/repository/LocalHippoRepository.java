@@ -308,12 +308,12 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
         if (result != null) {
             for(String option : result.split(",")) {
-		String key = "", value = "";
+                String key = "", value = "";
                 if (option.contains("=")) {
                     String[] keyValue = option.split("=");
-		    key = keyValue[0];
-		    value = keyValue[1];
-		}
+                    key = keyValue[0];
+                    value = keyValue[1];
+                }
                 if (option.equalsIgnoreCase("abort")) {
                     upgradeFlag = UpgradeFlag.ABORT;
                 } else if(key.equalsIgnoreCase("batchsize")) {

@@ -41,7 +41,7 @@ public class SecurityProviderFactory {
         this.groupsPath = groupsPath;
         this.rolesPath = rolesPath;
         this.domainsPath = domainsPath;
-	this.isMaintenance = isMaintenance;
+        this.isMaintenance = isMaintenance;
     }
 
     /**

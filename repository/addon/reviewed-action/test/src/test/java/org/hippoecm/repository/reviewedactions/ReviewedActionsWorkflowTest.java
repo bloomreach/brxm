@@ -84,7 +84,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         Node node, root = session.getRootNode();
         node = getNode("test/myarticle/myarticle");
         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
-	workflow.publish();
+        workflow.publish();
     }
 
     @Test

@@ -51,6 +51,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class EditmodelWorkflowTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Override
     public void setUp() throws Exception {
