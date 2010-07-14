@@ -176,7 +176,7 @@ public abstract class AbstractUserManager implements UserManager {
                     StringBuffer sb = new StringBuffer();
                     sb.append("User not one of existing users:");
                     for (NodeIterator nodeIter = session.getRootNode().getNode(usersPath).getNodes(); nodeIter.hasNext(); ) {
-	                Node userNode = nodeIter.nextNode();
+                        Node userNode = nodeIter.nextNode();
                         sb.append(" ");
                         sb.append(userNode.getName());
                     }

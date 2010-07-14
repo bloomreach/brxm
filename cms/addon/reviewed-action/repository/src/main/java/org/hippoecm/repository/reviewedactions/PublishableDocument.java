@@ -39,7 +39,7 @@ public class PublishableDocument extends Document {
 
     public PublishableDocument() {
         this.state = UNPUBLISHED;
-	this.availability = null;
+        this.availability = null;
     }
 
     @Override

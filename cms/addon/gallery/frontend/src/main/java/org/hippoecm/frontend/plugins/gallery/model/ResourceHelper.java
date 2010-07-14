@@ -23,6 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 public class ResourceHelper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public static final String MIME_IMAGE_PJPEG = "image/pjpeg";
     public static final String MIME_IMAGE_JPEG = "image/jpeg";

@@ -25,6 +25,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.junit.Test;
 
 public class ClusterConfigDecoratorTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testDecoratedPluginConfigContainsSetProperty() {

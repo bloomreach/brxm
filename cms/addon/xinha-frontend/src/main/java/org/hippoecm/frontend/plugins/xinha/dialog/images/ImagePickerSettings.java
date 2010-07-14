@@ -23,6 +23,9 @@ import java.io.Serializable;
  * FIXME: now used by the image item factory; should be used by the dialog itself
  */
 public class ImagePickerSettings implements Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private String[] preferredResourceNames = new String[0];

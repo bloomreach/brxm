@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
  * <p>
  */
 public class ResourceRewriteFilter implements Filter {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(ResourceRewriteFilter.class);
     

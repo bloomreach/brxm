@@ -24,6 +24,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.StringCodec;
 
 public class CopyNameHelper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private final Pattern firstcopy;
     private final Pattern othercopies;

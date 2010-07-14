@@ -19,6 +19,9 @@ package org.hippoecm.frontend.plugins.gallery.model;
  * Exception thrown when the image processor processes the image.
  */
 public class GalleryException extends Exception {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public GalleryException(String message) {

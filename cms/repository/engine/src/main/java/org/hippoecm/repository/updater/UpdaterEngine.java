@@ -146,7 +146,7 @@ public class UpdaterEngine {
                     UpdaterItemVisitor.NamespaceVisitor namespaceVisitor = (UpdaterItemVisitor.NamespaceVisitor) visitor;
                     if (namespaceVisitor.cndName == null && namespaceVisitor.cndReader == null) {
                         log.warn("no new definition of namespace "+namespaceVisitor.prefix+" found, ignoring registration of upgrading visitor");
-			visitor = null;
+                        visitor = null;
                     } else {
                         visitor = new NamespaceVisitorImpl(session.getWorkspace().getNamespaceRegistry(), namespaceVisitor);
                     }

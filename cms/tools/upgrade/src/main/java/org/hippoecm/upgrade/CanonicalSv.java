@@ -37,6 +37,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class CanonicalSv {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
         if (args.length >= 1 && (args[0].startsWith("-h") || args[0].startsWith("--h"))) {
