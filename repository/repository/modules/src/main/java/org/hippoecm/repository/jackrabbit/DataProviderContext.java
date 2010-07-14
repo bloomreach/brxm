@@ -53,6 +53,8 @@ public interface DataProviderContext {
 
     public FacetedNavigationEngine.Context getFacetedContext();
 
+    public ItemState getCanonicalItemState(ItemId id) throws NoSuchItemStateException, ItemStateException;
+
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException;
 
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException;

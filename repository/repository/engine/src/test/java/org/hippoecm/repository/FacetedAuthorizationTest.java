@@ -31,17 +31,17 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class FacetedAuthorizationTest extends TestCase {
-
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
 
     Node hipDocDomain;
     Node readDomain;
@@ -113,7 +113,6 @@ public class FacetedAuthorizationTest extends TestCase {
         Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
         Node users = config.getNode(HippoNodeType.USERS_PATH);
         Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
-
 
         // create test user
         testUser = users.addNode(TEST_USER_ID, HippoNodeType.NT_USER);
@@ -261,8 +260,6 @@ public class FacetedAuthorizationTest extends TestCase {
         userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
         testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
-
-
     }
 
     @Override
@@ -518,19 +515,28 @@ public class FacetedAuthorizationTest extends TestCase {
         }
     }
 
-    /**
-     * FIXME: HREPTWO-HREPTWO-3554
-     * @throws RepositoryException 
-     */
-    
-    @Ignore
+    @Test
     public void testFacetSearch() throws RepositoryException {
         Node navNode = testNav.getNode("search");
         assertTrue(navNode.hasNode("hippo:resultset/readdoc0"));
         assertTrue(navNode.hasNode("hippo:resultset/writedoc0"));
         NodeIterator iter = navNode.getNode("hippo:resultset").getNodes();
-        assertEquals(9L, iter.getSize());
-        assertEquals(9L, navNode.getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        int count = 0;
+        while(iter.hasNext()) {
+            Node n = iter.nextNode();
+            try {
+                Node c = ((HippoNode)n).getCanonicalNode();
+                if(c == null) {
+                    fail("Item "+n.getPath()+" should not have appeared in the resultset");
+                } 
+            } catch(Exception ex) {
+                fail("Item "+n.getPath()+" should not have appeared in the resultset");
+            }
+            ++count;
+        }
+        assertEquals(10, count);
+        assertEquals(10L, iter.getSize());
+        // FIXME HREPTWO-3554 assertEquals(10L, navNode.getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
     }
 
     /**
@@ -634,6 +640,7 @@ public class FacetedAuthorizationTest extends TestCase {
             // expected
         }
     }
+
     @Test
     public void testCheckPermissionNotPrivilegeJcrWrite() throws RepositoryException {
         try {

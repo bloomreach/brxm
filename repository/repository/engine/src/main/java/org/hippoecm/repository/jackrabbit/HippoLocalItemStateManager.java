@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
@@ -36,6 +37,7 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
+import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
@@ -251,6 +253,17 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         noUpdateChangeLog = true;
         update();
         noUpdateChangeLog = false;
+    }
+
+    public ItemState getCanonicalItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+        try {
+            if (!session.getAccessManager().isGranted(id, AccessManager.READ)) {
+                return null;
+            }
+        } catch (RepositoryException ex) {
+            return null;
+        }
+        return super.getItemState(id);
     }
 
     @Override

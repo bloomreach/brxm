@@ -239,13 +239,13 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             /* The next statements are painfull performance wise.
              * Only to obtain the child node name, we have to retrieve the parent state.
              */
-            NodeState upstreamState = getNodeState(upstream);
+            NodeState upstreamState = getCanonicalNodeState(upstream);
             if(upstreamState == null)
                 continue;
             NodeId parentId = upstreamState.getParentId();
             if(parentId == null)
                 continue;
-            NodeState parentNodeState = getNodeState(parentId);
+            NodeState parentNodeState = getCanonicalNodeState(parentId);
             if(parentNodeState == null || !parentNodeState.hasChildNodeEntry(upstream))
                 continue;
             Name name = parentNodeState.getChildNodeEntry(upstream).getName();
