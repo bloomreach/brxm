@@ -38,6 +38,7 @@ public class MockHstComponentWindow implements HstComponentWindow {
     protected HstComponent component;
     protected String renderPath;
     protected String serveResourcePath;
+    protected String pageErrorHandlerClassName;
     protected Map<String, String> parameters;
     protected Map<String, String> localParameters;
     protected HstComponentWindow parentWindow;
@@ -138,6 +139,14 @@ public class MockHstComponentWindow implements HstComponentWindow {
     
     public void setServeResourcePath(String serveResourcePath) {
         this.serveResourcePath = serveResourcePath;
+    }
+    
+    public String getPageErrorHandlerClassName() {
+        return pageErrorHandlerClassName;
+    }
+
+    public void setPageErrorHandlerClassName(String pageErrorHandlerClassName) {
+        this.pageErrorHandlerClassName = pageErrorHandlerClassName;
     }
     
     public String getParameter(String name) {

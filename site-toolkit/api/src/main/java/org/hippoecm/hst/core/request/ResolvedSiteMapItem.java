@@ -121,7 +121,7 @@ public interface ResolvedSiteMapItem {
     boolean isSecured();
     
     /**
-     * @return the <code>HstComponentConfiguration</code> that is found through {@link #getHstSiteMapItem()}
+     * @return the root <code>HstComponentConfiguration</code> that is configured on the backing {@link #getHstSiteMapItem()} of this ResolvedSiteMapItem
      */
     HstComponentConfiguration getHstComponentConfiguration();
     

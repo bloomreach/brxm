@@ -203,6 +203,7 @@ public abstract class AbstractValve implements Valve {
 					public String getLocalParameter(String name) {return null;}
 					public Map<String, String> getLocalParameters() {return null;}
 					public long getCreatedTime() {return 0L;}
+                    public String getPageErrorHandlerClassName() {return null;}
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);
@@ -293,11 +294,22 @@ public abstract class AbstractValve implements Valve {
         PageErrorHandler pageErrorHandler = (PageErrorHandler) hstRequest.getAttribute(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
         
         if (pageErrorHandler == null) {
-            String pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
-            
+            String pageErrorHandlerClassName = window.getPageErrorHandlerClassName();
+            if(pageErrorHandlerClassName == null) {
+                /* fallback to the original implementation through parametername/value. This is due to historical reasons and backwards 
+                 * compatibility
+                 */
+                pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
+            }
             while (pageErrorHandlerClassName == null && window.getParentWindow() != null) {
                 window = window.getParentWindow();
-                pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
+                pageErrorHandlerClassName = window.getPageErrorHandlerClassName();
+                if(pageErrorHandlerClassName == null) {
+                    /* fallback to the original implementation through parametername/value. This is due to historical reasons and backwards 
+                     * compatibility
+                     */
+                    pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
+                }
             }
             
             if (pageErrorHandlerClassName != null) {

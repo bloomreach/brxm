@@ -70,6 +70,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private String referenceComponent;
 
+    private String pageErrorHandlerClassName;
+
     private PropertyMap propertyMap;
 
     private String configurationRootNodePath;
@@ -107,18 +109,17 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         if (getValueProvider().isNodeType(HstNodeTypes.NODETYPE_HST_COMPONENT)) {
             this.name = getValueProvider().getName();
             this.referenceName = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
-            this.componentClassName = getValueProvider()
-                    .getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
+            this.componentClassName = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
             if (componentClassName == null) {
                 this.componentClassName = GenericHstComponent.class.getName();
             } else {
                 this.hasClassNameConfigured = true;
             }
 
-            this.referenceComponent = getValueProvider().getString(
-                    HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
+            this.referenceComponent = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
             this.hstTemplate = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
             this.serveResourcePath = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
+            this.pageErrorHandlerClassName = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
             this.propertyMap = getValueProvider().getPropertyMap();
             String[] parameterNames = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
             String[] parameterValues = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
@@ -241,6 +242,12 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return referenceComponent;
     }
 
+
+    public String getPageErrorHandlerClassName() {
+        return pageErrorHandlerClassName;
+    }
+
+    
     public SortedMap<String, HstComponentConfiguration> getChildren() {
         return Collections.unmodifiableSortedMap(this.componentConfigurations);
     }
@@ -273,6 +280,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         copy.referenceName = child.referenceName;
         copy.renderPath = child.renderPath;
         copy.referenceComponent = child.referenceComponent;
+        copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.serveResourcePath = child.serveResourcePath;
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
@@ -313,25 +321,36 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                     referencedComp.populateComponentReferences(rootComponentConfigurations, populated);
                 }
                 // get all properties that are null from the referenced component:
-                if (!this.hasClassNameConfigured)
+                if (!this.hasClassNameConfigured) {
                     this.componentClassName = referencedComp.componentClassName;
-                if (this.configurationRootNodePath == null)
+                }
+                if (this.configurationRootNodePath == null) {
                     this.configurationRootNodePath = referencedComp.configurationRootNodePath;
-                if (this.hstTemplate == null)
+                }
+                if (this.hstTemplate == null) {
                     this.hstTemplate = referencedComp.hstTemplate;
-                if (this.name == null)
+                }
+                if (this.name == null) {
                     this.name = referencedComp.name;
-                if (this.propertyMap == null)
+                }
+                if (this.propertyMap == null) {
                     this.propertyMap = referencedComp.propertyMap;
-                if (this.referenceName == null)
+                }
+                if (this.referenceName == null) {
                     this.referenceName = referencedComp.referenceName;
-                if (this.renderPath == null)
+                }
+                if (this.renderPath == null) {
                     this.renderPath = referencedComp.renderPath;
-                if (this.referenceComponent == null)
+                }
+                if (this.referenceComponent == null) {
                     this.referenceComponent = referencedComp.referenceComponent;
-                if (this.serveResourcePath == null)
+                }
+                if (this.serveResourcePath == null) {
                     this.serveResourcePath = referencedComp.serveResourcePath;
-
+                }
+                if (this.pageErrorHandlerClassName == null) {
+                    this.pageErrorHandlerClassName = referencedComp.pageErrorHandlerClassName;
+                }
                 if (this.parameters == null) {
                     this.parameters = new HashMap<String, String>(referencedComp.parameters);
                 } else if (referencedComp.parameters != null) {
@@ -380,24 +399,36 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private void combine(HstComponentConfigurationService childToMerge,
             Map<String, HstComponentConfiguration> rootComponentConfigurations,
             List<HstComponentConfiguration> populated) throws ServiceException {
-        if (!this.hasClassNameConfigured)
+        if (!this.hasClassNameConfigured) {
             this.componentClassName = childToMerge.componentClassName;
-        if (this.configurationRootNodePath == null)
+        }
+        if (this.configurationRootNodePath == null) {
             this.configurationRootNodePath = childToMerge.configurationRootNodePath;
-        if (this.hstTemplate == null)
+        }
+        if (this.hstTemplate == null) {
             this.hstTemplate = childToMerge.hstTemplate;
-        if (this.name == null)
+        }
+        if (this.name == null) {
             this.name = childToMerge.name;
-        if (this.propertyMap == null)
+        }
+        if (this.propertyMap == null) {
             this.propertyMap = childToMerge.propertyMap;
-        if (this.referenceName == null)
+        }
+        if (this.referenceName == null) {
             this.referenceName = childToMerge.referenceName;
-        if (this.renderPath == null)
+        }
+        if (this.renderPath == null) {
             this.renderPath = childToMerge.renderPath;
-        if (this.referenceComponent == null)
+        }
+        if (this.referenceComponent == null) {
             this.referenceComponent = childToMerge.referenceComponent;
-        if (this.serveResourcePath == null)
+        }
+        if (this.serveResourcePath == null) {
             this.serveResourcePath = childToMerge.serveResourcePath;
+        }
+        if (this.pageErrorHandlerClassName == null) {
+            this.pageErrorHandlerClassName = childToMerge.pageErrorHandlerClassName;
+        }
         if (this.parameters == null) {
             this.parameters = new HashMap<String, String>(childToMerge.parameters);
         } else if (childToMerge.parameters != null) {

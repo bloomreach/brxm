@@ -35,6 +35,7 @@
 - hst:serveresourcepath(string)
 - hst:referencename (string)
 - hst:referencecomponent(string)
+- hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 + * (hst:component)

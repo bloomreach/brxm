@@ -186,5 +186,10 @@ public interface HstComponentWindow {
      * @return
      */
     Enumeration<String> getAttributeNames();
+
+    /**
+     * @return the fully classified className of the class implementing {@link PageErrorHandler}
+     */
+    String getPageErrorHandlerClassName();
     
 }

@@ -20,6 +20,7 @@ import java.util.SortedMap;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.container.PageErrorHandler;
 
 /**
  * A <code>HstComponentConfiguration</code> specifies a (Java) componentClassName implementing the {@link org.hippoecm.hst.core.component.HstComponent} 
@@ -104,6 +105,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return return the servletpath of the servlet that must serve the resources for this <code>HstComponent</code>
      */
     String getServeResourcePath();
+    
+    /**
+     * @return the fully classified className of the class implementing {@link PageErrorHandler} or <code>null</code> when not configured
+     */
+    String getPageErrorHandlerClassName();
 
     /**
      * Returns the parameter value for the parameter <code>name</code> and <code>null</code> if not present. Note that
@@ -167,5 +173,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return the creation time of this HstComponentConfiguration
      */
     long getCreatedTime();
+
+
     
 }

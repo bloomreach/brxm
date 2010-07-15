@@ -172,6 +172,12 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     public String getReferenceName() {
         return hstComponentConfiguration.getReferenceName();
     }
+    
+
+    public String getPageErrorHandlerClassName() {
+        return hstComponentConfiguration.getPageErrorHandlerClassName();
+    }
+    
 
     public String getReferenceNamespace() {
         return this.referenceNamespace;
@@ -239,5 +245,5 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected void setResponseState(HstResponseState responseState) {
         this.responseState = responseState;
     }
-    
+
 }
