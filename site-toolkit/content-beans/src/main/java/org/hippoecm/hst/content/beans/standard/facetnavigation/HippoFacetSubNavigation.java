@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.util.KeyValue;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,16 @@ public class HippoFacetSubNavigation extends AbstractHippoFacetChildNavigation {
     
     private static Logger log = LoggerFactory.getLogger(HippoFacetSubNavigation.class);
     
-    
+    /**
+     * For HippoFacetSubNavigation, the node name is the encoded facet values. To get the correct original facet value, we need
+     * to decode the name of the node.
+     */
+    @Override
+    public String getName() {
+        return NodeNameCodec.decode(super.getName());
+    }
+
+
     public KeyValue<String, String> getFacetValueCombi(){
         try {
             final String key = this.getNode().getParent().getName();
