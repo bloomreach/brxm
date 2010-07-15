@@ -70,10 +70,6 @@ public interface ContainerConstants {
     
     /**
      * The parameter name for custom error handler class name in the root component configuration
-     * 
-     * @deprecated pageErrorHandler should be configured from version 2.10.xx and higher as property 'hst:page_errorhandlerclassname' on 
-     * the 'hst:component' and not through parametername 'org.hippoecm.hst.core.container.custom.errorhandler' anymore
-     */
-    @Deprecated 
+     */ 
     String CUSTOM_ERROR_HANDLER_PARAM_NAME = "org.hippoecm.hst.core.container.custom.errorhandler";  
 }
