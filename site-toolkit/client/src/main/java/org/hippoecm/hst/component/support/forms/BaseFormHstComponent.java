@@ -252,7 +252,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
                 result = result.getNode(Character.toString((char)(a+r)));
             } else {
                 needCheck = false;
-                result = result.addNode(Character.toString((char)(a+r)));
+                result = result.addNode(Character.toString((char)(a+r)), DEFAULT_FORMDATA_CONTAINER);
             }
         }
         return result;

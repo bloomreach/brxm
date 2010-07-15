@@ -55,7 +55,7 @@ public class Contact extends BaseFormHstComponent {
             // possible do a redirect to a thankyou page: do not use directly response.sendRedirect;
             HstSiteMapItem item = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getChild("thankyou");
             if(item != null) {
-                this.sendRedirect("/thankyou", request, response);
+                this.sendRedirect("/contact/thankyou", request, response);
             } else {
                 log.warn("Cannot redirect because siteMapItem not found. ");
             }
