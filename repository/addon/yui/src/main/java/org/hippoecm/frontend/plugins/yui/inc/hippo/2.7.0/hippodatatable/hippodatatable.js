@@ -39,14 +39,14 @@ if (!YAHOO.hippo.DataTable) {
         
         YAHOO.extend(YAHOO.hippo.DataTable, YAHOO.hippo.Widget, {
 
-        	  resize: function(sizes) {
+        	  resize: function(sizes, preserveScroll) {
                 var table = Dom.get(this.id);
                 if(table.rows.length <= 1) {
                      return; //no rows in body
                 }
 
                 if(YAHOO.env.ua.gecko > 0 || YAHOO.env.ua.webkit > 0) {
-                    this._updateGecko(sizes, table);
+                    this._updateGecko(sizes, table, preserveScroll);
                 } else {
                     this._updateIE(sizes, table);
                 }
@@ -55,7 +55,7 @@ if (!YAHOO.hippo.DataTable) {
             update : function() {
                 var table = Dom.get(this.id);
                 var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                this.resize(un.getSizes());
+                this.resize(un.getSizes(), true);
             },
         	
             _updateIE: function(sizes, table) {
@@ -118,13 +118,15 @@ if (!YAHOO.hippo.DataTable) {
                 }
         	  },
 
-            _updateGecko : function(sizes, table) {
+            _updateGecko : function(sizes, table, preserveScroll) {
                 var thead = this._getThead(table);
                 var headers = Dom.getElementsByClassName('headers' , 'tr' , thead);
                 if(headers.length == 0) {
                     return;
                 }
                 var tbody = this._getTbody(table);
+                var previousScrollTop = tbody.scrollTop;
+
                 var cells = Dom.getElementsByClassName(this.config.autoWidthClassName , 'td' , tbody);
                 if(cells.length == 0) {
                     return;
@@ -139,6 +141,10 @@ if (!YAHOO.hippo.DataTable) {
                 //if(heightData.changed) {
                     Dom.setStyle(tbody, 'height', heightData.tbodyHeight + 'px');
                 //}
+                if(preserveScroll) {
+                    tbody.scrollTop = previousScrollTop;
+                }
+
                 if(widthData.changed && heightData.scrolling) {
                     var scrollWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
 //                    for(var i=0; i<cells.length; ++i) {
