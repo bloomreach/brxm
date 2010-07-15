@@ -63,7 +63,9 @@
 + * (hst:sitemapitemhandler)
 
 [hst:script] > nt:base
-- * (string)  
+- hst:template (string) mandatory
+- hst:language (string) mandatory
+- * (string)
 
 [hst:scripts] orderable
 + * (hst:script)
