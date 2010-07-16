@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.IClasspathEntry
 import org.eclipse.jdt.internal.core.ClasspathEntry
 import org.eclipse.jdt.core.IPackageFragmentRoot
 import org.eclipse.jdt.core.IClasspathAttribute
+import org.eclipse.jdt.core.JavaCore
 import org.eclipse.core.internal.resources.Workspace
 
 out.clear()
@@ -26,6 +27,8 @@ cleanupSharedResources()
 cleanupTestResourcesInDependencies('hippo-ecm-quickstart-war')
 cleanupTestResourcesInDependencies('hippo-ecm-repository-application')
 cleanupTestResourcesInDependencies('hippo-ecm-frontend-application')
+
+convertResourcesToAny('hippo-ecm-repository-upgrade', 'src/main/resources')
 
 println "\n$metadata.menuName finished"
 
@@ -130,6 +133,35 @@ def removeProjectDependency(fromName, toName) {
             println "  Removing project dependency from $fromName to $toName"
             def classpathSet = new LinkedHashSet(Arrays.asList(classpath))
             classpathSet.remove(toBeRemoved)
+            classpath = (IClasspathEntry[])classpathSet.toArray()
+            def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true)
+            op.runOperation(monitor)
+        }
+    }
+}
+
+def convertResourcesToAny(fromName, source) {
+    def from = workspace.root.getProject(fromName)
+                System.out.println("hello")
+    if (from.isOpen()) {   
+        def fromProject = from.getNature('org.eclipse.jdt.core.javanature')
+        def classpath = fromProject.getRawClasspath()
+        def toBeRemoved = null
+        classpath.each() {
+            if (it.entryKind == IClasspathEntry.CPE_SOURCE) {
+	            if (it.path.toString().contains(source)) {
+	                toBeRemoved = it
+	            }
+            }
+        }
+        if (toBeRemoved != null) {
+            println "  Converting resourses to use any in $fromName"
+            def classpathSet = new LinkedHashSet(Arrays.asList(classpath))
+            classpathSet.remove(toBeRemoved)
+            
+	        def dependency = JavaCore.newSourceEntry(from.fullPath.append(source))
+	        classpathSet.add(dependency)
+
             classpath = (IClasspathEntry[])classpathSet.toArray()
             def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true)
             op.runOperation(monitor)
