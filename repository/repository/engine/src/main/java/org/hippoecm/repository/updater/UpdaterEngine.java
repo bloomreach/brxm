@@ -798,7 +798,7 @@ public class UpdaterEngine {
             partitionedBatch.add(currentBatch);
         }
 
-	/*
+        /*
         Iterator<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> iter = (reverse ? partitionedBatch.descendingIterator() : partitionedBatch.iterator());
         if(iter.hasNext()) {
             SortedMap<UpdaterPath, List<UpdaterItemVisitor>> carry = new TreeMap<UpdaterPath,List<UpdaterItemVisitor>>(comparator);
@@ -824,7 +824,7 @@ public class UpdaterEngine {
                 current = next;
             }
         }
-	*/
+        */
 
         return partitionedBatch;
     }
