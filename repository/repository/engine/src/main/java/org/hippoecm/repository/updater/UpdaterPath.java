@@ -26,6 +26,31 @@ public class UpdaterPath implements Comparable<UpdaterPath> {
     private Integer[] indices;
     private String string;
 
+    public UpdaterPath(String[] elements) {
+        this(elements, elements.length+1);
+    }
+
+    public UpdaterPath(String[] elements, int endIndex) {
+        StringBuffer sb = new StringBuffer();
+        names = new String[endIndex+1];
+        indices = new Integer[endIndex+1];
+        for (int i = 0; i <= endIndex; i++) {
+            String element = elements[i];
+            if (i > 0) {
+                sb.append("/");
+            }
+            sb.append(element);
+            if (element.contains("[")) {
+                names[i] = element.substring(0, element.indexOf('['));
+                indices[i] = Integer.parseInt(element.substring(element.indexOf('[') + 1, element.indexOf(']')));
+            } else {
+                names[i] = element;
+                indices[i] = 0;
+            }
+        }
+        this.string = new String(sb);
+    }
+
     public UpdaterPath(String path) {
         this.string = path;
 

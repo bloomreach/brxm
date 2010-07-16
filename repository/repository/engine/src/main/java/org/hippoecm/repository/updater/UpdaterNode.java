@@ -245,15 +245,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         if (nodeTypesChanged) {
             if (!hollow) {
                 oldOrigin = origin;
-                if (oldOrigin != null && (((Node)parent.origin).hasNode(nodeName)) &&
-                        ((Node)parent.origin).getNode(nodeName).getDefinition().isAutoCreated() &&
-                        !((Node)parent.origin).getNode(nodeName).getDefinition().allowsSameNameSiblings()) {
-                    if(UpdaterEngine.log.isDebugEnabled()) {
-                        UpdaterEngine.log.debug("commit autocreated "+origin.getPath());
-                    }
-                    origin = ((Node)parent.origin).getNode(nodeName);
-                    noSameNameSiblingWorkaround = null;
-                } else {
+                {
                     if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
                     }
@@ -332,7 +324,6 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                 }
             } catch (ConstraintViolationException ex) {
                 // happens in case of mandatory node that was kept left behind.
-                origin = ((Node)parent.origin).getNode(name);
                 UpdaterEngine.log.warn("dropping old mandatory node"+((Node)parent.origin).getPath());
             } catch(ItemExistsException ex) {
                 origin = ((Node)parent.origin).getNode(name);

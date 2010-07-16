@@ -797,6 +797,35 @@ public class UpdaterEngine {
         if (currentBatch != null) {
             partitionedBatch.add(currentBatch);
         }
+
+	/*
+        Iterator<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> iter = (reverse ? partitionedBatch.descendingIterator() : partitionedBatch.iterator());
+        if(iter.hasNext()) {
+            SortedMap<UpdaterPath, List<UpdaterItemVisitor>> carry = new TreeMap<UpdaterPath,List<UpdaterItemVisitor>>(comparator);
+            SortedMap<UpdaterPath, List<UpdaterItemVisitor>> current = iter.next();
+            while(iter.hasNext()) {
+                SortedMap<UpdaterPath, List<UpdaterItemVisitor>> next = iter.next();
+                for(Iterator<Map.Entry<UpdaterPath,List<UpdaterItemVisitor>>> entries = current.entrySet().iterator(); entries.hasNext(); ) {
+                    Map.Entry<UpdaterPath,List<UpdaterItemVisitor>> entry = entries.next();
+                    UpdaterPath path = null;
+                    String[] pathElements = entry.getKey().toString().split("/");
+                    for(int i=0; i<pathElements.length - 1; i++) {
+                        if(pathElements[i].equals(pathElements[i+1])) {
+                            path = new UpdaterPath(pathElements, i);
+                        }
+                    }
+                    if(path != null && next.containsKey(path)) {
+                        entries.remove();
+                        carry.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                next.putAll(carry);
+                carry.clear();
+                current = next;
+            }
+        }
+	*/
+
         return partitionedBatch;
     }
 
