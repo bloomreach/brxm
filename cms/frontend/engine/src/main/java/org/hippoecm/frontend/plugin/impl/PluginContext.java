@@ -367,6 +367,13 @@ public class PluginContext implements IPluginContext, IDetachable {
         }
     }
 
+    void reset() {
+        stop();
+
+        initializing = true;
+        stopping = false;
+    }
+    
     public void detach() {
         for (Map.Entry<IServiceFactory<IClusterable>, IClusterable> entry : instances.entrySet()) {
             IClusterable service = entry.getValue();
