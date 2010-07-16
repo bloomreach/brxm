@@ -598,7 +598,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
-    public static class WorkflowInvocationImpl implements WorkflowInvocation {
+    public class WorkflowInvocationImpl implements WorkflowInvocation {
         Node workflowNode;
         Document workflowSubject;
         Node workflowSubjectNode;
@@ -692,7 +692,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         public Object invoke(Session session) throws RepositoryException, WorkflowException {
             workflowSubjectNode = session.getNodeByUUID(workflowSubjectNode.getUUID());
-            WorkflowManager workflowManager = new WorkflowManagerImpl(session, session);
+            WorkflowManager workflowManager = new WorkflowManagerImpl(session, rootSession);
             Workflow workflow = workflowManager.getWorkflow(category, workflowSubjectNode);
             Method[] methods = workflow.getClass().getMethods();
             method = null;
