@@ -74,21 +74,15 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
-        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:nodetype") {
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:field") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
-                context.setName(node, "hipposysedit:nodetype");
-                //context.setPrimaryNodeType(node, "hipposysedit:nodetype");
-                for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
-                    Node field = iter.nextNode();
-                    context.setPrimaryNodeType(field, "hipposysedit_1_2:field");
-                    if(field.hasProperty("hipposysedit_1_2:name")) {
-                        Property nameProperty = field.getProperty("hipposysedit_1_2:name");
-                        if(field.getName().equals("hipposysedit_1_2:field")) {
-                            context.setName(field, nameProperty.getString());
-                        }
-                        nameProperty.remove();
+            public void leaving(final Node field, int level) throws RepositoryException {
+                if(field.hasProperty("hipposysedit:name")) {
+                    Property nameProperty = field.getProperty("hipposysedit:name");
+                    if(field.getName().equals("hipposysedit:field")) {
+                        context.setName(field, nameProperty.getString());
                     }
+                    nameProperty.remove();
                 }
             }
         });
