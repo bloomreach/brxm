@@ -98,7 +98,7 @@ public class PluginFactory implements IClusterable {
                     + config.getString(RenderService.WICKET_ID) + "'.";
 
             // reset context, i.e. unregister everything that was registered so far
-            context.stop();
+            context.reset();
 
             if (config.getString(RenderService.WICKET_ID) != null) {
                 IPluginConfig errorConfig = new JavaPluginConfig();
