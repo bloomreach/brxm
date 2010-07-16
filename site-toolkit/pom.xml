@@ -87,7 +87,7 @@
 
     <jackrabbit.version>1.5.0</jackrabbit.version>
 
-    <hippoecm.version>2.15.01</hippoecm.version>
+    <hippoecm.version>2.15.02-SNAPSHOT</hippoecm.version>
     <hst-configuration-editor.version>1.03.02</hst-configuration-editor.version>
     
     <jdo.version>2.0</jdo.version>
@@ -245,7 +245,7 @@
     </repository>
     <repository>
       <id>hippogallerypicker</id>
-      <url>http://forge.hippo-ecm.org/svn/gallerypicker/maven2</url>
+      <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
