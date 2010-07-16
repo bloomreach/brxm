@@ -253,7 +253,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     String categoryLabel = new StringResourceModel("add-category", this, null,
-                            new Object[] { new StringResourceModel(category, this, null) }).getString();
+                            new Object[] { new StringResourceModel(category, this, null, category) }).getString();
                     list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(), category + "-16.png")) {
                         public String prototype;
                         public String targetName;
@@ -262,7 +262,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                         @Override
                         protected Dialog createRequestDialog() {
                             return new AddDocumentDialog(this, new StringResourceModel(category,
-                                    FolderWorkflowPlugin.this, null), category, prototypes.get(category));
+                                    FolderWorkflowPlugin.this, null, category), category, prototypes.get(category));
                         }
 
                         @Override
