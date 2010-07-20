@@ -845,8 +845,9 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 /* date widget */
 .hippo-editor-field .yui-date-time-field {padding-left: 4px;}
 .hippo-editor-field-datepicker
-
-.yui-date-time-field {height: 24px;}
+.yui-date-time-field {display: inline-block;}
+.yui-date-time-field-input {height: 24px; float: left;}
+.yui-date-time-field-reset {height: 24px; float: left;}
 .yui-date-time-field input { border: 1px solid #e3e3e3; padding: 2px; height: 14px; float:left;}
 .yui-date-time-field input.date { width: 55px;}
 .yui-date-time-field input.time { width: 17px; }
