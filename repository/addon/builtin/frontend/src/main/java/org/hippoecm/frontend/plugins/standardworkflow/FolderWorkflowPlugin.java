@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -174,7 +175,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 if(folderNode != null) {
                     final IModel folderName = new NodeTranslator(new JcrNodeModel(folderNode)).getNodeName();
                     try {
-                        boolean deleteAllowed = folderNode.getNodes().getSize() == 0;
+                        boolean deleteAllowed = true;
+                        for (NodeIterator iter = folderNode.getNodes(); iter.hasNext();) {
+                            Node child = iter.nextNode();
+                            if (!child.isNodeType(HippoNodeType.NT_TRANSLATION)) {
+                                deleteAllowed = false;
+                                break;
+                            }
+                        }
                         StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
                                 FolderWorkflowPlugin.this, null, new Object[]{folderName}) {
 
