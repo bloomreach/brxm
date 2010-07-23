@@ -44,14 +44,6 @@
       <type>war</type>
     </dependency>
     
-    <!--  TODO : this dep is temporary fix. Remove after HREPTWO-4268 is fixed. See HSTTWO-1134 -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-ldap-repository</artifactId>
-      <version>${hippoecm.version}</version>
-      <type>jar</type>
-    </dependency>
-    
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
       <artifactId>hst-addon-cnd</artifactId>
