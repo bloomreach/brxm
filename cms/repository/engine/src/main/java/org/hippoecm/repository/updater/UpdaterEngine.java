@@ -368,6 +368,10 @@ public class UpdaterEngine {
         for (Iterator<ModuleRegistration> iter = modules.iterator(); iter.hasNext();) {
             ModuleRegistration registration = iter.next();
             boolean isValid = false;
+            if(registration.name == null || registration.name.trim().equals("")) {
+                log.error("module did not specify a name");
+                isValid = false;
+            }
             if(registration.startTag.size() == 0) {
                 if (!"m8-bootstrap".equals(registration.name)) {
                     log.warn("module "+registration.name+" did not specify start tag");

@@ -40,6 +40,7 @@ public class Upgrader12b implements UpdaterModule {
     static final Logger log = LoggerFactory.getLogger(Upgrader12b.class);
     
     public void register(final UpdaterContext context) {
+        context.registerName("upgrade-v12b");
         context.registerStartTag("v20902");
         context.registerStartTag("v12a");
         context.registerEndTag("v12b");
