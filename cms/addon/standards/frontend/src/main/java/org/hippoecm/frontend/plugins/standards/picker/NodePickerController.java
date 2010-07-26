@@ -275,6 +275,7 @@ public abstract class NodePickerController implements IDetachable {
                     return true;
                 }
             }
+            return false;
         }
 
         return isDocument;
