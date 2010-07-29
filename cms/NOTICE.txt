@@ -1,6 +1,6 @@
 This product includes software developed by:
 The Apache Software Foundation (http://www.apache.org/).
-Hippo B.V., Amsterdam, The Netherlands (http://www.hippo.nl/).
+Hippo B.V., Amsterdam, The Netherlands (http://www.onehippo.com/).
 
 NOTICE: Only our own original work is licensed under the terms of the Apache
 License Version 2.0. The licenses of some libraries might impose different
