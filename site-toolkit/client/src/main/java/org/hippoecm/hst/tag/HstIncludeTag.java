@@ -16,21 +16,26 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.util.HeadElementUtils;
 
 /**
- * Abstract supporting class for Hst URL tags (action, redner and resource)
+ * Supporting class for including the content of a child component window.
+ * @version $Id$
  */
-
 public class HstIncludeTag extends TagSupport {
     
     private static final long serialVersionUID = 1L;
-
+    
     protected String ref = null;
     
     /* (non-Javadoc)
@@ -56,12 +61,46 @@ public class HstIncludeTag extends TagSupport {
         }
         
         if (hstResponse != null) {
+            ContentRenderingContext ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.PAGE_SCOPE);
+            if (ctx == null) {
+                ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.REQUEST_SCOPE);
+            }
+            HeadElement wrapperElem = null;
+            if (ctx != null) {
+                wrapperElem = ctx.getWrapperElement();
+            }
+            
             try {
-                this.pageContext.getOut().flush();
-                hstResponse.flushChildContent(this.ref);
+                JspWriter writer = pageContext.getOut();
+                
+                if (wrapperElem != null) {
+                    wrapperElem.setAttribute(ctx.getContentNameAttribute(), ref);
+                    writer.write('<');
+                    writer.write(wrapperElem.getTagName());
+                    for (Map.Entry<String, String> entry : wrapperElem.getAttributeMap().entrySet()) {
+                        writer.write(' ');
+                        writer.write(entry.getKey());
+                        writer.write("=\"");
+                        writer.write(HeadElementUtils.encode(entry.getValue()));
+                        writer.write("\"");
+                    }
+                    writer.write('>');
+                }
+                
+                writer.flush();
+                
+                hstResponse.flushChildContent(ref);
+                
+                if (wrapperElem != null) {
+                    writer.write("</");
+                    writer.write(wrapperElem.getTagName());
+                    writer.write('>');
+                }
             } catch (IOException e) {
             }
         }
+        
+        ref = null;
         
         return EVAL_PAGE;
     }

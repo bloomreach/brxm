@@ -24,7 +24,7 @@ import java.util.Map;
  * 
  * @version $Id$
  */
-public interface HeadElement extends Serializable
+public interface HeadElement extends Serializable, Cloneable
 {
     
     /**
@@ -96,4 +96,8 @@ public interface HeadElement extends Serializable
      */
     Collection<HeadElement> getChildHeadElements();
     
+    /**
+     * {@inheritDoc}
+     */
+    Object clone();
 }

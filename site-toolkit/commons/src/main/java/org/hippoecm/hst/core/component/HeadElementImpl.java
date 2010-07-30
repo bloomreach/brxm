@@ -144,4 +144,22 @@ public class HeadElementImpl implements HeadElement
         }
     }
     
+    @Override
+    public Object clone() {
+        HeadElementImpl cloned = new HeadElementImpl();
+        
+        cloned.tagName = tagName;
+        cloned.attributes = new HashMap<String, String>(attributes);
+        cloned.textContent = textContent;
+        
+        if (childHeadElements != null) {
+            cloned.childHeadElements = new ArrayList<HeadElement>();
+            
+            for (HeadElement child : childHeadElements) {
+                cloned.childHeadElements.add((HeadElement) child.clone());
+            }
+        }
+        
+        return cloned;
+    }
 }

@@ -827,4 +827,56 @@
         <body-content>empty</body-content>
     </tag>
 
+    <tag>
+        <name>componentContentWrapper</name>
+        <tag-class>org.hippoecm.hst.tag.HstComponentContentWrapperTag</tag-class>
+        <body-content>JSP</body-content>
+        <description> The content of a HstComponent can be wrapped a dedicated wrapper DOM element
+            which is configured with this tag. </description>
+        <attribute>
+            <name>element</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.w3c.dom.Element</type>
+            <description> For more optimized way to create and use DOM element, this tag supports
+                setting a DOM element by element attribute. If this attribute is set, then the
+                componentContentWrapper tag will not try to parse the body content to create a DOM
+                element. Instead, it will use the passed DOM element by this attribute.
+            </description>
+        </attribute>
+        <attribute>
+            <name>elementByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean name of Element object which can be retrieved from pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
+            </description>
+        </attribute>
+        <attribute>
+            <name>scope</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> The scope to which the wrapper element should apply.
+              The valid scope is either 'request' or 'page'. The default value is 'page'. </description>
+        </attribute>
+        <attribute>
+            <name>contentNameAttribute</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> The name for the attribute which is set to the child content name. </description>
+        </attribute>
+        <example><![CDATA[
+            <hst:element var="componentContentWrapperElem" name="span">
+                <hst:attribute name="class" value="wrapper" />
+            </hst:element>
+            <hst:componentContentWrapper scope="request" element="${componentContentWrapperElem}" contentNameAttribute="hst:content">
+            </hst:componentContentWrapper>
+          ]]></example>
+    </tag>
+    
 </taglib>
