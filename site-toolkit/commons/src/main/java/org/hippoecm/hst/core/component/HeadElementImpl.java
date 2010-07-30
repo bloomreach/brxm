@@ -46,6 +46,11 @@ public class HeadElementImpl implements HeadElement
     {
     }
     
+    public HeadElementImpl(String tagName)
+    {
+        this.tagName = tagName;
+    }
+    
     public HeadElementImpl(final Element element)
     {
         tagName = element.getTagName();
@@ -94,26 +99,50 @@ public class HeadElementImpl implements HeadElement
         return tagName;
     }
     
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+    
     public boolean hasAttribute(String name)
     {
+        if (attributes == null) {
+            return false;
+        }
+        
         return attributes.containsKey(name);
     }
     
     public String getAttribute(String name)
     {
+        if (attributes == null) {
+            return null;
+        }
+        
         return attributes.get(name);
     }
     
     public Map<String, String> getAttributeMap()
     {
+        if (attributes == null) {
+            attributes = new HashMap<String, String>();
+        }
+        
         return Collections.unmodifiableMap(attributes);
     }
     
     public void setAttribute(String name, String value) {
+        if (attributes == null) {
+            attributes = new HashMap<String, String>();
+        }
+        
         attributes.put(name, value);
     }
     
     public String removeAttribute(String name) {
+        if (attributes == null) {
+            return null;
+        }
+        
         return attributes.remove(name);
     }
     
@@ -144,4 +173,22 @@ public class HeadElementImpl implements HeadElement
         }
     }
     
+    @Override
+    public Object clone() {
+        HeadElementImpl cloned = new HeadElementImpl();
+        
+        cloned.tagName = tagName;
+        cloned.attributes = new HashMap<String, String>(attributes);
+        cloned.textContent = textContent;
+        
+        if (childHeadElements != null) {
+            cloned.childHeadElements = new ArrayList<HeadElement>();
+            
+            for (HeadElement child : childHeadElements) {
+                cloned.childHeadElements.add((HeadElement) child.clone());
+            }
+        }
+        
+        return cloned;
+    }
 }
