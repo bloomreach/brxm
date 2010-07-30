@@ -18,15 +18,18 @@ package org.hippoecm.hst.tag;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.component.HeadElement;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.util.HeadElementUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 /**
  * Supporting class for including the content of a child component window.
@@ -53,51 +56,54 @@ public class HstIncludeTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
 
-        // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
-        HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
+        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
         
-        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
+        if (hstRequest == null || hstResponse == null) {
+            return EVAL_PAGE;
         }
         
-        if (hstResponse != null) {
-            ContentRenderingContext ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.PAGE_SCOPE);
+        ContentRenderingContext ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.PAGE_SCOPE);
+        if (ctx == null) {
+            ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.REQUEST_SCOPE);
             if (ctx == null) {
-                ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.REQUEST_SCOPE);
+                ctx = (ContentRenderingContext) hstRequest.getRequestContext().getAttribute(ContentRenderingContext.NAME);
             }
-            HeadElement wrapperElem = null;
-            if (ctx != null) {
-                wrapperElem = ctx.getWrapperElement();
+        }
+        HeadElement wrapperElem = null;
+        if (ctx != null) {
+            wrapperElem = ctx.getWrapperElement();
+        }
+        
+        try {
+            JspWriter writer = pageContext.getOut();
+            
+            if (wrapperElem != null) {
+                wrapperElem.setAttribute(ctx.getContentNameAttribute(), ref);
+                writer.write('<');
+                writer.write(wrapperElem.getTagName());
+                for (Map.Entry<String, String> entry : wrapperElem.getAttributeMap().entrySet()) {
+                    writer.write(' ');
+                    writer.write(entry.getKey());
+                    writer.write("=\"");
+                    writer.write(HeadElementUtils.encode(entry.getValue()));
+                    writer.write("\"");
+                }
+                writer.write('>');
             }
             
-            try {
-                JspWriter writer = pageContext.getOut();
-                
-                if (wrapperElem != null) {
-                    wrapperElem.setAttribute(ctx.getContentNameAttribute(), ref);
-                    writer.write('<');
-                    writer.write(wrapperElem.getTagName());
-                    for (Map.Entry<String, String> entry : wrapperElem.getAttributeMap().entrySet()) {
-                        writer.write(' ');
-                        writer.write(entry.getKey());
-                        writer.write("=\"");
-                        writer.write(HeadElementUtils.encode(entry.getValue()));
-                        writer.write("\"");
-                    }
-                    writer.write('>');
-                }
-                
-                writer.flush();
-                
-                hstResponse.flushChildContent(ref);
-                
-                if (wrapperElem != null) {
-                    writer.write("</");
-                    writer.write(wrapperElem.getTagName());
-                    writer.write('>');
-                }
-            } catch (IOException e) {
+            writer.flush();
+            
+            hstResponse.flushChildContent(ref);
+            
+            if (wrapperElem != null) {
+                writer.write("</");
+                writer.write(wrapperElem.getTagName());
+                writer.write('>');
             }
+        } catch (IOException e) {
         }
         
         ref = null;
