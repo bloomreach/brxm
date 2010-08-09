@@ -20,6 +20,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import org.apache.jackrabbit.core.persistence.PMContext;
+import org.apache.jackrabbit.core.persistence.bundle.NGKDbNameIndex;
+import org.apache.jackrabbit.core.persistence.bundle.DbNameIndex;
 import org.apache.jackrabbit.util.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
