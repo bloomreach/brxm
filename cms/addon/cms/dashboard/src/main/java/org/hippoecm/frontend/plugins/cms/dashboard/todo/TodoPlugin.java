@@ -75,41 +75,7 @@ public class TodoPlugin extends RenderPlugin {
         @Override
         protected Iterator getItemModels() {
             final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
-            final Iterator<Node> iter = dataProvider.iterator(0, 0);
-            return new Iterator() {
-                private Node next;
-                public boolean hasNext() {
-                    while (next == null && iter.hasNext()) {
-                        next = iter.next();
-                        try {
-                            if (!next.hasProperty("hippostdpubwf:type")) {
-                                next = null;
-                            }
-                        } catch (RepositoryException ex) {
-                            next = null;
-                        }
-                    }
-                    return next != null;
-                }
-                public Object next() {
-                    while (next == null && iter.hasNext()) {
-                        next = iter.next();
-                        try {
-                            if (!next.hasProperty("hippostdpubwf:type")) {
-                                next = null;
-                            }
-                        } catch (RepositoryException ex) {
-                            next = null;
-                        }
-                    }
-                    Node rtValue = next;
-                    next = null;
-                    return dataProvider.model(rtValue);
-                }
-                public void remove() {
-                    throw new UnsupportedOperationException("Unsupported operation");
-                }
-            };
+            return dataProvider.iterator(0, 0);
         }
 
         @Override
