@@ -95,7 +95,7 @@
       <sv:value>f2e7cb32-081a-4679-8bed-0fec3ef9a132</sv:value>
     </sv:property>
     <sv:property sv:name="reporting:limit" sv:type="Long">
-      <sv:value>2</sv:value>
+      <sv:value>16</sv:value>
     </sv:property>
     <sv:property sv:name="reporting:parameternames" sv:type="String">
     </sv:property>
