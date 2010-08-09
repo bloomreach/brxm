@@ -16,7 +16,9 @@
 package org.hippoecm.repository.decorating;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Calendar;
+import javax.jcr.Binary;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -92,5 +94,21 @@ public class ValueFactoryDecorator extends AbstractDecorator implements ValueFac
      */
     public Value createValue(Node value) throws RepositoryException {
         return valueFactory.createValue(NodeDecorator.unwrap(value));
+    }
+
+    public Value createValue(BigDecimal value) {
+        return valueFactory.createValue(value);
+    }
+
+    public Value createValue(Binary value) {
+        return valueFactory.createValue(value);
+    }
+
+    public Value createValue(Node value, boolean weak) throws RepositoryException {
+        return valueFactory.createValue(value, weak);
+    }
+
+    public Binary createBinary(InputStream stream) throws RepositoryException {
+        return valueFactory.createBinary(stream);
     }
 }

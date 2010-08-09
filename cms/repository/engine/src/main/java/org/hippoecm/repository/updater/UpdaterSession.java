@@ -55,6 +55,8 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.jcr.retention.RetentionManager;
+import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
@@ -484,6 +486,46 @@ final public class UpdaterSession implements HippoSession {
 
     @Deprecated
     public XAResource getXAResource() {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Node getNodeByIdentifier(String id) throws ItemNotFoundException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Node getNode(String absPath) throws PathNotFoundException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public boolean nodeExists(String absPath) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public boolean propertyExists(String absPath) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void removeItem(String absPath) throws VersionException, LockException, ConstraintViolationException, AccessDeniedException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public boolean hasPermission(String absPath, String actions) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public boolean hasCapability(String methodName, Object target, Object[] arguments) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public AccessControlManager getAccessControlManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
 }

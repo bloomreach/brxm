@@ -62,6 +62,7 @@ public class Utilities {
             // out.print(",uuid=...");
         }
         out.print(",path="+parent.getPath());
+        out.print(",id="+parent.getIdentifier());
         out.println("]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();

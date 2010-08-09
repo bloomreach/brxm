@@ -16,6 +16,7 @@
 package org.hippoecm.repository.updater;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +32,9 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.Binary;
 import javax.jcr.InvalidItemStateException;
+import javax.jcr.InvalidLifecycleTransitionException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
@@ -1100,6 +1103,62 @@ final public class UpdaterNode extends UpdaterItem implements Node {
 
     @Deprecated
     public boolean isLocked() throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Property setProperty(String name, Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Property setProperty(String name, BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public NodeIterator getNodes(String[] nameGlobs) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public PropertyIterator getProperties(String[] nameGlobs) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public String getIdentifier() throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public PropertyIterator getReferences(String name) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public PropertyIterator getWeakReferences() throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public PropertyIterator getWeakReferences(String name) throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void setPrimaryType(String nodeTypeName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public NodeIterator getSharedSet() throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void removeSharedSet() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void removeShare() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void followLifecycleTransition(String transition) throws UnsupportedRepositoryOperationException, InvalidLifecycleTransitionException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public String[] getAllowedLifecycleTransistions() throws UnsupportedRepositoryOperationException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
 }

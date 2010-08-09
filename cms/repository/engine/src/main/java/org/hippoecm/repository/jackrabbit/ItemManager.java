@@ -20,13 +20,12 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
+import org.apache.jackrabbit.core.id.NodeId;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.core.HierarchyManager;
-import org.apache.jackrabbit.core.ItemId;
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
@@ -39,14 +38,24 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
 
     private NodeId rootNodeId;
 
-    protected ItemManager(SessionItemStateManager itemStateProvider, HierarchyManager hierMgr,
-                          SessionImpl session, NodeDefinition rootNodeDef,
+    protected ItemManager(SessionItemStateManager sism,
+                          HierarchyManager hierMgr,
+                          SessionImpl session,
+                          org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl rootNodeDef,
                           NodeId rootNodeId) {
-        super(itemStateProvider, hierMgr, session, rootNodeDef, rootNodeId);
+        super(sism, hierMgr, session, rootNodeDef, rootNodeId);
         this.rootNodeId = rootNodeId;
     }
 
-    org.apache.jackrabbit.core.NodeImpl getRootNode() throws RepositoryException {
-        return (org.apache.jackrabbit.core.NodeImpl) getItem(rootNodeId);
+    public static ItemManager createInstance(
+            SessionItemStateManager itemStateProvider,
+            HierarchyManager hierMgr,
+            SessionImpl session,
+            org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl rootNodeDef,
+            NodeId rootNodeId) {
+        ItemManager mgr = new ItemManager(itemStateProvider, hierMgr,
+                session, rootNodeDef, rootNodeId);
+        itemStateProvider.addListener(mgr);
+        return mgr;
     }
 }

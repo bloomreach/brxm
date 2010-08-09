@@ -18,8 +18,8 @@ package org.hippoecm.repository.replication.filters;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.config.ConfigurationException;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;

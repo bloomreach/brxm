@@ -95,7 +95,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
             HippoAMContext ctx = new HippoAMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()),
                     ((RepositoryImpl)rep).getFileSystem(),
                     this, subject, hierMgr, this, getWorkspace().getName(), ntMgr, getItemStateManager());
-            AccessManager accessMgr = (AccessManager)amConfig.newInstance();
+            AccessManager accessMgr = (AccessManager)amConfig.newInstance(AccessManager.class);
             accessMgr.init(ctx);
             return accessMgr;
         } catch (AccessDeniedException ex) {
@@ -124,13 +124,15 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     }
 
     @Override
-    protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
-        return new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), manager, ((RepositoryImpl)rep).getNodeTypeRegistry());
+    protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager localISM) {
+        SessionItemStateManager sessionISM = new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), localISM, ((RepositoryImpl)rep).getNodeTypeRegistry());
+        localISM.addListener(sessionISM);
+        return sessionISM;
     }
 
     @Override
     protected org.apache.jackrabbit.core.ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
-        return new ItemManager(itemStateMgr, hierMgr, this, ntMgr.getRootNodeDefinition(), ((RepositoryImpl)rep).getRootNodeId());
+        return ItemManager.createInstance(itemStateMgr, hierMgr, this, ntMgr.getRootNodeDefinition(), ((RepositoryImpl)rep).getRootNodeId());
     }
 
     @Override

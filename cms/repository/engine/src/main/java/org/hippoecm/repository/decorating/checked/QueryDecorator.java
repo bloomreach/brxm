@@ -135,14 +135,17 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
         query.bindValue(varName, value);
     }
 
-    public void setLimit(long limit) throws RepositoryException {
-        check();
+    public void setLimit(long limit) {
         query.setLimit(limit);
     }
 
-    public void setOffset(long offset) throws RepositoryException {
-        check();
+    public void setOffset(long offset) {
         query.setOffset(offset);
+    }
+
+    public String[] getBindVariableNames() throws RepositoryException {
+        check();
+        return query.getBindVariableNames();
     }
 
 }

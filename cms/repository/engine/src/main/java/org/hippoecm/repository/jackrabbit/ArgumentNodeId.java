@@ -15,7 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.id.NodeId;
 
 public class ArgumentNodeId extends NodeId
 {
@@ -28,7 +28,7 @@ public class ArgumentNodeId extends NodeId
     private String argument;
 
     public ArgumentNodeId(NodeId original, String argument) {
-        super(original.getUUID());
+        super(original.getRawBytes());
         this.original = original;
         this.argument = argument;
     }
@@ -39,6 +39,6 @@ public class ArgumentNodeId extends NodeId
 
     @Override
     public String toString() {
-        return "ArgumentNodeId[uuid="+original.getUUID()+",hash="+hashCode()+",argument=\""+argument+"\"]";
+        return "ArgumentNodeId[uuid="+original+",hash="+hashCode()+",argument=\""+argument+"\"]";
     }
 }

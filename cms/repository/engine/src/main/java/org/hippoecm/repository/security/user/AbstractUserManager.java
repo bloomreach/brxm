@@ -24,6 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.transaction.NotSupportedException;
@@ -426,11 +427,11 @@ public abstract class AbstractUserManager implements UserManager {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Iterator findAuthorizables(String propertyName, String value) throws RepositoryException {
+    public Iterator<Authorizable> findAuthorizables(String propertyName, String value) throws RepositoryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Iterator findAuthorizables(String propertyName, String value, int searchType) throws RepositoryException {
+    public Iterator<Authorizable> findAuthorizables(String propertyName, String value, int searchType) throws RepositoryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -447,6 +448,14 @@ public abstract class AbstractUserManager implements UserManager {
     }
 
     public Group createGroup(Principal principal, String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isAutoSave() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void autoSave(boolean enable) throws UnsupportedRepositoryOperationException, RepositoryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

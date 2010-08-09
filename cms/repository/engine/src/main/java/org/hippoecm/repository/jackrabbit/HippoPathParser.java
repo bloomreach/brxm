@@ -357,5 +357,9 @@ public class HippoPathParser {
         public int getNormalizedIndex() {
             return Path.INDEX_DEFAULT;
         }
+
+        public boolean denotesIdentifier() {
+            return false;
+        }
     }
 }

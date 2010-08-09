@@ -32,12 +32,12 @@ import javax.security.auth.Subject;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.HierarchyManagerImpl;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SearchManager;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.journal.JournalException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
@@ -50,7 +50,6 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 import org.hippoecm.repository.replication.ReplicationJournal;
 import org.hippoecm.repository.replication.ReplicationJournalProducer;
@@ -104,12 +103,10 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     public FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> getFacetedNavigationEngine() {
         if (facetedEngine == null) {
-            log
-                    .warn("Please configure your facetedEngine correctly. Application will fall back to default "
+            log.warn("Please configure your facetedEngine correctly. Application will fall back to default "
                             + "faceted engine, but this is a very inefficient one. In your repository.xml (or workspace.xml if you have "
                             + "started the repository already at least once) configure the correct class for SearchIndex. See Hippo ECM "
                             + "documentation 'SearchIndex configuration' for further information.");
-            facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
         }
         return facetedEngine;
     }
@@ -236,7 +233,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
             if (journal == null) {
                 try {
-                    journal = (ReplicationJournal) rc.getJournalConfig().newInstance();
+                    journal = rc.getJournalConfig();
                     journal.setRepositoryHome(new File(getRepositoryConfig().getHomeDir()));
                     journal.init("REPL-JOURNAL", new RegistryNamespaceResolver(getNamespaceRegistry()));
                 } catch (JournalException e) {

@@ -38,7 +38,6 @@ import javax.transaction.xa.XAResource;
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
-import org.hippoecm.repository.SessionClassLoader;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 
@@ -107,7 +106,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     }
 
     public ClassLoader getSessionClassLoader() throws RepositoryException {
-        return new SessionClassLoader(this);
+        return null;
     }
 
     public XAResource getXAResource() {

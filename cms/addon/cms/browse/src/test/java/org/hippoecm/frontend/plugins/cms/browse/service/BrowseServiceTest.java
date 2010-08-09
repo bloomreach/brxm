@@ -117,6 +117,10 @@ public class BrowseServiceTest extends PluginTest {
                     // TODO Auto-generated method stub
                     return null;
                 }
+
+                public String[] getSelectorNames() throws RepositoryException {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
                 
             };
         }

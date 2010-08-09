@@ -146,10 +146,8 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         }
     }
 
-
     @Test
     public void testCorrectRemoveExternalNodeSave() throws RepositoryException{
-        try{
             commonStart();
             //external node indicates for the half regular half virtual nodes
             Node externalNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
@@ -159,16 +157,6 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
             externalNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
             externalNode.remove();
             session.save();
-        } catch(NullPointerException ex) {
-            fail(ex.getMessage());
-        } catch(RepositoryException ex) {
-            fail(ex.getMessage());
-        }  finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-            commonEnd();
-        }
-
     }
 
     @Test

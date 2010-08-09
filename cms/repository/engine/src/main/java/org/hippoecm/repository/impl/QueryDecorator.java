@@ -163,11 +163,11 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
         arguments.put(varName, value);
     }
 
-    public void setLimit(long limit) throws RepositoryException {
+    public void setLimit(long limit) {
         ((QueryImpl)query).setLimit(limit);
     }
 
-    public void setOffset(long offset) throws RepositoryException {
+    public void setOffset(long offset) {
         ((QueryImpl)query).setOffset(offset);
     }
 
@@ -184,6 +184,10 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
             position = endPosition;
         }
         return statement;
+    }
+
+    public String[] getBindVariableNames() throws RepositoryException {
+        return ((QueryImpl)query).getBindVariableNames();
     }
 
     public static interface HardcodedQuery {
@@ -262,6 +266,30 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
                                         return null;
                                     }
                                 }
+
+                                public Node getNode() throws RepositoryException {
+                                    throw new UnsupportedOperationException("Not supported yet.");
+                                }
+
+                                public Node getNode(String selectorName) throws RepositoryException {
+                                    throw new UnsupportedOperationException("Not supported yet.");
+                                }
+
+                                public String getPath() throws RepositoryException {
+                                    throw new UnsupportedOperationException("Not supported yet.");
+                                }
+
+                                public String getPath(String selectorName) throws RepositoryException {
+                                    throw new UnsupportedOperationException("Not supported yet.");
+                                }
+
+                                public double getScore() throws RepositoryException {
+                                    throw new UnsupportedOperationException("Not supported yet.");
+                                }
+
+                                public double getScore(String selectorName) throws RepositoryException {
+                                    throw new UnsupportedOperationException("Not supported yet.");
+                                }
                             };
                         }
 
@@ -338,6 +366,10 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
                             return index + 1 < result.size();
                         }
                     };
+                }
+
+                public String[] getSelectorNames() throws RepositoryException {
+                    throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
 

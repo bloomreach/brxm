@@ -24,6 +24,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
@@ -38,8 +39,8 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
 
     private HippoSession session;
 
-    public ServerServicingXASession(XASession session, RemoteServicingAdapterFactory factory) throws RemoteException {
-        super(session, factory);
+    public ServerServicingXASession(XASession session, XAResource resource, RemoteServicingAdapterFactory factory) throws RemoteException {
+        super(session, resource, factory);
         this.session = (HippoSession) session;
     }
 

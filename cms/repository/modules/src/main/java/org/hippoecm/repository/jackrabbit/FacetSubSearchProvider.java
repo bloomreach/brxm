@@ -18,10 +18,10 @@ package org.hippoecm.repository.jackrabbit;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -30,7 +30,7 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    PropDef primaryTypePropDef;
+    QPropertyDefinition primaryTypePropDef;
 
     public FacetSubSearchProvider()
         throws RepositoryException
@@ -53,7 +53,6 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 
         PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
         propState.setType(PropertyType.NAME);
-        propState.setDefinitionId(primaryTypePropDef.getId());
         propState.setValues(new InternalValue[] { InternalValue.create(resolveName(HippoNodeType.NT_FACETSUBSEARCH)) });
         propState.setMultiValued(false);
         state.addPropertyName(NameConstants.JCR_PRIMARYTYPE);

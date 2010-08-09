@@ -52,7 +52,7 @@
       </sv:property>
       <sv:node sv:name="browse-perspective-title">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -82,7 +82,7 @@
       </sv:node>
       <sv:node sv:name="mgmt-perspective-title">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -112,7 +112,7 @@
       </sv:node>
       <sv:node sv:name="admin-perspective-title">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -142,7 +142,7 @@
       </sv:node>
       <sv:node sv:name="section-documents">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -172,7 +172,7 @@
       </sv:node>
       <sv:node sv:name="section-images">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -202,7 +202,7 @@
       </sv:node>
       <sv:node sv:name="section-files">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -232,7 +232,7 @@
       </sv:node>
       <sv:node sv:name="section-configuration">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -262,7 +262,7 @@
       </sv:node>
       <sv:node sv:name="mgmt-new-user">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -292,7 +292,7 @@
       </sv:node>
       <sv:node sv:name="mgmt-new-group">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -322,7 +322,7 @@
       </sv:node>
       <sv:node sv:name="mgmt-new-domain">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>
@@ -352,7 +352,7 @@
       </sv:node>
       <sv:node sv:name="mgmt-new-role">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:translated</sv:value>

@@ -34,7 +34,7 @@ public class ServerQueryManager extends org.apache.jackrabbit.rmi.server.ServerQ
     protected QueryManager manager;
 
     public ServerQueryManager(QueryManager manager, ServerAdapterFactory factory, Session session) throws RemoteException {
-        super(manager, factory);
+        super(session, manager, factory);
         this.session = session;
         this.manager = manager;
     }

@@ -29,20 +29,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.persistence.bundle.BundleDbPersistenceManager;
-import org.apache.jackrabbit.core.persistence.bundle.util.NodePropBundle;
+import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeReferences;
-import org.apache.jackrabbit.core.state.NodeReferencesId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.uuid.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +85,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
      * the orphan nodes to be destroyed
      */
     protected void checkBundleConsistency(NodeId id, NodePropBundle bundle,
-                                          boolean fix, Collection modifications, Collection orphans) {
+                                          boolean fix, Collection<NodePropBundle> modifications, Collection orphans) {
         //log.info(name + ": checking bundle '" + id + "'");
 
         // skip all system nodes except root node
@@ -97,10 +95,8 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         }
 
         // look at the node's children
-        Collection missingChildren = new ArrayList();
-        Iterator iter = bundle.getChildNodeEntries().iterator();
-        while (iter.hasNext()) {
-            NodePropBundle.ChildNodeEntry entry = (NodePropBundle.ChildNodeEntry) iter.next();
+        Collection<NodePropBundle.ChildNodeEntry> missingChildren = new ArrayList<NodePropBundle.ChildNodeEntry>();
+        for (NodePropBundle.ChildNodeEntry entry : bundle.getChildNodeEntries()) {
 
             // skip check for system nodes (root, system root, version storage, node types)
             if (entry.getId().toString().endsWith("babecafebabe")) {
@@ -130,9 +126,8 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         }
         // remove child node entry (if fixing is enabled)
         if (fix && !missingChildren.isEmpty()) {
-            Iterator iterator = missingChildren.iterator();
-            while (iterator.hasNext()) {
-                bundle.getChildNodeEntries().remove(iterator.next());
+            for (NodePropBundle.ChildNodeEntry entry : missingChildren) {
+                bundle.getChildNodeEntries().remove(entry);
             }
             modifications.add(bundle);
         }
@@ -163,9 +158,9 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
 
         int count = 0;
         int total = 0;
-        Collection modifications = new ArrayList();
+        Collection<NodePropBundle> modifications = new ArrayList<NodePropBundle>();
         Collection orphans = new ArrayList();
-        Collection references = new ArrayList();
+        Collection<NodeId> references = new ArrayList();
 
         if (uuids == null) {
             // get all node bundles in the database with a single sql statement,
@@ -198,16 +193,16 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                 while (rs.next()) {
                     NodeId id;
                     if (getStorageModel() == SM_BINARY_KEYS) {
-                        id = new NodeId(new UUID(rs.getBytes(1)));
+                        id = new NodeId(rs.getBytes(1));
                     } else {
-                        id = new NodeId(new UUID(rs.getLong(1), rs.getLong(2)));
+                        id = new NodeId(rs.getLong(1), rs.getLong(2));
                     }
 
                     // issuing 2nd statement to circumvent issue JCR-1474
                     ResultSet bRs = null;
                     byte[] data = null;
                     try {
-                        Statement bSmt = connectionManager.executeStmt(bundleSelectSQL, getKey(id.getUUID()));
+                        Statement bSmt = connectionManager.executeStmt(bundleSelectSQL, getKey(id));
                         bRs = bSmt.getResultSet();
                         if (!bRs.next()) {
                             //throw new SQLException("bundle cannot be retrieved?");
@@ -235,8 +230,6 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                         closeResultSet(bRs);
                     }
 
-                    if (data != null) { 
-                    }
                     count++;
                     if (count % 1000 == 0) {
                         log.info(name + ": checked " + count + "/" + total + " bundles...");
@@ -257,57 +250,52 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
             //     b) check bundle, store any bundle-to-be-modified in collection
             //     c) if recursive, add child uuids to list of uuids
 
-            List uuidList = new ArrayList(uuids.length);
+            List<NodeId> idList = new ArrayList<NodeId>(uuids.length);
             // convert uuid string array to list of UUID objects
             for (int i = 0; i < uuids.length; i++) {
                 try {
-                    uuidList.add(new UUID(uuids[i]));
+                    idList.add(new NodeId(uuids[i]));
                 } catch (IllegalArgumentException e) {
                     log.error("Invalid uuid for consistency check, skipping: '" + uuids[i] + "': " + e);
                 }
             }
 
             // iterate over UUIDs (including ones that are newly added inside the loop!)
-            for (int i = 0; i < uuidList.size(); i++) {
-                final UUID uuid = (UUID) uuidList.get(i);
+            for (int i = 0; i < idList.size(); i++) {
+                NodeId id = idList.get(i);
                 try {
                     // load the node from the database
-                    NodeId id = new NodeId(uuid);
                     NodePropBundle bundle = loadBundle(id, true);
 
                     if (bundle == null) {
-                        log.error("No bundle found for uuid '" + uuid + "'");
+                        log.error("No bundle found for uuid '" + id + "'");
                         continue;
                     }
 
                     checkBundleConsistency(id, bundle, fix, modifications, orphans);
 
                     if (recursive) {
-                        Iterator iter = bundle.getChildNodeEntries().iterator();
-                        while (iter.hasNext()) {
-                            NodePropBundle.ChildNodeEntry entry = (NodePropBundle.ChildNodeEntry) iter.next();
-                            uuidList.add(entry.getId().getUUID());
+                        for (NodePropBundle.ChildNodeEntry entry : bundle.getChildNodeEntries()) {
+                            idList.add(entry.getId());
                         }
                     }
 
                     count++;
                     if (count % 1000 == 0) {
-                        log.info(name + ": checked " + count + "/" + uuidList.size() + " bundles...");
+                        log.info(name + ": checked " + count + "/" + idList.size() + " bundles...");
                     }
                 } catch (ItemStateException e) {
                     // problem already logged (loadBundle called with logDetailedErrors=true)
                 }
             }
 
-            total = uuidList.size();
+            total = idList.size();
         }
 
         // repair collected broken bundles
         if (fix && !modifications.isEmpty()) {
             log.info(name + ": Fixing " + modifications.size() + " inconsistent bundle(s)...");
-            Iterator iterator = modifications.iterator();
-            while (iterator.hasNext()) {
-                NodePropBundle bundle = (NodePropBundle) iterator.next();
+            for (NodePropBundle bundle : modifications) {
                 try {
                     log.info(name + ": Fixing bundle '" + bundle.getId() + "'");
                     bundle.markOld(); // use UPDATE instead of INSERT
@@ -318,7 +306,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                 }
             }
         }
-        
+
         // remove orphans
         if (fix && !orphans.isEmpty()) {
             log.info(name + ": Removing " + orphans.size() + " orphan bundle(s)...");
@@ -342,21 +330,19 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
 
         if (fix && !references.isEmpty()) {
             log.info(name + ": Fixing " + references.size() + " reference(s)...");
-            Iterator iterator = references.iterator();
-            while (iterator.hasNext()) {
-                NodeReferencesId id = (NodeReferencesId) iterator.next();
-                checkAndFixReference(id, true);
+            for (NodeId targetNode : references) {
+                checkAndFixReference(targetNode, true);
             }
         }
     }
 
-    protected Collection checkReferences(String name) {
+    protected Collection<NodeId> checkReferences(String name) {
 
-    log.info("{}: checking references consistency...", name);
+        log.info("{}: checking references consistency...", name);
 
-    int count = 0;
-    int total = 0;
-        Collection references = new ArrayList();
+        int count = 0;
+        int total = 0;
+        Collection<NodeId> references = new ArrayList();
         
         // Get all references in the database with a single sql statement.
         ResultSet rs = null;
@@ -384,11 +370,11 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
 
             // iterate over all node bundles in the db
             while (rs.next()) {
-                NodeReferencesId id;
+                NodeId id;
                 if (getStorageModel() == SM_BINARY_KEYS) {
-                    id = new NodeReferencesId(new UUID(rs.getBytes(1)));
+                    id = new NodeId(rs.getBytes(1));
                 } else {
-                    id = new NodeReferencesId(new UUID(rs.getLong(1), rs.getLong(2)));
+                    id = new NodeId(rs.getLong(1), rs.getLong(2));
                 }
                 if(checkAndFixReference(id, false)) {
                     references.add(id);
@@ -426,12 +412,12 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         }
     }
 
-    protected boolean checkAndFixReference(NodeReferencesId id, boolean fix) {
-        NodeReferences fixedRefs = (fix ? new NodeReferences(id) : null);
+    protected boolean checkAndFixReference(NodeId targetNode, boolean fix) {
+        NodeReferences fixedRefs = (fix ? new NodeReferences(targetNode) : null);
         try {
             // try to load reference
-            NodeReferences refs = load(id);
-            load(id.getTargetId());
+            NodeReferences refs = loadReferencesTo(targetNode);
+            load(targetNode);
             for (Iterator refIterator = refs.getReferences().iterator(); refIterator.hasNext(); ) {
                 PropertyId refPropertyId;
                 refPropertyId = (PropertyId)refIterator.next();
@@ -443,62 +429,63 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                         PropertyState propertyState = load(refPropertyId);
                         checkPath(propertyState);
                         if(fix) {
-                            log.info("keep reference "+refPropertyId+" to "+id);
+                            log.info("keep reference "+refPropertyId+" to "+targetNode);
                             fixedRefs.addReference(refPropertyId);
                         }
                     }
                 } catch (NoSuchItemStateException e) {
                     if (!fix) {
-                        log.error("Error in reference " + id + ": " + e);
+                        log.error("Error in reference to " + targetNode + ": " + e);
                         return true;
                     } else {
-                        log.info("drop reference "+refPropertyId+" to "+id);
+                        log.info("drop reference "+refPropertyId+" to "+targetNode);
                     }
                 } catch (ItemStateException e) {
                     if (!fix) {
-                        log.error("Error in reference " + id + ": " + e);
+                        log.error("Error in reference to " + targetNode + ": " + e);
                         return true;
                     } else {
-                        log.info("drop reference "+refPropertyId+" to "+id);
+                        log.info("drop reference "+refPropertyId+" to "+targetNode);
                     }
                 }
             }
         } catch (NoSuchItemStateException e) {
             if (fix) {
-                log.info(name + ": Removing references to: '" + id + "'");
+                log.info(name + ": Removing references to: '" + targetNode + "'");
                 try {
-                    connectionManager.executeStmt(nodeReferenceDeleteSQL, getKey(id.getTargetId().getUUID()));
+                    connectionManager.executeStmt(nodeReferenceDeleteSQL, getKey(targetNode));
                     return false;
                 } catch (Exception ex) {
-                    String msg = "failed to delete references to: " + id.getTargetId();
+                    String msg = "failed to delete references to: " + targetNode;
                     log.error(msg, e);
                     return true;
                 }
             } else {
-                log.error("Error in reference " + id + ": " + e);
+                log.error("Error in reference to " + targetNode + ": " + e);
                 return true;
             }
         } catch (ItemStateException e) {
             if (fix) {
-                log.info(name + ": Removing references to: '" + id + "'");
+                log.info(name + ": Removing references to: '" + targetNode + "'");
                 try {
-                    connectionManager.executeStmt(nodeReferenceDeleteSQL, getKey(id.getTargetId().getUUID()));
+                    connectionManager.executeStmt(nodeReferenceDeleteSQL, getKey(targetNode));
                     return false;
                 } catch (Exception ex) {
-                    String msg = "failed to delete references to: " + id.getTargetId();
+                    String msg = "failed to delete references to: " + targetNode;
                     log.error(msg, e);
                 }
             } else {
-                log.error("Error in reference " + id + ": " + e);
+                log.error("Error in reference to " + targetNode + ": " + e);
                 return true;
             }
         }
         if (fix) {
             try {
-                log.info(name + ": Fix references to: '" + id + "'");
+                log.info(name + ": Fix references to: '" + targetNode + "'");
+                new NodeReferences(targetNode);
                 store(fixedRefs);
             } catch (ItemStateException ex) {
-                String msg = "failed to fix references to: " + id.getTargetId();
+                String msg = "failed to fix references to: " + targetNode;
                 log.error(msg, ex);
                 return true;
             }
@@ -517,5 +504,5 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         bundle.markOld(); 
         destroyBundle(bundle);
         evictBundle(bundle.getId());
-    }
+      }
 }

@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
@@ -66,7 +67,7 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
     @Override
     public RemoteSession getRemoteSession(Session session) throws RemoteException {
         if (session instanceof XASession) {
-            return new ServerServicingXASession((XASession) session, this);
+            return new ServerServicingXASession((XASession) session, ((XASession)session).getXAResource(), this);
         } else {
             return new ServerServicingSession(session, this);
         }

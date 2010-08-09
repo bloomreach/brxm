@@ -20,12 +20,11 @@ import java.util.HashSet;
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import org.apache.jackrabbit.core.id.ItemId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.PropertyId;
-import org.apache.jackrabbit.core.nodetype.NodeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
@@ -33,6 +32,8 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.QNodeDefinition;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
@@ -51,8 +52,8 @@ public abstract class HippoVirtualProvider implements DataProviderModule
 
     private final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
-    protected final PropDef lookupPropDef(Name nodeTypeName, Name propName) throws RepositoryException {
-        PropDef[] propDefs = stateMgr.getNodeTypeRegistry().getNodeTypeDef(nodeTypeName).getPropertyDefs();
+    protected final QPropertyDefinition lookupPropDef(Name nodeTypeName, Name propName) throws RepositoryException {
+        QPropertyDefinition[] propDefs = stateMgr.getNodeTypeRegistry().getNodeTypeDef(nodeTypeName).getPropertyDefs();
         int i;
         for(i=0; i<propDefs.length; i++)
             if(propDefs[i].getName().equals(propName)) {
@@ -61,7 +62,7 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         throw new RepositoryException("required property "+propName+" in nodetype "+nodeTypeName+" not or badly defined");
     }
 
-    protected final NodeDef lookupNodeDef(NodeState parent, org.apache.jackrabbit.spi.Name nodeTypeName, org.apache.jackrabbit.spi.Name nodeName) throws RepositoryException {
+    protected final QNodeDefinition lookupNodeDef(NodeState parent, org.apache.jackrabbit.spi.Name nodeTypeName, org.apache.jackrabbit.spi.Name nodeName) throws RepositoryException {
         org.apache.jackrabbit.core.nodetype.EffectiveNodeType effNodeType;
         try {
             HashSet set = new HashSet(parent.getMixinTypeNames());
@@ -119,7 +120,6 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         try {
             NodeState state = createNew(nodeId, virtualNodeName, parentId);
             NodeState parentState = stateMgr.getNodeState(parentId);
-            state.setDefinitionId(lookupNodeDef(parentState, virtualNodeName, nodeId.name).getId());
             populate(context, state);
             return state;
         } catch(NoSuchItemStateException ex) {
@@ -137,7 +137,7 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         return stateMgr.createNew(propName, parentId);
     }
 
-    protected final String[] getProperty(NodeId nodeId, Name propName) {
+    protected final String[] getProperty(NodeId nodeId, Name propName) throws RepositoryException {
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
         if(propState == null) {
             if(log.isDebugEnabled()) {
@@ -147,8 +147,9 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         }
         InternalValue[] values = propState.getValues();
         String[] strings = new String[values.length];
-        for(int i=0; i<values.length; i++)
+        for(int i=0; i<values.length; i++) {
             strings[i] = values[i].getString();
+        }
         return strings;
     }
 

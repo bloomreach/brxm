@@ -26,13 +26,13 @@ import java.util.regex.Pattern;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.HitsRequested;
@@ -80,11 +80,11 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     Name searchName;
     Name countName;
 
-    PropDef querynamePropDef;
-    PropDef docbasePropDef;
-    PropDef facetsPropDef;
-    PropDef searchPropDef;
-    PropDef countPropDef;
+    QPropertyDefinition querynamePropDef;
+    QPropertyDefinition docbasePropDef;
+    QPropertyDefinition facetsPropDef;
+    QPropertyDefinition searchPropDef;
+    QPropertyDefinition countPropDef;
 
     Name virtualNodeName;
 
@@ -184,7 +184,6 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
 
             PropertyState propState = createNew(countName, state.getNodeId());
             propState.setType(PropertyType.LONG);
-            propState.setDefinitionId(countPropDef.getId());
             propState.setValues(new InternalValue[] { InternalValue.create(count) });
             propState.setMultiValued(false);
             state.addPropertyName(countName);
@@ -245,45 +244,46 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
         return state;
     }
 
+    private InternalValue[] createInternalValue(String[] strings) {
+        InternalValue[] values = new InternalValue[strings.length];
+        for(int i=0; i<strings.length; i++) {
+            values[i] = InternalValue.create(strings[i]);
+        }
+        return values;
+    }
+
     @Override
     public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         FacetSearchNodeId searchNodeId = (FacetSearchNodeId) nodeId;
         NodeState state = createNew(nodeId, virtualNodeName, parentId);
-        state.setDefinitionId(lookupNodeDef(getNodeState(parentId), resolveName(HippoNodeType.NT_FACETSUBSEARCH),
-                nodeId.name).getId());
         state.setNodeTypeName(resolveName(HippoNodeType.NT_FACETSUBSEARCH));
 
         PropertyState propState = createNew(querynameName, nodeId);
         propState.setType(PropertyType.STRING);
-        propState.setDefinitionId(querynamePropDef.getId());
         propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.queryname) });
         propState.setMultiValued(false);
         state.addPropertyName(querynameName);
 
         propState = createNew(docbaseName, nodeId);
         propState.setType(PropertyType.STRING);
-        propState.setDefinitionId(docbasePropDef.getId());
         propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.docbase) });
         propState.setMultiValued(false);
         state.addPropertyName(docbaseName);
 
         propState = createNew(facetsName, nodeId);
         propState.setType(PropertyType.STRING);
-        propState.setDefinitionId(facetsPropDef.getId());
-        propState.setValues(InternalValue.create(searchNodeId.facets));
+        propState.setValues(createInternalValue(searchNodeId.facets));
         propState.setMultiValued(true);
         state.addPropertyName(facetsName);
 
         propState = createNew(searchName, nodeId);
         propState.setType(PropertyType.STRING);
-        propState.setDefinitionId(searchPropDef.getId());
-        propState.setValues(InternalValue.create(searchNodeId.search));
+        propState.setValues(createInternalValue(searchNodeId.search));
         propState.setMultiValued(true);
         state.addPropertyName(searchName);
 
         propState = createNew(countName, nodeId);
         propState.setType(PropertyType.LONG);
-        propState.setDefinitionId(countPropDef.getId());
         propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.count) });
         propState.setMultiValued(false);
         state.addPropertyName(countName);

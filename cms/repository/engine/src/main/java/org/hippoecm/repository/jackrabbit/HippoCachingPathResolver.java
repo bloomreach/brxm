@@ -81,6 +81,24 @@ class HippoCachingPathResolver implements PathResolver {
         }
     }
 
+    public Path getQPath(String path, boolean normalizeIdentifier) throws MalformedPathException, IllegalNameException, NamespaceException {
+        Path qpath;
+        if (path.startsWith("[") && !normalizeIdentifier) {
+            qpath = pResolver.getQPath(path, normalizeIdentifier);
+        } else {
+            qpath = cache.get(path);
+            if (qpath == null) {
+                qpath = HippoPathParser.parse(path, nResolver, PathFactoryImpl.getInstance());
+                for (Path.Element element : qpath.getElements()) {
+                    if (element instanceof HippoPathParser.SmartElement)
+                        return qpath;
+                }
+                cache.put(path, qpath);
+            }
+        }
+        return qpath;
+    }
+
     class GenerationalCache<K, V> extends AbstractMap<K,V> implements Map<K, V> {
         private static final int DEFAULT_CACHE_SIZE = 1000;
         private static final int DEFAULT_SIZE_AGE_RATIO = 10;

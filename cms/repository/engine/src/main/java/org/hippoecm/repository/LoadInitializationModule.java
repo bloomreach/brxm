@@ -45,7 +45,7 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
-import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.slf4j.Logger;

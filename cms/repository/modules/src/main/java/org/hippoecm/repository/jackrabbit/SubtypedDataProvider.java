@@ -21,11 +21,13 @@ import java.util.TreeMap;
 import javax.jcr.NamespaceException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +70,7 @@ public class SubtypedDataProvider implements DataProviderModule {
         Name[] nodeTypes = ntReg.getRegisteredNodeTypes();
         for (int i = 0; i < nodeTypes.length; i++) {
             try {
-                NodeTypeDef nodeType = ntReg.getNodeTypeDef(nodeTypes[i]);
+                QNodeTypeDefinition nodeType = ntReg.getNodeTypeDef(nodeTypes[i]);
                 Name[] superTypes = nodeType.getSupertypes();
                 int superTypeMatch = -1;
                 for (int j = 0; j < superTypes.length; j++) {

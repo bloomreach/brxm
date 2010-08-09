@@ -23,23 +23,29 @@ import java.util.TreeSet;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.commons.cnd.DefinitionBuilderFactory;
+import org.apache.jackrabbit.spi.QNodeDefinition;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
-import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
+import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 
 import org.hippoecm.repository.util.VersionNumber;
 
-public class HippoCompactNodeTypeDefReader extends CompactNodeTypeDefReader {
+public class HippoCompactNodeTypeDefReader<T,N> extends CompactNodeTypeDefReader<T,N> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(HippoCompactNodeTypeDefReader.class);
 
-    private static class HippoNamespaceMapping extends NamespaceMapping {
+    public HippoCompactNodeTypeDefReader(Reader reader, String systemId, NamespaceRegistry registry, DefinitionBuilderFactory<T,N> factory) throws ParseException {
+        super(reader, systemId, (N) new HippoNamespaceMapping(registry), factory);
+    }
+
+    private static class HippoNamespaceMapping<N> extends NamespaceMapping {
         static Set<String> autoCompatibleNamespaces = new TreeSet<String>(Arrays.asList(new String[] {"hippo", "hipposys"}));
         private NamespaceRegistry registry;
 
@@ -85,9 +91,5 @@ public class HippoCompactNodeTypeDefReader extends CompactNodeTypeDefReader {
             }
             super.setMapping(prefix, uri);
         }
-    }
-
-    public HippoCompactNodeTypeDefReader(Reader reader, String systemId, NamespaceRegistry registry) throws ParseException {
-        super(reader, systemId, new HippoNamespaceMapping(registry));
     }
 }

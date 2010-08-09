@@ -63,7 +63,6 @@ public class DocumentManagerImpl implements DocumentManager {
 
     public DocumentManagerImpl(Session session) {
         this.session = session;
-        loader = new PluginClassLoader(session);
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
                                                           HippoNodeType.DOCUMENTS_PATH);

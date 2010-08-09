@@ -100,24 +100,5 @@ public interface HippoQuery extends Query {
      */
     public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException;
 
-    /**
-     * 
-     * @param limit
-     * @throws javax.jcr.RepositoryException
-     */
-    public void setLimit(long limit) throws RepositoryException;
-
-    /**
-     * 
-     * @param offset
-     * @throws javax.jcr.RepositoryException
-     */
-    public void setOffset(long offset) throws RepositoryException;
-
-    /* FIXME
-     * The following methods are part of JCR2, and should be supported
-     * as well within the QueryManager class:
-     *
-     * public PreparedQuery QueryManager.createPreparedQuery(String statement, String language) throws InvalidQueryException, RepositoryException;
-     */
+  
 }

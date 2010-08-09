@@ -26,10 +26,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.jackrabbit.core.config.BeanConfig;
 import org.apache.jackrabbit.core.config.ConfigurationErrorHandler;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.ConfigurationParser;
-import org.apache.jackrabbit.core.config.JournalConfig;
+import org.hippoecm.repository.replication.ReplicationJournal;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -155,7 +156,7 @@ public class ReplicationConfigurationParser extends ConfigurationParser {
         String home = getVariables().getProperty(REPOSITORY_HOME_VARIABLE);
 
         // Journal configuration
-        JournalConfig journalConfig = parseJournalConfig(root);
+        ReplicationJournal journalConfig = parseJournalConfig(root);
 
         // Replicator configurations
         Element replicators = getElement(root, REPLICATOR_NODES_ELEMENT);
@@ -291,8 +292,10 @@ public class ReplicationConfigurationParser extends ConfigurationParser {
      * @return journal configuration, or <code>null</code>
      * @throws ConfigurationException if the configuration is broken
      */
-    protected JournalConfig parseJournalConfig(Element replication) throws ConfigurationException {
-        return new JournalConfig(parseBeanConfig(replication, JOURNAL_ELEMENT));
+    protected ReplicationJournal parseJournalConfig(Element replication) throws ConfigurationException {
+
+        BeanConfig beanConfig = new BeanConfig(ReplicationJournal.class.getName(), parseParameters(getElement(replication, JOURNAL_ELEMENT)));
+        return beanConfig.<ReplicationJournal>newInstance(ReplicationJournal.class);
     }
 
     /**

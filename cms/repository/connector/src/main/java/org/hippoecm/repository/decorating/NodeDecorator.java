@@ -16,9 +16,11 @@
 package org.hippoecm.repository.decorating;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.Binary;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
@@ -556,4 +558,60 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
         super.refresh(keepChanges);
     }
 
+
+    public Property setProperty(String name, Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        return node.setProperty(name, value);
+    }
+
+    public Property setProperty(String name, BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        return node.setProperty(name, value);
+    }
+
+    public NodeIterator getNodes(String[] nameGlobs) throws RepositoryException {
+        return node.getNodes(nameGlobs);
+    }
+
+    public PropertyIterator getProperties(String[] nameGlobs) throws RepositoryException {
+        return node.getProperties(nameGlobs);
+    }
+
+    public String getIdentifier() throws RepositoryException {
+        return node.getIdentifier();
+    }
+
+    public PropertyIterator getReferences(String name) throws RepositoryException {
+        return node.getReferences(name);
+    }
+
+    public PropertyIterator getWeakReferences() throws RepositoryException {
+        return node.getWeakReferences();
+    }
+
+    public PropertyIterator getWeakReferences(String name) throws RepositoryException {
+        return node.getWeakReferences(name);
+    }
+
+    public void setPrimaryType(String nodeTypeName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
+        node.setPrimaryType(nodeTypeName);
+    }
+
+    public NodeIterator getSharedSet() throws RepositoryException {
+        return node.getSharedSet();
+    }
+
+    public void removeSharedSet() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        node.removeSharedSet();
+    }
+
+    public void removeShare() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        node.removeShare();
+    }
+
+    public void followLifecycleTransition(String transition) throws UnsupportedRepositoryOperationException, RepositoryException {
+        node.followLifecycleTransition(transition);
+    }
+
+    public String[] getAllowedLifecycleTransistions() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return getAllowedLifecycleTransistions(); // BERRY
+    }
 }

@@ -144,7 +144,7 @@ public class AuthorizationQuery {
                 try {
                     if (indexingConfig.isFacet(nodeName)) {
                         String internalFieldName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
-                        String internalNameTerm = nsMappings.translatePropertyName(nodeName);
+                        String internalNameTerm = nsMappings.translateName(nodeName);
                         if (facetRule.getValue().equals(FacetAuthConstants.WILDCARD)) {
                             if (facetRule.isEqual()) {
                                 return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
@@ -261,7 +261,7 @@ public class AuthorizationQuery {
                 NodeType[] superTypes = nt.getSupertypes();
                 if (Arrays.asList(superTypes).contains(base)) {
                     Name n = session.getQName(nt.getName());
-                    String ntName = nsMappings.translatePropertyName(n);
+                    String ntName = nsMappings.translateName(n);
                     Term t;
                     if (nt.isMixin()) {
                         // search on jcr:mixinTypes

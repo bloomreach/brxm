@@ -18,7 +18,7 @@ package org.hippoecm.repository.replication.replicators;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.ChangeLog;
 
 /**

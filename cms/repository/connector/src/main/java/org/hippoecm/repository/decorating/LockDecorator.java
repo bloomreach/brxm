@@ -83,4 +83,12 @@ public class LockDecorator extends AbstractDecorator implements Lock {
     public void refresh() throws LockException, RepositoryException {
         lock.refresh();
     }
+
+    public long getSecondsRemaining() throws RepositoryException {
+        return lock.getSecondsRemaining();
+    }
+
+    public boolean isLockOwningSession() {
+        return lock.isLockOwningSession();
+    }
 }

@@ -135,6 +135,30 @@ public class SearchDocumentsProviderTest extends PluginTest {
                                                 return null;
                                             }
 
+                                            public Node getNode() throws RepositoryException {
+                                                throw new UnsupportedOperationException("Not supported yet.");
+                                            }
+
+                                            public Node getNode(String selectorName) throws RepositoryException {
+                                                throw new UnsupportedOperationException("Not supported yet.");
+                                            }
+
+                                            public String getPath() throws RepositoryException {
+                                                throw new UnsupportedOperationException("Not supported yet.");
+                                            }
+
+                                            public String getPath(String selectorName) throws RepositoryException {
+                                                throw new UnsupportedOperationException("Not supported yet.");
+                                            }
+
+                                            public double getScore() throws RepositoryException {
+                                                throw new UnsupportedOperationException("Not supported yet.");
+                                            }
+
+                                            public double getScore(String selectorName) throws RepositoryException {
+                                                throw new UnsupportedOperationException("Not supported yet.");
+                                            }
+
                                         };
                                     }
 
@@ -168,6 +192,10 @@ public class SearchDocumentsProviderTest extends PluginTest {
                                     
                                 };
                             }
+
+                    public String[] getSelectorNames() throws RepositoryException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
                         };
                     }
                 }));

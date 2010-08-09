@@ -26,7 +26,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.ext.InternalWorkflow;
@@ -158,7 +157,16 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
             logMessage.append(" documentPath=[").append(documentPath).append("]");
         }
         if (arguments != null) {
-            logMessage.append(" arguments=[").append(StringUtils.join(arguments, ", ")).append("]");
+            logMessage.append(" arguments=[");
+            boolean firstArgument = true;
+            for(String argument : arguments) {
+                if(firstArgument)
+                    firstArgument = false;
+                else
+                    logMessage.append(", ");
+                logMessage.append(argument);
+            }
+            logMessage.append("]");
         }
         log.info(logMessage.toString());
     }

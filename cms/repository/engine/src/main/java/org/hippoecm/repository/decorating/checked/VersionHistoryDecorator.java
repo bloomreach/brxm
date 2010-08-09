@@ -16,6 +16,7 @@
 package org.hippoecm.repository.decorating.checked;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.NodeIterator;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -138,5 +139,21 @@ public class VersionHistoryDecorator extends NodeDecorator implements VersionHis
             UnsupportedRepositoryOperationException, VersionException, RepositoryException {
         check();
         versionHistory.removeVersion(versionName);
+    }
+
+    public String getVersionableIdentifier() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public VersionIterator getAllLinearVersions() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public NodeIterator getAllLinearFrozenNodes() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public NodeIterator getAllFrozenNodes() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

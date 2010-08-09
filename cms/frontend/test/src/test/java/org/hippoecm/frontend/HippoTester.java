@@ -32,6 +32,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -40,6 +41,8 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.retention.RetentionManager;
+import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
@@ -245,6 +248,46 @@ public class HippoTester extends WicketTester {
         }
 
         public NodeIterator pendingChanges() throws RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public Node getNodeByIdentifier(String id) throws ItemNotFoundException, RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public Node getNode(String absPath) throws PathNotFoundException, RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public boolean nodeExists(String absPath) throws RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public boolean propertyExists(String absPath) throws RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public void removeItem(String absPath) throws VersionException, LockException, ConstraintViolationException, AccessDeniedException, RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public boolean hasPermission(String absPath, String actions) throws RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public boolean hasCapability(String methodName, Object target, Object[] arguments) throws RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public AccessControlManager getAccessControlManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+            throw new RepositoryException();
+        }
+
+        public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
             throw new RepositoryException();
         }
         

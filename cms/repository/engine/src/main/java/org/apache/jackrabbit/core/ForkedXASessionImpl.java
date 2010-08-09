@@ -17,6 +17,7 @@
 package org.apache.jackrabbit.core;
 
 import org.apache.jackrabbit.core.state.*;
+import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.lock.LockManager;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
@@ -24,9 +25,9 @@ import org.apache.jackrabbit.core.lock.XALockManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.XAItemStateManager;
-import org.apache.jackrabbit.core.version.VersionManager;
-import org.apache.jackrabbit.core.version.VersionManagerImpl;
-import org.apache.jackrabbit.core.version.XAVersionManager;
+import org.apache.jackrabbit.core.version.InternalVersionManager;
+import org.apache.jackrabbit.core.version.InternalVersionManagerImpl;
+import org.apache.jackrabbit.core.version.InternalXAVersionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,12 +56,20 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
     /**
      * Global transactions
      */
-    private static final Map txGlobal = Collections.synchronizedMap(new HashMap());
+    private static final Map<Xid, TransactionContext> txGlobal =
+        Collections.synchronizedMap(new HashMap<Xid, TransactionContext>());
+
+    /**
+     * System property specifying the default Transaction Timeout
+     */
+    public static final String SYSTEM_PROPERTY_DEFAULT_TRANSACTION_TIMEOUT = "org.apache.jackrabbit.core.defaultTransactionTimeout";
 
     /**
      * Default transaction timeout, in seconds.
+     * Either it is specified by the System Property {@link XASessionImpl#SYSTEM_PROPERTY_DEFAULT_TRANSACTION_TIMEOUT} or
+     * it is per default 5 seconds if it is not set by the TransactionManager at runtime
      */
-    private static final int DEFAULT_TX_TIMEOUT = 5;
+    private static final int DEFAULT_TX_TIMEOUT = Integer.parseInt(System.getProperty(SYSTEM_PROPERTY_DEFAULT_TRANSACTION_TIMEOUT, "5"));
 
     /**
      * Currently associated transaction
@@ -127,7 +136,7 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
     private void init() throws RepositoryException {
         ForkedXAItemStateManager stateMgr = (ForkedXAItemStateManager) wsp.getItemStateManager();
         XALockManager lockMgr = (XALockManager) getLockManager();
-        XAVersionManager versionMgr = (XAVersionManager) getVersionManager();
+        InternalXAVersionManager versionMgr = (InternalXAVersionManager) getInternalVersionManager();
 
         /**
          * Create array that contains all resources that participate in this
@@ -163,11 +172,11 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
     /**
      * {@inheritDoc}
      */
-    protected VersionManager createVersionManager(RepositoryImpl rep)
+    protected InternalVersionManager createVersionManager(RepositoryImpl rep)
             throws RepositoryException {
 
-        VersionManagerImpl vMgr = (VersionManagerImpl) rep.getVersionManager();
-        return new XAVersionManager(vMgr, rep.getNodeTypeRegistry(), this, rep.getItemStateCacheFactory());
+        InternalVersionManagerImpl vMgr = (InternalVersionManagerImpl) rep.getVersionManager();
+        return new InternalXAVersionManager(vMgr, rep.getNodeTypeRegistry(), this, rep.getItemStateCacheFactory());
     }
 
     /**
@@ -175,7 +184,7 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      */
     public LockManager getLockManager() throws RepositoryException {
         if (lockMgr == null) {
-            LockManagerImpl lockMgr = (LockManagerImpl) wsp.getLockManager();
+            LockManagerImpl lockMgr = (LockManagerImpl) wsp.getInternalLockManager();
             this.lockMgr = new XALockManager(lockMgr);
         }
         return lockMgr;
@@ -380,9 +389,7 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      */
     public synchronized void associate(TransactionContext tx) {
         this.tx = tx;
-
-        for (int i = 0; i < txResources.length; i++) {
-            InternalXAResource txResource = txResources[i];
+        for (InternalXAResource txResource : txResources) {
             txResource.associate(tx);
         }
     }
@@ -405,9 +412,9 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
         super.logout();
         // dispose the caches
         try {
-            ((XAVersionManager) versionMgr).close();
+            ((InternalXAVersionManager) versionMgr).close();
         } catch (Exception e) {
-            log.warn("error while closing XAVersionManager", e);
+            log.warn("error while closing InternalXAVersionManager", e);
         }
     }
 

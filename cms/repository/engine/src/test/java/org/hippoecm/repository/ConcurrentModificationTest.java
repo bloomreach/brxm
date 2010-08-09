@@ -41,8 +41,8 @@ public class ConcurrentModificationTest extends TestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        Node testNode = createTestNode();
+        super.setUp(true);
+        Node testNode = session.getRootNode().addNode("test");
         testNode.addNode("A").addNode("B");
         testNode.addNode("B");
         testNode.addNode("C");
@@ -57,8 +57,9 @@ public class ConcurrentModificationTest extends TestCase {
             userSession.logout();
             userSession = null;
         }
-        //session.refresh(false);
+        session.refresh(false);
         getTestNode().remove();
+        session.save();
         super.tearDown();
     }
     
@@ -70,11 +71,6 @@ public class ConcurrentModificationTest extends TestCase {
         return (Node) session.getRootNode().getNode("test");
     }
 
-    private Node createTestNode() throws Exception {
-        return (Node) session.getRootNode().addNode("test");
-    }
-
-    @Test
     public void testReorderWithAdd() throws Exception {
         getTestNode().orderBefore("C", "A");
         getUserTestNode().addNode("D");
@@ -157,11 +153,7 @@ public class ConcurrentModificationTest extends TestCase {
         session.move(testRoot + "/A/B", testRoot + "/C/B");
         getUserTestNode().getNode("A").addNode("D");
         session.save();
-        try {
-            userSession.save();
-        } catch (InvalidItemStateException e) {
-            fail("must not throw exception");
-        }
+        userSession.save();
     }
 
     @Test
@@ -306,6 +298,5 @@ public class ConcurrentModificationTest extends TestCase {
             fail("must not throw InvalidItemStateException");
         }
     }
-
 }
 

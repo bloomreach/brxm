@@ -46,7 +46,7 @@ public class SelectLayoutStep extends WizardStep {
 
         setOutputMarkupId(true);
 
-        add(new ListView<String>("layouts", layoutProvider.getLayouts()) {
+        add(new ListView<String>("layouts", (layoutProvider==null ? null : layoutProvider.getLayouts())) {
 
             private static final long serialVersionUID = 1L;
 

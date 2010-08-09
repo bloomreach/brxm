@@ -36,14 +36,12 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <classifier>sources</classifier>
-      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -133,7 +131,7 @@
           <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
-            <version>1.0</version>
+            <version>${javax.jcr.version}</version>
             <scope>compile</scope>
           </dependency>
         </dependencies>

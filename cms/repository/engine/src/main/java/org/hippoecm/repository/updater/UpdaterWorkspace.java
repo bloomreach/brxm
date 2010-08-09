@@ -30,12 +30,14 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionManager;
 
 import org.xml.sax.ContentHandler;
 
@@ -144,6 +146,26 @@ public class UpdaterWorkspace implements Workspace {
     public void importXML(String parentAbsPath, InputStream in, int uuidBehavior)
             throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException,
                    InvalidSerializedDataException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public VersionManager getVersionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+   }
+
+    public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void createWorkspace(String name, String srcWorkspace) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void deleteWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
 }

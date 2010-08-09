@@ -15,8 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.spi.Name;
 
 public class HippoPropertyId extends PropertyId

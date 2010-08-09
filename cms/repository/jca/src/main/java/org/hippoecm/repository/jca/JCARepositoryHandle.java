@@ -23,6 +23,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.naming.Reference;
 import javax.resource.Referenceable;
 import javax.resource.ResourceException;
@@ -142,5 +143,21 @@ public final class JCARepositoryHandle implements Repository, Referenceable, Ser
      */
     public void setReference(Reference reference) {
         this.reference = reference;
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        return mcf.getRepository().isStandardDescriptor(key);
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        return mcf.getRepository().isSingleValueDescriptor(key);
+    }
+
+    public Value getDescriptorValue(String key) {
+        return mcf.getRepository().getDescriptorValue(key);
+   }
+
+    public Value[] getDescriptorValues(String key) {
+        return mcf.getRepository().getDescriptorValues(key);
     }
 }

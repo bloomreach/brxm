@@ -20,8 +20,8 @@ import java.util.List;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -75,7 +75,6 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
           
             PropertyState propState = createNew(countName, state.getNodeId());
             propState.setType(PropertyType.LONG);
-            propState.setDefinitionId(subCountPropDef.getId());
             propState.setValues(new InternalValue[] { InternalValue.create(facetNavigationNodeId.count) });
             propState.setMultiValued(false);
             state.addPropertyName(countName);
@@ -154,8 +153,6 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
     @Override
     public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState state = createNew(nodeId, virtualNodeName, parentId);
-        state.setDefinitionId(lookupNodeDef(getNodeState(parentId), resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION),
-                nodeId.name).getId());
         state.setNodeTypeName(resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION));
 
         return populate(context, state);

@@ -51,7 +51,7 @@ public class InheritedFilterQuery {
             for (Map.Entry<String, String> entry : inheritedFilter.entrySet()) {
                 try {
                     Name propName = NameFactoryImpl.getInstance().create(entry.getKey());
-                    String field = nsMappings.translatePropertyName(propName);
+                    String field = nsMappings.translateName(propName);
                     Term t = new Term(FieldNames.PROPERTIES, FieldNames.createNamedValue(field, entry.getValue()));
                     Query wq = new TermQuery(t);
                     this.query.add(wq, Occur.MUST);

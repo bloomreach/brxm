@@ -30,12 +30,14 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionManager;
 
 import org.xml.sax.ContentHandler;
 
@@ -183,5 +185,25 @@ public abstract class WorkspaceDecorator extends AbstractDecorator implements Hi
             PathNotFoundException, ItemExistsException, ConstraintViolationException, InvalidSerializedDataException,
             LockException, RepositoryException {
         workspace.importXML(parentAbsPath, in, uuidBehaviour);
+    }
+
+    public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return workspace.getLockManager();
+    }
+
+    public VersionManager getVersionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return workspace.getVersionManager();
+    }
+
+    public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {
+        workspace.createWorkspace(name);
+    }
+
+    public void createWorkspace(String name, String srcWorkspace) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+        createWorkspace(name, srcWorkspace);
+    }
+
+    public void deleteWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+        deleteWorkspace(name);
     }
 }

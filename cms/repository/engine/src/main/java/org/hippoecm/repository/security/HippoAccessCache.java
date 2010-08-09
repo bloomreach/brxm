@@ -18,8 +18,7 @@ package org.hippoecm.repository.security;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
-
-import org.apache.jackrabbit.core.ItemId;
+import org.apache.jackrabbit.core.id.ItemId;
 
 /**
  * Cache access permissions for the HippoAccessManager

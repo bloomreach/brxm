@@ -21,6 +21,7 @@ import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.qom.QueryObjectModelFactory;
 
 /**
  */
@@ -63,5 +64,9 @@ public class QueryManagerDecorator extends AbstractDecorator implements QueryMan
     public String[] getSupportedQueryLanguages() throws RepositoryException {
         check();
         return manager.getSupportedQueryLanguages();
+    }
+
+    public QueryObjectModelFactory getQOMFactory() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -15,15 +15,16 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class StandardHippoAnalyzerTest extends TestCase {
     @SuppressWarnings("unused")
@@ -68,11 +69,12 @@ public class StandardHippoAnalyzerTest extends TestCase {
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while (nodes.hasNext());
         }
         
         // search for a stopword 'over': as it is a stopword, we should not find a hit for it:
@@ -81,7 +83,8 @@ public class StandardHippoAnalyzerTest extends TestCase {
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 0L); 
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 0L);
+            assertFalse(nodes.hasNext());
         }
         
     }
@@ -89,26 +92,27 @@ public class StandardHippoAnalyzerTest extends TestCase {
     @Test
     public void testDiacritics() throws Exception {
        /*
-        * ë = \u00EB
-        * ç = \u00E7
-        * é = \u00E9
-        * ß = \u00DF
+        * Ã« = \u00EB
+        * Ã§ = \u00E7
+        * Ã© = \u00E9
+        * ÃŸ = \u00DF
         */
         
         
         String sentence = "Hygi\u00EBne is for fran\u00E7ois in his priv\u00E9leven as important as Fu\u00DFball";
         createCompoundStructure(sentence);
         
-     // search with diacritics Hygiëne
-        {
+     // search with diacritics HygiÃ«ne
+       {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'hygi\u00EBne')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while (nodes.hasNext());
         }
         
         // search without diacritics hygiene
@@ -116,23 +120,25 @@ public class StandardHippoAnalyzerTest extends TestCase {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'hygiene')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while(nodes.hasNext());
         }
         
-     // search with diacritics françois
+     // search with diacritics franÃ§ois
         {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'fran\u00E7ois')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while(nodes.hasNext());
         }
         
         // search without diacritics francois
@@ -140,23 +146,26 @@ public class StandardHippoAnalyzerTest extends TestCase {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'francois')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while(nodes.hasNext());
+
         }
         
-     // search with diacritics privéleven
+     // search with diacritics privÃ©leven
         {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'priv\u00E9leven')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while(nodes.hasNext());
         }
         
         // search without diacritics priveleven
@@ -164,35 +173,38 @@ public class StandardHippoAnalyzerTest extends TestCase {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'priveleven')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while(nodes.hasNext());
         }
         
-     // search with diacritics Fußball
+     // search with diacritics FuÃŸball
         {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'Fu\u00DFball')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while(nodes.hasNext());
         }
         
-        // search without diacritics fussball (ß --> ss )
-        {
+        // search without diacritics fussball (ÃŸ --> ss )
+         {
             String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'fussball')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
-            assertTrue(nodes.getSize() == 1L); 
-            while(nodes.hasNext()) {
+            assertTrue(nodes.getSize() == -1 || nodes.getSize() == 1L);
+            assertTrue(nodes.hasNext());
+            do {
                 Node doc = nodes.nextNode();
                 assertTrue(doc.getName().equals("Document1"));
-            }
+            } while(nodes.hasNext());
         }
         
     }

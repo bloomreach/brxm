@@ -30,7 +30,7 @@ public class ServicingNameFormat {
     }
 
     public static String getInternalFacetName(Name nodeName, NamespaceMappings nsMappings) throws IllegalNameException {
-        String internalName = nsMappings.translatePropertyName(nodeName);
+        String internalName = nsMappings.translateName(nodeName);
         int idx = internalName.indexOf(':');
         internalName = internalName.substring(0,idx+1) + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx+1);
         return internalName;
@@ -47,10 +47,10 @@ public class ServicingNameFormat {
         try {
             StringBuffer internalName = new StringBuffer();
             Element[] pathElements = PathFactoryImpl.getInstance().create(propertyPath).getElements();
-            internalName.append(nsMappings.translatePropertyName(pathElements[pathElements.length - 1].getName()));
+            internalName.append(nsMappings.translateName(pathElements[pathElements.length - 1].getName()));
             for (int i = 0; i < pathElements.length - 1; i++) {
                 internalName.append("/");
-                internalName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
+                internalName.append(nsMappings.translateName(pathElements[i].getName()));
             } 
             String name = new String(internalName);
             if(name.indexOf("$") > -1) {

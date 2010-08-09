@@ -17,14 +17,7 @@ package org.hippoecm.repository.decorating.remote;
 
 import java.io.Serializable;
 import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
-
-import org.apache.jackrabbit.spi.rmi.remote.RemoteRepositoryService;
 
 public interface RemoteRepository extends org.apache.jackrabbit.rmi.remote.RemoteRepository, Remote, Serializable {
     final static String SVN_ID = "$Id$";
-
-    public RemoteRepositoryService getRepositoryService() throws RepositoryException, RemoteException;
 }

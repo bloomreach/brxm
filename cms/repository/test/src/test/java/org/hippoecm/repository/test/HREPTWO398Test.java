@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.test;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
@@ -22,14 +23,17 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
 import org.hippoecm.repository.api.HippoSession;
 
-public class HREPTWO398Test extends TestCase
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+
+public class HREPTWO398Test
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -37,6 +41,17 @@ public class HREPTWO398Test extends TestCase
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
+    @Before
+    public void setUp() {
+        clear();
+    }
+
+    @After
+    public void tearDown() {
+        clear();
+    }
+
+    @Test
     public void testLocal() throws RepositoryException {
         HippoRepository server = HippoRepositoryFactory.getHippoRepository();
         Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
@@ -45,6 +60,7 @@ public class HREPTWO398Test extends TestCase
         server.close();
     }
 
+    @Test
     public void testRemote() throws RepositoryException, RemoteException, InterruptedException, AlreadyBoundException, MalformedURLException {
         HippoRepositoryServer backgroundServer = new HippoRepositoryServer();
         backgroundServer.run(true);
@@ -56,5 +72,24 @@ public class HREPTWO398Test extends TestCase
         server.close();
         backgroundServer.close();
         Thread.sleep(3000);
+    }
+
+    static private void delete(File path) {
+        if(path.exists()) {
+            if(path.isDirectory()) {
+                File[] files = path.listFiles();
+                for(int i=0; i<files.length; i++)
+                    delete(files[i]);
+            }
+            path.delete();
+        }
+    }
+
+    static private void clear() {
+        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
+        for(int i=0; i<files.length; i++) {
+            File file = new File(files[i]);
+            delete(file);
+        }
     }
 }

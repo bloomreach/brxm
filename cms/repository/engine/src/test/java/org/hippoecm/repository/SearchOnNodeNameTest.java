@@ -34,16 +34,7 @@ public class SearchOnNodeNameTest extends TestCase {
     private final static String TEST_PATH = "test";
     private Node testPath;
 
-    private final static List<String> names = new ArrayList<String>();
-
-    static {
-        names.add("foobarlux");
-        names.add("fooluxbar");
-        names.add("barfoolux");
-        names.add("barluxfoo");
-        names.add("luxbarfoo");
-        names.add("luxfoo bar");
-    }
+    private List<String> names;
 
     @Override
     @Before
@@ -54,59 +45,44 @@ public class SearchOnNodeNameTest extends TestCase {
         }
         testPath = session.getRootNode().addNode(TEST_PATH);
         session.save();
+        names = new ArrayList<String>();
+        names.add("foobarlux");
+        names.add("fooluxbar");
+        names.add("barfoolux");
+        names.add("barluxfoo");
+        names.add("luxbarfoo");
+        names.add("luxfoo bar");
+        for (String name : names) {
+            testPath.addNode(name);
+        }
+        session.save();
     }
-
     
     @Test
     public void testSearchNodeNameInNodeScope() throws RepositoryException {
-        for (String name : names) {
-            testPath.addNode(name);
-        }
-        session.save();
         String xpath = "//*[jcr:contains(.,'luxfoo')]";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        
-        assertTrue(queryResult.getNodes().getSize() > 0);
-        
+        assertTrue(queryResult.getNodes().hasNext());
     }
-    
+
     @Test
     public void testSearchNodeNameInProp() throws RepositoryException {
-        for (String name : names) {
-            testPath.addNode(name);
-        }
-        session.save();
         String xpath = "//*[jcr:contains(@hippo:_localname,'luxfoo')]";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        
-        assertTrue(queryResult.getNodes().getSize() > 0);
-        
+        assertTrue(queryResult.getNodes().hasNext());
     }
-    
-    
+
     @Test
     public void testSearchWildcardNodeNameInProp() throws RepositoryException {
-        for (String name : names) {
-            testPath.addNode(name);
-        }
-        session.save();
         String xpath = "//*[jcr:contains(@hippo:_localname,'luxfoo*')]";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-
-        assertTrue(queryResult.getNodes().getSize() > 0);
+        assertTrue(queryResult.getNodes().hasNext());
     }
-    
+
     @Test
     public void testSearchWildcardNodeNameInNodeScope() throws RepositoryException {
-        for (String name : names) {
-            testPath.addNode(name);
-        }
-        session.save();
         String xpath = "//*[jcr:contains(.,'luxfoo*')]";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        
-        assertTrue(queryResult.getNodes().getSize() > 0);
-        
+        assertTrue(queryResult.getNodes().hasNext());
     }
-
 }

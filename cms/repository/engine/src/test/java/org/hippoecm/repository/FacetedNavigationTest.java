@@ -152,6 +152,9 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
             if (node != null) {
                 assertFalse(node.hasProperty("jcr:uuid"));
                 assertTrue(node.hasProperty("hippo:uuid"));
+                assertTrue(node.hasProperty("hippo:paths"));
+                assertNotNull(node.getProperty("hippo:uuid"));
+                assertNotNull(node.getProperty("hippo:paths"));
                 /* FIXME: enable these for checks for HREPTWO-283
                  *  assertFalse(node.isNodeType("mix:referenceable"));
                  */

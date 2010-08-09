@@ -101,7 +101,7 @@ public class HippoRepositoryFactory {
                 if(!location.endsWith("/spi")) {
                     return RemoteHippoRepository.create(location);
                 } else {
-                    return SPIHippoRepository.create(location);
+                    throw new RepositoryException("Remote SPI not supported at the moment");
                 }
             } catch (RemoteException ex) {
                 throw new RepositoryException("Unable to connect to repository", ex);

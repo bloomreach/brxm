@@ -68,11 +68,11 @@ public class ServerQuery extends org.apache.jackrabbit.rmi.server.ServerQuery im
         query.bindValue(varName, value);
     }
 
-    public void setLimit(long limit) throws RepositoryException, RemoteException {
+    public void setLimit(long limit) throws RemoteException {
         query.setLimit(limit);
     }
 
-    public void setOffset(long offset) throws RepositoryException, RemoteException {
+    public void setOffset(long offset) throws RemoteException {
         query.setOffset(offset);
     }
 }
