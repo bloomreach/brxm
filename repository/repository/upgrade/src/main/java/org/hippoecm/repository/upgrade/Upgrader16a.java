@@ -41,7 +41,7 @@ public class Upgrader16a implements UpdaterModule {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
                 if (node.hasNode("reporting:listener")) {
-                    node.getNode("reporting:listener").setProperty("frontend:nodeTypes",
+                    node.getNode("reporting:listener").setProperty("frontend:nodetypes",
                             new String[] { "hippostdpubwf:request" });
                 }
                 if (node.hasNode("reporting:query")) {
