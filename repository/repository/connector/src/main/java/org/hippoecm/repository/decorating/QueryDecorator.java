@@ -113,7 +113,7 @@ public abstract class QueryDecorator extends AbstractDecorator implements HippoQ
 
     public abstract void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException;
 
-    public abstract void setLimit(long limit) throws RepositoryException;
+    public abstract void setLimit(long limit);
 
-    public abstract void setOffset(long offset) throws RepositoryException;
+    public abstract void setOffset(long offset);
 }

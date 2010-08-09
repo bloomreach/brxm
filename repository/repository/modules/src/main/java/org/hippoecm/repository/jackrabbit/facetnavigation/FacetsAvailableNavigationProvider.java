@@ -21,13 +21,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -156,7 +155,6 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
             PropertyState propState = createNew(countName, state.getNodeId());
             propState.setType(PropertyType.LONG);
-            propState.setDefinitionId(subCountPropDef.getId());
             propState.setValues(new InternalValue[] { InternalValue.create(count) });
             propState.setMultiValued(false);
             state.addPropertyName(countName);
@@ -300,8 +298,6 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     @Override
     public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState state = createNew(nodeId, virtualNodeName, parentId);
-        state.setDefinitionId(lookupNodeDef(getNodeState(parentId),
-                resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION), nodeId.name).getId());
         state.setNodeTypeName(resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION));
 
         return populate(context, state);

@@ -16,10 +16,13 @@
 package org.hippoecm.repository.decorating.checked;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.Binary;
 import javax.jcr.InvalidItemStateException;
+import javax.jcr.InvalidLifecycleTransitionException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
@@ -655,5 +658,64 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
     public NodeIterator pendingChanges() throws RepositoryException {
         check();
         return session.pendingChanges(this, null);
+    }
+
+    public Property setProperty(String name, Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        check();
+        return node.setProperty(name, value);
+    }
+
+    public Property setProperty(String name, BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        check();
+        return node.setProperty(name, value);
+    }
+
+    public NodeIterator getNodes(String[] nameGlobs) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PropertyIterator getProperties(String[] nameGlobs) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getIdentifier() throws RepositoryException {
+        check();
+        return node.getIdentifier();
+    }
+
+    public PropertyIterator getReferences(String name) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PropertyIterator getWeakReferences() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PropertyIterator getWeakReferences(String name) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setPrimaryType(String nodeTypeName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public NodeIterator getSharedSet() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeSharedSet() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeShare() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void followLifecycleTransition(String transition) throws UnsupportedRepositoryOperationException, InvalidLifecycleTransitionException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String[] getAllowedLifecycleTransistions() throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

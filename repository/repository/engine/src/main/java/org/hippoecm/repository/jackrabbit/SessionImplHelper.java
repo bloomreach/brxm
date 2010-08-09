@@ -37,14 +37,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.security.AccessControlManager;
+import javax.jcr.security.Privilege;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
-import org.apache.jackrabbit.api.jsr283.security.AccessControlManager;
-import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.apache.jackrabbit.core.HierarchyManager;
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
@@ -253,7 +253,7 @@ abstract class SessionImplHelper {
         namespaces.put(prefix, uri);
     }
 
-    
+    private HashSet<Privilege> jcrPrivileges = new HashSet<Privilege>();
     
     SessionImplHelper(org.apache.jackrabbit.core.SessionImpl sessionImpl,
                       NodeTypeManagerImpl ntMgr, RepositoryImpl rep, Subject subject) throws RepositoryException {
@@ -262,6 +262,20 @@ abstract class SessionImplHelper {
         this.rep = rep;
         this.subject = subject;
         setUserId();
+        AccessControlManager acMgr = sessionImpl.getAccessControlManager();
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_ADD_CHILD_NODES));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_LIFECYCLE_MANAGEMENT));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_LOCK_MANAGEMENT));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_MODIFY_ACCESS_CONTROL));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_MODIFY_PROPERTIES));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_NODE_TYPE_MANAGEMENT));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_READ));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_READ_ACCESS_CONTROL));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_REMOVE_CHILD_NODES));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_REMOVE_NODE));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_RETENTION_MANAGEMENT));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_VERSION_MANAGEMENT));
+        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_WRITE));
     }
 
     /**
@@ -318,18 +332,11 @@ abstract class SessionImplHelper {
         AccessControlManager acMgr = sessionImpl.getAccessControlManager();
 
         // build the set of actions to be checked
-        String[] strings = actions.split(",");
         HashSet<Privilege> privileges = new HashSet<Privilege>();
-        for (int i = 0; i < strings.length; i++) {
-            // skip the default jcr permissions as the have already been checked.
-            if(!SessionImpl.READ_ACTION.equals(strings[i]) &&
-                    !SessionImpl.REMOVE_ACTION.equals(strings[i]) &&
-                    !SessionImpl.ADD_NODE_ACTION.equals(strings[i]) &&
-                    !SessionImpl.SET_PROPERTY_ACTION.equals(strings[i])) {
-
-                privileges.add(acMgr.privilegeFromName(strings[i]));
-            }
+        for (String action : actions.split(",")) {
+            privileges.add(acMgr.privilegeFromName(action));
         }
+        privileges.removeAll(jcrPrivileges);
         if (privileges.size() > 0) {
             if (!acMgr.hasPrivileges(absPath, privileges.toArray(new Privilege[privileges.size()]))) {
                 throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);

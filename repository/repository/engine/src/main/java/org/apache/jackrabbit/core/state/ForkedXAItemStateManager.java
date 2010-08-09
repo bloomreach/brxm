@@ -16,30 +16,27 @@
  */
 package org.apache.jackrabbit.core.state;
 
-import org.apache.jackrabbit.core.ItemId;
-import org.apache.jackrabbit.core.TransactionException;
-import org.apache.jackrabbit.core.TransactionContext;
-import org.apache.jackrabbit.core.InternalXAResource;
-import org.apache.jackrabbit.core.PropertyId;
-import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
-import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.core.virtual.VirtualItemStateProvider;
-import org.apache.jackrabbit.uuid.UUID;
-import org.apache.commons.collections.iterators.FilterIterator;
-import org.apache.commons.collections.Predicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.ReferentialIntegrityException;
-import javax.jcr.PropertyType;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.IdentityHashMap;
-import java.util.Collections;
+
+import javax.jcr.PropertyType;
+import javax.jcr.ReferentialIntegrityException;
+
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.iterators.FilterIterator;
+import org.apache.jackrabbit.core.InternalXAResource;
+import org.apache.jackrabbit.core.TransactionContext;
+import org.apache.jackrabbit.core.TransactionException;
+import org.apache.jackrabbit.core.id.ItemId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
+import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.core.virtual.VirtualItemStateProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Extension to <code>LocalItemStateManager</code> that remembers changes on
@@ -316,7 +313,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * check the transactional change log. Fallback is always the call to
      * the base class.
      */
-    public NodeReferences getNodeReferences(NodeReferencesId id)
+    public NodeReferences getNodeReferences(NodeId id)
             throws NoSuchItemStateException, ItemStateException {
 
         if (virtualProvider != null && virtualProvider.hasNodeReferences(id)) {
@@ -333,7 +330,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * check the transactional change log. Fallback is always the call to
      * the base class.
      */
-    public boolean hasNodeReferences(NodeReferencesId id) {
+    public boolean hasNodeReferences(NodeId id) {
         if (virtualProvider != null && virtualProvider.hasNodeReferences(id)) {
             return true;
         }
@@ -371,7 +368,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * @throws ItemStateException if an error occurs while reading from the
      *                            underlying shared item state manager.
      */
-    private NodeReferences getReferences(NodeReferencesId id)
+    private NodeReferences getReferences(NodeId id)
             throws ItemStateException {
         NodeReferences refs;
         try {
@@ -382,34 +379,28 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
         // apply changes from change log
         ChangeLog changes = getChangeLog();
         if (changes != null) {
-            UUID uuid = id.getTargetId().getUUID();
             // check removed reference properties
-            for (Iterator it = filterReferenceProperties(changes.deletedStates());
-                 it.hasNext(); ) {
-                PropertyState prop = (PropertyState) it.next();
+            for (PropertyState prop : filterReferenceProperties(changes.deletedStates())) {
                 InternalValue[] values = prop.getValues();
                 for (int i = 0; i < values.length; i++) {
-                    if (values[i].getUUID().equals(uuid)) {
+                    if (values[i].getNodeId().equals(id)) {
                         refs.removeReference(prop.getPropertyId());
                         break;
                     }
                 }
             }
             // check added reference properties
-            for (Iterator it = filterReferenceProperties(changes.addedStates());
-                 it.hasNext(); ) {
-                PropertyState prop = (PropertyState) it.next();
+            for (PropertyState prop : filterReferenceProperties(changes.addedStates())) {
                 InternalValue[] values = prop.getValues();
                 for (int i = 0; i < values.length; i++) {
-                    if (values[i].getUUID().equals(uuid)) {
+                    if (values[i].getNodeId().equals(id)) {
                         refs.addReference(prop.getPropertyId());
                         break;
                     }
                 }
             }
             // check modified properties
-            for (Iterator it = changes.modifiedStates(); it.hasNext(); ) {
-                ItemState state = (ItemState) it.next();
+            for (ItemState state : changes.modifiedStates()) {
                 if (state.isNode()) {
                     continue;
                 }
@@ -419,7 +410,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
                         // remove if one of the old values references the node
                         InternalValue[] values = old.getValues();
                         for (int i = 0; i < values.length; i++) {
-                            if (values[i].getUUID().equals(uuid)) {
+                            if (values[i].getNodeId().equals(id)) {
                                 refs.removeReference(old.getPropertyId());
                                 break;
                             }
@@ -434,7 +425,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
                     // add if modified value references node
                     InternalValue[] values = prop.getValues();
                     for (int i = 0; i < values.length; i++) {
-                        if (values[i].getUUID().equals(uuid)) {
+                        if (values[i].getNodeId().equals(id)) {
                             refs.addReference(prop.getPropertyId());
                             break;
                         }
@@ -452,17 +443,24 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * @param itemStates item state source iterator.
      * @return iterator over reference property states.
      */
-    private Iterator filterReferenceProperties(Iterator itemStates) {
-        return new FilterIterator(itemStates, new Predicate() {
-            public boolean evaluate(Object object) {
-                ItemState state = (ItemState) object;
-                if (!state.isNode()) {
-                    PropertyState prop = (PropertyState) state;
-                    return prop.getType() == PropertyType.REFERENCE;
-                }
-                return false;
+    private Iterable<PropertyState> filterReferenceProperties(
+            final Iterable<ItemState> itemStates) {
+        return new Iterable<PropertyState>() {
+            @SuppressWarnings("unchecked")
+            public Iterator<PropertyState> iterator() {
+                return (Iterator<PropertyState>) new FilterIterator(
+                        itemStates.iterator(), new Predicate() {
+                    public boolean evaluate(Object object) {
+                        ItemState state = (ItemState) object;
+                        if (!state.isNode()) {
+                            PropertyState prop = (PropertyState) state;
+                            return prop.getType() == PropertyType.REFERENCE;
+                        }
+                        return false;
+                    }
+                });
             }
-        });
+        };
     }
 
     /**
@@ -474,23 +472,20 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
     private void updateVirtualReferences(ChangeLog changes) throws ItemStateException {
         ChangeLog references = new ChangeLog();
 
-        for (Iterator iter = changes.addedStates(); iter.hasNext();) {
-            ItemState state = (ItemState) iter.next();
+        for (ItemState state : changes.addedStates()) {
             if (!state.isNode()) {
                 PropertyState prop = (PropertyState) state;
                 if (prop.getType() == PropertyType.REFERENCE) {
                     InternalValue[] vals = prop.getValues();
                     for (int i = 0; vals != null && i < vals.length; i++) {
-                        UUID uuid = vals[i].getUUID();
-                        NodeReferencesId refsId = new NodeReferencesId(uuid);
                         addVirtualReference(
-                                references, prop.getPropertyId(), refsId);
+                                references, prop.getPropertyId(),
+                                vals[i].getNodeId());
                     }
                 }
             }
         }
-        for (Iterator iter = changes.modifiedStates(); iter.hasNext();) {
-            ItemState state = (ItemState) iter.next();
+        for (ItemState state : changes.modifiedStates()) {
             if (!state.isNode()) {
                 PropertyState newProp = (PropertyState) state;
                 PropertyState oldProp =
@@ -498,34 +493,30 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
                 if (oldProp.getType() == PropertyType.REFERENCE) {
                     InternalValue[] vals = oldProp.getValues();
                     for (int i = 0; vals != null && i < vals.length; i++) {
-                        UUID uuid = vals[i].getUUID();
-                        NodeReferencesId refsId = new NodeReferencesId(uuid);
                         removeVirtualReference(
-                                references, oldProp.getPropertyId(), refsId);
+                                references, oldProp.getPropertyId(),
+                                vals[i].getNodeId());
                     }
                 }
                 if (newProp.getType() == PropertyType.REFERENCE) {
                     InternalValue[] vals = newProp.getValues();
                     for (int i = 0; vals != null && i < vals.length; i++) {
-                        UUID uuid = vals[i].getUUID();
-                        NodeReferencesId refsId = new NodeReferencesId(uuid);
                         addVirtualReference(
-                                references, newProp.getPropertyId(), refsId);
+                                references, newProp.getPropertyId(),
+                                vals[i].getNodeId());
                     }
                 }
             }
         }
-        for (Iterator iter = changes.deletedStates(); iter.hasNext();) {
-            ItemState state = (ItemState) iter.next();
+        for (ItemState state : changes.deletedStates()) {
             if (!state.isNode()) {
                 PropertyState prop = (PropertyState) state;
                 if (prop.getType() == PropertyType.REFERENCE) {
                     InternalValue[] vals = prop.getValues();
                     for (int i = 0; vals != null && i < vals.length; i++) {
-                        UUID uuid = vals[i].getUUID();
-                        NodeReferencesId refsId = new NodeReferencesId(uuid);
                         removeVirtualReference(
-                                references, prop.getPropertyId(), refsId);
+                                references, prop.getPropertyId(),
+                                vals[i].getNodeId());
                     }
                 }
             }
@@ -539,18 +530,18 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * Ignored if <code>refsId.getTargetId()</code> does not denote a
      * virtual node.
      * @param sourceId property id
-     * @param refsId node references id
+     * @param targetId target node id
      */
     private void addVirtualReference(
-            ChangeLog references, PropertyId sourceId, NodeReferencesId refsId)
+            ChangeLog references, PropertyId sourceId, NodeId targetId)
             throws NoSuchItemStateException, ItemStateException {
 
-        NodeReferences refs = references.get(refsId);
+        NodeReferences refs = references.getReferencesTo(targetId);
         if (refs == null) {
-            refs = virtualProvider.getNodeReferences(refsId);
+            refs = virtualProvider.getNodeReferences(targetId);
         }
-        if (refs == null && virtualProvider.hasItemState(refsId.getTargetId())) {
-            refs = new NodeReferences(refsId);
+        if (refs == null && virtualProvider.hasItemState(targetId)) {
+            refs = new NodeReferences(targetId);
         }
         if (refs != null) {
             refs.addReference(sourceId);
@@ -563,18 +554,18 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * Ignored if <code>refsId.getTargetId()</code> does not denote a
      * virtual node.
      * @param sourceId property id
-     * @param refsId node references id
+     * @param targetId target node id
      */
     private void removeVirtualReference(
-            ChangeLog references, PropertyId sourceId, NodeReferencesId refsId)
+            ChangeLog references, PropertyId sourceId, NodeId targetId)
             throws NoSuchItemStateException, ItemStateException {
 
-        NodeReferences refs = references.get(refsId);
+        NodeReferences refs = references.getReferencesTo(targetId);
         if (refs == null) {
-            refs = virtualProvider.getNodeReferences(refsId);
+            refs = virtualProvider.getNodeReferences(targetId);
         }
-        if (refs == null && virtualProvider.hasItemState(refsId.getTargetId())) {
-            refs = new NodeReferences(refsId);
+        if (refs == null && virtualProvider.hasItemState(targetId)) {
+            refs = new NodeReferences(targetId);
         }
         if (refs != null) {
             refs.removeReference(sourceId);

@@ -32,21 +32,24 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.replication.FatalReplicationException;
 import org.hippoecm.repository.replication.RecoverableReplicationException;
 import org.slf4j.Logger;
@@ -365,14 +368,18 @@ public class JCRReplicator extends AbstractReplicator {
         if (propertyIsVirtual(propName)) {
             return;
         }
-        PropertyState propState = helper.getPropertyState(id, propName);
-        PropDef def = helper.getPropertyDefinition(propState);
 
-        if (propertyIsExcludedFromReplication(def)) {
-            return;
-        }
-        Value[] values = helper.getPropertyValues(propState);
-        if (def.isMultiple()) {
+        for(PropertyDefinition propDefinition : remoteNode.getPrimaryNodeType().getPropertyDefinitions())
+            if(propDefinition.getName().equals(helper.getJCRName(propName)) && propDefinition.isProtected())
+                return;
+        for(NodeType mixinNodeType : remoteNode.getMixinNodeTypes())
+            for(PropertyDefinition propDefinition : mixinNodeType.getPropertyDefinitions())
+                if(propDefinition.getName().equals(helper.getJCRName(propName)) && propDefinition.isProtected())
+                    return;
+
+        PropertyState propState = helper.getPropertyState(id, propName);
+       Value[] values = helper.getPropertyValues(propState, (SessionImpl)session); // FIXME: wrong session passed
+        if (propState.isMultiValued()) {
             remoteNode.setProperty(context.getNamePathResolver().getJCRName(propName), values);
         } else {
             remoteNode.setProperty(context.getNamePathResolver().getJCRName(propName), values[0]);

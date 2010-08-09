@@ -23,21 +23,24 @@ import java.util.Set;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.apache.jackrabbit.core.HierarchyManagerImpl;
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.PropertyId;
-import org.apache.jackrabbit.core.nodetype.NodeDef;
-import org.apache.jackrabbit.core.nodetype.NodeDefId;
-import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.nodetype.PropDefId;
+import org.apache.jackrabbit.core.ItemManager;
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QNodeDefinition;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
+import org.apache.jackrabbit.spi.commons.value.ValueFormat;
 import org.hippoecm.repository.replication.filters.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,12 +96,12 @@ public class ReplicatorHelper {
         return null;
     }
 
-    public Value[] getPropertyValues(PropertyState propState) {
+    public Value[] getPropertyValues(PropertyState propState, SessionImpl targetSession) {
         InternalValue[] iValues = propState.getValues();
         Value[] values = new Value[propState.getValues().length];
         for (int i = 0; i < values.length; i++) {
             try {
-                values[i] = iValues[i].toJCRValue(context.getNamePathResolver());
+                values[i] = ValueFormat.getJCRValue(iValues[i], targetSession, targetSession.getValueFactory());                        
             } catch (RepositoryException e) {
                 log.warn("Unable to resolve jcr value of '{}': {}", values[i], e.getMessage());
             }
@@ -116,16 +119,6 @@ public class ReplicatorHelper {
         } else {
             return null;
         }
-    }
-    
-    public PropDef getPropertyDefinition(PropertyState propState) {
-        PropDefId defId = propState.getDefinitionId();
-        return context.getNodeTypeRegistry().getPropDef(defId);
-    }
-
-    public NodeDef getNodeDefinition(NodeState state) {
-        NodeDefId defId = state.getDefinitionId();
-        return context.getNodeTypeRegistry().getNodeDef(defId);
     }
 
     public String getNodeType(NodeId id) {

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository;
 
+import org.hippoecm.repository.util.Utilities;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
@@ -33,11 +34,13 @@ public class HREPTWO650Test extends FacetedNavigationAbstractTest {
     private final static String SVN_ID = "$Id$";
 
     @Before
+    @Override
     public void setUp() throws Exception {
       super.setUp();
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
       super.tearDown();
     }

@@ -15,13 +15,6 @@
  */
 package org.hippoecm.repository.decorating.client;
 
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
-
-import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
-import org.apache.jackrabbit.spi.RepositoryService;
-import org.apache.jackrabbit.spi.rmi.client.ClientRepositoryService;
 import org.hippoecm.repository.decorating.remote.RemoteRepository;
 
 public class ClientRepository extends org.apache.jackrabbit.rmi.client.ClientRepository {
@@ -33,13 +26,5 @@ public class ClientRepository extends org.apache.jackrabbit.rmi.client.ClientRep
     protected ClientRepository(RemoteRepository repository, LocalServicingAdapterFactory factory) {
         super(repository, factory);
         this.remote = repository;
-    }
-
-    public RepositoryService getRepositoryService() throws RepositoryException {
-        try {
-            return new ClientRepositoryService(remote.getRepositoryService());
-        } catch(RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
     }
 }

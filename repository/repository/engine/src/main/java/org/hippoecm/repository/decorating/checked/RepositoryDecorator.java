@@ -21,6 +21,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 /**
  * Simple {@link Repository Repository} decorator.
@@ -109,6 +110,26 @@ public class RepositoryDecorator implements Repository {
     public Session login() throws LoginException, NoSuchWorkspaceException, RepositoryException {
         check();
         return login(null, null);
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        check();
+        return repository.isStandardDescriptor(key);
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        check();
+        return repository.isSingleValueDescriptor(key);
+    }
+
+    public Value getDescriptorValue(String key) {
+        check();
+        return repository.getDescriptorValue(key);
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        check();
+        return repository.getDescriptorValues(key);
     }
 
     protected void check() {

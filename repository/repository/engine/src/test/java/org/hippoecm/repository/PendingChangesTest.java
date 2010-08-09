@@ -52,7 +52,7 @@ public class PendingChangesTest extends TestCase {
     @After
     @Override
     public void tearDown() throws Exception {
-        session.refresh(false);
+        //session.refresh(false);
         if(session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
             session.save();

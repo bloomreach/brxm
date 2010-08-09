@@ -20,8 +20,8 @@ import java.util.List;
 
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollection;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;

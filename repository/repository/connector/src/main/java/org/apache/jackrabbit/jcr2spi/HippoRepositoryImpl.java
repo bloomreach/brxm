@@ -16,14 +16,18 @@
 package org.apache.jackrabbit.jcr2spi;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
+import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
@@ -32,8 +36,14 @@ import javax.naming.StringRefAddr;
 
 import org.apache.jackrabbit.commons.AbstractRepository;
 import org.apache.jackrabbit.jcr2spi.config.RepositoryConfig;
+import org.apache.jackrabbit.spi.QValue;
 import org.apache.jackrabbit.spi.SessionInfo;
 import org.apache.jackrabbit.spi.XASessionInfo;
+import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.apache.jackrabbit.spi.commons.value.ValueFormat;
+import org.apache.jackrabbit.value.ValueFactoryImpl;
 
 /**
  * <code>HippoRepositoryImpl</code>...
@@ -44,12 +54,31 @@ public class HippoRepositoryImpl extends AbstractRepository implements Reference
 
     // configuration of the repository
     private final RepositoryConfig config;
-    private final Map descriptors;
+    private final Map<String,Value[]> descriptors;
     private Reference reference = null;
 
     private HippoRepositoryImpl(RepositoryConfig config) throws RepositoryException {
         this.config = config;
-        descriptors = config.getRepositoryService().getRepositoryDescriptors();
+        ValueFactory vf = ValueFactoryImpl.getInstance();
+        NamePathResolver resolver = new DefaultNamePathResolver(new NamespaceResolver() {
+            public String getURI(String prefix) throws NamespaceException {
+                return prefix;
+            }
+            public String getPrefix(String uri) throws NamespaceException {
+                return uri;
+            }
+        });
+
+        Map<String, QValue[]> descr = config.getRepositoryService().getRepositoryDescriptors();
+        descriptors = new HashMap<String, Value[]>(descr.size());
+        for (String key : descr.keySet()) {
+            QValue[] qvs = descr.get(key);
+            Value[] vs = new Value[qvs.length];
+            for (int i = 0; i < qvs.length; i++) {
+                vs[i] = ValueFormat.getJCRValue(qvs[i], resolver, vf);
+            }
+            descriptors.put(key, vs);
+        }
     }
 
     public static Repository create(RepositoryConfig config) throws RepositoryException {
@@ -69,7 +98,14 @@ public class HippoRepositoryImpl extends AbstractRepository implements Reference
      * @see Repository#getDescriptor(String)
      */
     public String getDescriptor(String descriptorKey) {
-        return (String) descriptors.get(descriptorKey);
+        Value[] values = descriptors.get(descriptorKey);
+        if(values.length >= 0) {
+            try {
+                return values[0].getString();
+            } catch(RepositoryException ex) {
+            }
+        }
+        return null;
     }
 
     /**
@@ -114,5 +150,26 @@ public class HippoRepositoryImpl extends AbstractRepository implements Reference
         else {
             throw new javax.naming.OperationNotSupportedException("Contained RepositoryConfig needs to implement javax.naming.Referenceable");
         }
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        Value[] values = descriptors.get(key);
+        if(values != null && values.length == 1)
+            return true;
+        return false;
+    }
+
+    public Value getDescriptorValue(String key) {
+        Value[] values = descriptors.get(key);
+        if (values == null || values.length!=1)
+            return null;
+        return values[0];
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        Value[] values = descriptors.get(key);
+        if (values == null || values.length!=1)
+            return null;
+        return values;
     }
 }

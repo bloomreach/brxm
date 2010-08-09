@@ -16,6 +16,7 @@
  */
 package org.apache.jackrabbit.jcr2spi.state;
 
+import org.apache.jackrabbit.jcr2spi.SessionImpl;
 import org.apache.jackrabbit.jcr2spi.util.ReferenceChangeTracker;
 import org.apache.jackrabbit.jcr2spi.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.jcr2spi.nodetype.ItemDefinitionProvider;
@@ -112,7 +113,7 @@ public class HippoSessionItemStateManager extends SessionItemStateManager implem
     public HippoSessionItemStateManager(UpdatableItemStateManager workspaceItemStateMgr,
                                    ItemStateValidator validator,
                                    QValueFactory qValueFactory,
-                                   ItemStateFactory isf, ManagerProvider mgrProvider) {
+                                   ItemStateFactory isf, SessionImpl mgrProvider) {
         super(workspaceItemStateMgr, validator, qValueFactory, isf, mgrProvider);
 
         this.workspaceItemStateMgr = workspaceItemStateMgr;

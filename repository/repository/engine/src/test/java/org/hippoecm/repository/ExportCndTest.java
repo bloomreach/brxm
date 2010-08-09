@@ -37,11 +37,11 @@ import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.OnParentVersionAction;
 
 import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeImpl;
-import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefWriter;
+import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
+import org.apache.jackrabbit.spi.commons.nodetype.compact.CompactNodeTypeDefWriter;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.junit.After;
 import org.junit.Before;
@@ -65,7 +65,7 @@ public class ExportCndTest extends TestCase {
     public void testJRCndExport() throws RepositoryException {
         LinkedHashSet<NodeType> types = getSortedNodeTypes("hippo:");
 
-        List<NodeTypeDef> nodeTypeDefs = new ArrayList<NodeTypeDef>();
+        List<QNodeTypeDefinition> nodeTypeDefs = new ArrayList<QNodeTypeDefinition>();
         for (NodeType nt : types) {
             nodeTypeDefs.add(((NodeTypeImpl) nt).getDefinition());
         }

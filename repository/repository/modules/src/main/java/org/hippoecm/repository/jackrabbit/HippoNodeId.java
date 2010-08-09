@@ -15,16 +15,17 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.UUID;
+
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.core.state.ItemStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.uuid.UUID;
 
 /**
  * THIS CLASS IS NOT PART OF THE PUBLIC API.  DO NOT USE.

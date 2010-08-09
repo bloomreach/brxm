@@ -16,6 +16,7 @@
 package org.hippoecm.repository.decorating.checked;
 
 import java.util.Calendar;
+import javax.jcr.Node;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
@@ -94,5 +95,17 @@ public class VersionDecorator extends NodeDecorator implements Version {
             predecessors[i] = factory.getVersionDecorator(session, predecessors[i]);
         }
         return predecessors;
+    }
+
+    public Version getLinearSuccessor() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Version getLinearPredecessor() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Node getFrozenNode() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

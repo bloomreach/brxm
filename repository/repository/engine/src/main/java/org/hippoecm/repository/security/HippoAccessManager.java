@@ -34,19 +34,19 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.security.AccessControlException;
+import javax.jcr.security.AccessControlManager;
+import javax.jcr.security.AccessControlPolicy;
+import javax.jcr.security.AccessControlPolicyIterator;
+import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
+import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 
-import org.apache.jackrabbit.api.jsr283.security.AccessControlException;
-import org.apache.jackrabbit.api.jsr283.security.AccessControlManager;
-import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicy;
-import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicyIterator;
-import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.apache.jackrabbit.core.HierarchyManager;
-import org.apache.jackrabbit.core.ItemId;
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.id.ItemId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.security.AMContext;
-import org.apache.jackrabbit.core.security.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
@@ -302,6 +302,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
     }
 
+    public void checkPermission(Path path, int permissions) throws AccessDeniedException, ItemNotFoundException,
+            RepositoryException {
+        // just use the isGranted method
+        if (!isGranted(path, permissions)) {
+            throw new AccessDeniedException();
+        }
+    }
+
     /**
      * @see AccessManager#isGranted(ItemId, int)
      * @deprecated
@@ -387,6 +395,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
         if ((permissions & Permission.REMOVE_PROPERTY) != 0) {
             privileges.add(privilegeFromName("jcr:setProperties"));
+        }
+        if (privileges.isEmpty()) {
+            return true;
         }
         return hasPrivileges(absPath.getAncestor(1), privileges.toArray(new Privilege[privileges.size()]));
     }
@@ -817,9 +828,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                     break;
                 }
             } else if (iVal.getType() == PropertyType.NAME) {
-                log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getQName());
+                log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getName());
 
-                if (iVal.getQName().equals(rule.getValueName())) {
+                if (iVal.getName().equals(rule.getValueName())) {
                     match = true;
                     break;
                 }
@@ -859,8 +870,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                     return true;
                 }
 
-                log.trace("Checking facetVal: {} (name) -> {}", rule.getValueName(), iVal.getQName());
-                if (iVal.getQName().equals(rule.getValueName())) {
+                log.trace("Checking facetVal: {} (name) -> {}", rule.getValueName(), iVal.getName());
+                if (iVal.getName().equals(rule.getValueName())) {
                     return true;
                 }
             }
@@ -1230,7 +1241,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         // get the id of the node or of the parent node if absPath points to a property
         NodeId id = getNodeId(absPath);
         if (id == null) {
-            throw new PathNotFoundException("Node id not found for path: " + absPath);
+            //throw new PathNotFoundException("Node id not found for path: " + absPath);
+            return true;
         }
         
         // fast track read check
@@ -1450,6 +1462,4 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
         return buf.toString();
     }
-
-
 }

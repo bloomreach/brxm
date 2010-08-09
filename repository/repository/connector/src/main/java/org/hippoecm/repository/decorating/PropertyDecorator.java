@@ -16,7 +16,10 @@
 package org.hippoecm.repository.decorating;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Calendar;
+import javax.jcr.Binary;
+import javax.jcr.ItemNotFoundException;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -211,5 +214,29 @@ public class PropertyDecorator extends ItemDecorator implements Property {
      */
     public int getType() throws RepositoryException {
         return property.getType();
+    }
+
+    public void setValue(Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        property.setValue(value);
+    }
+
+    public void setValue(BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        property.setValue(value);
+    }
+
+    public Binary getBinary() throws ValueFormatException, RepositoryException {
+        return property.getBinary();
+    }
+
+    public BigDecimal getDecimal() throws ValueFormatException, RepositoryException {
+        return property.getDecimal();
+    }
+
+    public Property getProperty() throws ItemNotFoundException, ValueFormatException, RepositoryException {
+        return property.getProperty();
+    }
+
+    public boolean isMultiple() throws RepositoryException {
+        return property.isMultiple();
     }
 }

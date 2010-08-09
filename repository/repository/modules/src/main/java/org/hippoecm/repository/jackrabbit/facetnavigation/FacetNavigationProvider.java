@@ -21,9 +21,9 @@ import java.util.List;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -201,7 +201,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         return state;
     }
 
-    protected final int getPropertyAsInt(NodeId nodeId, Name propName) throws NumberFormatException{
+    protected final int getPropertyAsInt(NodeId nodeId, Name propName) throws NumberFormatException, RepositoryException {
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
         if(propState == null) {
             if(log.isDebugEnabled()) {

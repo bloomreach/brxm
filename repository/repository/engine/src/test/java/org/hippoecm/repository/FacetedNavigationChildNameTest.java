@@ -33,7 +33,7 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
     private final static String SVN_ID = "$Id$";
 
     @Test
-    public void testFacetIssues() throws RepositoryException {
+    public void testHREPTWO270Issue() throws RepositoryException {
         commonStart();
 
         final String simple = "testnode";
@@ -52,19 +52,18 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
         facetNode.hashCode(); // This earlier caused a NullPointerException, see HREPTWO-269
         assertEquals("success", facetNode.getName());
 
-        Node nodeFromFacet = (Node) facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
-        try {
-            String path = "success/" + NodeNameCodec.encode(encodeMe, true);
-            facetNode = getSearchNode().getNode(path);
-            assertEquals(NodeNameCodec.encode(encodeMe, true), facetNode.getName());
-            nodeFromFacet = (Node) facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
-            docNode = session.getRootNode().getNode("test/documents").getNode(simple);
-            assertTrue(nodeFromFacet.hasProperty("x"));
-            assertTrue(nodeFromFacet.hasProperty("y"));
-            assertEquals(docNode.getProperty("x").getString(), nodeFromFacet.getProperty("x").getString());
-            assertEquals(docNode.getProperty("y").getString(), nodeFromFacet.getProperty("y").getString());
-        } catch (PathNotFoundException e) {
-            fail("Issue HREPTWO-270 should be reopened");
-        }
+        Node nodeFromFacet = facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
+        String path = "success/" + NodeNameCodec.encode(encodeMe, true);
+        facetNode = getSearchNode().getNode(path);
+        assertEquals(NodeNameCodec.encode(encodeMe, true), facetNode.getName());
+        nodeFromFacet = facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
+        docNode = session.getRootNode().getNode("test/documents").getNode(simple);
+        assertTrue(nodeFromFacet.hasProperty("x"));
+        assertTrue(nodeFromFacet.hasProperty("y"));
+        assertEquals(docNode.getProperty("x").getString(), nodeFromFacet.getProperty("x").getString());
+        assertEquals(docNode.getProperty("y").getString(), nodeFromFacet.getProperty("y").getString());
+
+        commonEnd();
+
     }
 }

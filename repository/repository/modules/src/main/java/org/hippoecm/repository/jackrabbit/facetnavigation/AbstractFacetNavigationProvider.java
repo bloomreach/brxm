@@ -22,11 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.OrderBy;
@@ -52,7 +52,7 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     FacetedNavigationEngine.Context facetedContext;
 
     Name countName;
-    PropDef subCountPropDef;
+    QPropertyDefinition subCountPropDef;
     Name virtualNodeName;
 
     

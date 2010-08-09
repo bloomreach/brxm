@@ -27,12 +27,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.Executor;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.core.PropertyId;
+import org.apache.lucene.document.Fieldable;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.Parser;
+import org.apache.jackrabbit.core.id.PropertyId;
+import org.apache.jackrabbit.core.query.lucene.LazyTextExtractorField;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
@@ -41,13 +46,11 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.NodeIndexer;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.value.BLOBFileValue;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.extractor.PlainTextExtractor;
-import org.apache.jackrabbit.extractor.TextExtractor;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.Document;
@@ -97,10 +100,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     private QueryHandlerContext queryHandlerContext;
 
-    public ServicingNodeIndexer(NodeState node, QueryHandlerContext queryHandlerContext, NamespaceMappings mappings,
-            TextExtractor extractor) {
-        super(node, queryHandlerContext.getItemStateManager(), mappings, extractor);
-        this.queryHandlerContext = queryHandlerContext;
+    public ServicingNodeIndexer(NodeState node, QueryHandlerContext context, NamespaceMappings mappings, Parser parser) {
+        super(node, context.getItemStateManager(), mappings, context.getExecutor(), parser);
+        this.queryHandlerContext = context;
     }
 
     public void setServicingIndexingConfiguration(ServicingIndexingConfiguration config) {
@@ -110,7 +112,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     
     @Override
-    protected void addBinaryValue(Document doc, String fieldName, Object internalValue) {
+    protected void addBinaryValue(Document doc, String fieldName, InternalValue internalValue) {
         if(documentBinaries == null) {
             documentBinaries = new ArrayList<BinaryValue>();
         }
@@ -127,7 +129,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
     
     @Override
-    protected Document createDoc() throws RepositoryException {
+    public Document createDoc() throws RepositoryException {
         // index the jackrabbit way
         Document doc = super.createDoc();
         
@@ -153,19 +155,25 @@ public class ServicingNodeIndexer extends NodeIndexer {
                                 HippoNodeType.HIPPO_TEXT);
                         for (BinaryValue binval : documentBinaries) {
                             if (hippoTextName.equals(binval.fieldName)) {
-                                InputStream stream = ((BLOBFileValue) binval.internalValue).getStream();
                                 try {
-                                    TextExtractor extr = new PlainTextExtractor();
-                                    Reader reader = extr.extractText(stream, null, "UTF-8");
-                                    doc.add(createFulltextField(reader));
-                                } catch (IOException e) {
+                                    InternalValue type = getValue(NameConstants.JCR_MIMETYPE);
+                                    if (type != null) {
+                                        Metadata metadata = new Metadata();
+                                        metadata.set(Metadata.CONTENT_TYPE, type.getString());
+                                        InternalValue encoding = getValue(NameConstants.JCR_ENCODING);
+                                        if (encoding != null) {
+                                            metadata.set(Metadata.CONTENT_ENCODING, encoding.getString());
+                                        }
+                                        doc.add(createFulltextField((InternalValue)binval.internalValue, metadata));
+                                    }
+                                } catch (ItemStateException e) {
                                     log.warn("Exception during indexing hippo:text binary property", e);
                                 }
                             }
                         }
                     } else {
                         for (BinaryValue val : documentBinaries) {
-                            super.addBinaryValue(doc, val.fieldName, val.internalValue);
+                            super.addBinaryValue(doc, val.fieldName, (InternalValue) val.internalValue);
                         }
                     }
 
@@ -174,17 +182,23 @@ public class ServicingNodeIndexer extends NodeIndexer {
                     if (hippoTextName.equals(binVal.fieldName)) {
                         log.debug("The '{}' property is present and thus will be used to index this binary.",
                                 HippoNodeType.HIPPO_TEXT);
-                        InputStream stream = ((BLOBFileValue) binVal.internalValue).getStream();
                         try {
-                            TextExtractor extr = new PlainTextExtractor();
-                            Reader reader = extr.extractText(stream, null, "UTF-8");
-                            doc.add(createFulltextField(reader));
-                        } catch (IOException e) {
+                            InternalValue type = getValue(NameConstants.JCR_MIMETYPE);
+                            if (type != null) {
+                                Metadata metadata = new Metadata();
+                                metadata.set(Metadata.CONTENT_TYPE, type.getString());
+                                InternalValue encoding = getValue(NameConstants.JCR_ENCODING);
+                                if (encoding != null) {
+                                    metadata.set(Metadata.CONTENT_ENCODING, encoding.getString());
+                                }
+                                doc.add(createFulltextField((InternalValue)binVal.internalValue, metadata));
+                            }
+                        } catch (ItemStateException e) {
                             log.warn("Exception during indexing hippo:text binary property", e);
                         }
                     } else {
                         // fallback to original Jackrabbit binary indexing
-                        super.addBinaryValue(doc, binVal.fieldName, binVal.internalValue);
+                        super.addBinaryValue(doc, binVal.fieldName, (InternalValue) binVal.internalValue);
                     }
                 }
             } catch (NamespaceException e) {
@@ -309,7 +323,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     // below: When the QName is configured to be a facet, also index like one
-    private void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) {
+    private void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) throws RepositoryException {
 
         switch (value.getType()) {
         case PropertyType.BINARY:
@@ -347,18 +361,16 @@ public class ServicingNodeIndexer extends NodeIndexer {
             break;
         case PropertyType.NAME:
             if (name.equals(NameConstants.JCR_PRIMARYTYPE)) {
-                indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_PRIMARYTYPE, value.getQName());
+                indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_PRIMARYTYPE, value.getName());
             } else if (name.equals(NameConstants.JCR_MIXINTYPES)) {
-                indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE, value.getQName());
+                indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE, value.getName());
             }
             try {
                 // nodename in format: nsprefix:localname
-                String primaryNodeName = queryHandlerContext.getNamespaceRegistry().getPrefix(
-                        value.getQName().getNamespaceURI())
-                        + ":" + value.getQName().getLocalName();
-                indexFacet(doc, fieldName, primaryNodeName);
+                String prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(value.getName().getNamespaceURI());
+                indexFacet(doc, fieldName, prefix + ":" + value.getName().getLocalName());
             } catch (NamespaceException e) {
-                log.error("Could not get primaryNodeName in format nsprefix:localname for '{}'", value.getQName());
+                log.error("Could not get primaryNodeName in format nsprefix:localname for '{}'", value.getName());
             }
             break;
         default:
@@ -564,16 +576,5 @@ public class ServicingNodeIndexer extends NodeIndexer {
         } else {
             return servicingIndexingConfig.isHippoPath(propertyName);
         }
-    }
-
-    /**
-     * Wraps the exception <code>e</code> into a <code>RepositoryException</code>
-     * and throws the created exception.
-     *
-     * @param e the base exception.
-     */
-    private void throwRepositoryException(Exception e) throws RepositoryException {
-        String msg = "Error while indexing node: " + node.getNodeId() + " of " + "type: " + node.getNodeTypeName();
-        throw new RepositoryException(msg, e);
     }
 }

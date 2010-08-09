@@ -115,7 +115,7 @@ public class ReplicationJournalProducer implements ReplicationUpdateEventListene
         boolean succeeded = false;
 
         try {
-            ChangeLogRecord clr = new ChangeLogRecord(changes, events, record, workspace);
+            ChangeLogRecord clr = new ChangeLogRecord(changes, events, record, workspace, System.currentTimeMillis(), null);
             clr.write();
             succeeded = true;
         } catch (JournalException e) {

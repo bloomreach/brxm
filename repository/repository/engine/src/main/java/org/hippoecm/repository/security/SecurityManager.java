@@ -46,7 +46,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import org.apache.jackrabbit.api.security.principal.NoSuchPrincipalException;
 import org.apache.jackrabbit.api.security.principal.PrincipalIterator;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
 import org.apache.jackrabbit.api.security.user.Authorizable;
@@ -697,7 +696,7 @@ public class SecurityManager implements JackrabbitSecurityManager {
         }
     }
 
-    public String getUserID(Subject subject) {
+    public String getUserID(Subject subject, String workspace) {
         String uid = null;
         // if SimpleCredentials are present, the UserID can easily be retrieved.
         Iterator creds = subject.getPublicCredentials(SimpleCredentials.class).iterator();
@@ -725,7 +724,7 @@ public class SecurityManager implements JackrabbitSecurityManager {
     public void close() {
     }
 
-   public AuthContext getAuthContext(Credentials credentials, Subject subject) throws RepositoryException {
+   public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {
         return authCtxProvider.getAuthContext(credentials, subject, systemSession, principalProviderRegistry, null/*"admin"*/, /*"anonymous"*/null);
     }
 
@@ -736,7 +735,7 @@ public class SecurityManager implements JackrabbitSecurityManager {
             if (amc == null) {
                 accessMgr = new SimpleAccessManager();
             } else {
-                accessMgr = (AccessManager) amc.newInstance();
+                accessMgr = (AccessManager) amc.newInstance(AccessManager.class);
             }
             accessMgr.init(amContext);
             return accessMgr;
@@ -761,7 +760,7 @@ public class SecurityManager implements JackrabbitSecurityManager {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public Principal getPrincipal(String principalName) throws NoSuchPrincipalException {
+        public Principal getPrincipal(String principalName) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

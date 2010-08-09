@@ -48,6 +48,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventJournal;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
@@ -75,6 +76,18 @@ public class JcrObservationManager implements ObservationManager {
     private static JcrObservationManager INSTANCE = new JcrObservationManager();
 
     private WeakHashMap<Session, Map<String, NodeState>> cache = new WeakHashMap<Session, Map<String, NodeState>>();
+
+    public void setUserData(String userData) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public EventJournal getEventJournal() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public EventJournal getEventJournal(int eventTypes, String absPath, boolean isDeep, String[] uuid, String[] nodeTypeName) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     private static class ObservationException extends Exception {
         private static final long serialVersionUID = 1L;
@@ -124,6 +137,21 @@ public class JcrObservationManager implements ObservationManager {
                 return userId;
             }
 
+            public String getIdentifier() throws RepositoryException {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public Map getInfo() throws RepositoryException {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public String getUserData() throws RepositoryException {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public long getDate() throws RepositoryException {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
         }
 
         private String path;

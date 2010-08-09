@@ -18,16 +18,17 @@ package org.hippoecm.repository.query.lucene;
 import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SynonymProvider;
-import org.apache.jackrabbit.core.query.lucene.fulltext.ParseException;
-import org.apache.jackrabbit.core.query.lucene.fulltext.QueryParser;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
@@ -49,8 +50,7 @@ public class FacetFiltersQuery {
        try {
             for (FacetFilter filter : facetFilters.getFilters()) {
                 if (filter.operator == FacetFilters.NOOP_OPERATOR) {
-                    QueryParser parser = new QueryParser(FieldNames.FULLTEXT, analyzer, synonymProvider);
-                    parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
+                    QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, analyzer, synonymProvider);
                     Query freeTextQuery = parser.parse(filter.queryString);
                     if(filter.negated) {
                         freeTextQuery = QueryHelper.negateQuery(freeTextQuery);
@@ -63,8 +63,7 @@ public class FacetFiltersQuery {
                     tmp.append(":").append(FieldNames.FULLTEXT_PREFIX);
                     tmp.append(propName.getLocalName());
                     String fieldname = tmp.toString();
-                    QueryParser parser = new QueryParser(fieldname, analyzer, synonymProvider);
-                    parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
+                    QueryParser parser = new JackrabbitQueryParser(fieldname, analyzer, synonymProvider);
                     Query textQuery = parser.parse(filter.queryString);
                     if(filter.negated) {
                         textQuery = QueryHelper.negateQuery(textQuery);
@@ -82,7 +81,7 @@ public class FacetFiltersQuery {
                         Term t = new Term(internalFacetName , filter.queryString);
                         wq = new TermQuery(t);
                     } else {
-                        String field = nsMappings.translatePropertyName(propName);
+                        String field = nsMappings.translateName(propName);
                         Term t = new Term(FieldNames.PROPERTIES, FieldNames.createNamedValue(field, filter.queryString));
                         wq = new TermQuery(t);
                     }

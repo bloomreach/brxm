@@ -183,6 +183,22 @@ public class FacetSearchObserver {
                         return "FacetSearchObserver";
                     }
 
+                    public String getIdentifier() throws RepositoryException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+
+                    public Map getInfo() throws RepositoryException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+
+                    public String getUserData() throws RepositoryException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+
+                    public long getDate() throws RepositoryException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+
                 });
                 List<UpstreamEntry> listeners;
                 synchronized (upstream) {

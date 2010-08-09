@@ -149,12 +149,12 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
 
         List<Filter> filters = new ArrayList<Filter>();
         for (FilterConfig fc: config.getFilterConfigs()) {
-            Filter filter = (Filter) fc.newInstance();
+            Filter filter = (Filter) fc.newInstance(Filter.class);
             filters.add(filter);
         }
         
         // start replicator.
-        replicator = (Replicator) config.getReplicatorConfig().newInstance();
+        replicator = (Replicator) config.getReplicatorConfig().newInstance(Replicator.class);
         replicator.init(replicatorContext, filters);
         
         try {

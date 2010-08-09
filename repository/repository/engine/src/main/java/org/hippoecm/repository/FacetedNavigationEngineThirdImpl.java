@@ -29,14 +29,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SynonymProvider;
-import org.apache.jackrabbit.core.query.lucene.fulltext.ParseException;
-import org.apache.jackrabbit.core.query.lucene.fulltext.QueryParser;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.lucene.analysis.Analyzer;
@@ -48,6 +47,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
@@ -243,8 +244,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
         if (openQuery != null && openQuery.query != null && !openQuery.query.trim().equals("")) {
             try {
-                QueryParser parser = new QueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider());
-                parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
+                //QueryParser.parse(openQuery.query, Query.XPATH, nsMappings, null);
+                QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider());
                 searchQuery.add(parser.parse(openQuery.query), Occur.MUST);
             } catch (ParseException ex) {
                 log.info("Cannot compose free text query", ex);

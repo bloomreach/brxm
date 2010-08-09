@@ -34,6 +34,7 @@ import javax.jcr.ValueFormatException;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
+import org.apache.jackrabbit.spi.commons.value.ValueFormat;
 import org.apache.jackrabbit.util.Base64;
 import org.apache.jackrabbit.util.TransientFileFactory;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
@@ -251,7 +252,7 @@ class BufferedStringValue implements TextValue {
                             retrieve(), targetType, ValueFactoryImpl.getInstance()), nsContext);
                 // convert InternalValue to Value using this
                 // session's namespace mappings
-                return ival.toJCRValue(resolver);
+                return ValueFormat.getJCRValue(ival, resolver, ValueFactoryImpl.getInstance());                
             } else if (targetType == PropertyType.BINARY) {
                 if (length() < 0x10000) {
                     // < 65kb: deserialize BINARY type using String
@@ -293,21 +294,8 @@ class BufferedStringValue implements TextValue {
                 } else {
                     // >= 65kb: deserialize BINARY type
                     // using Reader and temporay file
-                    if (InternalValue.USE_DATA_STORE) {
-                        Base64ReaderInputStream in = new Base64ReaderInputStream(reader());
-                        return InternalValue.createTemporary(in);
-                    }
-                    TransientFileFactory fileFactory = TransientFileFactory.getInstance();
-                    File tmpFile = fileFactory.createTransientFile("bin", null, null);
-                    FileOutputStream out = new FileOutputStream(tmpFile);
-                    Reader reader = reader();
-                    try {
-                        Base64.decode(reader, out);
-                    } finally {
-                        reader.close();
-                        out.close();
-                    }
-                    return InternalValue.create(tmpFile);
+                    Base64ReaderInputStream in = new Base64ReaderInputStream(reader());
+                    return InternalValue.createTemporary(in);
                 }
             } else {
                 // convert serialized value to InternalValue using

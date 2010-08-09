@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Repository;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.NodeState;

@@ -16,6 +16,7 @@
 package org.hippoecm.repository.decorating;
 
 import java.util.Calendar;
+import javax.jcr.Node;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -91,5 +92,18 @@ public abstract class VersionDecorator extends NodeDecorator implements Version 
             predecessors[i] = factory.getVersionDecorator(session, predecessors[i]);
         }
         return predecessors;
+    }
+
+
+    public Version getLinearSuccessor() throws RepositoryException {
+        return version.getLinearSuccessor();
+    }
+
+    public Version getLinearPredecessor() throws RepositoryException {
+        return version.getLinearPredecessor();
+    }
+
+    public Node getFrozenNode() throws RepositoryException {
+        return version.getFrozenNode();
     }
 }

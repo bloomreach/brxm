@@ -32,6 +32,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -41,6 +42,8 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.retention.RetentionManager;
+import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
@@ -51,7 +54,6 @@ import org.xml.sax.SAXException;
 
 import org.apache.jackrabbit.api.XASession;
 
-import org.hippoecm.repository.SessionClassLoader;
 import org.hippoecm.repository.api.HippoSession;
 
 /**
@@ -420,7 +422,7 @@ public class SessionDecorator implements XASession, HippoSession {
 
     public ClassLoader getSessionClassLoader() throws RepositoryException {
         check();
-        return new SessionClassLoader(this);
+        return null;
     }
 
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
@@ -446,5 +448,51 @@ public class SessionDecorator implements XASession, HippoSession {
     private void repair() throws RepositoryException {
         // FIXME: this assumes that an impersonated() session can also login()
         session = (HippoSession) repository.login(credentials, workspaceName);
+    }
+
+    public Node getNodeByIdentifier(String id) throws ItemNotFoundException, RepositoryException {
+        check();
+        Node node = session.getNodeByIdentifier(id);
+        return factory.getNodeDecorator(this, node);
+    }
+
+    public Node getNode(String absPath) throws PathNotFoundException, RepositoryException {
+        check();
+        Node node = session.getNode(absPath);
+        return factory.getNodeDecorator(this, node);
+    }
+
+    public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
+        check();
+        Property property = session.getProperty(absPath);
+        return factory.getPropertyDecorator(this, property);
+    }
+
+    public boolean nodeExists(String absPath) throws RepositoryException {
+        return session.nodeExists(absPath);
+    }
+
+    public boolean propertyExists(String absPath) throws RepositoryException {
+        return session.propertyExists(absPath);
+    }
+
+    public void removeItem(String absPath) throws VersionException, LockException, ConstraintViolationException, AccessDeniedException, RepositoryException {
+        session.removeItem(absPath);
+    }
+
+    public boolean hasPermission(String absPath, String actions) throws RepositoryException {
+        return session.hasPermission(absPath, actions);
+    }
+
+    public boolean hasCapability(String methodName, Object target, Object[] arguments) throws RepositoryException {
+        return session.hasCapability(methodName, target, arguments);
+    }
+
+    public AccessControlManager getAccessControlManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

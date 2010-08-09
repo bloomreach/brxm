@@ -20,15 +20,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.PropertyId;
-import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.nodetype.PropDefId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public abstract class MirrorVirtualProvider extends HippoVirtualProvider
@@ -55,6 +54,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 
     Name docbaseName;
     Name jcrUUIDName;
+    Set<Name> omittedProperties;
     Name jcrMixinTypesName;
     Name hippoUUIDName;
     Name hardDocumentName;
@@ -63,7 +63,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
     Name mixinReferenceableName;
     Name mixinVersionableName;
 
-    PropDef hippoUUIDPropDef;
+    QPropertyDefinition hippoUUIDPropDef;
 
     @Override
     protected void initialize() throws RepositoryException {
@@ -76,6 +76,16 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
         softDocumentName = resolveName(HippoNodeType.NT_SOFTDOCUMENT);
         mixinReferenceableName = resolveName("mix:referenceable");
         mixinVersionableName = resolveName("mix:versionable");
+
+        omittedProperties = new HashSet<Name>();
+        omittedProperties.add(resolveName("hippo:related"));
+        omittedProperties.add(resolveName("jcr:isCheckedOut"));
+        omittedProperties.add(resolveName("jcr:versionHistory"));
+        omittedProperties.add(resolveName("jcr:baseVersion"));
+        omittedProperties.add(resolveName("jcr:predecessors"));
+        omittedProperties.add(resolveName("jcr:mergeFailed"));
+        omittedProperties.add(resolveName("jcr:activity"));
+        omittedProperties.add(resolveName("jcr:configuration"));
 
         hippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
     }
@@ -105,20 +115,22 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
         }
         state.setMixinTypeNames(mixins);
 
-        state.setDefinitionId(dereference.getDefinitionId());
         for(Iterator iter = dereference.getPropertyNames().iterator(); iter.hasNext(); ) {
             Name propName = (Name) iter.next();
             PropertyId upstreamPropId = new PropertyId(dereference.getNodeId(), propName);
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
-            PropDefId propDefId = upstreamPropState.getDefinitionId();
             if(propName.equals(jcrUUIDName)) {
-                propName = hippoUUIDName;
-                propDefId = hippoUUIDPropDef.getId();
+                if(mixins.contains(softDocumentName)) {
+                    propName = hippoUUIDName;
+                } else {
+                    continue;
+                }
             }
+            if(omittedProperties.contains(propName))
+                continue;
             state.addPropertyName(propName);
             PropertyState propState = createNew(propName, state.getNodeId());
             propState.setType(upstreamPropState.getType());
-            propState.setDefinitionId(propDefId);
             if(propName.equals(jcrMixinTypesName)) {
                 // replace the jcr:mixinTypes properties with the possibly changed mixin types
                 propState.setValues(InternalValue.create((Name[])state.getMixinTypeNames().toArray(new Name[state.getMixinTypeNames().size()])));
@@ -132,6 +144,6 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
         return state;
     }
 
-    protected abstract void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream);
+    protected abstract void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) throws RepositoryException;
     
 }

@@ -153,11 +153,13 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         // Otherwise, fall back to the default. 
         ClassLoader cl = clModel.getObject();
         InputStream stream = null;
-        if (variant != null) {
-            stream = cl.getResourceAsStream(location + "_" + variant + ".layout.xml");
-        }
-        if (stream == null) {
-            stream = cl.getResourceAsStream(location + ".layout.xml");
+        if (cl != null) {
+            if (variant != null) {
+                stream = cl.getResourceAsStream(location + "_" + variant + ".layout.xml");
+            }
+            if (stream == null) {
+                stream = cl.getResourceAsStream(location + ".layout.xml");
+            }
         }
         if (stream == null) {
             log.info("No layout descriptor found for " + location);

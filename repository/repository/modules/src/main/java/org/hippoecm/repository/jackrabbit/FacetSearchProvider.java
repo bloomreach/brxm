@@ -16,8 +16,8 @@
 package org.hippoecm.repository.jackrabbit;
 
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.hippoecm.repository.api.HippoNodeType;
 

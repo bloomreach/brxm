@@ -56,6 +56,7 @@ public class CanonicalPathTest extends TestCase {
     };
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         build(session, content1);
@@ -64,6 +65,12 @@ public class CanonicalPathTest extends TestCase {
         build(session, content2);
         session.save();
         session.refresh(false);
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -153,6 +160,10 @@ public class CanonicalPathTest extends TestCase {
         assertNotNull(node);
         assertTrue(node instanceof HippoNode);
         Node canonical = ((HippoNode)node).getCanonicalNode();
+        assertNotNull(canonical);
+        assertEquals("/test/content/newnodes", canonical.getPath());
+        node.getSession().save();
+        canonical = ((HippoNode)node).getCanonicalNode();
         assertNotNull(canonical);
         assertEquals("/test/content/newnodes", canonical.getPath());
     }

@@ -16,6 +16,7 @@
 package org.hippoecm.repository.updater;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -23,6 +24,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.jcr.Binary;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -386,11 +389,43 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
             public boolean isProtected() {
                 return false;
             }
+
+            public String[] getAvailableQueryOperators() {
+                throw new UpdaterException("illegal method");
+            }
+
+            public boolean isFullTextSearchable() {
+                throw new UpdaterException("illegal method");
+            }
+
+            public boolean isQueryOrderable() {
+                throw new UpdaterException("illegal method");
+            }
         };
     }
 
     @Deprecated
     public int getType() throws RepositoryException {
         return PropertyType.UNDEFINED;
+    }
+
+    public void setValue(Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public void setValue(BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Binary getBinary() throws ValueFormatException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public BigDecimal getDecimal() throws ValueFormatException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Property getProperty() throws ItemNotFoundException, ValueFormatException, RepositoryException {
+        throw new UpdaterException("illegal method");
     }
 }

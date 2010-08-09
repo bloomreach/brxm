@@ -20,7 +20,6 @@ import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 import javax.jcr.InvalidItemStateException;
 
-import org.hippoecm.repository.TestCase;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -58,7 +57,7 @@ public class HREPTWO548Test extends TestCase {
 
     @After
     public void tearDown() throws Exception {
-        session.refresh(false);
+        session.save(); //session.refresh(false);
         if (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
             session.save();
@@ -85,10 +84,9 @@ public class HREPTWO548Test extends TestCase {
 
         session.refresh(false);
         try {
-            browse.hasNode("yellow");
-            fail("node should not exist anymore");
+            assertFalse(browse.hasNode("yellow"));
         } catch(InvalidItemStateException ex) {
-            // expected result
+            // allowed result
         }
 
         browse = traverse(session, "/test/nav");

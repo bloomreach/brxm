@@ -25,6 +25,10 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.NodeNameCodec;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TrivialServerTest extends TestCase {
@@ -33,6 +37,8 @@ public class TrivialServerTest extends TestCase {
 
     private Node root;
 
+    @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         root = session.getRootNode();
@@ -42,7 +48,14 @@ public class TrivialServerTest extends TestCase {
             root = root.addNode("test");
     }
 
-    @Test public void testTrivialNodeOperations()  {
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    @Test
+    public void testTrivialNodeOperations()  {
         try {
             root.addNode("x");
         } catch (RepositoryException e) {
@@ -97,7 +110,8 @@ public class TrivialServerTest extends TestCase {
 
     }
 
-    @Test public void testEncodedNode() throws RepositoryException {
+    @Test
+    public void testEncodedNode() throws RepositoryException {
         String name = "2..,!@#$%^&*()_-[]{}|\\:;'\".,/?testnode";
         String encoded = NodeNameCodec.encode(name, true);
         Node encodedNode = root.addNode(encoded);
@@ -105,12 +119,7 @@ public class TrivialServerTest extends TestCase {
         assertEquals(encoded, encodedNode.getName());
         session.save();
         Node encodedNode2 = root.getNode(encoded);
-
-        // assertEquals(encodedNode, encodedNode2);    -- this test is WRONG [BvH], instead:
         assertTrue(encodedNode.isSame(encodedNode2));
-
         assertEquals(encoded, encodedNode.getName());
-        encodedNode2.remove();
     }
-
 }

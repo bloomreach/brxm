@@ -31,12 +31,13 @@ import javax.jcr.NodeIterator;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.value.BinaryImpl;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFTextStripper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
-import org.pdfbox.pdfparser.PDFParser;
-import org.pdfbox.pdmodel.PDDocument;
-import org.pdfbox.util.PDFTextStripper;
 
 public class PdfExtractionAndIndexingTest extends TestCase {
     @SuppressWarnings("unused")
@@ -45,6 +46,10 @@ public class PdfExtractionAndIndexingTest extends TestCase {
     public final static String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";
     private final static String TEST_PATH = "test";
+    private final static String UNIQUE_WORD_IN_PLAIN_TEXT = "uniquestringabcd";
+    private final static String UNIQUE_WORD_IN_UNNITTEST_PDF = "foobarlux";
+    private final static String UNITTEST_PDF_FILE_NAME = "unittest.pdf";
+    
     private Node testPath;
 
     
@@ -67,8 +72,10 @@ public class PdfExtractionAndIndexingTest extends TestCase {
         
         createDocumentWithPdf("docWithoutHippoText", false);
         
-        // we search on QueryManager, which only contains docWithHippoText
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'QueryManager')]";
+        FreeTextSearchTest.flushIndex(testPath.getSession());
+        
+        // we search on 'UNIQUE_WORD_IN_UNNITTEST_PDF', which is only contained by docWithHippoText
+        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+UNIQUE_WORD_IN_UNNITTEST_PDF+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
         /*
@@ -82,7 +89,7 @@ public class PdfExtractionAndIndexingTest extends TestCase {
         // now we search on 'uniquestringabcd': both documents contain this string in their jcr:data, but, the docWithHippoText 
         // should index the hippo:text, hence, we don't expect to find the docWithHippoText now:
         
-        xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'uniquestringabcd')]";
+        xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+UNIQUE_WORD_IN_PLAIN_TEXT+"')] order by @jcr:score descending";
         queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         nodes = queryResult.getNodes();
         assertTrue(nodes.getSize() == 1L);
@@ -91,15 +98,15 @@ public class PdfExtractionAndIndexingTest extends TestCase {
     }
  
     /*
-     * We store a dummy text 'The quick brown fox jumps over the lazy abuniquestringcd' as default binary. We also index an extracted pdf text version
+     * We store a dummy text 'The quick brown fox jumps over the lazy +UNIQUE_WORD' as default binary. We also index an extracted pdf text version
      * in hippo:text. When includeHippoText = true, we expect that not 'The quick brown fox jumps over the lazy' is indexed, but
      * the extracted pdf text, and thus. When includeHippoText = false, you can find the document for example by searching on
      * 
-     * 'uniquestringabcd'. 
+     * 'UNIQUE_WORD'. 
      * 
      * When it is true, you can find the doc on 
      * 
-     * 'QueryManager' because this word exists in the jsr170-1.0.pdf
+     * 'UNIQUE_WORD_IN_UNNITTEST_PDF' because this word exists in the PDF_FILE_NAME
      */
     private void createDocumentWithPdf(String name, boolean includeHippoText) throws Exception {
         
@@ -114,14 +121,14 @@ public class PdfExtractionAndIndexingTest extends TestCase {
             resource.setProperty("jcr:mimeType", "text/plain");
             ByteArrayOutputStream data = new ByteArrayOutputStream();
             OutputStreamWriter writer = new OutputStreamWriter(data, "UTF-8");
-            writer.write("The quick brown fox jumps over the lazy uniquestringabcd");
+            writer.write("The quick brown fox jumps over the lazy "+UNIQUE_WORD_IN_PLAIN_TEXT);
             writer.close();
-            resource.setProperty("jcr:data", new ByteArrayInputStream(data.toByteArray()));
+            resource.setProperty("jcr:data", new BinaryImpl(new ByteArrayInputStream(data.toByteArray())));
             resource.setProperty("jcr:lastModified", Calendar.getInstance());
         }
         
         if(includeHippoText) {
-            InputStream pdf = this.getClass().getResourceAsStream("jsr170-1.0.pdf");
+            InputStream pdf = this.getClass().getResourceAsStream(UNITTEST_PDF_FILE_NAME);
             try {
                 PDFParser parser = new PDFParser(new BufferedInputStream(pdf));
                 PDDocument pdDocument = null;
@@ -138,7 +145,7 @@ public class PdfExtractionAndIndexingTest extends TestCase {
                     extracted.append(writer.toCharArray());
                     // make sure to store it as UTF-8
                     InputStream extractedStream = IOUtils.toInputStream(extracted.toString() , "UTF-8"); 
-                    resource.setProperty("hippo:text", extractedStream);
+                    resource.setProperty("hippo:text", new BinaryImpl(extractedStream));
                 } finally {
                     try {
                         if (pdDocument != null) {
@@ -154,7 +161,7 @@ public class PdfExtractionAndIndexingTest extends TestCase {
                 
                 // we set empty extracted text:
                 InputStream extractedStream = IOUtils.toInputStream("" , "UTF-8"); 
-                resource.setProperty("hippo:text", extractedStream);
+                resource.setProperty("hippo:text", new BinaryImpl(extractedStream));
                 
             } finally {
                 pdf.close();

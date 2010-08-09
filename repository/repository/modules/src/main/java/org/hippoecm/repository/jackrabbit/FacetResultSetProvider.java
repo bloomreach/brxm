@@ -27,13 +27,13 @@ import java.util.regex.Pattern;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
@@ -109,8 +109,8 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     FacetedNavigationEngine.Context facetedContext;
 
     Name countName;
-    PropDef countPropDef;
-    PropDef primaryTypePropDef;
+    QPropertyDefinition countPropDef;
+    QPropertyDefinition primaryTypePropDef;
 
     public FacetResultSetProvider()
         throws IllegalNameException, NamespaceException, RepositoryException {
@@ -221,14 +221,12 @@ public class FacetResultSetProvider extends HippoVirtualProvider
 
         PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
         propState.setType(PropertyType.NAME);
-        propState.setDefinitionId(primaryTypePropDef.getId());
         propState.setValues(new InternalValue[] { InternalValue.create(resolveName(HippoNodeType.NT_FACETRESULT))} );
         propState.setMultiValued(false);
         state.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
 
         propState = createNew(countName, state.getNodeId());
         propState.setType(PropertyType.LONG);
-        propState.setDefinitionId(countPropDef.getId());
         propState.setValues(new InternalValue[] { InternalValue.create(count) });
         propState.setMultiValued(false);
         state.addPropertyName(countName);

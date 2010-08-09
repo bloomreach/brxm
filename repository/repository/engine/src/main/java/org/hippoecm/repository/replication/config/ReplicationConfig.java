@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.ConfigurationParser;
-import org.apache.jackrabbit.core.config.JournalConfig;
+import org.hippoecm.repository.replication.ReplicationJournal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -59,7 +59,7 @@ public class ReplicationConfig {
     /**
      * Journal configuration.
      */
-    private final JournalConfig jc;
+    private final ReplicationJournal jc;
 
     /**
      * Creates a repository configuration object.
@@ -68,7 +68,7 @@ public class ReplicationConfig {
      * @param jc the journal configuration
      * @param fsf file system factory
      */
-    public ReplicationConfig(JournalConfig jc, Map<String, ReplicatorNodeConfig> replicators, String home) {
+    public ReplicationConfig(ReplicationJournal jc, Map<String, ReplicatorNodeConfig> replicators, String home) {
         this.jc = jc;
         this.replicators = replicators;
     }
@@ -201,7 +201,7 @@ public class ReplicationConfig {
      *
      * @return journal configuration
      */
-    public JournalConfig getJournalConfig() {
+    public ReplicationJournal getJournalConfig() {
         return jc;
     }
 }

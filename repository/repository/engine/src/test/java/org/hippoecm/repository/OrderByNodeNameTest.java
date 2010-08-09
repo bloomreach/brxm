@@ -35,29 +35,12 @@ public class OrderByNodeNameTest extends TestCase {
 
     private Node testPath;
 
-    private final static List<String> names = new ArrayList<String>();
-
-    static {
-        names.add("aa");
-        names.add("aab");
-        names.add("ba");
-        names.add("aa");
-        names.add("aaa");
-        names.add("_aaa");
-        names.add("jcr:aa");
-        names.add("jcr:bb");
-        names.add("jcr:ba");
-        names.add("hippo:ba");
-        names.add("hippo:aa");
-        names.add("hippo:ab");
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         testPath = session.getRootNode().addNode("test");
-        for (String name : names) {
+        for (String name : new String[] { "aa", "aab", "ba", "aa", "aaa", "_aaa", "jcr:aa", "jcr:bb", "jcr:ba", "hippo:ba", "hippo:aa", "hippo:ab" }) {
             testPath.addNode(name);
         }
         session.save();
@@ -152,5 +135,4 @@ public class OrderByNodeNameTest extends TestCase {
             prev = nodename;
         }
     }
-
 }

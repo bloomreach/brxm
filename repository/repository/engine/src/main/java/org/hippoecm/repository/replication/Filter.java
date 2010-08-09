@@ -17,8 +17,8 @@ package org.hippoecm.repository.replication;
 
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.config.ConfigurationException;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.ChangeLog;
 
 /**

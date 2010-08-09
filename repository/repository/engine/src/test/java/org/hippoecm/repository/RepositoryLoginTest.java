@@ -266,7 +266,7 @@ public class RepositoryLoginTest {
                 sessions[i].logout();
             }
             long t2 = System.currentTimeMillis();
-            System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
+            //System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
         }
     }
 
@@ -282,7 +282,7 @@ public class RepositoryLoginTest {
                 sessions[i].logout();
             }
             long t2 = System.currentTimeMillis();
-            System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
+            //System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
         }
     }
 }

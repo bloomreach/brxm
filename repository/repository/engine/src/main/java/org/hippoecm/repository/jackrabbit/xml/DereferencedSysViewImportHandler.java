@@ -18,6 +18,7 @@ package org.hippoecm.repository.jackrabbit.xml;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -25,8 +26,8 @@ import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.xml.ImportHandler;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.NodeInfo;
@@ -155,8 +156,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             if (start) {
                 importer.startNode(node, state.props);
                 // dispose temporary property values
-                for (Iterator<PropInfo> iter = state.props.iterator(); iter.hasNext();) {
-                    PropInfo pi = iter.next();
+                for (org.apache.jackrabbit.core.xml.PropInfo pi : state.props) {
                     pi.dispose();
                 }
 
@@ -388,7 +388,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         /**
          * list of PropInfo instances representing properties of current node
          */
-        ArrayList<PropInfo> props = new ArrayList<PropInfo>();
+        List<org.apache.jackrabbit.core.xml.PropInfo> props = new ArrayList<org.apache.jackrabbit.core.xml.PropInfo>();
 
         /**
          * flag indicating whether startNode() has been called for current node

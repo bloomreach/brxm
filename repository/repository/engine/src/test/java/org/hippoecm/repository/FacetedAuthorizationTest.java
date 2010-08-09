@@ -30,6 +30,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.security.Privilege;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -65,10 +66,10 @@ public class FacetedAuthorizationTest extends TestCase {
     private static final String TEST_GROUP_ID = "testgroup";
 
     // predefined action constants in checkPermission
-    public static final String READ_ACTION = "read";
-    public static final String REMOVE_ACTION = "remove";
-    public static final String ADD_NODE_ACTION = "add_node";
-    public static final String SET_PROPERTY_ACTION = "set_property";
+    public static final String READ_ACTION = Privilege.JCR_READ;
+    public static final String REMOVE_ACTION = Privilege.JCR_REMOVE_NODE;
+    public static final String ADD_NODE_ACTION = Privilege.JCR_ADD_CHILD_NODES;
+    public static final String SET_PROPERTY_ACTION = Privilege.JCR_MODIFY_PROPERTIES;
     public static final String[] JCR_ACTIONS = new String[] { READ_ACTION, REMOVE_ACTION, ADD_NODE_ACTION,
         SET_PROPERTY_ACTION };
 
@@ -573,7 +574,7 @@ public class FacetedAuthorizationTest extends TestCase {
     public void testQueryXPath() throws RepositoryException {
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         // XPath doesn't like the query from the root
-        Query query = queryManager.createQuery("//element(*,hippo:ntunstructured)", Query.XPATH);
+        Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
         NodeIterator iter = query.execute().getNodes();
         assertEquals(10L, iter.getSize());
     }
@@ -581,7 +582,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testQuerySQL() throws RepositoryException {
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("SELECT * FROM hippo:ntunstructured", Query.SQL);
+        Query query = queryManager.createQuery("SELECT * FROM hippo:ntunstructured ORDER BY jcr:score", Query.SQL);
         NodeIterator iter = query.execute().getNodes();
         assertEquals(10L, iter.getSize());
     }
@@ -680,5 +681,4 @@ public class FacetedAuthorizationTest extends TestCase {
             // expected
         }
     }
-
 }

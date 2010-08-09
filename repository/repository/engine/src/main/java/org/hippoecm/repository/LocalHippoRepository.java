@@ -56,14 +56,17 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.api.JackrabbitRepository;
+import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
+import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
-import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+import org.apache.jackrabbit.spi.QNodeTypeDefinition;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
+import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -585,13 +588,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     static void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException,
             RepositoryException {
-        CompactNodeTypeDefReader cndReader = new HippoCompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry());
-        List ntdList = cndReader.getNodeTypeDefs();
+        CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
+        List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
         NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
 
-        for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-            NodeTypeDef ntd = (NodeTypeDef) iter.next();
+        for (Iterator<QNodeTypeDefinition> iter = ntdList.iterator(); iter.hasNext();) {
+            QNodeTypeDefinition ntd = iter.next();
 
             try {
                 ntreg.unregisterNodeType(ntd.getName());

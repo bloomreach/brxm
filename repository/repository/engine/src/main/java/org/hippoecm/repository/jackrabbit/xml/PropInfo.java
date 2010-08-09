@@ -25,14 +25,14 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * {@link NodeImpl} instance through a session or directly to a
  * {@link NodeState} instance in a workspace.
  */
-public class PropInfo {
+public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -92,6 +92,7 @@ public class PropInfo {
      * @param values value(s) of the property being imported
      */
     public PropInfo(NamePathResolver resolver, Name name, int type, TextValue[] values) {
+        super(name, type, values);
         if (name.getLocalName().endsWith(Reference.REFERENCE_SUFFIX)) {
             String local = name.getLocalName();
             local = local.substring(0, (local.length() - Reference.REFERENCE_SUFFIX.length()));
@@ -117,7 +118,7 @@ public class PropInfo {
         }
     }
 
-    private int getTargetType(PropDef def) {
+    public int getTargetType(QPropertyDefinition def) {
         int target = def.getRequiredType();
         if (target != PropertyType.UNDEFINED) {
             return target;
@@ -128,7 +129,8 @@ public class PropInfo {
         }
     }
 
-    private PropDef getApplicablePropertyDef(EffectiveNodeType ent)
+    @Override
+    public QPropertyDefinition getApplicablePropertyDef(EffectiveNodeType ent)
             throws ConstraintViolationException {
 
         // The eventual target type has to be checked not the current in between type.
@@ -151,7 +153,7 @@ public class PropInfo {
             Map<NodeId, List<Reference>> derefNodes, String basePath, int referenceBehavior) throws RepositoryException {
 
         // find applicable definition
-        PropDef def = getApplicablePropertyDef(node.getEffectiveNodeType());
+        QPropertyDefinition def = getApplicablePropertyDef(node.getEffectiveNodeType());
         if (def.isProtected()) {
             // skip protected property
             log.debug("skipping protected property " + name);

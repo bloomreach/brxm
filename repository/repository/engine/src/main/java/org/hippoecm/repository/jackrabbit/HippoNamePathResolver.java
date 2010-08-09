@@ -64,6 +64,10 @@ public class HippoNamePathResolver implements NamePathResolver {
         return pResolver.getQPath(path);
     }
 
+    public Path getQPath(String path, boolean normalizeIdentifier) throws MalformedPathException, IllegalNameException, NamespaceException {
+        return pResolver.getQPath(path, normalizeIdentifier);
+    }
+
     public String getJCRPath(Path path) throws NamespaceException {
         return pResolver.getJCRPath(path);
     }

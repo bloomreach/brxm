@@ -23,15 +23,15 @@ import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.cluster.ChangeLogRecord;
 import org.apache.jackrabbit.core.config.ConfigurationException;
-import org.apache.jackrabbit.core.nodetype.PropDef;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.replication.FatalReplicationException;
 import org.hippoecm.repository.replication.Filter;
@@ -170,9 +170,8 @@ abstract class AbstractReplicator implements Replicator {
      * @param operation the type of node operation. 
      * @see StateCollection
      */
-    private void addStatesToStateCollections(Iterator<ItemState> iter, int operation) {
-        while (iter.hasNext()) {
-            ItemState state = iter.next();
+    private void addStatesToStateCollections(Iterable<ItemState> iterable, int operation) {
+        for(ItemState state : iterable) {
             StateCollection collection = getOrCreateStateCollection(state);
             collection.addState(state, operation);
         }
@@ -381,18 +380,6 @@ abstract class AbstractReplicator implements Replicator {
             stack.pushStateCollection(new StateCollection(id));
         }
         return stack.peek(id);
-    }
-
-    protected boolean propertyIsExcludedFromReplication(PropDef def) {
-        if (def.getDeclaringNodeType().equals(NameConstants.MIX_LOCKABLE)) {
-            // skip properties defined by mix:lockable
-            return true;
-        }
-        if (def.isProtected()) {
-            // skip protected properties
-            return true;
-        }
-        return false;
     }
 
     protected boolean propertyIsVirtual(Name propName) {

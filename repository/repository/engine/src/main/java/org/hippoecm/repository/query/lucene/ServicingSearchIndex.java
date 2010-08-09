@@ -25,14 +25,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.NodeIdIterator;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.PropertyTypeRegistry.TypeMapping;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
@@ -45,8 +45,8 @@ import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.core.state.NodeStateIterator;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.document.Document;
@@ -148,7 +148,7 @@ public class ServicingSearchIndex extends SearchIndex {
     }
 
     @Override
-    public void updateNodes(NodeIdIterator remove, NodeStateIterator add) throws RepositoryException, IOException {
+    public void updateNodes(Iterator<NodeId> remove, Iterator<NodeState> add) throws RepositoryException, IOException {
         NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(add);
         NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
         super.updateNodes(removedIt, addedIt);
@@ -204,14 +204,13 @@ public class ServicingSearchIndex extends SearchIndex {
             return doc;
         }
 
-        ServicingNodeIndexer indexer = new ServicingNodeIndexer(node, getContext(), nsMappings, super
-                .getTextExtractor());
+        ServicingNodeIndexer indexer = new ServicingNodeIndexer(node, getContext(), nsMappings, getParser());
 
         indexer.setSupportHighlighting(super.getSupportHighlighting());
         indexer.setServicingIndexingConfiguration((ServicingIndexingConfiguration) super.getIndexingConfig());
         indexer.setIndexFormatVersion(indexFormatVersion);
         Document doc = indexer.createDoc();
-        mergeAggregatedNodeIndexes(node, doc);
+        mergeAggregatedNodeIndexes(node, doc, indexFormatVersion);
 
         try {
             if (aggregateDescendants) {
@@ -302,7 +301,7 @@ public class ServicingSearchIndex extends SearchIndex {
                 try {
                     NodeState nodeState = (NodeState) getContext().getItemStateManager().getItemState(
                             childNodeEntry.getId());
-                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, nodeState.getNodeId().getUUID().toString(),
+                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, nodeState.getNodeId().toString(),
                             Field.Store.NO, Field.Index.NO_NORMS));
 
                     aDoc = createDocument(nodeState, getNamespaceMappings(), indexFormatVersion, true);
@@ -324,10 +323,10 @@ public class ServicingSearchIndex extends SearchIndex {
                     }
                 } catch (ItemStateException e) {
                     log.warn("ItemStateException while indexing descendants of a hippo:document for "
-                            + "node with UUID: " + state.getNodeId().getUUID(), e);
+                            + "node with UUID: " + state.getNodeId().toString(), e);
                 } catch (RepositoryException e) {
                     log.warn("RepositoryException while indexing descendants of a hippo:document for "
-                            + "node with UUID: " + state.getNodeId().getUUID(), e);
+                            + "node with UUID: " + state.getNodeId().toString(), e);
                 }
             }
         }
@@ -335,12 +334,20 @@ public class ServicingSearchIndex extends SearchIndex {
 
     // TODO remove when jackrabbit supports sorting on nodename
     @Override
-    protected SortField[] createSortFields(Name[] orderProps, boolean[] orderSpecs) {
+    protected SortField[] createSortFields(Path[] orderProps, boolean[] orderSpecs) {
         SortField[] sortFields = super.createSortFields(orderProps, orderSpecs);
         for (int i = 0; i < orderProps.length; i++) {
-            if (orderProps[i].equals(NameConstants.JCR_NAME)) {
-                // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6) 
-                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, !orderSpecs[i]);
+            // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6)
+            if (orderProps[i].getString().equals(NameConstants.JCR_NAME.toString())) {
+                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, /*getSortComparatorSource(),*/ !orderSpecs[i]);
+            } else if(orderProps[i].getString().endsWith("/" + NameConstants.JCR_NAME.toString())) {
+                try {
+                    sortFields[i] = new SortField(orderProps[i].getAncestor(1).getString()+"/"+ServicingFieldNames.HIPPO_SORTABLE_NODENAME, /*getSortComparatorSource()*/ !orderSpecs[i]);
+                } catch(PathNotFoundException ex) {
+                    // ignore
+                } catch(RepositoryException ex) {
+                    // ignore
+                }
             }
         }
         return sortFields;
@@ -376,14 +383,14 @@ public class ServicingSearchIndex extends SearchIndex {
                         }
                     } catch (NoSuchItemStateException e) {
                         log.warn("NoSuchItemStateException while building indexing  hippo standard aggregates for "
-                                + "node with UUID: " + state.getNodeId().getUUID(), e);
+                                + "node with UUID: " + state.getNodeId(), e);
                     } catch (ItemStateException e) {
                         log.warn("ItemStateException while building indexing  hippo standard aggregates for "
-                                + "node with UUID: " + state.getNodeId().getUUID(), e);
+                                + "node with UUID: " + state.getNodeId(), e);
                     }
                 }
 
-                NodeState[] aggregates = (NodeState[]) nodeStates.toArray(new NodeState[nodeStates.size()]);
+                NodeState[] aggregates = nodeStates.toArray(new NodeState[nodeStates.size()]);
                 for (int j = 0; j < aggregates.length; j++) {
                     Document aDoc;
                     try {
@@ -395,19 +402,19 @@ public class ServicingSearchIndex extends SearchIndex {
                                 doc.add(fulltextFields[k]);
                             }
                             // Really important to keep here for updating the aggregate when a child is removed or updated
-                            doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregates[j].getNodeId().getUUID()
+                            doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregates[j].getNodeId()
                                     .toString(), Field.Store.NO, Field.Index.NO_NORMS));
                         }
                     } catch (RepositoryException e) {
                         log.warn("RepositoryException while building indexing  hippo standard aggregates for "
-                                + "node with UUID: " + state.getNodeId().getUUID(), e);
+                                + "node with UUID: " + state.getNodeId(), e);
                     }
                 }
             }
         }
     }
 
-    private class NodeIdIteratorImpl implements NodeIdIterator {
+    private class NodeIdIteratorImpl implements Iterator<NodeId> {
 
         private final Iterator iter;
         List<NodeId> processedIds = new ArrayList<NodeId>();
@@ -430,13 +437,13 @@ public class ServicingSearchIndex extends SearchIndex {
             return iter.hasNext();
         }
 
-        public Object next() {
+        public NodeId next() {
             return nextNodeId();
         }
 
     }
 
-    private class NodeStateIteratorImpl implements NodeStateIterator {
+    private class NodeStateIteratorImpl implements Iterator<NodeState> {
         Iterator process;
         List<NodeState> processedStates = new ArrayList<NodeState>();
         List<NodeId> processedIds = new ArrayList<NodeId>();
@@ -458,7 +465,7 @@ public class ServicingSearchIndex extends SearchIndex {
             return process.hasNext();
         }
 
-        public Object next() {
+        public NodeState next() {
             return nextNodeState();
         }
 

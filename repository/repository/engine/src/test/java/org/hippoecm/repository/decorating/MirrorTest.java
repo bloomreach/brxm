@@ -93,7 +93,7 @@ public class MirrorTest extends TestCase {
         assertFalse(session.getRootNode().getNode("test/navigation").getNode("mirror").hasNode("test1[2]"));
     }
     
-    @Test 
+    @Test
     public void testSubTypeMirror() throws Exception {        
         assertTrue(session.getRootNode().getNode("test/navigation").getNode("subtypemirror").hasProperty("hippo:docbase"));
         assertNotNull(session.getRootNode().getNode("test/navigation").getNode("subtypemirror").getProperty("hippo:docbase"));
@@ -112,5 +112,4 @@ public class MirrorTest extends TestCase {
         assertNotNull(session.getRootNode().getNode("test/navigation").getNode("subtypemirror").getNode("test1").getNode("test-x"));
         assertFalse(session.getRootNode().getNode("test/navigation").getNode("subtypemirror").hasNode("test1[2]"));
     }
-    
 }

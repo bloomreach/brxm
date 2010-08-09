@@ -19,15 +19,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
-import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         }
         NodeState dereference = null;
         try {
-            dereference = getNodeState(new NodeId(new UUID(docbase[0])));
+            dereference = getNodeState(new NodeId(UUID.fromString(docbase[0])));
         } catch (IllegalArgumentException e) {
             log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
         }
@@ -180,7 +180,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         return populate(context, this, state, docbase, null, null, null, false);
     }
 
-    protected boolean match(Map<Name, String> view, NodeId candidate) {
+    protected boolean match(Map<Name, String> view, NodeId candidate) throws RepositoryException {
         for (Map.Entry<Name, String> entry : view.entrySet()) {
             Name facet = entry.getKey();
             String value = entry.getValue();
@@ -202,7 +202,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         return true;
     }
 
-    protected void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) {
+    protected void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) throws RepositoryException {
         ViewNodeId viewId = (ViewNodeId)nodeId;
         boolean isHandle = state.getNodeTypeName().equals(handleName);
         Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
@@ -290,6 +290,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     return -1; // never return 0 (See Comparable api)
                 }
 
+                try {
                 for (Map.Entry<Name, String> entry : order.entrySet()) {
                     Name facet = entry.getKey();
                     String value = entry.getValue();
@@ -326,6 +327,9 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                         }
                     }
                 }
+                } catch (RepositoryException ex) {
+                }
+
 
                 // make sure the hippo:request entries are at the end
                 if(name.equals(requestName) || name.equals(translationName)) {

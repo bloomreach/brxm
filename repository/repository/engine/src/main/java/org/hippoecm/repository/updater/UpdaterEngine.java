@@ -56,16 +56,26 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeDefinition;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.NodeTypeTemplate;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionManager;
+import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
+import org.apache.jackrabbit.commons.cnd.DefinitionBuilderFactory;
+import org.apache.jackrabbit.commons.cnd.ParseException;
+import org.apache.jackrabbit.commons.cnd.TemplateBuilderFactory;
+import org.apache.jackrabbit.spi.QNodeTypeDefinition;
+import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +83,8 @@ import org.xml.sax.ContentHandler;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
-import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 
 import org.hippoecm.repository.LocalHippoRepository;
@@ -154,9 +161,9 @@ public class UpdaterEngine {
                 if (visitor != null) {
                     visitors.add(visitor);
                 }
-            } catch (RepositoryException ex) {
-                log.error("error while registering visitor", ex);
             } catch (ParseException ex) {
+                log.error("error while registering visitor", ex);
+            } catch (RepositoryException ex) {
                 log.error("error while registering visitor", ex);
             }
         }
@@ -269,6 +276,26 @@ public class UpdaterEngine {
         }
         public String getPrefix(String uri) throws NamespaceException, RepositoryException {
             return null;
+        }
+
+        public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+            throw new UpdaterException("illegal method");
+        }
+
+        public VersionManager getVersionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+            throw new UpdaterException("illegal method");
+        }
+
+        public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {
+            throw new UpdaterException("illegal method");
+        }
+
+        public void createWorkspace(String name, String srcWorkspace) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+            throw new UpdaterException("illegal method");
+        }
+
+        public void deleteWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+            throw new UpdaterException("illegal method");
         }
     }
 
@@ -473,7 +500,11 @@ public class UpdaterEngine {
                         if (explicitCNDUpgrades.contains(namespaceVisitor.namespace)) {
                             iter.remove();
                         } else {
-                            namespaceVisitor.initialize(moduleRegistration.getWorkspace());
+                            try {
+                                namespaceVisitor.initialize(moduleRegistration.getWorkspace());
+                            } catch (ParseException ex) {
+                                throw new RepositoryException("Failed to parse cnd", ex);
+                            }
                         }
                     }
                 }
@@ -865,11 +896,11 @@ public class UpdaterEngine {
             }
         }
         for (NamespaceVisitorImpl remap : nsVisitors) {
-            List ntdList = remap.cndReader.getNodeTypeDefs();
+            List ntdList = remap.cndReader.getNodeTypeDefinitions();
             NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
             NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
-            for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-                NodeTypeDef ntd = (NodeTypeDef)iter.next();
+            for (Iterator<QNodeTypeDefinition> iter = ntdList.iterator(); iter.hasNext();) {
+                QNodeTypeDefinition ntd = (QNodeTypeDefinition)iter.next();
                 try {
                     log.info("upgrade registering new nodetype " + ntd.getName());
                     /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
@@ -947,7 +978,7 @@ public class UpdaterEngine {
         String newURI;
         String oldPrefix;
         String newPrefix;
-        CompactNodeTypeDefReader cndReader;
+        CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader;
         String cndName;
         UpdaterContext context;
         boolean isCollecting = false;
@@ -968,18 +999,16 @@ public class UpdaterEngine {
                 // deliberate ignore
             }
            if(definition.cndReader != null) {
-               this.cndReader = new HippoCompactNodeTypeDefReader(definition.cndReader, cndName, nsReg);
+               this.cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(definition.cndReader, cndName, nsReg, new QDefinitionBuilderFactory());
                initialize();
            } else
                this.cndReader = null;
         }
 
-        void initialize(Workspace workspace) throws NamespaceException, RepositoryException {
+        void initialize(Workspace workspace) throws NamespaceException, RepositoryException, ParseException {
             try {
                 String cndString = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(workspace, namespace);
-                this.cndReader = new HippoCompactNodeTypeDefReader(new StringReader(cndString), cndName, workspace.getNamespaceRegistry());
-            } catch (ParseException ex) {
-                log.error("cannot autogenerate cnd", ex);
+                this.cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(new StringReader(cndString), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
             } catch (IOException ex) {
                 log.error("cannot autogenerate cnd", ex);
             }

@@ -55,4 +55,8 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
         NodeIterator nodes = result.getNodes();
         return new NodeIteratorDecorator(factory, session, nodes);
     }
+
+    public String[] getSelectorNames() throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

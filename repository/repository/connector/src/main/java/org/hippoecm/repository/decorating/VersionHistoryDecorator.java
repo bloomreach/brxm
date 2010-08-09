@@ -16,6 +16,7 @@
 package org.hippoecm.repository.decorating;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.NodeIterator;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -127,4 +128,20 @@ public abstract class VersionHistoryDecorator extends NodeDecorator implements V
         versionHistory.removeVersion(versionName);
     }
 
+
+    public String getVersionableIdentifier() throws RepositoryException {
+        return versionHistory.getVersionableIdentifier();
+    }
+
+    public VersionIterator getAllLinearVersions() throws RepositoryException {
+        return versionHistory.getAllLinearVersions();
+    }
+
+    public NodeIterator getAllLinearFrozenNodes() throws RepositoryException {
+        return versionHistory.getAllLinearFrozenNodes();
+    }
+
+    public NodeIterator getAllFrozenNodes() throws RepositoryException {
+        return versionHistory.getAllFrozenNodes();
+    }
 }
