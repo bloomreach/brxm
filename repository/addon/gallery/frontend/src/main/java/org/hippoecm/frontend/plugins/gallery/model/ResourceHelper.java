@@ -34,24 +34,15 @@ public class ResourceHelper {
 
     public static void validateResource(Node resource, String filename) throws GalleryException, RepositoryException {
         try {
-            String mimeType;
-            try {
-                mimeType = (resource.hasProperty("jcr:mimeType") ? resource.getProperty("jcr:mimeType").getString()
-                        : "");
-                mimeType = mimeType.toLowerCase();
-                if (mimeType.equals(MIME_IMAGE_PJPEG)) {
-                    mimeType = MIME_IMAGE_JPEG;
-                }
-            } catch (RepositoryException ex) {
-                throw new GalleryException("unexpected error validating mime type", ex);
+            String mimeType = (resource.hasProperty("jcr:mimeType") ? resource.getProperty("jcr:mimeType").getString()
+                    : "");
+            mimeType = mimeType.toLowerCase();
+            if (mimeType.equals(MIME_IMAGE_PJPEG)) {
+                mimeType = MIME_IMAGE_JPEG;
             }
             if (mimeType.startsWith("image/")) {
                 ImageInfo imageInfo = new ImageInfo();
-                try {
-                    imageInfo.setInput(resource.getProperty("jcr:data").getStream());
-                } catch (RepositoryException ex) {
-                    throw new RepositoryException("unexpected error validating mime type", ex);
-                }
+                imageInfo.setInput(resource.getProperty("jcr:data").getStream());
                 if (imageInfo.check()) {
                     String imageInfoMimeType = imageInfo.getMimeType();
                     if (imageInfoMimeType == null) {
@@ -69,23 +60,15 @@ public class ResourceHelper {
                 }
             } else if (mimeType.equals("application/pdf")) {
                 String line;
-                try {
-                    line = new BufferedReader(new InputStreamReader(resource.getProperty("jcr:data").getStream()))
-                            .readLine().toUpperCase();
-                } catch (RepositoryException ex) {
-                    throw new GalleryException("unexpected error validating mime type", ex);
-                }
+                line = new BufferedReader(new InputStreamReader(resource.getProperty("jcr:data").getStream()))
+                        .readLine().toUpperCase();
                 if (!line.startsWith("%PDF-")) {
                     throw new GalleryException("impermissable pdf type content");
                 }
             } else if (mimeType.equals("application/postscript")) {
                 String line;
-                try {
-                    line = new BufferedReader(new InputStreamReader(resource.getProperty("jcr:data").getStream()))
-                            .readLine().toUpperCase();
-                } catch (RepositoryException ex) {
-                    throw new GalleryException("unexpected error validating mime type", ex);
-                }
+                line = new BufferedReader(new InputStreamReader(resource.getProperty("jcr:data").getStream()))
+                        .readLine().toUpperCase();
                 if (!line.startsWith("%!")) {
                     throw new GalleryException("impermissable postscript type content");
                 }

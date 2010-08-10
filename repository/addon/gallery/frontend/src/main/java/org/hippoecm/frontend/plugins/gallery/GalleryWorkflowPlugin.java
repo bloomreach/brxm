@@ -124,7 +124,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                     getGalleryProcessor().makeImage(node, istream, mimetype, filename);
                     node.getSession().save();
                 } catch (GalleryException ex) {
-                    GalleryWorkflowPlugin.log.error(ex.getMessage());
+                    GalleryWorkflowPlugin.log.info(ex.getMessage());
                     error(ex);
                     try {
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);

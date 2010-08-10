@@ -150,6 +150,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
         MarkupContainer contextContent = newContextContent(item, "contextContent", node);
         item.add(contextContent);
         MarkupContainer contextLink = newContextLink(item, "contextLink", node, contextContent);
+        // FIXME: and what if it _is_ null?
         if (contextLink != null) {
             item.add(contextLink);
         }

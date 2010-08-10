@@ -441,6 +441,7 @@ public class SessionDecorator implements XASession, HippoSession {
 
     public void check() throws RepositoryException {
         if(!session.isLive()) {
+            System.err.println("repairing " + session.getUserID());
             repair();
         }
     }

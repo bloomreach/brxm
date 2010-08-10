@@ -546,7 +546,7 @@
           <docletArtifact>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-tools-documentation</artifactId>
-            <version>2.12.00</version>
+            <version>${pom.version}</version>
           </docletArtifact>
         </configuration>
       </plugin>
