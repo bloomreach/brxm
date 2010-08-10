@@ -708,8 +708,6 @@ if (!YAHOO.hippo.EditorManager) {
 
                 this.setSize(w, h);
                 
-                this.lastData = this.xinha.getInnerHTML();
-
                 Dom.setStyle(this.name, 'visibility', 'visible');
 
                 //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960
@@ -723,6 +721,8 @@ if (!YAHOO.hippo.EditorManager) {
                     this.xinha.activateEditor();
                     this.xinha.focusEditor();
                 }
+
+                this.lastData = this.xinha.getInnerHTML();
             },
             
             save : function(throttled) {
