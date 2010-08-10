@@ -64,15 +64,21 @@ class XMLExport {
         threadIOException = null;
         threadRepositoryException = null;
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("exporting " + node.getPath());
+            }
             String nodePath = node.getPath() + "/";
             if(nodePath.startsWith("/hippo:configuration/hippo:temporary/content")) {
                 nodePath = nodePath.substring("/hippo:configuration/hippo:temporary/content".length(), nodePath.length());
             }
             for(String path : paths) {
                 if(path.startsWith(nodePath)) {
-                    // temporarily, in session remove the path, will be reverted in the finally clause
-                    Node offspring = node.getNode(path.substring(nodePath.length()+1));
-                    offspring.remove();
+                    String relPath = path.substring(nodePath.length());
+                    if (node.hasNode(relPath)) {
+                        // temporarily, in session remove the path, will be reverted in the finally clause
+                        Node offspring = node.getNode(relPath);
+                        offspring.remove();
+                    }
                 }
             }
             try {

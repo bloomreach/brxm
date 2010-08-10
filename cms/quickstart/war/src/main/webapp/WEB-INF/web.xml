@@ -37,7 +37,7 @@
     <filter>
         <filter-name>ResourceAntiCache</filter-name>
         <filter-class>org.hippoecm.frontend.ResourceRewriteFilter</filter-class>
-        <!--  init-param>
+        <!-- init-param>
             <param-name>prefix</param-name>
             <param-value>nocache</param-value>
         </init-param -->
@@ -163,7 +163,7 @@
 
     <!-- Timeout in minutes -->
     <session-config>
-        <session-timeout>60</session-timeout>
+        <session-timeout>5</session-timeout>
     </session-config>
 
   <!--
