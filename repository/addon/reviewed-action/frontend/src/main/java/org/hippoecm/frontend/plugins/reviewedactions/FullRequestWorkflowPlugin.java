@@ -51,6 +51,7 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     WorkflowAction acceptAction;
     WorkflowAction rejectAction;
+    WorkflowAction cancelAction;
     
     public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -100,6 +101,23 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
+        add(cancelAction = new WorkflowAction("cancel", new StringResourceModel("cancel-request", this, null).getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "delete-16.png");
+            }
+            @Override
+            protected IModel getTitle() {
+                return new StringResourceModel("cancel-request", FullRequestWorkflowPlugin.this, null);
+            }
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
+                workflow.cancelRequest();
+                return null;
+            }
+        });
+
         onModelChanged();
     }
 
@@ -122,6 +140,11 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 }
                 if (info.containsKey("rejectRequest") && info.get("rejectRequest") instanceof Boolean) {
                     rejectAction.setVisible(((Boolean)info.get("rejectRequest")).booleanValue());
+                }
+                if (info.containsKey("cancelRequest") && info.get("cancelRequest") instanceof Boolean) {
+                    cancelAction.setVisible(((Boolean)info.get("cancelRequest")).booleanValue());
+                } else {
+                    cancelAction.setVisible(false);
                 }
 
                 if (documentNode.hasProperty("hippostdpubwf:type")) {
