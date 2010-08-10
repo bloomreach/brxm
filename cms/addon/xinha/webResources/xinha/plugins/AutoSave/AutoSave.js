@@ -74,7 +74,7 @@ AutoSave.prototype.save = function(throttled) {
 	if (throttled) {
 		// reschedule when a save is already in progress
 		if (this.saving) {
-			checkChanges();
+			this.checkChanges();
 			return;
 		}
 		this.saving = true;

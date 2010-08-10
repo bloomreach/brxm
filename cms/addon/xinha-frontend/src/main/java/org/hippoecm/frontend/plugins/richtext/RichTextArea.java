@@ -37,6 +37,7 @@ public class RichTextArea extends TextArea<String> {
     public RichTextArea(String id, IModel<String> model) {
         super(id, model);
 
+        setConvertEmptyInputStringToNull(false);
         setOutputMarkupId(true);
         setVisible(true);
         setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
