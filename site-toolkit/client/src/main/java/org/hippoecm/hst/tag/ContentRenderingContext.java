@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.tag;
 
-import org.hippoecm.hst.core.component.HeadElement;
+import org.hippoecm.hst.core.component.WrapperElement;
 
 /**
  * Class representing an content rendering context.
@@ -26,18 +26,18 @@ public class ContentRenderingContext {
     
     public static final String NAME = ContentRenderingContext.class.getName();
     
-    private HeadElement wrapperElement;
+    private WrapperElement wrapperElement;
     private String contentNameAttribute;
 
     public ContentRenderingContext() {
     }
     
-    public ContentRenderingContext(final HeadElement wrapperElement, final String contentNameAttribute) {
+    public ContentRenderingContext(final WrapperElement wrapperElement, final String contentNameAttribute) {
         this.wrapperElement = wrapperElement;
         this.contentNameAttribute = contentNameAttribute;
     }
     
-    public HeadElement getWrapperElement() {
+    public WrapperElement getWrapperElement() {
         return wrapperElement;
     }
     

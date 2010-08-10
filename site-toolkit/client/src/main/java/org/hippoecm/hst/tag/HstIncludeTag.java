@@ -25,11 +25,11 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.util.HeadElementUtils;
+import org.hippoecm.hst.core.component.WrapperElement;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.XmlUtils;
 
 /**
  * Supporting class for including the content of a child component window.
@@ -72,7 +72,7 @@ public class HstIncludeTag extends TagSupport {
                 ctx = (ContentRenderingContext) hstRequest.getRequestContext().getAttribute(ContentRenderingContext.NAME);
             }
         }
-        HeadElement wrapperElem = null;
+        WrapperElement wrapperElem = null;
         if (ctx != null) {
             wrapperElem = ctx.getWrapperElement();
         }
@@ -88,7 +88,7 @@ public class HstIncludeTag extends TagSupport {
                     writer.write(' ');
                     writer.write(entry.getKey());
                     writer.write("=\"");
-                    writer.write(HeadElementUtils.encode(entry.getValue()));
+                    writer.write(XmlUtils.encode(entry.getValue()));
                     writer.write("\"");
                 }
                 writer.write('>');
