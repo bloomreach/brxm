@@ -23,7 +23,7 @@ public class JCRSchedulingContext extends SchedulingContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    Session session;
+    private Session session;
 
     public JCRSchedulingContext() {
         super();
