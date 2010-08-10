@@ -34,6 +34,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.PackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
@@ -262,7 +263,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 for (final String category : prototypes.keySet()) {
                     String categoryLabel = new StringResourceModel("add-category", this, null,
                             new Object[] { new StringResourceModel(category, this, null, category) }).getString();
-                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(), category + "-16.png")) {
+                    ResourceReference iconResource = new ResourceReference(getClass(), category + "-16.png");
+                    iconResource.bind(getApplication());
+                    if (iconResource.getResource() == null ||
+                        (iconResource.getResource() instanceof PackageResource && ((PackageResource)iconResource.getResource()).getResourceStream(false) == null)) {
+                        iconResource = new ResourceReference(getClass(), "new-document-16.png");
+                        iconResource.bind(getApplication());
+                    }
+                    list.add(new WorkflowAction("id", categoryLabel, iconResource) {
                         public String prototype;
                         public String targetName;
                         public String uriName;
