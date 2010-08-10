@@ -94,7 +94,7 @@ public class UpgradeIntegrationTest
         for(Value value : session.getRootNode().getProperty("hippo:configuration/hippo:initialize/hippo:version").getValues()) {
             versionTags.add(value.getString());
         }
-        assertTrue(versionTags.contains("v13a"));
+        assertTrue(versionTags.contains("v16a"));
         assertTrue(versionTags.contains(MAGIC));
     }
 
