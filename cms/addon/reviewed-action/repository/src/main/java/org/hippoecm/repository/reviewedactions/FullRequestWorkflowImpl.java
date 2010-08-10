@@ -39,13 +39,23 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     public Map<String,Serializable> hints()  {
         Map<String,Serializable> info = super.hints();
         if(PublicationRequest.REJECTED.equals(request.getType())) {
-            info.put("acceptRequest", new Boolean(false));
-            info.put("rejectRequest", new Boolean(false));
-            info.put("cancelRequest", new Boolean(true));
+            info.put("acceptRequest", false);
+            info.put("rejectRequest", false);
+            info.put("cancelRequest", true);
         } else {
-            info.put("acceptRequest", new Boolean(true));
-            info.put("rejectRequest", new Boolean(true));
-            info.put("cancelRequest", new Boolean(false));
+            info.put("acceptRequest", true);
+            if(request.getOwner() != null) {
+                if(request.getOwner().equals(getWorkflowContext().getUserIdentity())) {
+                    info.put("rejectRequest", false);
+                    info.put("cancelRequest", true);
+                } else {
+                    info.put("rejectRequest", true);
+                    info.put("cancelRequest", false);
+                }
+            } else {
+                info.put("rejectRequest", true);
+                info.put("cancelRequest", false);
+            }
         }
         return info;
     }
