@@ -26,15 +26,15 @@ import java.util.TreeSet;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
+
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+
 import org.junit.Ignore;
 import org.junit.Test;
-
-
 import static org.junit.Assert.assertTrue;
 
 public class UpgradeIntegrationTest
