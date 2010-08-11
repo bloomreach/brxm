@@ -106,7 +106,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     }
 
     public ClassLoader getSessionClassLoader() throws RepositoryException {
-        return null;
+        return Thread.currentThread().getContextClassLoader();
     }
 
     public XAResource getXAResource() {

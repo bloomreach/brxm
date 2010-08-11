@@ -353,7 +353,7 @@ public abstract class SessionDecorator implements XASession, HippoSession {
     public abstract NodeIterator pendingChanges() throws RepositoryException;
 
     public ClassLoader getSessionClassLoader() throws RepositoryException {
-        return null;
+        return Thread.currentThread().getContextClassLoader();
     }
 
 
