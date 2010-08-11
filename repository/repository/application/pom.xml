@@ -267,7 +267,7 @@
               <systemProperties>
                 <property>
                   <name>product</name>
-                  <value>${basedir}/target/${artifactId}-${version}.war</value>
+                  <value>${basedir}/target/${project.artifactId}-${project.version}.war</value>
                 </property>
               </systemProperties>
               <additionalClasspathElements>
