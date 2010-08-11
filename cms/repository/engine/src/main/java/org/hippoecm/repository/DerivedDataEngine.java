@@ -47,6 +47,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.security.Privilege;
 import javax.jcr.version.VersionException;
 
 import org.slf4j.Logger;
@@ -357,7 +358,7 @@ public class DerivedDataEngine {
                                             if(values != null && values.length >= 1) {
                                                 if(!property.getValue().equals(values[0])) {
                                                     try {
-                                                        property.getSession().checkPermission(property.getPath(), "set_property");
+                                                        property.getSession().checkPermission(property.getPath(), Privilege.JCR_MODIFY_PROPERTIES);
                                                         property.setValue(values[0]);
                                                         if(logger.isDebugEnabled()) {
                                                             sb.append(values[0].getString());
@@ -377,7 +378,7 @@ public class DerivedDataEngine {
                                                 }
                                             } else {
                                                 try {
-                                                    property.getSession().checkPermission(property.getPath(), "remove");
+                                                    property.getSession().checkPermission(property.getPath(), Privilege.JCR_MODIFY_PROPERTIES);
                                                     property.remove();
                                                     if(logger.isDebugEnabled()) {
                                                         sb.append(" removed");
@@ -411,7 +412,7 @@ public class DerivedDataEngine {
                                             }
                                             if(changed) {
                                                 try {
-                                                    property.getSession().checkPermission(property.getPath(), "set_property");
+                                                    property.getSession().checkPermission(property.getPath(), Privilege.JCR_MODIFY_PROPERTIES);
                                                     property.setValue(parameters.get(propName));
                                                     if(logger.isDebugEnabled()) {
                                                         sb.append(" overwritten");
