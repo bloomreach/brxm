@@ -169,7 +169,7 @@
         <configuration>
           <skip>true</skip>
           <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}/${artifactId}-${version}</workingDirectory>
+          <workingDirectory>${project.build.directory}/${project.artifactId}-${project.version}</workingDirectory>
         </configuration>
         <executions>
           <execution>
