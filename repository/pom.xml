@@ -534,7 +534,7 @@
           <docletArtifact>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-tools-documentation</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
           </docletArtifact>
         </configuration>
       </plugin>
@@ -865,7 +865,7 @@
           <docletArtifact>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-tools-documentation</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
           </docletArtifact>
         </configuration>
         <reportSets>
@@ -993,6 +993,7 @@
           <plugin>
             <inherited>false</inherited>
             <artifactId>maven-clean-plugin</artifactId>
+            <version>2.4.1</version>
             <configuration>
               <filesets>
                 <fileset>
