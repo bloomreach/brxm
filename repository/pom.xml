@@ -548,13 +548,6 @@
         <artifactId>jcr</artifactId>
         <version>${javax.jcr.version}</version>
         <scope>provided</scope>
-        <classifier>sources</classifier>
-      </dependency>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>${javax.jcr.version}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>javax.jcr</groupId>
