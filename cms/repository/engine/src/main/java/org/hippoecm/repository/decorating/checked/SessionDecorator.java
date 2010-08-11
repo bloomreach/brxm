@@ -421,8 +421,7 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     public ClassLoader getSessionClassLoader() throws RepositoryException {
-        check();
-        return null;
+        return Thread.currentThread().getContextClassLoader();
     }
 
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
