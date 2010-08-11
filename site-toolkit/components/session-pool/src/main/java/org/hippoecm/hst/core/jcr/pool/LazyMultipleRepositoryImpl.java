@@ -377,7 +377,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                         
                         PoolingRepository poolingRepo = entry2.getValue();
                         
-                        if (poolingRepo.getNumIdle() <= 0) {
+                        if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() == 0) {
                             Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
                             
                             if (repoMap != null) {
