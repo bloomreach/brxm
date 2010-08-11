@@ -269,6 +269,7 @@ public class UserSession extends WebSession {
         }
         JcrObservationManager.getInstance().cleanupListeners(this);
 
+        invalidate();
         dirty();
         throw new RestartResponseException(WebApplication.get().getHomePage());
     }
