@@ -33,7 +33,7 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -149,21 +149,7 @@ public class WorkflowService extends BaseHstContentService {
                     throw new IllegalArgumentException("Invalid workflow class name. The workflow doesn't support this.");
                 }
                 
-                Method actionInvokingMethod = getMethodByName(wfClazz, action);
-                
-                if (actionInvokingMethod == null) {
-                    throw new IllegalArgumentException("Invalid action name: " + action + ". Not supported by " + wfClazz);
-                }
-                
-                Class<?> [] argTypes = actionInvokingMethod.getParameterTypes();
-                int paramCount = (params != null ? params.length : 0);
-                Object [] args = new Object[paramCount];
-                
-                for (int i = 0; i < paramCount; i++) {
-                    args[i] = ConvertUtils.convert(params[i], argTypes[i]);
-                }
-                
-                actionInvokingMethod.invoke(workflow, args);
+                MethodUtils.invokeMethod(workflow, action, params);
             }
             
             return Response.ok().build();
