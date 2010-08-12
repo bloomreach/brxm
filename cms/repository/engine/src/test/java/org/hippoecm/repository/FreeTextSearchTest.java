@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import org.apache.jackrabbit.core.SearchManager;
+import org.apache.jackrabbit.core.query.QueryHandler;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -361,8 +363,8 @@ public class FreeTextSearchTest extends TestCase {
         try {
             repository = org.hippoecm.repository.decorating.checked.RepositoryDecorator.unwrap(repository);
             repository = org.hippoecm.repository.decorating.RepositoryDecorator.unwrap(repository);
-            SearchIndex searchIndex = ((RepositoryImpl)repository).getSearchManager("default").getQueryHandler();
-            searchIndex.flush();
+            QueryHandler queryHandler = ((RepositoryImpl)repository).getSearchManager("default").getQueryHandler();
+            ((SearchIndex)queryHandler).flush();
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
