@@ -72,7 +72,7 @@ public class PdfExtractionAndIndexingTest extends TestCase {
         
         createDocumentWithPdf("docWithoutHippoText", false);
         
-        FreeTextSearchTest.flushIndex(testPath.getSession());
+        FreeTextSearchTest.flushIndex(testPath.getSession().getRepository());
         
         // we search on 'UNIQUE_WORD_IN_UNNITTEST_PDF', which is only contained by docWithHippoText
         String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+UNIQUE_WORD_IN_UNNITTEST_PDF+"')] order by @jcr:score descending";
