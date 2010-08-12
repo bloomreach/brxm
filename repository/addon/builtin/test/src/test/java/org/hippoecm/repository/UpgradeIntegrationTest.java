@@ -74,7 +74,7 @@ public class UpgradeIntegrationTest
         version.setValue(newValues);
         session.save();
         repository.close();
-        FileOutputStream ostream = new FileOutputStream("../src/test/fixtures/dump2.zip");
+        FileOutputStream ostream = new FileOutputStream("../src/test/fixtures/dump.zip");
         dump(ostream, "storage");
         ostream.close();
     }
@@ -82,7 +82,7 @@ public class UpgradeIntegrationTest
     @Test
     public void migrate() throws RepositoryException, IOException {
         delete(new File("storage"));
-        FileInputStream istream = new FileInputStream("../src/test/fixtures/dump2.zip");
+        FileInputStream istream = new FileInputStream("../src/test/fixtures/dump.zip");
         restore(istream);
         istream.close();
         HippoRepository repository = HippoRepositoryFactory.getHippoRepository("storage");
