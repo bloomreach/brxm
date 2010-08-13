@@ -114,6 +114,7 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/workflowservice/Products/HippoCMS");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
@@ -149,6 +150,7 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
         request.setServletPath("/preview/services");
         request.setPathInfo("/workflowservice/Products/HippoCMS");
         request.setQueryString("wfclass=org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow&action=requestPublication");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
