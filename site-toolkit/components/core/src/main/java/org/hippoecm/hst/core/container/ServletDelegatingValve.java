@@ -15,17 +15,28 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import org.hippoecm.hst.core.container.AbstractValve;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ServletDelegatingValve
@@ -88,7 +99,7 @@ public class ServletDelegatingValve extends AbstractValve
         protected ServletContext servletContext;
         
         public ServletConfigImpl(String servletName, Map<String, String> initParams) {
-            this(servletName, initParams, null);
+            this(servletName, initParams, new ServletContextImpl(servletName, new HashMap<String,String>()));
         }
         
         public ServletConfigImpl(String servletName, Map<String, String> initParams, ServletContext servletContext) {
@@ -119,5 +130,114 @@ public class ServletDelegatingValve extends AbstractValve
         
     }
     
+    public static class ServletContextImpl implements ServletContext {
+        
+        static Logger log = LoggerFactory.getLogger(ServletContextImpl.class);
+
+        protected String contextName;
+        protected Map<String,String> initParams;
+        protected Map<String,Object> attributes = new HashMap<String,Object>();
+
+        public ServletContextImpl(String contextName, Map<String,String> initParams) {
+            this.contextName = contextName;
+            this.initParams = initParams;
+        }
+        
+        public Object getAttribute(String name) {
+            return attributes.get(name);
+        }
+
+        public Enumeration getAttributeNames() {
+            return Collections.enumeration(attributes.keySet());
+        }
+
+        public ServletContext getContext(String uripath) {
+            return null;
+        }
+
+        public String getInitParameter(String name) {
+            return initParams.get(name);
+        }
+        
+        public Enumeration getInitParameterNames() {
+            return Collections.enumeration(initParams.keySet()); 
+        }
+
+        public int getMajorVersion() {
+            return 2;
+        }
+
+        public String getMimeType(String file) {
+            return null;
+        }
+
+        public int getMinorVersion() {
+            return 4;
+        }
+
+        public RequestDispatcher getNamedDispatcher(String name) {
+            return null;
+        }
+
+        public String getRealPath(String path) {
+            return null;
+        }
+
+        public RequestDispatcher getRequestDispatcher(String path) {
+            return null;
+        }
+
+        public URL getResource(String path) throws MalformedURLException {
+            return null;
+        }
+
+        public InputStream getResourceAsStream(String path) {
+            return null;
+        }
+
+        public Set getResourcePaths(String path) {
+            return null;
+        }
+
+        public String getServerInfo() {
+            return "ServletDelegatingValve";
+        }
+
+        public Servlet getServlet(String name) throws ServletException {
+            return null;
+        }
+
+        public String getServletContextName() {
+            return contextName;
+        }
+
+        public Enumeration getServletNames() {
+            return Collections.enumeration(new HashSet<String>());
+        }
+
+        public Enumeration getServlets() {
+            return Collections.enumeration(new HashSet<Servlet>());
+        }
+
+        public void log(String msg) {
+            log.info(msg);
+        }
+
+        public void log(Exception exception, String msg) {
+            log.error(msg, exception);
+        }
+
+        public void log(String message, Throwable throwable) {
+            log.error(message, throwable);
+        }
+
+        public void removeAttribute(String name) {
+            attributes.remove(name);
+        }
+
+        public void setAttribute(String name, Object object) {
+            attributes.put(name, object);
+        }
+    }
 }
 

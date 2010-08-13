@@ -96,6 +96,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/customerservice/customers/123/");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -165,6 +166,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/customerservice/customers/123/");
+        request.setContent(new byte[0]);
 
         response = new MockHttpServletResponse ();
         
@@ -190,6 +192,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/uuid/abababab-5fa8-48a8-b03b-4524373d992a/");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
@@ -223,6 +226,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/Products/HippoCMS");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
@@ -256,6 +260,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/Products/HippoCMS/HippoCMS/testproject:title");
+        request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
         
@@ -283,6 +288,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/Products/HippoCMS/HippoCMS/testproject:body");
+        request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
         
@@ -309,6 +315,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/query/");
         request.setQueryString("query=cms");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
@@ -352,6 +359,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/Solutions/SolutionsPage");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
@@ -374,6 +382,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/Solutions/SolutionsPage");
+        request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
         
@@ -436,6 +445,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/Solutions/SolutionsPage2");
+        request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
         
@@ -458,6 +468,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/Solutions/SolutionsPage2/SolutionsPage2/testproject:body");
+        request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
         
@@ -505,6 +516,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/afolder");
+        request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
         
@@ -534,6 +546,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/News/News1/News1");
         request.setQueryString("pv=testproject:title&pv=testproject:summary");
+        request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
@@ -597,6 +610,7 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         request.setServletPath("/preview/services");
         request.setPathInfo("/contentservice/News/News1/News1");
         request.setQueryString("pv=testproject:title&pv=testproject:summary");
+        request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();
         
