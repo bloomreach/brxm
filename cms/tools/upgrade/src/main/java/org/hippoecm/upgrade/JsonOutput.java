@@ -50,8 +50,8 @@ class JsonOutput extends AbstractOutput {
             if ("jcr:primaryType".equals(entry.getKey())) {
                 continue;
             }
-            if (entry.getValue().length > 1) {
-                Value[] values = entry.getValue();
+            Value[] values = entry.getValue();
+            if (values.length != 1) {
                 JSONArray array = new JSONArray();
                 for (int i = 0; i < values.length; i++) {
                     array.add(values[i].getValue());
