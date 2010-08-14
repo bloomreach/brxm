@@ -76,6 +76,8 @@
         <configuration>
           <extraJvmArguments>-Xmx128m</extraJvmArguments>
           <assembleDirectory>${project.build.directory}/canonicalsv</assembleDirectory>
+          <repositoryLayout>flat</repositoryLayout>
+          <repositoryName>lib</repositoryName>
           <platforms>
             <platform>windows</platform>
             <platform>unix</platform>
