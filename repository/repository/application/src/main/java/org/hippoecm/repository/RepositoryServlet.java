@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -42,6 +41,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -55,7 +55,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.jackrabbit.util.Base64;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
@@ -253,27 +252,12 @@ public class RepositoryServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         res.setContentType("text/html;charset=UTF-8");
 
-        String username = null;
-        String password = null;
-        String authhead = req.getHeader("Authorization");
-        if (authhead != null) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Base64.decode(authhead.substring(6), out);
-            String userpass = new String(out.toByteArray(), "UTF-8");
-            username = userpass.substring(0, userpass.indexOf(":"));
-            password = userpass.substring(userpass.indexOf(":") + 1);
-        } else {
-            /* An alternative for this else body part is to use:
-             *   username = req.getUserPrincipal().getName(); or req.getRemoteUser()
-             *   password = null;  a problem is that we don't have a password then
-             * but this only works if we fully configured a security realm for this.
-             */
-            if (req.getAuthType() != HttpServletRequest.BASIC_AUTH) {
-                res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
-                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
-                return;
-            }
+        if (!BasicAuth.hasAuthorizationHeader(req)) {
+            BasicAuth.setRequestAuthorizationHeaders(res, "Repository");
+            return;
         }
+
+        SimpleCredentials creds = BasicAuth.parseAuthoriztionHeader(req);
 
         String path = req.getRequestURI();
         if (path.startsWith(req.getContextPath())) {
@@ -288,10 +272,10 @@ public class RepositoryServlet extends HttpServlet {
 
         Session session = null;
         try {
-            if (username == null || username.equals("")) {
+            if (creds.getUserID() == null || creds.getUserID().length() == 0) {
                 session = repository.login();
             } else {
-                session = repository.login(username, (password != null ? password.toCharArray() : null));
+                repository.login(creds);
             }
 
             writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
@@ -580,8 +564,7 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
         } catch (LoginException ex) {
-            res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+            BasicAuth.setRequestAuthorizationHeaders(res, "Repository");
         } catch (RepositoryException ex) {
             writer.println("<p>Error while accessing the repository, exception reads as follows:");
             writer.println("<pre>" + ex.getClass().getName() + ": " + ex.getMessage());
