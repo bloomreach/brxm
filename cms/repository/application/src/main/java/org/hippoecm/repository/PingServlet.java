@@ -107,7 +107,7 @@ public class PingServlet extends HttpServlet {
     private static final String CUSTOM_MESSAGE_PARAM = "custom-message";
 
     /** Default values */
-    private static final String DEFAULT_REPOSITORY_ADDRESS = "rmi://localhost:1099/hipporepository";
+    private static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
     private static final String DEFAULT_USERNAME = "admin";
     private static final String DEFAULT_PASSWORD = "admin";
     private static final String DEFAULT_NODE = "content/documents";
