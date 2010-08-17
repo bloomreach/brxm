@@ -70,9 +70,11 @@ public class PermissionsDialog extends AbstractDialog<Node> {
      */
     public static final String AUTHOR_PRIVILEGE = "hippo:author";
     public static final String EDITOR_PRIVILEGE = "hippo:editor";
+    public static final String ADMIN_PRIVILEGE = "hippo:admin";
 
     public static final String[] JCR_PRIVILEGES = new String[] { READ_PRIVILEGE, WRITE_PRIVILEGE, ALL_PRIVILEGE,
-            SET_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE };
+            SET_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE,
+            ADMIN_PRIVILEGE };
 
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
@@ -161,7 +163,8 @@ public class PermissionsDialog extends AbstractDialog<Node> {
     }
 
     private String[] getMemberships(Session session, String username) throws RepositoryException {
-        final String queryString = "//element(*, hipposys:group)[jcr:contains(@hipposysedit:members, '" + username + "')]";
+        final String queryString = "//element(*, hipposys:group)[jcr:contains(@hipposysedit:members, '" + username
+                + "')]";
         final String queryType = "xpath";
         final List<String> list = new ArrayList<String>();
         try {
