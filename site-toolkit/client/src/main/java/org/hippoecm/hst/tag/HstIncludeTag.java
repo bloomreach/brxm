@@ -67,9 +67,9 @@ public class HstIncludeTag extends TagSupport {
         
         ContentRenderingContext ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.PAGE_SCOPE);
         if (ctx == null) {
-            ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.REQUEST_SCOPE);
+            ctx = (ContentRenderingContext) hstRequest.getAttribute(ContentRenderingContext.NAME);
             if (ctx == null) {
-                ctx = (ContentRenderingContext) hstRequest.getRequestContext().getAttribute(ContentRenderingContext.NAME);
+                ctx = (ContentRenderingContext) pageContext.getAttribute(ContentRenderingContext.NAME, PageContext.REQUEST_SCOPE);
             }
         }
         WrapperElement wrapperElem = null;
