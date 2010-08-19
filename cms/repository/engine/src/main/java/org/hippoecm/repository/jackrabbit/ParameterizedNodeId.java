@@ -17,7 +17,7 @@ package org.hippoecm.repository.jackrabbit;
 
 import org.apache.jackrabbit.core.id.NodeId;
 
-public class ArgumentNodeId extends NodeId
+public class ParameterizedNodeId extends NodeId
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -25,20 +25,24 @@ public class ArgumentNodeId extends NodeId
     private static final long serialVersionUID = 1L;
 
     private NodeId original;
-    private String argument;
+    private String parameter;
 
-    public ArgumentNodeId(NodeId original, String argument) {
+    public ParameterizedNodeId(NodeId original, String parameter) {
         super(original.getRawBytes());
         this.original = original;
-        this.argument = argument;
+        this.parameter = parameter;
     }
 
-    public String getArgument() {
-        return argument;
+    public String getParameterString() {
+        return parameter;
+    }
+
+    public NodeId getUnparameterizedNodeId() {
+        return original;
     }
 
     @Override
     public String toString() {
-        return "ArgumentNodeId[uuid="+original+",hash="+hashCode()+",argument=\""+argument+"\"]";
+        return "ParameterizedNodeId[uuid="+original+",hash="+hashCode()+",parameter=\""+parameter+"\"]";
     }
 }
