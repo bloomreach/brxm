@@ -612,6 +612,6 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
     }
 
     public String[] getAllowedLifecycleTransistions() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return getAllowedLifecycleTransistions(); // BERRY
+        return node.getAllowedLifecycleTransistions();
     }
 }
