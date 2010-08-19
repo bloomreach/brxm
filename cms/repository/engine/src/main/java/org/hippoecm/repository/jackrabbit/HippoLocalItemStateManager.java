@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,6 +62,7 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.Modules;
+import org.hippoecm.repository.SessionStateThresholdEnum;
 
 public class HippoLocalItemStateManager extends ForkedXAItemStateManager implements DataProviderContext {
     @SuppressWarnings("unused")
@@ -103,7 +105,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     private boolean virtualLayerEnabled = false;
     private int virtualLayerEnabledCount = 0;
     private boolean virtualLayerRefreshing = true;
-    private boolean argumentBasedSearch = false;
+    private boolean parameterizedView = false;
+    private StateProviderContext currentContext = null;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
                                       ItemStateCacheFactory cacheFactory, String attributeName, NodeTypeRegistry ntReg, boolean enabled,
@@ -241,7 +244,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         edit();
         FilteredChangeLog tempChangeLog = filteredChangeLog;
         filteredChangeLog = null;
-        argumentBasedSearch = false;
+        parameterizedView = false;
         if(tempChangeLog != null) {
             tempChangeLog.repopulate();
         }
@@ -266,67 +269,80 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
-        ItemState state = super.getItemState(id);
-        if(deletedExternals.containsKey(id))
-            return state;
-        if(id instanceof HippoNodeId) {
-            if(!virtualNodes.containsKey((NodeId)id)) {
-                edit();
-                NodeState nodeState = (NodeState) state;
-                if(isEnabled()) {
-                    nodeState = ((HippoNodeId)id).populate((StateProviderContext)null, nodeState);
-                    Name nodeTypeName = nodeState.getNodeTypeName();
-                    if (virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
-                        int type = isVirtual(nodeState);
-                        if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
-                            nodeState.removeAllChildNodeEntries();
-                        }
-                        nodeState = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
-                    }
-                    virtualNodes.put((HippoNodeId)id, nodeState);
-                    store(nodeState);
-                } else {
-                    // keep nodestate as is
-                }
-                return nodeState;
+        currentContext = null;
+        ItemState state;
+        try {
+            if (id instanceof ParameterizedNodeId) {
+                currentContext = new StateProviderContext(((ParameterizedNodeId)id).getParameterString());
+                id = ((ParameterizedNodeId)id).getUnparameterizedNodeId();
+                parameterizedView = true;
             }
-        } else if(state instanceof NodeState) {
-            NodeState nodeState = (NodeState) state;
-            Name nodeTypeName = nodeState.getNodeTypeName();
-            if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
-                edit();
-                int type = isVirtual(nodeState);
-                if ((type & ITEM_TYPE_EXTERNAL) != 0) {
-                    nodeState.removeAllChildNodeEntries();
+            state = super.getItemState(id);
+            if (deletedExternals.containsKey(id))
+                return state;
+            if (id instanceof HippoNodeId) {
+                if (!virtualNodes.containsKey((NodeId)id)) {
+                    edit();
+                    NodeState nodeState = (NodeState)state;
+                    if (isEnabled()) {
+                        nodeState = ((HippoNodeId)id).populate(currentContext, nodeState);
+                        Name nodeTypeName = nodeState.getNodeTypeName();
+                        if (virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                            int type = isVirtual(nodeState);
+                            if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
+                                nodeState.removeAllChildNodeEntries();
+                            }
+                            nodeState = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                        }
+                        virtualNodes.put((HippoNodeId)id, nodeState);
+                        store(nodeState);
+                    } else {
+                        // keep nodestate as is
+                    }
+                    return nodeState;
                 }
-                try {
-                    if (virtualLayerEnabled) {
-                        if(id instanceof ArgumentNodeId) {
-                            state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(((ArgumentNodeId)id).getArgument()), nodeState);
-                            argumentBasedSearch = true;
-                        } else if(id instanceof HippoNodeId) {
-                            if (isEnabled()) {
-                                state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+            } else if (state instanceof NodeState) {
+                NodeState nodeState = (NodeState)state;
+                Name nodeTypeName = nodeState.getNodeTypeName();
+                if (virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                    edit();
+                    int type = isVirtual(nodeState);
+                    if ((type & ITEM_TYPE_EXTERNAL) != 0) {
+                        nodeState.removeAllChildNodeEntries();
+                    }
+                    try {
+                        if (virtualLayerEnabled) {
+                            if (id instanceof ParameterizedNodeId) {
+                                if (isEnabled()) {
+                                    state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(((ParameterizedNodeId)id).getParameterString()), nodeState);
+                                    parameterizedView = true;
+                                }
+                            } else if (id instanceof HippoNodeId) {
+                                if (isEnabled()) {
+                                    state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                                }
+                            } else {
+                                if (isEnabled()) {
+                                    state = virtualNodeNames.get(nodeTypeName).populate(currentContext, nodeState);
+                                } else {
+                                    state = virtualNodeNames.get(nodeTypeName).populate(currentContext, nodeState);
+                                    ((NodeState)state).removeAllChildNodeEntries();
+                                }
                             }
                         } else {
-                            if (isEnabled()) {
-                                state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
-                            } else {
-                                state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
-                                ((NodeState)state).removeAllChildNodeEntries();
-                            }
+                            log.error("Populating while virtual layer disabled", new Exception());
                         }
-                    } else {
-                        log.error("Populating while virtual layer disabled", new Exception());
+                        virtualStates.add(state);
+                        store(state);
+                        return nodeState;
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                        throw new ItemStateException("Failed to populate node state", ex);
                     }
-                    virtualStates.add(state);
-                    store(state);
-                    return nodeState;
-                } catch (RepositoryException ex) {
-                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                    throw new ItemStateException("Failed to populate node state", ex);
                 }
             }
+        } finally {
+            currentContext = null;
         }
         return state;
     }
@@ -345,7 +361,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         try {
             state = super.getNodeState(id);
         } catch(NoSuchItemStateException ex) {
-            if(!(id instanceof HippoNodeId)) {
+            if(!(id instanceof HippoNodeId) && !(id instanceof ParameterizedNodeId)) {
                 throw ex;
             }
         } catch(ItemStateException ex) {
@@ -360,7 +376,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             edit();
             NodeState nodeState;
             if (isEnabled()) {
-                nodeState = ((HippoNodeId)id).populate(null);
+                nodeState = ((HippoNodeId)id).populate(currentContext);
                 if (nodeState == null) {
                     throw new NoSuchItemStateException("Populating node failed");
                 }
@@ -452,24 +468,29 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         }
     }
 
-    public boolean stateThresholdExceeded() {
-        int count = 0;
-        if (argumentBasedSearch) {
-            return true;
-        }
-        ChangeLog changelog = getChangeLog();
-        if(changelog != null) {
-            for (Iterator iter = changelog.modifiedStates().iterator(); iter.hasNext(); iter.next()) {
-                ++count;
-            }
-            for (Iterator iter = changelog.addedStates().iterator(); iter.hasNext(); iter.next()) {
-                ++count;
-            }
-            for (Iterator iter = changelog.deletedStates().iterator(); iter.hasNext(); iter.next()) {
-                ++count;
+    public boolean stateThresholdExceeded(EnumSet<SessionStateThresholdEnum> interests) {
+        if (interests == null || interests.contains(SessionStateThresholdEnum.MISCELLANEOUS)) {
+            if (parameterizedView) {
+                return true;
             }
         }
-        return count > VIRTUALSTATE_THRESHOLD;
+        if (interests == null || interests.contains(SessionStateThresholdEnum.VIEWS)) {
+            int count = 0;
+            ChangeLog changelog = getChangeLog();
+            if (changelog != null) {
+                for (Iterator iter = changelog.modifiedStates().iterator(); iter.hasNext(); iter.next()) {
+                    ++count;
+                }
+                for (Iterator iter = changelog.addedStates().iterator(); iter.hasNext(); iter.next()) {
+                    ++count;
+                }
+                for (Iterator iter = changelog.deletedStates().iterator(); iter.hasNext(); iter.next()) {
+                    ++count;
+                }
+            }
+            return count > VIRTUALSTATE_THRESHOLD;
+        }
+        return false;
     }
 
     class FilteredChangeLog extends ChangeLog {
@@ -569,14 +590,14 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                        !deletedExternals.containsKey(state.getId()) &&
                        !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                     try {
-                        if(state.getId() instanceof ArgumentNodeId) {
-                            virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(((ArgumentNodeId)state.getId()).getArgument()), (NodeState)state);
-                            argumentBasedSearch = true;
+                        if(state.getId() instanceof ParameterizedNodeId) {
+                            virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(((ParameterizedNodeId)state.getId()).getParameterString()), (NodeState)state);
+                            parameterizedView = true;
                         } else if(state.getId() instanceof HippoNodeId) {
                             ((HippoNodeId)state.getId()).populate(virtualNodeNames.get(((NodeState)state).getNodeTypeName()), (NodeState)state);
                         } else {
                             //((NodeState)state).removeAllChildNodeEntries();
-                            virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(), (NodeState)state);
+                            virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(null, (NodeState)state);
                             //forceUpdate(state);
                             //store(state);
                         }

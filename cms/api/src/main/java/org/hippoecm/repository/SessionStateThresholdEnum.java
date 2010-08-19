@@ -26,6 +26,10 @@ public enum SessionStateThresholdEnum {
      */
     UNPERSISTED,
     /**
+     * Cached view state that will not be explicitly persisted, but hold memory until session save or refresh(false) is called.
+     */
+    VIEWS,
+    /**
      * Uncategorized state that is at least flushed when performing a session.refresh(false)
      */
     MISCELLANEOUS

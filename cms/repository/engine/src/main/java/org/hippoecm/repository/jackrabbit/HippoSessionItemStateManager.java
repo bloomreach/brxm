@@ -59,8 +59,8 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
     }
 
     public boolean stateThresholdExceeded(EnumSet<SessionStateThresholdEnum> interests) {
-        if (interests == null || interests.contains(SessionStateThresholdEnum.MISCELLANEOUS)) {
-            if (localStateMgr.stateThresholdExceeded()) {
+        if (interests == null || (interests.contains(SessionStateThresholdEnum.MISCELLANEOUS) || interests.contains(SessionStateThresholdEnum.VIEWS))) {
+            if (localStateMgr.stateThresholdExceeded(interests)) {
                 return true;
             }
         }
