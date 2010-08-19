@@ -140,7 +140,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     start   = System.currentTimeMillis();
                 }
                 
-                facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, (context != null && context.getArgument() != null ? facetedEngine.parse(context.getArgument()) : null),
+                facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, (context != null && context.getParameterString() != null ? facetedEngine.parse(context.getParameterString()) : null),
                     facetSearchResultMap, filters, hitsRequested);
                 
                 if(FacetedNavigationModulesTimer.log.isDebugEnabled()) {

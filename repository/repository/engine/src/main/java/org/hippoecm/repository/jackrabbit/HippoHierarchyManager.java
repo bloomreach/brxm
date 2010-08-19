@@ -111,7 +111,7 @@ public class HippoHierarchyManager implements HierarchyManager {
                     ChildNodeEntry nodeEntry = parentState.getChildNodeEntry(name, index);
                     if (nodeEntry != null) {
                         smartNodeId = nodeEntry.getId();
-                        smartNodeId = new ArgumentNodeId(smartNodeId, ((HippoPathParser.SmartElement)element).argument);
+                        smartNodeId = new ParameterizedNodeId(smartNodeId, ((HippoPathParser.SmartElement)element).argument);
                     } else
                         return null;
                 } catch (NoSuchItemStateException ex) {

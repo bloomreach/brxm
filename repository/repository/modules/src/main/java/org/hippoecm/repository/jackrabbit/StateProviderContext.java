@@ -19,17 +19,22 @@ public class StateProviderContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private String argument;
+    private String parameter;
 
-    public StateProviderContext(String argument) {
-        this.argument = argument;
+    public StateProviderContext(String parameter) {
+        this.parameter = parameter;
     }
 
     public StateProviderContext() {
-        this.argument = null;
+        this.parameter = null;
     }
 
-    public String getArgument() {
-        return argument;
+    public String getParameterString() {
+        return parameter;
+    }
+
+    @Override
+    public String toString() {
+        return StateProviderContext.class.getName() + "[parameter=\"" + parameter + "\"]";
     }
 }

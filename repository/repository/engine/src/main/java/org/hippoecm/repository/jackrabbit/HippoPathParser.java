@@ -361,5 +361,9 @@ public class HippoPathParser {
         public boolean denotesIdentifier() {
             return false;
         }
+
+        public String toString() {
+            return getString();
+        }
     }
 }
