@@ -349,7 +349,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public boolean hasItemState(ItemId id) {
-            if(id instanceof HippoNodeId) {
+            if(id instanceof HippoNodeId || id instanceof ParameterizedNodeId) {
                 return true;
             }
             return super.hasItemState(id);
