@@ -906,8 +906,6 @@ public class UpdaterEngine {
                     /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
                 } catch (InvalidNodeTypeDefException ex) {
                     log.error("upgrade failed to register new nodetype " + ntd.getName(), ex);
-                } catch (RepositoryException ex) {
-                    log.error("upgrade failed to register new nodetype " + ntd.getName(), ex);
                 }
             }
         }
