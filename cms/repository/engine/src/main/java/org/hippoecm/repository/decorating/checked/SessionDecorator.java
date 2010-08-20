@@ -339,10 +339,6 @@ public class SessionDecorator implements XASession, HippoSession {
      * Forwards the method call to the underlying session.
      */
     public void logout() {
-        try {
-            check();
-        } catch(RepositoryException ex) {
-        }
         session.logout();
     }
 
@@ -439,10 +435,6 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     public void check() throws RepositoryException {
-        if(!session.isLive()) {
-            System.err.println("repairing " + session.getUserID());
-            repair();
-        }
     }
 
     private void repair() throws RepositoryException {
