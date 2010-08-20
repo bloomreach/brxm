@@ -143,18 +143,6 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                         orphans.add(bundle);
                     }
                 }
-                boolean found = false;
-                NodePropBundle parentBundle = loadBundle(parentId, true);
-                for (Iterator i = parentBundle.getChildNodeEntries().iterator(); i.hasNext();) {
-                    NodePropBundle.ChildNodeEntry entry = (NodePropBundle.ChildNodeEntry)i.next();
-                    if (entry != null && entry.getId().equals(bundle.getId())) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    orphans.add(bundle);
-                }
             }
         } catch (ItemStateException e) {
             log.error("Error reading node '" + parentId + "' (parent of '" + id + "'): " + e);
