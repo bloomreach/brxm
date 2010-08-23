@@ -62,10 +62,7 @@ public class HREPTWO4457IssueFacetedNavigationFreeTextTest extends AbstractDateF
         
         session.refresh(false);
 
-        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[[jumps]]");
-        //facetNavigation = session.getRootNode().getNode("test/facetnavigation");
-        //facetNavigation = facetNavigation.getNode("hippo:navigation[[jumps]]/year");
-        //facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
         
         // We only have three cars that contain jumps!!
         
@@ -80,7 +77,7 @@ public class HREPTWO4457IssueFacetedNavigationFreeTextTest extends AbstractDateF
     }
     
     @Test
-    public void testSimpleFreeTextAfterMirrorSearch() throws RepositoryException, IOException {
+    public void testSimpleFreeTextDirectAfterMirrorSearch() throws RepositoryException, IOException {
         commonStart();
 
         Node testNode = session.getRootNode().getNode("test");
@@ -121,18 +118,103 @@ public class HREPTWO4457IssueFacetedNavigationFreeTextTest extends AbstractDateF
         
         session.refresh(false);
         
+        // direct access with search, so no filter:
+        
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{green}]");
+        // We have three green cars
+        Long count = facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        assertEquals(3L, (long)count);
+        
+        session.refresh(false);
+        
+        facetselect = testNode.getNode("filtered");
+      
+        // access through facetselect with search
+        Node facetFreeSearchNavigationNode = facetselect.getNode("hippo:navigation[{green}]");
+       
+        count = facetFreeSearchNavigationNode.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        
+        // We have only one green peugeot
+        assertEquals(1L, (long)count);
+        
+    }
+
+    
+    /**
+     * Same as test {@link #testSimpleFreeTextDirectAfterMirrorSearch()} only this time we link the filter
+     * to a higher ancestor of the faceted navigation node. This means, the free text search & filters need to be passed on 
+     * by multiple 'mirrored/filtered' node ids. which behaves a little different then in the case of
+     * {@link #testSimpleFreeTextDirectAfterMirrorSearch()}
+     * @throws RepositoryException
+     * @throws IOException
+     */
+    @Test
+    public void testSimpleFreeTextInDirectAfterMirrorSearch() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+
+        // first create a test2 node now:
+        Node testNode2 = testNode.addNode("test2");
+        testNode2.addMixin("mix:referenceable");
+        Node facetNavigation = testNode2.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+      
+        /*
+         * let's create a facetselect with filter, that points to the faceted navigation.
+         * The criteria is, that we only want to see brand = peugeot. This needs to be 
+         * reflected in the count numbers & resultset and facetvalue in the faceted navigation as well
+         */
+
+        testNode = session.getRootNode().getNode("test");
+        String docbase = testNode.getNode("test2").getUUID();
+        Node facetselect = testNode.addNode("filtered", HippoNodeType.NT_FACETSELECT);
+        facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
+        facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "select" });
+        facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:brand" });
+        facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "peugeot" });
+       
+        session.save();
+        session.refresh(false);
+        
         facetselect = testNode.getNode("filtered");
         
-        // direct access with search
-        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
-      
+        // we know there are 5 peugeots, so only these should make it through the filter
         
-        //TODO  HREPTWO-4457 : SHOULD FIND THE NODE hippo:navigation[{jumps}] but returns a PathNotFoundException
+        assertTrue(" We expect 5 cars because of the inherited filter",facetselect.getNode("facetnavigation/hippo:navigation").getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong() == 5L);
+        
+        // now, also add FreeTextSearch: we know there are 3 peugeots which contains 'jumps'
+        
+        session.refresh(false);
+        
+        // direct access with search, so no filter:
+        
+        facetNavigation = session.getRootNode().getNode("test/test2/facetnavigation/hippo:navigation[{green}]");
+        // We have three green cars
+        Long count = facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        assertEquals(3L, (long)count);
+        
+        session.refresh(false);
+        
+        facetselect = testNode.getNode("filtered");
         
         // access through facetselect with search
-        Node facetFreeSearchNavigationNode = facetselect.getNode("hippo:navigation[{jumps}]");
+        Node facetFreeSearchNavigationNode = facetselect.getNode("facetnavigation/hippo:navigation[{green}]");
        
-        assertEquals(3L, facetselect.getNode("hippo:navigation").getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        count = facetFreeSearchNavigationNode.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        
+        // We have only one green peugeot
+        
+        // We should get 1L now
+        
+        // TODO see HREPTWO-4457
+        //assertEquals(1L, (long)count);
         
     }
 
