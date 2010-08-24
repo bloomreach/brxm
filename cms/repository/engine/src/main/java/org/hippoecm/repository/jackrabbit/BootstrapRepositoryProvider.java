@@ -68,7 +68,7 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String docbase = getProperty(nodeId, docbaseName)[0];
-        NodeState upstream = getNodeState(new NodeId(UUID.fromString(docbase)));
+        NodeState upstream = getNodeState(new NodeId(UUID.fromString(docbase)), context);
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             ChildNodeEntry entry = (ChildNodeEntry) iter.next();
             NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), context, entry.getName());
@@ -79,7 +79,7 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
 
     @Override
     public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
-        NodeState upstream = getNodeState(((BootstrapNodeId)nodeId).upstream);
+        NodeState upstream = getNodeState(((BootstrapNodeId)nodeId).upstream, context);
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
 

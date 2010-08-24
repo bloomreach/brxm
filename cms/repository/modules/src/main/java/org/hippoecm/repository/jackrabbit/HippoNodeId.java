@@ -64,9 +64,6 @@ public class HippoNodeId extends NodeId
         } else if (this.context == null) {
             this.context = context;
         }
-        if (context == null) {
-            context = new StateProviderContext();
-        }
         try {
             NodeState nodeState = provider.populate(context, this, parentId);
             return nodeState;

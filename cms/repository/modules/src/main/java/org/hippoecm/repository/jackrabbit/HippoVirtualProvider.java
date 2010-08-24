@@ -181,9 +181,16 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         }
     }
 
-    protected final NodeState getNodeState(NodeId nodeId) {
+    protected final NodeState getNodeState(NodeId nodeId, StateProviderContext context) {
         try {
-            return (NodeState) stateMgr.getItemState(nodeId);
+            if(!(nodeId instanceof ParameterizedNodeId) && (context != null && context.getParameterString() != null)) {
+                // we need to parameterize the node id still. This happens when for example parameterized faceted navigation is below the
+                // virtual hierarchy of a facetselect or mirror.
+                nodeId = new ParameterizedNodeId(nodeId, context.getParameterString());
+                return (NodeState) stateMgr.getItemState(nodeId);
+            } else {
+                return (NodeState) stateMgr.getItemState(nodeId);
+            }
         } catch(NoSuchItemStateException ex) {
             if(log.isDebugEnabled()) {
                 log.debug("possible expected node state "+nodeId+" not found: " +
