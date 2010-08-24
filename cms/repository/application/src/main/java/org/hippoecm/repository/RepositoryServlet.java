@@ -275,7 +275,7 @@ public class RepositoryServlet extends HttpServlet {
             if (creds.getUserID() == null || creds.getUserID().length() == 0) {
                 session = repository.login();
             } else {
-                repository.login(creds);
+                session = repository.login(creds);
             }
 
             writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
