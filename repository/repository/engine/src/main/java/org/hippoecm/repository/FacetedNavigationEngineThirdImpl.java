@@ -28,17 +28,19 @@ import java.util.Set;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.query.InvalidQueryException;
 import javax.security.auth.Subject;
-import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser;
+import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.core.query.lucene.SynonymProvider;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.lucene.analysis.Analyzer;
+import org.apache.jackrabbit.spi.commons.query.QueryRootNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
@@ -85,26 +87,76 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     private final static String SVN_ID = "$Id$";
 
     class QueryImpl extends FacetedNavigationEngine.Query {
-        String query;
+        String statement;
+        String language;
         String[] scopes;
         FacetFilters facetFilters;
+        org.apache.lucene.search.Query queryImpl = null;
 
-        public QueryImpl(String query) throws IllegalArgumentException{
-            this.query = query;
-            
-            String docbases = query;
-            if(query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER) > -1) {
-                // parse the filters
-                docbases = docbases.substring(0,query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER));
-                String filters = query.substring(query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER) + 1);
-                facetFilters = FacetFilters.fromString(filters);
+        public QueryImpl(String parameter) throws IllegalArgumentException{
+            if (parameter.length() >= javax.jcr.query.Query.XPATH.length() + 2 && parameter.substring(0, javax.jcr.query.Query.XPATH.length() + 1).equalsIgnoreCase(javax.jcr.query.Query.XPATH + "(")) {
+                language = javax.jcr.query.Query.XPATH;
+                statement = parameter.substring(javax.jcr.query.Query.XPATH.length() + 1, parameter.length() - 1);
+            } else if(parameter.length() >= javax.jcr.query.Query.SQL.length() + 2 && parameter.substring(0, javax.jcr.query.Query.SQL.length() + 1).equalsIgnoreCase(javax.jcr.query.Query.SQL + "(")) {
+                language = javax.jcr.query.Query.SQL;
+                statement = parameter.substring(javax.jcr.query.Query.SQL.length() + 1, parameter.length() - 1);
+            } else if(parameter.matches("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}.*")) {
+                statement = parameter;
+                language = "";
+                String docbases = parameter;
+                if(parameter.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER) > -1) {
+                    // parse the filters
+                    docbases = docbases.substring(0,parameter.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER));
+                    String filters = parameter.substring(parameter.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER) + 1);
+                    facetFilters = FacetFilters.fromString(filters);
+                }
+                scopes = docbases.split(",");
+            } else {
+                QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider());
+                //parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
+                try {
+                    queryImpl = parser.parse(parameter);
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                    throw new IllegalArgumentException("Unable to parse query", ex);
+                }
             }
-            
-            scopes = docbases.split(",");
+        }
+
+        public org.apache.lucene.search.Query getLuceneQuery(ContextImpl context) {
+            if (queryImpl == null) {
+                if (javax.jcr.query.Query.XPATH.equals(language)) {
+                    try {
+                        QueryRootNode root = org.apache.jackrabbit.spi.commons.query.QueryParser.parse(statement,
+                                "xpath", context.session, getQueryNodeFactory());
+                        queryImpl = LuceneQueryBuilder.createQuery(root, context.session,
+                                getContext().getItemStateManager(),
+                                getNamespaceMappings(), getTextAnalyzer(),
+                                getContext().getPropertyTypeRegistry(),
+                                getSynonymProvider(),
+                                getIndexFormatVersion());
+                    } catch (InvalidQueryException ex) {
+                        throw new IllegalArgumentException("Unable to parse query", ex);
+                    } catch (RepositoryException ex) {
+                        throw new IllegalArgumentException("error while building query", ex);
+                    }
+                } else if (javax.jcr.query.Query.SQL.equals(language)) {
+//                    try {
+//                        QueryHandler queryHandler = ((RepositoryImpl)context.session.getRepository()).getSearchManager(context.session.getWorkspace().getName()).getQueryHandler();
+//                        queryHandler.createExecutableQuery((SessionImpl)context.session, (SessionImpl)context.session.getItemManager, statement, language);
+//                        FacetedNavigationEngineThirdImpl.this.getContext
+//                    } catch (NoSuchWorkspaceException ex) {
+//                        throw new IllegalArgumentException("error while building query", ex);
+//                    } catch (RepositoryException ex) {
+//                        throw new IllegalArgumentException("error while building query", ex);
+//                    }
+                }
+            }
+            return queryImpl;
         }
 
         public String toString() {
-            return query;
+            return statement;
         }
     }
 
@@ -134,10 +186,12 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     class ContextImpl extends FacetedNavigationEngine.Context {
         AuthorizationQuery authorizationQuery;
+        SessionImpl session;
 
-        ContextImpl(Session session, String userId, Subject subject, NodeTypeManager ntMgr) throws RepositoryException {
+        ContextImpl(SessionImpl session, String userId, Subject subject, NodeTypeManager ntMgr) throws RepositoryException {
             this.authorizationQuery = new AuthorizationQuery(subject, getNamespaceMappings(),
                     (ServicingIndexingConfiguration) getIndexingConfig(), ntMgr, session);
+            this.session = session;
         }
     }
 
@@ -150,7 +204,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public ContextImpl prepare(String userId, Subject subject, List<QueryImpl> initialQueries, Session session)
             throws RepositoryException {
         NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
-        return new ContextImpl(session, userId, subject, ntMgr);
+        return new ContextImpl((SessionImpl)session, userId, subject, ntMgr);
     }
 
     public void unprepare(ContextImpl authorization) {
@@ -242,13 +296,10 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             searchQuery.add(facetFiltersQuery.getQuery(), Occur.MUST);
         }
 
-        if (openQuery != null && openQuery.query != null && !openQuery.query.trim().equals("")) {
-            try {
-                //QueryParser.parse(openQuery.query, Query.XPATH, nsMappings, null);
-                QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider());
-                searchQuery.add(parser.parse(openQuery.query), Occur.MUST);
-            } catch (ParseException ex) {
-                log.info("Cannot compose free text query", ex);
+        if (openQuery != null) {
+            org.apache.lucene.search.Query queryImpl = openQuery.getLuceneQuery(contextImpl);
+            if(queryImpl != null) {
+                searchQuery.add(queryImpl, Occur.MUST);
             }
         }
 

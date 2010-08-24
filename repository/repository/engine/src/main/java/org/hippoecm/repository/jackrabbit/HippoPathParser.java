@@ -25,6 +25,7 @@ import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.name.PathBuilder;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
+import javax.jcr.query.Query;
 import javax.jcr.NamespaceException;
 
 /**
@@ -206,16 +207,30 @@ public class HippoPathParser {
                         state = STATE_INDEX;
                         name = jcrPath.substring(lastPos, pos - 1);
                         lastPos = pos;
-                        if (jcrPath.charAt(pos) == '{' || jcrPath.charAt(pos) == '\'') {
-                            char matchingChar = jcrPath.charAt(pos) == '{' ? '}' : '\'';
-                            lastPos = ++pos;
-                            while(pos <= len && jcrPath.charAt(pos) != matchingChar)
+                        String matchString = null;
+                        switch(jcrPath.charAt(pos)) {
+                            case '{':   matchString = "}";  break;
+                            case '\'':  matchString = "\'"; break;
+                            case '[':   matchString = "]";  break;
+                        }
+                        if(matchString != null) {
+                            if (jcrPath.substring(pos+1, pos+1+Query.XPATH.length()+1).equalsIgnoreCase(Query.XPATH+"(")) {
+                                matchString = ")" + matchString;
+                                lastPos = ++pos;
+                            } else if (jcrPath.substring(pos+1, pos+1+Query.SQL.length()+1).equalsIgnoreCase(Query.SQL+"(")) {
+                                matchString = ")" + matchString;
+                                lastPos = ++pos;
+                            } else {
+                                lastPos = ++pos;
+                            }
+                            while(pos <= len && !jcrPath.substring(pos).startsWith(matchString))
                                 ++pos;
                             index = Path.INDEX_DEFAULT;
-                            argument = jcrPath.substring(lastPos, pos);
-                            if(pos+1 > len)
+                            argument = jcrPath.substring(lastPos, pos+(matchString.length()-1));
+                            if(pos+matchString.length() > len)
                                 throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
-                            if(jcrPath.charAt(++pos) != ']')
+                            pos += matchString.length();
+                            if(jcrPath.charAt(pos) != ']')
                                 throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
                             pos += 1;
                             state = STATE_INDEX_END;
