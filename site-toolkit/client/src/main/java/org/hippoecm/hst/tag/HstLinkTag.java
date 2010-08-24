@@ -162,6 +162,12 @@ public class HstLinkTag extends TagSupport {
         }
         
         String urlString = this.link.toUrlForm(hstRequest, hstResponse, external);
+        if(contextRelative) {
+            // append again the current queryString as we are context relative
+            if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {
+                urlString += "?"+hstRequest.getQueryString();
+            }
+        }
         
         if (var == null) {
             try {               
