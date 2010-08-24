@@ -64,7 +64,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         }
         NodeState dereference = null;
         try {
-            dereference = getNodeState(new NodeId(UUID.fromString(docbase[0])));
+            dereference = getNodeState(new NodeId(UUID.fromString(docbase[0])), context);
         } catch (IllegalArgumentException e) {
             log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
         }

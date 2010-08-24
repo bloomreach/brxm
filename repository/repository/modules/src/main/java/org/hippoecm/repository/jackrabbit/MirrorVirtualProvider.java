@@ -92,7 +92,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 
     @Override
     public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
-        NodeState dereference = getNodeState(((MirrorNodeId)nodeId).upstream);
+        NodeState dereference = getNodeState(((MirrorNodeId)nodeId).upstream, context);
         if(dereference == null) {
             throw new RepositoryException("Cannot populate top mirror node dereferencing "+((MirrorNodeId)nodeId).upstream);
         }
