@@ -212,7 +212,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
                 filters.put(entry.getKey().toString(), entry.getValue());
             }
         }
-        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, (context != null && context.getParameterString() != null ? facetedEngine.parse(context.getParameterString()) : null), null, filters,
+        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, (context != null ? context.getParameterQuery(facetedEngine) : null), null, filters,
                                            hitsRequested);
         if(log.isDebugEnabled()) {
             FacetedNavigationModulesTimer.log.debug("Creating facetedResultSet took '{}' ms for '{}' number of results.", (System.currentTimeMillis() - t1),  facetedResult.length());

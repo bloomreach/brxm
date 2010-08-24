@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import org.hippoecm.repository.FacetedNavigationEngine;
+
 public class StateProviderContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -31,6 +33,13 @@ public class StateProviderContext {
 
     public String getParameterString() {
         return parameter;
+    }
+
+    public FacetedNavigationEngine.Query getParameterQuery(FacetedNavigationEngine engine) {
+        if (parameter != null) {
+            return engine.parse(parameter);
+        }
+        return null;
     }
 
     @Override

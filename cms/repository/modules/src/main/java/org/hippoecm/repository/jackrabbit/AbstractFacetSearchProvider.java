@@ -174,7 +174,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             if (log.isDebugEnabled()) {
                 t1 = System.currentTimeMillis();
             }
-            facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, (context != null && context.getParameterString() != null ? facetedEngine.parse(context.getParameterString()) : null),
+            facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, (context != null ? context.getParameterQuery(facetedEngine) : null),
                     facetSearchResultMap, null, hitsRequested);
             if (log.isDebugEnabled()) {
                 t2 = System.currentTimeMillis();
