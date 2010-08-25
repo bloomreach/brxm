@@ -39,10 +39,14 @@ public class DefaultPageErrorHandler implements PageErrorHandler {
     protected void logWarningsForEachComponentExceptions(PageErrors pageErrors) {
         for (HstComponentInfo componentInfo : pageErrors.getComponentInfos()) {
             for (HstComponentException componentException : pageErrors.getComponentExceptions(componentInfo)) {
+                Throwable throwable = componentException;
+                if(throwable.getCause() != null) {
+                    throwable = throwable.getCause();
+                }
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception found on " + componentInfo.getComponentClassName(), componentException);
+                    log.warn("Component exception found on " + componentInfo.getComponentClassName(), throwable);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception found on {}. ", componentInfo.getComponentClassName(), componentException.getMessage());
+                    log.warn("Component exception found on {} : {} ", componentInfo.getComponentClassName(), throwable.toString());
                 }
             }
         }
