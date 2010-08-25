@@ -61,4 +61,5 @@ public class HippoFacetsAvailableNavigation extends AbstractHippoFacetChildNavig
         }
         return null;
     }
+    
 }

@@ -32,10 +32,9 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 public interface ObjectBeanManager {
 
     /**
-     * Get an object from the JCR repository
+     * Get an object from the JCR repository. <code>path</code> is the absolute object path and must start with a "/"
      *
-     * @param path
-     *            the object path
+     * @param path the absolute object path. 
      * @return the object found or null
      *
      * @throws ObjectBeanManagerException

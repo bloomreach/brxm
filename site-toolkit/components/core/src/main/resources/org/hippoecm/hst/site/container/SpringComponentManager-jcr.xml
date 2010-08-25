@@ -49,7 +49,7 @@
     <constructor-arg value="${binaries.repository.password}"/>
   </bean>
   
-  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
+  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
       <map>
@@ -186,6 +186,43 @@
     </constructor-arg>
     <!-- The default credentials for login() without credentials parameter. -->
     <constructor-arg ref="javax.jcr.Credentials.default"/>
+    
+    <!-- default config map which is empty -->
+    <constructor-arg>
+      <map key-type="java.lang.String" value-type="java.lang.String">
+        <entry key="repositoryProviderClassName" value="${repositoryProviderClassName}" />
+        <entry key="repositoryAddress" value="${default.repository.address}"/>
+        <entry key="defaultCredentialsUserID" value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
+        <entry key="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+        <entry key="defaultCredentialsPassword" value="${default.repository.password}"/>
+        <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+        
+        <!-- Properties below are for lazy initialized pooling repositories. As there can be many of these, for example one per unique faceted navigation free text search 
+             these settings are deliberately low
+        -->
+        <entry key="maxActive" value="5"/>
+        <entry key="maxIdle" value="5"/>
+        <entry key="minIdle" value="0"/>
+        <entry key="initialSize" value="0"/>
+        <entry key="maxWait" value="10000"/>
+        <entry key="testOnBorrow" value="true"/>
+        <entry key="testOnReturn" value="false"/>
+        <entry key="testWhileIdle" value="false"/>
+        <!-- check every 10 seconds for eviction -->
+        <entry key="timeBetweenEvictionRunsMillis" value="10000"/>
+        <entry key="numTestsPerEvictionRun" value="1"/>
+        <!-- when a session is idle for just three minutes, we already dispose it to avoid to much memory consumption -->
+        <entry key="minEvictableIdleTimeMillis" value="180000"/>
+        <entry key="refreshOnPassivate" value="true"/>
+        <!-- the maxRefreshIntervalOnPassivate must not be to low, as we do not want an entire faceted tree view to be refreshed -->
+        <entry key="maxRefreshIntervalOnPassivate" value="300000"/>
+      </map>
+    </constructor-arg>
+    
+    <!-- This is the interval for evicting disposable session pools when all its sessions are evicted -->
+    <property name="timeBetweenEvictionRunsMillis" value="10000"/>
+    
+    <property name="disposableUserIDPattern" value=".*;disposable"/>
   </bean>
   
 </beans>

@@ -126,8 +126,7 @@ public class HstQueryImpl implements HstQuery {
         return this.offset;
     }
 
-    public String getQuery() throws QueryException{
-        
+    public String getQueryAsString(boolean skipDefaultOrderBy) throws QueryException{
         if(this.scopes == null || this.scopes.size() == 0) {
             throw new QueryException("There must be a scope for a search");
         }
@@ -216,14 +215,18 @@ public class HstQueryImpl implements HstQuery {
                 query.append(orderBy);
                 first = false;
             }
-        } else {
+        } else if(!skipDefaultOrderBy){
             // default order is by score descending
             query.append(" order by @jcr:score descending ");
         }
         log.debug("Query to execute is '{}'", query.toString());
         return query.toString();
     }
+
     
+    public String getQuery() throws QueryException{
+        return getQueryAsString(false);
+    }
     
     @Override
     public String toString() {
@@ -338,5 +341,6 @@ public class HstQueryImpl implements HstQuery {
         fromList.removeAll(removeItems);
     }
 
+   
     
 }
