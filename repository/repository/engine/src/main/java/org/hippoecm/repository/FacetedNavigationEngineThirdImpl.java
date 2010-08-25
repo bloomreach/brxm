@@ -39,8 +39,11 @@ import org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.jackrabbit.spi.commons.query.QueryRootNode;
+import org.apache.jackrabbit.spi.commons.query.OrderQueryNode.OrderSpec;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
@@ -86,13 +89,23 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    class QueryAndSort {
+        org.apache.lucene.search.Query query;
+        org.apache.lucene.search.Sort sort;
+        
+        QueryAndSort(org.apache.lucene.search.Query query, Sort sort){
+            this.query = query;
+            this.sort = sort;
+        }
+    }
+    
     class QueryImpl extends FacetedNavigationEngine.Query {
         String statement;
         String language;
         String[] scopes;
         FacetFilters facetFilters;
-        org.apache.lucene.search.Query queryImpl = null;
-
+        QueryAndSort queryAndSort = null;
+        
         public QueryImpl(String parameter) throws IllegalArgumentException{
             if (parameter.length() >= javax.jcr.query.Query.XPATH.length() + 2 && parameter.substring(0, javax.jcr.query.Query.XPATH.length() + 1).equalsIgnoreCase(javax.jcr.query.Query.XPATH + "(")) {
                 language = javax.jcr.query.Query.XPATH;
@@ -115,7 +128,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider());
                 //parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
                 try {
-                    queryImpl = parser.parse(parameter);
+                    org.apache.lucene.search.Query query = parser.parse(parameter);
+                    queryAndSort = new QueryAndSort(query, null);
                 } catch (ParseException ex) {
                     ex.printStackTrace();
                     throw new IllegalArgumentException("Unable to parse query", ex);
@@ -123,18 +137,33 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             }
         }
 
-        public org.apache.lucene.search.Query getLuceneQuery(ContextImpl context) {
-            if (queryImpl == null) {
+        public QueryAndSort getLuceneQueryAndSort(ContextImpl context) {
+            if (queryAndSort == null) {
                 if (javax.jcr.query.Query.XPATH.equals(language)) {
                     try {
                         QueryRootNode root = org.apache.jackrabbit.spi.commons.query.QueryParser.parse(statement,
                                 "xpath", context.session, getQueryNodeFactory());
-                        queryImpl = LuceneQueryBuilder.createQuery(root, context.session,
+                        org.apache.lucene.search.Query query = LuceneQueryBuilder.createQuery(root, context.session,
                                 getContext().getItemStateManager(),
                                 getNamespaceMappings(), getTextAnalyzer(),
                                 getContext().getPropertyTypeRegistry(),
                                 getSynonymProvider(),
                                 getIndexFormatVersion());
+                        
+                        // if there is a sort, set the sort
+                        Sort sort = null;
+                        if(root.getOrderNode() != null) {
+                            OrderQueryNode.OrderSpec[] orderSpecs = root.getOrderNode().getOrderSpecs();
+                            Path[] orderProperties = new Path[orderSpecs.length];
+                            boolean[] ascSpecs = new boolean[orderSpecs.length];
+                            for (int i = 0; i < orderSpecs.length; i++) {
+                                orderProperties[i] = orderSpecs[i].getPropertyPath();
+                                ascSpecs[i] = orderSpecs[i].isAscending();
+                                sort = new Sort(createSortFields(orderProperties, ascSpecs));
+                            }
+                        }
+                        queryAndSort = new QueryAndSort(query, sort);
+                        
                     } catch (InvalidQueryException ex) {
                         throw new IllegalArgumentException("Unable to parse query", ex);
                     } catch (RepositoryException ex) {
@@ -152,7 +181,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 //                    }
                 }
             }
-            return queryImpl;
+            return queryAndSort;
         }
 
         public String toString() {
@@ -279,6 +308,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          */
 
         BooleanQuery searchQuery = new BooleanQuery(false);
+        Sort freeSearchInjectedSort = null;
 
         if (facetsQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
@@ -295,12 +325,14 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetFiltersQuery.getQuery(), Occur.MUST);
         }
-
+        
         if (openQuery != null) {
-            org.apache.lucene.search.Query queryImpl = openQuery.getLuceneQuery(contextImpl);
-            if(queryImpl != null) {
-                searchQuery.add(queryImpl, Occur.MUST);
+            QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
+            if(queryAndSort.query != null) {
+                searchQuery.add(queryAndSort.query, Occur.MUST);
             }
+            
+            freeSearchInjectedSort = queryAndSort.sort;
         }
 
         // TODO perhaps create cached user specific filter for authorisation to gain speed
@@ -397,7 +429,10 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
                     int fetchTotal = hitsRequested.getOffset() + hitsRequested.getLimit();
                     Sort sort = null;
-                    if (hitsRequested.getOrderByList().size() > 0) {
+                    if(freeSearchInjectedSort != null) {
+                        // we already have a sort from the xpath or sql free search. Use this one
+                        sort = freeSearchInjectedSort;
+                    } else  if (hitsRequested.getOrderByList().size() > 0) {
                         List<SortField> sortFields = new ArrayList<SortField>();
                         for (OrderBy orderBy : hitsRequested.getOrderByList()) {
                             try {
