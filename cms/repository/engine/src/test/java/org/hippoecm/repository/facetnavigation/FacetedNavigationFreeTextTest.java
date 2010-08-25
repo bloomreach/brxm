@@ -64,7 +64,6 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
         
         // We only have three cars that contain jumps!!
-        
         assertNotNull(facetNavigation.getNode("year"));
         assertNotNull(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)));
 
@@ -72,8 +71,198 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong());
         
-         
     }
+    
+    @Test
+    public void testSimpleXPathSearches() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+
+        Node facetNavigation = testNode.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+      
+        session.save();
+        
+        int currentYear = start.get(Calendar.YEAR);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        assertNotNull(facetNavigation.getNode("year"));
+        assertNotNull(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)));
+
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 7L);
+        
+        session.refresh(false);
+        
+        String xpath = "xpath(//*[jcr:contains(.,'jumps')])";
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 3 cars that contains jumps.
+        assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+        
+        
+        session.refresh(false);
+        
+        // search in only the content
+        xpath = "xpath(//*[jcr:contains(contents/@content,'jumps')])";
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 3 cars that contains jumps.
+        assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+        
+        session.refresh(false);
+        xpath = "xpath(//*[@hippo:brand = 'peugeot'])";
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 5 peugeots
+        assertEquals(5L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+        
+        session.refresh(false);
+        xpath = "xpath(//*[@hippo:brand = 'peugeot' and @hippo:color='red'])";
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 3 red peugeots
+        assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+        
+        session.refresh(false);
+        xpath = "xpath(//*[@hippo:brand = 'peugeot' and @hippo:color='red' and jcr:contains(.,'jumps')])";
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 1 red peugeot that contains 'jumps'
+        assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+        
+    }
+    
+    @Test
+    public void testMultipleScopesAndFreeText() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+
+        Node facetNavigation = testNode.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getUUID() + "," +
+                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getUUID();;
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, multiScopeDocBases);
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+      
+        session.save();
+        
+        int currentYear = start.get(Calendar.YEAR);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        assertNotNull(facetNavigation.getNode("year"));
+        assertNotNull(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)));
+
+        // we have as multiple scopes two cars only
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 2L);
+        
+        // combine a free text search now as well:
+        session.refresh(false);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
+        
+        // only cardoc1 contains 'jumps'. cardoc6 does not, so we expect 1 result 
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 1L);
+    }
+    
+    @Test
+    public void testMultipleScopesAndXPath() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+
+        Node facetNavigation = testNode.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getUUID() + "," +
+                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getUUID();;
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, multiScopeDocBases);
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+      
+        session.save();
+        
+        int currentYear = start.get(Calendar.YEAR);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        assertNotNull(facetNavigation.getNode("year"));
+        assertNotNull(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)));
+
+        // we have as multiple scopes two cars only
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 2L);
+        
+        // combine a free text search now as well:
+        session.refresh(false);
+
+        String xpath = "xpath(//*[@hippo:brand = 'peugeot'])";
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        
+        // only cardoc1 is of brand 'peugeot'. cardoc6 does not, so we expect 1 result 
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 1L);
+    }
+    
+    @Test
+    public void testMultipleScopesAndFiltersAndXPath() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+
+        Node facetNavigation = testNode.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getUUID() + "," +
+                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getUUID();;
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, multiScopeDocBases);
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot"});
+        
+        session.save();
+        
+        int currentYear = start.get(Calendar.YEAR);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        assertNotNull(facetNavigation.getNode("year"));
+        assertNotNull(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)));
+
+        // we have as multiple scopes two cars only but due to filter only one car, peugeot we should find
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 1L);
+        
+        // combine a free text search now as well:
+        session.refresh(false);
+
+        String xpath = "xpath(//*[@hippo:brand = 'peugeot' and jcr:contains(.,'jumps')])";
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        
+        // only cardoc1 is of brand 'peugeot'. cardoc6 does not, so we expect 1 result 
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 1L);
+    }
+    
+    
     
     @Test
     public void testSimpleFreeTextDirectAfterMirrorSearch() throws RepositoryException, IOException {
