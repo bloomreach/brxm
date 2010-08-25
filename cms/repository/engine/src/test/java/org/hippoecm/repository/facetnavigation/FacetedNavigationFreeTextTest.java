@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Calendar;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -400,4 +401,99 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
       
     }
 
+    
+    @Test
+    public void testXPathAndOrderBySearches() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+
+        Node facetNavigation = testNode.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+      
+        // we set the default ordering on the faceted navigation to 'hippo:color' (default is ascending)
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:color" });
+        
+        session.save();
+        
+        int currentYear = start.get(Calendar.YEAR);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+  
+        assertNotNull(facetNavigation.getNode("year"));
+        assertNotNull(facetNavigation.getNode("year").getNode("hippo:resultset"));
+
+        assertTrue(facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 9L);
+        
+        // we sorted on hippo:color in the faceted navigation configuration, let's confirm this:
+        {
+            NodeIterator it = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
+            String prevColor = "aaaa";
+            while(it.hasNext()) {
+                String nextColor = it.nextNode().getProperty("hippo:color").getString();
+                // assert that we have ascending order in color
+                assertTrue(nextColor.compareTo(prevColor) >= 0);
+                prevColor = nextColor;
+            }
+        }
+        
+        // now we add new ordering (on hippo:brand) through xpath injected
+        session.refresh(false);
+        
+        // default order is ascending
+        String xpath = "xpath(//* order by @hippo:brand)";
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // we still have 9 cars
+        
+        assertNotNull(facetNavigation.getNode("year"));
+        assertNotNull(facetNavigation.getNode("year").getNode("hippo:resultset"));
+
+        assertTrue(facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 9L);
+      
+        // we sorted on hippo:brand in the faceted navigation configuration, let's confirm this:
+        {
+            NodeIterator it = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
+            String prevBrand = "aaaa";
+            while(it.hasNext()) {
+                String nextBrand = it.nextNode().getProperty("hippo:brand").getString();
+                // assert that we have ascending order in brand
+                assertTrue(nextBrand.compareTo(prevBrand) >= 0);
+                prevBrand = nextBrand;
+            }
+        }
+        
+       // now we add new ordering (on hippo:brand) but now REVERSE the ordering
+        session.refresh(false);
+        
+        xpath = "xpath(//* order by @hippo:brand descending)";
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // we still have 9 cars
+        
+        assertNotNull(facetNavigation.getNode("year"));
+        assertNotNull(facetNavigation.getNode("year").getNode("hippo:resultset"));
+
+        assertTrue(facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 9L);
+      
+        // we sorted on hippo:brand in the faceted navigation configuration, let's confirm this:
+        {
+            NodeIterator it = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
+            String prevBrand = "zzzzz";
+            while(it.hasNext()) {
+                String nextBrand = it.nextNode().getProperty("hippo:brand").getString();
+                // assert that we have DESCENDING order in brand
+                assertTrue(nextBrand.compareTo(prevBrand) <= 0);
+                prevBrand = nextBrand;
+            }
+        }
+    }
 }
