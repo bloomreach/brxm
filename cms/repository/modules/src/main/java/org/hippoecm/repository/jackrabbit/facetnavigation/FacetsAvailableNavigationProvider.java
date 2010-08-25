@@ -149,6 +149,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 
             } catch (IllegalArgumentException e) {
                 log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
+                return state;
             }
             
             int count = facetedResult.length();
