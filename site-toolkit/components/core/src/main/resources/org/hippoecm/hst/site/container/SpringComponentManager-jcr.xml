@@ -200,27 +200,26 @@
         <!-- Properties below are for lazy initialized pooling repositories. As there can be many of these, for example one per unique faceted navigation free text search 
              these settings are deliberately low
         -->
-        <entry key="maxActive" value="5"/>
-        <entry key="maxIdle" value="5"/>
-        <entry key="minIdle" value="0"/>
+        <entry key="maxActive" value="${disposable.repository.maxActive}"/>
+        <entry key="maxIdle" value="${disposable.repository.maxIdle}"/>
+        <entry key="minIdle" value="${disposable.repository.minIdle}"/>
         <entry key="initialSize" value="0"/>
-        <entry key="maxWait" value="10000"/>
+        <entry key="maxWait" value="${disposable.repository.maxWait}"/>
         <entry key="testOnBorrow" value="true"/>
         <entry key="testOnReturn" value="false"/>
         <entry key="testWhileIdle" value="false"/>
         <!-- check every 10 seconds for eviction -->
-        <entry key="timeBetweenEvictionRunsMillis" value="10000"/>
-        <entry key="numTestsPerEvictionRun" value="1"/>
+        <entry key="timeBetweenEvictionRunsMillis" value="${disposable.repository.timeBetweenEvictionRunsMillis}"/>
+        <entry key="numTestsPerEvictionRun" value="${disposable.repository.numTestsPerEvictionRun}"/>
         <!-- when a session is idle for just three minutes, we already dispose it to avoid to much memory consumption -->
-        <entry key="minEvictableIdleTimeMillis" value="180000"/>
-        <entry key="refreshOnPassivate" value="true"/>
+        <entry key="minEvictableIdleTimeMillis" value="${disposable.repository.minEvictableIdleTimeMillis}"/>
         <!-- the maxRefreshIntervalOnPassivate must not be to low, as we do not want an entire faceted tree view to be refreshed -->
-        <entry key="maxRefreshIntervalOnPassivate" value="300000"/>
+        <entry key="maxRefreshIntervalOnPassivate" value="${disposable.repository.maxRefreshIntervalOnPassivate}"/>
       </map>
     </constructor-arg>
     
     <!-- This is the interval for evicting disposable session pools when all its sessions are evicted -->
-    <property name="timeBetweenEvictionRunsMillis" value="10000"/>
+    <property name="timeBetweenEvictionRunsMillis" value="${disposable.global.repository.timeBetweenEvictionRunsMillis}"/>
     
     <property name="disposableUserIDPattern" value=".*;disposable"/>
   </bean>
