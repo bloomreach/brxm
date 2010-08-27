@@ -65,6 +65,7 @@
                           <a href="${link}">${result.title}</a>
                       </c:otherwise>
                    </c:choose>
+                   &nbsp;&nbsp;price : ${result.price}
                 </li>
               </ul>
             </c:forEach>

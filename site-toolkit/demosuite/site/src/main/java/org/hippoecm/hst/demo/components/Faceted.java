@@ -43,8 +43,6 @@ public class Faceted extends BaseHstComponent {
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
          
-        HippoBean facetNav = null;
-       
         String query = this.getPublicRequestParameter(request, "query");
         if (query != null && !"".equals(query)) {
             // there was a free text query. We need to account for this. 
@@ -52,7 +50,7 @@ public class Faceted extends BaseHstComponent {
             request.setAttribute("queryString", "?query=" + query);
             // account for the free text string
         }
-        facetNav = BeanUtils.getFacetedNavigationBean(request, query, getObjectConverter());
+        HippoFacetNavigationBean facetNav = BeanUtils.getFacetedNavigationBean(request, query, getObjectConverter());
         
         List<ProductBean> resultset = new ArrayList<ProductBean>();
         request.setAttribute("resultset", resultset);
