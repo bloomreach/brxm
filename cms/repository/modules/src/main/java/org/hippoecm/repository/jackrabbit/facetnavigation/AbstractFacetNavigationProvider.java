@@ -22,8 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.QPropertyDefinition;
@@ -35,6 +35,7 @@ import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.DataProviderContext;
+import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
 import org.hippoecm.repository.jackrabbit.IFilterNodeId;
@@ -52,8 +53,12 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     FacetedNavigationEngine.Context facetedContext;
 
     Name countName;
-    QPropertyDefinition subCountPropDef;
     Name virtualNodeName;
+    Name resultSetChildName;
+    QPropertyDefinition subCountPropDef;
+    QPropertyDefinition countPropDef;
+    
+    FacetResultSetProvider subNodesProvider = null;
 
     
     @Override
@@ -61,13 +66,16 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         super.initialize(stateMgr);
         this.facetedEngine = stateMgr.getFacetedEngine();
         this.facetedContext = stateMgr.getFacetedContext();
+        subNodesProvider = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());
         stateMgr.registerProviderProperty(countName);
     }
 
     @Override
     protected void initialize() throws RepositoryException {
         countName = resolveName(HippoNodeType.HIPPO_COUNT);
+        resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
         subCountPropDef = lookupPropDef(resolveName(FacNavNodeType.NT_ABSTRACTFACETNAVIGATION), countName);
+        countPropDef = lookupPropDef(resolveName(FacNavNodeType.NT_FACETNAVIGATION), countName);
     }
 
     @Override
@@ -152,27 +160,39 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         }
     }
     
-
     public void inheritParentFilters(FacetNavigationNodeId childNodeId, NodeState state) {
-        if(state.getNodeId() instanceof IFilterNodeId) {
-            IFilterNodeId filterNodeId = (IFilterNodeId)state.getNodeId();
-            if(filterNodeId.getView() != null) {
-                childNodeId.view = new LinkedHashMap<Name,String>(filterNodeId.getView());
+        ParentFilters parentFilters = new ParentFilters(state);
+        childNodeId.view = parentFilters.view;
+        childNodeId.order = parentFilters.order;
+        childNodeId.singledView = parentFilters.singledView;
+    }
+    
+    public class ParentFilters {
+        boolean singledView;
+        LinkedHashMap<Name,String> view;
+        LinkedHashMap<Name,String> order;
+        
+        public ParentFilters(NodeState state) {
+            if(state.getNodeId() instanceof IFilterNodeId) {
+                IFilterNodeId filterNodeId = (IFilterNodeId)state.getNodeId();
+                if(filterNodeId.getView() != null) {
+                    view = new LinkedHashMap<Name,String>(filterNodeId.getView());
+                }
+                if(filterNodeId.getOrder() != null) {
+                    order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
+                }
+                singledView = filterNodeId.isSingledView();
+            } else if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
+                IFilterNodeId filterNodeId = (IFilterNodeId)state.getParentId();
+                if(filterNodeId.getView() != null) {
+                    view = new LinkedHashMap<Name,String>(filterNodeId.getView());
+                }
+                if(filterNodeId.getOrder() != null) {
+                    order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
+                }
+                singledView = filterNodeId.isSingledView();
             }
-            if(filterNodeId.getOrder() != null) {
-                childNodeId.order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
-            }
-            childNodeId.singledView = filterNodeId.isSingledView();
-        } else if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
-            IFilterNodeId filterNodeId = (IFilterNodeId)state.getParentId();
-            if(filterNodeId.getView() != null) {
-                childNodeId.view = new LinkedHashMap<Name,String>(filterNodeId.getView());
-            }
-            if(filterNodeId.getOrder() != null) {
-                childNodeId.order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
-            }
-            childNodeId.singledView = filterNodeId.isSingledView();
-        }
+        }  
     }
     
     public class FacetNavigationEntry implements Comparable<FacetNavigationEntry> {

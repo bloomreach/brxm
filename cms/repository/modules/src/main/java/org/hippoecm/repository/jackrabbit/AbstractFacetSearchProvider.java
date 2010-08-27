@@ -238,7 +238,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
         FacetResultSetProvider.FacetResultSetNodeId childNodeId;
         Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
         childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, queryname,
-                docbase, search, count);
+                docbase, search);
         state.addChildNodeEntry(resultSetChildName, childNodeId);
 
         return state;

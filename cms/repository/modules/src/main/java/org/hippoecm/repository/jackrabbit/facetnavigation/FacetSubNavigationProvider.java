@@ -46,13 +46,12 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
     private final Logger log = LoggerFactory.getLogger(FacetSubNavigationProvider.class);
     
     protected FacetsAvailableNavigationProvider facetsAvailableNavigationProvider = null;
-    protected FacetResultSetProvider subNodesProvider = null;
+    
 
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
         facetsAvailableNavigationProvider = (FacetsAvailableNavigationProvider) lookup(FacetsAvailableNavigationProvider.class.getName());
-        subNodesProvider  = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());
         virtualNodeName = resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION);
         register(null, virtualNodeName);
     }
@@ -138,10 +137,9 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             }
             
             // add child node resultset:
-            Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
-                    docbase, currentSearch, currentRanges, facetNavigationNodeId.count, facetNavigationNodeId.facetedFiltersString);
+                    docbase, currentSearch, currentRanges, facetNavigationNodeId.facetedFiltersString);
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             

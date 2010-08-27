@@ -52,7 +52,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
+  
     @Test
     public void testDirectSingleValuedFacetNavigation() throws RepositoryException, IOException {
         commonStart();
@@ -65,6 +65,16 @@ public class FacetedNavigationSimpleTest extends TestCase {
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
 
         assertNotNull(node);
+        // assert there is a correct count property:
+        assertTrue(node.hasProperty("hippo:count"));
+        // there are 5 cars on the root navigation (although car0 does not have facets!)
+        assertEquals(5L, node.getProperty("hippo:count").getLong());
+        // there must be a resultset with 5 cars:
+        assertTrue(node.hasNode("hippo:resultset"));
+        assertTrue(node.getNode("hippo:resultset").hasProperty("hippo:count"));
+        assertEquals(5L , node.getNode("hippo:resultset").getProperty("hippo:count").getLong());
+        assertEquals(5L , node.getNode("hippo:resultset").getNodes().getSize());
+        
         // assert some facetednavigation nodes exists
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/hippo:resultset"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/grey"));
@@ -181,6 +191,17 @@ public class FacetedNavigationSimpleTest extends TestCase {
         Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
 
         // without filter:
+        
+        // assert there is a correct count property:
+        assertTrue(navigation.hasProperty("hippo:count"));
+        // there are 5 cars on the root navigation (although car0 does not have facets!)
+        assertEquals(5L, navigation.getProperty("hippo:count").getLong());
+        // there must be a resultset with 5 cars:
+        assertTrue(navigation.hasNode("hippo:resultset"));
+        assertTrue(navigation.getNode("hippo:resultset").hasProperty("hippo:count"));
+        assertEquals(5L , navigation.getNode("hippo:resultset").getProperty("hippo:count").getLong());
+        assertEquals(5L , navigation.getNode("hippo:resultset").getNodes().getSize());
+        
         assertNotNull(navigation.getNode("hippo:brand"));
         assertEquals(4L, navigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         assertNotNull(navigation.getNode("hippo:brand/mercedes"));
@@ -210,8 +231,19 @@ public class FacetedNavigationSimpleTest extends TestCase {
 
         assertNotNull(testNode.getNode("filtered"));
         assertNotNull(testNode.getNode("filtered/hippo:navigation"));
+        
 
         Node filteredNavigation = testNode.getNode("filtered/hippo:navigation");
+        // assert there is a correct count property:
+        assertTrue(filteredNavigation.hasProperty("hippo:count"));
+        // there are 2 cars on the root navigation after the filter
+        assertEquals(2L, filteredNavigation.getProperty("hippo:count").getLong());
+        // there must be a resultset with 2 cars:
+        assertTrue(filteredNavigation.hasNode("hippo:resultset"));
+        assertTrue(filteredNavigation.getNode("hippo:resultset").hasProperty("hippo:count"));
+        assertEquals(2L , filteredNavigation.getNode("hippo:resultset").getProperty("hippo:count").getLong());
+        assertEquals(2L , filteredNavigation.getNode("hippo:resultset").getNodes().getSize());
+
         assertNotNull(filteredNavigation.getNode("hippo:brand"));
         // after filter, only 2 results here!
         assertEquals(2L, filteredNavigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());

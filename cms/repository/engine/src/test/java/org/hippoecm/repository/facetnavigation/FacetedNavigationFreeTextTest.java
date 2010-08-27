@@ -94,6 +94,14 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
 
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
 
+        
+        // assert there is a correct count property:
+        assertTrue(facetNavigation.hasProperty("hippo:count"));
+        assertEquals(9L, facetNavigation.getProperty("hippo:count").getLong());
+        assertTrue(facetNavigation.hasNode("hippo:resultset"));
+        assertTrue(facetNavigation.getNode("hippo:resultset").hasProperty("hippo:count"));
+        assertEquals(9L , facetNavigation.getNode("hippo:resultset").getProperty("hippo:count").getLong());
+        assertEquals(9L , facetNavigation.getNode("hippo:resultset").getNodes().getSize());
         assertNotNull(facetNavigation.getNode("year"));
         assertNotNull(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)));
 
@@ -116,7 +124,14 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         xpath = "xpath(//*[jcr:contains(contents/@content,'jumps')])";
         
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        
         // WE HAVE 3 cars that contains jumps.
+        assertTrue(facetNavigation.hasProperty("hippo:count"));
+        assertEquals(3L, facetNavigation.getProperty("hippo:count").getLong());
+        assertTrue(facetNavigation.hasNode("hippo:resultset"));
+        assertTrue(facetNavigation.getNode("hippo:resultset").hasProperty("hippo:count"));
+        assertEquals(3L , facetNavigation.getNode("hippo:resultset").getProperty("hippo:count").getLong());
+        assertEquals(3L , facetNavigation.getNode("hippo:resultset").getNodes().getSize());
         assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong());
         
@@ -309,7 +324,6 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         
         // direct access with search, so no filter:
         
-        
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{green}]");
         // We have three green cars
         Long count = facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
@@ -322,10 +336,17 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         // access through facetselect with search
         Node facetFreeSearchNavigationNode = facetselect.getNode("hippo:navigation[{green}]");
        
-        count = facetFreeSearchNavigationNode.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-        
         // We have only one green peugeot
-        assertEquals(1L, (long)count);
+        // assert there is a correct count property:
+        assertTrue(facetFreeSearchNavigationNode.hasProperty("hippo:count"));
+        assertEquals(1L, facetFreeSearchNavigationNode.getProperty("hippo:count").getLong());
+        assertTrue(facetFreeSearchNavigationNode.hasNode("hippo:resultset"));
+        assertTrue(facetFreeSearchNavigationNode.getNode("hippo:resultset").hasProperty("hippo:count"));
+        assertEquals(1L , facetFreeSearchNavigationNode.getNode("hippo:resultset").getProperty("hippo:count").getLong());
+        assertEquals(1L , facetFreeSearchNavigationNode.getNode("hippo:resultset").getNodes().getSize());
+       
+        // We have only one green peugeot
+        assertEquals(1L, facetFreeSearchNavigationNode.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         
     }
 
@@ -396,8 +417,13 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         // access through facetselect with search. We have only ONE green peugeot
         Node facetFreeSearchNavigationNode = facetselect.getNode("facetnavigation/hippo:navigation[{green}]");
        
-        count = facetFreeSearchNavigationNode.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-        assertEquals("There should be 1 green peugeot",1L, (long)count);
+        assertTrue(facetFreeSearchNavigationNode.hasProperty("hippo:count"));
+        assertEquals(1L, facetFreeSearchNavigationNode.getProperty("hippo:count").getLong());
+        assertTrue(facetFreeSearchNavigationNode.hasNode("hippo:resultset"));
+        assertTrue(facetFreeSearchNavigationNode.getNode("hippo:resultset").hasProperty("hippo:count"));
+        assertEquals(1L , facetFreeSearchNavigationNode.getNode("hippo:resultset").getProperty("hippo:count").getLong());
+        assertEquals(1L , facetFreeSearchNavigationNode.getNode("hippo:resultset").getNodes().getSize());
+        assertEquals("There should be 1 green peugeot",1L, facetFreeSearchNavigationNode.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
       
     }
 
