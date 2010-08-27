@@ -69,29 +69,26 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         // the list of properties to order the resultset on
         List<OrderBy> orderByList;
         
-        long count;
         // default limit = 1000
         int limit = 1000;
         
         FacetResultSetNodeId(NodeId parent, StateProviderContext context, Name name) {
             super(FacetResultSetProvider.this, parent, context, name);
         }
-        public FacetResultSetNodeId(NodeId parent, StateProviderContext context, Name name, String queryname, String docbase, String[] search, long count) {
+        public FacetResultSetNodeId(NodeId parent, StateProviderContext context, Name name, String queryname, String docbase, String[] search) {
             super(FacetResultSetProvider.this, parent, context, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.search = search;
-            this.count = count;
         }
         
         public FacetResultSetNodeId(NodeId parent, StateProviderContext context, Name name, String queryname, String docbase,
-                List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, int count, String facetedFiltersString) {
+                List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, String facetedFiltersString) {
             super(FacetResultSetProvider.this, parent, context, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.preparedSearch = currentSearch;
             this.currentRanges = currentRanges;
-            this.count = count;
             this.facetedFiltersString = facetedFiltersString;
         }
 
@@ -141,8 +138,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String facetedFiltersString = nodeId.facetedFiltersString;
         String[] search = nodeId.search;
         List<FacetRange> currentRanges = nodeId.currentRanges;
-        long count = nodeId.count;
-        
+       
         Map<Name,String> inheritedFilter = null;
         boolean singledView = false;
         LinkedHashMap<Name,String> view = null;
@@ -217,7 +213,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         if(log.isDebugEnabled()) {
             FacetedNavigationModulesTimer.log.debug("Creating facetedResultSet took '{}' ms for '{}' number of results.", (System.currentTimeMillis() - t1),  facetedResult.length());
         }
-        count = facetedResult.length();
+        long count = facetedResult.length();
 
         PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
         propState.setType(PropertyType.NAME);
@@ -247,14 +243,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             if(parentNodeState == null || !parentNodeState.hasChildNodeEntry(upstream))
                 continue;
             Name name = parentNodeState.getChildNodeEntry(upstream).getName();
-            /*
-             *  TODO : inherit all the 
-             *  this.view = view;
-             *  this.order = order;
-             *  this.singledView = singledView;
-             *  
-             *  from parent NodeId, which is NOT a ViewNodeId, nor a MirrorNodeId
-             */
+        
             state.addChildNodeEntry(name, subNodesProvider . new ViewNodeId(state.getNodeId(), upstream, context, name, view, order , singledView));
         }
 

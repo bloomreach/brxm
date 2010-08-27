@@ -53,13 +53,11 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     private final Logger log = LoggerFactory.getLogger(FacetsAvailableNavigationProvider.class);
 
     protected FacetSubNavigationProvider facetsSubNavigationProvider = null;
-    protected FacetResultSetProvider subNodesProvider = null;
-
+ 
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
         facetsSubNavigationProvider = (FacetSubNavigationProvider) lookup(FacetSubNavigationProvider.class.getName());
-        subNodesProvider = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());
         virtualNodeName = resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION);
         register(null, virtualNodeName);
     }
@@ -279,14 +277,13 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             // we add to the search now the current facet with no value: this will make sure that 
             // the result set nodes at least contain the facet
 
-            Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
             List<KeyValue<String, String>> resultSetSearch = new ArrayList<KeyValue<String, String>>(currentSearch);
             // we add here the 'facet' without value, to make sure we only get results having at least the current facet as property
             resultSetSearch.add(new FacetKeyValue(parsedFacet.getNamespacedProperty(), null));
 
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
-                    docbase, resultSetSearch, currentRanges, count, facetedFiltersString);
+                    docbase, resultSetSearch, currentRanges, facetedFiltersString);
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             state.addChildNodeEntry(resultSetChildName, childNodeId);

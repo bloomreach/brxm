@@ -16,7 +16,10 @@
 package org.hippoecm.repository.jackrabbit.facetnavigation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
@@ -30,10 +33,14 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.hippoecm.repository.FacetFilters;
+import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
+import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.hippoecm.repository.jackrabbit.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,6 +204,65 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             log.warn("Incorrect faceted navigation configuration: '{}'. Return state", e.getMessage());
             return state;
         }
+        
+        // Add count
+        StringBuilder initialQueryString = new StringBuilder();
+        if(docbase != null) {
+            initialQueryString.append(docbase);
+        }
+        if(facetedFiltersString != null) {
+            initialQueryString.append(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER).append(facetedFiltersString);
+        }
+        FacetedNavigationEngine.Query initialQuery;
+        try {
+            initialQuery = (docbase != null ? facetedEngine.parse(initialQueryString.toString()) : null);
+        } catch (IllegalArgumentException e) {
+            log.warn("Return state. Error parsing initial query:  '{}'", e.getMessage());
+            return state;
+        }
+
+        HitsRequested hitsRequested = new HitsRequested();
+        hitsRequested.setResultRequested(false);
+        hitsRequested.setFixedDrillPath(false);
+
+        FacetedNavigationEngine.Result facetedResult = null;
+        try {
+            Map<String, String> inheritedFilterMap = null;
+            
+            // get from public void inheritParentFilters(FacetNavigationNodeId childNodeId, NodeState state) {
+            ParentFilters parentFilters = new ParentFilters(state);
+            
+            if(parentFilters.view != null) {
+                inheritedFilterMap = new HashMap<String,String>();
+                for(Entry<Name, String> entry : parentFilters.view.entrySet()) {
+                    inheritedFilterMap.put(entry.getKey().toString(), entry.getValue());
+                }
+            }
+            
+            facetedResult = facetedEngine.view(null, initialQuery, facetedContext, new ArrayList<KeyValue<String, String>>(), null, (context != null ? context.getParameterQuery(facetedEngine) : null),
+                null, inheritedFilterMap , hitsRequested);
+            
+         
+        } catch (IllegalArgumentException e) {
+            log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
+            return state;
+        }
+        
+        int count = facetedResult.length();
+        
+        PropertyState propState = createNew(countName, state.getNodeId());
+        propState.setType(PropertyType.LONG);
+        propState.setValues(new InternalValue[] { InternalValue.create(count) });
+        propState.setMultiValued(false);
+        state.addPropertyName(countName);
+        
+        // Add resultset
+        FacetResultSetProvider.FacetResultSetNodeId childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
+                docbase, new ArrayList<KeyValue<String, String>>(), null, facetedFiltersString);
+        if(limit > -1) {
+            childNodeId.setLimit(limit);
+        }
+        state.addChildNodeEntry(resultSetChildName, childNodeId);
         
         return state;
     }
