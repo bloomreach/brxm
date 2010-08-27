@@ -214,10 +214,12 @@ public class HippoPathParser {
                             case '[':   matchString = "]";  break;
                         }
                         if(matchString != null) {
-                            if (jcrPath.substring(pos+1, pos+1+Query.XPATH.length()+1).equalsIgnoreCase(Query.XPATH+"(")) {
+                            if (jcrPath.length() >= Query.XPATH.length() + 2 + pos + 1 &&
+                                jcrPath.substring(pos+1, pos+1+Query.XPATH.length()+1).equalsIgnoreCase(Query.XPATH+"(")) {
                                 matchString = ")" + matchString;
                                 lastPos = ++pos;
-                            } else if (jcrPath.substring(pos+1, pos+1+Query.SQL.length()+1).equalsIgnoreCase(Query.SQL+"(")) {
+                            } else if (jcrPath.length() >= Query.SQL.length() + 2 + pos + 1 &&
+                                       jcrPath.substring(pos+1, pos+1+Query.SQL.length()+1).equalsIgnoreCase(Query.SQL+"(")) {
                                 matchString = ")" + matchString;
                                 lastPos = ++pos;
                             } else {

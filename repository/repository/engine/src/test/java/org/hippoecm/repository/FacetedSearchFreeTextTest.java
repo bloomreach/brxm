@@ -27,9 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.hippoecm.repository.util.Utilities;
-
-public class FacetedSearchFreeText extends TestCase {
+public class FacetedSearchFreeTextTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -60,14 +58,10 @@ public class FacetedSearchFreeText extends TestCase {
         "hippo:facets",    "y",
         "hippo:facets",    "x",
         "hippo:docbase",   "/test/docs",
-        "hippo:queryname", "test",
-        "/test/nav3",      "hippofacnav:facetnavigation",
-        "hippofacnav:facets",    "x",
-        "hippo:docbase",   "/test/docs"
+        "hippo:queryname", "test"
     };
 
-    //private static String[] searchPatterns = new String[] {"[aap]", "{aap}", "'aap'" };
-    private static String[] searchPatterns = new String[] {"[noot]", "{noot}", "'noot'" };
+    private static String[] searchPatterns = new String[] {"[aap]", "{aap}", "'aap'" };
 
     @Override
     @Before
@@ -91,16 +85,6 @@ public class FacetedSearchFreeText extends TestCase {
     }
 
     @Test
-    public void testNavigation() throws RepositoryException {
-        Node testRoot = session.getRootNode();
-        for (String search : searchPatterns) {
-            Node node = testRoot.getNode("test/nav3[" + search + "]");
-            Utilities.dump(System.err, node);
-            session.refresh(false);
-        }
-    }
-
-    @Ignore
     public void testFirstLevel() throws RepositoryException {
         Node testRoot = session.getRootNode();
         for (String search : searchPatterns) {
@@ -113,7 +97,7 @@ public class FacetedSearchFreeText extends TestCase {
         }
     }
 
-    @Ignore
+    @Test
     public void testSecondLevel() throws RepositoryException {
         Node testRoot = session.getRootNode();
         for (String search : searchPatterns) {
@@ -128,7 +112,7 @@ public class FacetedSearchFreeText extends TestCase {
         }
     }
 
-    @Ignore
+    @Test
     public void testParentOfSearch() throws RepositoryException {
         Node testRoot = session.getRootNode();
         {
@@ -157,7 +141,7 @@ public class FacetedSearchFreeText extends TestCase {
         }
     }
 
-    @Ignore
+    @Test
     public void testMultipleSearches() throws RepositoryException {
         Node testRoot = session.getRootNode();
         {
@@ -213,7 +197,7 @@ public class FacetedSearchFreeText extends TestCase {
         assertTrue(search3.hasNode("b"));
     }
 
-    @Ignore
+    @Test
     public void testThresholdExceeded() throws RepositoryException {
         if (external != null) {
             return; // not a valid test for remote repositories
