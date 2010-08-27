@@ -26,6 +26,14 @@ public class HippoFacetResult extends HippoFolder implements HippoResultSetBean 
     public Long getCount() {
         return this.getProperty(HippoNodeType.HIPPO_COUNT);
     }
+
+    @Override
+    public int getDocumentSize() {
+        /*
+         * do not get from HippoFolder as that one fetches all docs first which is very inefficient. Use getCount
+         */
+        return getCount().intValue();
+    }
     
     
 }
