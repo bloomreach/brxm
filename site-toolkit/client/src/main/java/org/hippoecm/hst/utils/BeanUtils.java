@@ -306,13 +306,16 @@ public class BeanUtils {
      * pass in a {@link HstQuery}
      * @see {@link #getFacetNavigationBean(HstRequest, String, ObjectConverter)}
      * @param hstRequest the hstRequest
-     * @param query a {@link HstQuery} object
+     * @param query a {@link HstQuery} object. If <code>null</code> the call returns as if there is no query
      * @param objectConverter the objectConverter to be used
      * @return the <code>HippoFacetNavigationBean</code> accounted for this <code>query</code> and <code>null</code> if we could not find the HippoFacetNavigationBean when the <code>query</code> is applied
      * @throws HstComponentException
      */
     public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, HstQuery query, ObjectConverter objectConverter) throws HstComponentException {
         String queryAsString = null;
+        if(query == null) {
+            return getFacetNavigationBean(hstRequest, queryAsString, objectConverter);
+        }
         try {
             queryAsString = "xpath("+query.getQueryAsString(true)+")";
         } catch (QueryException e) {
