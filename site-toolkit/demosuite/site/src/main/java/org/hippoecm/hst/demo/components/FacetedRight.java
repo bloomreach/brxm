@@ -43,7 +43,7 @@ public class FacetedRight extends BaseHstComponent {
             // account for the free text string
         }
         
-        facNavBean = BeanUtils.getFacetedNavigationBean(request, query, getObjectConverter());
+        facNavBean = BeanUtils.getFacetNavigationBean(request, query, getObjectConverter());
 
         request.setAttribute("facetnav", facNavBean);
         

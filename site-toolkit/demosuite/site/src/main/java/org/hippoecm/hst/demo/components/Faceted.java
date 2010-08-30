@@ -22,7 +22,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
@@ -50,7 +49,7 @@ public class Faceted extends BaseHstComponent {
             request.setAttribute("queryString", "?query=" + query);
             // account for the free text string
         }
-        HippoFacetNavigationBean facetNav = BeanUtils.getFacetedNavigationBean(request, query, getObjectConverter());
+        HippoFacetNavigationBean facetNav = BeanUtils.getFacetNavigationBean(request, query, getObjectConverter());
         
         List<ProductBean> resultset = new ArrayList<ProductBean>();
         request.setAttribute("resultset", resultset);

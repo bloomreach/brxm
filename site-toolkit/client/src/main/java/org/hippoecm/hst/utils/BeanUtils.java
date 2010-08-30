@@ -175,7 +175,7 @@ public class BeanUtils {
      * @return the <code>HippoFacetNavigationBean</code> accounted for this <code>query</code> and <code>null</code> if we could not find the HippoFacetNavigationBean when the <code>query</code> is applied
      * @throws HstComponentException
      */
-    public static HippoFacetNavigationBean getFacetedNavigationBean(HstRequest hstRequest, String relPath, String query, ObjectConverter objectConverter) throws HstComponentException {
+    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, String relPath, String query, ObjectConverter objectConverter) throws HstComponentException {
         ResolvedSiteMapItem resolvedSiteMapItem = hstRequest.getRequestContext().getResolvedSiteMapItem();
         String base = PathUtils.normalizePath(resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         
@@ -284,7 +284,7 @@ public class BeanUtils {
      * </p>
      * <p>
      * <b>If</b> you need a {@link HippoFacetNavigationBean} that is not on for the  {@link ResolvedSiteMapItem}, but at some fixed location,
-     * you can use {@link #getFacetedNavigationBean(HstRequest, String, String, ObjectConverter)}
+     * you can use {@link #getFacetNavigationBean(HstRequest, String, String, ObjectConverter)}
      * </p>
      * 
      * If some exception happens, like we cannot get a disposable pooled session, we throw a {@link HstComponentException}
@@ -295,36 +295,36 @@ public class BeanUtils {
      * @return the <code>HippoFacetNavigationBean</code> accounted for this <code>query</code> and <code>null</code> if we could not find the HippoFacetNavigationBean when the <code>query</code> is applied
      * @throws HstComponentException
      */
-    public static HippoFacetNavigationBean getFacetedNavigationBean(HstRequest hstRequest, String query, ObjectConverter objectConverter) throws HstComponentException {
+    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, String query, ObjectConverter objectConverter) throws HstComponentException {
         ResolvedSiteMapItem resolvedSiteMapItem = hstRequest.getRequestContext().getResolvedSiteMapItem();
         String relPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
-        return getFacetedNavigationBean(hstRequest, relPath, query, objectConverter);
+        return getFacetNavigationBean(hstRequest, relPath, query, objectConverter);
     }
 
     /**
-     * Same as  {@link #getFacetedNavigationBean(HstRequest, String, ObjectConverter)} only now instead of a {@link String} query we 
+     * Same as  {@link #getFacetNavigationBean(HstRequest, String, ObjectConverter)} only now instead of a {@link String} query we 
      * pass in a {@link HstQuery}
-     * @see {@link #getFacetedNavigationBean(HstRequest, String, ObjectConverter)}
+     * @see {@link #getFacetNavigationBean(HstRequest, String, ObjectConverter)}
      * @param hstRequest the hstRequest
      * @param query a {@link HstQuery} object
      * @param objectConverter the objectConverter to be used
      * @return the <code>HippoFacetNavigationBean</code> accounted for this <code>query</code> and <code>null</code> if we could not find the HippoFacetNavigationBean when the <code>query</code> is applied
      * @throws HstComponentException
      */
-    public static HippoFacetNavigationBean getFacetedNavigationBean(HstRequest hstRequest, HstQuery query, ObjectConverter objectConverter) throws HstComponentException {
+    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, HstQuery query, ObjectConverter objectConverter) throws HstComponentException {
         String queryAsString = null;
         try {
             queryAsString = "xpath("+query.getQueryAsString(true)+")";
         } catch (QueryException e) {
             throw new HstComponentException("Unable to create a string representation of query", e);
         }
-        return getFacetedNavigationBean(hstRequest, queryAsString, objectConverter);
+        return getFacetNavigationBean(hstRequest, queryAsString, objectConverter);
     }
     
     /**
-     * Same as  {@link #getFacetedNavigationBean(HstRequest, HstQuery, ObjectConverter)} only now instead of having the faceted navigation
+     * Same as  {@link #getFacetNavigationBean(HstRequest, HstQuery, ObjectConverter)} only now instead of having the faceted navigation
      * node from the {@link ResolvedSiteMapItem} we add a <code>relPath</code> where it should be found
-     * @see {@link #getFacetedNavigationBean(HstRequest, String, ObjectConverter)}
+     * @see {@link #getFacetNavigationBean(HstRequest, String, ObjectConverter)}
      * @param hstRequest the hstRequest
      * @param relPath the relative path to the faceted navigation node, which must not start with a / and is relative to the site content base path  
      * @param query a {@link HstQuery} object
@@ -332,14 +332,14 @@ public class BeanUtils {
      * @return the <code>HippoFacetNavigationBean</code> accounted for this <code>query</code> and <code>relPath</code> and <code>null</code> if we could not find the HippoFacetNavigationBean when the <code>query</code> is applied
      * @throws HstComponentException
      */
-    public static HippoFacetNavigationBean getFacetedNavigationBean(HstRequest hstRequest, String relPath, HstQuery query, ObjectConverter objectConverter) throws HstComponentException {
+    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, String relPath, HstQuery query, ObjectConverter objectConverter) throws HstComponentException {
         String queryAsString = null;
         try {
             queryAsString = "xpath("+query.getQueryAsString(true)+")";
         } catch (QueryException e) {
             throw new HstComponentException("Unable to create a string representation of query", e);
         }
-        return getFacetedNavigationBean(hstRequest, relPath, queryAsString, objectConverter);
+        return getFacetNavigationBean(hstRequest, relPath, queryAsString, objectConverter);
     }
         
     
