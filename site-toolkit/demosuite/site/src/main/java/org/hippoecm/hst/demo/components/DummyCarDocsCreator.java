@@ -200,7 +200,7 @@ public class DummyCarDocsCreator {
         addCars(availableCars, "Triumph", 5, 3000, 15000, 1, 200000, new String[] {"English", "bicycles", "BMW", "sportswagon"});
         addCars(availableCars, "Volkswagen", 9, 3000, 75000, 1, 200000, new String[] {"German", "large company", "cheap", "Volkswagon group"});
         addCars(availableCars, "Volvo", 8, 3000, 75000, 1, 200000, new String[] {"Swedish", "Ford Motor Company", "luxury", "high quality"});
-        addCars(availableCars, "Overige Auto's", 1, 3000, 75000, 1, 200000, new String[] {"Imaginary", "random", "cheap"});
+        addCars(availableCars, "Overige Autos", 1, 3000, 75000, 1, 200000, new String[] {"Imaginary", "random", "cheap"});
 
     }
     
