@@ -26,6 +26,9 @@ import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * JNDI Resource Factory for {@link BasicPoolingRepository}
  * 
@@ -81,6 +84,7 @@ import javax.naming.spi.ObjectFactory;
  * </pre></code>
  */
 public class BasicPoolingRepositoryFactory implements ObjectFactory {
+    private Logger log = LoggerFactory.getLogger(BasicPoolingRepositoryFactory.class);
     
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
         return getObjectInstance(obj);
@@ -147,6 +151,10 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setMaxRefreshIntervalOnPassivate(Long.parseLong(value));
             } else if (type.equals("whenExhaustedAction")) {
                 poolingRepository.setWhenExhaustedAction(value);
+            } else if (type.equals("defaultCredentialsUserIDSeparator")) {
+                poolingRepository.setDefaultCredentialsUserIDSeparator(value);
+            } else {
+                log.warn("Unexpected property '{}' with value '{}' found in configMap. It will be ignored", type, value);
             }
         }
         

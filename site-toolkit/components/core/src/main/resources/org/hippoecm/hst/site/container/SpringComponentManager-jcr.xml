@@ -213,6 +213,7 @@
         <entry key="numTestsPerEvictionRun" value="${disposable.repository.numTestsPerEvictionRun}"/>
         <!-- when a session is idle for just three minutes, we already dispose it to avoid to much memory consumption -->
         <entry key="minEvictableIdleTimeMillis" value="${disposable.repository.minEvictableIdleTimeMillis}"/>
+        <entry key="refreshOnPassivate" value="${disposable.repository.refreshOnPassivate}"/>
         <!-- the maxRefreshIntervalOnPassivate must not be to low, as we do not want an entire faceted tree view to be refreshed -->
         <entry key="maxRefreshIntervalOnPassivate" value="${disposable.repository.maxRefreshIntervalOnPassivate}"/>
       </map>
