@@ -96,7 +96,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             int count = 0;
 
-            while (iterator.hasNext() && count <= DEFAULT_PAGE_SIZE) {
+            while (iterator.hasNext() && count <  DEFAULT_PAGE_SIZE) {
                 HippoBean bean = iterator.nextHippoBean();
                 // note: bean can be null
                 if (bean != null && bean instanceof BaseBean) {
