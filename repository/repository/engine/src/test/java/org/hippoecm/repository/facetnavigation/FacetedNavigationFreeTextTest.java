@@ -24,7 +24,9 @@ import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
@@ -446,9 +448,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:color" });
         
         session.save();
-        
-        int currentYear = start.get(Calendar.YEAR);
-
+   
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
   
         assertNotNull(facetNavigation.getNode("year"));
@@ -458,16 +458,11 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
                 .getLong() == 9L);
         
         // we sorted on hippo:color in the faceted navigation configuration, let's confirm this:
-        {
-            NodeIterator it = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
-            String prevColor = "aaaa";
-            while(it.hasNext()) {
-                String nextColor = it.nextNode().getProperty("hippo:color").getString();
-                // assert that we have ascending order in color
-                assertTrue(nextColor.compareTo(prevColor) >= 0);
-                prevColor = nextColor;
-            }
-        }
+        
+        assertTrue(isCorrectOrder(facetNavigation.getNode("hippo:resultset").getNodes(), "hippo:color", true));
+             
+        // check resultset below year facet
+        assertTrue(isCorrectOrder(facetNavigation.getNode("year").getNode("hippo:resultset").getNodes(), "hippo:color", true));
         
         // now we add new ordering (on hippo:brand) through xpath injected
         session.refresh(false);
@@ -485,16 +480,8 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
                 .getLong() == 9L);
       
         // we sorted on hippo:brand in the faceted navigation configuration, let's confirm this:
-        {
-            NodeIterator it = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
-            String prevBrand = "aaaa";
-            while(it.hasNext()) {
-                String nextBrand = it.nextNode().getProperty("hippo:brand").getString();
-                // assert that we have ascending order in brand
-                assertTrue(nextBrand.compareTo(prevBrand) >= 0);
-                prevBrand = nextBrand;
-            }
-        }
+        assertTrue(isCorrectOrder(facetNavigation.getNode("hippo:resultset").getNodes(), "hippo:brand", true));
+        assertTrue(isCorrectOrder(facetNavigation.getNode("year").getNode("hippo:resultset").getNodes(), "hippo:brand", true));
         
        // now we add new ordering (on hippo:brand) but now REVERSE the ordering
         session.refresh(false);
@@ -511,15 +498,28 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
                 .getLong() == 9L);
       
         // we sorted on hippo:brand in the faceted navigation configuration, let's confirm this:
+        assertTrue(isCorrectOrder(facetNavigation.getNode("hippo:resultset").getNodes(), "hippo:brand", false));
+        assertTrue(isCorrectOrder(facetNavigation.getNode("year").getNode("hippo:resultset").getNodes(), "hippo:brand", false));
+        
+    }
+    
+    private boolean isCorrectOrder(NodeIterator nodes, String property, boolean ascending) throws RepositoryException{
         {
-            NodeIterator it = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
-            String prevBrand = "zzzzz";
-            while(it.hasNext()) {
-                String nextBrand = it.nextNode().getProperty("hippo:brand").getString();
-                // assert that we have DESCENDING order in brand
-                assertTrue(nextBrand.compareTo(prevBrand) <= 0);
-                prevBrand = nextBrand;
+            String prevValue = null;
+            while(nodes.hasNext()) {
+                String nextValue = nodes.nextNode().getProperty(property).getString();
+                if(prevValue != null && nextValue.compareTo(prevValue) < 0 && ascending) {
+                    // not an ascending order
+                    return false;
+                }
+                if(prevValue != null &&  nextValue.compareTo(prevValue) > 0 && !ascending) {
+                    // not an descending order
+                    return false;
+                }
+                prevValue = nextValue;
             }
         }
+        return true;
     }
+    
 }
