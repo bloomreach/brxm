@@ -20,7 +20,7 @@ import java.util.Calendar;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoImage;
 
-@Node(jcrType="demosite:newspage")
+@Node(jcrType="demosite:newsdocument")
 public class NewsBean extends TextBean{
 
     private HippoImage imageBean;

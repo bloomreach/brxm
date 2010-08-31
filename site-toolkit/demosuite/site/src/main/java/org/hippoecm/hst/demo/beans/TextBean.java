@@ -18,7 +18,7 @@ package org.hippoecm.hst.demo.beans;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
 
-@Node(jcrType="demosite:textpage")
+@Node(jcrType="demosite:textdocument")
 public class TextBean extends BaseBean{
 
 	// if you have in document resources

@@ -21,7 +21,7 @@ import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
-@Node(jcrType="demosite:comment")
+@Node(jcrType="demosite:commentdocument")
 public class CommentBean extends TextBean {
 
     private Calendar date;

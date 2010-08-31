@@ -11,7 +11,7 @@
             <sv:value>hst:pages/home</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>common/homepage</sv:value>
+            <sv:value>common/home-page</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="about">
@@ -22,7 +22,7 @@
             <sv:value>hst:pages/detailpage</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>common/About Us</sv:value>
+            <sv:value>common/about-us</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="news">

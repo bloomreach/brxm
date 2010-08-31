@@ -67,11 +67,13 @@ public class DummyCarDocsCreator {
         for(int i = 0 ;i < number; i++) {
             cal = Calendar.getInstance();
             
-            Node handle = crFolder.addNode("car-"+cal.getTimeInMillis(), "hippo:handle"); 
+            int car = r.nextInt(availableCars.size());
+            Car randomCar = availableCars.get(car);
+            
+            Node handle = crFolder.addNode(randomCar.brand + "-" + cal.getTimeInMillis(), "hippo:handle"); 
             handle.addMixin("hippo:hardhandle");
-            Node doc = handle.addNode("car-"+cal.getTimeInMillis(), "demosite:product");
+            Node doc = handle.addNode(randomCar.brand + "-"+cal.getTimeInMillis(), "demosite:productdocument");
             doc.addMixin("hippo:harddocument");
-         
             
             doc.setProperty("demosite:created", Calendar.getInstance());
             
@@ -86,16 +88,13 @@ public class DummyCarDocsCreator {
             doc.setProperty("demosite:constructiondate", cal);
             
             doc.setProperty("demosite:product", "car");
-            
-            int car = r.nextInt(availableCars.size());
-            Car randomCar = availableCars.get(car);
             doc.setProperty("demosite:brand", randomCar.brand);
             
             int color = r.nextInt(COLORS.length);
             doc.setProperty("demosite:color", COLORS[color]);
             
             double price = r.nextDouble()*(randomCar.upperPrice - randomCar.lowerPrice) + randomCar.lowerPrice;
-            doc.setProperty("demosite:price", price);
+            doc.setProperty("demosite:price", Math.round(price));
             
             long mileage = r.nextInt((int)(randomCar.upperMileage-randomCar.lowerMileage)) + randomCar.lowerMileage;
             doc.setProperty("demosite:mileage", mileage);

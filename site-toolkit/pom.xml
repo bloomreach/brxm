@@ -87,7 +87,7 @@
 
     <jackrabbit.version>1.5.0</jackrabbit.version>
 
-    <hippoecm.version>2.12.16</hippoecm.version>
+    <hippoecm.version>2.16.00</hippoecm.version>
     <hst-configuration-editor.version>1.03.02</hst-configuration-editor.version>
     
     <jdo.version>2.0</jdo.version>
@@ -236,6 +236,16 @@
     <repository>
       <id>codehaus</id>
       <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+    <repository>
+      <id>hippogallerypicker</id>
+      <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

@@ -17,7 +17,7 @@ package org.hippoecm.hst.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;
 
-@Node(jcrType="demosite:product")
+@Node(jcrType="demosite:productdocument")
 public class ProductBean extends TextBean{
 
     public String getBrand(){
@@ -31,5 +31,11 @@ public class ProductBean extends TextBean{
     }
     public String getType(){
         return this.getProperty("demosite:type");
+    }
+    public Double getPrice(){
+        return this.getProperty("demosite:price");
+    }
+    public String[] getTags(){
+        return this.getProperty("hippostd:tags");
     }
 }
