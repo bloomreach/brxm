@@ -94,6 +94,9 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
         return componentConfiguration.getServeResourcePath();
     }
 
-   
-    
+    public String getCanonicalPath() {
+        return componentConfiguration.getCanonicalStoredLocation();
+    }
+
+
 }

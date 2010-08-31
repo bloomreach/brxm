@@ -826,5 +826,42 @@
         <tei-class>org.hippoecm.hst.tag.DefineObjectsTag$TEI</tei-class>
         <body-content>empty</body-content>
     </tag>
-
+    
+    <tag>
+        <name>setWrapperElement</name>
+        <tag-class>org.hippoecm.hst.tag.SetWrapperElementTag</tag-class>
+        <body-content>JSP</body-content>
+        <description> A HstComponent can configure a wrapper elements to wrap the rendered content.
+            When the rendered content should be accessed via DOM, the wrapper element could be used.
+            If the view page uses this tag to wrap the rendered content, then the
+            container will wrap the rendered content by the wrapper element. </description>
+        <attribute>
+            <name>element</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.w3c.dom.Element</type>
+            <description> For more optimized way to create and use DOM element, this tag supports
+                setting a DOM element by element attribute. If this attribute is set, then
+                this tag will not try to parse the body content to create a DOM
+                element. Instead, it will use the passed DOM element by this attribute.
+            </description>
+        </attribute>
+        <attribute>
+            <name>elementByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean name of Element object which can be retrieved from pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
+            </description>
+        </attribute>
+        <example><![CDATA[
+          <hst:setWrapperElement>
+            <span class="wrapper"></span>
+          </hst:setWrapperElement>
+          ]]></example>
+    </tag>
+    
 </taglib>

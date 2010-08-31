@@ -32,6 +32,7 @@ import javax.servlet.http.Cookie;
 
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
+import org.hippoecm.hst.util.WrapperElementUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -65,6 +66,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected Map<String, List<String>> headers;
     protected List<Cookie> cookies;
     protected List<KeyValue<String, Element>> headElements;
+    protected Element wrapperElement;
     protected boolean committed;
     protected boolean hasStatus;
     protected boolean hasError;
@@ -581,6 +583,14 @@ public abstract class AbstractHstResponseState implements HstResponseState {
         
         return elements;
     }
+    
+    public void setWrapperElement(Element element) {
+        this.wrapperElement = element;
+    }
+    
+    public Element getWrapperElement() {
+        return wrapperElement;
+    }
 
     public void clear() {
         printWriter = null;
@@ -688,8 +698,13 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                     if (contentLength > -1 && contentLength < len) {
                         len = contentLength;
                     }
-                    if (len > 0) {
-                        realOutputStream.write(byteOutputBuffer.toByteArray(), 0, len);
+                    if (wrapperElement == null) {
+                        if (len > 0) {
+                            realOutputStream.write(byteOutputBuffer.toByteArray(), 0, len);
+                        }
+                    } else {
+                        WrapperElement wrapperElem = new WrapperElementImpl(wrapperElement);
+                        WrapperElementUtils.writeWrapperElement(realOutputStream, characterEncoding, wrapperElem, byteOutputBuffer.toByteArray(), 0, len);
                     }
                     outputStream.close();
                     outputStream = null;
@@ -697,8 +712,13 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 } else if (printWriter != null) {
                     if (!closed) {
                         printWriter.flush();
-                        if (charOutputBuffer.getCount() > 0) {
-                            getResponseWriter().write(charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
+                        if (wrapperElement == null) {
+                            if (charOutputBuffer.getCount() > 0) {
+                                getResponseWriter().write(charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
+                            }
+                        } else {
+                            WrapperElement wrapperElem = new WrapperElementImpl(wrapperElement);
+                            WrapperElementUtils.writeWrapperElement(getResponseWriter(), wrapperElem, charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
                         }
                         printWriter.close();
 

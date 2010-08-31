@@ -160,4 +160,6 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @param name the name of the child HstComponentConfiguration
      */
     HstComponentConfiguration getChildByName(String name);
+
+    String getCanonicalStoredLocation();
 }
