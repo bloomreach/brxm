@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.AccessControlException;
+import java.util.NoSuchElementException;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -51,12 +52,10 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.tester.WicketTester;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaConfigService;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
@@ -67,6 +66,40 @@ public class HippoTester extends WicketTester {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static class NullNodeIterator implements NodeIterator {
+
+        public Node nextNode() {
+            throw new NoSuchElementException();
+        }
+
+        public long getPosition() {
+            return 0;
+        }
+
+        public long getSize() {
+            return 0;
+        }
+
+        public void skip(long skipNum) {
+            if (skipNum > 0) {
+                throw new NoSuchElementException();
+            }
+        }
+
+        public boolean hasNext() {
+            return false;
+        }
+
+        public Object next() {
+            throw new NoSuchElementException();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+        
+    }
+    
     private static class DummySession implements HippoSession {
 
         public void addLockToken(String lt) {
@@ -75,7 +108,7 @@ public class HippoTester extends WicketTester {
         }
 
         public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
-            throw new RepositoryException();
+            // everything is fine
         }
 
         public void exportDocumentView(String absPath, ContentHandler contentHandler, boolean skipBinary,
@@ -115,7 +148,7 @@ public class HippoTester extends WicketTester {
         }
 
         public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
-            throw new RepositoryException();
+            throw new PathNotFoundException();
         }
 
         public String[] getLockTokens() {
@@ -124,15 +157,15 @@ public class HippoTester extends WicketTester {
         }
 
         public String getNamespacePrefix(String uri) throws NamespaceException, RepositoryException {
-            throw new RepositoryException();
+            throw new NamespaceException();
         }
 
         public String[] getNamespacePrefixes() throws RepositoryException {
-            throw new RepositoryException();
+            return new String[0];
         }
 
         public String getNamespaceURI(String prefix) throws NamespaceException, RepositoryException {
-            throw new RepositoryException();
+            throw new NamespaceException();
         }
 
         public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
@@ -163,7 +196,7 @@ public class HippoTester extends WicketTester {
         }
 
         public boolean hasPendingChanges() throws RepositoryException {
-            throw new RepositoryException();
+            return false;
         }
 
         public javax.jcr.Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
@@ -182,7 +215,7 @@ public class HippoTester extends WicketTester {
         }
 
         public boolean itemExists(String absPath) throws RepositoryException {
-            throw new RepositoryException();
+            return false;
         }
 
         public void logout() {
@@ -204,7 +237,6 @@ public class HippoTester extends WicketTester {
         public void save() throws AccessDeniedException, ItemExistsException, ConstraintViolationException,
                 InvalidItemStateException, VersionException, LockException, NoSuchNodeTypeException,
                 RepositoryException {
-            throw new RepositoryException();
         }
 
         public void setNamespacePrefix(String prefix, String uri) throws NamespaceException, RepositoryException {
@@ -218,7 +250,6 @@ public class HippoTester extends WicketTester {
         public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
                 throws IOException, PathNotFoundException, RepositoryException {
             throw new RepositoryException();
-            
         }
 
         public ClassLoader getSessionClassLoader() throws RepositoryException {
@@ -239,36 +270,36 @@ public class HippoTester extends WicketTester {
 
         public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                 NoSuchNodeTypeException, RepositoryException {
-            throw new RepositoryException();
+            return new NullNodeIterator();
         }
 
         public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException,
                 NoSuchNodeTypeException, RepositoryException {
-            throw new RepositoryException();
+            return new NullNodeIterator();
         }
 
         public NodeIterator pendingChanges() throws RepositoryException {
-            throw new RepositoryException();
+            return new NullNodeIterator();
         }
 
         public Node getNodeByIdentifier(String id) throws ItemNotFoundException, RepositoryException {
-            throw new RepositoryException();
+            throw new ItemNotFoundException();
         }
 
         public Node getNode(String absPath) throws PathNotFoundException, RepositoryException {
-            throw new RepositoryException();
+            throw new PathNotFoundException();
         }
 
         public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
-            throw new RepositoryException();
+            throw new PathNotFoundException();
         }
 
         public boolean nodeExists(String absPath) throws RepositoryException {
-            throw new RepositoryException();
+            return false;
         }
 
         public boolean propertyExists(String absPath) throws RepositoryException {
-            throw new RepositoryException();
+            return false;
         }
 
         public void removeItem(String absPath) throws VersionException, LockException, ConstraintViolationException, AccessDeniedException, RepositoryException {
@@ -276,19 +307,19 @@ public class HippoTester extends WicketTester {
         }
 
         public boolean hasPermission(String absPath, String actions) throws RepositoryException {
-            throw new RepositoryException();
+            return true;
         }
 
         public boolean hasCapability(String methodName, Object target, Object[] arguments) throws RepositoryException {
-            throw new RepositoryException();
+            return false;
         }
 
         public AccessControlManager getAccessControlManager() throws UnsupportedRepositoryOperationException, RepositoryException {
-            throw new RepositoryException();
+            throw new UnsupportedRepositoryOperationException();
         }
 
         public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
-            throw new RepositoryException();
+            throw new UnsupportedRepositoryOperationException();
         }
         
     }
