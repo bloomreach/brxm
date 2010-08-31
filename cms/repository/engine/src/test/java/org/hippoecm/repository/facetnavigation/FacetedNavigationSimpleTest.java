@@ -324,18 +324,40 @@ public class FacetedNavigationSimpleTest extends TestCase {
         session.save();
         navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
 
+        
         // the resultset shoult be sorted on {hippo:brand (descending) and then on hippo:color (descending), see createFacetNodeSingleValues}
-        NodeIterator it = navigation.getNode("hippo:brand/hippo:resultset").getNodes();
-        String prevBrandValue = null;
-        while (it.hasNext()) {
-            Node n = it.nextNode();
-            String brand = n.getProperty("hippo:brand").getString();
-            if (prevBrandValue != null) {
-                int compare = prevBrandValue.compareTo(brand);
-                // if sorted correctly, compare must be >= 0
-                assertTrue("Sorting of resultset failed", compare >= 0);
+        
+        // check directly for resultset below facet navigation
+        {
+            NodeIterator it = navigation.getNode("hippo:resultset").getNodes();
+            String prevBrandValue = null;
+            while (it.hasNext()) {
+                Node n = it.nextNode();
+                if(n.hasProperty("hippo:brand")) {
+                    String brand = n.getProperty("hippo:brand").getString();
+                    if (prevBrandValue != null) {
+                        int compare = prevBrandValue.compareTo(brand);
+                        // if sorted correctly, compare must be >= 0
+                        assertTrue("Sorting of resultset failed", compare >= 0);
+                    }
+                    prevBrandValue = brand;
+                }
             }
-            prevBrandValue = brand;
+        }
+        // check for first facet
+        {
+            NodeIterator it = navigation.getNode("hippo:brand/hippo:resultset").getNodes();
+            String prevBrandValue = null;
+            while (it.hasNext()) {
+                Node n = it.nextNode();
+                String brand = n.getProperty("hippo:brand").getString();
+                if (prevBrandValue != null) {
+                    int compare = prevBrandValue.compareTo(brand);
+                    // if sorted correctly, compare must be >= 0
+                    assertTrue("Sorting of resultset failed", compare >= 0);
+                }
+                prevBrandValue = brand;
+            }
         }
     }
 

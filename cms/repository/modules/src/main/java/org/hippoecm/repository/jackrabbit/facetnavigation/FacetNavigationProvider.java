@@ -262,6 +262,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         if(limit > -1) {
             childNodeId.setLimit(limit);
         }
+        childNodeId.setOrderByList(orderByList);
         state.addChildNodeEntry(resultSetChildName, childNodeId);
         
         return state;
