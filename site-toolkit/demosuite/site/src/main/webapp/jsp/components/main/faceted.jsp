@@ -52,23 +52,59 @@
             <p>No hits found</p>
           </c:when>
           <c:otherwise>
-            <br />
-            <c:forEach var="result" items="${resultset}">
-              <ul class="list-overview">
-                <hst:link var="link" hippobean="${result}" contextRelative="true" />
-                <li class="title">
-                   <c:choose>
-                      <c:when test="${empty result.title}">
-                          <a href="${link}">${result.name}</a>
-                      </c:when>
-                      <c:otherwise>
-                          <a href="${link}">${result.title}</a>
-                      </c:otherwise>
-                   </c:choose>
-                   &nbsp;&nbsp;price : ${result.price}
-                </li>
-              </ul>
-            </c:forEach>
+            <br/>
+            <c:choose>
+	            <c:when test="${order eq 'brand'}">
+                    <hst:renderURL var="orderbybrand">
+                       <hst:param name="order" value="-brand"/>
+                    </hst:renderURL>
+                </c:when>
+                <c:otherwise>
+                    <hst:renderURL var="orderbybrand">
+                       <hst:param name="order" value="brand"/>
+                    </hst:renderURL>
+                </c:otherwise>
+            </c:choose>
+            <c:choose>
+                <c:when test="${order eq 'price'}">
+                    <hst:renderURL var="orderbyprice">
+                       <hst:param name="order" value="-price"/>
+                    </hst:renderURL>
+                </c:when>
+                <c:otherwise>
+                    <hst:renderURL var="orderbyprice">
+                       <hst:param name="order" value="price"/>
+                    </hst:renderURL>
+                </c:otherwise>
+            </c:choose>
+            
+            <table class="facetedTable">
+            <thead>
+                <tr>
+                 <th><a href="${orderbybrand}">Brand</a></th>
+                 <th><a href="${orderbyprice}">Price</a></th>
+                </tr>
+             </thead>
+             <tbody>
+	            <c:forEach var="result" items="${resultset}">
+	              <hst:link var="link" hippobean="${result}" contextRelative="true" />
+	                
+	                 <tr>
+	                    <td>
+		                    <c:choose>
+		                      <c:when test="${empty result.title}">
+		                          <a href="${link}">${result.name}</a>
+		                      </c:when>
+		                      <c:otherwise>
+		                          <a href="${link}">${result.title}</a>
+		                      </c:otherwise>
+		                   </c:choose>
+	                    </td>
+	                    <td>price : ${result.price}</td>
+	                 </tr>
+	            </c:forEach>
+	          </tbody>
+            </table>
           </c:otherwise>
         </c:choose>
 </div>

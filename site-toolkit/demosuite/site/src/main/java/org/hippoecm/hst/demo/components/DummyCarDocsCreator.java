@@ -66,10 +66,12 @@ public class DummyCarDocsCreator {
         
         for(int i = 0 ;i < number; i++) {
             cal = Calendar.getInstance();
+            int car = r.nextInt(availableCars.size());
+            Car randomCar = availableCars.get(car);
             
-            Node handle = crFolder.addNode("car-"+cal.getTimeInMillis(), "hippo:handle"); 
+            Node handle = crFolder.addNode(randomCar.brand + "-" + cal.getTimeInMillis(), "hippo:handle"); 
             handle.addMixin("hippo:hardhandle");
-            Node doc = handle.addNode("car-"+cal.getTimeInMillis(), "demosite:productdocument");
+            Node doc = handle.addNode(randomCar.brand + "-"+cal.getTimeInMillis(), "demosite:productdocument");
             doc.addMixin("hippo:harddocument");
          
             
@@ -87,8 +89,6 @@ public class DummyCarDocsCreator {
             
             doc.setProperty("demosite:product", "car");
             
-            int car = r.nextInt(availableCars.size());
-            Car randomCar = availableCars.get(car);
             doc.setProperty("demosite:brand", randomCar.brand);
             
             int color = r.nextInt(COLORS.length);

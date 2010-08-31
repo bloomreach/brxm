@@ -216,3 +216,12 @@ ul.facets li {
 div.right {
     float:right;
 }
+
+table.facetedTable tr  th {
+  text-decoration:underline;
+}	
+
+table.facetedTable tr td,table.facetedTable tr  th{
+ margin: 5px;
+ padding: 5px;
+}

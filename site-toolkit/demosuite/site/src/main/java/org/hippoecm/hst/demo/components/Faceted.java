@@ -22,6 +22,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
@@ -43,13 +46,47 @@ public class Faceted extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
          
         String query = this.getPublicRequestParameter(request, "query");
-        if (query != null && !"".equals(query)) {
+        String order = request.getParameter("order");
+        
+        HstQuery q = null;
+        
+        if ( (query != null && !"".equals(query)) || (order != null && !"".equals(order))) {
             // there was a free text query. We need to account for this. 
             request.setAttribute("query", query);
-            request.setAttribute("queryString", "?query=" + query);
+            request.setAttribute("order", order);
+            
+            if(query != null) {
+                request.setAttribute("queryString", "?query=" + query);
+            }
             // account for the free text string
+            
+            try {
+                q = this.queryManager.createQuery(this.getSiteContentBaseBean(request));
+                if(query != null && !"".equals(query)) {
+                    Filter f = q.createFilter();
+                    Filter f1 = q.createFilter();
+                    f1.addContains(".", query);
+                    Filter f2 = q.createFilter();
+                    f2.addContains("demosite:title", query);
+                    f.addOrFilter(f1);
+                    f.addOrFilter(f2);
+                    q.setFilter(f);
+                }
+                if(order != null && !"".equals(order)) {
+                    if(order.startsWith("-")) {
+                        q.addOrderByDescending("demosite:"+order.substring(1));
+                    } else {
+                        q.addOrderByAscending("demosite:"+order);
+                    }
+                    
+                }
+                
+            } catch (QueryException e) {
+                e.printStackTrace();
+            }
+            
         }
-        HippoFacetNavigationBean facetNav = BeanUtils.getFacetNavigationBean(request, query, getObjectConverter());
+        HippoFacetNavigationBean facetNav = BeanUtils.getFacetNavigationBean(request, q, getObjectConverter());
         
         List<ProductBean> resultset = new ArrayList<ProductBean>();
         request.setAttribute("resultset", resultset);
