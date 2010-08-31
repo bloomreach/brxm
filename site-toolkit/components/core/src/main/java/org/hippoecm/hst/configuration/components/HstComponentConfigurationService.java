@@ -34,6 +34,7 @@ import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.LoggerFactory;
 
 public class HstComponentConfigurationService extends AbstractJCRService implements HstComponentConfiguration, Service {
@@ -83,6 +84,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private Map<String, String> parameters = new HashMap<String, String>();
     private Map<String, String> localParameters = new HashMap<String, String>();
+    
+    private String canonicalStoredLocation;
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -100,6 +103,13 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         }
 
         this.createdTime = System.currentTimeMillis();
+        
+        try {
+            this.canonicalStoredLocation = ((HippoNode) jcrNode).getCanonicalNode().getPath();
+        } catch (RepositoryException e) {
+            throw new ServiceException("Exception during initialization", e);
+        }
+        
         this.parent = parent;
 
         this.configurationRootNodePath = configurationRootNodePath;
@@ -263,6 +273,10 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return derivedChildrenByName.get(name);
     }
     
+    public String getCanonicalStoredLocation() {
+        return canonicalStoredLocation;
+    }
+    
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
             Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
@@ -282,6 +296,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.serveResourcePath = child.serveResourcePath;
+        copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);
@@ -347,6 +362,9 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 }
                 if (this.serveResourcePath == null) {
                     this.serveResourcePath = referencedComp.serveResourcePath;
+                }
+                if (this.canonicalStoredLocation == null) {
+                    this.canonicalStoredLocation = referencedComp.canonicalStoredLocation;
                 }
                 if (this.pageErrorHandlerClassName == null) {
                     this.pageErrorHandlerClassName = referencedComp.pageErrorHandlerClassName;

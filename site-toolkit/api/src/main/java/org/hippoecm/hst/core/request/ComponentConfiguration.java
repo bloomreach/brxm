@@ -75,5 +75,7 @@ public interface ComponentConfiguration {
      * @return return the servletpath of the servlet that must serve the resources for this <code>HstComponent</code>
      */
     String getServeResourcePath();
+
+    String getCanonicalPath();
     
 }

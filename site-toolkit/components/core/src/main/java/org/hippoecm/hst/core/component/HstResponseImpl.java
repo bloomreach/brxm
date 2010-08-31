@@ -328,7 +328,15 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         
         return contained;
     }
-
+    
+    public void setWrapperElement(Element element) {
+        responseState.setWrapperElement(element);
+    }
+    
+    public Element getWrapperElement() {
+        return responseState.getWrapperElement();
+    }
+    
     public void setRenderParameter(String key, String value) {
         if (value == null) {
             setRenderParameter(key, new String[0]);

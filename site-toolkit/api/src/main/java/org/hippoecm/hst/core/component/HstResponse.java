@@ -306,4 +306,16 @@ public interface HstResponse extends HttpServletResponse {
      */
     void addCookie(Cookie cookie);
     
+    /**
+     * Sets wrapper element for the rendered content
+     * @param element
+     */
+    void setWrapperElement(Element element);
+    
+    /**
+     * Returns the wrapper element for the rendered content
+     * @return
+     */
+    Element getWrapperElement();
+    
 }

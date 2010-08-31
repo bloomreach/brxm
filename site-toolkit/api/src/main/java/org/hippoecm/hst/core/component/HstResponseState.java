@@ -123,7 +123,11 @@ public interface HstResponseState
     List<Element> getHeadElements();
     
     boolean containsHeadElement(String keyHint);
-
+    
+    void setWrapperElement(Element element);
+    
+    Element getWrapperElement();
+    
     void clear();
 
     void flush() throws IOException;

@@ -115,5 +115,13 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     public void forward(String pathInfo) throws IOException {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke forward().");
     }
+
+    public Element getWrapperElement() {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke getWrapperElement().");
+    }
+
+    public void setWrapperElement(Element element) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke setWrapperElement().");
+    }
     
 }
