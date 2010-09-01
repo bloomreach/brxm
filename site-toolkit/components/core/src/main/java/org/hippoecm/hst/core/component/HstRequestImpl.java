@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.security.AccessController;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -35,16 +38,29 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * HstRequestImpl
  * 
  * @version $Id$
  */
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
+
+    private static Logger log = LoggerFactory.getLogger(HstRequestImpl.class);
     
     public static final String CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY = HstRequest.class.getName() + ".containerAttributeNamePrefixes"; 
     
+    public static final String CONTAINER_USER_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".userPrincipalClassName";
+
+    public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
+
     private static String [] CONTAINER_ATTR_NAME_PREFIXES = null;
+    
+    private static Class<? extends Principal> USER_PRINCIPAL_CLASS = null;
+
+    private static Class<? extends Principal> ROLE_PRINCIPAL_CLASS = null;
     
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
@@ -356,4 +372,124 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         return this.lifecyclePhase;
     }
 
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequestWrapper#getUserPrincipal()
+     */
+    public Principal getUserPrincipal() {
+        // initialize configuration of user principal class
+        initUserPrincipalClass(requestContext);
+
+        // check for user principal in current thread's user subject
+        boolean [] subjectFound = new boolean[1];
+        Principal principal = getSubjectUserPrincipal(subjectFound);
+        if (subjectFound[0]) {
+            return principal;
+        }
+
+        // return existing principal for request if any
+        return super.getUserPrincipal();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static void initUserPrincipalClass(HstRequestContext requestContext) {
+        if (USER_PRINCIPAL_CLASS == null) {
+            synchronized (HstRequestImpl.class) {
+                if (USER_PRINCIPAL_CLASS == null) {
+                    Class<? extends Principal> userPrincipalClass = Principal.class;
+                    if (requestContext != null) {
+                        ContainerConfiguration containerConfiguration = requestContext.getContainerConfiguration();
+                        if (containerConfiguration != null) {
+                            String userPrincipalClassName = containerConfiguration.getString(CONTAINER_USER_PRINCIPAL_CLASSNAME_PROP_KEY);
+                            if (userPrincipalClassName != null) {
+                                try {
+                                    userPrincipalClass = (Class<? extends Principal>)Class.forName(userPrincipalClassName);
+                                } catch (ClassNotFoundException cnfe) {
+                                    log.error("Container configuration property "+CONTAINER_USER_PRINCIPAL_CLASSNAME_PROP_KEY+" invalid: "+cnfe, cnfe);
+                                }
+                            }
+                        }
+                    }
+                    USER_PRINCIPAL_CLASS = userPrincipalClass;        
+                }
+            }
+        }
+    }
+    
+    public static Principal getSubjectUserPrincipal(boolean [] subjectFound) {
+        if ((USER_PRINCIPAL_CLASS != null) && (USER_PRINCIPAL_CLASS != Principal.class)) {
+            Subject userSubject = Subject.getSubject(AccessController.getContext());
+            if (userSubject != null) {
+                if (subjectFound != null) {
+                    subjectFound[0] = true;
+                }
+                Set<? extends Principal> userPrincipals = userSubject.getPrincipals(USER_PRINCIPAL_CLASS);
+                if (!userPrincipals.isEmpty()) {
+                    Principal userPrincipal = userPrincipals.iterator().next();
+                    return userPrincipal;
+                }
+            }
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequestWrapper#isUserInRole(java.lang.String)
+     */
+    public boolean isUserInRole(String role) {
+        // initialize configuration of role principal class
+        initRolePrincipalClass(requestContext);
+
+        // check for role principals in current thread's user subject
+        boolean [] subjectFound = new boolean[1];
+        boolean userInRole = isSubjectUserInRole(role, subjectFound);
+        if (subjectFound[0]) {
+            return userInRole;
+        }
+        
+        // return existing role tests if available
+        return super.isUserInRole(role);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static void initRolePrincipalClass(HstRequestContext requestContext) {
+        if (ROLE_PRINCIPAL_CLASS == null) {
+            synchronized (HstRequestImpl.class) {
+                if (ROLE_PRINCIPAL_CLASS == null) {
+                    Class<? extends Principal> rolePrincipalClass = Principal.class;
+                    if (requestContext != null) {
+                        ContainerConfiguration containerConfiguration = requestContext.getContainerConfiguration();
+                        if (containerConfiguration != null) {
+                            String rolePrincipalClassName = containerConfiguration.getString(CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY);
+                            if (rolePrincipalClassName != null) {
+                                try {
+                                    rolePrincipalClass = (Class<? extends Principal>)Class.forName(rolePrincipalClassName);
+                                } catch (ClassNotFoundException cnfe) {
+                                    log.error("Container configuration property "+CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY+" invalid: "+cnfe, cnfe);
+                                }
+                            }
+                        }
+                    }
+                    ROLE_PRINCIPAL_CLASS = rolePrincipalClass;
+                }
+            }
+        }
+    }
+    
+    public static boolean isSubjectUserInRole(String role, boolean [] subjectFound) {
+        if ((ROLE_PRINCIPAL_CLASS != null) && (ROLE_PRINCIPAL_CLASS != Principal.class)) {
+            Subject userSubject = Subject.getSubject(AccessController.getContext());
+            if (userSubject != null) {
+                if (subjectFound != null) {
+                    subjectFound[0] = true;
+                }
+                Set<? extends Principal> rolePrincipals = userSubject.getPrincipals(ROLE_PRINCIPAL_CLASS);
+                for (Principal rolePrincipal : rolePrincipals) {
+                    if (rolePrincipal.getName().equalsIgnoreCase(role)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;        
+    }
 }
