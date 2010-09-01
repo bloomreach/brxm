@@ -50,6 +50,15 @@ public interface HstQuery {
     void setLimit(int limit);
     
     /**
+     * Returns the query as string. When <code>skipDefaultOrder</code> is <codee>TRUE</code>, the string representation will only include an 'order by' clause
+     * when there is set one explicitly.
+     * @param skipDefaultOrder
+     * @return the query as string
+     * @throws QueryException if we cannot build the query string
+     */
+    String getQueryAsString(boolean skipDefaultOrderBy) throws QueryException;
+    
+    /**
      * Returns the limit of the HstQuery. If no limit is set, it returns the default HstQuery limit {@link #DEFAULT_LIMIT}
      * @return the limit 
      */

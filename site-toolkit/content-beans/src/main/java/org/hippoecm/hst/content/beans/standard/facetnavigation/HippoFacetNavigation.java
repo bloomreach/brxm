@@ -16,9 +16,38 @@
 package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
+import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippofacnav:facetnavigation")
-public class HippoFacetNavigation extends HippoFolder {
+public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavigationBean {
+    
+    private static Logger log = LoggerFactory.getLogger(HippoFacetNavigation.class);
+    
+    public Long getCount() {
+        return this.getProperty(HippoNodeType.HIPPO_COUNT);
+    }
 
+    public HippoResultSetBean getResultSet() {
+        return this.getBean(HippoNodeType.HIPPO_RESULTSET);
+    }
+
+    public HippoFacetNavigationBean getRootFacetNavigationBean() {
+        HippoBean bean = this;
+        while(bean != null) {
+            if(bean instanceof HippoFacetNavigationBean && !(bean instanceof HippoFacetChildNavigationBean)) {
+                // found the HippoFacetNavigation bean
+                return (HippoFacetNavigationBean)bean;
+            }
+            bean = bean.getParentBean();
+        }
+        log.warn("Unable to return the HippoFacetNavigationBean for the current HippoFacetChildNavigationBean at '{}'. Return null", this.getPath());
+        return null;
+    }
 }

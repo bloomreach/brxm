@@ -18,19 +18,6 @@ package org.hippoecm.hst.content.beans.standard;
 /**
  * Interface for all child nodes primarily meant for the virtual structure below 'hippo:facetnavigation'
  */
-public interface HippoFacetChildNavigationBean extends HippoVirtualOnlyBean, HippoFolderBean {
-    
-    /**
-     * the value of the 'hippo:count' property
-     * @return Long value for the count
-     */
-    Long getCount();
-    
-    /**
-     * 
-     * @return the result set below this faceted navigation item
-     */
-    HippoResultSetBean getResultSet();
-    
-    
+public interface HippoFacetChildNavigationBean extends HippoVirtualOnlyBean, HippoFacetNavigationBean {
+
 }

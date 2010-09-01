@@ -51,39 +51,17 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
-        Object object = null;
-        
+        if(path == null || !path.startsWith("/")) {
+            log.warn("Illegal argument for '{}' : not an absolute path", path);
+            return null;
+        }
+        String relPath = path.substring(1);
         try {
-            if(path == null || !path.startsWith("/")) {
-                log.warn("Illegal argument for '{}' : not an absolute path", path);
-                return null;
-            }
-            if (!session.itemExists(path)) {
-                return null;
-            }
-            
-            Node node = (Node) session.getItem(path);
-
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                // if its a handle, we want the child node. If the child node is not present,
-                // this node can be ignored
-                if(node.hasNode(node.getName())) {
-                    return getObject(node.getNode(node.getName()));
-                } else {
-                    return null;
-                }
-            } else {
-                object = getObject(node);
-                
-            }
-        } catch (PathNotFoundException pnfe) {
-            // HINT should never get here
-            throw new ObjectBeanManagerException("Impossible to get the object at " + path, pnfe);
+            return getObject(session.getRootNode(), relPath);
         } catch (RepositoryException re) {
             throw new ObjectBeanManagerException("Impossible to get the object at " + path, re);
         }
-        
-        return object;
+           
     }
 
     public Object getObject(Node node, String relPath) throws ObjectBeanManagerException {
@@ -95,13 +73,29 @@ public class ObjectConverterImpl implements ObjectConverter {
             log.warn("Node is null. Cannot get document with relative path '{}'", relPath);
             return null;
         }
-        Session session = null;
+        String nodePath = null;
         try {
-            session = node.getSession();
-            String absPath = node.getPath() + "/" + relPath;
-            return this.getObject(session, absPath);
+            nodePath  = node.getPath();
+            if(!node.hasNode(relPath)) {
+                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath , relPath);
+                return null;
+            }
+            Node relNode = node.getNode(relPath);
+            if (relNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                // if its a handle, we want the child node. If the child node is not present,
+                // this node can be ignored
+                if(relNode.hasNode(relNode.getName())) {
+                    return getObject(relNode.getNode(relNode.getName()));
+                } else {
+                    log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath);
+                    return null;
+                }
+            } else {
+                return getObject(relNode);
+            }   
+            
         } catch (RepositoryException e) {
-            log.warn("Node's session is available. Cannot get document with relative path '{}'", relPath);
+            log.warn("Cannot get objectfor node '{}' with relPath '{}'",nodePath , relPath);
             return null;
         }
     }
