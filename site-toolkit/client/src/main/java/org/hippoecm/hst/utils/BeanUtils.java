@@ -148,9 +148,6 @@ public class BeanUtils {
         return incomingBeans;
     }
     
-    
-    
-    
     /**
      * <p>
      * Returns the {@link HippoFacetNavigationBean} for this {@link HstRequest} and <code>relPath</code> where it is accounted for the free text <code>query</code>. When <code>query</code> is <code>null</code> or
@@ -504,5 +501,4 @@ public class BeanUtils {
         }
      }
 
-   
 }

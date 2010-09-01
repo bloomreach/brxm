@@ -162,7 +162,7 @@
 			</sv:property>
 		</sv:node>
 	</sv:node>
-   <sv:node sv:name="bodyfacetedaddproduct">
+    <sv:node sv:name="bodyfacetedaddproduct">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
