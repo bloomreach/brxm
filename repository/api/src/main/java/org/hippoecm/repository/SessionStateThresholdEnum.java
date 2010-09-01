@@ -30,6 +30,10 @@ public enum SessionStateThresholdEnum {
      */
     VIEWS,
     /**
+     * Cached view state that that also contains specific information on how it was retrieved
+     */
+    PARAMETERIZED,
+    /**
      * Uncategorized state that is at least flushed when performing a session.refresh(false)
      */
     MISCELLANEOUS
