@@ -469,7 +469,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     public boolean stateThresholdExceeded(EnumSet<SessionStateThresholdEnum> interests) {
-        if (interests == null || interests.contains(SessionStateThresholdEnum.MISCELLANEOUS)) {
+        if (interests == null || interests.contains(SessionStateThresholdEnum.PARAMETERIZED) || interests.contains(SessionStateThresholdEnum.MISCELLANEOUS)) {
             if (parameterizedView) {
                 return true;
             }
