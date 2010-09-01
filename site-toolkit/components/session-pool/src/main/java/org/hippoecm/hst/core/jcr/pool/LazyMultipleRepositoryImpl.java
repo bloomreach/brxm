@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.jcr.Credentials;
@@ -59,12 +60,20 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     
     public LazyMultipleRepositoryImpl(Credentials defaultCredentials, Map<String, String> defaultConfigMap) {
         super(defaultCredentials);
-        this.defaultConfigMap = defaultConfigMap;
+        /*
+         *  because properties that have an accidental space behind become very confusing, for example Boolean.toBoolean("true ") is not parsed as <code>true</code> because of the space, 
+         *  we first trim leading and trailing whitespaces from the String values of the map
+         */
+        this.defaultConfigMap = trimWhiteSpaceValues(defaultConfigMap);
     }
     
     public LazyMultipleRepositoryImpl(Map<Credentials, Repository> repoMap, Credentials defaultCredentials, Map<String, String> defaultConfigMap) {
         super(repoMap, defaultCredentials);
-        this.defaultConfigMap = defaultConfigMap;
+        /*
+         *  because properties that have an accidental space behind become very confusing, for example Boolean.toBoolean("true ") is not parsed as <code>true</code> because of the space, 
+         *  we first trim leading and trailing whitespaces from the String values of the map
+         */
+        this.defaultConfigMap = trimWhiteSpaceValues(defaultConfigMap);
     }
     
     public void setPoolingRepositoryFactory(BasicPoolingRepositoryFactory poolingRepositoryFactory) {
@@ -405,6 +414,14 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                 }
             }
         }
+    }
+    
+    private Map<String, String> trimWhiteSpaceValues(Map<String, String> configMap) {
+        Map<String, String> trimmedConfigMap = new HashMap<String, String>(configMap.size());
+        for(Entry<String, String> entry : configMap.entrySet()) {
+            trimmedConfigMap.put(entry.getKey(), entry.getValue().trim());
+        }
+        return trimmedConfigMap;
     }
     
 }
