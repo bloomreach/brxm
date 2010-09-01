@@ -384,7 +384,6 @@ public class BaseHstComponent extends GenericHstComponent {
      * <p>
      * Facility method for sending a redirect to a sitemap path including query params. You do not have to take into account the context path or SiteMount path
      * </p>
-     
      * @see HstResponse#sendRedirect(String)
      * @param path the sitemap path you want to redirect to 
      * @param request the HstRequest
@@ -424,6 +423,9 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
+        if(objectConverter != null) {
+            return objectConverter;
+        }
         Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
         List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClassNames();
         for (Class<? extends HippoBean> c : annotatedClasses) {
