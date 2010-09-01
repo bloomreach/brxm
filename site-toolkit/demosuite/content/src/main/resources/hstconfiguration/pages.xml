@@ -116,6 +116,22 @@
             </sv:property>
         </sv:node>
     </sv:node>
+    <sv:node sv:name="facetedaddproduct">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+            <sv:value>hst:pages/standard</sv:value>
+        </sv:property>
+        <sv:node sv:name="body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencecomponent" sv:type="String">
+                <sv:value>hst:components/bodyfacetedaddproduct</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
     <sv:node sv:name="faceted_detailpage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
@@ -152,21 +168,20 @@
 		</sv:node>
 	</sv:node>
     <sv:node sv:name="productpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/bodyproductpage</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:component</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:referencecomponent" sv:type="String">
+			<sv:value>hst:pages/standard</sv:value>
+		</sv:property>
+		<sv:node sv:name="body">
+			<sv:property sv:name="jcr:primaryType" sv:type="Name">
+				<sv:value>hst:component</sv:value>
+			</sv:property>
+			<sv:property sv:name="hst:referencecomponent" sv:type="String">
+				<sv:value>hst:components/bodyproductpage</sv:value>
+			</sv:property>
+		</sv:node>
+	</sv:node>
 </sv:node>
 

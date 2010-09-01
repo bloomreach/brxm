@@ -21,8 +21,15 @@
 
 <div class="yui-b">
   <h2>Faceted Navigation</h2>
+        
+        <hst:link var="searchLink" hippobean="${facetnav}"/>
+        
+        <form method="get" action="${searchLink}"/>
+            <input type="text" name="query" value="${query}"/>
+        </form>
+        
         <c:if test="${childNav}">
-            <hst:facetnavigationlink var="removeAll" current="${facetnav}" removeList="${facetnav.ancestorsAndSelf}"/>
+            <hst:link var="removeAll" hippobean="${facetnav.rootFacetNavigationBean}"/>
             <p>Clear all [<a href="${removeAll}" class="deleteFacet">X</a>]</p>
         </c:if> 
         <c:forEach var="facet" items="${facetnav.folders}">
@@ -38,12 +45,12 @@
                                   <c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b>
                                   <c:if test="${facetvalue.count > 0}">
                                       <hst:facetnavigationlink var="remove" current="${facetnav}" remove="${facetvalue}"/>
-                                      [<a href="${remove}" class="deleteFacet">X</a>]
+                                      [<a href="${remove}${queryString}" class="deleteFacet">X</a>]
                                   </c:if>
                                </c:when>
                                <c:otherwise>
                                  <hst:link var="link" hippobean="${facetvalue}"/>
-                                 <a href="${link}"><c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b></a> 
+                                 <a href="${link}${queryString}"><c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b></a> 
                                </c:otherwise>
                              </c:choose>
                           </li>

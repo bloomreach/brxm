@@ -22,47 +22,93 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
+import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
+import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.utils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Faceted extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Faceted.class);
-    
+  
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-       
-        HippoBean currentBean = this.getContentBean(request);
-        
-        if(currentBean instanceof HippoFacetChildNavigationBean) {
-            HippoFacetChildNavigationBean facetNav = (HippoFacetChildNavigationBean)currentBean;
-            
-            
-            List<ProductBean> resultset = new ArrayList<ProductBean>();
          
-            HippoDocumentIterator<ProductBean> it = facetNav.getResultSet().getDocumentIterator(ProductBean.class);
-            int skip = 0;
-            it.skip(skip);
-            while(it.hasNext() && it.getPosition() < 10 + (skip - 1)) {
-                // the it.getPosition gets increased on it.next() call, hence above, skip - 1
-                resultset.add(it.next());
+        String query = this.getPublicRequestParameter(request, "query");
+        String order = request.getParameter("order");
+        
+        HstQuery q = null;
+        
+        if ( (query != null && !"".equals(query)) || (order != null && !"".equals(order))) {
+            // there was a free text query. We need to account for this. 
+            request.setAttribute("query", query);
+            request.setAttribute("order", order);
+            
+            if(query != null) {
+                request.setAttribute("queryString", "?query=" + query);
+            }
+            // account for the free text string
+            
+            try {
+                q = this.queryManager.createQuery(this.getSiteContentBaseBean(request));
+                if(query != null && !"".equals(query)) {
+                    Filter f = q.createFilter();
+                    Filter f1 = q.createFilter();
+                    f1.addContains(".", query);
+                    Filter f2 = q.createFilter();
+                    f2.addContains("demosite:title", query);
+                    f.addOrFilter(f1);
+                    f.addOrFilter(f2);
+                    q.setFilter(f);
+                }
+                if(order != null && !"".equals(order)) {
+                    if(order.startsWith("-")) {
+                        q.addOrderByDescending("demosite:"+order.substring(1));
+                    } else {
+                        q.addOrderByAscending("demosite:"+order);
+                    }
+                    
+                }
+                
+            } catch (QueryException e) {
+                e.printStackTrace();
             }
             
-            request.setAttribute("resultset", resultset);
+        }
+        HippoFacetNavigationBean facetNav = BeanUtils.getFacetNavigationBean(request, q, getObjectConverter());
+        
+        List<ProductBean> resultset = new ArrayList<ProductBean>();
+        request.setAttribute("resultset", resultset);
+
+        request.setAttribute("facetNavigation", facetNav);
+        if(facetNav instanceof HippoFacetChildNavigationBean) {
+            request.setAttribute("subnavigation", true);
         }
         
-        if(currentBean instanceof HippoFacetSubNavigation) {
-            request.setAttribute("subnavigation", currentBean);
+        HippoResultSetBean resultSetBean = ((HippoFacetNavigationBean)facetNav).getResultSet();
+        if(resultSetBean == null) {
+            return;
         }
+       
+        HippoDocumentIterator<ProductBean> it = resultSetBean.getDocumentIterator(ProductBean.class);
+        int skip = 0;
+        it.skip(skip);
+        while(it.hasNext() && it.getPosition() < 10 + (skip - 1)) {
+            // the it.getPosition gets increased on it.next() call, hence above, skip - 1
+            resultset.add(it.next());
+        }
+            
     }
 
     @Override
@@ -89,10 +135,7 @@ public class Faceted extends BaseHstComponent {
                 writableSession.logout();
             }
         }
-        
-        
-        
-        
+              
     }
        
 }

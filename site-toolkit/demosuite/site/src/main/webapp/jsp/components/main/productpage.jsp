@@ -40,5 +40,11 @@
     <p>
       color : ${document.color}
     </p>
+    <p>
+     tags: 
+     <c:forEach var="tag" items="${document.tags}">
+            ${tag}&nbsp;
+     </c:forEach>
+    </p>
     
 </div>
