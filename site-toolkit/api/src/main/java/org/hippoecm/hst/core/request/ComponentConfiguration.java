@@ -76,6 +76,14 @@ public interface ComponentConfiguration {
      */
     String getServeResourcePath();
 
+    /**
+     * Returns the canonical path of the backing stored configuration location. Note that multiple (many) <code>ComponentConfiguration</code>'s
+     * can share the same canonical path: When a component is added by a reference, this method will return the same canonical path as the
+     * direct (not referenced) component.
+     * 
+     * @return the canonical path of the backing stored configuration location.
+     */
+    
     String getCanonicalPath();
     
 }

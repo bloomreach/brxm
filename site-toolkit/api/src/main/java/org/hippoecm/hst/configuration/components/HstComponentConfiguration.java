@@ -161,5 +161,9 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      */
     HstComponentConfiguration getChildByName(String name);
 
+    /**
+     * Returns the canonical (real physical) location of the stored configuration of this HstComponentConfiguration
+     * @return the canonical location where the configuration is stored
+     */
     String getCanonicalStoredLocation();
 }
