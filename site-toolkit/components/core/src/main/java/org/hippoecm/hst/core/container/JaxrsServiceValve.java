@@ -15,10 +15,14 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.beanutils.MethodUtils;
+import org.hippoecm.hst.core.component.HstRequestImpl;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
@@ -79,7 +83,8 @@ public class JaxrsServiceValve extends AbstractValve {
             String servletPath = resolvedSiteMount.getResolvedMountPath();
             String pathInfo = HstRequestUtils.getPathInfo(resolvedSiteMount, request);
             
-            HttpServletRequest adjustedRequest = new PathsAdjustedHttpServletRequestWrapper(context.getServletRequest(), servletPath, pathInfo);
+            HstRequestContext requestContext = (HstRequestContext) request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            HttpServletRequest adjustedRequest = new PathsAdjustedHttpServletRequestWrapper(context.getServletRequest(), servletPath, pathInfo, requestContext);
             
             MethodUtils.invokeMethod(servletController, "invoke", new Object[] { adjustedRequest, context.getServletResponse() });
         } catch (Exception e) {
@@ -97,13 +102,16 @@ public class JaxrsServiceValve extends AbstractValve {
     }
     
     private static class PathsAdjustedHttpServletRequestWrapper extends HttpServletRequestWrapper {
+
         private String servletPath;
         private String pathInfo;
+        private HstRequestContext requestContext;
         
-        private PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String pathInfo) {
+        private PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String pathInfo, HstRequestContext requestContext) {
             super(request);
             this.servletPath = servletPath;
             this.pathInfo = pathInfo;
+            this.requestContext = requestContext;
         }
         
         @Override
@@ -115,6 +123,41 @@ public class JaxrsServiceValve extends AbstractValve {
         public String getPathInfo() {
             return (pathInfo != null ? pathInfo : super.getPathInfo());
         }
+
+        /* (non-Javadoc)
+         * @see javax.servlet.http.HttpServletRequestWrapper#getUserPrincipal()
+         */
+        public Principal getUserPrincipal() {
+            // initialize configuration of user principal class
+            HstRequestImpl.initUserPrincipalClass(requestContext);
+
+            // check for user principal in current thread's user subject
+            boolean [] subjectFound = new boolean[1];
+            Principal principal = HstRequestImpl.getSubjectUserPrincipal(subjectFound);
+            if (subjectFound[0]) {
+                return principal;
+            }
+
+            // return existing principal for request if any
+            return super.getUserPrincipal();
+        }
+        
+        /* (non-Javadoc)
+         * @see javax.servlet.http.HttpServletRequestWrapper#isUserInRole(java.lang.String)
+         */
+        public boolean isUserInRole(String role) {
+            // initialize configuration of role principal class
+            HstRequestImpl.initRolePrincipalClass(requestContext);
+
+            // check for role principals in current thread's user subject
+            boolean [] subjectFound = new boolean[1];
+            boolean userInRole = HstRequestImpl.isSubjectUserInRole(role, subjectFound);
+            if (subjectFound[0]) {
+                return userInRole;
+            }
+            
+            // return existing role tests if available
+            return super.isUserInRole(role);
+        }
     }
-    
 }
