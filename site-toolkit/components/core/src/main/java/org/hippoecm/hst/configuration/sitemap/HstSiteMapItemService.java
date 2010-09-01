@@ -209,9 +209,9 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         this.componentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         
         String[] siteMapItemHandlerIds = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
-        if(siteMapItemHandlerIds != null) {
+        if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
             for(String handlerId : siteMapItemHandlerIds) {
-                HstSiteMapItemHandlerConfiguration handlerConfiguration = this.siteMapItemHandlersConfiguration.getSiteMapItemHandlerConfiguration(handlerId);
+                HstSiteMapItemHandlerConfiguration handlerConfiguration = siteMapItemHandlersConfiguration.getSiteMapItemHandlerConfiguration(handlerId);
                 if(handlerConfiguration == null) {
                     log.error("Incorrect configuration: SiteMapItem '{}' contains a handlerId '{}' which cannot be found in the siteMapItemHandlers configuration. The handler will be ignored", getQualifiedId(), handlerId);
                 } else {
