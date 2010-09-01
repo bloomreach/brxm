@@ -50,6 +50,4 @@ public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavig
         log.warn("Unable to return the HippoFacetNavigationBean for the current HippoFacetChildNavigationBean at '{}'. Return null", this.getPath());
         return null;
     }
-    
-    
 }
