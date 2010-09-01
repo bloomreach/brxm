@@ -48,6 +48,13 @@
       <version>${hippoecm.version}</version>
     </dependency>
     
+    <!-- unfortunately, we need this dependency because it contains the htmlcleaner namespace which is used in hippo-ecm-package-auth -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
