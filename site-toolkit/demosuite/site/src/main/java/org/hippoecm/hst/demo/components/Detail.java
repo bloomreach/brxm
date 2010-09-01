@@ -146,7 +146,7 @@ public class Detail extends BaseHstComponent {
                     String commentNodeName = "comment-for-"+commentTo.getName()+"-" + System.currentTimeMillis();
 
                     // create comment node now
-                    wpm.create(commentsFolderPath, "demosite:comment", commentNodeName, true);
+                    wpm.create(commentsFolderPath, "demosite:commentdocument", commentNodeName, true);
 
                     // retrieve the comment content to manipulate
                     CommentBean commentBean = (CommentBean) wpm.getObject(commentsFolderPath + "/" + commentNodeName);
