@@ -33,10 +33,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     protected String state;
     protected String userIdentity;
     protected PublicationRequest current;
-    protected PublicationRequest current2;
-    protected PublicationRequest current3;
-    protected PublicationRequest current4;
-    protected PublicationRequest current5;
     protected PublishableDocument publishedDocument;
     protected PublishableDocument unpublishedDocument;
     protected PublishableDocument draftDocument;
@@ -51,7 +47,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         boolean locked = false;
         boolean status = false;
         boolean pendingRequest;
-        if (current != null || current2 != null || current3 != null || current4 != null || current5 != null) {
+        if (current != null) {
             pendingRequest = true;
         } else {
             pendingRequest = false;
@@ -113,7 +109,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public Document obtainEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("obtain editable instance on document ");
         if (draftDocument == null) {
-            if (current != null || current2 != null || current3 != null || current4 != null || current5 != null) {
+            if (current != null) {
                 throw new WorkflowException("unable to edit document with pending operation");
             }
             try {
