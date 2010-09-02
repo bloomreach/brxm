@@ -20,6 +20,8 @@ import org.apache.jackrabbit.core.id.NodeId;
 
 import org.apache.jackrabbit.core.state.NodeState;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 
 public class FacetSearchProvider extends AbstractFacetSearchProvider
 {

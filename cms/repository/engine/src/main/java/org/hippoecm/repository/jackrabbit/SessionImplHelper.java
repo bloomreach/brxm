@@ -63,8 +63,9 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.util.XMLChar;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.decorating.NodeDecorator;
-import org.hippoecm.repository.jackrabbit.MirrorVirtualProvider.MirrorNodeId;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
@@ -536,7 +537,7 @@ abstract class SessionImplHelper {
         NodeId nodeId = node.getNodeId();
         if(nodeId instanceof HippoNodeId) {
             if(nodeId instanceof MirrorNodeId) {
-                NodeId upstream = ((MirrorNodeId)nodeId).upstream;
+                NodeId upstream = ((MirrorNodeId)nodeId).getCanonicalId();
                 try {
                     return sessionImpl.getNodeById(upstream);
                 } catch(ItemNotFoundException ex) {

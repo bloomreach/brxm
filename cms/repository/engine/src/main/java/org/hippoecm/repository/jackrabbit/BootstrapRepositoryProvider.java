@@ -30,6 +30,9 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 
 public class BootstrapRepositoryProvider extends HippoVirtualProvider
 {

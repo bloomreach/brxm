@@ -24,7 +24,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.hippoecm.repository.jackrabbit.KeyValue;
+import org.hippoecm.repository.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

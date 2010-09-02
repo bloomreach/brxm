@@ -26,7 +26,6 @@ import javax.security.auth.Subject;
 import org.apache.jackrabbit.core.id.NodeId;
 
 import org.apache.jackrabbit.spi.Name;
-import org.hippoecm.repository.jackrabbit.KeyValue;
 
 /**
 

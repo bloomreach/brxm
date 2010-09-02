@@ -47,6 +47,16 @@
       <artifactId>hippo-ecm-repository-engine</artifactId>
       <version>2.17.00-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-provider</artifactId>
+      <version>2.17.00-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-modules</artifactId>
+      <version>2.17.00-SNAPSHOT</version>
+    </dependency>
 
     <!-- test -->
     <dependency>
@@ -182,9 +192,7 @@
             </property>
           </systemProperties>
           <excludes>
-            <exclude>**/TraversePerfTest.java</exclude>
-            <exclude>**/TraversePerfTestCase.java</exclude>
-            <exclude>**/HREPTWO2182Test.java</exclude>
+            <exclude>**/*PerfTestCase.java</exclude>
           </excludes>
         </configuration>
       </plugin>

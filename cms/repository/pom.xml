@@ -35,6 +35,7 @@
 
   <modules>
     <module>connector</module>
+    <module>provider</module>
     <module>engine</module>
     <module>modules</module>
     <module>upgrade</module>

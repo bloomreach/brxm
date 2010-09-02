@@ -20,10 +20,10 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.InvalidQueryException;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.spi.Name;
-import org.hippoecm.repository.jackrabbit.KeyValue;
 
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
         implements FacetedNavigationEngine<Q, C> {

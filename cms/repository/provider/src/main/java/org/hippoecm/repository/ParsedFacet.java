@@ -21,7 +21,7 @@ import java.util.List;
 import net.sf.json.JSONArray;
 
 import org.apache.jackrabbit.spi.Path;
-import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
 
 public class ParsedFacet {
     @SuppressWarnings("unused")

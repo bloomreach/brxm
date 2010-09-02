@@ -24,9 +24,9 @@ import java.util.Map.Entry;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
-
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -35,13 +35,13 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.hippoecm.repository.FacetFilters;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.HitsRequested;
+import org.hippoecm.repository.KeyValue;
 import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
-import org.hippoecm.repository.jackrabbit.KeyValue;
-import org.hippoecm.repository.jackrabbit.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

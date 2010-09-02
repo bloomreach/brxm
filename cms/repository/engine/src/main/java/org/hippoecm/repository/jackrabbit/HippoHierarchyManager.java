@@ -17,14 +17,11 @@ package org.hippoecm.repository.jackrabbit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
+
+import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -33,6 +30,9 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.name.PathBuilder;
+import org.hippoecm.repository.dataprovider.ParameterizedNodeId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HippoHierarchyManager implements HierarchyManager {
     @SuppressWarnings("unused")

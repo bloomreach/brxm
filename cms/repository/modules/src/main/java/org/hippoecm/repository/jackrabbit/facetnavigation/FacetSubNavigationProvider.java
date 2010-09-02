@@ -26,16 +26,16 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.FacetKeyValue;
 import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.HitsRequested;
+import org.hippoecm.repository.KeyValue;
 import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.jackrabbit.FacetKeyValue;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
-import org.hippoecm.repository.jackrabbit.HippoNodeId;
-import org.hippoecm.repository.jackrabbit.KeyValue;
-import org.hippoecm.repository.jackrabbit.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,6 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
     private final Logger log = LoggerFactory.getLogger(FacetSubNavigationProvider.class);
     
     protected FacetsAvailableNavigationProvider facetsAvailableNavigationProvider = null;
-    
 
     @Override
     protected void initialize() throws RepositoryException {

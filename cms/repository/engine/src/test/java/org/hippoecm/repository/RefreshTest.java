@@ -108,33 +108,4 @@ public class RefreshTest {
         session.save();
     }
 
-    @Test
-    public void testRefreshAfterAddingNodes() throws RepositoryException {
-        Repository repository = HippoRepositoryFactory.getHippoRepository().getRepository();
-        Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-        while(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-        Node node = session.getRootNode().addNode("test");
-        node.addNode("documents", "nt:unstructured").addMixin("mix:referenceable");
-        session.save();
-        node = node.addNode("navigation", HippoNodeType.NT_FACETSEARCH);
-        node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "query");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x" });
-        session.save();
-        session.refresh(false);
-        session.getRootNode().getNode("test/documents").addNode("dummy");
-        //session.getRootNode().getNode("test/documents").addNode("test", "hippo:testdocument");
-        //session.getRootNode().getNode("test/navigation/xyz").setProperty(HippoNodeType.HIPPO_QUERYNAME, "blaat");
-        session.save();
-        session.refresh(false);
-        session.getRootNode().getNode("test/documents").addNode("aap");
-        session.save();
-        session.getRootNode().getNode("test/navigation").remove();
-        session.save();
-        session.getRootNode().getNode("test").remove();
-        session.save();
-    }
 }

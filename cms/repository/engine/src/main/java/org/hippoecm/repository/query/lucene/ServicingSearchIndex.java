@@ -53,7 +53,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.search.SortField;
-import org.hippoecm.repository.jackrabbit.HippoNodeId;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;

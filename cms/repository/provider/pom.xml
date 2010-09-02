@@ -21,16 +21,16 @@
     <version>2.17.00-SNAPSHOT</version>
   </parent>
 
-  <name>Repository modules</name>
-  <description>Hippo ECM repository modules</description>
+  <name>Repository Provider Interface</name>
+  <description>Hippo ECM repository data provider interface</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-repository-modules</artifactId>
+  <artifactId>hippo-ecm-repository-provider</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/modules</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/modules</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/modules</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/provider</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/provider</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/provider</url>
   </scm>
 
   <dependencies>
@@ -51,11 +51,6 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-provider</artifactId>
       <version>2.17.00-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -87,20 +82,6 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetsAvailableNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider org.hippoecm.repository.quartz.SchedulerModule</Hippo-Modules>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>1.5</source>
@@ -109,5 +90,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

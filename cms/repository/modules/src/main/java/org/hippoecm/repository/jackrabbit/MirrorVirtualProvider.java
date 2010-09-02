@@ -29,28 +29,15 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
+import org.hippoecm.repository.dataprovider.MirrorNodeId;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 
 public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    protected abstract class MirrorNodeId extends HippoNodeId {
-
-        private static final long serialVersionUID = 1L;
-
-        NodeId upstream;
-
-        protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name, NodeId upstream) {
-            super(provider, parent, context, name);
-            this.upstream = upstream;
-        }
-
-        MirrorNodeId(NodeId parent, NodeId upstream, StateProviderContext context, Name name) {
-            super(MirrorVirtualProvider.this, parent, context, name);
-            this.upstream = upstream;
-        }
-    }
 
     Name docbaseName;
     Name jcrUUIDName;
@@ -92,9 +79,9 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 
     @Override
     public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
-        NodeState dereference = getNodeState(((MirrorNodeId)nodeId).upstream, context);
+        NodeState dereference = getNodeState(((MirrorNodeId)nodeId).getCanonicalId(), context);
         if(dereference == null) {
-            throw new RepositoryException("Cannot populate top mirror node dereferencing "+((MirrorNodeId)nodeId).upstream);
+            throw new RepositoryException("Cannot populate top mirror node dereferencing "+((MirrorNodeId)nodeId).getCanonicalId());
         }
         NodeState state = createNew(nodeId, dereference.getNodeTypeName(), parentId);
         state.setNodeTypeName(dereference.getNodeTypeName());

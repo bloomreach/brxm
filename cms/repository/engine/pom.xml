@@ -74,7 +74,7 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-modules</artifactId>
+      <artifactId>hippo-ecm-repository-provider</artifactId>
       <version>2.17.00-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -90,6 +90,12 @@
     <dependency>
       <groupId>jpox</groupId>
       <artifactId>jpox-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opensymphony</groupId>
+      <artifactId>quartz</artifactId>
+      <version>[1.5.1,1.6.0)</version>
     </dependency>
 
     <dependency>
@@ -204,6 +210,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule</Hippo-Modules>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
         <version>2.2</version>
           <executions>
             <execution>
@@ -236,23 +256,6 @@
           <additionalProjectnatures>
             <projectnature>org.jpox.ide.eclipse.projectnature</projectnature>
           </additionalProjectnatures>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>history.points</name>
-              <value>${history.points}</value>
-            </property>
-          </systemProperties>
-          <excludes>
-            <exclude>**/*PerfTestCase.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
       <plugin>
