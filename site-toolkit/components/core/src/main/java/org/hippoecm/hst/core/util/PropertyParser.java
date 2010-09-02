@@ -64,7 +64,7 @@ public class PropertyParser {
             for(int i = 0 ; i < unparsed.length ; i++) {
                 String s = unparsed[i];
                 try {
-                    s =  propertyPlaceholderHelper.replacePlaceholders((String)o, properties);
+                    s =  propertyPlaceholderHelper.replacePlaceholders(unparsed[i], properties);
                 } catch (IllegalArgumentException e ) {
                     log.debug("Unable to replace property expression for property '{}'. Return null : '{}'.",name, e);
                     s = null;
