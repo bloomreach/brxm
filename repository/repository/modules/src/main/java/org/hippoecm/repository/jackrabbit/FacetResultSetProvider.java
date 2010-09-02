@@ -37,11 +37,18 @@ import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.hippoecm.repository.FacetKeyValue;
 import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.HitsRequested;
+import org.hippoecm.repository.KeyValue;
 import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.DataProviderContext;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
+import org.hippoecm.repository.dataprovider.IFilterNodeId;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,7 +251,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
                 continue;
             Name name = parentNodeState.getChildNodeEntry(upstream).getName();
         
-            state.addChildNodeEntry(name, subNodesProvider . new ViewNodeId(state.getNodeId(), upstream, context, name, view, order , singledView));
+            state.addChildNodeEntry(name, subNodesProvider . newViewNodeId(state.getNodeId(), upstream, context, name, view, order , singledView));
         }
 
         return state;

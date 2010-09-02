@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.test;
 
+import java.io.File;
+
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
@@ -68,6 +70,26 @@ public class RemoteTest extends Suite
         super(klass, annotatedClasses);
     }
 
+
+    static private void delete(File path) {
+        if(path.exists()) {
+            if(path.isDirectory()) {
+                File[] files = path.listFiles();
+                for(int i=0; i<files.length; i++)
+                    delete(files[i]);
+            }
+            path.delete();
+        }
+    }
+
+    static private void clear() {
+        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
+        for(int i=0; i<files.length; i++) {
+            File file = new File(files[i]);
+            delete(file);
+        }
+    }
+
     @Override
     public void run(final RunNotifier notifier) {
         HippoRepositoryServer backgroundServer = null;
@@ -103,6 +125,7 @@ public class RemoteTest extends Suite
             if (backgroundServer != null) {
                 backgroundServer.close();
             }
+            clear();
         }
     }
 }

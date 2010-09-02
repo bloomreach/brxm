@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit;
+package org.hippoecm.repository.dataprovider;
 
 import java.util.UUID;
 
@@ -103,4 +103,9 @@ public class HippoNodeId extends NodeId
         }
         return state;
     }
+
+    protected final HippoVirtualProvider getProvider() {
+        return provider;
+    }
+
 }

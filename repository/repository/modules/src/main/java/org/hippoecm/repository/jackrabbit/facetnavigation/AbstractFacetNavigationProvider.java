@@ -29,18 +29,18 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.KeyValue;
 import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.DataProviderContext;
+import org.hippoecm.repository.dataprovider.DataProviderContext;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
+import org.hippoecm.repository.dataprovider.IFilterNodeId;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
-import org.hippoecm.repository.jackrabbit.HippoNodeId;
-import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
-import org.hippoecm.repository.jackrabbit.IFilterNodeId;
-import org.hippoecm.repository.jackrabbit.KeyValue;
-import org.hippoecm.repository.jackrabbit.StateProviderContext;
 
 public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvider {
     @SuppressWarnings("unused")
@@ -57,7 +57,7 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     Name resultSetChildName;
     QPropertyDefinition subCountPropDef;
     QPropertyDefinition countPropDef;
-    
+
     FacetResultSetProvider subNodesProvider = null;
 
     

@@ -43,7 +43,6 @@ import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.jackrabbit.spi.commons.query.QueryRootNode;
-import org.apache.jackrabbit.spi.commons.query.OrderQueryNode.OrderSpec;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
@@ -66,7 +65,6 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
-import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetFiltersQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
@@ -672,4 +670,5 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         stateMgr.repository.setFacetedNavigationEngine(this);
         super.doInit();
     }
+
 }

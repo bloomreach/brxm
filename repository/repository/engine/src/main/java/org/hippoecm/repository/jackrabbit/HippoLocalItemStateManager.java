@@ -54,15 +54,19 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngine.Context;
-import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.SessionStateThresholdEnum;
+import org.hippoecm.repository.FacetedNavigationEngine.Context;
+import org.hippoecm.repository.FacetedNavigationEngine.Query;
+import org.hippoecm.repository.dataprovider.DataProviderContext;
+import org.hippoecm.repository.dataprovider.DataProviderModule;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
+import org.hippoecm.repository.dataprovider.ParameterizedNodeId;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HippoLocalItemStateManager extends ForkedXAItemStateManager implements DataProviderContext {
     @SuppressWarnings("unused")

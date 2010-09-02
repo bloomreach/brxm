@@ -27,6 +27,8 @@ import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.DataProviderContext;
+import org.hippoecm.repository.dataprovider.DataProviderModule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

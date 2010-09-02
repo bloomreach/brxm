@@ -24,7 +24,7 @@ import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
 
 public class FacetFilters {
     @SuppressWarnings("unused")

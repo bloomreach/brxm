@@ -21,6 +21,8 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.dataprovider.StateProviderContext;
 
 public class FacetSelectProvider extends ViewVirtualProvider
 {

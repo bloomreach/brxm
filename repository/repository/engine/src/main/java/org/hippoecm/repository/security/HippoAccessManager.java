@@ -68,7 +68,7 @@ import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.HippoNodeId;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;

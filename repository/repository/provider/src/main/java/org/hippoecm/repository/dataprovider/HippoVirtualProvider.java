@@ -13,17 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit;
+package org.hippoecm.repository.dataprovider;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import org.apache.jackrabbit.core.id.ItemId;
+
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
-
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
@@ -49,6 +50,7 @@ public abstract class HippoVirtualProvider implements DataProviderModule
 
     private Name externalNodeName;
     private Name virtualNodeName;
+    private Map<String, Name> nameCache = new HashMap<String, Name>();
 
     private final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
@@ -100,12 +102,19 @@ public abstract class HippoVirtualProvider implements DataProviderModule
             stateMgr.registerProvider(externalNodeName, this);
     }
 
+    protected final DataProviderContext getDataProviderContext() {
+        return stateMgr;
+    }
+    
     protected HippoVirtualProvider lookup(String providerName) {
         return stateMgr.lookupProvider(providerName);
     }
 
     public final Name resolveName(String name) throws IllegalNameException, NamespaceException {
-        return stateMgr.getQName(name);
+        if (!nameCache.containsKey(name)) {
+            nameCache.put(name, stateMgr.getQName(name));
+        }
+        return nameCache.get(name);
     }
 
     public final Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
