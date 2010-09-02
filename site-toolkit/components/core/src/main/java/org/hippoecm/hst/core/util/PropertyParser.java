@@ -15,28 +15,30 @@
  */
 package org.hippoecm.hst.core.util;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.util.PropertyPlaceholderHelper;
 
 /**
  * PropertyParser
  * 
  * @version $Id$
  */
-public class PropertyParser extends PropertyPlaceholderConfigurer {
+public class PropertyParser {
+
+    public final static String DEFAULT_PLACEHOLDER_PREFIX = "${";
+    public final static String DEFAULT_PLACEHOLDER_SUFFIX = "}";
     
     private final static Logger log = LoggerFactory.getLogger(PropertyParser.class);
     private Properties properties;
+    private PropertyPlaceholderHelper propertyPlaceholderHelper;
     
     public PropertyParser(Properties properties){
-        super();
         this.properties = properties;
+        // we want an expeption for unresolved properties, this use 'false'
+        this.propertyPlaceholderHelper = new PropertyPlaceholderHelper(DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFIX, null, false);
     }
     public Object resolveProperty(String name, Object o) {
         if(o == null || properties == null) {
@@ -45,18 +47,13 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
         
         if(o instanceof String) {
             String s = (String)o;
-            Set<String> exprSet = new HashSet<String>();
             // replace possible expressions
             try {
-              s = this.parseStringValue((String)o, properties, exprSet );
-            } catch (BeanDefinitionStoreException e) {
+              s =  propertyPlaceholderHelper.replacePlaceholders((String)o, properties);
+            } catch (IllegalArgumentException e) {
               log.debug("Unable to replace property expression for property '{}'. Return null : '{}'" ,name, e); 
               return null;
               
-            }
-            
-            if(!exprSet.isEmpty()) {
-              if (log.isDebugEnabled()) log.debug("Translated property value from '{}' --> '{}' for property '" +name + "'", o, s);   
             }
             return s;
         }
@@ -64,24 +61,15 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
             // replace possible expressions in every String
             String[] unparsed = (String[])o;
             String[] parsed = new String[unparsed.length];
-            Set<String> exprSet = new HashSet<String>();
             for(int i = 0 ; i < unparsed.length ; i++) {
                 String s = unparsed[i];
                 try {
-                    s = this.parseStringValue(unparsed[i], properties, exprSet );
-                } catch (BeanDefinitionStoreException e ) {
+                    s =  propertyPlaceholderHelper.replacePlaceholders((String)o, properties);
+                } catch (IllegalArgumentException e ) {
                     log.debug("Unable to replace property expression for property '{}'. Return null : '{}'.",name, e);
                     s = null;
                 }
                 parsed[i] = s;
-            }
-            
-            if (log.isDebugEnabled()) {
-                if(!exprSet.isEmpty()) {
-                    for(int i = 0; i < parsed.length; i++) {
-                        log.debug("Translated property value from '{}' --> '{}' for property '"+name+"'", unparsed[i], parsed[i]);
-                    }
-                }
             }
             
             return parsed;
