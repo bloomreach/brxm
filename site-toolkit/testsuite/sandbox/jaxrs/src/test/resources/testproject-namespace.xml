@@ -112,7 +112,7 @@
                 <sv:property sv:name="hipposysedit:uri" sv:type="String">
                     <sv:value>http://www.hippoecm.org/hst/nt/testproject/1.0</sv:value>
                 </sv:property>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="title">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -121,9 +121,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>f9a005b2-8ee2-4b1e-bfe7-a924a70ea397</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -138,7 +135,7 @@
                         <sv:value>String</sv:value>
                     </sv:property>
                 </sv:node>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="summary">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -147,9 +144,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>1808b5f5-f2a5-4cc0-a6de-d44159e01667</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -164,7 +158,7 @@
                         <sv:value>String</sv:value>
                     </sv:property>
                 </sv:node>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="body">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -173,9 +167,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>01674462-fce1-4369-9389-567d45f10093</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -190,7 +181,7 @@
                         <sv:value>hippostd:html</sv:value>
                     </sv:property>
                 </sv:node>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="date">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -199,9 +190,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>54b34be7-c94b-4ab0-9f27-339bf0d9628e</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -325,7 +313,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>f9a005b2-8ee2-4b1e-bfe7-a924a70ea397</sv:value>
+                        <sv:value>title</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
@@ -356,7 +344,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>1808b5f5-f2a5-4cc0-a6de-d44159e01667</sv:value>
+                        <sv:value>summary</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
@@ -387,7 +375,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>01674462-fce1-4369-9389-567d45f10093</sv:value>
+                        <sv:value>body</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
@@ -418,7 +406,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>54b34be7-c94b-4ab0-9f27-339bf0d9628e</sv:value>
+                        <sv:value>date</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
@@ -491,7 +479,7 @@
                 <sv:property sv:name="hipposysedit:uri" sv:type="String">
                     <sv:value>http://www.hippoecm.org/hst/nt/testproject/1.0</sv:value>
                 </sv:property>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="title">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -500,9 +488,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>9d1cd720-6408-4fd4-9094-9d890ceae289</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -517,7 +502,7 @@
                         <sv:value>String</sv:value>
                     </sv:property>
                 </sv:node>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="summary">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -526,9 +511,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>cedcda2d-a1a9-4442-adc7-7c67ab4dfb3e</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -543,7 +525,7 @@
                         <sv:value>String</sv:value>
                     </sv:property>
                 </sv:node>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="body">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -552,9 +534,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>8857c545-63fc-4c5f-ab72-e2ba3097a12e</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -569,7 +548,7 @@
                         <sv:value>hippostd:html</sv:value>
                     </sv:property>
                 </sv:node>
-                <sv:node sv:name="hipposysedit:field">
+                <sv:node sv:name="date">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hipposysedit:field</sv:value>
                     </sv:property>
@@ -578,9 +557,6 @@
                     </sv:property>
                     <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
                         <sv:value>false</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hipposysedit:name" sv:type="String">
-                        <sv:value>44b34be7-c94b-4ab0-9f27-339bf0d9628e</sv:value>
                     </sv:property>
                     <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
                         <sv:value>false</sv:value>
@@ -704,7 +680,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>9d1cd720-6408-4fd4-9094-9d890ceae289</sv:value>
+                        <sv:value>title</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
@@ -735,7 +711,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>cedcda2d-a1a9-4442-adc7-7c67ab4dfb3e</sv:value>
+                        <sv:value>summary</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
@@ -766,7 +742,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>8857c545-63fc-4c5f-ab72-e2ba3097a12e</sv:value>
+                        <sv:value>body</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
@@ -797,7 +773,7 @@
                         <sv:value>${engine}</sv:value>
                     </sv:property>
                     <sv:property sv:name="field" sv:type="String">
-                        <sv:value>44b34be7-c94b-4ab0-9f27-339bf0d9628e</sv:value>
+                        <sv:value>date</sv:value>
                     </sv:property>
                     <sv:property sv:name="mode" sv:type="String">
                         <sv:value>${mode}</sv:value>
