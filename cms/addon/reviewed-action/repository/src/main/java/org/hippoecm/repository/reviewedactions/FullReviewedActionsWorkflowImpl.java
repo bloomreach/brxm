@@ -53,11 +53,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void delete() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("deletion on document ");
         if(current != null)
-            throw new WorkflowException("cannot delete document with pending publication request");
-        if(current2 != null)
-            throw new WorkflowException("cannot delete document with pending depublication request");
-        if(current3 != null)
-            throw new WorkflowException("cannot delete document with pending delete request");
+            throw new WorkflowException("cannot delete document with pending request");
         if(publishedDocument != null)
             throw new WorkflowException("cannot delete published document");
         if(draftDocument != null)
@@ -131,11 +127,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         ReviewedActionsWorkflowImpl.log.info("move document");
         if(current != null)
-            throw new WorkflowException("cannot move document with pending publication request");
-        if(current2 != null)
-            throw new WorkflowException("cannot move document with pending depublication request");
-        if(current3 != null)
-            throw new WorkflowException("cannot move document with pending delete request");
+            throw new WorkflowException("cannot move document with pending request");
         if(publishedDocument != null)
             throw new WorkflowException("cannot move published document");
         if(draftDocument != null)
@@ -152,11 +144,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void rename(String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         ReviewedActionsWorkflowImpl.log.info("rename on document ");
         if(current != null)
-            throw new WorkflowException("cannot rename document with pending publication request");
-        if(current2 != null)
-            throw new WorkflowException("cannot rename document with pending depublication request");
-        if(current3 != null)
-            throw new WorkflowException("cannot rename document with pending delete request");
+            throw new WorkflowException("cannot rename document with pending request");
         if(publishedDocument != null || unpublishedDocument == null)
             throw new WorkflowException("cannot rename published document");
         if(draftDocument != null)
@@ -178,9 +166,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         if(draftDocument != null)
             throw new WorkflowException("cannot publish document being edited");
         if(current != null)
-            throw new WorkflowException("cannot publish document with pending publication request");
-        if(current2 != null)
-            throw new WorkflowException("cannot publish document with pending depublication request");
+            throw new WorkflowException("cannot publish document with pending request");
         doPublish();
     }
 
@@ -206,9 +192,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void depublish() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication on document ");
         if(current != null)
-            throw new WorkflowException("cannot depublish document with pending publication request");
-        if(current2 != null)
-            throw new WorkflowException("cannot depublish document with pending depublication request");
+            throw new WorkflowException("cannot depublish document with pending request");
         if(draftDocument != null)
             throw new WorkflowException("cannot publish document being edited");
         doDepublish();

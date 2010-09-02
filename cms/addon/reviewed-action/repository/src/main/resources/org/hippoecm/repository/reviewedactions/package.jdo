@@ -27,11 +27,7 @@
       <field name="draftDocument" column="../{.}[hippostd:state='draft']"/>
       <field name="unpublishedDocument" column="../{.}[hippostd:state='unpublished']"/>
       <field name="publishedDocument" column="../{.}[hippostd:state='published']"/>
-      <field name="current" column="../hippo:request[hippostdpubwf:type='publish']"/>
-      <field name="current2" column="../hippo:request[hippostdpubwf:type='depublish']"/>
-      <field name="current3" column="../hippo:request[hippostdpubwf:type='delete']"/>
-      <field name="current4" column="../hippo:request[hippostdpubwf:type='scheduledpublish']"/>
-      <field name="current5" column="../hippo:request[hippostdpubwf:type='scheduleddepublish']"/>
+      <field name="current" column="../hippo:request[hippostdpubwf:type!='rejected']"/>
     </class>
     <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>

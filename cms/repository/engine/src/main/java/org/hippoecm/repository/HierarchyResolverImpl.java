@@ -39,6 +39,36 @@ public class HierarchyResolverImpl implements HierarchyResolver {
 
     private final Logger logger = LoggerFactory.getLogger(HierarchyResolverImpl.class);
 
+    private abstract static class Comparison {
+	    Comparison() {
+	    }
+	    abstract boolean compare(String value);
+    }
+    private static class EqualsComparison extends Comparison {
+	    String value;
+	    EqualsComparison(String value) {
+                this.value = value;
+	    }
+	    boolean compare(String value) {
+                return this.value.equals(value);
+	    }
+    }
+    private static class UnequalsComparison extends Comparison {
+	    String value;
+	    UnequalsComparison(String value) {
+                this.value = value;
+	    }
+	    boolean compare(String value) {
+                return ! this.value.equals(value);
+	    }
+    }
+    private static class ExistsComparison extends Comparison {
+	    ExistsComparison() {
+	    }
+	    boolean compare(String value) {
+		return value != null;
+	    }
+    }
     public Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
       throws InvalidItemStateException, RepositoryException {
         if(logger.isDebugEnabled()) {
@@ -84,20 +114,39 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                 node = node.getSession().getNodeByUUID(uuid);
                 continue;
             }
-            Map<String,String> conditions = null;
+            Map<String,Comparison> conditions = null;
             String relIndex = null;
             if(relPath.contains("[") && relPath.endsWith("]")) {
                 relIndex = relPath.substring(relPath.indexOf("[")+1,relPath.lastIndexOf("]"));
                 try {
                     Integer.decode(relIndex);
                 } catch(NumberFormatException ex) {
-                    conditions = new TreeMap<String,String>();
+                    conditions = new TreeMap<String,Comparison>();
                 }
             }
             if (conditions != null) {
                 String[] conditionElts = relIndex.split(",");
                 for(int conditionIdx=0; conditionIdx<conditionElts.length; conditionIdx++) {
-                    int pos = conditionElts[conditionIdx].indexOf("=");
+                    int pos;
+		    pos = conditionElts[conditionIdx].indexOf("!=");
+                    if(pos >= 0) {
+                        String key = conditionElts[conditionIdx].substring(0,pos);
+                        if (key.startsWith("@")) {
+                            key = key.substring(1);
+                        }
+                        String value = conditionElts[conditionIdx].substring(pos+2);
+                        if(value.startsWith("'") && value.endsWith("'")) {
+                            value = value.substring(1,value.length()-1);
+                            conditions.put(key, new UnequalsComparison(value));
+                        } else if(value.startsWith("{") && value.endsWith("}")) {
+                            value = ancestor.getProperty(value.substring(1,value.length()-1)).getString();
+                            conditions.put(key, new UnequalsComparison(value));
+                        } else {
+                            conditions.put(key, new UnequalsComparison(value));
+                        }
+			continue;
+                    }
+		    pos = conditionElts[conditionIdx].indexOf("=");
                     if(pos >= 0) {
                         String key = conditionElts[conditionIdx].substring(0,pos);
                         if (key.startsWith("@")) {
@@ -106,26 +155,26 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         String value = conditionElts[conditionIdx].substring(pos+1);
                         if(value.startsWith("'") && value.endsWith("'")) {
                             value = value.substring(1,value.length()-1);
-                            conditions.put(key, value);
+                            conditions.put(key, new EqualsComparison(value));
                         } else if(value.startsWith("{") && value.endsWith("}")) {
                             value = ancestor.getProperty(value.substring(1,value.length()-1)).getString();
-                            conditions.put(key, value);
+                            conditions.put(key, new EqualsComparison(value));
                         } else {
-                            conditions.put(key, value);
+                            conditions.put(key, new EqualsComparison(value));
+                        }
+			continue;
+                    }
+                    if(conditionElts[conditionIdx].equals("{_similar}")) {
+                        Node parent = ancestor.getParent();
+                        if(parent.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
+                            Value[] discriminators = parent.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
+                            for(int i=0; i<discriminators.length; i++) {
+                                conditions.put(discriminators[i].getString(),
+                                               new EqualsComparison(ancestor.getProperty(discriminators[i].getString()).getString()));
+                            }
                         }
                     } else {
-                        if(conditionElts[conditionIdx].equals("{_similar}")) {
-                            Node parent = ancestor.getParent();
-                            if(parent.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
-                                Value[] discriminators = parent.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                                for(int i=0; i<discriminators.length; i++) {
-                                    conditions.put(discriminators[i].getString(),
-                                                   ancestor.getProperty(discriminators[i].getString()).getString());
-                                }
-                            }
-                        } else {
-                            conditions.put(conditionElts[conditionIdx], null);
-                        }
+                        conditions.put(conditionElts[conditionIdx], new ExistsComparison());
                     }
                 }
                 relPath = relPath.substring(0,relPath.indexOf("["));
@@ -167,35 +216,20 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                     if(logger.isDebugEnabled()) {
                         logger.debug("considering for conditional path "+relPath+" item "+child.getPath());
                     }
-                    for(Map.Entry<String,String> condition: conditions.entrySet()) {
-                        if(child.hasProperty(condition.getKey())) {
-                            if(condition.getValue() != null) {
-                                try {
-                                    if(!child.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
-                                        if(logger.isDebugEnabled()) {
-                                             logger.debug("child is not item because of key "+condition.getKey()+" expected "+condition.getValue()+" found "+child.getProperty(condition.getKey()).getString().equals(condition.getValue()));
-                                        }
-                                        child = null;
-                                        break;
-                                    }
-                                } catch(PathNotFoundException ex) {
-                                    child = null; // impossible because if hasProperty check
-                                    break;
-                                } catch(ValueFormatException ex) {
-                                    if(logger.isDebugEnabled()) {
-                                        logger.debug("child is not item because of key "+condition.getKey()+" was not or right type");
-                                    }
-                                    child = null;
-                                    break;
-                                }
-                            }
-                        } else {
-                            if(logger.isDebugEnabled()) {
-                                logger.debug("child is not item because of key "+condition.getKey()+" was not found");
-                            }
-                            child = null;
-                            break;
-                        }
+                    for(Map.Entry<String,Comparison> condition: conditions.entrySet()) {
+			String childValue = null;
+		        try {
+                            if(child.hasProperty(condition.getKey())) {
+		                childValue = child.getProperty(condition.getKey()).getString();
+			    }
+			} catch(ValueFormatException ex) {
+			    child = null;
+			    break;
+			}
+			if(!condition.getValue().compare(childValue)) {
+		            child = null;
+			    break;
+			}
                     }
                     if(child != null)
                         break;
