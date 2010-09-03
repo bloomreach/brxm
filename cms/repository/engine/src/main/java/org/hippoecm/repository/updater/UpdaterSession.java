@@ -77,6 +77,7 @@ final public class UpdaterSession implements HippoSession {
     ValueFactory valueFactory;
     UpdaterNode root;
     UpdaterWorkspace workspace;
+    String namespaceTransition = null;
     private Map<String, List<UpdaterProperty>> references;
 
     public UpdaterSession(Session session) throws UnsupportedRepositoryOperationException, RepositoryException {
@@ -150,15 +151,9 @@ final public class UpdaterSession implements HippoSession {
                 property.setValue(targetUUID);
             }
 
-            // docbases that come after the source node in the traversal FIXME needed for hippo namespace transition
-            boolean namespaceTransition = true;
-            try {
-                upstream.getNamespaceURI("hippo_2_1");
-            } catch(NamespaceException ex) {
-                namespaceTransition = false;
-            }
-            if(namespaceTransition) {
-                query = queryMgr.createQuery("//*[(hippo_2_1:docbase='" + sourceUUID + "')]", Query.XPATH);
+            // docbases that come after the source node in the traversal
+            if (namespaceTransition != null) {
+                query = queryMgr.createQuery("//*[("+namespaceTransition+":docbase='" + sourceUUID + "')]", Query.XPATH);
                 result = query.execute();
                 for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
                     Node reference = iter.nextNode();
@@ -169,7 +164,7 @@ final public class UpdaterSession implements HippoSession {
                     if (reference.isNodeType("mix:versionable")) {
                         reference.checkout();
                     }
-                    Property property = reference.getProperty("hippo_2_1:docbase");
+                    Property property = reference.getProperty(namespaceTransition+":docbase");
                     if (log.isDebugEnabled()) {
                         log.debug("setting " + property.getPath() + " from " + sourceUUID + " to " + targetUUID);
                     }
