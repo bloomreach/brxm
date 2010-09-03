@@ -387,7 +387,33 @@ public class UpdaterEngine {
         }
         log.info("Migration cycle starting with version tags:"+new String(logInfo));
 
-        return prepare(modules, currentVersions);
+        if (prepare(modules, currentVersions)) {
+            // find out if we're migrating the hippo or hipposys namespace
+            for (ModuleRegistration moduleRegistration : modules) {
+                for (ItemVisitor visitor : moduleRegistration.visitors) {
+                    if ("NodeTypeVisitor[hippo:derived]".equals(visitor.toString())) {
+			// in case of migrating the hippo namespace the following line is relevant:
+			((org.hippoecm.repository.impl.SessionDecorator)session).postDerivedData(false);
+	            }
+                    if (visitor instanceof NamespaceVisitorImpl) {
+                        NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
+                        if ("hippo".equals(namespaceVisitor.namespace)) {
+                            if(namespaceVisitor.newPrefix == null) {
+                                log.error("error in migration cycle, new hippo namespace prefix not set");
+                            }
+                            updaterSession.namespaceTransition = namespaceVisitor.newPrefix;
+                        }
+                        if ("hippo".equals(namespaceVisitor.namespace) || "hipposys".equals(namespaceVisitor.namespace)) {
+                            // in case of migrating the hippo namespace the following line is relevant:
+                            ((org.hippoecm.repository.impl.SessionDecorator)session).postDerivedData(false);
+                        }
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     static boolean prepare(Vector<ModuleRegistration> modules, Set<String> currentVersions) throws RepositoryException {
@@ -586,8 +612,6 @@ public class UpdaterEngine {
             boolean updates;
             do {
                 Session subSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
-                // in case of migrating the hippo namespace the following line may be relevant
-                ((org.hippoecm.repository.impl.SessionDecorator)subSession).postDerivedData(false);
                 UpdaterEngine engine = new UpdaterEngine(subSession);
                 updates = engine.prepare();
                 if (updates) {
@@ -608,16 +632,20 @@ public class UpdaterEngine {
             } while (updates);
             log.info("migration cycle finished successfully");
         } catch(ReferentialIntegrityException ex) {
-            String uuid = ex.getMessage().substring(0, ex.getMessage().indexOf(":"));
-            try {
-                Node node = session.getNodeByUUID(uuid);
-                log.error("error in migration cycle: node still referenced: "+uuid+" "+node.getPath());
-                for(PropertyIterator iter = node.getReferences(); iter.hasNext(); ) {
-                    Property reference = iter.nextProperty();
-                    log.error("  referring property "+reference.getPath());
+            if (ex.getMessage().contains(":")) {
+                String uuid = ex.getMessage().substring(0, ex.getMessage().indexOf(":"));
+                try {
+                    Node node = session.getNodeByUUID(uuid);
+                    log.error("error in migration cycle: node still referenced: "+uuid+" "+node.getPath());
+                    for(PropertyIterator iter = node.getReferences(); iter.hasNext(); ) {
+                        Property reference = iter.nextProperty();
+                        log.error("  referring property "+reference.getPath());
+                    }
+                } catch(RepositoryException ignored) {
+                    log.error("error in migration cycle: node still referenced: "+uuid);
                 }
-            } catch(RepositoryException ignored) {
-                log.error("error in migration cycle: node still referenced: "+uuid);
+            } else {
+                log.error("error in migration cycle: node still referenced", ex);
             }
             throw ex;
         } catch(RepositoryException ex) {
