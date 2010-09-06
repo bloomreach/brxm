@@ -166,9 +166,9 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         QueryManager queryManager = document.getSession().getWorkspace().getQueryManager();
         String statement;
         if (retrieveUnpublished) {
-            statement = "//element(*,hippostd:publishable)[@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed')]//*[@hippo:docbase='" + uuid + "']";
+            statement = "//element(*,hippostd:publishable)[@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed')]//*[@hippo:docbase='" + uuid + "'] order by jcr:score";
         } else {
-            statement = "//element(*,hippostd:publishable)[@hippostd:state='published']//*[@hippo:docbase='" + uuid + "']";
+            statement = "//element(*,hippostd:publishable)[@hippostd:state='published']//*[@hippo:docbase='" + uuid + "'] order by jcr:score";
         }
         HippoQuery query = (HippoQuery) queryManager.createQuery(statement, Query.XPATH);
         query.setLimit(1000);
