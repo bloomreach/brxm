@@ -244,6 +244,16 @@
       </releases>
     </repository>
     <repository>
+      <id>repo2</id>
+      <url>http://repo2.maven.org/maven2</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+    <repository>
       <id>hippogallerypicker</id>
       <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
       <snapshots>
@@ -839,7 +849,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>2.8</version>
         <configuration>
-          <downloadSources>false</downloadSources>
+          <downloadSources>true</downloadSources>
           <downloadJavadocs>true</downloadJavadocs>
         </configuration>
       </plugin>
