@@ -30,7 +30,7 @@
     <modules>
       <module>content</module>
       <module>cms</module>
-      <!-- module>sandbox</module-->
+      <module>sandbox</module>
       <module>site</module>
     </modules>
 
