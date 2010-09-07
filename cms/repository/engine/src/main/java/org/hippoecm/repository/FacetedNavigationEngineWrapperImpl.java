@@ -24,6 +24,7 @@ import javax.jcr.query.InvalidQueryException;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.FacetedNavigationEngine.Result;
 
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
         implements FacetedNavigationEngine<Q, C> {
@@ -96,6 +97,10 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
 
     public Q parse(String query) {
         return upstream.parse(query);
+    }
+
+    public Result query(String statement, C context) throws InvalidQueryException, RepositoryException {
+        return upstream.query(statement, context);
     }
 
 }
