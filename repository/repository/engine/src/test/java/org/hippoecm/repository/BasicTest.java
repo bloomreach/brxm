@@ -18,15 +18,29 @@ package org.hippoecm.repository;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.junit.After;
 import org.junit.Test;
 
 public class BasicTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    @After
+    public void tearDown() {
+        clear();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testBasics() throws Exception {
@@ -74,8 +88,28 @@ public class BasicTest {
                     exceptionOccurred = true;
                 }
             }
+            HippoRepositoryFactory.setDefaultRepository((String) null);
             if (exceptionOccurred)
                 throw firstException;
+        }
+    }
+
+    static private void delete(File path) {
+        if(path.exists()) {
+            if(path.isDirectory()) {
+                File[] files = path.listFiles();
+                for(int i=0; i<files.length; i++)
+                    delete(files[i]);
+            }
+            path.delete();
+        }
+    }
+
+    static private void clear() {
+        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
+        for(int i=0; i<files.length; i++) {
+            File file = new File(files[i]);
+            delete(file);
         }
     }
 }
