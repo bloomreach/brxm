@@ -46,6 +46,16 @@
   </servlet>
 
   <servlet>
+    <servlet-name>PingServlet</servlet-name>
+    <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
+    <load-on-startup>3</load-on-startup>
+    <init-param>
+      <param-name>repository-address</param-name>
+      <param-value>vm://</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
     <init-param>
@@ -76,6 +86,11 @@
   <servlet-mapping>
     <servlet-name>RepositoryServlet</servlet-name>
     <url-pattern>/repository/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>PingServlet</servlet-name>
+    <url-pattern>/ping/*</url-pattern>
   </servlet-mapping>
 
   <!-- Timeout in minutes -->
