@@ -24,6 +24,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class HREPTWO1493Test extends TestCase {
@@ -43,6 +44,7 @@ public class HREPTWO1493Test extends TestCase {
         "hippo:x",            "test"
     };
 
+    @Before
     @Override
     public void setUp() throws Exception {
         super.setUp(true);
