@@ -82,7 +82,7 @@ public class LoggingServlet extends HttpServlet {
         repositoryLocation = getInitParameter(config, REPOS_PARAM, DEFAULT_REPOS);
         privilege = getInitParameter(config, PRIV_PARAM, DEFAULT_PRIV);
         absPath = ensureStartSlash(getInitParameter(config, NODE_PARAM, DEFAULT_NODE));
-        log.error("LoggingServlet configured with repository '" + repositoryLocation + "' check node '" + absPath
+        log.info("LoggingServlet configured with repository '" + repositoryLocation + "' check node '" + absPath
                 + "' and check privilege '" + privilege + "'");
         super.init(config);
     }
