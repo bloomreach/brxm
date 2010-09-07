@@ -22,9 +22,10 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.InvalidQueryException;
 import javax.security.auth.Subject;
-import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
 
 /**
@@ -402,5 +403,17 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
             List<FacetRange> rangeQuery, Q openQuery, Map<String, Map<String, Count>> resultset,
             Map<String, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException, IllegalArgumentException;
+
+    /**
+     * Query the lucene index with an XPATH search.  This will query the JackRabbit
+     * index, i.e. it does not use the Hippo facets.
+     * 
+     * @param statement
+     * @param context
+     * @return
+     * @throws InvalidQueryException
+     * @throws RepositoryException
+     */
+    public Result query(String statement, C context) throws InvalidQueryException, RepositoryException;
 
 }

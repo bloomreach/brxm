@@ -671,4 +671,40 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         super.doInit();
     }
 
+    public Result query(String statement, ContextImpl context) throws InvalidQueryException, RepositoryException {
+        QueryRootNode root = org.apache.jackrabbit.spi.commons.query.QueryParser.parse(statement, "xpath",
+                context.session, getQueryNodeFactory());
+        org.apache.lucene.search.Query query = LuceneQueryBuilder.createQuery(root, context.session, getContext()
+                .getItemStateManager(), getNamespaceMappings(), getTextAnalyzer(), getContext()
+                .getPropertyTypeRegistry(), getSynonymProvider(), getIndexFormatVersion());
+
+        Set<NodeId> nodeIdHits = new LinkedHashSet<NodeId>();
+        try {
+            IndexReader indexReader = getIndexReader(false);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+            searcher.setSimilarity(new FixedScoreSimilarity());
+
+            TopDocs tfDocs = searcher.search(query, (Filter) null, 1000);
+            ScoreDoc[] hits = tfDocs.scoreDocs;
+            int position = 0;
+
+            Set<String> fieldNames = new HashSet<String>();
+            fieldNames.add(FieldNames.UUID);
+            FieldSelector fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
+
+            // LinkedHashSet because ordering should be kept!
+            while (position < hits.length) {
+                Document d = indexReader.document(hits[position].doc, fieldSelector);
+                Field uuidField = d.getField(FieldNames.UUID);
+                if (uuidField != null) {
+                    nodeIdHits.add(NodeId.valueOf(uuidField.stringValue()));
+                }
+                position++;
+            }
+        } catch (IOException ex) {
+            log.warn(ex.getMessage(), ex);
+        }
+        return new ResultImpl(nodeIdHits.size(), nodeIdHits);
+    }
+
 }
