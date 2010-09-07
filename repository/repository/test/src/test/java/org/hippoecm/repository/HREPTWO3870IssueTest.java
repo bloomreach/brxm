@@ -62,7 +62,7 @@ public class HREPTWO3870IssueTest extends TestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
         // add test specific setup code here
     }
 
