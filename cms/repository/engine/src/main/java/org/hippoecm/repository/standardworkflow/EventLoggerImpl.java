@@ -41,11 +41,13 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     final Logger log = LoggerFactory.getLogger(Workflow.class);
 
     private boolean enabled = false;
+    private Session rootSession;
     private Node logFolder;
     private String appender;
     private long maxSize;
 
     public EventLoggerImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
+        this.rootSession = rootSession;
         if (subject != null) {
             try {
                 logFolder = rootSession.getRootNode().getNode(subject.getPath().substring(1));
@@ -100,7 +102,7 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 sb.append(document.getIdentity());
                 sb.append(",path='");
                 try {
-                    sb.append(logFolder.getSession().getNodeByUUID(document.getIdentity()).getPath());
+                    sb.append(rootSession.getNodeByUUID(document.getIdentity()).getPath());
                 } catch (RepositoryException e) {
                     sb.append("error:").append(e.getMessage());
                 }
