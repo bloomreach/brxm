@@ -28,17 +28,22 @@ import java.util.NoSuchElementException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.InvalidQueryException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.jackrabbit.core.ItemManager;
+import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.query.ExecutableQuery;
 import org.apache.jackrabbit.core.query.PropertyTypeRegistry.TypeMapping;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.core.query.lucene.QueryImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -53,6 +58,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.search.SortField;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +95,26 @@ public class ServicingSearchIndex extends SearchIndex {
         return super.getIndex();
     }
 
+    @Override
+    public ExecutableQuery createExecutableQuery(SessionImpl session, ItemManager itemMgr, String statement,
+            String language) throws InvalidQueryException {
+       
+        if(statement.contains(HippoNodeType.HIPPO_PATHS)) {
+           // Do not search in versioning
+           return new QueryImpl(session, itemMgr, this,
+                    getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
+               // we override the needsSystemTree() to return false: We do not want to search in versioning.
+               @Override
+               public boolean needsSystemTree() {
+                   return false;
+               }
+           };
+        } else {
+            return super.createExecutableQuery(session, itemMgr, statement, language);
+        }
+    }
+    
+    
     /**
      * Returns the document element of the indexing configuration or
      * <code>null</code> if there is no indexing configuration.
