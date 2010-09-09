@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,7 +55,14 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
 
     public Iterator<String> iterator(int first, int count) {
         load();
-        return entries.subList(first, count).iterator();
+        if (first < entries.size()) {
+            if ((first + count) <= entries.size()) {
+                return entries.subList(first, first + count).iterator();
+            } else {
+                return entries.subList(first, entries.size()).iterator();
+            }
+        }
+        return Collections.EMPTY_LIST.iterator();
     }
 
     public IModel<String> model(String object) {
