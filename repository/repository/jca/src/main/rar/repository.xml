@@ -108,11 +108,4 @@
         </PersistenceManager>
     </Versioning>
 
-    <!--
-        Search index for content that is shared repository wide
-        (/jcr:system tree, contains mainly versions)
-    -->
-    <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
-        <param name="path" value="${rep.home}/repository/index"/>
-    </SearchIndex>
 </Repository>
