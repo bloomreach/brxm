@@ -93,7 +93,7 @@ AutoSave.prototype.save = function(throttled) {
     }
     var self = this;
     var callbackUrl = this.editor.config.callbackUrl;
-    xmlHttpReq.open('POST', callbackUrl, true);
+    xmlHttpReq.open('POST', callbackUrl, throttled);
     xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xmlHttpReq.setRequestHeader('Wicket-Ajax', "true");
     xmlHttpReq.onreadystatechange = function() {
