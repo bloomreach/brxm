@@ -77,7 +77,7 @@ public class BrowserSectionAccordion extends Panel {
 
             public Iterator<String> iterator(int first, int count) {
                 load();
-                return names.subList(first, count).iterator();
+                return names.subList(first, first + count).iterator();
             }
 
             public IModel<String> model(String object) {
