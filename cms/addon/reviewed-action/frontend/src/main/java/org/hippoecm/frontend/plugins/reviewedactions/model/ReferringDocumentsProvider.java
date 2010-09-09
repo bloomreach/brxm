@@ -171,26 +171,25 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
             statement = "//element(*,hippostd:publishable)[@hippostd:state='published']//*[@hippo:docbase='" + uuid + "'] order by jcr:score";
         }
         HippoQuery query = (HippoQuery) queryManager.createQuery(statement, Query.XPATH);
-        query.setLimit(1000);
+
+        // The repository does not know how many results it finds.
+        // So iterate over all results to count them.  Use a 
+        query.setLimit(2000);
         QueryResult result = query.execute();
-        numResults = (int) result.getNodes().getSize();
-        if (numResults == 1000) {
-            numResults = -1;
-        }
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
             Node node = iter.nextNode();
             while (!node.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
                 node = (node.getDepth() > 0 ? node.getParent() : null);
             }
-            if (referrers.size() < getLimit()) {
-                if (!node.isNodeType("mix:referenceable")) {
-                    log.warn("Node " + node.getPath() + " is not referenceable.");
-                    continue;
-                }
-                referrers.add(node);
-            } else {
-                break;
+            if (!node.isNodeType("mix:referenceable")) {
+                log.warn("Node " + node.getPath() + " is not referenceable.");
+                continue;
             }
+            referrers.add(node);
+        }
+        numResults = referrers.size();
+        if (numResults >= 1000) {
+            numResults = -1;
         }
         return referrers;
     }
