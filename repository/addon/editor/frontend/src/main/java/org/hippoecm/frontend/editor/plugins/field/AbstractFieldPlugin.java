@@ -158,7 +158,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             }
 
         } else {
-            templateController = new TemplateController<C>(context, config, helper.getValidationModel(), this,
+            IModel<IValidationResult> validationModel = null;
+            if (IEditor.Mode.EDIT == mode) {
+                validationModel = helper.getValidationModel();
+            }
+            templateController = new TemplateController<C>(context, config, validationModel, this,
                     getItemId());
 
             provider = getProvider(getModel());
@@ -196,7 +200,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     }
 
                 };
-                IModel<IValidationResult> validationModel = helper.getValidationModel();
                 if (validationModel != null && validationModel.getObject() != null) {
                     holder.setValid(validationModel.getObject().isValid());
                 }

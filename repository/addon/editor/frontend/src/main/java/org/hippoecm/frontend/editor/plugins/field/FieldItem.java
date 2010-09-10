@@ -60,40 +60,42 @@ public class FieldItem<C extends IModel> implements IDetachable {
         modelRef.init(context);
 
         validationService = null;
-        if (validationModel != null && validationModel.getObject() != null) {
-            filteredValidationModel = new FilteredValidationModel(validationModel, element);
-            final String validationServiceId = control.getClusterConfig().getString(IValidationService.VALIDATE_ID);
-            if (validationServiceId != null) {
-                validationService = new IValidationService() {
-                    private static final long serialVersionUID = 1L;
-
-                    public IValidationResult getValidationResult() {
-                        return filteredValidationModel.getObject();
-                    }
-
-                    public void validate() throws ValidationException {
-                        throw new ValidationException("Initiating validation from template is unsupported");
-                    }
-
-                };
-                context.registerService(validationService, validationServiceId);
-                if (validationModel instanceof IObservable) {
-                    context.registerService(validationObserver = new Observer((IObservable) validationModel) {
-
-                        public void onEvent(Iterator events) {
-                            List<IValidationListener> listeners = context.getServices(validationServiceId,
-                                    IValidationListener.class);
-                            for (IValidationListener listener : listeners) {
-                                listener.onValidation(filteredValidationModel.getObject());
-                            }
+        if (validationModel != null) {
+            if (validationModel.getObject() != null) {
+                filteredValidationModel = new FilteredValidationModel(validationModel, element);
+                final String validationServiceId = control.getClusterConfig().getString(IValidationService.VALIDATE_ID);
+                if (validationServiceId != null) {
+                    validationService = new IValidationService() {
+                        private static final long serialVersionUID = 1L;
+    
+                        public IValidationResult getValidationResult() {
+                            return filteredValidationModel.getObject();
                         }
-
-                    }, IObserver.class.getName());
+    
+                        public void validate() throws ValidationException {
+                            throw new ValidationException("Initiating validation from template is unsupported");
+                        }
+    
+                    };
+                    context.registerService(validationService, validationServiceId);
+                    if (validationModel instanceof IObservable) {
+                        context.registerService(validationObserver = new Observer((IObservable) validationModel) {
+    
+                            public void onEvent(Iterator events) {
+                                List<IValidationListener> listeners = context.getServices(validationServiceId,
+                                        IValidationListener.class);
+                                for (IValidationListener listener : listeners) {
+                                    listener.onValidation(filteredValidationModel.getObject());
+                                }
+                            }
+    
+                        }, IObserver.class.getName());
+                    }
                 }
-            }
-        } else {
-            if (control.getClusterConfig().containsKey(IValidationService.VALIDATE_ID)) {
-                log.warn("Template supports validation, but container does not provide validator model");
+            } else {
+                if (control.getClusterConfig().containsKey(IValidationService.VALIDATE_ID)) {
+                    log.warn("Template supports validation, but container does not provide validator model");
+                }
             }
         }
 
