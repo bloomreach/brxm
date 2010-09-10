@@ -99,12 +99,14 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
     }
 
     static UUID nullUUID = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+
     static UUID create(NodeId nodeId) {
         if(nodeId == null)
             return nullUUID;
         //return UUID.nameUUIDFromBytes(getUUID(nodeId).getRawBytes());
         return UUID.fromString(getUUID(nodeId).toString());
     }
+
     static UUID create(String string) {
         try {
             if(string == null || "".equals(string))
@@ -114,6 +116,10 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
             System.err.println("BERRY \""+string+"\"");
             return null;
         }
+    }
+
+    static UUID getUUID(NodeId nodeId) {
+        return UUID.fromString(nodeId.toString());
     }
 
     class TrivialStringIndex implements StringIndex {
