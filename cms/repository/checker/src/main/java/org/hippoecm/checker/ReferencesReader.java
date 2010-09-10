@@ -57,7 +57,7 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
         while (rs.next()) {
             byte[] nodeIdBytes = rs.getBytes(1);
             Blob blob = rs.getBlob(2);
-            final NodeId nodeId = new NodeId(new org.apache.jackrabbit.uuid.UUID(nodeIdBytes));
+            final NodeId nodeId = new NodeId(nodeIdBytes);
             byte[] bytes = getBytes(blob);
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
             int count = in.readInt();   // count

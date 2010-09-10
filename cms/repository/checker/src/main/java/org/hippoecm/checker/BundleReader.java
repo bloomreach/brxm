@@ -106,7 +106,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             String bundleSelectSQL = "select BUNDLE_DATA from " + schemaObjectPrefix + "BUNDLE WHERE NODE_ID = ?";
             PreparedStatement stmt = connection.prepareStatement(bundleSelectSQL);
             stmt.clearParameters();
-            stmt.setBytes(1, getUUID(nodeId).getRawBytes());
+            stmt.setBytes(1, nodeId.getRawBytes());
             stmt.clearWarnings();
             stmt.execute();
             ResultSet rs = stmt.getResultSet();
@@ -119,16 +119,18 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             bundle.setParentId(NodeId.valueOf(parent.toString()));
             for(Iterator<ChildNodeEntry> iter = ((List<ChildNodeEntry>) bundle.getChildNodeEntries()).iterator(); iter.hasNext(); ) {
                 ChildNodeEntry childNodeEntry = (ChildNodeEntry) iter.next();
-                if(!children.contains(UUID.fromString(childNodeEntry.getId().getUUID().toString()))) {
+                if(!children.contains(UUID.fromString(getUUID(childNodeEntry.getId()).toString()))) {
                     iter.remove();
                 }
             }
+	    /*
             for(UUID child : children) {
                 NodeId childNodeId = NodeId.valueOf(child.toString());
                 if(!bundle.getChildNodeEntries().contains(childNodeId)) {
                     bundle.addChildNodeEntry("lost", nodeId);
                 }
             }
+	    */
             ByteArrayOutputStream ostream = new ByteArrayOutputStream();
             bundleBinding.writeBundle(new DataOutputStream(ostream), bundle);
             String bundleUpdateSQL = "update " + schemaObjectPrefix + "BUNDLE SET BUNDLE_DATA = ? WHERE NODE_ID = ?";
@@ -137,7 +139,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             blob.truncate(0);
             blob.setBytes(0, ostream.toByteArray());
             stmt2.setBlob(1, blob);
-            stmt2.setBytes(2, nodeId.getUUID().getRawBytes());
+            stmt2.setBytes(2, nodeId.getRawBytes());
             stmt2.clearWarnings();
             stmt2.executeUpdate();
         } catch (SQLException ex) {
@@ -165,7 +167,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                 public Collection<UUID> getChildren() {
                     List<UUID> children = new LinkedList<UUID>();
                     for (ChildNodeEntry child : (List<ChildNodeEntry>)bundle.getChildNodeEntries()) {
-                        children.add(UUID.fromString(child.getId().getUUID().toString()));
+                        children.add(UUID.fromString(getUUID(child.getId()).toString()));
                     }
                     return children;
                 }
@@ -175,7 +177,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                     for (PropertyEntry entry : (Collection<PropertyEntry>)bundle.getPropertyEntries()) {
                         if (entry.getType() == PropertyType.REFERENCE) {
                             for (InternalValue value : entry.getValues()) {
-                                references.add(UUID.fromString(value.getUUID().toString()));
+				references.add(UUID.fromString(value.getNodeId().toString()));
                             }
                         }
                     }
@@ -420,9 +422,5 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             }
         }
         return true;
-    }
-
-    UUID getUUID(NodeId nodeId) {
-        return UUID.fromString(nodeId.toString());
     }
 }
