@@ -43,5 +43,6 @@
     <module>utilities</module>
     <module>test</module>
     <module>application</module>
+    <module>checker</module>
   </modules>
 </project>
