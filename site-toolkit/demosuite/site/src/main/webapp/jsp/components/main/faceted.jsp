@@ -53,38 +53,8 @@
           </c:when>
           <c:otherwise>
             <br/>
-            <c:choose>
-	            <c:when test="${order eq 'brand'}">
-                    <hst:renderURL var="orderbybrand">
-                       <hst:param name="order" value="-brand"/>
-                    </hst:renderURL>
-                </c:when>
-                <c:otherwise>
-                    <hst:renderURL var="orderbybrand">
-                       <hst:param name="order" value="brand"/>
-                    </hst:renderURL>
-                </c:otherwise>
-            </c:choose>
-            <c:choose>
-                <c:when test="${order eq 'price'}">
-                    <hst:renderURL var="orderbyprice">
-                       <hst:param name="order" value="-price"/>
-                    </hst:renderURL>
-                </c:when>
-                <c:otherwise>
-                    <hst:renderURL var="orderbyprice">
-                       <hst:param name="order" value="price"/>
-                    </hst:renderURL>
-                </c:otherwise>
-            </c:choose>
             
             <table class="facetedTable">
-            <thead>
-                <tr>
-                 <th><a href="${orderbybrand}">Brand</a></th>
-                 <th><a href="${orderbyprice}">Price</a></th>
-                </tr>
-             </thead>
              <tbody>
 	            <c:forEach var="result" items="${resultset}">
 	              <hst:link var="link" hippobean="${result}" contextRelative="true" />
