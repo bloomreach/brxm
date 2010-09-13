@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -24,16 +24,16 @@ import org.hippoecm.hst.utils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacetedDetail extends BaseHstComponent {
+public class FacetedDetail extends AbstractFacetedComponnent {
 
     public static final Logger log = LoggerFactory.getLogger(FacetedDetail.class);
   
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
          
-        String query = this.getPublicRequestParameter(request, "query");
+        HstQuery hstQuery = getHstQuery(request);
         
-        ProductBean product = BeanUtils.getFacetedNavigationResultDocument(request, query, getObjectConverter(), ProductBean.class);
+        ProductBean product = BeanUtils.getFacetedNavigationResultDocument(request, hstQuery, getObjectConverter(), ProductBean.class);
         
         request.setAttribute("document", product);
         

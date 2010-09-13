@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -25,25 +25,16 @@ import org.hippoecm.hst.utils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacetedRight extends BaseHstComponent {
+public class FacetedRight extends AbstractFacetedComponnent {
 
     public static final Logger log = LoggerFactory.getLogger(FacetedRight.class);
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
        
-        HippoFacetNavigationBean facNavBean = null;
-       
-        String query = this.getPublicRequestParameter(request, "query");
+        HstQuery hstQuery = getHstQuery(request);
         
-        if (query != null && !"".equals(query)) {
-            // there was a free text query. We need to account for this. 
-            request.setAttribute("query", query);
-            request.setAttribute("queryString", "?query=" + query);
-            // account for the free text string
-        }
-        
-        facNavBean = BeanUtils.getFacetNavigationBean(request, query, getObjectConverter());
+        HippoFacetNavigationBean facNavBean = BeanUtils.getFacetNavigationBean(request, hstQuery , getObjectConverter());
 
         request.setAttribute("facetnav", facNavBean);
         
