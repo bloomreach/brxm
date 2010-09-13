@@ -326,13 +326,13 @@ public class BeanUtils {
      * node from the {@link ResolvedSiteMapItem} we add a <code>relPath</code> where it should be found
      * @see {@link #getFacetNavigationBean(HstRequest, String, ObjectConverter)}
      * @param hstRequest the hstRequest
-     * @param relPath the relative path to the faceted navigation node, which must not start with a / and is relative to the site content base path  
      * @param query a {@link HstQuery} object
+     * @param relPath the relative path from site base content to the faceted navigation node, which must not start with a / and is relative to the site content base path  
      * @param objectConverter the objectConverter to be used
      * @return the <code>HippoFacetNavigationBean</code> accounted for this <code>query</code> and <code>relPath</code> and <code>null</code> if we could not find the HippoFacetNavigationBean when the <code>query</code> is applied
      * @throws HstComponentException
      */
-    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, String relPath, HstQuery query, ObjectConverter objectConverter) throws HstComponentException {
+    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, HstQuery query, String relPath, ObjectConverter objectConverter) throws HstComponentException {
         String queryAsString = null;
         try {
             queryAsString = "xpath("+query.getQueryAsString(true)+")";
@@ -358,8 +358,28 @@ public class BeanUtils {
             ObjectConverter objectConverter, Class<T> beanMappingClass)  {
         
         ResolvedSiteMapItem resolvedSiteMapItem = hstRequest.getRequestContext().getResolvedSiteMapItem();
-        String base = PathUtils.normalizePath(resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         String relPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
+        
+        return getFacetedNavigationResultDocument(hstRequest, query, relPath, objectConverter, beanMappingClass);
+    }
+
+    /**
+     * Tries to return a bean that is located in a faceted navigation tree below a result set. When it cannot be found,
+     * or the bean is not of type <code>beanMappingClass</code>, <code>null</code> will be returned.
+     * 
+     * @param <T>
+     * @param hstRequest the hstRequest
+     * @param query the free text search as String that is used for this faceted navigation
+     * @param relPath the relative path from site base content to the faceted navigation node, which must not start with a / and is relative to the site content base path
+     * @param objectConverter
+     * @param beanMappingClass the class T must be of 
+     * @return The faceted navigation result document of type T and <code>null</code> if it cannot be found or is not of type <code>T</code>
+     */
+    public static <T extends  HippoBean> T getFacetedNavigationResultDocument(HstRequest hstRequest, String query, String relPath,
+            ObjectConverter objectConverter, Class<T> beanMappingClass)  {
+        
+        ResolvedSiteMapItem resolvedSiteMapItem = hstRequest.getRequestContext().getResolvedSiteMapItem();
+        String base = PathUtils.normalizePath(resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         
         if(relPath == null) {
             log.warn("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
@@ -446,7 +466,7 @@ public class BeanUtils {
             throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+query+"'", e);
         }
     }
-
+        
     
     /**
      * Tries to return a bean that is located in a faceted navigation tree below a result set. When it cannot be found,
@@ -473,6 +493,34 @@ public class BeanUtils {
             throw new HstComponentException("Unable to create a string representation of query", e);
         }
         return getFacetedNavigationResultDocument(hstRequest, queryAsString, objectConverter, beanMappingClass);
+    }
+    
+    /**
+     * Tries to return a bean that is located in a faceted navigation tree below a result set. When it cannot be found,
+     * or the bean is not of type <code>beanMappingClass</code>, <code>null</code> will be returned.
+     * 
+     * @param <T>
+     * @param hstRequest the hstRequest
+     * @param query the free text search as {@link HstQuery} that is used for this faceted navigation
+     * @param relPath the relative path from site base content to the faceted navigation node, which must not start with a / and is relative to the site content base path
+     * @param objectConverter
+     * @param beanMappingClass the class T must be of 
+     * @return The faceted navigation result document of type T and <code>null</code> if it cannot be found or is not of type <code>T</code>
+     */
+    public static <T extends  HippoBean> T getFacetedNavigationResultDocument(HstRequest hstRequest, HstQuery query, String relPath, 
+            ObjectConverter objectConverter, Class<T> beanMappingClass)  {
+        
+        if(query == null) {
+            return getFacetedNavigationResultDocument(hstRequest, (String)null, relPath, objectConverter, beanMappingClass);
+        }
+        
+        String queryAsString = null;
+        try {
+            queryAsString = "xpath("+query.getQueryAsString(true)+")";
+        } catch (QueryException e) {
+            throw new HstComponentException("Unable to create a string representation of query", e);
+        }
+        return getFacetedNavigationResultDocument(hstRequest, queryAsString, relPath, objectConverter, beanMappingClass);
     }
     
     
