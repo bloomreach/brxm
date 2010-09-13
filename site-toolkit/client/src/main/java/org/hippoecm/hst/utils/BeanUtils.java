@@ -461,6 +461,11 @@ public class BeanUtils {
      */
     public static <T extends  HippoBean> T getFacetedNavigationResultDocument(HstRequest hstRequest, HstQuery query,
             ObjectConverter objectConverter, Class<T> beanMappingClass)  {
+        
+        if(query == null) {
+            return getFacetedNavigationResultDocument(hstRequest, (String)null, objectConverter, beanMappingClass);
+        }
+        
         String queryAsString = null;
         try {
             queryAsString = "xpath("+query.getQueryAsString(true)+")";
