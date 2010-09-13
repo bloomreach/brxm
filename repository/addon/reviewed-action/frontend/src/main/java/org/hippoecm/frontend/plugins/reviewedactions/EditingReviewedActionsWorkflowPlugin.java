@@ -46,17 +46,20 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,16 +103,38 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 if (!closing) {
                     try {
                         OnCloseDialog.Actions actions = new OnCloseDialog.Actions() {
+                            @SuppressWarnings("deprecation")
                             public void revert() {
                                 try {
                                     UserSession session = (UserSession) org.apache.wicket.Session.get();
                                     WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getDefaultModelObject();
                                     WorkflowManager manager = session.getWorkflowManager();
-                                    Node handleNode = ((WorkflowDescriptorModel) plugin.getDefaultModel()).getNode();
+                                    Node docNode = ((WorkflowDescriptorModel) plugin.getDefaultModel()).getNode();
+                                    Node handleNode = docNode;
                                     if (handleNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                                         handleNode = handleNode.getParent();
                                     }
                                     handleNode.refresh(false);
+                                    NodeIterator docs = handleNode.getNodes(handleNode.getName());
+                                    if (docs.hasNext()) {
+                                        Node sibling = docs.nextNode();
+                                        if (sibling.isSame(docNode)) {
+                                            if (!docs.hasNext()) {
+                                                Document folder = ((HippoWorkspace) session.getJcrSession()
+                                                        .getWorkspace()).getDocumentManager().getDocument("embedded",
+                                                        docNode.getUUID());
+                                                Workflow workflow = manager.getWorkflow("internal", folder);
+                                                if (workflow instanceof FolderWorkflow) {
+                                                    ((FolderWorkflow) workflow).delete(new Document(docNode.getUUID()));
+                                                } else {
+                                                    log.warn("cannot delete document which is not contained in a folder");
+                                                }
+                                                return;
+                                            }
+                                        }
+                                    } else {
+                                        log.warn("No documents found under handle of edited document");
+                                    }
                                     handleNode.getSession().refresh(true);
                                     ((EditableWorkflow) manager.getWorkflow(descriptor)).disposeEditableInstance();
                                     session.getJcrSession().refresh(true);
