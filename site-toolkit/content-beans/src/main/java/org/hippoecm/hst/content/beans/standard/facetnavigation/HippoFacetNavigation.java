@@ -15,11 +15,15 @@
  */
 package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -29,6 +33,25 @@ import org.slf4j.LoggerFactory;
 public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavigationBean {
     
     private static Logger log = LoggerFactory.getLogger(HippoFacetNavigation.class);
+    
+    
+    /**
+     * HippoFacetNavigation does not return the HippoResultSetBean as a folder, as this is normally a 
+     * folder that is not wanted to be displayed, and can be accessed through {@link #getResultSet()} already
+     */
+    @Override
+    public List<HippoFolderBean> getFolders(boolean sorted){
+        List<HippoFolderBean> folders = super.getFolders(sorted);
+        
+        List<HippoFolderBean> remove = new ArrayList<HippoFolderBean>();
+        for(HippoFolderBean folder : folders) {
+            if(folder instanceof HippoResultSetBean) {
+                remove.add(folder);
+            }
+        }
+        this.hippoFolders.removeAll(remove);
+        return this.hippoFolders;
+    }
     
     public Long getCount() {
         return this.getProperty(HippoNodeType.HIPPO_COUNT);
