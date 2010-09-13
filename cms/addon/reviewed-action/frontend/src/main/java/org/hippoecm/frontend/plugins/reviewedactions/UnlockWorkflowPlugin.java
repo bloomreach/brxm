@@ -40,7 +40,7 @@ public class UnlockWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(UnlockWorkflowPlugin.class);
 
     WorkflowAction unlockAction;
 
