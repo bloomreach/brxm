@@ -190,38 +190,39 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         protected Iterator<IModel<Node>> getItemModels() {
             ArrayList<IModel<Node>> nodeModels = new ArrayList<IModel<Node>>();
 
-            final NodeIterator iterator;
-            try {
-
-                iterator = ImageGalleryPlugin.this.getModelObject().getNodes();
-                while (iterator.hasNext()) {
-                    javax.jcr.Node node = iterator.nextNode();
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        if (node.hasNode(node.getName())) {
-                            javax.jcr.Node imageSet = node.getNode(node.getName());
-                            try {
-                                Item primItem = imageSet.getPrimaryItem();
-                                if (primItem.isNode()) {
-                                    if (((javax.jcr.Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                                        nodeModels.add(new JcrNodeModel(node));
-                                    } else {
-                                        log.warn("primary item of image set must be of type "
-                                                + HippoNodeType.NT_RESOURCE);
+            Node document = ImageGalleryPlugin.this.getModelObject();
+            if (document != null) {
+                try {
+                    NodeIterator iterator = document.getNodes();
+                    while (iterator.hasNext()) {
+                        javax.jcr.Node node = iterator.nextNode();
+                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            if (node.hasNode(node.getName())) {
+                                javax.jcr.Node imageSet = node.getNode(node.getName());
+                                try {
+                                    Item primItem = imageSet.getPrimaryItem();
+                                    if (primItem.isNode()) {
+                                        if (((javax.jcr.Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                                            nodeModels.add(new JcrNodeModel(node));
+                                        } else {
+                                            log.warn("primary item of image set must be of type "
+                                                    + HippoNodeType.NT_RESOURCE);
+                                        }
                                     }
+                                } catch (ItemNotFoundException e) {
+                                    log.debug("ImageSet must have a primary item. " + node.getPath()
+                                            + " probably not of correct image set type");
                                 }
-                            } catch (ItemNotFoundException e) {
-                                log.debug("ImageSet must have a primary item. " + node.getPath()
-                                        + " probably not of correct image set type");
                             }
+                        } else if (node.isNodeType(IMAGE_FOLDER_TYPE)) {
+                            nodeModels.add(new JcrNodeModel(node));
+                        } else {
+                            log.info("invalid node type, not adding to the list of items");
                         }
-                    } else if (node.isNodeType(IMAGE_FOLDER_TYPE)) {
-                        nodeModels.add(new JcrNodeModel(node));
-                    } else {
-                        log.info("invalid node type, not adding to the list of items");
                     }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
             }
             return nodeModels.iterator();
         }
