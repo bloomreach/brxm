@@ -69,7 +69,8 @@ public class TestSimpleBean extends AbstractBeanTestCase {
      
         Object o = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         assertNotNull("The object is not retrieved from the path.", o);
-        assertTrue(" Object should be an instance of PersistableTextPage and not PersistableTextPageCopy, because PersistableTextPage is added first", o instanceof PersistableTextPage);
+        assertTrue(" Object should be an instance of PersistableTextPage and not PersistableTextPageCopy, because PersistableTextPage is added first. The object is " + o, 
+                o instanceof PersistableTextPage);
         
         PersistableTextPage homePage =  (PersistableTextPage)obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         PersistableTextPage homePageAsWell = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage/homepage");

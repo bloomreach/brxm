@@ -15,25 +15,16 @@
  */
 package org.hippoecm.hst;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.PersistableTextPageCopy;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDirectory;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
-import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
-import org.hippoecm.hst.content.beans.standard.HippoFolder;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoResource;
-import org.hippoecm.hst.content.beans.standard.HippoStdPubWfRequest;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.test.AbstractHstTestCase;
+import org.hippoecm.hst.util.ObjectConverterUtils;
  
 /**
  * <p>
@@ -44,46 +35,14 @@ import org.hippoecm.hst.test.AbstractHstTestCase;
 public abstract class AbstractBeanTestCase extends AbstractHstTestCase{
 
     protected ObjectConverter getObjectConverter() {
-        
-        // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
-
-
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoResource.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoStdPubWfRequest.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, PersistableTextPage.class, false);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, PersistableTextPageCopy.class, true);
-        
-        // builds a fallback jcrPrimaryNodeType array.
-        String [] fallBackJcrPrimaryNodeTypes = new String[] { "hippo:facetselect","hippostd:directory","hippostd:folder" , "hippo:resource", "hippo:request", "hippostd:html", "hippo:document" };
-        
-        ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallBackJcrPrimaryNodeTypes);
-        return objectConverter;
+        return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);
     }
     
-    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs, Class clazz, boolean builtinType) {
-        String jcrPrimaryNodeType = null;
-        if (clazz.isAnnotationPresent(Node.class)) {
-            Node anno = (Node) clazz.getAnnotation(Node.class);
-            jcrPrimaryNodeType = anno.jcrType();
-        }
-        
-        if(jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType) != null) {
-            return;
-        }
-        
-        if (jcrPrimaryNodeType == null) {
-            throw new IllegalArgumentException("There's no annotation for jcrType in the class: " + clazz);
-        }
-        
-        jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType, clazz);
+    protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {
+        List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
+        annotatedClasses.add(PersistableTextPage.class);
+        annotatedClasses.add(PersistableTextPageCopy.class);
+        return annotatedClasses;
     }
     
 }

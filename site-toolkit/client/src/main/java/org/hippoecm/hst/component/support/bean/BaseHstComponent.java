@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.component.support.bean;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,41 +24,20 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
-import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
-import org.hippoecm.hst.content.beans.standard.HippoAsset;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDirectory;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
-import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
-import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoImage;
-import org.hippoecm.hst.content.beans.standard.HippoMirror;
-import org.hippoecm.hst.content.beans.standard.HippoResource;
-import org.hippoecm.hst.content.beans.standard.HippoStdPubWfRequest;
-import org.hippoecm.hst.content.beans.standard.HippoTranslation;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetNavigation;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetResult;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetsAvailableNavigation;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -73,10 +47,10 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstResponseUtils;
+import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  * A base HstComponent implementation to provide some facility methods for accessing content node POJO objects,
@@ -345,7 +319,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public ObjectBeanManager getObjectBeanManager(HstRequest request) {
         try {
             HstRequestContext requestContext = request.getRequestContext();
-            return new ObjectBeanManagerImpl(requestContext.getSession(), this.objectConverter);
+            return new ObjectBeanManagerImpl(requestContext.getSession(), getObjectConverter());
         } catch (UnsupportedRepositoryOperationException e) {
             throw new HstComponentException(e);
         } catch (RepositoryException e) {
@@ -415,86 +389,36 @@ public class BaseHstComponent extends GenericHstComponent {
             this.objectConverter = getObjectConverter();
             
             ComponentManager compMngr = HstServices.getComponentManager();
-            HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName());
-            this.queryManager = hstQueryManagerFactory.createQueryManager(this.objectConverter);
+            if (compMngr != null) {
+                HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName());
+                this.queryManager = hstQueryManagerFactory.createQueryManager(this.objectConverter);
+            }
+            
             this.beansInitialized = true;
         }
     }
-
+    
     public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        if(objectConverter != null) {
-            return objectConverter;
+        if (objectConverter == null) {
+            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClassNames();
+            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
         }
-        Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
-        List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClassNames();
-        for (Class<? extends HippoBean> c : annotatedClasses) {
-            addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c, false) ;
-        }
-        // below the default present mapped mappings
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoMirror.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoResource.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoStdPubWfRequest.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoAsset.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoImage.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoTranslation.class, true);
         
-        // facet navigation parts:
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetNavigation.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetsAvailableNavigation.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSubNavigation.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetResult.class, true);
-        
-        // builds a fallback jcrPrimaryNodeType array.
-        String[] fallBackJcrNodeTypes = getFallBackJcrNodeTypes();
-        ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs,
-                fallBackJcrNodeTypes);
         return objectConverter;
     }
-
+    
     /**
      * If you want other fallbacktypes, override this method. Note, that the fallback types are tried in order that the
      * array is. A fallback type is suited for creating a bean for the node if: node.isNodeType(fallBackJcrNodeType) returns true.
      * @return String array containing the fallback types
+     * @deprecated
      */
-    protected String[] getFallBackJcrNodeTypes(){
-        return new String[] { "hippo:facetselect","hippo:mirror","hippostd:directory","hippostd:folder" , "hippo:resource", "hippo:request", "hippostd:html", "hippo:document" };
+    @Deprecated
+    protected String[] getFallBackJcrNodeTypes() {
+        return ObjectConverterUtils.getDefaultFallbackNodeTypes();
     }
     
-    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs,
-            Class clazz, boolean builtinType) throws HstComponentException {
-        String jcrPrimaryNodeType = null;
-
-        if (clazz.isAnnotationPresent(Node.class)) {
-            Node anno = (Node) clazz.getAnnotation(Node.class);
-            jcrPrimaryNodeType = anno.jcrType();
-        }
-
-        if(jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType) != null) {
-            if(builtinType) {
-                log.debug("Builtin annotated class for primary type '{}' is overridden. Builtin version is ignored", jcrPrimaryNodeType);
-            } else {
-                throw new HstComponentFatalException("Annotated class for primarytype '"+jcrPrimaryNodeType+"' is duplicate. " +
-                		"You might have configured a bean in 'beans-annotated-classes.xml' that does not have a annotation for the jcrType and" +
-                		"inherits the jcrType from the bean it extends, resulting in 2 beans with the same jcrType. Correct your beans.");
-            }
-            return;
-        }
-        
-        if (jcrPrimaryNodeType == null) {
-            throw new IllegalArgumentException("There's no annotation for jcrType in the class: " + clazz);
-        }
-
-        jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType,clazz);
-    }
-
     /**
      * when you want to inject specific component only custom annotated classes override this method
      * 
@@ -502,67 +426,33 @@ public class BaseHstComponent extends GenericHstComponent {
 	 * @return List of annotated classes, and if there are none, return an empty list
      */
     protected List<Class<? extends HippoBean>> getLocalAnnotatedClasses() {
-        return new ArrayList<Class<? extends HippoBean>>();
+        return null;
     }
     
     private List<Class<? extends HippoBean>> getAnnotatedClassNames() {
-        List<String> classNames = new ArrayList<String>();
-        List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
-
+        List<Class<? extends HippoBean>> annotatedClasses = null;
+        
         String param = getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
         String ocmAnnotatedClassesResourcePath = (param != null ? param : DEFAULT_BEANS_ANNOTATED_CLASSES_CONF);
-        InputStream in = null;
-
-        try {
-            in = new BufferedInputStream(getServletContext().getResourceAsStream(
-                    ocmAnnotatedClassesResourcePath));
-
-            Digester digester = new Digester();
-            digester.setValidating(false);
-            digester.push(classNames);
-            digester.addCallMethod("hst-content-beans/annotated-class", "add", 1);
-            digester.addCallParam("hst-content-beans/annotated-class", 0);
-
-            digester.parse(in);
-        } catch (IOException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("No ocm annotated classes configuration available: " + ocmAnnotatedClassesResourcePath);
-            }
-        } catch (SAXException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("ocm annotated classes configuration is not valid: " + ocmAnnotatedClassesResourcePath);
-            }
-        } finally {
-            if (in != null)
-                try {
-                    in.close();
-                } catch (Exception ce) {
-                }
-        }
         
-        for (String className : classNames) {
-            Class clazz = null;
-            try {
-                clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-                annotatedClasses.add(clazz);
-            } catch (Exception e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Skipped class registration into the mapper. Cannot load class: " + className);
-                }
-            }
+        try {
+            annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(getServletContext().getResource(ocmAnnotatedClassesResourcePath));
+        } catch (Exception e) {
+            throw new HstComponentException(e);
         }
         
         List<Class<? extends HippoBean>> localAnnotatedClasses = getLocalAnnotatedClasses();
-        if(localAnnotatedClasses != null) {
-            for(Class<? extends HippoBean> localClass : localAnnotatedClasses) {
-                if(classNames.contains(localClass.getName())) {
+        
+        if (localAnnotatedClasses != null && !localAnnotatedClasses.isEmpty()) {
+            for (Class<? extends HippoBean> localClass : localAnnotatedClasses) {
+                if (annotatedClasses.contains(localClass)) {
                     log.warn("local added class '{}' already present. Skipping", localClass.getName());
-                } 
-                else {
+                } else {
                     annotatedClasses.add(localClass); 
                 }
             }
         }
+        
         return annotatedClasses;
     }
     
