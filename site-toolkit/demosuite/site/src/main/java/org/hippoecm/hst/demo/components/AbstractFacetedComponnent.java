@@ -36,10 +36,6 @@ public class AbstractFacetedComponnent extends BaseHstComponent {
             // there was a free text query. We need to account for this. 
             request.setAttribute("query", query);
             request.setAttribute("order", order);
-            
-            if(query != null) {
-                request.setAttribute("queryString", "?query=" + query);
-            }
             // account for the free text string
             
             try {
