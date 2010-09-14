@@ -250,6 +250,26 @@
       <type>jar</type>
     </dependency>
 
+    <!-- translation addon -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-translation-common</artifactId>
+      <version>2.17.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-translation-repository</artifactId>
+      <version>2.17.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-translation-frontend</artifactId>
+      <version>2.17.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
     <!-- search addon -->
     <dependency>
       <groupId>org.hippoecm</groupId>
