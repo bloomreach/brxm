@@ -356,13 +356,14 @@ public abstract class SessionDecorator implements XASession, HippoSession {
         return Thread.currentThread().getContextClassLoader();
     }
 
-
     public Node getNodeByIdentifier(String id) throws ItemNotFoundException, RepositoryException {
-        return session.getNodeByIdentifier(id);
+        Node node = session.getNodeByIdentifier(id);
+        return factory.getNodeDecorator(this, node);
     }
 
     public Node getNode(String absPath) throws PathNotFoundException, RepositoryException {
-        return session.getNode(absPath);
+        Node node = session.getNode(absPath);
+        return factory.getNodeDecorator(this, node);
     }
 
     public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
