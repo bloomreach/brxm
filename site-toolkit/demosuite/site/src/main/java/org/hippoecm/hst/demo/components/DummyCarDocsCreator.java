@@ -72,6 +72,12 @@ public class DummyCarDocsCreator {
             
             Node handle = crFolder.addNode(randomCar.brand + "-" + cal.getTimeInMillis(), "hippo:handle"); 
             handle.addMixin("hippo:hardhandle");
+            handle.addMixin("hippo:translated");
+            
+            Node translation = handle.addNode("hippo:translation","hippo:translation");
+            translation.setProperty("hippo:message", randomCar.brand + "-" + cal.getTimeInMillis());
+            translation.setProperty("hippo:language", "");
+            
             Node doc = handle.addNode(randomCar.brand + "-"+cal.getTimeInMillis(), "demosite:productdocument");
             doc.addMixin("hippo:harddocument");
             
@@ -132,6 +138,9 @@ public class DummyCarDocsCreator {
             }
             
             doc.setProperty("hippostd:tags", randomTags.toArray(new String[randomTags.size()]));
+            
+            Node body = doc.addNode("demosite:body","hippostd:html");
+            body.setProperty("hippostd:content", "<html> <body> <p>body </p> </body> </html>");
             
             if(i%100 == 0) {
                 writableSession.save();
