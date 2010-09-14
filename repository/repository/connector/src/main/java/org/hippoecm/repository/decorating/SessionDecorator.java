@@ -367,7 +367,8 @@ public abstract class SessionDecorator implements XASession, HippoSession {
     }
 
     public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
-        return session.getProperty(absPath);
+        Property property = session.getProperty(absPath);
+        return factory.getPropertyDecorator(this, property);
     }
 
     public boolean nodeExists(String absPath) throws RepositoryException {
