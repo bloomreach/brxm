@@ -45,12 +45,12 @@
                                   <c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b>
                                   <c:if test="${facetvalue.count > 0}">
                                       <hst:facetnavigationlink var="remove" current="${facetnav}" remove="${facetvalue}"/>
-                                      [<a href="${remove}${queryString}" class="deleteFacet">X</a>]
+                                      [<a href="${remove}" class="deleteFacet">X</a>]
                                   </c:if>
                                </c:when>
                                <c:otherwise>
-                                 <hst:link var="link" hippobean="${facetvalue}"/>
-                                 <a href="${link}${queryString}"><c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b></a> 
+                                 <hst:link var="link" hippobean="${facetvalue}" contextRelative="true"/>
+                                 <a href="${link}"><c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b></a> 
                                </c:otherwise>
                              </c:choose>
                           </li>
