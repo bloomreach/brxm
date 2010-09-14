@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
@@ -216,7 +217,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     }
                     newValue = currentTime;
                 } else if (newValue.startsWith("$")) {
-                    newValue = arguments.get(newValue.substring(1));
+                    String key = newValue.substring(1);
+                    if (arguments.containsKey(key)) {
+                        newValue = arguments.get(key);
+                    } else {
+                        if (key.equals("uuid")) {
+                            newValue = UUID.randomUUID().toString();
+                        } else {
+                            throw new WorkflowException("No value specified for parameter " + key);
+                        }
+                    }
                 }
                 if (renames.containsKey(values[i].getString())) {
                     String[] oldValues = renames.get(values[i].getString());
@@ -504,10 +514,20 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             }
         }
 
-        if (primaryType != null) {
-            target = target.addNode(name, primaryType);
-        } else {
-            target = target.addNode(name);
+        boolean found = false;
+        if (target.hasNode(name)) {
+            Node candidate = target.getNode(name);
+            if (candidate.getDefinition().isAutoCreated()) {
+                target = candidate;
+                found = true;
+            }
+        }
+        if (!found) {
+            if (primaryType != null) {
+                target = target.addNode(name, primaryType);
+            } else {
+                target = target.addNode(name);
+            }
         }
 
         if(source.hasProperty("jcr:mixinTypes")) {
