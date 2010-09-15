@@ -53,6 +53,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -70,6 +71,8 @@ public class RandomWalkTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(RandomWalkTest.class);
+
+    final static int MAX_DEPTH = 10;
 
     private String base;
     
@@ -113,7 +116,7 @@ public class RandomWalkTest extends TestCase {
 
     private void sanity(Node node) throws RepositoryException {
         final WorkflowManager workflowManager = ((HippoWorkspace)node.getSession().getWorkspace()).getWorkflowManager();
-        node.accept(new TraversingItemVisitor.Default(true) {
+        node.accept(new TraversingItemVisitor.Default() {
             @Override
             protected void entering(Property property, int level) throws RepositoryException {
                 if(property.getDefinition().isMultiple()) {
@@ -133,60 +136,79 @@ public class RandomWalkTest extends TestCase {
             @Override
             public void visit(Node node) throws RepositoryException {
                 try {
+                    boolean isVirtual = false;
+                    if (node instanceof HippoNode) {
+                        try {
+                            Node canonical = ((HippoNode) node).getCanonicalNode();
+                            if (canonical == null || !canonical.isSame(node)) {
+                                isVirtual = true;
+                            }
+                        } catch (ItemNotFoundException infe) {
+                            isVirtual = true;
+                        }
+                    }
                     if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")) {
-                        super.visit(node);
+                        if (node.getDepth() < MAX_DEPTH) {
+                            super.visit(node);
+                        }
                     } else if (node.isNodeType("hippo:document")) {
-                        EditableWorkflow editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("default", node);
-                        Document document = editWorkflow.obtainEditableInstance();
-                        node.getSession().refresh(false);
-                        Node draft = node.getSession().getNodeByUUID(document.getIdentity());
-                        draft.getSession().save();
-                        node.getSession().refresh(false);
-                        editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("edit", draft);
-                        editWorkflow.commitEditableInstance();
+                        if (!isVirtual) {
+                            EditableWorkflow editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("default", node);
+                            Document document = editWorkflow.obtainEditableInstance();
+                            node.getSession().refresh(false);
+                            Node draft = node.getSession().getNodeByUUID(document.getIdentity());
+                            draft.getSession().save();
+                            node.getSession().refresh(false);
+                            editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("edit", draft);
+                            editWorkflow.commitEditableInstance();
+                        }
                     } else if (node.isNodeType("hippo:handle") && !node.hasNode(node.getName())) {
-                        super.visit(node);
+                        if (node.getDepth() < MAX_DEPTH) {
+                            super.visit(node);
+                        }
                     } else if (node.isNodeType("hippo:handle")) {
-                        Node variant = null;
-                        for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
-                            Node child = iter.nextNode();
-                            if (child.getProperty("hippostd:state").getString().equals("draft"))
-                                variant = child;
-                            else if (child.getProperty("hippostd:state").getString().equals("published") && variant == null)
-                                variant = child;
-                            else if (child.getProperty("hippostd:state").getString().equals("unpublished") &&
-                                    (variant == null || !variant.getProperty("hippostd:state").getString().equals("draft")))
-                                variant = child;
+                        if (!isVirtual) {
+                            Node variant = null;
+                            for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
+                                Node child = iter.nextNode();
+                                if (child.getProperty("hippostd:state").getString().equals("draft"))
+                                    variant = child;
+                                else if (child.getProperty("hippostd:state").getString().equals("published") && variant == null)
+                                    variant = child;
+                                else if (child.getProperty("hippostd:state").getString().equals("unpublished") &&
+                                        (variant == null || !variant.getProperty("hippostd:state").getString().equals("draft")))
+                                    variant = child;
+                            }
+                            if(variant == null) {
+                                throw new RepositoryException("unsupported document type for this test");
+                            }
+                            if(!variant.isNodeType("hippostd:publishable")) {
+                                throw new RepositoryException("unsupported document type for this test "+node.getPrimaryNodeType().getName());
+                            }
+                            EditableWorkflow editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("default", variant);
+                            Document document = editWorkflow.obtainEditableInstance();
+                            node.getSession().refresh(false);
+                            Node draft = node.getSession().getNodeByUUID(document.getIdentity());
+                            draft.getSession().save();
+                            editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("default", draft);
+                            editWorkflow.commitEditableInstance();
+                            for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
+                                Node child = iter.nextNode();
+                                if (child.getProperty("hippostd:state").getString().equals("unpublished"))
+                                    variant = child;
+                            }
+                            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)workflowManager.getWorkflow("default", variant);
+                            workflow.publish();
+                            node.getSession().refresh(false);
+                            for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
+                                Node child = iter.nextNode();
+                                if (child.getProperty("hippostd:state").getString().equals("published"))
+                                    variant = child;
+                            }
+                            workflow = (FullReviewedActionsWorkflow)workflowManager.getWorkflow("default", variant);
+                            workflow.depublish();
+                            node.getSession().refresh(false);
                         }
-                        if(variant == null) {
-                            throw new RepositoryException("unsupported document type for this test");
-                        }
-                        if(!variant.isNodeType("hippostd:publishable")) {
-                            throw new RepositoryException("unsupported document type for this test "+node.getPrimaryNodeType().getName());
-                        }
-                        EditableWorkflow editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("default", variant);
-                        Document document = editWorkflow.obtainEditableInstance();
-                        node.getSession().refresh(false);
-                        Node draft = node.getSession().getNodeByUUID(document.getIdentity());
-                        draft.getSession().save();
-                        editWorkflow = (EditableWorkflow)workflowManager.getWorkflow("default", draft);
-                        editWorkflow.commitEditableInstance();
-                        for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
-                            Node child = iter.nextNode();
-                            if (child.getProperty("hippostd:state").getString().equals("unpublished"))
-                                variant = child;
-                        }
-                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)workflowManager.getWorkflow("default", variant);
-                        workflow.publish();
-                        node.getSession().refresh(false);
-                        for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
-                            Node child = iter.nextNode();
-                            if (child.getProperty("hippostd:state").getString().equals("published"))
-                                variant = child;
-                        }
-                        workflow = (FullReviewedActionsWorkflow)workflowManager.getWorkflow("default", variant);
-                        workflow.depublish();
-                        node.getSession().refresh(false);
                     }
                 } catch(WorkflowException ex) {
                     new RepositoryException("failed workflow", ex);
