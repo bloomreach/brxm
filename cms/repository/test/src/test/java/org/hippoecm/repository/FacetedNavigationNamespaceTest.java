@@ -31,16 +31,6 @@ public class FacetedNavigationNamespaceTest extends TestCase {
     private final static long PROP_COUNT = 2;
     private final static long NODE_COUNT = 3;
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     private void commonStart() throws RepositoryException {
         Node test = session.getRootNode().addNode("test");
         Node docs = test.addNode("documents");
