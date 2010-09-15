@@ -99,15 +99,34 @@ public class ObjectConverterUtils {
     private ObjectConverterUtils() {
     }
     
+    /**
+     * Creates <CODE>ObjectConverter</CODE>.
+     * @param annotatedClasses Annotated class mapping against jcr primary node types.
+     * @return
+     */
     public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses) {
         return createObjectConverter(annotatedClasses, false);
     }
     
+    /**
+     * Creates <CODE>ObjectConverter</CODE>.
+     * @param annotatedClasses Annotated class mapping against jcr primary node types.
+     * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses, boolean ignoreDuplicates) {
         return createObjectConverter(annotatedClasses, (Class<? extends HippoBean> []) DEFAULT_BUILT_IN_MAPPING_CLASSES, DEFAULT_FALLBACK_NODE_TYPES, ignoreDuplicates);
     }
     
+    /**
+     * Creates <CODE>ObjectConverter</CODE>.
+     * @param annotatedClasses Annotated class mapping against jcr primary node types.
+     * @param builtInMappingClasses Built-in class mappings against the default built-in jcr primary node types.
+     * @param fallbackNodeTypes If no bean found for the node type, a fallback node type is to be selected as ordered by using <CODE>node.isNodeType(fallbackNodeType)</CODE>
+     * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
+     * @return
+     */
     public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses, final Class<? extends HippoBean> [] builtInMappingClasses, final String [] fallbackNodeTypes, boolean ignoreDuplicates) {
         Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
         

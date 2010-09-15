@@ -409,8 +409,8 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
-     * If you want other fallbacktypes, override this method. Note, that the fallback types are tried in order that the
-     * array is. A fallback type is suited for creating a bean for the node if: node.isNodeType(fallBackJcrNodeType) returns true.
+     * If you want other fallbacktypes, override {@link #getObjectConverter()} method instead.
+     * This method just returns the default fallback primary node types by using {@link ObjectConverterUtils#getDefaultFallbackNodeTypes()}.
      * @return String array containing the fallback types
      * @deprecated
      */
