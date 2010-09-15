@@ -40,7 +40,7 @@ public class PendingChangesTest extends TestCase {
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         while(session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }

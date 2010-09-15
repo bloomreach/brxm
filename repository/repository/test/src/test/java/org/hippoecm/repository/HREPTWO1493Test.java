@@ -44,12 +44,6 @@ public class HREPTWO1493Test extends TestCase {
         "hippo:x",            "test"
     };
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp(true);
-    }
-
     @Test
     public void testParentOfProperty() throws RepositoryException {
         Property property;

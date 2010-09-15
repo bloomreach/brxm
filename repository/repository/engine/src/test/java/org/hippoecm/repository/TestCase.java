@@ -115,12 +115,15 @@ public abstract class TestCase
     }
 
     protected void setUp(boolean clearRepository) throws Exception {
-        if(clearRepository) {
-            clear();
-        }
         if (external != null) {
+            if (clearRepository) {
+                throw new IllegalArgumentException("Cannot clear the repository in a remote test");
+            }
             server = external;
         } else {
+            if(clearRepository) {
+                clear();
+            }
             server = HippoRepositoryFactory.getHippoRepository();
         }
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);

@@ -31,6 +31,9 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
+/**
+ * Run tests remotely (over RMI).  These tests should not start/stop and/or clean up the repository.
+ */
 @RunWith(RemoteTest.class)
 @Suite.SuiteClasses({
     org.hippoecm.repository.TrivialServerTest.class,
@@ -40,7 +43,6 @@ import org.junit.runners.Suite;
     org.hippoecm.repository.DescriptorsTest.class,
     org.hippoecm.repository.PendingChangesTest.class,
     org.hippoecm.repository.RepositoryMapTest.class,
-    //org.hippoecm.repository.FacetedAuthorizationTest.class,
     org.hippoecm.repository.FacetedNavigationChildNameTest.class,
     org.hippoecm.repository.FacetedNavigationHippoCountTest.class,
     org.hippoecm.repository.FacetedNavigationNamespaceTest.class,
@@ -48,7 +50,7 @@ import org.junit.runners.Suite;
     org.hippoecm.repository.HREPTWO280Test.class,
     org.hippoecm.repository.HREPTWO283IssueTest.class,
     org.hippoecm.repository.HREPTWO690Test.class,
-    org.hippoecm.repository.HREPTWO1493Test.class,
+    // org.hippoecm.repository.HREPTWO1493Test.class,
     org.hippoecm.repository.HREPTWO650Test.class,
     org.hippoecm.repository.HREPTWO3402IssueTest.class,
     org.hippoecm.repository.decorating.FacetedReferenceTest.class,
