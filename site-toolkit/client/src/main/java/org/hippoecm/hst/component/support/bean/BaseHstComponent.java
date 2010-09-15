@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletContext;
 
+import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
@@ -46,6 +47,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.HstResponseUtils;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.hst.util.PathUtils;
@@ -78,7 +80,6 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
     
-   
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
     protected HstQueryManager queryManager;
@@ -401,7 +402,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClassNames();
+            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
             objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
         }
         
@@ -429,14 +430,19 @@ public class BaseHstComponent extends GenericHstComponent {
         return null;
     }
     
-    private List<Class<? extends HippoBean>> getAnnotatedClassNames() {
+    private List<Class<? extends HippoBean>> getAnnotatedClasses() {
         List<Class<? extends HippoBean>> annotatedClasses = null;
         
         String param = getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
         String ocmAnnotatedClassesResourcePath = (param != null ? param : DEFAULT_BEANS_ANNOTATED_CLASSES_CONF);
         
         try {
-            annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(getServletContext().getResource(ocmAnnotatedClassesResourcePath));
+            if (ocmAnnotatedClassesResourcePath.startsWith("classpath*:")) {
+                ClasspathResourceScanner scanner = MetadataReaderClasspathResourceScanner.newInstance(getServletContext());
+                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, ocmAnnotatedClassesResourcePath);
+            } else {
+                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(getServletContext().getResource(ocmAnnotatedClassesResourcePath));
+            }
         } catch (Exception e) {
             throw new HstComponentException(e);
         }

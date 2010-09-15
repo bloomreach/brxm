@@ -15,11 +15,16 @@
  */
 package org.hippoecm.hst.util;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -46,6 +51,27 @@ public class TestObjectConverterUtils {
     @Test
     public void testObjectConverterCreationWithURL() throws Exception {
         Collection<Class<? extends HippoBean>> annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(annotationXmlUrl);
+        ObjectConverter objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+        
+        assertEquals(TextBean.class, objectConverter.getAnnotatedClassFor("test:textdocument"));
+        assertEquals(CommentBean.class, objectConverter.getAnnotatedClassFor("test:comment"));
+        
+        assertEquals("test:textdocument", objectConverter.getPrimaryNodeTypeNameFor(TextBean.class));
+        assertEquals("test:comment", objectConverter.getPrimaryNodeTypeNameFor(CommentBean.class));
+    }
+    
+    @Test
+    public void testObjectConverterCreationWithClasspathResourceScanner() throws Exception {
+        String locationPattern = "classpath*:" + getClass().getPackage().getName().replace('.', '/') + "/**/*.class";
+        
+        Set<String> expectedAannotatedClassNames = new HashSet<String>();
+        expectedAannotatedClassNames.add(TextBean.class.getName());
+        expectedAannotatedClassNames.add(CommentBean.class.getName());
+        ClasspathResourceScanner resourceScanner = createNiceMock(ClasspathResourceScanner.class);
+        expect(resourceScanner.scanClassNamesAnnotatedBy(Node.class, locationPattern, false)).andReturn(expectedAannotatedClassNames).anyTimes();
+        replay(resourceScanner);
+        
+        Collection<Class<? extends HippoBean>> annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(resourceScanner, locationPattern);
         ObjectConverter objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
         
         assertEquals(TextBean.class, objectConverter.getAnnotatedClassFor("test:textdocument"));

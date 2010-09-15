@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,12 +146,39 @@ public class ObjectConverterUtils {
         return new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallbackNodeTypes);
     }
     
+    /**
+     * Returns the default built-in fallback jcr primary node types
+     * @return
+     */
     public static String [] getDefaultFallbackNodeTypes() {
         String [] fallbackTypes = new String[DEFAULT_FALLBACK_NODE_TYPES.length];
         System.arraycopy(DEFAULT_FALLBACK_NODE_TYPES, 0, fallbackTypes, 0, DEFAULT_FALLBACK_NODE_TYPES.length);
         return fallbackTypes;
     }
     
+    /**
+     * Collects bean classes annotated by {@link org.hippoecm.hst.content.beans.Node} from a XML Resource URL.
+     * <P>
+     * Each annotated class name must be written inside <CODE>&lt;annotated-class/&gt;</CODE> element 
+     * as child of the root element, &lt;hst-content-beans/&gt;,
+     * like the following example:
+     * <PRE><XMP>
+     * <hst-content-beans>
+     *   <annotated-class>org.hippoecm.hst.demo.beans.TextBean</annotated-class>
+     *   <annotated-class>org.hippoecm.hst.demo.beans.NewsBean</annotated-class>
+     *   <annotated-class>org.hippoecm.hst.demo.beans.ProductBean</annotated-class>
+     *   <annotated-class>org.hippoecm.hst.demo.beans.CommentBean</annotated-class>
+     *   <annotated-class>org.hippoecm.hst.demo.beans.CommentLinkBean</annotated-class>
+     *   <annotated-class>org.hippoecm.hst.demo.beans.ImageLinkBean</annotated-class>
+     * </hst-content-beans>
+     * </XMP></PRE>
+     * </P>
+     * @param url
+     * @return
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     */
     @SuppressWarnings("unchecked")
     public static List<Class<? extends HippoBean>> getAnnotatedClasses(final URL url) throws IOException, SAXException, ParserConfigurationException {
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
@@ -194,6 +222,47 @@ public class ObjectConverterUtils {
             }
             if (is != null) {
                 try { is.close(); } catch (Exception ignore) { }
+            }
+        }
+        
+        return annotatedClasses;
+    }
+    
+    /**
+     * Collects bean classes annotated by {@link org.hippoecm.hst.content.beans.Node}
+     * from the location specified by <CODE>locationPattern</CODE>.
+     * Class resources will be collected by the specified <CODE>resourceScanner</CODE>.
+     *  
+     * @param resourceScanner
+     * @param locationPattern
+     * @return
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @see {@link ClasspathResourceScanner}
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String locationPattern) throws IOException, SAXException, ParserConfigurationException {
+        List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
+        Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Node.class, locationPattern, false);
+        
+        if (annotatedClassNames != null && !annotatedClassNames.isEmpty()) {
+            Class<?> clazz = null;
+            
+            for (String className : annotatedClassNames) {
+                try {
+                    clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+                } catch (ClassNotFoundException e) {
+                    log.warn("Skipped class registration into the mapper. Cannot load class: {}.", className);
+                }
+                
+                if (HippoBean.class.isAssignableFrom(clazz)) {
+                    annotatedClasses.add((Class<? extends HippoBean>) clazz);
+                } else {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Skipped class registration into the mapper. Type is not HippoBean: {}.", className);
+                    }
+                }
             }
         }
         

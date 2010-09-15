@@ -38,19 +38,43 @@ import org.junit.Test;
 public class TestBaseHstComponent {
     
     private URL annotationXmlUrl;
+    private String annotationClassesLocationFilter;
     
     @Before
     public void setUp() throws Exception {
         String beansAnnotatedClassResourcePath = "/" + getClass().getName().replace('.', '/') + "-beans-annotated-classes.xml";
         annotationXmlUrl = getClass().getResource(beansAnnotatedClassResourcePath);
         assertNotNull("Beans annotatated classes xml resource doesn't exist: " + beansAnnotatedClassResourcePath, annotationXmlUrl);
+        
+        annotationClassesLocationFilter = "classpath*:" + getClass().getPackage().getName().replace('.', '/') + "/**/*.class";
     }
     
     @Test
-    public void testObjectConverterCreation() throws Exception {
+    public void testObjectConverterCreationWithXML() throws Exception {
         ServletContext servletContext = createNiceMock(ServletContext.class);
         expect(servletContext.getInitParameter(BaseHstComponent.BEANS_ANNOTATED_CLASSES_CONF_PARAM)).andReturn(BaseHstComponent.DEFAULT_BEANS_ANNOTATED_CLASSES_CONF).anyTimes();
         expect(servletContext.getResource(BaseHstComponent.DEFAULT_BEANS_ANNOTATED_CLASSES_CONF)).andReturn(annotationXmlUrl).anyTimes();
+        
+        ComponentConfiguration componentConfig = createNiceMock(ComponentConfiguration.class);
+        
+        replay(servletContext);
+        replay(componentConfig);
+        
+        BaseHstComponent comp = new BaseHstComponent();
+        comp.init(servletContext, componentConfig);
+        assertNotNull("ObjectConverter is not created during init().", comp.objectConverter);
+        
+        assertEquals(TextBean.class, comp.objectConverter.getAnnotatedClassFor("test:textdocument"));
+        assertEquals(CommentBean.class, comp.objectConverter.getAnnotatedClassFor("test:comment"));
+        
+        assertEquals("test:textdocument", comp.objectConverter.getPrimaryNodeTypeNameFor(TextBean.class));
+        assertEquals("test:comment", comp.objectConverter.getPrimaryNodeTypeNameFor(CommentBean.class));
+    }
+    
+    @Test
+    public void testObjectConverterCreationWithScanner() throws Exception {
+        ServletContext servletContext = createNiceMock(ServletContext.class);
+        expect(servletContext.getInitParameter(BaseHstComponent.BEANS_ANNOTATED_CLASSES_CONF_PARAM)).andReturn(annotationClassesLocationFilter).anyTimes();
         
         ComponentConfiguration componentConfig = createNiceMock(ComponentConfiguration.class);
         
