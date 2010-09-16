@@ -410,8 +410,23 @@ public class BaseHstComponent extends GenericHstComponent {
     public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         if (objectConverter == null) {
+            
             List<Class<? extends HippoBean>> localAnnotatedClasses = getLocalAnnotatedClasses();
-            if(localAnnotatedClasses == null) {
+            
+            // 
+            // When local annotated classes are not empty, it means the specific component
+            // wants its own object converter with some additional annotated bean classes
+            // which were manullay added by its overriding method, #getLocalAnnotatedClasses().
+            //
+            // On the other hand, if local annotated classes are empty, it means each component
+            // can share one globally shared object converter with the same annotated classes.
+            // In this case, the object converter is stored into servlet context attribute.
+            // 
+            
+            boolean objectConverterSharable = (localAnnotatedClasses == null || localAnnotatedClasses.isEmpty());
+            
+            if (objectConverterSharable) {
+                
                 objectConverter = (ObjectConverter) getServletContext().getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
                 
                 if (objectConverter == null) {
@@ -419,11 +434,21 @@ public class BaseHstComponent extends GenericHstComponent {
                     objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
                     getServletContext().setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
                 }
+                
             } else {
+                
                 List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
-                // add all local added annotated classes
-                annotatedClasses.addAll(localAnnotatedClasses);
+                
+                for (Class<? extends HippoBean> localClass : localAnnotatedClasses) {
+                    if (annotatedClasses.contains(localClass)) {
+                        log.warn("local added class '{}' already present. Skipping", localClass.getName());
+                    } else {
+                        annotatedClasses.add(localClass); 
+                    }
+                }
+                
                 objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+                
             }
         }
         
@@ -470,18 +495,6 @@ public class BaseHstComponent extends GenericHstComponent {
             }
         } catch (Exception e) {
             throw new HstComponentException(e);
-        }
-        
-        List<Class<? extends HippoBean>> localAnnotatedClasses = getLocalAnnotatedClasses();
-        
-        if (localAnnotatedClasses != null && !localAnnotatedClasses.isEmpty()) {
-            for (Class<? extends HippoBean> localClass : localAnnotatedClasses) {
-                if (annotatedClasses.contains(localClass)) {
-                    log.warn("local added class '{}' already present. Skipping", localClass.getName());
-                } else {
-                    annotatedClasses.add(localClass); 
-                }
-            }
         }
         
         return annotatedClasses;
