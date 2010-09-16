@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.component.support.bean;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +80,12 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
+    public static final String OBJECT_CONVERTER_CONTEXT_ATTRIBUTE = BaseHstComponent.class.getName() + ".objectConverter";
+    
+    private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
+        "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
+        "You can set a servlet context parameter named '" + BEANS_ANNOTATED_CLASSES_CONF_PARAM + "' with xml or classes location filter.\n" +
+        "For example, '" + DEFAULT_BEANS_ANNOTATED_CLASSES_CONF + "' or 'classpath*:org/examples/beans/**/*.class";
     
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
@@ -402,8 +409,13 @@ public class BaseHstComponent extends GenericHstComponent {
     public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
-            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+            objectConverter = (ObjectConverter) getServletContext().getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
+            
+            if (objectConverter == null) {
+                List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
+                objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+                getServletContext().setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
+            }
         }
         
         return objectConverter;
@@ -441,7 +453,11 @@ public class BaseHstComponent extends GenericHstComponent {
                 ClasspathResourceScanner scanner = MetadataReaderClasspathResourceScanner.newInstance(getServletContext());
                 annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, ocmAnnotatedClassesResourcePath);
             } else {
-                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(getServletContext().getResource(ocmAnnotatedClassesResourcePath));
+                URL xmlConfURL = getServletContext().getResource(ocmAnnotatedClassesResourcePath);
+                if (xmlConfURL == null) {
+                    throw new IllegalStateException(BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG);
+                }
+                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(xmlConfURL);
             }
         } catch (Exception e) {
             throw new HstComponentException(e);
