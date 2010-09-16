@@ -410,12 +410,20 @@ public class BaseHstComponent extends GenericHstComponent {
     public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         if (objectConverter == null) {
-            objectConverter = (ObjectConverter) getServletContext().getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
-            
-            if (objectConverter == null) {
+            List<Class<? extends HippoBean>> localAnnotatedClasses = getLocalAnnotatedClasses();
+            if(localAnnotatedClasses == null) {
+                objectConverter = (ObjectConverter) getServletContext().getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
+                
+                if (objectConverter == null) {
+                    List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
+                    objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+                    getServletContext().setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
+                }
+            } else {
                 List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
+                // add all local added annotated classes
+                annotatedClasses.addAll(localAnnotatedClasses);
                 objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-                getServletContext().setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
             }
         }
         
