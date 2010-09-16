@@ -28,11 +28,10 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CheckInOutDialog extends AbstractDialog<Node> implements ITitleDecorator {
+public class CheckInOutDialog extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;

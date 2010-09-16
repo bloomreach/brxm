@@ -26,10 +26,17 @@ import org.apache.wicket.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LocaleProviderPlugin extends Plugin implements ILocaleProvider {
+/**
+ * Provider of {@link HippoLocale}s, based on plugin configuration.  Icons should
+ * be made available in it's package and should follow the wicket locale pattern
+ * for their names.
+ */
+public final class LocaleProviderPlugin extends Plugin implements ILocaleProvider {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
@@ -68,6 +75,7 @@ public class LocaleProviderPlugin extends Plugin implements ILocaleProvider {
                         .getString("hippo:message"));
             }
             locales.add(new HippoLocale(locale, name) {
+                private static final long serialVersionUID = 1L;
 
                 @Override
                 public String getDisplayName(Locale locale) {
@@ -79,14 +87,14 @@ public class LocaleProviderPlugin extends Plugin implements ILocaleProvider {
                 }
 
                 @Override
-                public ResourceReference getIcon(IconType type) {
+                public ResourceReference getIcon(IconSize size, LocaleState state) {
                     String resourceName;
-                    switch (type) {
-                    case SMALL_NEW:
-                        resourceName = "flag-new.png";
+                    switch (state) {
+                    case AVAILABLE:
+                        resourceName = "flag-new-" + size.getSize() + ".png";
                         break;
                     default:
-                        resourceName = "flag.png";
+                        resourceName = "flag-" + size.getSize() + ".png";
                         break;
                     }
                     return new ResourceReference(LocaleProviderPlugin.class, resourceName, getLocale(), getName());

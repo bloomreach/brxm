@@ -193,48 +193,51 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
         if (parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
             if (lastReferences.containsKey(nodeModel)) {
                 JcrNodeModel targetParent = lastReferences.get(nodeModel);
-                boolean isResultSet = targetParent.getNode().isNodeType(HippoNodeType.NT_FACETRESULT);
-                // Locate document in target.  The first node (lowest sns index in target)
-                // whose canonical equivalent is under the handle will be used.
-                int index = 0;
-                Node target = null;
-                try {
-                    NodeIterator nodes = targetParent.getNode().getNodes(nodeModel.getNode().getName());
-                    while (nodes.hasNext()) {
-                        Node node = nodes.nextNode();
-                        if (node == null || !(node instanceof HippoNode)) {
-                            continue;
-                        }
-                        try {
-                            Node canonical = ((HippoNode) node).getCanonicalNode();
-                            if (canonical == null) {
+                Node targetParentNode = targetParent.getNode();
+                if (targetParentNode != null) {
+                    boolean isResultSet = targetParentNode.isNodeType(HippoNodeType.NT_FACETRESULT);
+                    // Locate document in target.  The first node (lowest sns index in target)
+                    // whose canonical equivalent is under the handle will be used.
+                    int index = 0;
+                    Node target = null;
+                    try {
+                        NodeIterator nodes = targetParent.getNode().getNodes(nodeModel.getNode().getName());
+                        while (nodes.hasNext()) {
+                            Node node = nodes.nextNode();
+                            if (node == null || !(node instanceof HippoNode)) {
                                 continue;
                             }
-                            if (isResultSet) {
-                                if (canonical.getParent().isSame(parentNode)) {
-                                    if (index == 0 || node.getIndex() < index) {
-                                        index = node.getIndex();
+                            try {
+                                Node canonical = ((HippoNode) node).getCanonicalNode();
+                                if (canonical == null) {
+                                    continue;
+                                }
+                                if (isResultSet) {
+                                    if (canonical.getParent().isSame(parentNode)) {
+                                        if (index == 0 || node.getIndex() < index) {
+                                            index = node.getIndex();
+                                            target = node;
+                                        }
+                                    }
+                                } else {
+                                    if (canonical.isSame(parentNode)) {
                                         target = node;
+                                        break;
                                     }
                                 }
-                            } else {
-                                if (canonical.isSame(parentNode)) {
-                                    target = node;
-                                    break;
-                                }
+                            } catch (ItemNotFoundException ex) {
+                                // physical node no longer exists
+                                continue;
                             }
-                        } catch (ItemNotFoundException ex) {
-                            // physical node no longer exists
-                            continue;
                         }
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage(), ex);
                     }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage(), ex);
-                }
-                if (target != null) {
-                    return new JcrNodeModel(target);
-                } else {
-                    log.warn("unable to find virtual equivalent");
+                    if (target != null) {
+                        return new JcrNodeModel(target);
+                    } else {
+                        log.warn("unable to find virtual equivalent");
+                    }
                 }
             }
         }

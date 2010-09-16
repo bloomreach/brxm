@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import org.apache.wicket.Component;
+import java.util.List;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,6 +32,7 @@ import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.Loop.LoopItem;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -37,8 +41,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
-
-import java.util.List;
+import org.hippoecm.frontend.service.IconSize;
 
 public class TabbedPanel extends WebMarkupContainer {
     @SuppressWarnings("unused")
@@ -54,6 +57,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private final List<TabsPlugin.Tab> tabs;
     private MarkupContainer panelContainer;
     private MarkupContainer tabsContainer;
+    private IconSize iconType = IconSize.TINY;
     private transient boolean redraw = false;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
@@ -133,7 +137,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
     protected WebMarkupContainer newLink(final int index) {
         WebMarkupContainer container = new WebMarkupContainer("container", new Model<Integer>(Integer.valueOf(index)));
-        TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
+        TabsPlugin.Tab tabbie = getTabs().get(index);
         final IModel<TabsPlugin.Tab> tabbieModel = new Model<TabsPlugin.Tab>(tabbie);
         if (tabbie.canClose()) {
             container.add(new AjaxFallbackLink<TabsPlugin.Tab>("close", tabbieModel) {
@@ -147,15 +151,29 @@ public class TabbedPanel extends WebMarkupContainer {
         } else {
             container.add(new Label("close").setVisible(false));
         }
-        Component link;
-        container.add(link = new AjaxFallbackLink<TabsPlugin.Tab>("link", tabbieModel) {
+        WebMarkupContainer link = new AjaxFallbackLink<TabsPlugin.Tab>("link", tabbieModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 plugin.onSelect(getModelObject(), target);
             }
-        }.add(new Label("title", new LoadableDetachableModel<String>() {
+        };
+
+        ResourceReference iconResource = tabbie.getIcon(iconType);
+        Image image;
+        if (iconResource == null) {
+            image = new Image("icon");
+            image.setVisible(false);
+        } else {
+            image = new Image("icon", iconResource);
+        }
+        IModel<String> sizeModel = new Model<String>(Integer.valueOf(iconType.getSize()).toString());
+        image.add(new AttributeModifier("width", true, sizeModel));
+        image.add(new AttributeModifier("height", true, sizeModel));
+        link.add(image);
+
+        link.add(new Label("title", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -171,7 +189,7 @@ public class TabbedPanel extends WebMarkupContainer {
                 }
                 return "title";
             }
-        })));
+        }));
         link.add(new AttributeAppender("title", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
@@ -185,6 +203,7 @@ public class TabbedPanel extends WebMarkupContainer {
             }
 
         }, ""));
+        container.add(link);
 
         return container;
     }
@@ -250,7 +269,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
         setDefaultModelObject(Integer.valueOf(index));
 
-        ITab tab = (ITab) tabs.get(index);
+        ITab tab = tabs.get(index);
 
         Panel panel = tab.getPanel(TAB_PANEL_ID);
 
@@ -273,6 +292,14 @@ public class TabbedPanel extends WebMarkupContainer {
 
     public final int getSelectedTab() {
         return ((Integer) getDefaultModelObject()).intValue();
+    }
+
+    public void setIconType(IconSize iconType) {
+        this.iconType = iconType;
+    }
+
+    public IconSize getIconType() {
+        return iconType;
     }
 
 }

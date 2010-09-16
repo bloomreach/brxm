@@ -26,14 +26,13 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A dialog that shows where a document is used, i.e. what other documents refer to it.
  */
-public class WhereUsedDialog extends AbstractDialog implements ITitleDecorator {
+public class WhereUsedDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

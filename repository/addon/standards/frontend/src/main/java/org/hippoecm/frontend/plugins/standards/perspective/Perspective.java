@@ -15,12 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.standards.perspective;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public abstract class Perspective extends RenderPlugin<Void> implements ITitleDecorator {
@@ -45,6 +47,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     public IModel<String> getTitle() {
         return title;
+    }
+
+    public ResourceReference getIcon(IconSize size) {
+        return new ResourceReference(Perspective.class, "perspective-" + size.getSize() + ".png");
     }
 
     protected void setTitle(String title) {

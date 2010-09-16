@@ -29,13 +29,12 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CndImportDialog extends AbstractDialog<Void> implements ITitleDecorator {
+public class CndImportDialog extends AbstractDialog<Void> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 

@@ -385,6 +385,11 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return 3499 ^ super.hashCode();
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public void startObservation() {

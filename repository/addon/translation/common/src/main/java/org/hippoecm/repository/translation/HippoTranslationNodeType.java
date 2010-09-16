@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.translation;
 
+/**
+ * Node types used by content localization.
+ */
 public interface HippoTranslationNodeType {
 
     String NS = "http://www.onehippo.org/jcr/hippotranslation/nt/1.0";

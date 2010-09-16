@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MiniMap;
@@ -43,13 +44,13 @@ import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.reviewedactions.PublishableDocument;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 
 public class EditorFactoryTest extends PluginTest {
@@ -88,6 +89,11 @@ public class EditorFactoryTest extends PluginTest {
                 throw new RuntimeException("failed to determine node name", ex);
             }
         }
+
+        public ResourceReference getIcon(IconSize type) {
+            return null;
+        }
+
     }
 
     public static class Comparer extends RenderPlugin {

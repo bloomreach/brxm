@@ -179,25 +179,6 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         rootSession.refresh(false);
     }
 
-    public Document getTranslation(String language) throws WorkflowException, MappingException, RepositoryException,
-            RemoteException {
-        Node translations = rootSubject.getNode(HippoTranslationNodeType.TRANSLATIONS);
-        if (!translations.hasNode(language)) {
-            throw new WorkflowException("Translation already exists");
-        }
-        Node node = translations.getNode(language);
-        Node canonical = ((HippoNode) node).getCanonicalNode();
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            if (node.hasNode(canonical.getName())) {
-                String uuid = ((HippoNode) node.getNode(canonical.getName())).getCanonicalNode().getUUID();
-                return new Document(uuid);
-            }
-        } else {
-            return new Document(canonical.getUUID());
-        }
-        return null;
-    }
-
     public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException {
         Map<String, Serializable> hints = new TreeMap<String, Serializable>();
 

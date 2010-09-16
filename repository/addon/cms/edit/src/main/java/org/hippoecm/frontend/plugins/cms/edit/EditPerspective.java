@@ -25,6 +25,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -41,11 +42,16 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
+import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,6 +174,55 @@ public class EditPerspective extends Perspective {
             }
 
         };
+    }
+
+    @Override
+    public ResourceReference getIcon(IconSize iconSize) {
+        JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
+        if (nodeModel != null) {
+            ILocaleProvider localeProvider = getLocaleProvider();
+            if (localeProvider != null) {
+                Node node = nodeModel.getNode();
+                if (node != null) {
+                    try {
+                        if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                            Node localeNode = node;
+                            String localeName = null;
+                            while (localeNode.getDepth() > 0) {
+                                if (localeNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
+                                        && localeNode.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                                    localeName = localeNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                                    break;
+                                }
+                                localeNode = localeNode.getParent();
+                            }
+                            if (localeName != null) {
+                                for (HippoLocale locale : localeProvider.getLocales()) {
+                                    if (localeName.equals(locale.getName())) {
+                                        return locale.getIcon(iconSize, LocaleState.EXISTS);
+                                    }
+                                }
+                                log.warn("Locale '" + localeName + "' was not found in provider");
+                            } else {
+                                log.warn("Node '" + node.getPath() + "' is translated, but locale was not found");
+                            }
+                        } else {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Node " + node.getPath() + " is not translated");
+                            }
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("Repository error while retrieving locale for edited document", e);
+                    }
+                }
+            }
+        }
+        return new ResourceReference(EditPerspective.class, "document-" + iconSize.getSize() + ".png");
+    }
+
+    protected ILocaleProvider getLocaleProvider() {
+        return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
+                ILocaleProvider.class);
     }
 
 }

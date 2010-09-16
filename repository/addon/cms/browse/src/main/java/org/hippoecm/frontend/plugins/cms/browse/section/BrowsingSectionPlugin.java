@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.browse.section;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -28,6 +29,7 @@ import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,6 +139,10 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
 
     public IModel<String> getTitle() {
         return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
+    }
+
+    public ResourceReference getIcon(IconSize type) {
+        return null;
     }
 
 }
