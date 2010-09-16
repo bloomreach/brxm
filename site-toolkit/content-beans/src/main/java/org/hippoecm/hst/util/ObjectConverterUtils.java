@@ -101,22 +101,25 @@ public class ObjectConverterUtils {
     }
     
     /**
-     * Creates <CODE>ObjectConverter</CODE>.
+     * Creates <CODE>ObjectConverter</CODE>, with ignoreDuplicates = false, which means that when there are two annotated beans with the same 
+     * value for {@link Node#jcrType()}, an IllegalArgumentException is thrown.
      * @param annotatedClasses Annotated class mapping against jcr primary node types.
-     * @return
+     * @return the ObjectConverter for these<code>annotatedClasses</code>
+     * @throws IllegalArgumentException when two annotatedClasses have the same {@link Node#jcrType()} 
      */
-    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses) {
+    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses) throws IllegalArgumentException {
         return createObjectConverter(annotatedClasses, false);
     }
     
     /**
-     * Creates <CODE>ObjectConverter</CODE>.
+     * Creates <CODE>ObjectConverter</CODE>. 
      * @param annotatedClasses Annotated class mapping against jcr primary node types.
      * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
-     * @return
+     * @return the ObjectConverter for these<code>annotatedClasses</code>
+     * @throws IllegalArgumentException when two annotatedClasses have the same {@link Node#jcrType()} and <code>ignoreDuplicates</code> is false
      */
     @SuppressWarnings("unchecked")
-    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses, boolean ignoreDuplicates) {
+    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses, boolean ignoreDuplicates) throws IllegalArgumentException {
         return createObjectConverter(annotatedClasses, (Class<? extends HippoBean> []) DEFAULT_BUILT_IN_MAPPING_CLASSES, DEFAULT_FALLBACK_NODE_TYPES, ignoreDuplicates);
     }
     
@@ -128,7 +131,7 @@ public class ObjectConverterUtils {
      * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
      * @return
      */
-    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses, final Class<? extends HippoBean> [] builtInMappingClasses, final String [] fallbackNodeTypes, boolean ignoreDuplicates) {
+    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses, final Class<? extends HippoBean> [] builtInMappingClasses, final String [] fallbackNodeTypes, boolean ignoreDuplicates) throws IllegalArgumentException {
         Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
         
         if (annotatedClasses != null && !annotatedClasses.isEmpty()) {
@@ -269,7 +272,7 @@ public class ObjectConverterUtils {
         return annotatedClasses;
     }
     
-    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs, Class<? extends HippoBean> clazz, boolean builtinType, boolean ignoreDuplicates) {
+    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs, Class<? extends HippoBean> clazz, boolean builtinType, boolean ignoreDuplicates) throws IllegalArgumentException {
         String jcrPrimaryNodeType = null;
         
         if (clazz.isAnnotationPresent(Node.class)) {
