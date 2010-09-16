@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
@@ -25,6 +26,7 @@ import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbBar;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
+import org.hippoecm.frontend.service.IconSize;
 
 public class AdminPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -63,6 +65,11 @@ public class AdminPerspective extends Perspective {
         });
 
         add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+    }
+
+    @Override
+    public ResourceReference getIcon(IconSize type) {
+        return new ResourceReference(AdminPerspective.class, "admin-perspective-" + type.getSize() + ".png");
     }
 
     public void showDialog(IDialogService.Dialog dialog) {

@@ -28,7 +28,6 @@ import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A dialog that shows the revision history of a document.
  */
-public class HistoryDialog extends AbstractDialog implements ITitleDecorator {
+public class HistoryDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

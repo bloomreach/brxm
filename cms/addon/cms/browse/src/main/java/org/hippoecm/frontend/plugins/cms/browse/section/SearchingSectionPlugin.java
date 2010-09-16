@@ -20,6 +20,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -52,6 +53,7 @@ import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -471,6 +473,10 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     public IModel<String> getTitle() {
         return new StringResourceModel(getPluginConfig().getString("title", getPluginConfig().getName()), this, null);
+    }
+
+    public ResourceReference getIcon(IconSize type) {
+        return null;
     }
 
 }

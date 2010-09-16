@@ -26,19 +26,17 @@ import org.hippoecm.repository.api.WorkflowException;
 
 /**
  * Workflow on translated documents. (hippotranslation:translated)
+ * <p>
+ * The {@link Workflow#hints()} method returns the following information:
+ * <ul>
+ *   <li><b>locale</b>: the locale of the document
+ *   <li><b>locales</b>: a Set<String> of locale names in which
+ *      the document or folder is available
+ *   <li><b>available</b>: the Set<String> of locale names to
+ *      which this document can be translated.
  */
 public interface TranslationWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
-
-    /**
-     * Find the document that corresponds to a translation of the original document,
-     * in the specified language.
-     * 
-     * @param language
-     * @return the translation, when available, or null when it is not available
-     */
-    Document getTranslation(String language)
-        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Create a new translation of the document.  Only valid when the containing folder

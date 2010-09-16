@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -34,6 +35,7 @@ import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.IFocusListener;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +46,7 @@ public class TabsTest extends PluginTest {
 
     static final String PANELS = "panels";
 
-    public static class ContentPanel extends RenderPlugin {
+    public static class ContentPanel extends RenderPlugin<Void> {
         private static final long serialVersionUID = 1L;
 
         ITitleDecorator decorator;
@@ -55,8 +57,14 @@ public class TabsTest extends PluginTest {
             context.registerService(decorator = new ITitleDecorator() {
                 private static final long serialVersionUID = 1L;
 
+                @SuppressWarnings("unchecked")
                 public IModel<String> getTitle() {
                     return (IModel<String>) getDefaultModel();
+                }
+
+                public ResourceReference getIcon(IconSize type) {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
 
             }, context.getReference(this).getServiceId());

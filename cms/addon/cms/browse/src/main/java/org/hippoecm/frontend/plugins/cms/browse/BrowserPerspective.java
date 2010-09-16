@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
@@ -28,6 +29,7 @@ import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 
@@ -191,6 +193,11 @@ public class BrowserPerspective extends Perspective {
         });
     }
 
+    @Override
+    public ResourceReference getIcon(IconSize type) {
+        return new ResourceReference(BrowserPerspective.class, "browser-perspective-" + type.getSize() + ".png");
+    }
+    
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);

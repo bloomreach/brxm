@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
+import org.apache.wicket.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.service.IconSize;
 
 public class DashboardPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -27,5 +29,10 @@ public class DashboardPerspective extends Perspective {
 
     public DashboardPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    @Override
+    public ResourceReference getIcon(IconSize type) {
+        return new ResourceReference(DashboardPerspective.class, "dashboard-perspective-" + type.getSize() + ".png");
     }
 }

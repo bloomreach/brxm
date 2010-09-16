@@ -19,12 +19,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LogoutDialog extends AbstractDialog implements ITitleDecorator {
+public class LogoutDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

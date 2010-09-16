@@ -29,11 +29,10 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
+public class OnCloseDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

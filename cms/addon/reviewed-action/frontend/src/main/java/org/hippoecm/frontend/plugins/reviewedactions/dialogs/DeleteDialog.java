@@ -29,11 +29,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteDialog extends WorkflowAction.WorkflowDialog implements ITitleDecorator {
+public class DeleteDialog extends WorkflowAction.WorkflowDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

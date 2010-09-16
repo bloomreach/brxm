@@ -26,9 +26,8 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class NodeDialog extends AbstractDialog<Node> implements ITitleDecorator {
+public class NodeDialog extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

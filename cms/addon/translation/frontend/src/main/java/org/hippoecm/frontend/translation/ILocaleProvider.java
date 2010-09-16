@@ -21,13 +21,30 @@ import java.util.Locale;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ResourceReference;
+import org.hippoecm.frontend.service.IconSize;
 
+/**
+ * Provider of content locale information.  Available as a service in the CMS,
+ * it can be used by plugins to retrieve Locale and presentation
+ * information.
+ * <p>
+ * The provider is made available under the "locale.id" configuration key.
+ * When this key is not present, the fully qualified class name can be used
+ * as a fall back.
+ * <p>
+ * Whereas the repository only depends on the name of a HippoLocale, the CMS
+ * couples this name to a Locale for presentation purposes.
+ */
 public interface ILocaleProvider extends IClusterable {
-    
-    enum IconType {
-        SMALL, SMALL_NEW
+
+    enum LocaleState {
+        DISABLED, AVAILABLE, EXISTS 
     }
 
+    /**
+     * Description of a content locale.  Provides the (java) Locale and
+     * UI presentation details.
+     */
     abstract class HippoLocale implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -47,11 +64,11 @@ public interface ILocaleProvider extends IClusterable {
             return name;
         }
         
-        abstract public ResourceReference getIcon(IconType type);
+        abstract public ResourceReference getIcon(IconSize size, LocaleState type);
 
         abstract public String getDisplayName(Locale locale);
     }
 
-    List<HippoLocale> getLocales();
+    List<? extends HippoLocale> getLocales();
 
 }

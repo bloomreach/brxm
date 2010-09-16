@@ -15,7 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -34,16 +39,27 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+/**
+ * Plugin that manages a number of {@link IRenderService}s using a tabbing interface.
+ * <p>
+ * Configuration:
+ * <ul>
+ *   <li><b>title.maxlength</b><br>
+ *     The maximum length (in characters) of the title.  When exceeded, the title
+ *     will be shown truncated with ellipses.  The title attribute will contain the
+ *     full title.
+ *   <li><b>icon.size</b><br>
+ *     The size of the icon in the tab.  Can be one of the {@link IconSize}
+ *     sizes.  By default, 'tiny' will be used.
+ * </ul>
+ */
 public class TabsPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -54,8 +70,9 @@ public class TabsPlugin extends RenderPlugin {
 
     public static final String TAB_ID = "tabs";
     public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
+    public static final String TAB_ICON_SIZE = "icon.size";
 
-    private TabbedPanel tabbedPanel;
+    private final TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
     private List<Tab> tabs;
     private ServiceTracker<IRenderService> tabsTracker;
@@ -72,8 +89,8 @@ public class TabsPlugin extends RenderPlugin {
         IPluginConfig panelConfig = new JavaPluginConfig();
         panelConfig.put("wicket.id", properties.getString(TAB_ID));
         panelConfig.put("wicket.behavior", properties.getString("tabbedpanel.behavior"));
-        
-        if(properties.containsKey("tabbedpanel.openleft")) {
+
+        if (properties.containsKey("tabbedpanel.openleft")) {
             openleft = properties.getBoolean("tabbedpanel.openleft");
         }
 
@@ -86,6 +103,7 @@ public class TabsPlugin extends RenderPlugin {
         tabs = new ArrayList<Tab>();
         add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs, tabsContainer));
         tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
+        tabbedPanel.setIconType(IconSize.getIconSize(properties.getString(TAB_ICON_SIZE, "tiny")));
 
         if (properties.containsKey("tabs.container.id")) {
             JavaPluginConfig containerConfig = new JavaPluginConfig();
@@ -195,7 +213,7 @@ public class TabsPlugin extends RenderPlugin {
      */
     protected void onSelectTab(int index) {
     }
-    
+
     void onClose(Tab tabbie, AjaxRequestTarget target) {
         IServiceReference<IRenderService> reference = getPluginContext().getReference(tabbie.renderer);
         if (reference == null) {
@@ -238,6 +256,10 @@ public class TabsPlugin extends RenderPlugin {
         }
     }
 
+    protected final TabbedPanel getTabbedPanel() {
+        return tabbedPanel;
+    }
+
     class Tab implements ITab, IObserver<IObservable> {
         private static final long serialVersionUID = 1L;
 
@@ -262,7 +284,7 @@ public class TabsPlugin extends RenderPlugin {
                         getPluginContext().unregisterService(Tab.this, IObserver.class.getName());
                     }
                     titleModel = null;
-                    tabbedPanel.redraw();
+                    getTabbedPanel().redraw();
                 }
 
                 @Override
@@ -273,7 +295,7 @@ public class TabsPlugin extends RenderPlugin {
                         }
                         titleModel = null;
                         decorator = null;
-                        tabbedPanel.redraw();
+                        getTabbedPanel().redraw();
                     }
                 }
             };
@@ -289,7 +311,7 @@ public class TabsPlugin extends RenderPlugin {
                 // look for previously selected tab
                 int lastCount = 0;
                 Tab lastTab = tabs.get(0);
-                Iterator<Tab> tabIterator = tabbedPanel.getTabs().iterator();
+                Iterator<Tab> tabIterator = getTabbedPanel().getTabs().iterator();
                 while (tabIterator.hasNext()) {
                     Tab tabbie = tabIterator.next();
                     if (tabbie.lastSelected > lastCount) {
@@ -297,10 +319,10 @@ public class TabsPlugin extends RenderPlugin {
                         lastTab = tabbie;
                     }
                 }
-                tabbedPanel.setSelectedTab(tabs.indexOf(lastTab));
+                getTabbedPanel().setSelectedTab(tabs.indexOf(lastTab));
                 lastTab.lastSelected = ++TabsPlugin.this.selectCount;
                 lastTab.renderer.focus(null);
-                tabbedPanel.redraw();
+                getTabbedPanel().redraw();
             }
         }
 
@@ -309,7 +331,7 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-            tabbedPanel.redraw();
+            getTabbedPanel().redraw();
         }
 
         // implement ITab interface
@@ -323,6 +345,13 @@ public class TabsPlugin extends RenderPlugin {
                 }
             }
             return titleModel;
+        }
+
+        public ResourceReference getIcon(IconSize type) {
+            if (decorator != null) {
+                return decorator.getIcon(type);
+            }
+            return null;
         }
 
         public Panel getPanel(String panelId) {
@@ -343,10 +372,10 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         void select() {
-            if (tabs.indexOf(this) != tabbedPanel.getSelectedTab()) {
-                tabbedPanel.setSelectedTab(tabs.indexOf(this));
+            if (tabs.indexOf(this) != getTabbedPanel().getSelectedTab()) {
+                getTabbedPanel().setSelectedTab(tabs.indexOf(this));
                 lastSelected = ++TabsPlugin.this.selectCount;
-                tabbedPanel.redraw();
+                getTabbedPanel().redraw();
             }
         }
 

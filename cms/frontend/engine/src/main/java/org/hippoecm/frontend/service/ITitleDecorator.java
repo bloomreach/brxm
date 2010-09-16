@@ -16,10 +16,37 @@
 package org.hippoecm.frontend.service;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugin.IServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Title decorator.  This service can be added to another service to provide (optional)
+ * presentational information to consumers.
+ * <p>
+ * Implementations should register it at the other service's id.  {@link IServiceReference#getServiceId}
+ * Consumers can find it then at the same location.
+ */
 public interface ITitleDecorator extends IClusterable {
     final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(ITitleDecorator.class);
+
     IModel<String> getTitle();
+
+    /**
+     * Retrieve an icon to represent the decorated object.  Implementations should return null
+     * when no icon is available.  When no icon is available of the specified size, a larger
+     * sized icon can be returned.
+     * <p>
+     * Consumers should use a default icon when none is returned.  They should handle resizing
+     * icons when these are not of the specified size.
+     * 
+     * @param type
+     * @return
+     */
+    ResourceReference getIcon(IconSize type);
+
 }

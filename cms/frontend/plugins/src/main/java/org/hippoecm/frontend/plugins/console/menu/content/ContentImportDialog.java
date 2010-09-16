@@ -45,7 +45,6 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -53,7 +52,7 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContentImportDialog  extends AbstractDialog<Node> implements ITitleDecorator {
+public class ContentImportDialog  extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;

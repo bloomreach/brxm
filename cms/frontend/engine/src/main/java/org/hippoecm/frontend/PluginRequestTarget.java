@@ -122,6 +122,11 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
     }
 
     @Override
+    public int hashCode() {
+        return 324889 ^ super.hashCode();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof PluginRequestTarget) {
             return super.equals(obj);

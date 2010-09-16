@@ -167,14 +167,10 @@ padding-top: 8px;
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {position: absolute; top: 0px; width: 50px; left: 0px; padding-top: 50px;}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li {height: 52px;}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.selected {background: url("images/tab-active.png") no-repeat center center}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span{display: block; width: 100%; height: 100%; background-repeat: no-repeat; background-position: center center; text-indent: -9999px;}
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span{display: block; width: 100%; height: 100%; background-repeat: no-repeat; background-position: center center;}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a {display: block; height: 100%; width: 100%}
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a img {margin: 10px;}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a span{display: none}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab0 span{background-image: url(images/icons/home-32.png);}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab1 span{background-image: url(images/icons/emblem-documents-32.png);}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab3 span{background-image: url(images/icons/groups-32.png);}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab2 span{background-image: url(images/icons/controlpanel-32.png);}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab0 .close{background-image: none}
 
 /* TabsPlugin Document switcher */
 /* ================================================ */
@@ -220,7 +216,7 @@ color: #999999;
 .hippo-tabs-documents .hippo-tabs-documents-tab:hover{background-position: 0px -66px; color: #666666}
 .hippo-tabs-documents .hippo-tabs-documents-tab:active{background-position: 0px -66px}
 
-.hippo-tabs-documents .hippo-tabs-documents-tab span.icon-16{padding-left: 20px; background-position: 0px 3px}
+.hippo-tabs-documents .hippo-tabs-documents-tab img {margin-right: 3px; vertical-align: -4px;}
 
 /* Logout */
 /* ================================================ */

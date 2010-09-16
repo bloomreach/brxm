@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MiniMap;
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.junit.After;
@@ -69,6 +71,10 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
             } catch (RepositoryException ex) {
                 throw new RuntimeException("failed to determine node name", ex);
             }
+        }
+
+        public ResourceReference getIcon(IconSize type) {
+            return null;
         }
     }
 
