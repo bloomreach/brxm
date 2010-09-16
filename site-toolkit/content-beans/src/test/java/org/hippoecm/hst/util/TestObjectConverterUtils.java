@@ -68,7 +68,7 @@ public class TestObjectConverterUtils {
         expectedAannotatedClassNames.add(TextBean.class.getName());
         expectedAannotatedClassNames.add(CommentBean.class.getName());
         ClasspathResourceScanner resourceScanner = createNiceMock(ClasspathResourceScanner.class);
-        expect(resourceScanner.scanClassNamesAnnotatedBy(Node.class, locationPattern, false)).andReturn(expectedAannotatedClassNames).anyTimes();
+        expect(resourceScanner.scanClassNamesAnnotatedBy(Node.class, false, locationPattern)).andReturn(expectedAannotatedClassNames).anyTimes();
         replay(resourceScanner);
         
         Collection<Class<? extends HippoBean>> annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(resourceScanner, locationPattern);

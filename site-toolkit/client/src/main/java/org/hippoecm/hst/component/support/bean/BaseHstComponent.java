@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
@@ -451,7 +452,7 @@ public class BaseHstComponent extends GenericHstComponent {
         try {
             if (ocmAnnotatedClassesResourcePath.startsWith("classpath*:")) {
                 ClasspathResourceScanner scanner = MetadataReaderClasspathResourceScanner.newInstance(getServletContext());
-                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, ocmAnnotatedClassesResourcePath);
+                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));
             } else {
                 URL xmlConfURL = getServletContext().getResource(ocmAnnotatedClassesResourcePath);
                 if (xmlConfURL == null) {

@@ -242,9 +242,9 @@ public class ObjectConverterUtils {
      * @see {@link ClasspathResourceScanner}
      */
     @SuppressWarnings("unchecked")
-    public static List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String locationPattern) throws IOException, SAXException, ParserConfigurationException {
+    public static List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException, SAXException, ParserConfigurationException {
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
-        Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Node.class, locationPattern, false);
+        Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Node.class, false, locationPatterns);
         
         if (annotatedClassNames != null && !annotatedClassNames.isEmpty()) {
             Class<?> clazz = null;

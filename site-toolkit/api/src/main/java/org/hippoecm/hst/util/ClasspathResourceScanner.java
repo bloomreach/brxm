@@ -28,7 +28,7 @@ import java.util.Set;
 public interface ClasspathResourceScanner {
     
     /**
-     * Scans classpath from the location specified by <CODE>locationPattern</CODE> 
+     * Scans classpath from the location specified by <CODE>locationPatterns</CODE> 
      * for all class names which annotates the speified <CODE>annotationType</CODE>.
      * <P>
      * Note: An implementation is recommended to support <CODE>locationPattern</CODE> with <CODE>classpath*:</CODE> prefix at least
@@ -39,10 +39,10 @@ public interface ClasspathResourceScanner {
      * </UL>
      * </P>
      * @param annotationType
-     * @param locationPattern
      * @param matchSuperClass
+     * @param locationPatterns
      * @return
      */
-    public Set<String> scanClassNamesAnnotatedBy(Class<? extends Annotation> annotationType, String locationPattern, boolean matchSuperClass);
+    public Set<String> scanClassNamesAnnotatedBy(Class<? extends Annotation> annotationType, boolean matchSuperClass, String ... locationPatterns);
     
 }

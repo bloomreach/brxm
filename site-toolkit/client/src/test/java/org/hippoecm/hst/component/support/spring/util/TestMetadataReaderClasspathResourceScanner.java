@@ -47,7 +47,7 @@ public class TestMetadataReaderClasspathResourceScanner {
     
     @Test
     public void testSpringResourceScanner() {
-        Set<String> annotatedClassNames = scanner.scanClassNamesAnnotatedBy(Node.class, locationPattern, false);
+        Set<String> annotatedClassNames = scanner.scanClassNamesAnnotatedBy(Node.class, false, locationPattern);
         assertTrue(annotatedClassNames.contains(TextBean.class.getName()));
         assertTrue(annotatedClassNames.contains(CommentBean.class.getName()));
     }

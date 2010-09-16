@@ -88,9 +88,13 @@ public class MetadataReaderClasspathResourceScanner implements ClasspathResource
         
     }
     
-    public Set<String> scanClassNamesAnnotatedBy(Class<? extends Annotation> annotationType, String locationPattern, boolean matchSuperClass) {
+    public Set<String> scanClassNamesAnnotatedBy(Class<? extends Annotation> annotationType, boolean matchSuperClass, String ... locationPatterns) {
         if (resourcePatternResolver == null) {
             throw new IllegalStateException("ResourceLoader has not been set.");
+        }
+        
+        if (locationPatterns == null || locationPatterns.length == 0) {
+            throw new IllegalArgumentException("Provide one or more location pattern(s).");
         }
         
         Set<String> annotatedClassNames = new LinkedHashSet<String>();
@@ -98,16 +102,17 @@ public class MetadataReaderClasspathResourceScanner implements ClasspathResource
         MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
         
         try {
-            Resource [] resources = resourcePatternResolver.getResources(locationPattern);
             TypeFilter typeFilter = new CustomAnnotationTypeFilter(annotationType, matchSuperClass);
             
-            for (Resource resource : resources) {
-                log.debug("Scanning {}", resource);
-                MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
+            for (String locationPattern : locationPatterns) {
+                Resource [] resources = resourcePatternResolver.getResources(locationPattern);
                 
-                if (typeFilter.match(metadataReader, metadataReaderFactory)) {
-                    log.debug("Found an @Node annotated class {}", metadataReader.getAnnotationMetadata().getClassName());
-                    annotatedClassNames.add(metadataReader.getAnnotationMetadata().getClassName());
+                for (Resource resource : resources) {
+                    MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
+                    
+                    if (typeFilter.match(metadataReader, metadataReaderFactory)) {
+                        annotatedClassNames.add(metadataReader.getAnnotationMetadata().getClassName());
+                    }
                 }
             }
         } catch (IOException e) {

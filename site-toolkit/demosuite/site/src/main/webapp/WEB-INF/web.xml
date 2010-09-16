@@ -41,6 +41,9 @@
     all the annotated bean classes will be automatically scanned from the location.
     If the context parameter is not configured, '/WEB-INF/beans-annotated-classes.xml'
     will be used by default.
+    Also, you can configure multiple classpath resource location filters separated by comma or white spaces.
+    For example, you can set the parameter value to 'classpath*:org/hippoecm/hst/demo/beans/**/*.class, classpath*:org/hippoecm/hst/demo2/beans/**/*.class'
+    to specify two or more different location filters.
     -->
     <context-param>
         <param-name>hst-beans-annotated-classes</param-name>
