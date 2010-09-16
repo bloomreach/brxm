@@ -24,6 +24,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.Browser;
 import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.StylesheetConfiguration;
 import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.UserAgent;
+import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
@@ -33,6 +34,7 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +82,10 @@ public class RootPlugin extends TabsPlugin {
         }
         add(new BrowserSpecificStylesheetsBehavior(configurations.toArray(new StylesheetConfiguration[configurations.size()])));
 
-        get("tabs").add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+        TabbedPanel tabbedPanel = getTabbedPanel();
+        tabbedPanel.setIconType(IconSize.SMALL);
+        tabbedPanel.add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
     }
