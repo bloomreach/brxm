@@ -41,12 +41,15 @@ import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.services.support.jaxrs.content.AbstractJaxrsSpringTestCase;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletConfig;
+import org.springframework.mock.web.MockServletContext;
 import org.w3c.dom.Document;
 
 /**
@@ -63,6 +66,7 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
     protected ServletConfig servletConfig;
     protected ServletContext servletContext;
     protected HstContainerConfig hstContainerConfig;
+    protected ResolvedVirtualHost resolvedVirtualHost;
     protected SiteMount siteMount;
     protected HstMutableRequestContext requestContext;
     protected ResolvedSiteMount resolvedSiteMount;
@@ -76,7 +80,7 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
         pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         jaxrsPipeline = this.pipelines.getPipeline("JaxrsPipeline");
         
-        servletConfig = getComponent("jaxrsServiceServletConfig");
+        servletConfig = new MockServletConfig(new MockServletContext());
         servletContext = servletConfig.getServletContext();
         
         hstContainerConfig = new HstContainerConfig() {
@@ -88,16 +92,23 @@ public class TestWorkflowService extends AbstractJaxrsSpringTestCase {
             }
         };
         
+        resolvedVirtualHost = EasyMock.createNiceMock(ResolvedVirtualHost.class);
+        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn("localhost").anyTimes();
+        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(8085).anyTimes();
+
         siteMount = EasyMock.createNiceMock(SiteMount.class);
         EasyMock.expect(siteMount.getMountPoint()).andReturn(SITE_MOUNT_POINT).anyTimes();
         
         resolvedSiteMount = EasyMock.createNiceMock(ResolvedSiteMount.class);
+        EasyMock.expect(resolvedSiteMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
         EasyMock.expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount).anyTimes();
-        EasyMock.expect(resolvedSiteMount.getResolvedMountPath()).andReturn("/services/preview").anyTimes();
+        EasyMock.expect(resolvedSiteMount.getResolvedMountPath()).andReturn("/preview/services").anyTimes();
         
+        EasyMock.replay(resolvedVirtualHost);
         EasyMock.replay(siteMount);
         EasyMock.replay(resolvedSiteMount);
         requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
+        requestContext.setServletContext(servletContext);
         requestContext.setResolvedSiteMount(resolvedSiteMount);
     }
     

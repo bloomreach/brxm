@@ -63,47 +63,19 @@
   <bean id="jaxrsJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
     <property name="mapper" ref="jacksonObjectMapper" />
   </bean>
-  
-  <bean id="cxfJaxrsBus" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetClass" value="org.apache.cxf.BusFactory"/>
-    <property name="targetMethod" value="getThreadDefaultBus"/>
-    <property name="arguments">
-      <list>
-        <value>true</value>
-      </list>
-    </property>
+   
+  <bean id="jaxrsService1" class="org.hippoecm.hst.services.support.jaxrs.cxf.CXFJaxrsService">
+    <constructor-arg value="jaxrsService1"/>
+    <property name="servletPath" value=""/>
+    <property name="jaxrsServerFactoryBean" ref="cxfJaxrsServerFactoryBean"/>
   </bean>
   
-  <bean id="cxfDestinationFactory" class="org.apache.cxf.transport.servlet.ServletTransportFactory">
-    <constructor-arg ref="cxfJaxrsBus" />
-  </bean>
-  
-  <bean id="jaxrsServiceServletConfig" class="org.hippoecm.hst.core.container.ServletDelegatingValve$ServletConfigImpl">
-    <constructor-arg value="jaxrsServlet" />
-    <constructor-arg>
-      <map/>
-    </constructor-arg>
-  </bean>
-  
-  <bean id="cxfJaxrsServletController" class="org.apache.cxf.transport.servlet.ServletController">
-    <constructor-arg ref="cxfDestinationFactory" />
-    <constructor-arg ref="jaxrsServiceServletConfig" />
-    <constructor-arg>
-      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-        <property name="targetObject" ref="jaxrsServiceServletConfig" />
-        <property name="propertyPath" value="servletContext"/>
-      </bean>
-    </constructor-arg>
-    <constructor-arg ref="cxfJaxrsBus" />
-  </bean>
-  
-  <!-- 
+  <!--  
     The internal server factory. 
-    Each JAX-RS service component is registered by "resourceProvider" property. 
-  -->
+    Each JAX-RS service component is registered by "resourceProvider" property.
+  -->  
   <bean id="cxfJaxrsServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/" />
-    <property name="destinationFactory" ref="cxfDestinationFactory" />
     <property name="providers">
       <list>
         <ref bean="jaxrsJsonProvider" />
@@ -127,9 +99,9 @@
       </list>
     </property>
   </bean>
-  
+ 
   <!-- Demo Customer Service -->
-  <bean id="jaxrsCustomerService" class="org.hippoecm.hst.services.support.jaxrs.demo.CustomerService">
+  <bean id="jaxrsCustomerService" class="org.hippoecm.hst.services.support.jaxrs.demo.CustomerService" scope="singleton">
   </bean>
   
   <!-- Content Service -->
@@ -139,38 +111,24 @@
       </list>
     </property>
   </bean>
-  <bean id="jaxrsContentService" class="org.hippoecm.hst.services.support.jaxrs.content.ContentService">
+  
+  <bean id="jaxrsContentService" class="org.hippoecm.hst.services.support.jaxrs.content.ContentService" scope="singleton">
     <property name="annotatedClasses" ref="customContentBeanClasses" />
   </bean>
   
   <!-- Workflow Service -->
-  <bean id="jaxrsWorkflowService" class="org.hippoecm.hst.services.support.jaxrs.content.workflow.WorkflowService">
+  <bean id="jaxrsWorkflowService" class="org.hippoecm.hst.services.support.jaxrs.content.workflow.WorkflowService" scope="singleton">
   </bean>
   
   <!-- ========================================================= -->
   <!-- The followings need to be moved to SpringComponentManager-pipelines.xml. -->
   <!-- ========================================================= -->
   
-  <!-- Pipelining -->
-  
-  <bean id="restfulServicesValve" class="org.hippoecm.hst.core.container.JaxrsServiceValve" 
-        init-method="initialize" destroy-method="destroy">
-    <constructor-arg value="org.apache.cxf.BusFactory" />
-    <constructor-arg ref="cxfJaxrsBus" />
-    <constructor-arg ref="cxfJaxrsServletController" />
-    <constructor-arg ref="cxfJaxrsServerFactoryBean" />
-  </bean>
-<!--   
-  <bean id="siteContentPathResolvingValve" 
-        class="org.hippoecm.hst.services.support.jaxrs.container.SiteContentPathResolvingValve">
-    <property name="sitesManagers">
-      <map>
-        <entry key="${preview.servlet.path}/services" value-ref="org.hippoecm.hst.configuration.HstSitesManager.preview" />
-        <entry key="${live.servlet.path}/services" value-ref="org.hippoecm.hst.configuration.HstSitesManager.live" />
-      </map>
-    </property>
-  </bean>
- -->  
+  <!-- Pipelining -->  
+   <bean id="restfulServicesValve" class="org.hippoecm.hst.core.container.JaxrsServiceValve">
+    <constructor-arg ref="jaxrsService1" />
+   </bean> 
+ 
   <bean id="jaxrsPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
     <property name="preInvokingValves">
       <list>
@@ -179,10 +137,6 @@
     </property>
     <property name="invokingValves">
       <list>
-<!--         
-        <ref bean="siteResolvingValve" />
-        <ref bean="siteContentPathResolvingValve" />
- -->        
         <ref bean="securityValve" />
         <ref bean="restfulServicesValve" />
       </list>
@@ -211,4 +165,3 @@
   </bean>
   
 </beans>
-
