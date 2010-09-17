@@ -25,6 +25,7 @@ import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -48,6 +49,7 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  */
 public class HstRequestContextImpl implements HstMutableRequestContext {
 
+	protected ServletContext servletContext;
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
@@ -78,6 +80,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public boolean isPreview() {
     	return this.resolvedSiteMount.getSiteMount().isPreview();
     }    
+    
+    public ServletContext getServletContext() {
+    	return servletContext;
+    }
+    
+    public void setServletContext(ServletContext servletContext) {
+    	this.servletContext = servletContext;
+    }
     
     public void setContextNamespace(String contextNamespace) {
         this.contextNamespace = contextNamespace;

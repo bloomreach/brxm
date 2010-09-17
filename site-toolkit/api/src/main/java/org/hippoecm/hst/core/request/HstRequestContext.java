@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -40,6 +41,11 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  */
 public interface HstRequestContext {
     
+	/** Returns the ServletContext for this request 
+     * @return the ServletContext for this request
+	**/
+	ServletContext getServletContext();
+	
     /**
      * Returns a session which is normally retrieved from a session pooling repository.
      * 

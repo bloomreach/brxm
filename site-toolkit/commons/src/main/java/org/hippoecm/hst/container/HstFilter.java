@@ -247,6 +247,7 @@ public class HstFilter implements Filter {
         		}
         		req.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
     		}
+    		requestContext.setServletContext(filterConfig.getServletContext());
     		
     		ResolvedSiteMount mount = requestContext.getResolvedSiteMount();
     		if (mount == null) {
