@@ -27,9 +27,16 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 
 /**
- * Utils class for getting and returning sessions from the hst session pool.
+ * Utility class for getting and returning sessions from the hst session pool.
  */
 public class SessionUtils {
+
+
+    /**
+     * Hide constructor of utility class
+     */
+    private SessionUtils() {
+    }
 
     public static Session getBinariesSession(HttpServletRequest request) throws RepositoryException {
         return getSession(request, "binaries");

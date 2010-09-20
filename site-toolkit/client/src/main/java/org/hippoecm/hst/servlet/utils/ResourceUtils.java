@@ -48,6 +48,13 @@ public class ResourceUtils {
 
     public static final String DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME = "jcr:lastModified";
 
+
+    /**
+     * Hide constructor of utility class
+     */
+    private ResourceUtils() {
+    }
+
     public static long getLastModifiedDate(Node resourceNode, String binaryLastModifiedPropName) {
         if (resourceNode == null) {
             return -1L;

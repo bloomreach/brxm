@@ -45,6 +45,12 @@ public class ContentDispositionUtils {
     public static final String USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING = "user-agent-specific";
 
     /**
+     * Hide constructor of utility class
+     */
+    private ContentDispositionUtils() {
+    }
+
+    /**
      * Test if a mime type matches any of the content disposition types.
      * <p/>
      * The content disposition types can have a '*' as wildcards.

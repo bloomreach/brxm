@@ -29,6 +29,12 @@ public class HeaderUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HeaderUtils.class);
 
+    /**
+     * Hide constructor of utility class
+     */
+    private HeaderUtils() {
+    }
+
     public static boolean isForcedCheck(HttpServletRequest request) {
         String cacheControl = request.getHeader("Cache-Control");
         if (cacheControl != null && "no-cache".equals(cacheControl)) {
