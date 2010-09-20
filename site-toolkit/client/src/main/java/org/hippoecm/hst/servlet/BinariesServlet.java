@@ -378,21 +378,14 @@ public class BinariesServlet extends HttpServlet {
     }
 
     private void cacheBinaryData(BinaryPage page, Node resourceNode) {
-        InputStream input = null;
-        ByteArrayOutputStream output = null;
         try {
-            input = resourceNode.getProperty(binaryDataPropName).getStream();
-            output = new ByteArrayOutputStream();
-            IOUtils.copy(input, output);
-            page.setData(output.toByteArray());
+            InputStream input = resourceNode.getProperty(binaryDataPropName).getStream();
+            page.loadDataFromStream(input);
         } catch (RepositoryException e) {
             log.warn("Unable to cache page data for " + page.getResourcePath(), e);
         } catch (IOException e) {
             page.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             log.error("Error while copying datastream from resource node " + page.getResourcePath(), e);
-        } finally {
-            IOUtils.closeQuietly(input);
-            IOUtils.closeQuietly(output);
         }
     }
 

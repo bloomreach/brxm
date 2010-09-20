@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -85,7 +86,7 @@ public class BinaryPageTest {
     public void testBinaryData() throws IOException {
         BinaryPage p = new BinaryPage("/my:resource");
         byte[] data = { 'a', 'b', 'c', 'd' };
-        p.setData(data);
+        p.loadDataFromStream(new ByteArrayInputStream(data));
         assertTrue(p.containsData());
         assertEquals(4, p.getLength());
         InputStream is = p.getStream();

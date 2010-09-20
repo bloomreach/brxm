@@ -16,10 +16,13 @@
 package org.hippoecm.hst.servlet.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * A {@link Serializable} representation of a resource from the repository as a html page.
@@ -147,6 +150,19 @@ public class BinaryPage implements Serializable {
     }
 
     /**
+     * Read the data from the input stream and close the stream when done.
+     * @param input the input stream to read the data from.
+     * @throws IOException when an error occurs while copying. The stream will be closed.
+     */
+    public void loadDataFromStream(InputStream input) throws IOException {
+        try {
+            data = IOUtils.toByteArray(input);
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+    }
+
+    /**
      * Set the HTTP status. The status is not checked for validity.
      * @param status
      */
@@ -184,14 +200,6 @@ public class BinaryPage implements Serializable {
      */
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
-    }
-
-    /**
-     * Set the binary data.
-     * @param data
-     */
-    public void setData(byte[] data) {
-        this.data = data;
     }
 
     /**
