@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.LocationResolver;
@@ -236,9 +235,14 @@ public class BinariesServlet extends HttpServlet {
 
         InputStream input = null;
         OutputStream output = null;
-
+        Session session = null;
         try {
-            input = getPageStream(request, page);
+            if (page.containsData()) {
+                input = page.getStream();
+            } else {
+                session = SessionUtils.getBinariesSession(request);
+                getRepositoryResourceStream(session, page);
+            }
             output = response.getOutputStream();
             IOUtils.copy(input, output);
             output.flush();
@@ -249,34 +253,19 @@ public class BinariesServlet extends HttpServlet {
             binariesCache.removePage(page);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "Unable to stream binary content to client: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("IOException while getting stream for binaries request '" + request.getRequestURI() + "'", e);
         } finally {
             IOUtils.closeQuietly(input);
             IOUtils.closeQuietly(output);
-        }
-    }
-
-    private InputStream getPageStream(HttpServletRequest request, BinaryPage page) throws RepositoryException {
-        if (page.containsData()) {
-            return page.getStream();
-        } else {
-            return getResourceStream(request, page);
-        }
-    }
-
-    private InputStream getResourceStream(HttpServletRequest request, BinaryPage page) throws RepositoryException {
-        Session session = null;
-        InputStream stream = null;
-        try {
-            session = SessionUtils.getBinariesSession(request);
-            Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
-                    allResourceContainers);
-            stream = resourceNode.getProperty(binaryDataPropName).getStream();
-        } finally {
             SessionUtils.releaseSession(request, session);
         }
-        return stream;
+    }
+
+    private InputStream getRepositoryResourceStream(Session session, BinaryPage page) throws RepositoryException {
+        Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
+                allResourceContainers);
+        return resourceNode.getProperty(binaryDataPropName).getStream();
     }
 
     private BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request, HttpServletResponse response) {
