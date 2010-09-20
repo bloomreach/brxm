@@ -145,15 +145,17 @@ public class BinariesServlet extends HttpServlet {
 
     private static final boolean DEFAULT_SET_EXPIRES_HEADERS = true;
 
-    protected String baseBinariesContentPath = ResourceUtils.DEFAULT_BASE_BINARIES_CONTENT_PATH;
+    private String baseBinariesContentPath = ResourceUtils.DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
-    protected Set<String> contentDispositionContentTypes;
+    private Set<String> contentDispositionContentTypes;
 
-    protected String[] contentDispositionFilenamePropertyNames;
+    private String[] contentDispositionFilenamePropertyNames;
 
-    protected Map<String, List<ResourceContainer>> prefix2ResourceContainer;
+    private String contentDispositionFileNameEncoding = ContentDispositionUtils.USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING;
 
-    protected List<ResourceContainer> allResourceContainers;
+    private Map<String, List<ResourceContainer>> prefix2ResourceContainer;
+
+    private List<ResourceContainer> allResourceContainers;
 
     private boolean initialized = false;
 
@@ -166,8 +168,6 @@ public class BinariesServlet extends HttpServlet {
     private String binaryMimeTypePropName = ResourceUtils.DEFAULT_BINARY_MIME_TYPE_PROP_NAME;
 
     private String binaryLastModifiedPropName = ResourceUtils.DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
-
-    protected String contentDispositionFileNameEncoding = ContentDispositionUtils.USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING;
 
     /** FIXME: BinariesCache is not serializable. */
     private BinariesCache binariesCache;
@@ -199,7 +199,7 @@ public class BinariesServlet extends HttpServlet {
             }
         }
 
-        final BinaryPage page = getPageFromCacheOrLoadPage(request, response);
+        final BinaryPage page = getPageFromCacheOrLoadPage(request);
 
         response.setStatus(page.getStatus());
         if (page.getStatus() != HttpServletResponse.SC_OK) {
@@ -268,7 +268,7 @@ public class BinariesServlet extends HttpServlet {
         return resourceNode.getProperty(binaryDataPropName).getStream();
     }
 
-    private BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request, HttpServletResponse response) {
+    private BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request) {
         String resourcePath = ResourceUtils.getResourcePath(request, baseBinariesContentPath);
         BinaryPage page = binariesCache.getPageFromBlockingCache(resourcePath);
         if (page != null) {
@@ -280,7 +280,7 @@ public class BinariesServlet extends HttpServlet {
         return page;
     }
 
-    protected void validatePageInCache(HttpServletRequest request, BinaryPage page) {
+    private void validatePageInCache(HttpServletRequest request, BinaryPage page) {
         if (HeaderUtils.isForcedCheck(request) || binariesCache.hasPageExpired(page)) {
             long lastModified = getLastModifiedFromResource(request, page.getResourcePath());
             if (binariesCache.isPageStale(page, lastModified)) {
@@ -378,7 +378,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    protected void doInit() {
+    private void doInit() {
         if (initialized) {
             return;
         }
@@ -389,7 +389,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    protected void initPrefix2ResourceMappers() {
+    private void initPrefix2ResourceMappers() {
         if (prefix2ResourceContainer != null) {
             return;
         }
@@ -419,7 +419,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    protected void initAllResourceContainers() {
+    private void initAllResourceContainers() {
         if (allResourceContainers != null) {
             return;
         }

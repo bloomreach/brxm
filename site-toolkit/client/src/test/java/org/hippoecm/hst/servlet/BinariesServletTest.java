@@ -76,15 +76,6 @@ public class BinariesServletTest {
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);
-
-        Set<String> actualMimeTypes = binariesServlet.contentDispositionContentTypes;
-        assertNotNull(actualMimeTypes);
-        assertEquals(3, actualMimeTypes.size());
-        assertTrue(actualMimeTypes.contains("application/pdf"));
-        assertTrue(actualMimeTypes.contains("application/rtf"));
-        assertTrue(actualMimeTypes.contains("application/excel"));
-
-        assertEquals(expectedBasePath, binariesServlet.baseBinariesContentPath);
     }
 
     /**
@@ -117,12 +108,6 @@ public class BinariesServletTest {
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);
-
-        Set<String> actualMimeTypes = binariesServlet.contentDispositionContentTypes;
-        assertNotNull(actualMimeTypes);
-        assertEquals(0, actualMimeTypes.size());
-
-        assertEquals("", binariesServlet.baseBinariesContentPath);
     }
 
 }
