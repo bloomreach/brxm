@@ -21,11 +21,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class MenuHierarchy {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(MenuHierarchy.class);
+
+    private Map<String, MenuDescription> menus = new LinkedHashMap<String, MenuDescription>();
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<String, MenuHierarchy>();
     private List<ActionDescription> items = new LinkedList<ActionDescription>();
 
@@ -39,6 +44,10 @@ class MenuHierarchy {
         submenus.get(classifiers[0]).put(action);
     }
 
+    public void put(String category, MenuDescription menu) {
+        menus.put(category, menu);
+    }
+
     private void put(ActionDescription action) {
         items.add(action);
     }
@@ -47,56 +56,57 @@ class MenuHierarchy {
         Map<String, MenuHierarchy> submenus = this.submenus;
         this.submenus = new LinkedHashMap<String, MenuHierarchy>();
         this.items = new LinkedList<ActionDescription>();
-        if(submenus.containsKey("default")) {
+        if (submenus.containsKey("default")) {
             MenuHierarchy submenu = submenus.get("default");
-            for(ActionDescription action : submenu.items) {
-                if(!action.isVisible()) {
+            for (ActionDescription action : submenu.items) {
+                if (!action.isVisible()) {
                     continue;
                 }
-                if(action.getId().startsWith("info")) {
+                if (action.getId().startsWith("info")) {
                     // processed in second round
-                } else if(action.getId().equals("edit")) {
+                } else if (action.getId().equals("edit")) {
                     put(action);
-                } else if(action.getId().equals("delete")) {
+                } else if (action.getId().equals("delete")) {
                     put(new String[] { "document" }, action);
-                } else if(action.getId().equals("copy")) {
+                } else if (action.getId().equals("copy")) {
                     put(new String[] { "document" }, action);
-                } else if(action.getId().equals("move")) {
+                } else if (action.getId().equals("move")) {
                     put(new String[] { "document" }, action);
-                } else if(action.getId().equals("rename")) {
+                } else if (action.getId().equals("rename")) {
                     put(new String[] { "document" }, action);
-                } else if(action.getId().equals("where-used")) {
+                } else if (action.getId().equals("where-used")) {
                     put(new String[] { "document" }, action);
-                } else if(action.getId().equals("history")) {
+                } else if (action.getId().equals("history")) {
                     put(new String[] { "document" }, action);
-                } else if(action.getId().toLowerCase().contains("publi")) {
+                } else if (action.getId().toLowerCase().contains("publi")) {
                     put(new String[] { "publication" }, action);
-                } else if(action.getId().equals("cancel") || action.getId().equals("accept") || action.getId().equals("reject")) {
+                } else if (action.getId().equals("cancel") || action.getId().equals("accept")
+                        || action.getId().equals("reject")) {
                     put(new String[] { "request" }, action);
                 } else {
                     put(new String[] { "miscellaneous" }, action);
                 }
             }
         }
-        if(submenus.containsKey("editing")) {
+        if (submenus.containsKey("editing")) {
             MenuHierarchy submenu = submenus.remove("editing");
-            for(ActionDescription action : submenu.items) {
+            for (ActionDescription action : submenu.items) {
                 put(action);
             }
         }
-        if(submenus.containsKey("threepane")) {
+        if (submenus.containsKey("threepane")) {
             MenuHierarchy submenu = submenus.remove("editing");
-            for(ActionDescription action : submenu.items) {
+            for (ActionDescription action : submenu.items) {
                 put(action);
             }
         }
-        if(submenus.containsKey("versioning")) {
+        if (submenus.containsKey("versioning")) {
             MenuHierarchy submenu = submenus.remove("versioning");
-            for(ActionDescription action : submenu.items) {
+            for (ActionDescription action : submenu.items) {
                 put(action);
             }
         }
-        if(submenus.containsKey("default")) {
+        if (submenus.containsKey("default")) {
             MenuHierarchy submenu = submenus.remove("default");
             /* [AC] skipping spacer - not used anywhere yet and it causes esthetics problems with the workflow toolbar
             put(new ActionDescription("spacer") {
@@ -105,18 +115,18 @@ class MenuHierarchy {
                 }
             });
             */
-            for(ActionDescription action : submenu.items) {
-                if(!action.isVisible()) {
+            for (ActionDescription action : submenu.items) {
+                if (!action.isVisible()) {
                     continue;
                 }
-                if(action.getId().startsWith("info")) {
+                if (action.getId().startsWith("info")) {
                     put(action);
                 }
             }
         }
-        if(submenus.containsKey("custom")) {
+        if (submenus.containsKey("custom")) {
             MenuHierarchy submenu = submenus.remove("custom");
-            for(ActionDescription action : submenu.items) {
+            for (ActionDescription action : submenu.items) {
                 put(action);
             }
         }
@@ -137,9 +147,9 @@ class MenuHierarchy {
         Map<String, MenuHierarchy> submenus = this.submenus;
         this.submenus = new LinkedHashMap<String, MenuHierarchy>();
         this.items = new LinkedList<ActionDescription>();
-        for(MenuHierarchy submenu : submenus.values()) {
-            for(ActionDescription action : submenu.items) {
-                if(action.isVisible()) {
+        for (MenuHierarchy submenu : submenus.values()) {
+            for (ActionDescription action : submenu.items) {
+                if (action.isVisible()) {
                     put(action);
                 }
             }
@@ -158,12 +168,16 @@ class MenuHierarchy {
                 }
             }
             for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {
-                list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
+                if (menus.containsKey(submenu.getKey())) {
+                    list.add(new MenuButton("item", submenu.getKey(), submenu.getValue(), menus.get(submenu.getKey()).getLabel()));
+                } else {
+                    list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
+                }
             }
             for (ActionDescription item : items) {
                 if (item.getId().startsWith("info")) {
                     list.add(new MenuLabel("item", item));
-                } else if(item.getId().equals("spacer")) {
+                } else if (item.getId().equals("spacer")) {
                     list.add(new MenuSpacer("item"));
                 }
             }

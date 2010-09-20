@@ -181,12 +181,16 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                                         observers.add(observer);
                                         context.registerService(observer, IObserver.class.getName());
 
+                                        plugin.beforeRender();
+
                                         plugin.visitChildren(new IVisitor() {
 
                                             public Object component(Component component) {
                                                 try {
                                                     if (component instanceof ActionDescription) {
                                                         menu.put(new String[] {category, descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER), ((ActionDescription)component).getId()}, (ActionDescription)component);
+                                                    } else if (component instanceof MenuDescription) {
+                                                        menu.put(category, (MenuDescription) component);
                                                     }
                                                 } catch (RepositoryException ex) {
                                                     System.err.println(ex.getClass().getName() + ": " + ex.getMessage());

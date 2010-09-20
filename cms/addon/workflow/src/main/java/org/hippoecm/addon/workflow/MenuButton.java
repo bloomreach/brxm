@@ -15,6 +15,8 @@
  */
 package org.hippoecm.addon.workflow;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -33,6 +35,10 @@ class MenuButton extends Panel implements IContextMenu {
     private AbstractLink link;
 
     MenuButton(String id, String name, final MenuHierarchy menu) {
+        this(id, name, menu, null);
+    }
+
+    MenuButton(String id, String name, final MenuHierarchy menu, Component label) {
         super(id);
         setOutputMarkupId(true);
         add(content = new MenuList("item", null, menu));
@@ -56,12 +62,18 @@ class MenuButton extends Panel implements IContextMenu {
                 content.setVisible(!content.isVisible());
                 target.addComponent(MenuButton.this);
                 if (content.isVisible()) {
-                    final MenuBar bar = (MenuBar) findParent(MenuBar.class);
                     getContextMenuManager().showContextMenu(MenuButton.this);
                 }
             }
         });
-        link.add(new Label("label", new StringResourceModel(name, MenuButton.this, null, name)));
+        if (label == null) {
+            link.add(new Label("label", new StringResourceModel(name, MenuButton.this, null, name)));
+        } else {
+            if (!"label".equals(label.getId())) {
+                throw new WicketRuntimeException("Menu label component doesn't have correct id.  Should be 'label', but was '" + label.getId() + "'");
+            }
+            link.add(label);
+        }
     }
 
     protected IContextMenuManager getContextMenuManager() {

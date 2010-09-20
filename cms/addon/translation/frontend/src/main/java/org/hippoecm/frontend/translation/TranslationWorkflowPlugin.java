@@ -23,14 +23,20 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
+import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -42,7 +48,6 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
-import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -67,8 +72,6 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
     private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(TranslationWorkflowPlugin.class);
-
-    private AbstractView<HippoLocale> rv;
 
     public boolean hasLocale(String locale) {
         WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
@@ -115,8 +118,29 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 return "unknown";
             }
         };
-        ILocaleProvider localeProvider = getLocaleProvider();
-        rv = new AbstractView<HippoLocale>("languages", new ListDataProvider<HippoLocale>(
+        final ILocaleProvider localeProvider = getLocaleProvider();
+        add(new MenuDescription() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Component getLabel() {
+                Fragment fragment = new Fragment("label", "label", TranslationWorkflowPlugin.this);
+                Image image = null;
+                for (HippoLocale locale : localeProvider.getLocales()) {
+                    if (locale.getName().equals(languageModel.getObject())) {
+                        ResourceReference resourceRef = locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
+                        image = new Image("img", resourceRef);
+                    }
+                }
+                if (image == null) {
+                    image = new Image("img", new ResourceReference(getClass(), "translate-16.png"));
+                }
+                fragment.add(image);
+                return fragment;
+            }
+            
+        });
+        add(new DataView<HippoLocale>("languages", new ListDataProvider<HippoLocale>(
                 (List<HippoLocale>) localeProvider.getLocales())) {
             private static final long serialVersionUID = 1L;
 
@@ -248,15 +272,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 languageModel.detach();
                 super.onDetach();
             }
-        };
-        rv.setItemReuseStrategy(DefaultItemReuseStrategy.getInstance());
-        add(rv);
-    }
-
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
-        rv.populate();
+        });
     }
 
     protected ILocaleProvider getLocaleProvider() {

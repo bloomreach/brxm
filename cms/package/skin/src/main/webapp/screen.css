@@ -356,7 +356,7 @@ width: 156px;
 
 /* override from wicket styles */
 .hippo-toolbar-section-button{
-width: 110px; display: block; height: 16px; padding-left: 4px; padding-top: 2px;
+padding-right: 15px; display: block; height: 16px; padding-left: 4px; padding-top: 2px;
 border: 1px solid #e3e3e3;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat right -20px;
 cursor: pointer;
@@ -383,7 +383,7 @@ color: black
 
 .hippo-toolbar-menu-item-button-icon{display: block; float: left; margin-right: 11px; }
 
-.hippo-toolbar-section li.icon-16{padding-left: 0px; background-position: 3px 4px; width: 118px;}
+.hippo-toolbar-section li.icon-16{padding-left: 0px; background-position: 3px 4px;}
 .hippo-toolbar-section span.icon-16{display: block; height: 16px; width: 16px}
 
 .hippo-toolbar .hippo-toolbar-section li.menu-label-item {white-space: nowrap; padding-left: 4px; padding-right: 0px; padding-top: 2px;}
@@ -394,7 +394,7 @@ color: black
 .menu-action:hover{border: 1px solid #000000;background-color: #fff6e0;}
 .menu-action.disabled:hover{border: 1px solid #e3e3e3;background-color: transparent;}
 .menu-action-text{width: 90px; height: 17px; vertical-align: top; padding-top: 0px; margin-top: 0px; }
-.menu-action-icon{padding-top: 0px;}
+.menu-action-icon{padding-top: 0px; vertical-align: -5px;}
 .menu-label{padding-left: 4px; padding-right: 8px; padding-top: 3px; background-image: none; border: 0px solid #e3e3e3; display: block; min-width:100px; height: 17px; white-space: nowrap; }
 .menu-spacer{width:80px;}
 
