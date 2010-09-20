@@ -42,7 +42,6 @@ public class HeaderUtilsTest {
         response = new MockHttpServletResponse();
         response.setCharacterEncoding("UTF-8");
         page = new BinaryPage("/content/binaries/my:pdffile");
-        //page.setData("mybinarycontent".getBytes("UTF-8"));
         page.setLastModified(1234L);
     }
 
