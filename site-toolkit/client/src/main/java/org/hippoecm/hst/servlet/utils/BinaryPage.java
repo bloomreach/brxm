@@ -90,7 +90,7 @@ public class BinaryPage implements Serializable {
      * @return the ETag
      */
     public String getETag() {
-        return "\"" + Math.abs(getResourcePath().hashCode() * 17 + getLength() * 13 + getLastModified()) + "\"";
+        return "\"" + Math.abs(getResourcePath().hashCode() * 17L + getLength() * 13L + getLastModified()) + "\"";
     }
 
     /**
@@ -206,7 +206,7 @@ public class BinaryPage implements Serializable {
     /**
      * Set the creation time to the current time.
      */
-    public void setCreatedNow() {
+    private void setCreatedNow() {
         this.creationTime = System.currentTimeMillis();
     }
 
@@ -225,7 +225,7 @@ public class BinaryPage implements Serializable {
 
     @Override
     public int hashCode() {
-        return (int) (getResourcePath().hashCode() * 17 + getLength() * 13 + getLastModified());
+        return (int) (getResourcePath().hashCode() * 17L + getLength() * 13L + getLastModified());
     }
 
     @Override

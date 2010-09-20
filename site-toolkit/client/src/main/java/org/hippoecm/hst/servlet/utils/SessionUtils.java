@@ -57,7 +57,7 @@ public class SessionUtils {
         }
     }
 
-    private static Session getSessionFromRequest(HttpServletRequest request) throws LoginException, RepositoryException {
+    private static Session getSessionFromRequest(HttpServletRequest request) throws RepositoryException {
         HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
         if (hstRequest != null) {
             Session session = hstRequest.getRequestContext().getSession();
@@ -68,7 +68,7 @@ public class SessionUtils {
         return null;
     }
 
-    private static Session getSessionFromHstServices(String poolName) throws LoginException, RepositoryException {
+    private static Session getSessionFromHstServices(String poolName) throws RepositoryException {
         Repository repository = getRepositoryFromHstServices();
         Session session = null;
         if (repository != null) {

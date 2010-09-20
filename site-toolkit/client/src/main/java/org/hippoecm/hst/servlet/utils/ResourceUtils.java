@@ -99,7 +99,7 @@ public class ResourceUtils {
 
     public static String getResourcePath(HttpServletRequest request, String contentPath) {
         String relPath = getResourceRelPath(request);
-        StringBuilder resourcePathBuilder = new StringBuilder(80);
+        StringBuilder resourcePathBuilder = new StringBuilder();
 
         if (contentPath != null && !"".equals(contentPath)) {
             resourcePathBuilder.append('/').append(PathUtils.normalizePath(contentPath));

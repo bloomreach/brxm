@@ -44,6 +44,8 @@ public class ContentDispositionUtils {
 
     public static final String USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING = "user-agent-specific";
 
+    private static final String DEFAULT_ENCODING = "UTF-8";
+    
     /**
      * Hide constructor of utility class
      */
@@ -139,7 +141,7 @@ public class ContentDispositionUtils {
 
         try {
             String responseEncoding = response.getCharacterEncoding();
-            String encodedFileName = URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
+            String encodedFileName = URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
 
             if (encodedFileName.equals(fileName)) {
                 log.debug("The filename did not contains non-ascii chars: we can safely return an un-encoded version");
@@ -154,7 +156,7 @@ public class ContentDispositionUtils {
 
                 // now check whether the asciiFileName really only contains ascii chars:
                 String encodedAsciiFileName = URLEncoder.encode(asciiFileName,
-                        responseEncoding != null ? responseEncoding : "UTF-8");
+                        responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
                 if (encodedAsciiFileName.equals(asciiFileName)) {
                     log.debug("Replaced fileName '{}' with its un-accented equivalent '{}'", fileName, asciiFileName);
                     return asciiFileName;
@@ -171,17 +173,17 @@ public class ContentDispositionUtils {
                     .equals(contentDispositionFileNameEncoding)) {
                 String userAgent = request.getHeader("User-Agent");
                 if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
-                    return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
+                    return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
                 } else {
                     return EncoderUtil.encodeEncodedWord(fileName, EncoderUtil.Usage.WORD_ENTITY, 0, Charset
-                            .forName("UTF-8"), EncoderUtil.Encoding.B);
+                            .forName(DEFAULT_ENCODING), EncoderUtil.Encoding.B);
                 }
             } else {
                 log.warn("Invalid encoding strategy: only allowed is '"
                         + USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING + "' or '"
                         + USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING
                         + "'. Return utf-8 encoded version.");
-                return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
+                return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
             }
 
         } catch (Exception e) {

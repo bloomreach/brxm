@@ -29,6 +29,7 @@ public class HeaderUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HeaderUtils.class);
 
+    private static final long MILLIS_IN_SEC = 1000L;
     /**
      * Hide constructor of utility class
      */
@@ -76,7 +77,7 @@ public class HeaderUtils {
         final long lastModifiedDate = page.getLastModified();
         if (lastModifiedDate > 0) {
             response.setDateHeader("Last-Modified", lastModifiedDate);
-            final long age = (System.currentTimeMillis() - page.getCreationTime()) / 1000;
+            final long age = (System.currentTimeMillis() - page.getCreationTime()) / MILLIS_IN_SEC;
             if (age > 0) {
                 response.setHeader("Age", String.valueOf(age));
             }
@@ -89,7 +90,7 @@ public class HeaderUtils {
             final long expires = System.currentTimeMillis() - lastModifiedDate;
             if (expires > 0) {
                 response.setDateHeader("Expires", expires + System.currentTimeMillis());
-                response.setHeader("Cache-Control", "max-age=" + (expires / 1000));
+                response.setHeader("Cache-Control", "max-age=" + (expires / MILLIS_IN_SEC));
             }
         }
     }
