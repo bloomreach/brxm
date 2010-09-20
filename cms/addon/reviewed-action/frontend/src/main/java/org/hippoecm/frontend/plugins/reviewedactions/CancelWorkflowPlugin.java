@@ -77,8 +77,6 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-
-        onModelChanged();
     }
 
     @Override

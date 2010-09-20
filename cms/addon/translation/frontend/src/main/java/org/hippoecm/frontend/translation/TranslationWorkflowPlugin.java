@@ -15,10 +15,12 @@
  */
 package org.hippoecm.frontend.translation;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -26,7 +28,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
-import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
@@ -35,6 +36,7 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -138,10 +140,10 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 fragment.add(image);
                 return fragment;
             }
-            
+
         });
-        add(new DataView<HippoLocale>("languages", new ListDataProvider<HippoLocale>(
-                (List<HippoLocale>) localeProvider.getLocales())) {
+        add(new DataView<HippoLocale>("languages", new ListDataProvider<HippoLocale>((List<HippoLocale>) localeProvider
+                .getLocales())) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -223,6 +225,13 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                             if (name != null && !url.equals(name)) {
                                 defaultWorkflow.localizeName(name);
                             }
+                            IBrowseService<JcrNodeModel> browser = getBrowserService();
+                            if (browser != null) {
+                                browser.browse(new JcrNodeModel(session.getNodeByUUID(translation.getIdentity())));
+                            } else {
+                                log.warn("Cannot open newly created document - configured browser.id "
+                                        + getPluginConfig().getString("browser.id") + " is invalid.");
+                            }
                             return null;
                         }
                     });
@@ -258,7 +267,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                                     log.error("No workflow descriptor model for document");
                                 }
                             } else {
-                                log.warn("No browser service found to navigate to translations.");
+                                log.warn("Cannot navigate to translation - configured browser.id '"
+                                        + getPluginConfig().getString("browser.id") + "' is invalid.");
                             }
                             return null;
                         }
@@ -275,13 +285,42 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         });
     }
 
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+        WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+        if (wdm != null) {
+            WorkflowDescriptor descriptor = (WorkflowDescriptor) wdm.getObject();
+            if (descriptor != null) {
+                try {
+                    Map<String, Serializable> hints = descriptor.hints();
+                    if (hints.containsKey("addTranslation") && hints.get("addTranslation").equals(Boolean.FALSE)) {
+                        this.visitChildren(new IVisitor() {
+
+                            public Object component(Component component) {
+                                if (component instanceof ActionDescription) {
+                                    component.setVisible(false);
+                                    return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                                }
+                                return IVisitor.CONTINUE_TRAVERSAL;
+                            }
+                            
+                        });
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Failed to analyze hints for translations workflow", e);
+                }
+            }
+        }
+    }
+    
     protected ILocaleProvider getLocaleProvider() {
         return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
                 ILocaleProvider.class);
     }
 
     protected IBrowseService getBrowserService() {
-        return getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID),
+        return getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse"),
                 IBrowseService.class);
     }
 

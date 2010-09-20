@@ -29,6 +29,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -182,6 +183,33 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException {
         Map<String, Serializable> hints = new TreeMap<String, Serializable>();
 
+        if (rootSubject.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+            String state = rootSubject.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+            if ("draft".equals(state)) {
+                hints.put("addTranslation", Boolean.FALSE);
+            } else {
+                NodeIterator siblings = rootSubject.getParent().getNodes(rootSubject.getName());
+                Node unpublished = null;
+                Node published = null;
+                while (siblings.hasNext()) {
+                    Node sibling = siblings.nextNode();
+                    if (sibling.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                        String siblingState = sibling.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                        if ("unpublished".equals(siblingState)) {
+                            unpublished = sibling;
+                        } else if ("published".equals(siblingState)) {
+                            published = sibling;
+                        }
+                    }
+                }
+                if (unpublished != null && published != null) {
+                    if ("published".equals(state)) {
+                        hints.put("addTranslation", Boolean.FALSE);
+                    }
+                }
+            }
+        }
+        
         Set<String> translations = new TreeSet<String>();
         for (NodeIterator children = rootSubject.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes(); children
                 .hasNext();) {

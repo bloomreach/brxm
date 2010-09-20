@@ -119,8 +119,6 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-
-        onModelChanged();
     }
 
     @Override

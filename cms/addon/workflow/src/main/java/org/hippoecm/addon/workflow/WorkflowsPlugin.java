@@ -47,8 +47,7 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
         super(context, config);
 
         if (config.getString(RenderService.MODEL_ID) != null) {
-            modelReference = context.getService(config.getString(RenderService.MODEL_ID),
-                    IModelReference.class);
+            modelReference = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
             if (modelReference != null) {
                 //updateModel(modelReference.getModel());
                 context.registerService(new IObserver<IModelReference>() {
@@ -75,6 +74,11 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
+        redraw();
+    }
+
+    @Override
+    protected void onBeforeRender() {
         Set<Node> nodeSet = new LinkedHashSet<Node>();
         MenuHierarchy menu = null;
         if (handleObserver != null) {
@@ -84,9 +88,10 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
         }
         try {
             if (getDefaultModel() instanceof JcrNodeModel) {
-                Node node = ((JcrNodeModel)getDefaultModel()).getNode();
+                Node node = ((JcrNodeModel) getDefaultModel()).getNode();
                 if (node != null) {
-                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT)
+                            && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                         Node handle = node.getParent();
                         for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
                             node = iter.nextNode();
@@ -99,6 +104,7 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
                             public JcrNodeModel getObservable() {
                                 return handleModel;
                             }
+
                             public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> event) {
                                 onModelChanged();
                             }
@@ -115,7 +121,7 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
         menu.restructure();
         addOrReplace(new MenuBar("menu", menu));
 
-        redraw();
+        super.onBeforeRender();
     }
 
     @Override

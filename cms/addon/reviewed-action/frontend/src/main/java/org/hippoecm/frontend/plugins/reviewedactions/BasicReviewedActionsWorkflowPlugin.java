@@ -311,8 +311,6 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                 return null;
             }
         });
-
-        onModelChanged();
     }
 
     private IEditorManager getEditorManager() {

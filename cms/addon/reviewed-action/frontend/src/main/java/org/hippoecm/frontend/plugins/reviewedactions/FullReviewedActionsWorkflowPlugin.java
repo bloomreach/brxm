@@ -474,8 +474,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 return null;
             }
         });
-
-        onModelChanged();
     }
 
     private JcrNodeModel getFolder() {

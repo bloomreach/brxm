@@ -239,8 +239,6 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 workflow.delete(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""));
             }
         });
-
-        onModelChanged();
     }
 
     @Override
