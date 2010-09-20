@@ -56,6 +56,7 @@ public class BinariesCache {
 
     private static boolean mBeansRegistered = false;
     private static CacheManager cacheManager;
+    private static Object cacheManagerLock = new Object();
     
     private boolean initialized = false;
 
@@ -96,15 +97,17 @@ public class BinariesCache {
         return ttlMillis;
     }
 
-    public synchronized void destroy() {
-        if (cacheManager.cacheExists(name)) {
-            log.info("Removing binaries cache: {}.", name);
-            cacheManager.removeCache(name);
+    public void destroy() {
+        synchronized (cacheManagerLock) {
+            if (cacheManager.cacheExists(name)) {
+                log.info("Removing binaries cache: {}.", name);
+                cacheManager.removeCache(name);
+            }
         }
         initialized = false;
     }
 
-    public synchronized void init() {
+    public void init() {
         createCacheManager();
         createCache();
         registerCacheMBeans();
@@ -114,48 +117,54 @@ public class BinariesCache {
     }
 
     private void createCacheManager() {
-        if (cacheManager != null) {
-            return;
-        }
-        if (ehCacheConfigFile == null) {
-            cacheManager = CacheManager.create();
-        } else {
-            try {
-                cacheManager = CacheManager.create(ehCacheConfigFile);
-            } catch (CacheException e) {
-                log.error("Error while setting up cache manager for file " + ehCacheConfigFile
-                        + " trying to start cache with defaults.", e);
+        synchronized (cacheManagerLock) {
+            if (cacheManager != null) {
+                return;
+            }
+            if (ehCacheConfigFile == null) {
                 cacheManager = CacheManager.create();
+            } else {
+                try {
+                    cacheManager = CacheManager.create(ehCacheConfigFile);
+                } catch (CacheException e) {
+                    log.error("Error while setting up cache manager for file " + ehCacheConfigFile
+                            + " trying to start cache with defaults.", e);
+                    cacheManager = CacheManager.create();
+                }
             }
         }
     }
 
     private void createCache() {
-        Ehcache cache = cacheManager.getEhcache(name);
-        if (cache == null) {
-            log.warn("No EhCache configuration found. Create new memory cache '{}' with {} maxObjects.", name,
-                    maxObjectsInMem);
-            cache = new Cache(name, maxObjectsInMem, false, true, 0, 0);
-            cacheManager.addCache(cache);
-        }
+        synchronized (cacheManagerLock) {
+            Ehcache cache = cacheManager.getEhcache(name);
+            if (cache == null) {
+                log.warn("No EhCache configuration found. Create new memory cache '{}' with {} maxObjects.", name,
+                        maxObjectsInMem);
+                cache = new Cache(name, maxObjectsInMem, false, true, 0, 0);
+                cacheManager.addCache(cache);
+            }
 
-        if (!(cache instanceof BlockingCache)) {
-            //decorate and substitute
-            BlockingCache newBlockingCache = new BlockingCache(cache);
-            cacheManager.replaceCacheWithDecoratedCache(cache, newBlockingCache);
+            if (!(cache instanceof BlockingCache)) {
+                //decorate and substitute
+                BlockingCache newBlockingCache = new BlockingCache(cache);
+                cacheManager.replaceCacheWithDecoratedCache(cache, newBlockingCache);
+            }
+            
+            blockingCache = (BlockingCache) cacheManager.getEhcache(name);
+            blockingCache.setTimeoutMillis(lockTimeOutMillis);
         }
-        
-        blockingCache = (BlockingCache) cacheManager.getEhcache(name);
-        blockingCache.setTimeoutMillis(lockTimeOutMillis);
         log.info("Setting lock timeout for cache '{}' to {} milliseconds.", name, lockTimeOutMillis);
         log.info("Setting max object size for cache '{}' to {} bytes.", name, maxObjectSizeBytes);
     }
 
     private void registerCacheMBeans() {
-        if (!mBeansRegistered) {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            ManagementService.registerMBeans(cacheManager, mBeanServer, true, true, true, true);
-            mBeansRegistered = true;
+        synchronized (cacheManager) {
+            if (!mBeansRegistered) {
+                MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+                ManagementService.registerMBeans(cacheManager, mBeanServer, true, true, true, true);
+                mBeansRegistered = true;
+            }
         }
     }
 
