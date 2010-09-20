@@ -254,7 +254,7 @@
     </repository>
     <repository>
       <id>codehaus</id>
-      <url>https://nexus.codehaus.org/content/repositories</url>
+      <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
