@@ -16,7 +16,6 @@
 package org.hippoecm.hst.servlet.utils;
 
 import javax.jcr.Credentials;
-import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -29,7 +28,7 @@ import org.hippoecm.hst.util.HstRequestUtils;
 /**
  * Utility class for getting and returning sessions from the hst session pool.
  */
-public class SessionUtils {
+final public class SessionUtils {
 
 
     /**

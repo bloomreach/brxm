@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.servlet.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Set;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for setting content disposition headers on responses.
  */
-public class ContentDispositionUtils {
+final public class ContentDispositionUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ContentDispositionUtils.class);
 
@@ -45,7 +46,7 @@ public class ContentDispositionUtils {
     public static final String USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING = "user-agent-specific";
 
     private static final String DEFAULT_ENCODING = "UTF-8";
-    
+
     /**
      * Hide constructor of utility class
      */
@@ -141,7 +142,8 @@ public class ContentDispositionUtils {
 
         try {
             String responseEncoding = response.getCharacterEncoding();
-            String encodedFileName = URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
+            String encodedFileName = URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding
+                    : DEFAULT_ENCODING);
 
             if (encodedFileName.equals(fileName)) {
                 log.debug("The filename did not contains non-ascii chars: we can safely return an un-encoded version");
@@ -149,44 +151,20 @@ public class ContentDispositionUtils {
             }
 
             if (USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding)) {
-                // let's try to bring the filename to it's baseform by replacing diacritics: if then still there are non-ascii chars, we log an info 
-                // message that you might need user-agent-specific mode, and return a utf-8 encoded version. 
-
-                String asciiFileName = EncodingUtils.isoLatin1AccentReplacer(fileName);
-
-                // now check whether the asciiFileName really only contains ascii chars:
-                String encodedAsciiFileName = URLEncoder.encode(asciiFileName,
-                        responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
-                if (encodedAsciiFileName.equals(asciiFileName)) {
-                    log.debug("Replaced fileName '{}' with its un-accented equivalent '{}'", fileName, asciiFileName);
-                    return asciiFileName;
-                } else {
-                    log
-                            .info(
-                                    "Filename '{}' consists of non latin chars. We have to utf-8 encode the filename, which might be shown with unencoded in some browsers."
-                                            + " If you want to avoid this, use '{}'. However, this influences reverse proxies.",
-                                    fileName, USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING);
-                    return encodedAsciiFileName;
-                }
-
+                return getUserAgentAgnosticFileName(fileName, responseEncoding);
             } else if (USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING
                     .equals(contentDispositionFileNameEncoding)) {
                 String userAgent = request.getHeader("User-Agent");
-                if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
-                    return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
-                } else {
-                    return EncoderUtil.encodeEncodedWord(fileName, EncoderUtil.Usage.WORD_ENTITY, 0, Charset
-                            .forName(DEFAULT_ENCODING), EncoderUtil.Encoding.B);
-                }
+                return getUserAgentSpecificFileName(fileName, responseEncoding, userAgent);
             } else {
                 log.warn("Invalid encoding strategy: only allowed is '"
                         + USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING + "' or '"
-                        + USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING
-                        + "'. Return utf-8 encoded version.");
+                        + USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING + "'. Return " + DEFAULT_ENCODING
+                        + " encoded version.");
                 return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
             }
 
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to encode filename.", e);
             } else {
@@ -195,5 +173,38 @@ public class ContentDispositionUtils {
         }
 
         return fileName;
+    }
+
+    private static String getUserAgentAgnosticFileName(String fileName, String responseEncoding)
+            throws UnsupportedEncodingException {
+        // let's try to bring the filename to it's baseform by replacing diacritics: if then still there are non-ascii chars, we log an info 
+        // message that you might need user-agent-specific mode, and return a utf-8 encoded version. 
+
+        String asciiFileName = EncodingUtils.isoLatin1AccentReplacer(fileName);
+
+        // now check whether the asciiFileName really only contains ascii chars:
+        String encodedAsciiFileName = URLEncoder.encode(asciiFileName, responseEncoding != null ? responseEncoding
+                : DEFAULT_ENCODING);
+        if (encodedAsciiFileName.equals(asciiFileName)) {
+            log.debug("Replaced fileName '{}' with its un-accented equivalent '{}'", fileName, asciiFileName);
+            return asciiFileName;
+        } else {
+            log.info("Filename '{}' consists of non latin chars. We have to utf-8 encode the filename, "
+                    + " which might be shown with unencoded in some browsers."
+                    + " If you want to avoid this, use '{}'. However, this influences reverse proxies.", fileName,
+                    USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING);
+            return encodedAsciiFileName;
+        }
+    }
+
+    private static String getUserAgentSpecificFileName(String fileName, String responseEncoding, String userAgent)
+            throws UnsupportedEncodingException {
+        if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
+            return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : DEFAULT_ENCODING);
+        } else {
+            return EncoderUtil.encodeEncodedWord(fileName, EncoderUtil.Usage.WORD_ENTITY, 0, Charset
+                    .forName(DEFAULT_ENCODING), EncoderUtil.Encoding.B);
+        }
+
     }
 }
