@@ -61,8 +61,6 @@ public class UnlockWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-
-        onModelChanged();
     }
 
     @Override

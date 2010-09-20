@@ -43,8 +43,7 @@ public final class WorkflowPlugin extends AbstractWorkflowPlugin {
         super(context, config);
 
         if (config.getString(RenderService.MODEL_ID) != null) {
-            modelReference = context.getService(config.getString(RenderService.MODEL_ID),
-                    IModelReference.class);
+            modelReference = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
             if (modelReference != null) {
                 //updateModel(modelReference.getModel());
                 context.registerService(new IObserver<IModelReference>() {
@@ -74,30 +73,39 @@ public final class WorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        Set<Node> nodeSet = new LinkedHashSet<Node>();
-        if (getDefaultModel() instanceof JcrNodeModel) {
-            Node node = ((JcrNodeModel)getDefaultModel()).getNode();
-            if (node != null) {
-                try {
-                    // FIXME workaround when editing a document a save on the nodes takes place; this fix makes it impossible
-                    // for usages of this workflow container class to update the state of the document.  This could
-                    // occur for instance when publishing a document from within an edit screen, but would be applicable
-                    // to other usages as well (viewing a request, for instance).  However these cases do not exist at this time.
-                    if(oldModel != null && oldModel instanceof JcrNodeModel && node.isSame(((JcrNodeModel)oldModel).getNode())) {
-                        return;
-                    }
-                    nodeSet.add(node);
-                    oldModel = getDefaultModel();
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage(), ex);
-                    oldModel = null;
-                }
-            }
-        }
-        MenuHierarchy menu = buildMenu(nodeSet);
-        menu.restructure();
-        addOrReplace(new MenuBar("menu", menu));
-
         redraw();
     }
+
+    @Override
+    protected void onBeforeRender() {
+        try {
+            Set<Node> nodeSet = new LinkedHashSet<Node>();
+            if (getDefaultModel() instanceof JcrNodeModel) {
+                Node node = ((JcrNodeModel) getDefaultModel()).getNode();
+                if (node != null) {
+                    try {
+                        // FIXME workaround when editing a document a save on the nodes takes place; this fix makes it impossible
+                        // for usages of this workflow container class to update the state of the document.  This could
+                        // occur for instance when publishing a document from within an edit screen, but would be applicable
+                        // to other usages as well (viewing a request, for instance).  However these cases do not exist at this time.
+                        if (oldModel != null && oldModel instanceof JcrNodeModel
+                                && node.isSame(((JcrNodeModel) oldModel).getNode())) {
+                            return;
+                        }
+                        nodeSet.add(node);
+                        oldModel = getDefaultModel();
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage(), ex);
+                        oldModel = null;
+                    }
+                }
+            }
+            MenuHierarchy menu = buildMenu(nodeSet);
+            menu.restructure();
+            addOrReplace(new MenuBar("menu", menu));
+        } finally {
+            super.onBeforeRender();
+        }
+    }
+
 }

@@ -207,8 +207,6 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-
-        onModelChanged();
     }
 
     private IEditor getEditor() {

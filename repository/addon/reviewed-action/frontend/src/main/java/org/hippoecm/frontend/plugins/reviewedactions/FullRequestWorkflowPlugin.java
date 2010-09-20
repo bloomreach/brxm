@@ -117,8 +117,6 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-
-        onModelChanged();
     }
 
     @Override

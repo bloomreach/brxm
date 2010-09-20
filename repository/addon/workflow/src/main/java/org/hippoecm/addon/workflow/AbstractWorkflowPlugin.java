@@ -141,12 +141,12 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                     if (workspace instanceof HippoWorkspace) {
                         WorkflowManager workflowMgr = ((HippoWorkspace) workspace).getWorkflowManager();
                         for (final String category : categories) {
-                            try {
-                                final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
-                                if (descriptor != null) {
-                                    String pluginRenderer = descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER);
-                                    Panel plugin = null;
-                                    WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
+                            final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
+                            if (descriptor != null) {
+                                final String pluginRenderer = descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER);
+                                Panel plugin = null;
+                                WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
+                                try {
                                     if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
                                     } else if(pluginRenderer.startsWith("/")) {
@@ -186,15 +186,10 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                                         plugin.visitChildren(new IVisitor() {
 
                                             public Object component(Component component) {
-                                                try {
-                                                    if (component instanceof ActionDescription) {
-                                                        menu.put(new String[] {category, descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER), ((ActionDescription)component).getId()}, (ActionDescription)component);
-                                                    } else if (component instanceof MenuDescription) {
-                                                        menu.put(category, (MenuDescription) component);
-                                                    }
-                                                } catch (RepositoryException ex) {
-                                                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                                    ex.printStackTrace(System.err);
+                                                if (component instanceof ActionDescription) {
+                                                    menu.put(new String[] {category, pluginRenderer, ((ActionDescription)component).getId()}, (ActionDescription)component);
+                                                } else if (component instanceof MenuDescription) {
+                                                    menu.put(category, (MenuDescription) component);
                                                 }
                                                 return IVisitor.CONTINUE_TRAVERSAL;
                                             }
@@ -202,28 +197,22 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                                         plugin.setVisible(false);
                                         list.add(plugin);
                                     }
+                                } catch (ClassNotFoundException ex) {
+                                    log.warn("Could not find plugin class '" + pluginRenderer + "' for category '" + category + "'", ex);
+                                } catch (NoSuchMethodException ex) {
+                                    log.warn("Could not find legacy constructor for '" + pluginRenderer + "' for category '" + category + "'", ex);
+                                } catch (InstantiationException ex) {
+                                    log.warn("Failed to instantiate '" + pluginRenderer + "' for category '" + category + "'", ex);
+                                } catch (IllegalAccessException ex) {
+                                    log.warn("Could not access constructor of '" + pluginRenderer + "' for category '" + category + "'", ex);
+                                } catch (InvocationTargetException ex) {
+                                    log.warn("Plugin '" + pluginRenderer + "' for category '" + category + "' threw exception while initializing", ex);
                                 }
-                            } catch (ClassNotFoundException ex) {
-                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                ex.printStackTrace(System.err);
-                            } catch (NoSuchMethodException ex) {
-                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                ex.printStackTrace(System.err);
-                            } catch (InstantiationException ex) {
-                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                ex.printStackTrace(System.err);
-                            } catch (IllegalAccessException ex) {
-                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                ex.printStackTrace(System.err);
-                            } catch (InvocationTargetException ex) {
-                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                ex.printStackTrace(System.err);
                             }
                         }
                     }
                 } catch (RepositoryException ex) {
-                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                    ex.printStackTrace(System.err);
+                    log.error("Error setting up workflow menu", ex);
                 }
             }
         }
