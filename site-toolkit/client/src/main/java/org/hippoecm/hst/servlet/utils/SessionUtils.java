@@ -28,7 +28,7 @@ import org.hippoecm.hst.util.HstRequestUtils;
 /**
  * Utility class for getting and returning sessions from the hst session pool.
  */
-final public class SessionUtils {
+public final class SessionUtils {
 
 
     /**

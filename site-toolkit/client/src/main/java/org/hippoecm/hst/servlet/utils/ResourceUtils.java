@@ -34,7 +34,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final public class ResourceUtils {
+public final class ResourceUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
 

@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Utility class for checking and setting http headers for BinaryPage binaries.
  * TODO: Default max expires
  */
-final public class HeaderUtils {
+public final class HeaderUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HeaderUtils.class);
 

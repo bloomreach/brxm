@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for setting content disposition headers on responses.
  */
-final public class ContentDispositionUtils {
+public final class ContentDispositionUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ContentDispositionUtils.class);
 
