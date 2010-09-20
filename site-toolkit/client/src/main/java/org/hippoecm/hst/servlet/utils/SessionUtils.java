@@ -1,0 +1,86 @@
+/*
+ *  Copyright 2010 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.servlet.utils;
+
+import javax.jcr.Credentials;
+import javax.jcr.LoginException;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
+
+/**
+ * Utils class for getting and returning sessions from the hst session pool.
+ */
+public class SessionUtils {
+
+    public static Session getBinariesSession(HttpServletRequest request) throws RepositoryException {
+        return getSession(request, "binaries");
+    }
+
+    private static Session getSession(HttpServletRequest request, String poolName) throws RepositoryException {
+        Session session = getSessionFromRequest(request);
+        if (session == null && HstServices.isAvailable()) {
+            session = getSessionFromHstServices(poolName);
+        }
+        return session;
+    }
+
+    public static void releaseSession(HttpServletRequest request, Session session) {
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
+        if (hstRequest == null && session != null) {
+            session.logout();
+        }
+    }
+
+    private static Session getSessionFromRequest(HttpServletRequest request) throws LoginException, RepositoryException {
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
+        if (hstRequest != null) {
+            Session session = hstRequest.getRequestContext().getSession();
+            if (session != null && session.isLive()) {
+                return session;
+            }
+        }
+        return null;
+    }
+
+    private static Session getSessionFromHstServices(String poolName) throws LoginException, RepositoryException {
+        Repository repository = getRepositoryFromHstServices();
+        Session session = null;
+        if (repository != null) {
+            Credentials credentials = getCredentialsFromHstServices(poolName);
+            if (credentials != null) {
+                session = repository.login(credentials);
+            } else {
+                session = repository.login();
+            }
+        }
+        return session;
+    }
+    
+    private static Repository getRepositoryFromHstServices() {
+        return HstServices.getComponentManager().getComponent(Repository.class.getName());
+    }
+
+    private static Credentials getCredentialsFromHstServices(String type) {
+        return HstServices.getComponentManager().getComponent(Credentials.class.getName() + "." + type);
+    }
+
+}

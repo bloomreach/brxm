@@ -63,7 +63,7 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
         if(innerHTML != null) {
             html = innerHTML;
         }
-        html.trim();
+        html = html.trim();
         
         int globalOffset = 0;
         while (html.indexOf(LINK_TAG, globalOffset) > -1) {

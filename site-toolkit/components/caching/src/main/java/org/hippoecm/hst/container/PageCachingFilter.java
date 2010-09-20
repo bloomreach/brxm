@@ -52,13 +52,13 @@ public class PageCachingFilter extends SimplePageCachingFilter {
         return "PageCachingFilter";
     }
 
-    @Override
-    public void doInit() throws CacheException {
-        CacheManager cacheMngr = this.getCacheManager();
-        // 5 minutes ttl and idle
-        Cache memCache = new Cache(getCacheName(), 5000, false, false, 300 , 300);
-        cacheMngr.addCache(memCache);
-        super.doInit();
-    }
+//    @Override
+//    public void doInit() throws CacheException {
+//        CacheManager cacheMngr = this.getCacheManager();
+//        // 5 minutes ttl and idle
+//        Cache memCache = new Cache(getCacheName(), 5000, false, false, 300 , 300);
+//        cacheMngr.addCache(memCache);
+//        super.doInit();
+//    }
      
 }

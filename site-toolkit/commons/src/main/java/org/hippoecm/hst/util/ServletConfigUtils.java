@@ -45,7 +45,7 @@ public class ServletConfigUtils {
     public static String getInitParameter(ServletConfig servletConfig, ServletContext servletContext, String paramName, String defaultValue) {
         String value = null;
         
-        if (value == null && servletConfig != null) {
+        if (servletConfig != null) {
             value = servletConfig.getInitParameter(paramName);
         }
         
@@ -59,6 +59,8 @@ public class ServletConfigUtils {
         
         return value;
     }
+    
+
     
     /**
      * Retrieves the init parameter from the given config objects which must have <CODE>String getInitParameter(String);</CODE> method.

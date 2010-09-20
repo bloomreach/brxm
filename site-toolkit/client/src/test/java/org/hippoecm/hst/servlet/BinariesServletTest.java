@@ -5,32 +5,20 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.servlet.ServletConfig;
 
-import org.apache.james.mime4j.codec.DecoderUtil;
-import org.apache.james.mime4j.util.MimeUtil;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * Tests {@link org.hippoecm.hst.servlet.BinariesServlet}. Since the tested class is originally written by Hippo,
  * only the added logic is tested. The original logic is left untested.
- *
- * @author Tom van Zummeren
  */
 public class BinariesServletTest {
 
@@ -45,6 +33,14 @@ public class BinariesServletTest {
     }
 
     /**
+     * @see After
+     */
+    @After
+    public void tearDown() {
+        binariesServlet.destroy();
+    }
+
+    /**
      * Precondition: All possible init-params are set.
      *
      * Pass condition: Content types init-param is properly parsed as an array of Strings and the filename property is
@@ -54,22 +50,29 @@ public class BinariesServletTest {
     public void testInit() throws Exception {
         ServletConfig servletConfig = createMock(ServletConfig.class);
 
-        String mimeTypesString = "\n" +
-                "                application/pdf\n\r" +
-                "                application/rtf\n" +
-                "                application/excel\r\n" +
-                "            ";
+        String mimeTypesString = "\n" + "                application/pdf\n\r" + "                application/rtf\n"
+                + "                application/excel\r\n" + "            ";
         String expectedFilenameProperty = "myschema:filename";
         String expectedBasePath = "/path/to/binaries";
-      
+
         expect(servletConfig.getInitParameter("contentDispositionContentTypes")).andReturn(mimeTypesString);
-        expect(servletConfig.getInitParameter("contentDispositionFilenameProperty")).andReturn(expectedFilenameProperty);
+        expect(servletConfig.getInitParameter("contentDispositionFilenameProperty"))
+                .andReturn(expectedFilenameProperty);
         expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(expectedBasePath);
-        expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn(null);
-        expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
-        expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
-        expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn(null);
-    
+        expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn("my:data");
+        expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn("my:type");
+        expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn("my:lastmod");
+        expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn("user-agent-specific");
+
+        expect(servletConfig.getInitParameter("set-expires-headers")).andReturn("false");
+
+        expect(servletConfig.getInitParameter("cache-lock-timeout-millis")).andReturn("15000");
+        expect(servletConfig.getInitParameter("cache-ttl-millis")).andReturn("36000");
+        expect(servletConfig.getInitParameter("cache-max-object-size-bytes")).andReturn("250000");
+        expect(servletConfig.getInitParameter("cache-max-objects-mem")).andReturn("350");
+        expect(servletConfig.getInitParameter("cache-config-file")).andReturn("/no/such/file.xml");
+        expect(servletConfig.getInitParameter("cache-name")).andReturn("testCache");
+
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);
@@ -100,7 +103,17 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
         expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn(null);
-       
+
+
+        expect(servletConfig.getInitParameter("set-expires-headers")).andReturn(null);
+
+        expect(servletConfig.getInitParameter("cache-lock-timeout-millis")).andReturn(null);
+        expect(servletConfig.getInitParameter("cache-ttl-millis")).andReturn(null);
+        expect(servletConfig.getInitParameter("cache-max-object-size-bytes")).andReturn(null);
+        expect(servletConfig.getInitParameter("cache-max-objects-mem")).andReturn(null);
+        expect(servletConfig.getInitParameter("cache-config-file")).andReturn(null);
+        expect(servletConfig.getInitParameter("cache-name")).andReturn(null);
+
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);
@@ -112,222 +125,4 @@ public class BinariesServletTest {
         assertEquals("", binariesServlet.baseBinariesContentPath);
     }
 
-    /**
-     * Precondition: - A list of content types and the name of the filename property are set.
-     *               - The given response has a content type set that matches one of the content types in the list.
-     *
-     * Pass condition: The Content-Disposition header is added to the HTTP response, along with the filename.
-     */
-    @Test
-    public void testSetContentDispositionHeader() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
-                "application/pdf", "application/rtf", "application/excel"));
-
-        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
-        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
-
-        Property filenameProperty = createMock(Property.class);
-        expect(filenameProperty.getString()).andReturn("filename.pdf");
-
-        Node binaryFileNode = createMock(Node.class);
-        expect(binaryFileNode.hasProperty(filenamePropertyName)).andReturn(true);
-        expect(binaryFileNode.getProperty(filenamePropertyName)).andReturn(filenameProperty);
-
-        replay(binaryFileNode, filenameProperty);
-        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
-        verify(binaryFileNode, filenameProperty);
-        
-        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
-        assertEquals("attachment", headerParams.get(""));
-        assertEquals("filename.pdf", headerParams.get("filename"));
-    }
-    
-    /**
-     * By default, the binaries servlet is user-agent-agnostic. In this mode, we try to replace iso latin 1 chars.
-     * 
-     * Therefore, when we have filename filenam\u00EB.pdf, we expect back filename.pdf
-     * @throws Exception
-     */
-    @Test
-    public void testSetContentDispositionHeaderAccentedChars() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
-                "application/pdf", "application/rtf", "application/excel"));
-
-        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
-        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
-
-        Property filenameProperty = createMock(Property.class);
-        // add accented filename: 
-        expect(filenameProperty.getString()).andReturn("filenam\u00EB.pdf");
-
-        Node binaryFileNode = createMock(Node.class);
-        expect(binaryFileNode.hasProperty(filenamePropertyName)).andReturn(true);
-        expect(binaryFileNode.getProperty(filenamePropertyName)).andReturn(filenameProperty);
-
-        replay(binaryFileNode, filenameProperty);
-        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
-        verify(binaryFileNode, filenameProperty);
-        
-        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
-        assertEquals("attachment", headerParams.get(""));
-        // we expect the returned name to have the accented char replaced
-        assertEquals("filename.pdf", headerParams.get("filename"));
-    }
-    
-    /**
-     * By default, the binaries servlet is user-agent-agnostic. Now, we set it to be user agent specific, 
-     * and drop in a filename with accents: The returned header param now will be encoded dependent on the 
-     * user-agent
-     * @throws Exception
-     */
-    @Test
-    public void testSetContentDispositionHeaderAccentedCharsUserAgentSpecific() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
-                "application/pdf", "application/rtf", "application/excel"));
-
-        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
-        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
-
-        binariesServlet.contentDispositionFileNameEncoding = BinariesServlet.USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING;
-        
-        Property filenameProperty = createMock(Property.class);
-        // add accented filename: 
-        expect(filenameProperty.getString()).andReturn("filenam\u00EB.pdf");
-
-        Node binaryFileNode = createMock(Node.class);
-        expect(binaryFileNode.hasProperty(filenamePropertyName)).andReturn(true);
-        expect(binaryFileNode.getProperty(filenamePropertyName)).andReturn(filenameProperty);
-
-        replay(binaryFileNode, filenameProperty);
-        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
-        verify(binaryFileNode, filenameProperty);
-        
-        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
-        assertEquals("attachment", headerParams.get(""));
-        // we expect the returned name to be encoded now
-        assertNotSame("filename.pdf", headerParams.get("filename"));
-        
-        // and again, the decoded version, we expect to be filenam\u00EB.pdf
-        assertEquals("filenam\u00EB.pdf",DecoderUtil.decodeEncodedWords(headerParams.get("filename")));
-    }
-
-    /**
-     * Precondition: - A list of content types and the name of the filename property are set.
-     *               - The given response has a content type set that matches one of the content types in the list.
-     *               - The given node does not contain the configured filename property
-     *
-     * Pass condition: The Content-Disposition header is added to the HTTP response, without a filename.
-     */
-    @Test
-    public void testSetContentDispositionHeader_filenamePropertyDoesNotExist() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
-                "application/pdf", "application/rtf", "application/excel"));
-
-        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
-        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
-
-        Node binaryFileNode = createMock(Node.class);
-        expect(binaryFileNode.hasProperty(filenamePropertyName)).andReturn(false);
-
-        replay(binaryFileNode);
-        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
-        verify(binaryFileNode);
-
-        assertEquals("attachment", response.getHeader("Content-Disposition"));
-    }
-
-    /**
-     * Precondition: - Only a list of content types is set.
-     *               - The given response has a content type set that matches one of the content types in the list.
-     *
-     * Pass condition: The Content-Disposition header is added to the HTTP response, without a filename.
-     */
-    @Test
-    public void testSetContentDispositionHeader_noFilenameProperty() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
-                "application/pdf", "application/rtf", "application/excel"));
-
-        Node binaryFileNode = createMock(Node.class);
-
-        replay(binaryFileNode);
-        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
-        verify(binaryFileNode);
-
-        assertEquals("attachment", response.getHeader("Content-Disposition"));
-    }
-
-    /**
-     * Precondition: - A list of content types and the name of the filename property are set.
-     *               - The given response has a content type set that matches NONE of the content types in the list.
-     *
-     * Pass condition: The Content-Disposition header is NOT added to the HTTP response.
-     */
-    @Test
-    public void testSetContentDispositionHeader_noMatch() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
-                "application/pdf", "application/rtf", "application/excel"));
-
-        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
-        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
-
-        Property filenameProperty = createMock(Property.class);
-
-        Node binaryFileNode = createMock(Node.class);
-
-        replay(binaryFileNode, filenameProperty);
-        binariesServlet.addContentDispositionHeader(request, response, "image/jpeg", binaryFileNode);
-        verify(binaryFileNode, filenameProperty);
-
-        assertFalse(response.containsHeader("Content-Disposition"));
-    }
-    
-    /**
-     * Precondition: All possible init-params are set with glob expression parameter ('application/*').
-     *
-     * Pass condition: Content types init-param is properly parsed as an array of Strings and the filename property is
-     *                 properly retrieved from init-params.
-     */
-    @Test
-    public void testSetContentDispositionHeaderWithGlobConfigs() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList("application/*"));
-
-        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename", "myschema:filename2" };
-
-        Property filenameProperty = createMock(Property.class);
-        expect(filenameProperty.getString()).andReturn("filename.pdf");
-
-        Node binaryFileNode = createMock(Node.class);
-        expect(binaryFileNode.hasProperty(binariesServlet.contentDispositionFilenamePropertyNames[0])).andReturn(false);
-        expect(binaryFileNode.hasProperty(binariesServlet.contentDispositionFilenamePropertyNames[1])).andReturn(true);
-        expect(binaryFileNode.getProperty(binariesServlet.contentDispositionFilenamePropertyNames[1])).andReturn(filenameProperty);
-
-        replay(binaryFileNode, filenameProperty);
-        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
-        verify(binaryFileNode, filenameProperty);
-        
-        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
-        assertEquals("attachment", headerParams.get(""));
-        assertEquals("filename.pdf", DecoderUtil.decodeEncodedWords(headerParams.get("filename")));
-    }
 }
