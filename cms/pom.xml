@@ -303,7 +303,7 @@
     </repository>
     <repository>
       <id>codehaus</id>
-      <url>https://nexus.codehaus.org/content/repositories/org/codehaus/mojo</url>
+      <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
