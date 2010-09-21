@@ -323,6 +323,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             private IModel title;
             private IRenderService dialogRenderer;
             private IClusterControl control;
+            private String modelServiceId;
+            private ServiceTracker tracker;
 
             public DestinationDialog(IModel title, IModel question, PropertyModel nameModel,
                     final NodeModelWrapper destination) {
@@ -353,8 +355,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 control.start();
 
-                String modelServiceId = decorated.getString("model.folder");
-                context.registerTracker(new ServiceTracker<IModelReference>(IModelReference.class) {
+                modelServiceId = decorated.getString("model.folder");
+                tracker = new ServiceTracker<IModelReference>(IModelReference.class) {
                     
                     IModelReference modelRef;
                     IObserver modelObserver;
@@ -393,7 +395,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                         super.onRemoveService(service, name);
                     }
 
-                }, modelServiceId);
+                };
+                context.registerTracker(tracker, modelServiceId);
 
                 dialogRenderer = context.getService(decorated.getString("wicket.id"), IRenderService.class);
                 dialogRenderer.bind(null, "picker");
@@ -416,6 +419,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 dialogRenderer.unbind();
                 dialogRenderer = null;
                 control.stop();
+                CompatibilityWorkflowPlugin.this.getPluginContext().unregisterTracker(tracker, modelServiceId);
+                tracker = null;
             }
 
             @Override
