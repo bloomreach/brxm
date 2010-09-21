@@ -76,7 +76,7 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
 
         @Override
         public String getObject() {
-            if (wrapped != null) {
+            if (wrapped != null && wrapped.getObject() != null) {
                 String object = Strings.escapeMarkup(wrapped.getObject()).toString();
                 return Strings.replaceAll(object, "\n", "<br/>").toString();
             }
