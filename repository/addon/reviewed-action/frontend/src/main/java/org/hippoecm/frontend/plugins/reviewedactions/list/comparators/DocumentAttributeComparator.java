@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.list.comparators;
+package org.hippoecm.frontend.plugins.reviewedactions.list.comparators;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 
 public abstract class DocumentAttributeComparator extends NodeComparator {
     @SuppressWarnings("unused")

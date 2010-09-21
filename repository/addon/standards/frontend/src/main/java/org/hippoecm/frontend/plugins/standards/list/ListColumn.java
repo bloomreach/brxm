@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -27,14 +32,10 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
-
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Definition of a column in a {@link ListDataTable}.  Can be used to define sorting,
@@ -50,7 +51,7 @@ public class ListColumn<T> extends AbstractColumn<T> {
 
     private Comparator<T> comparator;
     private IListCellRenderer<T> renderer;
-    private IListAttributeModifier<T> attributeModifier;
+    private Object attributeModifier;
     private String cssClass;
 
     private IPluginContext context;
@@ -84,12 +85,24 @@ public class ListColumn<T> extends AbstractColumn<T> {
         return renderer;
     }
 
+    /**
+     * Deprecated method to set the list attribute modifier.  Implement the AbstractListAttributeModifier instead.
+     */
+    @Deprecated
     public void setAttributeModifier(IListAttributeModifier<T> attributeModifier) {
         this.attributeModifier = attributeModifier;
     }
 
+    public void setAttributeModifier(AbstractListAttributeModifier<T> attributeModifier) {
+        this.attributeModifier = attributeModifier;
+    }
+
+    @Deprecated
     public IListAttributeModifier<T> getAttributeModifier() {
-        return attributeModifier;
+        if (attributeModifier instanceof IListAttributeModifier) {
+            return (IListAttributeModifier<T>) attributeModifier;
+        }
+        return null;
     }
 
     void init(IPluginContext context) {
@@ -123,9 +136,17 @@ public class ListColumn<T> extends AbstractColumn<T> {
     public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
         final ListCell cell = new ListCell(componentId, model, renderer, attributeModifier, context);
         if (attributeModifier != null) {
-            AttributeModifier[] columnModifiers = attributeModifier.getColumnAttributeModifiers(model);
+            AttributeModifier[] columnModifiers;
+            if (attributeModifier instanceof AbstractListAttributeModifier) {
+                columnModifiers = ((AbstractListAttributeModifier) attributeModifier).getColumnAttributeModifiers();
+            } else {
+                columnModifiers = ((IListAttributeModifier) attributeModifier).getColumnAttributeModifiers(model);
+            }
             if (columnModifiers != null) {
                 for (final AttributeModifier columnModifier : columnModifiers) {
+                    if (columnModifier == null) {
+                        continue;
+                    }
                     item.add(columnModifier);
                     if (columnModifier instanceof IObservable && context != null) {
                         IObserver observer = new IObserver<IObservable>() {
@@ -150,4 +171,5 @@ public class ListColumn<T> extends AbstractColumn<T> {
         }
         item.add(cell);
     }
+
 }

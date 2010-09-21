@@ -19,6 +19,11 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
+/**
+ * Deprecated interface to add attributes to grid columns and cells.
+ * Implementations should move to the AbstractListAttributeModifier instead.
+ */
+@Deprecated
 public interface IListAttributeModifier<T> extends IClusterable {
     final static String SVN_ID = "$Id$";
 

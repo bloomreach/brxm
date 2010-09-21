@@ -117,7 +117,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
     }
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(Node node) {
+    public AttributeModifier getColumnAttributeModifier() {
         return new CssClassAppender(new Model<String>("icon-16"));
     }
 

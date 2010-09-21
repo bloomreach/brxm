@@ -53,8 +53,8 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.slf4j.Logger;
@@ -78,17 +78,14 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         private String name;
         private IModel<String> displayName;
         private AttributeModifier cellModifier;
-        private AttributeModifier columnModifier;
         private JcrNodeModel nodeModel;
 
-        ListItem(JcrNodeModel nodeModel) {
+        ListItem(JcrNodeModel nodeModel, IconAttributeModifier attributeModifier) {
             this.nodeModel = nodeModel;
             try {
                 name = nodeModel.getNode().getName();
                 displayName = new NodeTranslator(nodeModel).getNodeName();
-                IconAttributeModifier attributeModifier = new IconAttributeModifier();
                 cellModifier = attributeModifier.getCellAttributeModifier(nodeModel.getNode());
-                columnModifier = attributeModifier.getColumnAttributeModifier(nodeModel.getNode());
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
             }
@@ -104,10 +101,6 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
 
         public AttributeModifier getCellModifier() {
             return cellModifier;
-        }
-
-        public AttributeModifier getColumnModifier() {
-            return columnModifier;
         }
 
         public void detach() {
@@ -142,11 +135,12 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
 
         ReorderDataProvider(DocumentsProvider documents) {
             listItems = new LinkedList<ListItem>();
+            IconAttributeModifier attributeModifier = new IconAttributeModifier();
             Iterator<Node> it = documents.iterator(0, documents.size());
             while (it.hasNext()) {
                 IModel<Node> entry = documents.model(it.next());
                 if (entry instanceof JcrNodeModel) {
-                    listItems.add(new ListItem((JcrNodeModel) entry));
+                    listItems.add(new ListItem((JcrNodeModel) entry, attributeModifier));
                 }
             }
         }
@@ -209,20 +203,22 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             setOutputMarkupId(true);
 
             List<ListColumn<ListItem>> columns = new ArrayList<ListColumn<ListItem>>();
+            final IconAttributeModifier attributeModifier = new IconAttributeModifier();
 
             ListColumn<ListItem> column = new ListColumn<ListItem>(new Model<String>(""), "icon");
             column.setRenderer(new EmptyRenderer<ListItem>());
-            column.setAttributeModifier(new IListAttributeModifier<ListItem>() {
+            column.setAttributeModifier(new AbstractListAttributeModifier<ListItem>() {
                 private static final long serialVersionUID = 1L;
 
+                @Override
                 public AttributeModifier[] getCellAttributeModifiers(IModel<ListItem> model) {
                     ListItem item = model.getObject();
                     return new AttributeModifier[] { item.getCellModifier() };
                 }
 
-                public AttributeModifier[] getColumnAttributeModifiers(IModel<ListItem> model) {
-                    ListItem item = model.getObject();
-                    return new AttributeModifier[] { item.getColumnModifier() };
+                @Override
+                public AttributeModifier[] getColumnAttributeModifiers() {
+                    return new AttributeModifier[] { attributeModifier.getColumnAttributeModifier() };
                 }
             });
             columns.add(column);

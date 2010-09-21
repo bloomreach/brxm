@@ -14,30 +14,29 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.standards.list.resolvers;
+package org.hippoecm.frontend.plugins.reviewedactions.list.resolvers;
 
-import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
-public abstract class DocumentAttributeAttributeModifier extends AbstractNodeAttributeModifier {
+public abstract class DocumentAttributeRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = -1694566516119253553L;
-
-    private String attribute;
-
-    public DocumentAttributeAttributeModifier(String attribute) {
-        this.attribute = attribute;
-    }
+    private static final long serialVersionUID = -2853371369162994945L;
 
     @Override
-    protected AttributeModifier getColumnAttributeModifier(Node node) {
-        return new AttributeModifier(attribute, true, new MyModel(node));
+    protected Component getViewer(String id, final Node node) throws RepositoryException {
+        return new Label(id, new MyModel(node)); 
     }
+
+    protected abstract String getObject(StateIconAttributes atts);
 
     class MyModel extends AbstractReadOnlyModel<String> {
 
@@ -49,16 +48,14 @@ public abstract class DocumentAttributeAttributeModifier extends AbstractNodeAtt
 
         @Override
         public String getObject() {
-            return DocumentAttributeAttributeModifier.this.getObject(atts);
+            return DocumentAttributeRenderer.this.getObject(atts);
         }
 
         @Override
         public void detach() {
             atts.detach();
         }
-
+        
     }
-
-    protected abstract String getObject(StateIconAttributes atts);
 
 }

@@ -313,7 +313,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             }
         }
     }
-    
+
     protected ILocaleProvider getLocaleProvider() {
         return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
                 ILocaleProvider.class);

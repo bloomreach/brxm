@@ -124,7 +124,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     }
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(Node node) {
+    public AttributeModifier getColumnAttributeModifier() {
         return new CssClassAppender(new Model("icon-16"));
     }
 }

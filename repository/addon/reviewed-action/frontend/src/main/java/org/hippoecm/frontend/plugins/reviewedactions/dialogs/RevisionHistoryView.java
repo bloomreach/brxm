@@ -39,6 +39,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
@@ -47,11 +48,10 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,9 +215,10 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
         column = new ListColumn(new StringResourceModel("history-state", this, null), "state");
         column.setRenderer(new EmptyRenderer());
-        column.setAttributeModifier(new IListAttributeModifier() {
+        column.setAttributeModifier(new AbstractListAttributeModifier() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public AttributeModifier[] getCellAttributeModifiers(IModel model) {
                 Revision revision = (Revision) model.getObject();
                 StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
@@ -227,7 +228,8 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 return attributes;
             }
 
-            public AttributeModifier[] getColumnAttributeModifiers(IModel model) {
+            @Override
+            public AttributeModifier[] getColumnAttributeModifiers() {
                 return new AttributeModifier[] { new CssClassAppender(new Model("icon-16")) };
             }
         });

@@ -24,7 +24,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractNodeAttributeModifier implements IListAttributeModifier<Node> {
+public abstract class AbstractNodeAttributeModifier extends AbstractListAttributeModifier<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -32,6 +32,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNodeAttributeModifier.class);
 
+    @Override
     public AttributeModifier[] getCellAttributeModifiers(IModel<Node> model) {
         if (model instanceof JcrNodeModel) {
             try {
@@ -54,38 +55,48 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
 
     protected AttributeModifier[] getCellAttributeModifiers(Node node) throws RepositoryException {
         AttributeModifier modifier = getCellAttributeModifier(node);
-        if(modifier != null) {
-            return new AttributeModifier[] { modifier };
-        } else {
-            return null;
-        }
-    }
-
-    public AttributeModifier[] getColumnAttributeModifiers(IModel<Node> model) {
-        try {
-            Node node = model.getObject();
-            if (node != null) {
-                return getColumnAttributeModifiers(node);
-            } else {
-                log.warn("Cannot render a null node");
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
-    }
-
-    protected AttributeModifier getColumnAttributeModifier(Node node) {
-        return null;
-    }
-
-    protected AttributeModifier[] getColumnAttributeModifiers(Node node) throws RepositoryException {
-        AttributeModifier modifier = getColumnAttributeModifier(node);
         if (modifier != null) {
             return new AttributeModifier[] { modifier };
         } else {
             return null;
         }
     }
-}
 
+    /**
+     * Deprecated implementation of getColumnAttributeModifiers.  Is no longer invoked by the
+     * ListColumn.
+     */
+    @Deprecated
+    public AttributeModifier[] getColumnAttributeModifiers(IModel<Node> model) {
+        AttributeModifier modifier = getColumnAttributeModifier();
+        if (modifier != null) {
+            return new AttributeModifier[] { modifier };
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Deprecated helper routine.  Subclasses should override the method without the Node argument.
+     */
+    @Deprecated
+    protected AttributeModifier getColumnAttributeModifier(Node node) {
+        return null;
+    }
+
+    /**
+     * Helper method for the common case that there is only one modifier.  Override this method
+     * when a column-specific attribute modifier should be present on each cell in the column.
+     */
+    protected AttributeModifier getColumnAttributeModifier() {
+        return getColumnAttributeModifier(null);
+    }
+
+    @Override
+    /**
+     * 
+     */
+    public AttributeModifier[] getColumnAttributeModifiers() {
+        return getColumnAttributeModifiers(null);
+    }
+}

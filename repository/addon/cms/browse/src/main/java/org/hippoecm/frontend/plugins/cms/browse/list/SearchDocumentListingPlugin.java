@@ -31,7 +31,8 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
+import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
+import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.SearchDocumentsProvider;
@@ -44,7 +45,6 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;

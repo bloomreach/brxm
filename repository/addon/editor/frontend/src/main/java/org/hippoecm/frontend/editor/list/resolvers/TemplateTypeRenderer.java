@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.list.resolvers;
+package org.hippoecm.frontend.editor.list.resolvers;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

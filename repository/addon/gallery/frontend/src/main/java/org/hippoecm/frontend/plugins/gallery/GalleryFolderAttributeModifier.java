@@ -77,7 +77,7 @@ public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifie
     }
 
     @Override
-    protected AttributeModifier getColumnAttributeModifier(Node node) {
+    protected AttributeModifier getColumnAttributeModifier() {
         return new CssClassAppender(new Model("icon-16"));
     }
 

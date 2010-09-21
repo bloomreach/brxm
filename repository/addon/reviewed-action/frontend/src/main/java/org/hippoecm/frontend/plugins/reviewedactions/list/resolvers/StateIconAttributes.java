@@ -13,7 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.resolvers;
+package org.hippoecm.frontend.plugins.reviewedactions.list.resolvers;
+
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
+
+import java.util.Calendar;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -29,20 +44,6 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
-import java.util.Calendar;
-
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 
 /**
  * Standard attributes of a hippostd:publishable document.  Figures out what css classes
@@ -109,7 +110,6 @@ public class StateIconAttributes implements IObservable, IDetachable {
         load();
         return publicationDate;
     }
-
 
     public void detach() {
         loaded = false;
