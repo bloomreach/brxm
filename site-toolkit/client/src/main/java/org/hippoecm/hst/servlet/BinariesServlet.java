@@ -241,7 +241,7 @@ public class BinariesServlet extends HttpServlet {
                 input = page.getStream();
             } else {
                 session = SessionUtils.getBinariesSession(request);
-                getRepositoryResourceStream(session, page);
+                input = getRepositoryResourceStream(session, page);
             }
             output = response.getOutputStream();
             IOUtils.copy(input, output);
