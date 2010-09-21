@@ -17,17 +17,19 @@ package org.hippoecm.hst.configuration.sitemap;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
@@ -69,9 +71,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     private String portletComponentConfigurationId;
   
-    private List<String> roles;
-    
     private boolean secured = false;
+    
+    private Set<String> roles;
+    
+    private Set<String> users;
     
     private boolean isExcludedForLinkRewriting = false;
 
@@ -222,20 +226,31 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         
         this.portletComponentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         
-        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
-            String[] rolesProp = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
-            this.roles = Arrays.asList(rolesProp);
-        } else if(this.parentItem != null){
-            this.roles = parentItem.getRoles();
-        } else {
-            this.roles = new ArrayList<String>();
-        }
-        
-        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
+        if (getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
             this.secured = getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED);
         } else if(this.parentItem != null){
             this.secured = parentItem.isSecured();
         } 
+        
+        if (getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
+            String [] rolesProp = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
+            this.roles = new HashSet<String>();
+            CollectionUtils.addAll(this.roles, rolesProp);
+        } else if (this.parentItem != null){
+            this.roles = new HashSet<String>(parentItem.getRoles());
+        } else {
+            this.roles = new HashSet<String>();
+        }
+        
+        if (getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS)) {
+            String [] usersProp = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS);
+            this.users = new HashSet<String>();
+            CollectionUtils.addAll(this.users, usersProp);
+        } else if (this.parentItem != null){
+            this.users = new HashSet<String>(parentItem.getUsers());
+        } else {
+            this.users = new HashSet<String>();
+        }
         
         if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
             this.isExcludedForLinkRewriting = getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
@@ -349,12 +364,16 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.errorCode;
     }
 
-    public List<String> getRoles() {
-        return Collections.unmodifiableList(this.roles);
-    }
-
     public boolean isSecured() {
         return this.secured;
+    }
+
+    public Set<String> getRoles() {
+        return Collections.unmodifiableSet(this.roles);
+    }
+
+    public Set<String> getUsers() {
+        return Collections.unmodifiableSet(this.users);
     }
 
     public String getValue() {

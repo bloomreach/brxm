@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.internal;
 
+import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
@@ -22,6 +23,7 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -36,7 +38,11 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  *
  */
 public interface HstMutableRequestContext extends HstRequestContext {
-
+    
+    public void setRepository(Repository repository);
+    
+    public void setContextCredentialsProvider(ContextCredentialsProvider contextCredentialsProvider);
+    
 	public void setServletContext(ServletContext servletContext);
 	
 	public void setContextNamespace(String contextNamespace);

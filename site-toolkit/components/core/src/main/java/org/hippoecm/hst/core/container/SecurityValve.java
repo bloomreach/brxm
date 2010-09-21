@@ -17,13 +17,14 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMount;
 
 /**
  * SecurityValve
@@ -58,7 +59,23 @@ public class SecurityValve extends AbstractValve {
     protected void checkAuthorized(HttpServletRequest servletRequest) throws ContainerSecurityException {
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        Set<String> roles = null;
+        Set<String> users = null;
+
         boolean secured = (resolvedSiteMapItem != null && resolvedSiteMapItem.isSecured());
+
+        if (secured) {
+            roles = resolvedSiteMapItem.getRoles();
+            users = resolvedSiteMapItem.getUsers();
+        } else {
+            ResolvedSiteMount mount = requestContext.getResolvedSiteMount();
+            secured = (mount != null && mount.isSecured());
+            
+            if (secured) {
+                roles = mount.getRoles();
+                users = mount.getUsers();
+            }
+        }
         
         if (!secured) {
             if (log.isDebugEnabled()) {
@@ -78,16 +95,34 @@ public class SecurityValve extends AbstractValve {
             throw new ContainerSecurityException("Not authenticated yet.");
         }
         
-        List<String> roles = resolvedSiteMapItem.getRoles();
+        if (users.isEmpty() && roles.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debug("The roles or users are not configured.");
+            }
+            
+            throw new ContainerSecurityException("No role or user is not configured for the secured content.");
+        }
         
-        for (String role : roles) {
-            if (servletRequest.isUserInRole(role)) {
+        if (!users.isEmpty()) {
+            if (users.contains(userPrincipal.getName())) {
                 return;
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("The user is not assigned to users, {}", users);
             }
         }
         
-        if (log.isDebugEnabled()) {
-            log.debug("The user is not assigned to roles, {}", roles);
+        if (!roles.isEmpty()) {
+            for (String role : roles) {
+                if (servletRequest.isUserInRole(role)) {
+                    return;
+                }
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("The user is not assigned to roles, {}", roles);
+            }
         }
         
         throw new ContainerSecurityException("Not authorized.");

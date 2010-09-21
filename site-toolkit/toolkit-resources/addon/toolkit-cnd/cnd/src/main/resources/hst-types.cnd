@@ -81,9 +81,11 @@
 - hst:namedpipeline (string)
 - hst:statuscode (long)
 - hst:errorcode (long)
-- hst:secured (boolean)
 - hst:excludedforlinkrewriting (boolean)
+- hst:secured (boolean)
 - hst:roles (string) multiple
+- hst:users (string) multiple
+- hst:groups (string) multiple
 + * (hst:sitemapitem)
 
 [hst:sitemap] orderable
@@ -150,6 +152,10 @@
 - hst:homepage (string)
 - hst:pagenotfound (string)
 - hst:versioninpreviewheader (boolean)
+- hst:secured (boolean)
+- hst:roles (string) multiple
+- hst:users (string) multiple
+- hst:groups (string) multiple
 
 [hst:portmount]
 + hst:root (hst:sitemount)

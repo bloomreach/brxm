@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.request;
 
+import java.util.Set;
+
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
@@ -57,5 +59,35 @@ public interface ResolvedSiteMount {
      * @throws MatchException 
      */
     ResolvedSiteMapItem matchSiteMapItem(String siteMapPathInfo) throws MatchException;
+    
+    /**
+     * If this method returns true, then only if the user is explicitly allowed or <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
+     * site mount is accessible for the request. 
+     * 
+     * If a site mount does not have a configuration for isSecure, the value from the parent item is taken.
+     * 
+     * @return <code>true</code> if the site mount is secured. 
+     */
+    boolean isSecured();
+    
+    /**
+     * Returns the roles that are allowed to access this site mount when {@link isSecure()} is true. If the site mount does not have any roles defined by itself, it
+     * inherits them from the parent. If it defines roles, the roles from any ancestor are ignored. An empty set of roles
+     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * 
+     * @return The set of roles that are allowed to access this site mount. When no roles defined, the roles from the parent item are inherited. If none of the 
+     * parent items have a role defined, an empty set is returned
+     */
+    Set<String> getRoles();  
+    
+    /**
+     * Returns the users that are allowed to access this site mount when {@link isSecure()} is true. If the site mount does not have any users defined by itself, it
+     * inherits them from the parent. If it defines users, the users from any ancestor are ignored. An empty set of users
+     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * 
+     * @return The set of users that are allowed to access this site mount. When no users defined, the users from the parent item are inherited. If none of the 
+     * parent items have a user defined, an empty set is returned
+     */
+    Set<String> getUsers();  
     
 }

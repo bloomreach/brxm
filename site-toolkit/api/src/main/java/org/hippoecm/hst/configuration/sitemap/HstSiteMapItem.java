@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.sitemap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
@@ -93,20 +94,7 @@ public interface HstSiteMapItem {
     String getPortletComponentConfigurationId();
     
     /**
-     * Returns the roles that are allowed to access this sitemap item when {@link isSecure()} is true. If the sitemap items does not have any roles defined by itself, it
-     * inherits them from the parent. If it defines roles, the roles from any ancestor are ignored. An empty list of roles
-     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
-     * 
-     * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
-     * should return an unmodifiable List. 
-     * 
-     * @return The list of roles that are allowed to access this sitemap item. When no roles defined, the roles from the parent item are inherited. If none of the 
-     * parent items have a role defined, an empty list is returned
-     */
-    List<String> getRoles();  
-    
-    /**
-     * If this method returns true, then only if the <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
+     * If this method returns true, then only if the user is explicitly allowed or <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
      * sitemap item is accessible for the request. 
      * 
      * If a sitemap item does not have a configuration for isSecure, the value from the parent item is taken. The root sitemap items 
@@ -115,6 +103,32 @@ public interface HstSiteMapItem {
      * @return <code>true</code> if the sitemap item is secured. 
      */
     boolean isSecured();
+    
+    /**
+     * Returns the roles that are allowed to access this sitemap item when {@link isSecure()} is true. If the sitemap items does not have any roles defined by itself, it
+     * inherits them from the parent. If it defines roles, the roles from any ancestor are ignored. An empty set of roles
+     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * 
+     * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
+     * should return an unmodifiable set. 
+     * 
+     * @return The set of roles that are allowed to access this sitemap item. When no roles defined, the roles from the parent item are inherited. If none of the 
+     * parent items have a role defined, an empty set is returned
+     */
+    Set<String> getRoles();  
+    
+    /**
+     * Returns the users that are allowed to access this sitemap item when {@link isSecure()} is true. If the sitemap items does not have any users defined by itself, it
+     * inherits them from the parent. If it defines users, the users from any ancestor are ignored. An empty set of users
+     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * 
+     * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
+     * should return an unmodifiable set. 
+     * 
+     * @return The set of users that are allowed to access this sitemap item. When no users defined, the users from the parent item are inherited. If none of the 
+     * parent items have a user defined, an empty set is returned
+     */
+    Set<String> getUsers();  
     
     /**
      * <p>

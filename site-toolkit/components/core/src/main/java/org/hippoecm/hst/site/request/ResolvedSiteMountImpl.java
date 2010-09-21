@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.Set;
+
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
@@ -96,4 +98,17 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
         }
         return item; 
     }
+    
+    public boolean isSecured() {
+        return siteMount.isSecured();
+    }
+    
+    public Set<String> getRoles() {
+        return siteMount.getRoles();
+    }
+    
+    public Set<String> getUsers() {
+        return siteMount.getUsers();
+    }
+
 }

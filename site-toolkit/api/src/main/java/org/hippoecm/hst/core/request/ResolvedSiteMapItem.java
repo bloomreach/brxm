@@ -15,10 +15,11 @@
  */
 package org.hippoecm.hst.core.request;
 
-import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 /**
@@ -111,14 +112,19 @@ public interface ResolvedSiteMapItem {
     int getErrorCode();
     
     /**
-     * @return the roles that are allowed to proceed the request with this resolved sitemap item. If no roles present, and empty list is returned
-     */
-    List<String> getRoles();
-    
-    /**
      * @return <code>true</code> if {@link #getRoles} should be applied to this ResolvedSiteMap item
      */
     boolean isSecured();
+    
+    /**
+     * @return the roles that are allowed to proceed the request with this resolved sitemap item. If no roles present, and empty list is returned
+     */
+    Set<String> getRoles();
+    
+    /**
+     * @return the users that are allowed to proceed the request with this resolved sitemap item. If no users present, and empty list is returned
+     */
+    Set<String> getUsers();
     
     /**
      * @return the root <code>HstComponentConfiguration</code> that is configured on the backing {@link #getHstSiteMapItem()} of this ResolvedSiteMapItem
@@ -129,6 +135,5 @@ public interface ResolvedSiteMapItem {
      * @return the <code>HstComponentConfiguration</code> for portlet that is found through {@link #getHstSiteMapItem()}
      */
     HstComponentConfiguration getPortletHstComponentConfiguration();
-  
     
 }

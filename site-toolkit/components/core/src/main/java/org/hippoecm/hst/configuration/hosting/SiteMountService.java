@@ -1,12 +1,16 @@
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
@@ -103,6 +107,12 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     private String onlyForContextPath;
     
     private String scheme;
+    
+    private boolean secured;
+    
+    private Set<String> roles;
+    
+    private Set<String> users;
 
     /**
      * for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
@@ -244,6 +254,32 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
+        if (getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SECURED)) {
+            this.secured = getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SECURED);
+        } else if (parent != null){
+            this.secured = parent.isSecured();
+        } 
+        
+        if (getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ROLES)) {
+            String [] rolesProp = getValueProvider().getStrings(HstNodeTypes.SITEMOUNT_PROPERTY_ROLES);
+            this.roles = new HashSet<String>();
+            CollectionUtils.addAll(this.roles, rolesProp);
+        } else if (parent != null){
+            this.roles = new HashSet<String>(parent.getRoles());
+        } else {
+            this.roles = new HashSet<String>();
+        }
+        
+        if (getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_USERS)) {
+            String [] usersProp = getValueProvider().getStrings(HstNodeTypes.SITEMOUNT_PROPERTY_USERS);
+            this.users = new HashSet<String>();
+            CollectionUtils.addAll(this.users, usersProp);
+        } else if (parent != null){
+            this.users = new HashSet<String>(parent.getUsers());
+        } else {
+            this.users = new HashSet<String>();
+        }
+        
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
         if(mountPoint == null ){
@@ -375,6 +411,16 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         return embeddedSiteMountPath;
     }
 
-
+    public boolean isSecured() {
+        return secured;
+    }
+    
+    public Set<String> getRoles() {
+        return Collections.unmodifiableSet(this.roles);
+    }
+    
+    public Set<String> getUsers() {
+        return Collections.unmodifiableSet(this.users);
+    }
 
 }

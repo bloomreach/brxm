@@ -59,8 +59,9 @@ public interface HstNodeTypes {
     public final static String SCRIPT_PROPERTY_TEMPLATE =  "hst:template";
     
     public final static String SITEMAPITEM_PROPERTY_VALUE =  "hst:value";
-    public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMAPITEM_PROPERTY_SECURED =  "hst:secured";
+    public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
+    public final static String SITEMAPITEM_PROPERTY_USERS =  "hst:users";
     public final static String SITEMAPITEM_PROPERTY_STATUSCODE =  "hst:statuscode";
     public final static String SITEMAPITEM_PROPERTY_ERRORCODE =  "hst:errorcode";
     public final static String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH =  "hst:relativecontentpath";
@@ -99,6 +100,9 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
     public final static String SITEMOUNT_PROPERTY_ISPREVIEW = "hst:ispreview";
     public final static String SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH = "hst:embeddedsitemountpath";
+    public final static String SITEMOUNT_PROPERTY_SECURED =  "hst:secured";
+    public final static String SITEMOUNT_PROPERTY_ROLES =  "hst:roles";
+    public final static String SITEMOUNT_PROPERTY_USERS =  "hst:users";
     
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     

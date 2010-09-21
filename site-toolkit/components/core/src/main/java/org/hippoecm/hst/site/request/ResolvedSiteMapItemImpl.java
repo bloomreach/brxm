@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.site.request;
 
-import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -145,14 +145,6 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         return this.pathInfo;
     }
 
-    public List<String> getRoles() {
-        return hstSiteMapItem.getRoles();
-    }
-
-    public boolean isSecured() {
-        return hstSiteMapItem.isSecured();
-    }
-
     public ResolvedSiteMount getResolvedSiteMount() {
        return resolvedSiteMount;
     }
@@ -161,4 +153,15 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         return hstSiteMapItem.getNamedPipeline();
     }
 
+    public boolean isSecured() {
+        return hstSiteMapItem.isSecured();
+    }
+
+    public Set<String> getRoles() {
+        return hstSiteMapItem.getRoles();
+    }
+
+    public Set<String> getUsers() {
+        return hstSiteMapItem.getUsers();
+    }
 }
