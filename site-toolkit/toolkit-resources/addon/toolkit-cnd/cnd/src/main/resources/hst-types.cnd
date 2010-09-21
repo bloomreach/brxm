@@ -85,7 +85,6 @@
 - hst:secured (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
-- hst:groups (string) multiple
 + * (hst:sitemapitem)
 
 [hst:sitemap] orderable
@@ -155,7 +154,6 @@
 - hst:secured (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
-- hst:groups (string) multiple
 
 [hst:portmount]
 + hst:root (hst:sitemount)
