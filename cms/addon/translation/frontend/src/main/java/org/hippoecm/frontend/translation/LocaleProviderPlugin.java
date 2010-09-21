@@ -93,6 +93,9 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
                     case AVAILABLE:
                         resourceName = "flag-new-" + size.getSize() + ".png";
                         break;
+                    case DISABLED:
+                        resourceName = "flag-disabled-" + size.getSize() + ".png";
+                        break;
                     default:
                         resourceName = "flag-" + size.getSize() + ".png";
                         break;

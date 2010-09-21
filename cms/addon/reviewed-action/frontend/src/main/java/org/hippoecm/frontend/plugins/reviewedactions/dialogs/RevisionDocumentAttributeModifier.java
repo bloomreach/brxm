@@ -25,12 +25,12 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RevisionDocumentAttributeModifier implements IListAttributeModifier<Revision> {
+public class RevisionDocumentAttributeModifier extends AbstractListAttributeModifier<Revision> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -38,6 +38,7 @@ public class RevisionDocumentAttributeModifier implements IListAttributeModifier
 
     static final Logger log = LoggerFactory.getLogger(RevisionDocumentAttributeModifier.class);
 
+    @Override
     public AttributeModifier[] getCellAttributeModifiers(IModel<Revision> model) {
         Revision revision = model.getObject();
         if (revision != null) {
@@ -87,10 +88,6 @@ public class RevisionDocumentAttributeModifier implements IListAttributeModifier
             log.error("Unable to determine type of document", ex);
         }
         return new AttributeAppender("title", documentType, " ");
-    }
-
-    public AttributeModifier[] getColumnAttributeModifiers(IModel<Revision> model) {
-        return null;
     }
 
 }

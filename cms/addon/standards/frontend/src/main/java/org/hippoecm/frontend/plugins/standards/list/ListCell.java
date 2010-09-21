@@ -23,6 +23,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -31,6 +32,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
@@ -46,9 +48,14 @@ class ListCell extends Panel {
     private List<IObserver> observers;
     private IPluginContext context;
 
-    public ListCell(String id, final IModel model, IListCellRenderer renderer,
-            IListAttributeModifier attributeModifier, IPluginContext context) {
+    public ListCell(String id, final IModel model, IListCellRenderer renderer, Object attributeModifier,
+            IPluginContext context) {
         super(id, model);
+
+        if ((attributeModifier != null) && !(attributeModifier instanceof AbstractListAttributeModifier)
+                && !(attributeModifier instanceof IListAttributeModifier)) {
+            throw new IllegalArgumentException("attribute modifier must be of type IListAttributeModifier or AbstractListAttributeModifier");
+        }
 
         this.context = context;
         this.observers = new LinkedList<IObserver>();
@@ -83,16 +90,24 @@ class ListCell extends Panel {
                         target.addComponent(ListCell.this);
                     }
                 }
-                
+
             };
             context.registerService(observer, IObserver.class.getName());
             observers.add(observer);
         }
 
         if (attributeModifier != null) {
-            AttributeModifier[] cellModifiers = attributeModifier.getCellAttributeModifiers(model);
+            AttributeModifier[] cellModifiers;
+            if (attributeModifier instanceof AbstractListAttributeModifier) {
+                cellModifiers = ((AbstractListAttributeModifier) attributeModifier).getCellAttributeModifiers(model);
+            } else {
+                cellModifiers = ((IListAttributeModifier) attributeModifier).getCellAttributeModifiers(model);
+            }
             if (cellModifiers != null) {
                 for (final AttributeModifier cellModifier : cellModifiers) {
+                    if (cellModifier == null) {
+                        continue;
+                    }
                     add(cellModifier);
                     if (context != null && (cellModifier instanceof IObservable)) {
                         IObserver observer = new IObserver<IObservable>() {
@@ -115,6 +130,17 @@ class ListCell extends Panel {
                 }
             }
         }
+    }
+
+    @Override
+    protected void onDetach() {
+        for (IObserver observer : observers) {
+            IObservable observable = observer.getObservable();
+            if (observable instanceof IDetachable) {
+                ((IDetachable) observable).detach();
+            }
+        }
+        super.onDetach();
     }
 
     @Override

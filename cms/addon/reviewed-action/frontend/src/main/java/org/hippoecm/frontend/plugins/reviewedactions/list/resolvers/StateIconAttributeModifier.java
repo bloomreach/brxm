@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.resolvers;
+package org.hippoecm.frontend.plugins.reviewedactions.list.resolvers;
 
 import javax.jcr.Node;
 
@@ -22,6 +22,8 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.ObservablePropertyModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +39,7 @@ public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
     static final String SUFFIX = "-16";
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(Node node) {
+    public AttributeModifier getColumnAttributeModifier() {
         return new CssClassAppender(new Model("icon-16"));
     }
 

@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
@@ -26,37 +32,34 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.browse.list.comparators.DocumentAttributeComparator;
-import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
+import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.DocumentAttributeComparator;
+import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
+import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.DocumentAttributeAttributeModifier;
+import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.DocumentAttributeRenderer;
+import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributeModifier;
+import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
+import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
-import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
+import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.frontend.translation.list.resolvers.TranslationRenderer;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 public class DocumentListingPlugin extends AbstractListingPlugin implements IExpandableCollapsable {
     private static final long serialVersionUID = 1L;
@@ -236,6 +239,12 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
         column.setCssClass("doclisting-date");
         columns.add(column);
 
+        //publication date
+        column = new ListColumn<Node>(new StringResourceModel("doclisting-translations", this, null), "translations");
+        column.setRenderer(new TranslationRenderer(getLocaleProvider()));
+        column.setCssClass("doclisting-translations");
+        columns.add(column);
+
         return columns;
     }
 
@@ -263,6 +272,11 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
             return DateTimeFormat.forPattern(DateTimeFormat.patternForStyle("LS", getLocale())).print(new DateTime(cal));
         }
         return "";
+    }
+
+    protected ILocaleProvider getLocaleProvider() {
+        return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
+                ILocaleProvider.class);
     }
 
     @Override

@@ -122,9 +122,8 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
             if (declarations.containsKey(entry.getKey())) {
                 if (!templates.containsKey(declarations.get(entry.getKey()).getName())) {
                     continue;
-                } else {
-                    // TODO: extract plugin from super configuration
                 }
+                // TODO: extract plugin from super configuration
             } else {
                 try {
                     Map<String, Object> criteria = new MiniMap<String, Object>(1);
