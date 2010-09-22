@@ -50,8 +50,4 @@ public interface HstSiteMapItemHandlerConfiguration {
      */
     Map<String, Object> getProperties();
     
-    /**
-     * @return the creation time of this HstSiteMapItemHandlerConfiguration
-     */
-    long getCreatedTime();
 }

@@ -172,13 +172,6 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return the canonical location where the configuration is stored
      */
     String getCanonicalStoredLocation();
-    
-    /**
-     * 
-     * @return the creation time of this HstComponentConfiguration
-     */
-    long getCreatedTime();
-
-
+  
     
 }
