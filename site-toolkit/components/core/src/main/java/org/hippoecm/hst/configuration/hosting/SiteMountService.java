@@ -10,7 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
-import org.hippoecm.hst.configuration.model.HstWebSitesManager;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -116,7 +116,7 @@ public class SiteMountService implements SiteMount {
      */
     private String embeddedSiteMountPath;
      
-    public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstWebSitesManager hstWebSitesManager) throws ServiceException {
+    public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
         this.virtualHost = virtualHost;
         this.parent = parent;
         
@@ -283,14 +283,14 @@ public class SiteMountService implements SiteMount {
             log.info("SiteMount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), siteMount.getValueProvider().getPath());
         } else {
              
-            HstSiteRootNode hstSiteNodeForMount = hstWebSitesManager.getHstSiteRootNodes().get(mountPoint);
+            HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
             if(hstSiteNodeForMount == null) {
                 throw new ServiceException("mountPoint '" + mountPoint
                         + "' does not point to a hst:site node for SiteMount '" + siteMount.getValueProvider().getPath()
                         + "'. Cannot create HstSite for SiteMount");
             }
             
-            this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstWebSitesManager);
+            this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
             log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
         }
         
@@ -298,7 +298,7 @@ public class SiteMountService implements SiteMount {
         
         for(HstNode childMount : siteMount.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(childMount.getNodeTypeName())) {
-                SiteMountService childMountService = new SiteMountService(childMount, this, virtualHost, hstWebSitesManager);
+                SiteMountService childMountService = new SiteMountService(childMount, this, virtualHost, hstManager);
                 SiteMountService prevValue = this.childSiteMountServices.put(childMountService.getName(), childMountService);
                 if(prevValue != null) {
                     log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", siteMount.getValueProvider().getPath());
@@ -374,7 +374,7 @@ public class SiteMountService implements SiteMount {
     }
 
     public HstSiteMapMatcher getHstSiteMapMatcher() {
-        return getVirtualHost().getVirtualHosts().getVirtualHostsManager().getSiteMapMatcher();
+        return getVirtualHost().getVirtualHosts().getHstManager().getSiteMapMatcher();
     }
 
     public String getEmbeddedSiteMountPath() {

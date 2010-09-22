@@ -82,7 +82,7 @@ public abstract class AbstractHstSiteMapHandler implements HstSiteMapItemHandler
      * @return the HstURLFactory 
      */
     public HstURLFactory getURLFactory(ResolvedSiteMapItem resolvedSiteMapItem) {
-        HstURLFactory factory = resolvedSiteMapItem.getResolvedSiteMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getVirtualHostsManager().getUrlFactory();
+        HstURLFactory factory = resolvedSiteMapItem.getResolvedSiteMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getHstManager().getUrlFactory();
         return factory;
     }
 }

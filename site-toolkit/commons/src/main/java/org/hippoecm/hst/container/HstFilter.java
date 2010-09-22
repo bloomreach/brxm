@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -78,7 +78,7 @@ public class HstFilter implements Filter {
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     protected HstContainerConfig requestContainerConfig;
     
-    protected VirtualHostsManager virtualHostsManager;
+    protected HstManager hstSitesManager;
     protected HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
     
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -119,14 +119,14 @@ public class HstFilter implements Filter {
 
         Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
         
-        virtualHostsManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
-        if(virtualHostsManager != null) {
-            siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
+        hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        if(hstSitesManager != null) {
+            siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
             if(siteMapItemHandlerFactory == null) {
                 logger.error("Cannot find the siteMapItemHandlerFactory component");
             }
         } else {
-            logger.error("Cannot find the virtualHostsManager component for '{}'", VirtualHostsManager.class.getName());
+            logger.error("Cannot find the virtualHostsManager component for '{}'", HstManager.class.getName());
         }
         
         if (clientComponentManager != null) {
@@ -217,7 +217,7 @@ public class HstFilter implements Filter {
     			doInit(filterConfig);
     		}
 
-    		if(this.siteMapItemHandlerFactory == null || this.virtualHostsManager == null) {
+    		if(this.siteMapItemHandlerFactory == null || this.hstSitesManager == null) {
     			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     			logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
     			return;
@@ -231,7 +231,7 @@ public class HstFilter implements Filter {
 
     		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
 
-    		VirtualHosts vHosts = virtualHostsManager.getVirtualHosts();
+    		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
     		if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(req))) {
     			chain.doFilter(request, response);
@@ -267,7 +267,7 @@ public class HstFilter implements Filter {
     			} 
     		}
     		
-			HstURLFactory factory = virtualHostsManager.getUrlFactory();
+			HstURLFactory factory = hstSitesManager.getUrlFactory();
 			
     		HstContainerURL hstContainerURL = requestContext.getBaseURL();
     		if (hstContainerURL == null) {
@@ -371,7 +371,7 @@ public class HstFilter implements Filter {
                 throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
             }
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-            requestContext.setBaseURL(virtualHostsManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
+            requestContext.setBaseURL(hstSitesManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
             
             processResolvedSiteMapItem(req, res, requestContext, true, logger);
         }

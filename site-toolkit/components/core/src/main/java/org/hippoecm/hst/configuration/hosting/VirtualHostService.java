@@ -24,7 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.HstWebSitesManager;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class VirtualHostService implements VirtualHost {
     private boolean contextPathInUrl;
     private String scheme;
 
-    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, HstWebSitesManager hstWebSitesManager) throws ServiceException {        
+    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, HstManagerImpl hstManager) throws ServiceException {        
        
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
@@ -138,7 +139,7 @@ public class VirtualHostService implements VirtualHost {
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
-                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hstWebSitesManager);
+                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hstManager);
                 this.childVirtualHosts.put(childHost.name, childHost);
                 // we need to switch the attachPortMountToHost to the last host
             }
@@ -162,7 +163,7 @@ public class VirtualHostService implements VirtualHost {
             // a portmount service with portnumber 0, which means any port
             HstNode siteMountNode = virtualHostNode.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(siteMountNode.getNodeTypeName())) {
-                SiteMount siteMount = new SiteMountService(siteMountNode, null, attachPortMountToHost, hstWebSitesManager);
+                SiteMount siteMount = new SiteMountService(siteMountNode, null, attachPortMountToHost, hstManager);
                  
                 PortMount portMount = new PortMountService(siteMount, this);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
@@ -173,17 +174,17 @@ public class VirtualHostService implements VirtualHost {
         
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
-                VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hstWebSitesManager);
+                VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hstManager);
                 attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
-                PortMount portMount = new PortMountService(child, attachPortMountToHost, hstWebSitesManager);
+                PortMount portMount = new PortMountService(child, attachPortMountToHost, hstManager);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
             }
         }
        
     }
 
-    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, HstWebSitesManager hstWebSitesManager) {
+    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, HstManagerImpl hstManager) {
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
         this.scheme = parent.scheme;
@@ -194,7 +195,7 @@ public class VirtualHostService implements VirtualHost {
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
-            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hstWebSitesManager);
+            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hstManager);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
         hostName = buildHostName();

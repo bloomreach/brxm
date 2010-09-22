@@ -2,7 +2,7 @@ package org.hippoecm.hst.configuration.hosting;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.HstWebSitesManager;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class PortMountService implements PortMount {
      */
     private SiteMount rootSiteMount;
     
-    public PortMountService(HstNode portMount, VirtualHost virtualHost, HstWebSitesManager hstNodeManager) throws ServiceException {
+    public PortMountService(HstNode portMount, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
         String nodeName = portMount.getValueProvider().getName();
         try {
             portNumber = Integer.parseInt(nodeName);
@@ -36,7 +36,7 @@ public class PortMountService implements PortMount {
         HstNode siteMount = portMount.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
         if(siteMount != null && HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(siteMount.getNodeTypeName())) {
             try {
-                rootSiteMount = new SiteMountService(siteMount, null, virtualHost, hstNodeManager);
+                rootSiteMount = new SiteMountService(siteMount, null, virtualHost, hstManager);
             } catch (ServiceException e) {
                 log.warn("The host '{}' for port '"+portNumber+"' contains an incorrect configured SiteMount. The host with port cannot be used for hst request processing: {}", virtualHost.getHostName(), e.getMessage());
             } 

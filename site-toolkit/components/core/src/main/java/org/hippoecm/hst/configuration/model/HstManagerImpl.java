@@ -28,20 +28,30 @@ import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
+import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This class handles the loading of {@link HstNodeImpl}'s. 
  */
-public class HstWebSitesManagerImpl implements HstWebSitesManager {
+public class HstManagerImpl implements HstManager {
     
-    private static final Logger log = LoggerFactory.getLogger(HstWebSitesManagerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(HstManagerImpl.class);
 
     private Repository repository;
     private Credentials credentials;
-    
+
+    private VirtualHosts virtualHosts;
+    private HstURLFactory urlFactory;
+    private HstSiteMapMatcher siteMapMatcher;
+    private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
     /**
      * the list of node types that we know about for the hst configuration.
      */
@@ -62,6 +72,7 @@ public class HstWebSitesManagerImpl implements HstWebSitesManager {
      */
     Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
     
+    
     public void setNodeTypeNames(List<String> nodeTypeNames) {
         this.nodeTypeNames = nodeTypeNames;
     }
@@ -74,7 +85,48 @@ public class HstWebSitesManagerImpl implements HstWebSitesManager {
         this.credentials = credentials;
     }
     
-    public void populate() throws RepositoryNotAvailableException {
+    public void setUrlFactory(HstURLFactory urlFactory) {
+        this.urlFactory = urlFactory;
+    }
+
+    public HstURLFactory getUrlFactory() {
+        return this.urlFactory;
+    }
+    
+    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
+        this.siteMapMatcher = siteMapMatcher;
+    }
+    
+    public HstSiteMapMatcher getSiteMapMatcher() {
+        return siteMapMatcher;
+    }
+    
+    public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
+        this.siteMapItemHandlerFactory = siteMapItemHandlerFactory;
+    }
+    
+    public HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory() {
+        return siteMapItemHandlerFactory;
+    }
+    
+    public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException{
+        VirtualHosts vHosts = this.virtualHosts;
+        
+        if (vHosts == null) {
+            synchronized(this) {
+                buildSites();
+                vHosts = this.virtualHosts;
+            }
+        }
+        
+        return vHosts;
+    }
+    
+    protected synchronized void buildSites() throws RepositoryNotAvailableException{
+        if (this.virtualHosts != null) {
+            return;
+        }
+        
         Session session = null;
         try {
             if (this.credentials == null) {
@@ -126,6 +178,8 @@ public class HstWebSitesManagerImpl implements HstWebSitesManager {
                 siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
             }
             
+            
+            
         } catch (RepositoryException e) {
             throw new RepositoryNotAvailableException("Exception during loading configuration nodes. ",e);
         } finally {
@@ -133,8 +187,19 @@ public class HstWebSitesManagerImpl implements HstWebSitesManager {
                 try { session.logout(); } catch (Exception ce) {}
             }
         }
-        
+         
+        try {
+            this.virtualHosts = new VirtualHostsService(getVirtualHostsNode(), this);
+        } catch (ServiceException e) {
+            throw new RepositoryNotAvailableException(e);
+        }
     }
+    
+    public synchronized void invalidate(String path) {
+        this.virtualHosts = null;
+    }
+    
+    
     
     public HstNode getVirtualHostsNode() {
         return virtualHostsRepositoryNode;

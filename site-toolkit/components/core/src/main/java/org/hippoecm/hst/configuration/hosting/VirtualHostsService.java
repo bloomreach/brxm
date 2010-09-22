@@ -20,7 +20,8 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.HstWebSitesManager;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -41,7 +42,7 @@ public class VirtualHostsService implements VirtualHosts {
     
     public final static String DEFAULT_SCHEME = "http";
 
-    private VirtualHostsManager virtualHostsManager;
+    private HstManagerImpl hstManager;
     private Map<String, VirtualHostService> rootVirtualHosts = virtualHostHashMap();
   
     private String defaultHostName;
@@ -69,8 +70,8 @@ public class VirtualHostsService implements VirtualHosts {
     private String[] suffixExclusions;
 
   
-    public VirtualHostsService(HstNode virtualHostsConfigurationNode, VirtualHostsManager virtualHostsManager, HstWebSitesManager hstWebSitesManager) throws ServiceException {
-        this.virtualHostsManager = virtualHostsManager;
+    public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
+        this.hstManager = hstManager;
         this.virtualHostsConfigured = true;
         this.portNumber = virtualHostsConfigurationNode.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PORT).intValue();
         this.portVisible = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
@@ -88,14 +89,23 @@ public class VirtualHostsService implements VirtualHosts {
             this.scheme = DEFAULT_SCHEME;
         }
         
-        init(virtualHostsConfigurationNode, hstWebSitesManager);
+        for(HstNode virtualHostNode : virtualHostsConfigurationNode.getNodes()) {
+            try {
+                VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hstManager);
+                this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
+            } catch (IllegalArgumentException e) {
+                log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
+                        + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
+                        + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
+               throw e;
+           }
+        }
         
     }
     
 
-
-    public VirtualHostsManager getVirtualHostsManager() {
-        return virtualHostsManager;
+    public HstManager getHstManager() {
+        return hstManager;
     }
 
     
@@ -231,22 +241,6 @@ public class VirtualHostsService implements VirtualHosts {
             return traverseInToHost(vhost, hostNameSegments, depth);
         }
         return null;
-    }
-
-    private void init(HstNode virtualHostsConfigurationNode, HstWebSitesManager hstWebSitesManager) throws ServiceException {
-        
-       for(HstNode virtualHostNode : virtualHostsConfigurationNode.getNodes()) {
-           try {
-               VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hstWebSitesManager);
-               this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
-           } catch (IllegalArgumentException e) {
-               log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
-                       + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
-                       + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
-              throw e;
-          }
-       }
-       
     }
 
     public boolean isPortVisible() {

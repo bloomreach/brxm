@@ -19,6 +19,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -220,7 +221,7 @@ public interface SiteMount {
     String getNamedPipeline();
 
     /**
-     * This is a shortcut method fetching the HstSiteMapMatcher from the backing {@link VirtualHostsManager}
+     * This is a shortcut method fetching the HstSiteMapMatcher from the backing {@link HstManager}
      * @return the HstSiteMapMatcher implementation
      */
     HstSiteMapMatcher getHstSiteMapMatcher();

@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -36,7 +36,7 @@ public abstract class AbstractValve implements Valve {
     protected final static Logger log = LoggerFactory.getLogger(AbstractValve.class);
     
     protected ContainerConfiguration containerConfiguration;
-    protected VirtualHostsManager virtualHostsManager;
+    protected HstManager hstManager;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstRequestContextComponent requestContextComponent;
     protected HstComponentFactory componentFactory;
@@ -61,12 +61,12 @@ public abstract class AbstractValve implements Valve {
         this.containerConfiguration = containerConfiguration;
     }
  
-    public VirtualHostsManager getVirtualHostsManager() {
-        return virtualHostsManager;
+    public HstManager getHstManager() {
+        return hstManager;
     }
 
-    public void setVirtualHostsManager(VirtualHostsManager virtualHostsManager) {
-        this.virtualHostsManager = virtualHostsManager;
+    public void setHstManager(HstManager hstManager) {
+        this.hstManager = hstManager;
     }
 
     public HstSiteMapMatcher getSiteMapMatcher() {

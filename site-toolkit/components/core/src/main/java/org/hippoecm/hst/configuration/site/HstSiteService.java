@@ -24,8 +24,8 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.HstWebSitesManager;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
@@ -58,14 +58,14 @@ public class HstSiteService implements HstSite {
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     
     
-    public HstSiteService(HstSiteRootNode site, SiteMount siteMount, HstWebSitesManager hstWebSitesManager) throws ServiceException{
+    public HstSiteService(HstSiteRootNode site, SiteMount siteMount, HstManagerImpl hstManager) throws ServiceException{
         this.name = site.getValueProvider().getName();
         this.siteMount = siteMount;
         contentPath = site.getContentPath();
         canonicalcontentPath = site.getCanonicalcontentPath();
         configurationPath = site.getConfigurationPath();
         
-        HstNode configurationNode = hstWebSitesManager.getConfigurationRootNodes().get(configurationPath);
+        HstNode configurationNode = hstManager.getConfigurationRootNodes().get(configurationPath);
         
         if(configurationNode == null) {
             throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );

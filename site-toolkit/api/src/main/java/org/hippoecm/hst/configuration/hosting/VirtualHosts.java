@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import java.util.List;
-
-import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -31,9 +29,9 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 public interface VirtualHosts {
 
     /**
-     * @return the {@link VirtualHostsManager} for this VirtualHosts object
+     * @return the {@link HstManager} for this VirtualHosts object
      */
-    VirtualHostsManager getVirtualHostsManager();
+    HstManager getHstManager();
     
     /**
      * 

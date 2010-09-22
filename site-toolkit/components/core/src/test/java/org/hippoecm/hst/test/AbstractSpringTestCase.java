@@ -27,7 +27,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -122,8 +122,8 @@ public abstract class AbstractSpringTestCase
     
 
     protected HstRequestContext resolveRequest(HttpServletRequest request, HttpServletResponse response) throws RepositoryNotAvailableException {
-        VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
-        VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
+        HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
         HstMutableRequestContext requestContext = ((HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName())).create(false);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ResolvedSiteMount mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     

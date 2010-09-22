@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.hosting;
+package org.hippoecm.hst.configuration.model;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
@@ -24,15 +24,15 @@ import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VirtualHostsConfigurationEventListener extends GenericEventListener {
+public class HstSitesConfigurationEventListener extends GenericEventListener {
     
-    static Logger log = LoggerFactory.getLogger(VirtualHostsConfigurationEventListener.class);
+    static Logger log = LoggerFactory.getLogger(HstSitesConfigurationEventListener.class);
     
-    protected VirtualHostsManager virtualHostsManager;
+    protected HstManager hstManager;
     protected HstComponentRegistry componentRegistry;
     
-    public void setVirtualHostsManager(VirtualHostsManager virtualHostsManager) {
-        this.virtualHostsManager = virtualHostsManager;
+    public void setVirtualHostsManager(HstManager hstManager) {
+        this.hstManager = hstManager;
     }
     
     public void setComponentRegistry(HstComponentRegistry componentRegistry) {
@@ -69,6 +69,6 @@ public class VirtualHostsConfigurationEventListener extends GenericEventListener
     
     private void doInvalidation(String path) {
         this.componentRegistry.unregisterAllComponents();
-        this.virtualHostsManager.invalidate(path);
+        this.hstManager.invalidate(path);
     }
 }

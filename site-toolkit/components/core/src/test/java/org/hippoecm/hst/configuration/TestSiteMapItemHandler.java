@@ -28,7 +28,7 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsManager;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -49,7 +49,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 public class TestSiteMapItemHandler extends AbstractSpringTestCase {
 
-        private VirtualHostsManager virtualHostsManager;
+        private HstManager hstSitesManager;
         private HstURLFactory hstURLFactory;
         protected ServletConfig servletConfig;
         protected HstContainerConfig requestContainerConfig;
@@ -57,7 +57,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
         @Override
         public void setUp() throws Exception {
             super.setUp();
-            this.virtualHostsManager = getComponent(VirtualHostsManager.class.getName());
+            this.hstSitesManager = getComponent(HstManager.class.getName());
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
             this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
             this.requestContainerConfig = new HstContainerConfigImpl(this.servletConfig.getServletContext(), getClass().getClassLoader());
@@ -76,7 +76,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setContextPath("");
             
             try {
-                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -89,7 +89,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 assertNotNull("There must be a handler on the resolvedSiteMapItem for '/handler_nooptest'",handlerConfigrations.size() > 0);
                 assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlerConfigrations.size() == 1 && handlerConfigrations.get(0).getName().equals("noophandler"));
                 
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
                 
                 assertNotNull(siteMapItemHandlerFactory);
                
@@ -168,14 +168,14 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setRequestURI("/handler_nooptest/foo");
             request.setContextPath("");
             try {
-                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                  
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                                                                      
                 try {
@@ -208,7 +208,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setRequestURI("/multiplehandler_example/foo/bar");
             request.setContextPath("");
             try {
-                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -221,7 +221,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 assertTrue("for '/multiplehandler_wildcardexample/foo/bar' we expect two handlers but we found '"+handlerConfigrations.size()+"'",handlerConfigrations.size() == 2);
                 
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
                 
                 ResolvedSiteMapItem processedSiteMapItem = resolvedSiteMapItem;
                 for( HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigrations){
@@ -278,7 +278,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setContextPath("");
             
             try {
-                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -289,7 +289,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 assertTrue("There must be exactly one handler and it should be browser_redirecthandler",handlerConfigrations.size() == 1 && handlerConfigrations.get(0).getName().equals("browser_redirecthandler"));
                 
-                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
+                HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
                 
                 assertNotNull(siteMapItemHandlerFactory);
                 
@@ -332,7 +332,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setRequestURI("/handler_sitemapitem_redirecttest"); 
             request.setContextPath("");
             try {
-                VirtualHosts vhosts = virtualHostsManager.getVirtualHosts();
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -340,7 +340,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                 
                 try {
-                    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = virtualHostsManager.getSiteMapItemHandlerFactory();
+                    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
                     
                     assertNotNull(siteMapItemHandlerFactory);
                     
