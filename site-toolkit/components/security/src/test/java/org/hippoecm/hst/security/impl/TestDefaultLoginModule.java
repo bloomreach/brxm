@@ -26,10 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
@@ -74,7 +71,7 @@ public class TestDefaultLoginModule {
         boolean committed = false;
         
         Subject subject = new Subject();
-        CallbackHandler callbackHandler = new PredeterminedCallbackHandler("nobody", "nobody".toCharArray());
+        CallbackHandler callbackHandler = new PassiveCallbackHandler("nobody", "nobody".toCharArray());
         loginModule.initialize(subject, callbackHandler, sharedState, options);
         
         try {
@@ -87,7 +84,7 @@ public class TestDefaultLoginModule {
         committed = false;
         
         subject = new Subject();
-        callbackHandler = new PredeterminedCallbackHandler("charley", "brown".toCharArray());
+        callbackHandler = new PassiveCallbackHandler("charley", "brown".toCharArray());
         loginModule.initialize(subject, callbackHandler, sharedState, options);
         
         try {
@@ -144,30 +141,6 @@ public class TestDefaultLoginModule {
             }
             
             return roleSet;
-        }
-    }
-    
-    @Ignore
-    private static class PredeterminedCallbackHandler implements CallbackHandler {
-        
-        private String name;
-        private char [] password;
-        
-        public PredeterminedCallbackHandler(String name, char [] password) {
-            this.name = name;
-            this.password = password;
-        }
-        
-        public void handle(Callback[] callbacks) {
-            for (int i = 0; i < callbacks.length; i++) {
-                if (callbacks[i] instanceof NameCallback) {
-                    NameCallback nc = (NameCallback) callbacks[i];
-                    nc.setName(name);
-                } else if (callbacks[i] instanceof PasswordCallback) {
-                    PasswordCallback pc = (PasswordCallback) callbacks[i];
-                    pc.setPassword(password);
-                }
-            }
         }
     }
 }

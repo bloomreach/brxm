@@ -28,9 +28,9 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.hippoecm.hst.security.AuthenticationProvider;
-import org.hippoecm.hst.security.LoginModuleServices;
 import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.User;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,16 +75,7 @@ public class DefaultLoginModule implements LoginModule {
      * <p>The default login module constructor.</p>
      */
     public DefaultLoginModule() {
-        LoginModuleServices loginModuleProxy = DefaultLoginModuleServices.getLoginModuleServices();
-
-        if (loginModuleProxy != null) {
-            this.authProvider = loginModuleProxy.getAuthenticationProvider();
-        }
-
-        debug = false;
-        success = false;
-        commitSuccess = false;
-        username = null;
+        this(null);
     }
 
     /**
@@ -92,16 +83,8 @@ public class DefaultLoginModule implements LoginModule {
      * @param authProvider the authentication provider to use
      */
     protected DefaultLoginModule(AuthenticationProvider authProvider) {
-        if (authProvider != null) {
-            this.authProvider = authProvider;
-        } else {
-            LoginModuleServices loginModuleProxy = DefaultLoginModuleServices.getLoginModuleServices();
-
-            if (loginModuleProxy != null) {
-                this.authProvider = loginModuleProxy.getAuthenticationProvider();
-            }
-        }
-
+        this.authProvider = authProvider;
+        
         debug = false;
         success = false;
         commitSuccess = false;
@@ -126,18 +109,6 @@ public class DefaultLoginModule implements LoginModule {
         return true;
     }
 
-    protected void refreshProxy() {
-        if (authProvider != null) {
-            return;
-        }
-
-        LoginModuleServices loginModuleProxy = DefaultLoginModuleServices.getLoginModuleServices();
-
-        if (loginModuleProxy != null) {
-            this.authProvider = loginModuleProxy.getAuthenticationProvider();
-        }
-    }
-
     /**
      * @see javax.security.auth.spi.LoginModule#commit()
      */
@@ -146,8 +117,6 @@ public class DefaultLoginModule implements LoginModule {
             if (subject.isReadOnly()) {
                 throw new LoginException("Subject is Readonly");
             }
-            
-            refreshProxy();
             
             try {
                 commitSubject(subject, user);
@@ -193,12 +162,10 @@ public class DefaultLoginModule implements LoginModule {
 
             ((PasswordCallback) callbacks[1]).clearPassword();
 
-            refreshProxy();
-
             success = false;
 
             try {
-                user = authProvider.authenticate(this.username, password.toCharArray());
+                user = getAuthenticationProvider().authenticate(this.username, password.toCharArray());
             } catch (SecurityException se) {
                 if (se.getCause() != null) {
                     if (log.isDebugEnabled()) {
@@ -271,5 +238,16 @@ public class DefaultLoginModule implements LoginModule {
             subject.getPrincipals().add(role);
         }
     }
-
+    
+    protected AuthenticationProvider getAuthenticationProvider() throws SecurityException {
+        if (authProvider == null) {
+            authProvider = HstServices.getComponentManager().getComponent(AuthenticationProvider.class.getName());
+            
+            if (authProvider == null) {
+                throw new SecurityException("AuthenticationProvider is not found in HST-2 service component assembly.");
+            }
+        }
+        
+        return authProvider;
+    }
 }

@@ -15,7 +15,13 @@
  */
 package org.hippoecm.hst.security.impl;
 
-import javax.security.auth.callback.*;
+import java.io.IOException;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 /**
  * PassiveCallbackHandler
@@ -32,7 +38,6 @@ import javax.security.auth.callback.*;
  * 
  * @version $Id$
  */
-
 public class PassiveCallbackHandler implements CallbackHandler
 {
 
@@ -45,10 +50,11 @@ public class PassiveCallbackHandler implements CallbackHandler
      * @param username The username.
      * @param password The password.
      */
-    public PassiveCallbackHandler(String username, String password)
+    public PassiveCallbackHandler(String username, char[] passwordArray)
     {
         this.username = username;
-        this.password = password.toCharArray();
+        this.password = new char[passwordArray.length];
+        System.arraycopy(passwordArray, 0, password, 0, passwordArray.length);
     }
 
     /**
