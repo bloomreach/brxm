@@ -34,27 +34,18 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
     
     protected Map<HstContainerConfig, Map<String, HstComponentHolder>> servletConfigComponentsMap = 
         Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponentHolder>>());
-
-    public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId) {
-        return getComponent(requestContainerConfig, componentId, 0L);
-    }
     
-    public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId, long creationTime) {
+    public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId) {
         HstComponentHolder holder = getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
         
         if (holder != null) {
-            if (holder.getTimestamp() < creationTime) {
-                unregisterComponent(requestContainerConfig, componentId);
-            } else {
-                return holder.getComponent();
-            }
+            return holder.getComponent();
         }
-        
         return null;
     }
 
     public void registerComponent(HstContainerConfig requestContainerConfig, String componentId, HstComponent component) {
-        getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, new HstComponentHolder(component, System.currentTimeMillis()));
+        getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, new HstComponentHolder(component));
     }
 
     public void unregisterComponent(HstContainerConfig requestContainerConfig, String componentId) {
@@ -125,20 +116,15 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
     private static class HstComponentHolder {
         
         private HstComponent component;
-        private long timestamp;
         
-        private HstComponentHolder(final HstComponent component, long timestamp) {
-            this.timestamp = timestamp;
+        private HstComponentHolder(final HstComponent component) {
             this.component = component;
         }
         
         public HstComponent getComponent() {
             return component;
         }
-        
-        public long getTimestamp() {
-            return timestamp;
-        }
+    
     }
     
 }
