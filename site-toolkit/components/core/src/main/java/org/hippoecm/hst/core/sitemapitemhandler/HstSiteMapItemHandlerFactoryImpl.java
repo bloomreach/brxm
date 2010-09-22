@@ -34,8 +34,8 @@ public class HstSiteMapItemHandlerFactoryImpl implements HstSiteMapItemHandlerFa
     
     public HstSiteMapItemHandler getSiteMapItemHandlerInstance(HstContainerConfig requestContainerConfig, HstSiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException {
         
-        String handlerId = handlerConfig.getId();
-        HstSiteMapItemHandler handler = this.siteMapItemHandlerRegistry.getSiteMapItemHandler(requestContainerConfig, handlerId, handlerConfig.getCreatedTime());
+        String handlerId = handlerConfig.getId() + handlerConfig.hashCode();
+        HstSiteMapItemHandler handler = this.siteMapItemHandlerRegistry.getSiteMapItemHandler(requestContainerConfig, handlerId);
         
         if (handler == null) {
             boolean initialized = false;

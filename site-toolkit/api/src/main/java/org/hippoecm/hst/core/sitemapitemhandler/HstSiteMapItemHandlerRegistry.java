@@ -45,10 +45,9 @@ public interface HstSiteMapItemHandlerRegistry {
      * 
      * @param requestContainerConfig the container configuration
      * @param siteMapItemHandlerId the siteMapItemHandler ID
-     * @param creationTime the creation time milliseconds of the configuration of the sitemap item handler
      * @return the SiteMapItemHandler registered with the key pair.
      */
-    HstSiteMapItemHandler getSiteMapItemHandler(HstContainerConfig requestContainerConfig, String siteMapItemHandlerId , long creationTime);
+    HstSiteMapItemHandler getSiteMapItemHandler(HstContainerConfig requestContainerConfig, String siteMapItemHandlerId);
     
     /**
      * Unregisters all the SiteMapItemHandlers.

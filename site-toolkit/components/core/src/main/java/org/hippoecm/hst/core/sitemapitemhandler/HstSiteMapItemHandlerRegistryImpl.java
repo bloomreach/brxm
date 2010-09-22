@@ -35,25 +35,17 @@ public class HstSiteMapItemHandlerRegistryImpl implements HstSiteMapItemHandlerR
         Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstSiteMapItemHandlerHolder>>());
 
     public HstSiteMapItemHandler getSiteMapItemHandler(HstContainerConfig requestContainerConfig, String handlerId) {
-        return getSiteMapItemHandler(requestContainerConfig, handlerId, 0L);
-    }
-    
-    public HstSiteMapItemHandler getSiteMapItemHandler(HstContainerConfig requestContainerConfig, String handlerId, long creationTime) {
         HstSiteMapItemHandlerHolder holder = getServletConfigSiteMapItemHandlersMap(requestContainerConfig, true).get(handlerId);
         
         if (holder != null) {
-            if (holder.getTimestamp() < creationTime) {
-                unregisterSiteMapItemHandler(requestContainerConfig, handlerId);
-            } else {
-                return holder.getHstSiteMapItemHandler();
-            }
+            return holder.getHstSiteMapItemHandler();
         }
         
         return null;
     }
 
     public void registerSiteMapItemHandler(HstContainerConfig requestContainerConfig, String handlerId, HstSiteMapItemHandler hstSiteMapItemHandler) {
-        getServletConfigSiteMapItemHandlersMap(requestContainerConfig, true).put(handlerId, new HstSiteMapItemHandlerHolder(hstSiteMapItemHandler, System.currentTimeMillis()));
+        getServletConfigSiteMapItemHandlersMap(requestContainerConfig, true).put(handlerId, new HstSiteMapItemHandlerHolder(hstSiteMapItemHandler));
     }
                 
     public void unregisterSiteMapItemHandler(HstContainerConfig requestContainerConfig, String handlerId) {
@@ -124,10 +116,8 @@ public class HstSiteMapItemHandlerRegistryImpl implements HstSiteMapItemHandlerR
     private static class HstSiteMapItemHandlerHolder {
         
         private HstSiteMapItemHandler hstSiteMapItemHandler;
-        private long timestamp;
         
-        private HstSiteMapItemHandlerHolder(final HstSiteMapItemHandler hstSiteMapItemHandler, long timestamp) {
-            this.timestamp = timestamp;
+        private HstSiteMapItemHandlerHolder(final HstSiteMapItemHandler hstSiteMapItemHandler) {
             this.hstSiteMapItemHandler = hstSiteMapItemHandler;
         }
         
@@ -135,9 +125,6 @@ public class HstSiteMapItemHandlerRegistryImpl implements HstSiteMapItemHandlerR
             return hstSiteMapItemHandler;
         }
         
-        public long getTimestamp() {
-            return timestamp;
-        }
     }
     
 }
