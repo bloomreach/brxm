@@ -29,6 +29,7 @@
     <packaging>pom</packaging>
 
     <modules>
+      <module>security</module>
       <module>session-pool</module>
       <module>core</module>
       <module>caching</module>
