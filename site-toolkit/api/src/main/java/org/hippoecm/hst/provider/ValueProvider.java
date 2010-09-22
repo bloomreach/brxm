@@ -19,12 +19,20 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Map;
 
-public interface ValueProvider extends Serializable{
+public interface ValueProvider extends Serializable {
   
     /**
      * @return the path of the object used to create this valueprovider with
      */
     String getPath();
+    
+    /**
+     * The canonical path can be a different location then {@link #getPath()} because the latter might give some virtual / mirrored
+     * path of the value provider
+     * 
+     * @return the  canonical path of the object used to create this valueprovider with
+     */
+    String getCanonicalPath();
     
     /**
      * @return the name of the object used to create this valueprovider with

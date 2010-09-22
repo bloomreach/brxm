@@ -42,8 +42,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     // transient node because ValueProvider implements Serializable
     private transient Node jcrNode;
-    
+
     private String nodePath;
+    private String canonicalPath;
     private String nodeName;
     private String localizedName;
     
@@ -63,7 +64,19 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         supportedPropertyTypes.add(PropertyType.LONG);
     }
     
+    
+    
     public JCRValueProviderImpl(Node jcrNode) {
+        this(jcrNode, true);
+    }
+    
+    /**
+     * if <code>lazyLoading</code> is false, we'll actively fill all the properties of the jcr node in the properties map
+     * and fetch the canonical path
+     * @param jcrNode
+     * @param lazyLoading
+     */
+    public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading) {
         this.jcrNode = jcrNode;
         if(jcrNode == null) {
             return;
@@ -71,10 +84,13 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         try {
             this.nodeName = jcrNode.getName();
             this.nodePath = jcrNode.getPath();
+            if(!lazyLoading) {
+                populate();
+                populateCanonicalPath();
+            }
         } catch (RepositoryException e) {
             log.error("RepositoryException ", e);
         }
-        
     }
 
     public Node getJcrNode(){
@@ -140,6 +156,17 @@ public class JCRValueProviderImpl implements JCRValueProvider{
       return this.nodePath;
     }
     
+    public String getCanonicalPath() {
+        if(canonicalPath != null) {
+            return canonicalPath;
+        }
+        
+        populateCanonicalPath();
+        
+        return canonicalPath;
+    }
+    
+    
     public boolean isNodeType(String nodeType) {
         if(isDetached()){
             log.warn("Jcr Node is detatched. Cannot execute method");
@@ -157,11 +184,16 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         boolean b = this.propertyMap.hasProperty(propertyName);
         if(b) {
             return true;
+        } 
+        if(isLoaded) {
+            // all properties are already loaded, but propertyName was not one of them.
+            return false;
         }
         b = this.propertyMap.isUnAvailableProperty(propertyName);
         if(b) {
             return false;
         }
+        
         if(isDetached()){
             log.warn("Jcr Node is detatched. Cannot execute method");
             return false;
@@ -357,39 +389,20 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         if(this.isLoaded) {
            return propertyMap;
         }
+        populate();
         
-        
-        
-        if(isDetached()){
-            log.warn("Jcr Node is detatched. Return already loaded properties ");
-            return propertyMap;
-        }
-        try {
-            for(PropertyIterator allProps = jcrNode.getProperties(); allProps.hasNext();) {
-                Property p = allProps.nextProperty();
-                if(this.propertyMap.hasProperty(p.getName())) {
-                    // already loaded
-                    continue;
-                }
-                if(supportedPropertyTypes.contains(p.getType())) {
-                   loadProperty(p, p.getDefinition(), p.getName());
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Repository Exception: {}", e.getMessage());
-        }
-        this.isLoaded = true;
         return propertyMap;
     }
     
-    
-
-
     private void loadProperty(String propertyName, int propertyType, boolean isMultiple){
+        if(isLoaded) {
+          return; 
+        }
         if(isDetached()){
             log.warn("Jcr Node is detatched. Cannot execute method");
+            return;
         }
-        try {
+        try { 
             if(jcrNode.hasProperty(propertyName)) {
                 
                 Property prop = jcrNode.getProperty(propertyName);
@@ -531,4 +544,45 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
 
 
+    private void populate() {
+        if(isDetached()){
+            log.warn("Jcr Node is detatched. Return already loaded properties ");
+            return;
+        }
+        try {
+            for(PropertyIterator allProps = jcrNode.getProperties(); allProps.hasNext();) {
+                Property p = allProps.nextProperty();
+                if(this.propertyMap.hasProperty(p.getName())) {
+                    // already loaded
+                    continue;
+                }
+                if(supportedPropertyTypes.contains(p.getType())) {
+                   loadProperty(p, p.getDefinition(), p.getName());
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Repository Exception: {}", e.getMessage());
+        }
+        this.isLoaded = true;
+    }
+    
+    private void populateCanonicalPath(){
+        if(isDetached()){
+            log.warn("Jcr Node is detatched. Cannot get canonical path");
+            return;
+        } 
+        this.canonicalPath = this.nodePath;
+        
+        if(jcrNode instanceof HippoNode) {
+            try {
+                Node canonical = ((HippoNode)jcrNode).getCanonicalNode();
+                if(canonical != null) {
+                    this.canonicalPath = canonical.getPath();
+                }
+            } catch (RepositoryException e) {
+                log.warn("Repository Exception during fetching canonical path: ", e);
+            }
+            
+        }
+    }
 }

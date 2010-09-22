@@ -22,14 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.provider.ValueProvider;
-import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,89 +46,67 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
     
-    public HstSiteMenuItemConfigurationService(Node siteMenuItem, HstSiteMenuItemConfiguration parent, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws ServiceException {
+    public HstSiteMenuItemConfigurationService(HstNode siteMenuItem, HstSiteMenuItemConfiguration parent, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws ServiceException {
         this.parent = parent;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
-        HstSiteMap hstSiteMap = hstSiteMenuConfiguration.getSiteMenusConfiguration().getSite().getSiteMap();
-        try {
-            this.name = siteMenuItem.getName();
-            init(siteMenuItem, hstSiteMap);
-        } catch (RepositoryException e) {
-            throw new ServiceException("Repository Exception occured '" + e.getMessage() + "'");
+        
+        this.name = siteMenuItem.getValueProvider().getName();
+        if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
+            this.externalLink = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK);
+        }else if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
+           // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
+           this.siteMapItemPath = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
+           
+        } else {
+           log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
         }
-    }
+        
+        if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED)) {
+            this.repositoryBased = siteMenuItem.getValueProvider().getBoolean(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED);
+        }
+        
+        if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_DEPTH)) {
+           this.depth = siteMenuItem.getValueProvider().getLong(HstNodeTypes.SITEMENUITEM_PROPERTY_DEPTH).intValue();
+        }
+        
+        if( (this.repositoryBased && this.depth <= 0) || (!this.repositoryBased && this.depth > 0) ) {
+            this.repositoryBased =false;
+            this.depth = 0;
+            log.warn("Ambiguous configuration for repository based sitemenu: only when both repository based is true AND " +
+                    "depth > 0 the configuration is correct for repository based navigation. Skipping repobased and depth setting for this item.");
+        }
+        
+        this.properties = siteMenuItem.getValueProvider().getProperties();
+        
 
-    private void init(Node siteMenuItem, HstSiteMap hstSiteMap) throws ServiceException{
-        try {
-            if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
-                this.externalLink = siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK).getString();
-            }else if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
-               // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
-               this.siteMapItemPath = siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString();
-               
-            } else {
-               log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
-            }
-            
-            if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED)) {
-                this.repositoryBased = siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED).getBoolean();
-            }
-            
-            if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_DEPTH)) {
-               this.depth = (int)siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_DEPTH).getLong();
-            }
-            
-            if( (this.repositoryBased && this.depth <= 0) || (!this.repositoryBased && this.depth > 0) ) {
-                this.repositoryBased =false;
-                this.depth = 0;
-                log.warn("Ambiguous configuration for repository based sitemenu: only when both repository based is true AND " +
-                		"depth > 0 the configuration is correct for repository based navigation. Skipping repobased and depth setting for this item.");
-            }
-            
-            
-            
-            // fetch all properties from the sitemenu item node and put this in the propertyMap
-            ValueProvider provider = new JCRValueProviderImpl(siteMenuItem);
-            this.properties = provider.getProperties();
-            
-
-            String[] parameterNames = provider.getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
-            String[] parameterValues = provider.getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
-            
-            if(parameterNames != null && parameterValues != null){
-               if(parameterNames.length != parameterValues.length) {
-                   log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
-               }  else {
-                   for(int i = 0; i < parameterNames.length ; i++) {
-                       this.parameters.put(parameterNames[i], parameterValues[i]);
-                       this.localParameters.put(parameterNames[i], parameterValues[i]);
-                   }
+        String[] parameterNames = siteMenuItem.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = siteMenuItem.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+        
+        if(parameterNames != null && parameterValues != null){
+           if(parameterNames.length != parameterValues.length) {
+               log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+           }  else {
+               for(int i = 0; i < parameterNames.length ; i++) {
+                   this.parameters.put(parameterNames[i], parameterValues[i]);
+                   this.localParameters.put(parameterNames[i], parameterValues[i]);
                }
-            }
-            
-            if(this.parent != null){
-                // add the parent parameters that are not already present
-                for(Entry<String, String> parentParam : this.parent.getParameters().entrySet()) {
-                    if(!this.parameters.containsKey(parentParam.getKey())) {
-                        this.parameters.put(parentParam.getKey(), parentParam.getValue());
-                    }
-                }
-            }
-            
-            NodeIterator siteMenuIt = siteMenuItem.getNodes();
-            while(siteMenuIt.hasNext()){
-                Node childSiteMenuItem = siteMenuIt.nextNode();
-                if(childSiteMenuItem == null) {
-                    continue;
-                }
-                
-                HstSiteMenuItemConfiguration child = new HstSiteMenuItemConfigurationService(childSiteMenuItem, this, this.hstSiteMenuConfiguration);
-                childItems.add(child);
-            }
-            
-        } catch (RepositoryException e) {
-            throw new ServiceException("ServiceException while initializing HstSiteMenuItemConfiguration.", e);
+           }
         }
+        
+        if(this.parent != null){
+            // add the parent parameters that are not already present
+            for(Entry<String, String> parentParam : this.parent.getParameters().entrySet()) {
+                if(!this.parameters.containsKey(parentParam.getKey())) {
+                    this.parameters.put(parentParam.getKey(), parentParam.getValue());
+                }
+            }
+        }
+        
+        for(HstNode childItem : siteMenuItem.getNodes()) {
+            HstSiteMenuItemConfiguration child = new HstSiteMenuItemConfigurationService(childItem, this, this.hstSiteMenuConfiguration);
+            childItems.add(child);
+        }
+        
     }
 
     public List<HstSiteMenuItemConfiguration> getChildItemConfigurations() {

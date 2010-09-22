@@ -36,7 +36,6 @@ public class BasicHstTestCase extends AbstractHstTestCase{
        assertTrue("Node /unittestpreview must exist",session.itemExists("/unittestpreview"));
        assertTrue("Node /unittestlive must exist",session.itemExists("/unittestlive"));
        assertTrue("Node /hst:unittestvirtualhosts must exist", session.itemExists("/hst:unittestvirtualhosts"));
-       assertTrue("Node /hst:unittestconfiguration must exist", session.itemExists("/hst:unittestconfiguration"));
        assertTrue("Node /unittestpreview/unittestproject/hst:content/common/homepage must exist", session.itemExists("/unittestpreview/unittestproject/hst:content/common/homepage"));
 
     }

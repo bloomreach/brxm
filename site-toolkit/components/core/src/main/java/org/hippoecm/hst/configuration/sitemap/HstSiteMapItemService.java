@@ -25,21 +25,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
-import org.hippoecm.hst.service.AbstractJCRService;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapItemService extends AbstractJCRService implements HstSiteMapItem, Service{
+public class HstSiteMapItemService implements HstSiteMapItem {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,8 +44,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new HashMap<String, HstSiteMapItemHandlerConfiguration>();
 
-    private String siteMapRootNodePath;
-    
     private String id;
     
     private String qualifiedId;
@@ -101,8 +94,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private HstSiteMapItemService parentItem;
     
-    private HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration;
-
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
     
@@ -114,33 +105,27 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private String extension;
     private String prefix; 
     
-    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
-        super(jcrNode);
+    public HstSiteMapItemService(HstNode node, String siteMapRootNodePath, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
-        this.siteMapItemHandlersConfiguration = siteMapItemHandlersConfiguration;
         this.depth = depth;
-        String nodePath = getValueProvider().getPath();
-        if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
-            this.closeValueProvider(false);
-            throw new ServiceException("Node path of the sitemap cannot start without the global sitemap root path. Skip SiteMapItem");
+        String nodePath = node.getValueProvider().getPath();
+        if(!node.getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
+            throw new ServiceException("Node path of the sitemap item '"+nodePath+"' cannot start without the global sitemap root path. Skip SiteMapItem");
         }
-
-        this.siteMapRootNodePath = siteMapRootNodePath;
         
         this.qualifiedId = nodePath;
         
         // path & id are the same
         this.id = nodePath.substring(siteMapRootNodePath.length()+1);
         // currently, the value is always the nodename
-        this.value = getValueProvider().getName();
+        this.value = node.getValueProvider().getName();
 
-        this.statusCode = getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
-        this.errorCode = getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
+        this.statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
+        this.errorCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
        
         if(this.value == null){
             log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
-            this.closeValueProvider(false);
             throw new ServiceException("The 'value' of a SiteMapItem is not allowed to be null. It is so for '"+nodePath+"'");
         }
         if(parentItem != null) {
@@ -186,8 +171,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             parameterizedPath = parameterizedPath + value;
         }
         
-        String[] parameterNames = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
-        String[] parameterValues = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+        String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
         
         if(parameterNames != null && parameterValues != null){
            if(parameterNames.length != parameterValues.length) {
@@ -209,10 +194,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             }
         }
         
-        this.relativeContentPath = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
-        this.componentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
+        this.relativeContentPath = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
+        this.componentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         
-        String[] siteMapItemHandlerIds = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
+        String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
             for(String handlerId : siteMapItemHandlerIds) {
                 HstSiteMapItemHandlerConfiguration handlerConfiguration = siteMapItemHandlersConfiguration.getSiteMapItemHandlerConfiguration(handlerId);
@@ -224,16 +209,16 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             }
         }
         
-        this.portletComponentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
+        this.portletComponentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         
-        if (getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
-            this.secured = getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED);
+        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
+            this.secured = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED);
         } else if(this.parentItem != null){
             this.secured = parentItem.isSecured();
         } 
         
-        if (getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
-            String [] rolesProp = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
+        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
+            String [] rolesProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
             this.roles = new HashSet<String>();
             CollectionUtils.addAll(this.roles, rolesProp);
         } else if (this.parentItem != null){
@@ -242,8 +227,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             this.roles = new HashSet<String>();
         }
         
-        if (getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS)) {
-            String [] usersProp = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS);
+        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS)) {
+            String [] usersProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS);
             this.users = new HashSet<String>();
             CollectionUtils.addAll(this.users, usersProp);
         } else if (this.parentItem != null){
@@ -252,12 +237,12 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             this.users = new HashSet<String>();
         }
         
-        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
-            this.isExcludedForLinkRewriting = getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
+        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
+            this.isExcludedForLinkRewriting = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
         }
         
-        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
-            this.namedPipeline = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
+        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
+            this.namedPipeline = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
         } else if(this.parentItem != null) {
             this.namedPipeline = parentItem.getNamedPipeline();
         } else {
@@ -265,43 +250,22 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             this.namedPipeline = this.getHstSiteMap().getSite().getSiteMount().getNamedPipeline();
         }
         
-        init(jcrNode);
-    }
-
-    private void init(Node node) {
-        try{
-            for(NodeIterator nodeIt = node.getNodes(); nodeIt.hasNext();) {
-                Node child = nodeIt.nextNode();
-                if(child == null) {
-                    log.warn("skipping null node");
-                    continue;
-                }
-                if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
-                    try {
-                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
-                        childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
-                    } catch (ServiceException e) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Skipping root sitemap '{}'", child.getPath(), e);
-                        } else if (log.isWarnEnabled()) {
-                            log.warn("Skipping root sitemap '{}'", child.getPath());
-                        }
-                    }
-                } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        for(HstNode child : node.getNodes()) {
+            if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
+                try {
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
+                    childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
+                } catch (ServiceException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath());
                     }
                 }
-            } 
-        } catch (RepositoryException e) {
-            log.warn("Skipping SiteMap structure due to Repository Exception ", e);
+            }
         }
     }
     
-    public Service[] getChildServices() {
-        return childSiteMapItems.values().toArray(new Service[childSiteMapItems.size()]);
-    }
-
     public HstSiteMapItem getChild(String value) {
         return this.childSiteMapItems.get(value);
     }

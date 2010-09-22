@@ -17,19 +17,15 @@ package org.hippoecm.hst.configuration.site;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.HstWebSitesManager;
+import org.hippoecm.hst.configuration.model.HstSiteRootNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
@@ -39,14 +35,11 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
-import org.hippoecm.hst.service.AbstractJCRService;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteService extends AbstractJCRService implements HstSite, Service{
+public class HstSiteService implements HstSite {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,128 +58,88 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     
     
-    public HstSiteService(Node site, SiteMount siteMount) throws ServiceException{
-        super(site);
-        try {
-            this.name = site.getName();
-            this.siteMount = siteMount;
-            if(site.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && site.hasNode(HstNodeTypes.NODEPATH_HST_CONFIGURATION) ) {
-                Node contentNode = site.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                contentPath = contentNode.getPath();
-                
-                // fetch the mandatory hippo:docbase property to retrieve the canonical node
-                if(contentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    String docbaseUuid = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    
-                    try {
-                            // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
-                            
-                            UUID.fromString(docbaseUuid);
-                            Item item =  contentNode.getSession().getNodeByUUID(docbaseUuid); 
-                            if(item instanceof Node) {
-                                // set the canonical content path
-                                this.canonicalcontentPath = ((Node)item).getPath();
-                            } else {
-                                log.warn("Docbase from '{}' does contain a uuid that points to a property instead of a 'root content node'. Content mirror is broken", contentNode.getPath());
-                            }
-                    } catch (IllegalArgumentException e) {
-                        log.warn("Docbase from '{}' does not contain a valid uuid. Content mirror is broken", contentNode.getPath());
-                    } catch (ItemNotFoundException e) {
-                        log.warn("ItemNotFoundException: Content mirror is broken. ", e.getMessage());
-                    } catch (RepositoryException e) {
-                        log.error("RepositoryException: Content mirror is broken. ", e);
-                    }
-                } else {
-                    // contentNode is not a mirror. Take the canonical path to be the same
-                    this.canonicalcontentPath = this.contentPath;
-                }
-                
-                Node configurationNode = site.getNode(HstNodeTypes.NODEPATH_HST_CONFIGURATION);
-                configurationPath = configurationNode.getPath();
-                
-                init(configurationNode);
-              
-            } else {
-                throw new ServiceException("Subsite '"+name+"' cannot be instantiated because it does not contain the mandatory nodes. Skipping this one");
-            } 
-        } catch (RepositoryException e) {
-            throw new ServiceException("Repository Exception during instantiating '"+name+"'. Skipping subsite.");
+    public HstSiteService(HstSiteRootNode site, SiteMount siteMount, HstWebSitesManager hstWebSitesManager) throws ServiceException{
+        this.name = site.getValueProvider().getName();
+        this.siteMount = siteMount;
+        contentPath = site.getContentPath();
+        canonicalcontentPath = site.getCanonicalcontentPath();
+        configurationPath = site.getConfigurationPath();
+        
+        HstNode configurationNode = hstWebSitesManager.getConfigurationRootNodes().get(configurationPath);
+        
+        if(configurationNode == null) {
+            throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );
         }
         
+        init(configurationNode);
     }
 
     
-    private void init(Node configurationNode) throws  RepositoryException, ServiceException {
+    private void init(HstNode configurationNode) throws ServiceException {
        Map<String, String> templateRenderMap = new HashMap<String,String>();
        
        // templates
-       Node hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
-       NodeIterator nodeIt = hstTemplates.getNodes();
-       while(nodeIt.hasNext()){
-           Node template = nodeIt.nextNode();
-           if(template == null) {
+       HstNode hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
+       if(hstTemplates == null) {
+           throw new ServiceException("There are no '"+HstNodeTypes.NODENAME_HST_TEMPLATES+"' present for the configuration at '"+configurationNode.getValueProvider().getPath()+"'");
+       }
+       for(HstNode template : hstTemplates.getNodes()) {
+           if(!template.getValueProvider().hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH) ) {
+               log.warn("Skipping template '{}' because missing '{}' property", template.getValueProvider().getPath(), HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
                continue;
            }
-           if(!template.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH) ) {
-               log.warn("Skipping template '{}' because missing '{}' property", template.getPath(), HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-               continue;
-           }
-           String renderpath = template.getProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH).getString();
+           String renderpath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
            if(renderpath != null && ! "".equals(renderpath)) {
-               templateRenderMap.put(template.getName(), renderpath.trim());
+               templateRenderMap.put(template.getValueProvider().getName(), renderpath.trim());
            }
        }
        
        // component configuration
        this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateRenderMap); 
-      
+       
        // sitemapitem handlers
-       if(configurationNode.hasNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS)) {
-           log.info("Found a '{}' configuration. Initialize handles service now", HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
-           Node sitemapItemHandlersNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
+       
+       HstNode sitemapItemHandlersNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
+       
+       if(sitemapItemHandlersNode != null) {
+           log.info("Found a '{}' configuration. Initialize sitemap item handlers service now", HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
            try {
                this.siteMapItemHandlersConfigurationService = new HstSiteMapItemHandlersConfigurationService(sitemapItemHandlersNode);
            } catch (ServiceException e) {
                log.error("ServiceException: Skipping handlesConfigurationService", e);
            }
        } else {
-           log.debug("No handles configuration present.");
+           log.debug("No sitemap item handlers configuration present.");
        }
        
        // sitemap
-       Node siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
+       HstNode siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
+       if(siteMapNode == null) {
+           throw new ServiceException("There is no sitemap configured");
+       }
        this.siteMapService = new HstSiteMapService(this, siteMapNode, siteMapItemHandlersConfigurationService); 
        
        checkAndLogAccessibleRootComponents();
        
        this.locationMapTree = new LocationMapTreeImpl(this.getSiteMap().getSiteMapItems());
        
-       if(configurationNode.hasNode(HstNodeTypes.NODENAME_HST_SITEMENUS)) {
-           Node siteMenusNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
+       HstNode siteMenusNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
+       if(siteMenusNode != null) {
            try {
-           this.siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
+               this.siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
            } catch (ServiceException e) {
                log.error("ServiceException: Skipping SiteMenusConfiguration", e);
            }
        } else {
            log.info("There is no configuration for 'hst:sitemenus' for this HstSite. The clien cannot use the HstSiteMenusConfiguration");
        }
+       
     }
    
     public SiteMount getSiteMount(){
         return this.siteMount;
     }
 
-    public Service[] getChildServices() {
-        if(siteMapItemHandlersConfigurationService == null) {
-            Service[] services = {siteMapService,componentsConfigurationService};
-            return services;
-        } else {
-            Service[] services = {siteMapService,componentsConfigurationService, siteMapItemHandlersConfigurationService};
-            return services;
-        }
-    }
-    
     /*
      * meant to check all accessible root components from the sitemap space, and check whether every component has at least a template 
      * (jsp/freemarker/etc) configured. If not, we log a warning about this

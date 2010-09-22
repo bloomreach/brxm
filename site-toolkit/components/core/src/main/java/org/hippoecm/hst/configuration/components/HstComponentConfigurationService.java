@@ -24,20 +24,14 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.provider.PropertyMap;
-import org.hippoecm.hst.service.AbstractJCRService;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.LoggerFactory;
 
-public class HstComponentConfigurationService extends AbstractJCRService implements HstComponentConfiguration, Service {
+public class HstComponentConfigurationService implements HstComponentConfiguration {
 
     private static final long serialVersionUID = 1L;
 
@@ -77,8 +71,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private String configurationRootNodePath;
     
-    private long createdTime;
-
     private ArrayList<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
 
@@ -89,50 +81,41 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
-        super(null);
         this.id = id;
     }
 
-    public HstComponentConfigurationService(Node jcrNode, HstComponentConfiguration parent,
+    public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
             String configurationRootNodePath) throws ServiceException {
-        super(jcrNode);
-        if (!getValueProvider().getPath().startsWith(configurationRootNodePath)) {
-            this.closeValueProvider(false);
+        if (!node.getValueProvider().getPath().startsWith(configurationRootNodePath)) {
             throw new ServiceException(
                     "Node path of the component cannot start without the global components path. Skip Component");
         }
 
-        this.createdTime = System.currentTimeMillis();
-        
-        try {
-            this.canonicalStoredLocation = ((HippoNode) jcrNode).getCanonicalNode().getPath();
-        } catch (RepositoryException e) {
-            throw new ServiceException("Exception during initialization", e);
-        }
+        this.canonicalStoredLocation = node.getValueProvider().getCanonicalPath();
         
         this.parent = parent;
 
         this.configurationRootNodePath = configurationRootNodePath;
         // id is the relative path wrt configuration components path
-        this.id = getValueProvider().getPath().substring(configurationRootNodePath.length() + 1);
+        this.id = node.getValueProvider().getPath().substring(configurationRootNodePath.length() + 1);
 
-        if (getValueProvider().isNodeType(HstNodeTypes.NODETYPE_HST_COMPONENT)) {
-            this.name = getValueProvider().getName();
-            this.referenceName = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
-            this.componentClassName = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
+        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
+            this.name = node.getValueProvider().getName();
+            this.referenceName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
+            this.componentClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
             if (componentClassName == null) {
                 this.componentClassName = GenericHstComponent.class.getName();
             } else {
                 this.hasClassNameConfigured = true;
             }
 
-            this.referenceComponent = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
-            this.hstTemplate = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
-            this.serveResourcePath = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
-            this.pageErrorHandlerClassName = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
-            this.propertyMap = getValueProvider().getPropertyMap();
-            String[] parameterNames = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
-            String[] parameterValues = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+            this.referenceComponent = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
+            this.hstTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
+            this.serveResourcePath = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
+            this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
+            this.propertyMap = node.getValueProvider().getPropertyMap();
+            String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
+            String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
 
             if (parameterNames != null && parameterValues != null) {
                 if (parameterNames.length != parameterValues.length) {
@@ -145,58 +128,38 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 }
             }
         }
-        init(jcrNode);
-    }
-
-    public void init(Node jcrNode) {
-        try {
-            for (NodeIterator nodeIt = jcrNode.getNodes(); nodeIt.hasNext();) {
-                Node child = nodeIt.nextNode();
-                if (child == null) {
-                    log.warn("skipping null node");
-                    continue;
+        
+        for(HstNode child : node.getNodes()) {
+            if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())) {
+                if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
+                    usedChildReferenceNames.add(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
                 }
-                if (child.isNodeType(HstNodeTypes.NODETYPE_HST_COMPONENT)) {
-                    if (child.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                        usedChildReferenceNames.add(child.getProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)
-                                .getString());
-                    }
-                    try {
-                        HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(
-                                child, this, configurationRootNodePath);
-                        componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
+                try {
+                    HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(
+                            child, this, configurationRootNodePath);
+                    componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
 
-                        // we also need an ordered list
-                        orderedListConfigs.add(componentConfiguration);
-                        childConfByName.put(child.getName(), componentConfiguration);
-                        log.debug("Added component service with key '{}'", componentConfiguration.getId());
-                    } catch (ServiceException e) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Skipping component '{}'", child.getPath(), e);
-                        } else if (log.isWarnEnabled()) {
-                            log.warn("Skipping component '{}'", child.getPath());
-                        }
-                    }
-
-                } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(),
-                                (HstNodeTypes.NODETYPE_HST_COMPONENT));
+                    // we also need an ordered list
+                    orderedListConfigs.add(componentConfiguration);
+                    childConfByName.put(child.getValueProvider().getName(), componentConfiguration);
+                    log.debug("Added component service with key '{}'", componentConfiguration.getId());
+                } catch (ServiceException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Skipping component '{}'", child.getValueProvider().getPath(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Skipping component '{}'", child.getValueProvider().getPath());
                     }
                 }
+            } else {
+                log.warn("Skipping node '{}' because is not of type '{}'", child.getValueProvider().getPath(),
+                        (HstNodeTypes.NODETYPE_HST_COMPONENT));
             }
-        } catch (RepositoryException e) {
-            log.warn("Skipping Component due to Repository Exception ", e);
         }
-
+        
     }
-    
+
     public HstComponentConfiguration getParent() {
         return parent;
-    }
-
-    public Service[] getChildServices() {
-        return componentConfigurations.values().toArray(new Service[componentConfigurations.size()]);
     }
 
     public String getComponentClassName() {
@@ -519,10 +482,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 child.setReferenceName(autoRefName);
             }
         }
-    }
-
-    public long getCreatedTime() {
-        return createdTime;
     }
 
 }

@@ -19,53 +19,34 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
-import org.hippoecm.hst.service.AbstractJCRService;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapItemHandlersConfigurationService extends AbstractJCRService implements HstSiteMapItemHandlersConfiguration, Service {
+public class HstSiteMapItemHandlersConfigurationService implements HstSiteMapItemHandlersConfiguration {
 
     private static final long serialVersionUID = 1L;
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMapItemHandlersConfigurationService.class);
 
     private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHanderConfigurations = new HashMap<String, HstSiteMapItemHandlerConfiguration>();
     
-    public HstSiteMapItemHandlersConfigurationService(Node siteMapItemHandlersNode) throws ServiceException {
-        super(siteMapItemHandlersNode);
-        
-        try {
-            for(NodeIterator nodeIt = siteMapItemHandlersNode.getNodes(); nodeIt.hasNext();) {
-                Node child = nodeIt.nextNode();
-                if(child == null) {
-                    log.warn("skipping null node");
-                    continue;
+    public HstSiteMapItemHandlersConfigurationService(HstNode siteMapItemHandlersNode) throws ServiceException {
+        for(HstNode handlerNode : siteMapItemHandlersNode.getNodes()) {
+            if(HstNodeTypes.NODETYPE_HST_SITEMAPITEMHANDLER.equals(handlerNode.getNodeTypeName())) {
+                try {
+                    HstSiteMapItemHandlerConfiguration siteMapItemHandler = new HstSiteMapItemHandlerConfigurationService(handlerNode);
+                    siteMapItemHanderConfigurations.put(siteMapItemHandler.getId(), siteMapItemHandler);
+                } catch (ServiceException e) {
+                    log.warn("Skipping handle '{}' because '{}'", handlerNode.getValueProvider().getPath(), e.getMessage());
                 }
-                if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEMHANDLER)) {
-                    try {
-                        HstSiteMapItemHandlerConfiguration siteMapItemHandler = new HstSiteMapItemHandlerConfigurationService(child);
-                        siteMapItemHanderConfigurations.put(siteMapItemHandler.getId(), siteMapItemHandler);
-                    } catch (ServiceException e) {
-                        log.warn("Skipping handle '{}' because '{}'", child.getPath(), e.getMessage());
-                    }
-                    
-                } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipping node '{}' because is not of type {}", child.getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEMHANDLER);
-                    }
-                }
+            }else {
+               log.warn("Skipping node '{}' because is not of type {}", handlerNode.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEMHANDLER); 
             }
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException during initializing handles", e);
-        }
-        
+        } 
+       
     }
     
     public HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(String id) {
@@ -74,10 +55,6 @@ public class HstSiteMapItemHandlersConfigurationService extends AbstractJCRServi
 
     public Map<String, HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
         return Collections.unmodifiableMap(siteMapItemHanderConfigurations);
-    }
-
-    public Service[] getChildServices() {
-        return siteMapItemHanderConfigurations.values().toArray(new Service[siteMapItemHanderConfigurations.values().size()]);
     }
 
 }

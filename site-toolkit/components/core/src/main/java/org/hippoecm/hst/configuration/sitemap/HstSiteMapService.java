@@ -22,19 +22,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
-import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapService extends AbstractJCRService implements HstSiteMap, Service{
+public class HstSiteMapService implements HstSiteMap {
     
     private static final long serialVersionUID = 1L;
 
@@ -52,19 +48,32 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
    
     private Map<String, HstSiteMapItem> siteMapDescendants = new HashMap<String, HstSiteMapItem>();
     
-    public HstSiteMapService(HstSite hstSite, Node siteMapNode, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws RepositoryException, ServiceException {
-        super(siteMapNode);
+    public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
         this.hstSite = hstSite;
-        this.siteMapRootNodePath = siteMapNode.getPath();
+        this.siteMapRootNodePath = siteMapNode.getValueProvider().getPath();
         this.siteMapItemHandlersConfiguration = siteMapItemHandlersConfiguration;
         
-        if(!siteMapNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAP)) {
-            this.closeValueProvider(false);
-            throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+HstNodeTypes.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getPrimaryNodeType().getName()+"'");
+        if(!HstNodeTypes.NODETYPE_HST_SITEMAP.equals(siteMapNode.getNodeTypeName())) {
+            throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+HstNodeTypes.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getNodeTypeName()+"'");
         }
         
         // initialize all sitemap items
-        init(siteMapNode);
+        for(HstNode child : siteMapNode.getNodes()) {
+            if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
+                try {
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, siteMapItemHandlersConfiguration , null, this, 1);
+                    rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
+                } catch (ServiceException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath());
+                    }
+                }
+            } else {
+                log.warn("Skipping node '{}' because is not of type {}", child.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+            }
+        }
         
         // add lookups to any descendant sitemap item
         for(HstSiteMapItem child : this.rootSiteMapItems.values()) {
@@ -72,34 +81,6 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
         }
         
     }
-    
-    private void init(Node siteMapNode) throws RepositoryException {
-        for(NodeIterator nodeIt = siteMapNode.getNodes(); nodeIt.hasNext();) {
-            Node child = nodeIt.nextNode();
-            if(child == null) {
-                log.warn("skipping null node");
-                continue;
-            }
-            if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
-                try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, siteMapItemHandlersConfiguration , null, this, 1);
-                    rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
-                } catch (ServiceException e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Skipping root sitemap '{}'", child.getPath(), e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Skipping root sitemap '{}'", child.getPath());
-                    }
-                }
-                
-            } else {
-                if (log.isWarnEnabled()) {
-                    log.warn("Skipping node '{}' because is not of type {}", child.getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
-                }
-            }
-        }
-    }
-
     
     private void populateDescendants(HstSiteMapItem hstSiteMapItem) {
         siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);

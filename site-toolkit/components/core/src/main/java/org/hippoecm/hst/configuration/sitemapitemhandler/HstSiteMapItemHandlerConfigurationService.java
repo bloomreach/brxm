@@ -17,15 +17,12 @@ package org.hippoecm.hst.configuration.sitemapitemhandler;
 
 import java.util.Map;
 
-import javax.jcr.Node;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
-import org.hippoecm.hst.service.AbstractJCRService;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 
-public class HstSiteMapItemHandlerConfigurationService extends AbstractJCRService implements HstSiteMapItemHandlerConfiguration, Service {
+public class HstSiteMapItemHandlerConfigurationService implements HstSiteMapItemHandlerConfiguration {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,20 +30,16 @@ public class HstSiteMapItemHandlerConfigurationService extends AbstractJCRServic
     private String name;
     private String sitemapItemHandlerClassName;
     private Map<String, Object> properties;
-    private long createdTime;
-    
-    public HstSiteMapItemHandlerConfigurationService(Node handleNode) throws ServiceException {
-        super(handleNode);
-        this.createdTime = System.currentTimeMillis();
-        id = getValueProvider().getName();
-        name = getValueProvider().getName();
-        sitemapItemHandlerClassName = getValueProvider().getString(HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME);
+     
+    public HstSiteMapItemHandlerConfigurationService(HstNode handleNode) throws ServiceException {
+        id = handleNode.getValueProvider().getName();
+        name = handleNode.getValueProvider().getName();
+        sitemapItemHandlerClassName = handleNode.getValueProvider().getString(HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME);
         if(sitemapItemHandlerClassName == null || "".equals(sitemapItemHandlerClassName)) {
-            this.closeValueProvider(false);
             throw new ServiceException("Invalid sitemap item handler because property '"+HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME+"' is missing or empty ");
         }
         
-        properties = getValueProvider().getProperties();
+        properties = handleNode.getValueProvider().getProperties();
         
     }
     public String getSiteMapItemHandlerClassName() {
@@ -73,13 +66,6 @@ public class HstSiteMapItemHandlerConfigurationService extends AbstractJCRServic
      */
     public Map<String, Object> getProperties() {
         return properties;
-    }
-
-    public Service[] getChildServices() {
-        return null;
-    }
-    public long getCreatedTime() {
-        return this.createdTime;
     }
 
 }

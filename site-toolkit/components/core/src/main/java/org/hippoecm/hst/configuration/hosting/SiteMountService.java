@@ -6,22 +6,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.HstSiteRootNode;
+import org.hippoecm.hst.configuration.model.HstWebSitesManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.service.AbstractJCRService;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SiteMountService extends AbstractJCRService implements SiteMount, Service {
+public class SiteMountService implements SiteMount {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SiteMountService.class);
@@ -77,7 +74,7 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
     private String mountPath;
     
     /**
-     * The jcr path where the mount is pointing to
+     * The path where the mount is pointing to
      */
     private String mountPoint;
     
@@ -118,13 +115,12 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
      * for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
      */
     private String embeddedSiteMountPath;
-    
-    public SiteMountService(Node siteMount, SiteMount parent, VirtualHost virtualHost) throws ServiceException {
-        super(siteMount);
+     
+    public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstWebSitesManager hstWebSitesManager) throws ServiceException {
         this.virtualHost = virtualHost;
         this.parent = parent;
         
-        this.name = getValueProvider().getName();
+        this.name = siteMount.getValueProvider().getName();
 
         
         if(parent == null) {
@@ -134,8 +130,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         }
        
         // is the context path visible in the url
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWCONTEXTPATH)) {
-            this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWCONTEXTPATH);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWCONTEXTPATH)) {
+            this.contextPathInUrl = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWCONTEXTPATH);
         } else {
             if(parent != null) {
                 this.contextPathInUrl = parent.isContextPathInUrl();
@@ -144,8 +140,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
-            this.onlyForContextPath = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
+            this.onlyForContextPath = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH);
         } else {
             if(parent != null) {
                 this.onlyForContextPath = parent.onlyForContextPath();
@@ -165,8 +161,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SCHEME)) {
-            this.scheme = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_SCHEME);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SCHEME)) {
+            this.scheme = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_SCHEME);
             if(this.scheme == null || "".equals(this.scheme)) {
                 this.scheme = VirtualHostsService.DEFAULT_SCHEME;
             }
@@ -179,8 +175,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
-            this.homepage = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
+            this.homepage = siteMount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -190,8 +186,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
-            this.pageNotFound = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
+            this.pageNotFound = siteMount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -202,8 +198,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         }
         
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
-            this.versionInPreviewHeader = this.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+            this.versionInPreviewHeader = siteMount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -213,36 +209,33 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
-        
-         
-        
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW)) {
-            this.preview = this.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW)) {
+            this.preview = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW);
         } else if(parent != null) {
             this.preview = parent.isPreview();
         }
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT)) {
-            this.isSiteMount = this.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT)) {
+            this.isSiteMount = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT);
         } else if(parent != null) {
             this.isSiteMount = parent.isSiteMount();
         }
 
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE)) {
-            this.namedPipeline = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE)) {
+            this.namedPipeline = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE);
         } else if(parent != null) {
             this.namedPipeline = parent.getNamedPipeline();
         }
         
 
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH)) {
-            this.embeddedSiteMountPath = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH)) {
+            this.embeddedSiteMountPath = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH);
         } else if(parent != null) {
             this.embeddedSiteMountPath = parent.getEmbeddedSiteMountPath();
         }
         
-        if(this.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH)) {
-            this.mountPoint = this.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH)) {
+            this.mountPoint = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH);
             // now, we need to create the HstSite object
             if(mountPoint == null || "".equals(mountPoint)){
                 mountPoint = null;
@@ -254,14 +247,14 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             }
         }
         
-        if (getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SECURED)) {
-            this.secured = getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SECURED);
+        if (siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SECURED)) {
+            this.secured = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SECURED);
         } else if (parent != null){
             this.secured = parent.isSecured();
         } 
         
-        if (getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ROLES)) {
-            String [] rolesProp = getValueProvider().getStrings(HstNodeTypes.SITEMOUNT_PROPERTY_ROLES);
+        if (siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ROLES)) {
+            String [] rolesProp = siteMount.getValueProvider().getStrings(HstNodeTypes.SITEMOUNT_PROPERTY_ROLES);
             this.roles = new HashSet<String>();
             CollectionUtils.addAll(this.roles, rolesProp);
         } else if (parent != null){
@@ -270,8 +263,8 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
             this.roles = new HashSet<String>();
         }
         
-        if (getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_USERS)) {
-            String [] usersProp = getValueProvider().getStrings(HstNodeTypes.SITEMOUNT_PROPERTY_USERS);
+        if (siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_USERS)) {
+            String [] usersProp = siteMount.getValueProvider().getStrings(HstNodeTypes.SITEMOUNT_PROPERTY_USERS);
             this.users = new HashSet<String>();
             CollectionUtils.addAll(this.users, usersProp);
         } else if (parent != null){
@@ -283,44 +276,34 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
         if(mountPoint == null ){
-            log.info("SiteMount '{}' at '{}' does have an empty mountPoint. This means the SiteMount is not using a HstSite and does not have a content path", getName(), getValueProvider().getPath());
+            log.info("SiteMount '{}' at '{}' does have an empty mountPoint. This means the SiteMount is not using a HstSite and does not have a content path", getName(), siteMount.getValueProvider().getPath());
         } else if(!mountPoint.startsWith("/")) {
-            throw new ServiceException("SiteMount at '"+getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
+            throw new ServiceException("SiteMount at '"+siteMount.getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
         } else if(!isSiteMount()){
-            log.info("SiteMount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), getValueProvider().getPath());
+            log.info("SiteMount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), siteMount.getValueProvider().getPath());
         } else {
-            try {
-                if (siteMount.getSession().itemExists(mountPoint) && siteMount.getSession().getItem(mountPoint).isNode() && ((Node) siteMount.getSession().getItem(mountPoint)).isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
-                    Node hstSiteNode = (Node) siteMount.getSession().getItem(mountPoint);
-                    this.hstSite = new HstSiteService(hstSiteNode, this);
-                    log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
-                } else {
-                    throw new ServiceException("mountPoint '" + mountPoint
-                            + "' does not point to a hst:site node for SiteMount '" + getValueProvider().getPath()
-                            + "'. Cannot create HstSite for SiteMount");
-                }
-                
-            } catch (RepositoryException e) {
-                throw new ServiceException("Error during creating HstSite. Cannot add SiteMount for '"+getValueProvider().getPath()+"'", e);
+             
+            HstSiteRootNode hstSiteNodeForMount = hstWebSitesManager.getHstSiteRootNodes().get(mountPoint);
+            if(hstSiteNodeForMount == null) {
+                throw new ServiceException("mountPoint '" + mountPoint
+                        + "' does not point to a hst:site node for SiteMount '" + siteMount.getValueProvider().getPath()
+                        + "'. Cannot create HstSite for SiteMount");
             }
+            
+            this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstWebSitesManager);
+            log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
         }
         
         // check whether there are child SiteMounts now for this SiteMount
-        try {
-            NodeIterator childMounts = siteMount.getNodes();
-            while (childMounts.hasNext()) {
-                Node childMountNode = childMounts.nextNode();
-                if (childMountNode == null) {
-                    continue;
-                }
-                SiteMountService childMount = new SiteMountService(childMountNode, this, virtualHost);
-                SiteMountService prevValue = this.childSiteMountServices.put(childMount.getName(), childMount);
+        
+        for(HstNode childMount : siteMount.getNodes()) {
+            if(HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(childMount.getNodeTypeName())) {
+                SiteMountService childMountService = new SiteMountService(childMount, this, virtualHost, hstWebSitesManager);
+                SiteMountService prevValue = this.childSiteMountServices.put(childMountService.getName(), childMountService);
                 if(prevValue != null) {
-                    log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", siteMount.getPath());
+                    log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", siteMount.getValueProvider().getPath());
                 }
             }
-        } catch (RepositoryException e) {
-            throw new ServiceException("Error during initializing site mounts", e);
         }
     }
     
@@ -386,19 +369,6 @@ public class SiteMountService extends AbstractJCRService implements SiteMount, S
         return versionInPreviewHeader;
     }
 
-    public Service[] getChildServices() {
-        // the services are the child mounts AND the hstSite if this one is not null
-        Service[] childServices = childSiteMountServices.values().toArray(new Service[childSiteMountServices.values().size()]);
-        if(this.hstSite != null) {
-            Service[] servicesPlusHstSite = new Service[childServices.length + 1];
-            System.arraycopy(childServices, 0, servicesPlusHstSite, 0, childServices.length);
-            // and add to the end the hstSite
-            servicesPlusHstSite[childServices.length] = (Service)hstSite;
-            return servicesPlusHstSite;
-        } 
-        return childServices;
-    }
-    
     public String getNamedPipeline(){
         return namedPipeline;
     }

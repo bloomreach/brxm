@@ -20,9 +20,6 @@
 <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
-[unittestproject:sitemenuitem] > hst:sitemenuitem
-- unittestproject:title 
-
 [unittestproject:basedocument] > hippostdpubwf:document, hippostd:publishableSummary, hippo:document
 
 [unittestproject:textpage] > unittestproject:basedocument

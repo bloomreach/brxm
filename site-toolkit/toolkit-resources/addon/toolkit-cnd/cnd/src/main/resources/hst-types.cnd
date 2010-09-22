@@ -119,7 +119,7 @@
 
 [hst:site]
 + hst:content (hippo:facetselect) mandatory
-+ hst:configuration (hippo:facetselect) mandatory
+- hst:configurationpath (string) mandatory
 - hst:portalconfigurationenabled (boolean)
 
 [hst:sites]

@@ -15,9 +15,9 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
@@ -203,7 +203,6 @@ public abstract class AbstractValve implements Valve {
 					public String getLocalParameter(String name) {return null;}
 					public Map<String, String> getLocalParameters() {return null;}
 					public String getCanonicalStoredLocation() {return null;}
-					public long getCreatedTime() {return 0L;}
                     public String getPageErrorHandlerClassName() {return null;}
                 };
                 

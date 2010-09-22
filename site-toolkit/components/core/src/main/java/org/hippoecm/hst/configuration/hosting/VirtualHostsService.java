@@ -18,24 +18,20 @@ package org.hippoecm.hst.configuration.hosting;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.HstWebSitesManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
-import org.hippoecm.hst.service.AbstractJCRService;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VirtualHostsService extends AbstractJCRService implements VirtualHosts, Service {
+public class VirtualHostsService implements VirtualHosts {
     
     private static final long serialVersionUID = 1L;
 
@@ -65,7 +61,6 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     private boolean versionInPreviewHeader = true;
     
     private boolean virtualHostsConfigured;
-    private String jcrPath;
     private boolean portVisible;
     private int portNumber;
     private String scheme;
@@ -74,36 +69,27 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     private String[] suffixExclusions;
 
   
-    public VirtualHostsService(Node virtualHostsNode, VirtualHostsManager virtualHostsManager) {
-        super(virtualHostsNode);
+    public VirtualHostsService(HstNode virtualHostsConfigurationNode, VirtualHostsManager virtualHostsManager, HstWebSitesManager hstWebSitesManager) throws ServiceException {
         this.virtualHostsManager = virtualHostsManager;
         this.virtualHostsConfigured = true;
-        this.jcrPath = this.getValueProvider().getPath();
-        this.portNumber = this.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PORT).intValue();
-        this.portVisible = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
-        this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
-        this.prefixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
-        this.suffixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
-        this.scheme = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
-        this.homepage = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
-        this.pageNotFound = this.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
-        if(this.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
-            this.versionInPreviewHeader = this.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        this.portNumber = virtualHostsConfigurationNode.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PORT).intValue();
+        this.portVisible = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
+        this.contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
+        this.prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
+        this.suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
+        this.scheme = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
+        this.homepage = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        this.pageNotFound = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+            this.versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         }
-        this.defaultHostName  = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
+        this.defaultHostName  = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if(scheme == null || "".equals(scheme)) {
             this.scheme = DEFAULT_SCHEME;
         }
-        try {
-            init(virtualHostsNode);
-        } catch (RepositoryException e) {
-            log.error("Failed to inialize hosts for '{}' : {}", jcrPath, e);
-        }
-        /*
-         * After initialization, all needed jcr properties and nodes have to be loaded. The underlying jcr nodes in 
-         * the value providers now will all be closed.
-         */
-        this.closeValueProvider(true);
+        
+        init(virtualHostsConfigurationNode, hstWebSitesManager);
+        
     }
     
 
@@ -136,7 +122,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     }
     
     
-    public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException{
+    public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException {
             
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hstContainerURL.getHostName());
         if(resolvedVirtualHost == null) {
@@ -247,16 +233,12 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return null;
     }
 
-    private void init(Node virtualHostsNode) throws RepositoryException {
-       NodeIterator nodes = virtualHostsNode.getNodes();
-       while(nodes.hasNext()) {
-           Node virtualHostNode = nodes.nextNode();
-           if(virtualHostNode == null) {continue;}
+    private void init(HstNode virtualHostsConfigurationNode, HstWebSitesManager hstWebSitesManager) throws ServiceException {
+        
+       for(HstNode virtualHostNode : virtualHostsConfigurationNode.getNodes()) {
            try {
-               VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null);
+               VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hstWebSitesManager);
                this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
-           } catch (ServiceException e) {
-               log.warn("Unable to initialize VirtualHost for '{}'. Skipping. {}", virtualHostNode.getPath(), e.getMessage());
            } catch (IllegalArgumentException e) {
                log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
                        + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
@@ -266,12 +248,6 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
        }
        
     }
-
-
-    public Service[] getChildServices() {
-        return rootVirtualHosts.values().toArray(new Service[rootVirtualHosts.values().size()]);
-    }
- 
 
     public boolean isPortVisible() {
         return portVisible;

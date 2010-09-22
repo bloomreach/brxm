@@ -21,11 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -41,39 +38,25 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
     private Map<String, HstSiteMenuConfiguration> hstSiteMenuConfigurations = new HashMap<String, HstSiteMenuConfiguration>();
     private Map<String, List<HstSiteMenuItemConfiguration>> hstSiteMenuItemsBySiteMapId = new HashMap<String, List<HstSiteMenuItemConfiguration>>();
     
-    public HstSiteMenusConfigurationService(HstSite hstSite, Node siteMenusNode) throws ServiceException{
+    public HstSiteMenusConfigurationService(HstSite hstSite, HstNode siteMenusNode) throws ServiceException{
         this.hstSite = hstSite;
-        try {
-            if (siteMenusNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENUS)) {
-                init(siteMenusNode);
+        if (HstNodeTypes.NODETYPE_HST_SITEMENUS.equals(siteMenusNode.getNodeTypeName())) {
+            for(HstNode siteMenu: siteMenusNode.getNodes()) {
+                if(HstNodeTypes.NODETYPE_HST_SITEMENU.equals(siteMenu.getNodeTypeName())) {
+                    try {
+                        HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu);
+                        HstSiteMenuConfiguration old = hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
+                        if(old != null) {
+                            log.error("Duplicate name for HstSiteMenuConfiguration found. The first one is replaced");
+                        }
+                    } catch(ServiceException e) {
+                        log.warn("Skipping HstSiteMenuConfiguration for '{}' because '{}'", siteMenu.getValueProvider().getPath(), e.toString());
+                    }
+                } else {
+                    log.error("Skipping siteMenu '{}' because not of type '{}'", siteMenu.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_SITEMENU);
+                }
             }
-        } catch (RepositoryException e) {
-            throw new ServiceException("Cannot create SiteMenusConfiguration",e);
         }
-        
-    }
-
-    private void init(Node siteMenusNode) throws RepositoryException {
-       NodeIterator siteMenuIt = siteMenusNode.getNodes();
-       while(siteMenuIt.hasNext()){
-           Node siteMenu = siteMenuIt.nextNode();
-           if(siteMenu == null) {
-               continue;
-           }
-           if(siteMenu.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)) {
-               try {
-                   HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu);
-                   HstSiteMenuConfiguration old = hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
-                   if(old != null) {
-                       log.error("Duplicate name for HstSiteMenuConfiguration found. The first one is replaced");
-                   }
-               } catch(ServiceException e) {
-                   log.warn("Skipping HstSiteMenuConfiguration for '{}' because '{}'", siteMenu.getPath(), e.toString());
-               }
-           } else {
-               log.error("Skipping siteMenu '{}' because not of type '{}'", siteMenu.getPath(), HstNodeTypes.NODETYPE_HST_SITEMENU);
-           }
-       }
     }
 
     public void addHstSiteMenuItem(String hstSiteMapItemId, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration) {

@@ -106,6 +106,8 @@ public interface HstNodeTypes {
     
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     
+    public final static String SITE_CONFIGURATIONPATH = "hst:configurationpath";
+    
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";
     public final static String NODENAME_HST_CONTENTNODE = "hst:content";
     public final static String NODENAME_HST_SITEMAP = "hst:sitemap";

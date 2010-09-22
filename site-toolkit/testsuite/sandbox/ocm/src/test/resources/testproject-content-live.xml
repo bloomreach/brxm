@@ -19,10 +19,12 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sites</sv:value>
   </sv:property>
-  
   <sv:node sv:name="testproject">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:unittestconfiguration/hst:configuration</sv:value>
     </sv:property>
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -30,23 +32,6 @@
       </sv:property>
       <sv:property sv:name="hippo:docbase" sv:type="String">
         <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:values" sv:type="String">
-        <sv:value>published</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:modes" sv:type="String">
-        <sv:value>single</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:configuration">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:facetselect</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>abababab-fb6b-47a6-bb85-f58d20e7e767</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
         <sv:value>hippostd:state</sv:value>
