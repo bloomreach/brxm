@@ -31,7 +31,7 @@ public class HstSitesConfigurationEventListener extends GenericEventListener {
     protected HstManager hstManager;
     protected HstComponentRegistry componentRegistry;
     
-    public void setVirtualHostsManager(HstManager hstManager) {
+    public void setHstManager(HstManager hstManager) {
         this.hstManager = hstManager;
     }
     
