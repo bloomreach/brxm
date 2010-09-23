@@ -72,7 +72,7 @@ public class TestJcrAuthenticationProvider extends AbstractHstTestCase {
             fail("Failed to log on by admin: " + e);
         }
         
-        Set<Role> roleSet = authenticationProvider.getRoles(user);
+        Set<Role> roleSet = authenticationProvider.getRolesByUsername(user.getName());
         assertTrue(roleSet.contains(new TransientRole("everybody")));
         assertTrue(roleSet.contains(new TransientRole("admin")));
         assertFalse(roleSet.contains(new TransientRole("editor")));

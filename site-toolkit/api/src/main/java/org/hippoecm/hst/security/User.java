@@ -18,10 +18,18 @@ package org.hippoecm.hst.security;
 import java.io.Serializable;
 import java.security.Principal;
 
+import javax.security.auth.Subject;
+
 /**
  * User
  * @version $Id$
  */
 public interface User extends Principal, Serializable {
-
+    
+    /**
+     * Returns subject for the user
+     * @return
+     */
+    Subject getSubject();
+    
 }

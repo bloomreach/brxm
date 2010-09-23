@@ -17,14 +17,23 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.security.AuthenticationProvider;
+import org.hippoecm.hst.security.Role;
+import org.hippoecm.hst.security.TransientUser;
+import org.hippoecm.hst.security.User;
 
 /**
  * SecurityValve
@@ -32,6 +41,12 @@ import org.hippoecm.hst.core.request.ResolvedSiteMount;
  * @version $Id$
  */
 public class SecurityValve extends AbstractValve {
+    
+    protected AuthenticationProvider authProvider;
+    
+    public void setAuthenticationProvider(AuthenticationProvider authProvider) {
+        this.authProvider = authProvider;
+    }
     
     @Override
     public void invoke(ValveContext context) throws ContainerException {
@@ -43,6 +58,7 @@ public class SecurityValve extends AbstractValve {
         } catch (ContainerSecurityException e) {
             try {
                 servletResponse.sendError(403, e.getMessage());
+                return;
             } catch (IOException ioe) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to send error code.", ioe);
@@ -52,8 +68,29 @@ public class SecurityValve extends AbstractValve {
             }
         }
         
-        // continue
-        context.invokeNext();
+        Subject subject = getSubject(servletRequest);
+        
+        if (subject == null) {
+            context.invokeNext();
+            return;
+        }
+
+        final ValveContext valveContext = context;
+        
+        ContainerException ce = (ContainerException) Subject.doAsPrivileged(subject, new PrivilegedAction<ContainerException>() {
+            public ContainerException run() {
+                try {
+                    valveContext.invokeNext();
+                    return null;
+                } catch (ContainerException e) {
+                    return e;
+                }
+            }
+        }, null);
+
+        if (ce != null) {
+            throw ce;
+        }
     }
     
     protected void checkAuthorized(HttpServletRequest servletRequest) throws ContainerSecurityException {
@@ -128,4 +165,65 @@ public class SecurityValve extends AbstractValve {
         throw new ContainerSecurityException("Not authorized.");
     }
     
+    protected Subject getSubject(HttpServletRequest request) {
+        Principal userPrincipal = request.getUserPrincipal();
+        
+        if (userPrincipal == null) {
+            return null;
+        }
+        
+        Subject subject = null;
+        
+        if (userPrincipal instanceof User) {
+            subject = ((User) userPrincipal).getSubject();
+            
+            if (subject == null) {
+                log.warn("Subject is not found in the user principal.");
+            }
+        }
+        
+        if (subject == null) {
+            HttpSession session = request.getSession(false);
+            
+            if (session != null) {
+                subject = (Subject) session.getAttribute(ContainerConstants.SUBJECT_ATTR_NAME);
+            }
+        }
+        
+        if (subject == null) {
+            if (authProvider == null) {
+                log.warn("Cannot find authentication provider component.");
+                User user = new TransientUser(userPrincipal.getName());
+                Set<Principal> principals = new HashSet<Principal>();
+                principals.add(userPrincipal);
+                principals.add(user);
+                Set<Object> pubCred = Collections.emptySet();
+                Set<Object> privCred = Collections.emptySet();
+                subject = new Subject(true, principals, pubCred, privCred);
+            } else {
+                User user = new TransientUser(userPrincipal.getName());
+                Set<Role> roleSet = authProvider.getRolesByUsername(userPrincipal.getName());
+                Set<Principal> principals = new HashSet<Principal>();
+                principals.add(userPrincipal);
+                principals.add(user);
+                principals.addAll(roleSet);
+                Set<Object> pubCred = Collections.emptySet();
+                Set<Object> privCred = Collections.emptySet();
+                subject = new Subject(true, principals, pubCred, privCred);
+            }
+            
+            HttpSession session = request.getSession(false);
+            
+            if (session != null) {
+                session.setAttribute(ContainerConstants.SUBJECT_ATTR_NAME, subject);
+            }
+        }
+        
+        if (subject == null) {
+            log.warn("Failed to find subjct.");
+        }
+        
+        return subject;
+    }
+
 }

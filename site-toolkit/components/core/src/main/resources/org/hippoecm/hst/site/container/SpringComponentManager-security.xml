@@ -25,7 +25,7 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
     
-  <bean id="authenticationProvider" class="org.hippoecm.hst.security.impl.JcrAuthenticationProvider">
+  <bean id="org.hippoecm.hst.security.AuthenticationProvider" class="org.hippoecm.hst.security.impl.JcrAuthenticationProvider">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="config.containsKey('java.security.auth.login.config')" /> 
     <constructor-arg index="0" ref="javax.jcr.Repository" />

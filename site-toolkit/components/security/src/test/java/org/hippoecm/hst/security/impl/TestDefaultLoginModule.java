@@ -118,20 +118,24 @@ public class TestDefaultLoginModule {
         }
 
         public User authenticate(String userName, char[] password) throws SecurityException {
+            return authenticate(userName, password, null);
+        }
+        
+        public User authenticate(String userName, char[] password, Subject subject) throws SecurityException {
             for (String user : userRolesMap.keySet()) {
                 if (user.equals(userName)) {
-                    return new TransientUser(user);
+                    return new TransientUser(user, subject);
                 }
             }
             
             throw new SecurityException("User not found: " + userName);
         }
 
-        public Set<Role> getRoles(User user) throws SecurityException {
-            String [] roles = userRolesMap.get(user.getName());
+        public Set<Role> getRolesByUsername(String username) throws SecurityException {
+            String [] roles = userRolesMap.get(username);
             
             if (roles == null) {
-                throw new SecurityException("User not found: " + user);
+                throw new SecurityException("User not found: " + username);
             }
             
             Set<Role> roleSet = new HashSet<Role>();

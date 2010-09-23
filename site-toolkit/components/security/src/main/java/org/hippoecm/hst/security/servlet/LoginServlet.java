@@ -32,6 +32,32 @@ import org.slf4j.LoggerFactory;
 /**
  * LoginServlet
  * <P>
+ * The LoginServlet enables form-based JAAS login. 
+ * The LoginServlet is able to processes form-based at the four different stage:
+ * <UL>
+ * <LI><EM>Login::Proxy</EM> - An html form submits to this servlet with login info, 
+ * and then this servlet redirects to a secured resource, Login::Resource, which is configured in web.xml as security-constraint.
+ * As the Login::Resource is requested, the servlet container will invoke the configured form-based login servlet path,
+ * which is also configured in web.xml as login-config.
+ * In this stage, this servlet stores the user's login information to be used later. 
+ * </LI>
+ * <LI><EM>Login::Login</EM> - Because the Login::Proxy mode redirects to the Login::Resource mode url in the previous stage,
+ * the servlet container invokes this Login::Login mode servlet url which is configured in web.xml as login-config.
+ * In this stage, this servlet forwards to a view page to write a hidden html form filled with the stored login information.
+ * The hidden form will be submitted automatically to 'j_security_check', as soon as the page loaded.
+ * </LI>
+ * <LI><EM>Login::Resource</EM> - After authentication succeeds, the servlet container allows the Login::Resource url to the authenticated user.
+ * However, because the Login::Resource url was used for internal purpose only, it should redirect to somewhere.
+ * If 'destination' parameter was used at the Login::Proxy stage, then the destination url will be used to redirect.
+ * Otherwise, it will redirect to the root servlet context path.
+ * </LI>
+ * <LI><EM>Login::Logout</EM> - A web site can provide a logout link which invoked this mode.
+ * If 'destination' parameter was used for this url, then the destination url will be used to redirect after logout.
+ * Otherwise, it will redirect to the root servlet context path after logout.
+ * </LI>
+ * </UL> 
+ * </P>
+ * <P>
  * Example servlet configuration:
  * <PRE><XMP>
  * <servlet>
@@ -46,8 +72,8 @@ import org.slf4j.LoggerFactory;
  * 
  * <security-constraint>
  *   <web-resource-collection>
- *     <web-resource-name>Login</web-resource-name>
- *     <url-pattern>/login/redirector</url-pattern>
+ *     <web-resource-name>Login Resource</web-resource-name>
+ *     <url-pattern>/login/resource</url-pattern>
  *   </web-resource-collection>
  *   <auth-constraint>
  *     <role-name>everybody</role-name>
@@ -80,7 +106,7 @@ import org.slf4j.LoggerFactory;
 public class LoginServlet extends HttpServlet {
     
     private static final long serialVersionUID = 1L;
-
+    
     public static final String DESTINATION = "destination";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
@@ -89,33 +115,39 @@ public class LoginServlet extends HttpServlet {
     public static final String USERNAME_ATTR_NAME = LoginServlet.class.getName() + "." + USERNAME;
     public static final String PASSWORD_ATTR_NAME = LoginServlet.class.getName() + "." + PASSWORD;
     
-    public static final String DEFAULT_LOGIN_REDIRECTOR_PATH = "/login/redirector";
+    public static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
     public static final String DEFAULT_LOGIN_FORM_PAGE_PATH = "/WEB-INF/jsp/login.jsp";
     
     public static final String MODE_LOGIN_PROXY = "proxy";
     public static final String MODE_LOGIN_LOGIN = "login";
-    public static final String MODE_LOGIN_REDIRECT = "redirect";
+    public static final String MODE_LOGIN_RESOURCE = "resource";
     public static final String MODE_LOGIN_LOGOUT = "logout";
     
-    private static Logger logger = LoggerFactory.getLogger(LoginServlet.class);
+    private static Logger log = LoggerFactory.getLogger(LoginServlet.class);
     
-    private String loginRedirectorPath;
-    private String loginFormPagePath;
+    protected String requestCharacterEncoding;
+    protected String loginResourcePath;
+    protected String loginFormPagePath;
     
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
-        loginRedirectorPath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginRedirector", DEFAULT_LOGIN_REDIRECTOR_PATH);
+        requestCharacterEncoding = ServletConfigUtils.getInitParameter(servletConfig, null, "requestCharacterEncoding", null);
+        loginResourcePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
         loginFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginFormPage", DEFAULT_LOGIN_FORM_PAGE_PATH);
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (requestCharacterEncoding != null) {
+            request.setCharacterEncoding(requestCharacterEncoding);
+        }
+        
         String mode = getMode(request);
         
         if (MODE_LOGIN_PROXY.equals(mode)) {
             doLoginProxy(request, response);
-        } else if (MODE_LOGIN_REDIRECT.equals(mode)) {
-            doLoginRedirect(request, response);
+        } else if (MODE_LOGIN_RESOURCE.equals(mode)) {
+            doLoginResource(request, response);
         } else if (MODE_LOGIN_LOGOUT.equals(mode)) {
             doLoginLogout(request, response);
         } else {
@@ -134,15 +166,13 @@ public class LoginServlet extends HttpServlet {
         
         if (mode == null) {
             String requestURI = request.getRequestURI();
-            mode = requestURI.substring(requestURI.lastIndexOf('/'));
+            mode = requestURI.substring(requestURI.lastIndexOf('/') + 1);
         }
         
         return mode;
     }
     
     protected void doLoginProxy(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.setCharacterEncoding("UTF-8");
-        
         HttpSession session = request.getSession(true);
         
         String parameter = request.getParameter(DESTINATION);
@@ -169,7 +199,7 @@ public class LoginServlet extends HttpServlet {
             session.removeAttribute(PASSWORD_ATTR_NAME);
         }
         
-        response.sendRedirect(response.encodeURL(request.getContextPath() + loginRedirectorPath));
+        response.sendRedirect(response.encodeURL(request.getContextPath() + loginResourcePath));
     }
     
     protected void doLoginLogin(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -195,7 +225,7 @@ public class LoginServlet extends HttpServlet {
         response.sendRedirect(response.encodeURL(destination));
     }
     
-    protected void doLoginRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doLoginResource(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String destination = null;
         
         HttpSession session = request.getSession(false);
@@ -209,10 +239,10 @@ public class LoginServlet extends HttpServlet {
         } else {
             session.removeAttribute(DESTINATION_ATTR_NAME);
         }
-
+        
         session.removeAttribute(USERNAME_ATTR_NAME);
         session.removeAttribute(PASSWORD_ATTR_NAME);
-
+        
         response.sendRedirect(response.encodeURL(destination));
     }
     
@@ -229,7 +259,6 @@ public class LoginServlet extends HttpServlet {
         }
         
         response.sendRedirect(response.encodeURL(destination));
-
     }
 }
 

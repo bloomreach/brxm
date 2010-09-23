@@ -72,4 +72,10 @@ public interface ContainerConstants {
      * The parameter name for custom error handler class name in the root component configuration
      */ 
     String CUSTOM_ERROR_HANDLER_PARAM_NAME = "org.hippoecm.hst.core.container.custom.errorhandler";  
+    
+    /**
+     * Subject session attribute name
+     */
+    String SUBJECT_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject";
+    
 }

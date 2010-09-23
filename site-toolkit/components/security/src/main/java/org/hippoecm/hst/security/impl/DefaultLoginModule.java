@@ -165,7 +165,7 @@ public class DefaultLoginModule implements LoginModule {
             success = false;
 
             try {
-                user = getAuthenticationProvider().authenticate(this.username, password.toCharArray());
+                user = getAuthenticationProvider().authenticate(this.username, password.toCharArray(), subject);
             } catch (SecurityException se) {
                 if (se.getCause() != null) {
                     if (log.isDebugEnabled()) {
@@ -232,7 +232,7 @@ public class DefaultLoginModule implements LoginModule {
     protected void commitSubject(Subject containerSubject, User user) {
         subject.getPrincipals().add(user);
         
-        Set<Role> roles = authProvider.getRoles(user);
+        Set<Role> roles = authProvider.getRolesByUsername(user.getName());
         
         for (Role role : roles) {
             subject.getPrincipals().add(role);

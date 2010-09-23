@@ -29,6 +29,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.security.auth.Subject;
 
 import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.Role;
@@ -72,6 +73,10 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
     }
     
     public User authenticate(String userName, char[] password) throws SecurityException {
+        return authenticate(userName, password, null);
+    }
+    
+    public User authenticate(String userName, char[] password, Subject subject) throws SecurityException {
         Session session = null;
         SimpleCredentials creds = new SimpleCredentials(userName, password);
         
@@ -90,14 +95,18 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
             }
         }
         
-        return new TransientUser(creds.getUserID());
+        if (subject == null) {
+            return new TransientUser(creds.getUserID());
+        } else {
+            return new TransientUser(creds.getUserID(), subject);
+        }
     }
     
-    public Set<Role> getRoles(User user) throws SecurityException {
+    public Set<Role> getRolesByUsername(String username) throws SecurityException {
         Set<Role> roleSet = null;
         
         try {
-            Set<String> roleNameSet = getRoleNamesOfUser(user);
+            Set<String> roleNameSet = getRoleNamesOfUser(username);
             roleSet = new HashSet<Role>();
             
             for (String roleName : roleNameSet) {
@@ -116,7 +125,7 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
         return roleSet;
     }
     
-    protected Set<String> getRoleNamesOfUser(User user) throws LoginException, RepositoryException {
+    protected Set<String> getRoleNamesOfUser(String username) throws LoginException, RepositoryException {
         Set<String> roleNameSet = null;
         Session session = null;
         
@@ -127,7 +136,7 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
                 session = systemRepository.login();
             }
             
-            String statement = MessageFormat.format(rolesOfUserQuery, user.getName());
+            String statement = MessageFormat.format(rolesOfUserQuery, username);
             
             if (log.isDebugEnabled()) {
                 log.debug("Searching roles of user with query: " + statement);

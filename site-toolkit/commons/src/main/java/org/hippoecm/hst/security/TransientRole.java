@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.security;
 
-import java.io.Serializable;
 
 /**
  * TransientRole

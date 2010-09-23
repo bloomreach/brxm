@@ -17,6 +17,8 @@ package org.hippoecm.hst.security;
 
 import java.util.Set;
 
+import javax.security.auth.Subject;
+
 /**
  * AuthenticationProvider
  * <p>
@@ -37,10 +39,20 @@ public interface AuthenticationProvider {
     User authenticate(String userName, char [] password) throws SecurityException;
     
     /**
-     * Returns security roles of the given user
+     * Authenticate a user.
+     * 
+     * @param userName The user name.
+     * @param password The user password.
+     * @param subject The subject given by the container
+     * @return the {@link User}
+     */
+    User authenticate(String userName, char [] password, Subject subject) throws SecurityException;
+    
+    /**
+     * Returns security roles of the given username
      * @param user
      * @return
      */
-    Set<Role> getRoles(User user) throws SecurityException;
+    Set<Role> getRolesByUsername(String username) throws SecurityException;
     
 }
