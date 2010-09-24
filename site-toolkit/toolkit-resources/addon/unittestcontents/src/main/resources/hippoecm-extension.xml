@@ -49,7 +49,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="hst-testcontent">
+  <sv:node sv:name="hst-unittestcontent">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
