@@ -52,7 +52,8 @@ public class HstSubject {
     /**
      * Perform work as a particular <code>Subject</code> after setting subject reference in current thread 
      */
-    public static <T> T doAs(final Subject subjectInput, final PrivilegedAction<T> action) {
+    @SuppressWarnings("unchecked")
+	public static <T> T doAs(final Subject subjectInput, final PrivilegedAction<T> action) {
         Subject subject = subjectInput;
         
         if (subject == null) {
@@ -61,12 +62,13 @@ public class HstSubject {
         
         tlSubject.set(subject);
         
-        return Subject.doAs(subject, action);
+        return (T)Subject.doAs(subject, action);
     }
 
     /**
      * Perform work as a particular <code>Subject</code> after setting subject reference in current thread.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T doAs(final Subject subjectInput, final PrivilegedExceptionAction<T> action) throws PrivilegedActionException {
         Subject subject = subjectInput;
         
@@ -76,12 +78,13 @@ public class HstSubject {
         
         tlSubject.set(subject);
         
-        return Subject.doAs(subject, action);
+        return (T)Subject.doAs(subject, action);
     }
 
     /**
      * Perform privileged work as a particular <code>Subject</code> after setting subject reference in current thread.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T doAsPrivileged(final Subject subjectInput, final PrivilegedAction<T> action, final AccessControlContext acc) {
         Subject subject = subjectInput;
         
@@ -91,12 +94,13 @@ public class HstSubject {
         
         tlSubject.set(subject);
         
-        return Subject.doAsPrivileged(subject, action, acc);
+        return (T)Subject.doAsPrivileged(subject, action, acc);
     }
 
     /**
      * Perform privileged work as a particular <code>Subject</code> after setting subject reference in current thread.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T doAsPrivileged(final Subject subjectInput, final PrivilegedExceptionAction<T> action, final AccessControlContext acc) throws PrivilegedActionException {
         Subject subject = subjectInput;
         
@@ -106,7 +110,7 @@ public class HstSubject {
         
         tlSubject.set(subject);
         
-        return Subject.doAsPrivileged(subject, action, acc);
+        return (T)Subject.doAsPrivileged(subject, action, acc);
     }
 
     /**
