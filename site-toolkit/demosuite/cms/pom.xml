@@ -72,9 +72,16 @@
       <type>jar</type>
     </dependency>
   
-    <dependency>
+    <!-- dependency>
       <groupId>org.onehippo.ecm.hst.demosuite</groupId>
       <artifactId>hst-demosuite-content</artifactId>
+      <version>${pom.version}</version>
+      <type>jar</type>
+    </dependency-->
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-unittestcontents</artifactId>
       <version>${pom.version}</version>
       <type>jar</type>
     </dependency>
