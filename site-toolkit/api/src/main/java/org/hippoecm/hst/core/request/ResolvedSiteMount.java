@@ -88,6 +88,12 @@ public interface ResolvedSiteMount {
      * @return The set of users that are allowed to access this site mount. When no users defined, the users from the parent item are inherited. If none of the 
      * parent items have a user defined, an empty set is returned
      */
-    Set<String> getUsers();  
+    Set<String> getUsers();
+    
+    /**
+     * Returns true if stateful jcr session should be used for this site mount 
+     * @return
+     */
+    boolean isSessionStateful();
     
 }

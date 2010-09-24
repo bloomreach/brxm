@@ -27,10 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.security.AuthenticationProvider;
+import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.TransientUser;
 import org.hippoecm.hst.security.User;
@@ -77,7 +79,7 @@ public class SecurityValve extends AbstractValve {
 
         final ValveContext valveContext = context;
         
-        ContainerException ce = (ContainerException) Subject.doAsPrivileged(subject, new PrivilegedAction<ContainerException>() {
+        ContainerException ce = (ContainerException) HstSubject.doAsPrivileged(subject, new PrivilegedAction<ContainerException>() {
             public ContainerException run() {
                 try {
                     valveContext.invokeNext();
@@ -221,6 +223,9 @@ public class SecurityValve extends AbstractValve {
         
         if (subject == null) {
             log.warn("Failed to find subjct.");
+        } else {
+            HstRequestContext requestContext = (HstRequestContext) request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            ((HstMutableRequestContext) requestContext).setSubject(subject);
         }
         
         return subject;

@@ -64,4 +64,13 @@
     <property name="minEvictableIdleTimeMillis" value="60000" />
   </bean>
   
+  <!-- Delegating repository to the raw hippo repository -->
+  <bean id="javax.jcr.Repository.delegating" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
+  </bean>
+  
+  <!-- Subject based non-pooling delegating repository -->
+  <bean id="javax.jcr.Repository.subjectBasedStateful" class="org.hippoecm.hst.core.jcr.SubjectBasedStatefulRepository">
+    <constructor-arg ref="javax.jcr.Repository.delegating" />
+  </bean>
+  
 </beans>

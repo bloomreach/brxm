@@ -262,4 +262,10 @@ public interface SiteMount {
      */
     Set<String> getUsers();  
 
+    /**
+     * Returns true if stateful jcr session should be used for this site mount 
+     * @return
+     */
+    boolean isSessionStateful();
+
 }

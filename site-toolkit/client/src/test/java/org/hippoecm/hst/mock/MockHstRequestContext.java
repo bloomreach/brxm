@@ -22,6 +22,7 @@ import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -55,6 +56,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected Credentials defaultCredentials;
     protected ContainerConfiguration containerConfiguration;
     protected ContextCredentialsProvider contextCredentialsProvider;
+    protected Subject subject;
 
     public boolean isPreview() {
     	return this.resolvedSiteMount.getSiteMount().isPreview();
@@ -209,4 +211,8 @@ public class MockHstRequestContext implements HstRequestContext {
 	public String getTargetComponentPath() {
 		return null;
 	}
+
+    public Subject getSubject() {
+        return subject;
+    }
 }

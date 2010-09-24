@@ -154,6 +154,7 @@
 - hst:secured (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
+- hst:sessionstateful (boolean)
 
 [hst:portmount]
 + hst:root (hst:sitemount)

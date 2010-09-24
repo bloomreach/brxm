@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.internal;
 
 import javax.jcr.Repository;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -72,4 +73,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	public void setEmbeddingContextPath(String embeddingContextPath);
 
 	public void setResolvedEmbeddingSiteMount(ResolvedSiteMount resolvedEmbeddingSiteMount);
+	
+    public void setSubject(Subject subject);
+
 }

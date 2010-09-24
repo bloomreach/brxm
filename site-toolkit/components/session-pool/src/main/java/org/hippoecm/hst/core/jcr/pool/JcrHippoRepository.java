@@ -48,6 +48,10 @@ public class JcrHippoRepository implements Repository {
     
     private boolean repositoryInitialized;
     
+    public JcrHippoRepository() {
+        this((String) null);
+    }
+    
     public JcrHippoRepository(String repositoryURI) {
         this.repositoryURI = repositoryURI;
         vmRepositoryUsed = (repositoryURI != null && repositoryURI.startsWith("vm:"));

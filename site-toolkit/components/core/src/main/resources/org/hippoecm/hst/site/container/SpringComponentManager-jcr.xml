@@ -225,4 +225,14 @@
     <property name="disposableUserIDPattern" value=".*;disposable"/>
   </bean>
   
+  <!-- Delegating repository to the raw hippo repository -->
+  <bean id="javax.jcr.Repository.delegating" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
+    <constructor-arg value="${default.repository.address}" />
+  </bean>
+  
+  <!-- Subject based non-pooling delegating repository -->
+  <bean id="javax.jcr.Repository.subjectBasedStateful" class="org.hippoecm.hst.core.jcr.SubjectBasedStatefulRepository">
+    <constructor-arg ref="javax.jcr.Repository.delegating" />
+  </bean>
+  
 </beans>

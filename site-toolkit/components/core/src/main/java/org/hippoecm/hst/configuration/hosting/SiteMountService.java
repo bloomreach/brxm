@@ -115,6 +115,8 @@ public class SiteMountService implements SiteMount {
      * for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
      */
     private String embeddedSiteMountPath;
+    
+    private boolean sessionStateful;
      
     public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
         this.virtualHost = virtualHost;
@@ -273,6 +275,12 @@ public class SiteMountService implements SiteMount {
             this.users = new HashSet<String>();
         }
         
+        if (siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SESSIONSTATEFUL)) {
+            this.sessionStateful = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SESSIONSTATEFUL);
+        } else if (parent != null){
+            this.sessionStateful = parent.isSessionStateful();
+        } 
+        
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
         if(mountPoint == null ){
@@ -391,6 +399,10 @@ public class SiteMountService implements SiteMount {
     
     public Set<String> getUsers() {
         return Collections.unmodifiableSet(this.users);
+    }
+
+    public boolean isSessionStateful() {
+        return sessionStateful;
     }
 
 }

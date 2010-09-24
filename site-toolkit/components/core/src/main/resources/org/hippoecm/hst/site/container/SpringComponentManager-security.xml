@@ -42,18 +42,9 @@
     <property name="arguments">
       <list>
         <value>java.security.auth.login.config</value>
-        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-          <property name="targetObject">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-              <property name="targetObject">
-                <bean class="org.springframework.core.io.ClassPathResource">
-                  <constructor-arg value="${java.security.auth.login.config}" />
-                </bean>
-              </property>
-              <property name="targetMethod"><value>getURL</value></property>
-            </bean>
-          </property>
-          <property name="targetMethod"><value>toString</value></property>
+        <bean class="org.hippoecm.hst.site.container.ResourceFactoryBean">
+          <constructor-arg value="${java.security.auth.login.config}" />
+          <constructor-arg value="java.lang.String" />
         </bean>
       </list>
     </property>

@@ -103,6 +103,7 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_SECURED =  "hst:secured";
     public final static String SITEMOUNT_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMOUNT_PROPERTY_USERS =  "hst:users";
+    public final static String SITEMOUNT_PROPERTY_SESSIONSTATEFUL =  "hst:sessionstateful";
     
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     

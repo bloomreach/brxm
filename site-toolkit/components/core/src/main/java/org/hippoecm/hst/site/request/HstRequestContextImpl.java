@@ -25,6 +25,7 @@ import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -66,7 +67,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     protected String embeddingContextPath;
-    protected ResolvedSiteMount resolvedEmbeddingSiteMount;
+    protected ResolvedSiteMount resolvedEmbeddingSiteMount;  
+    protected Subject subject;
     
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -291,6 +293,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     
     public ContextCredentialsProvider getContextCredentialsProvider() {
         return contextCredentialsProvider;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public Subject getSubject() {
+        return subject;
     }
     
 }

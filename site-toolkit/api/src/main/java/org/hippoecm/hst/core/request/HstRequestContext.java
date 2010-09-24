@@ -20,8 +20,10 @@ import java.util.Enumeration;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -202,5 +204,11 @@ public interface HstRequestContext {
      * @return
      */
     ContextCredentialsProvider getContextCredentialsProvider();
+    
+    /**
+     * Gets the subject associated with the authorized entity.
+     * @return The JAAS subject on this request.
+     */
+    Subject getSubject();
     
 }

@@ -36,7 +36,6 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
     private ResolvedVirtualHost resolvedVirtualHost;
     private String resolvedMountPath;
     
-    
     public ResolvedSiteMountImpl(SiteMount siteMount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath){
         this.siteMount = siteMount;
         this.resolvedVirtualHost = resolvedVirtualHost;
@@ -109,6 +108,10 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
     
     public Set<String> getUsers() {
         return siteMount.getUsers();
+    }
+
+    public boolean isSessionStateful() {
+        return siteMount.isSessionStateful();
     }
 
 }
