@@ -60,7 +60,7 @@ import org.w3c.dom.Element;
  */
 public class TestContentService extends AbstractJaxrsSpringTestCase {
     
-    private static final String SITE_MOUNT_POINT = "/testpreview/testproject";
+    private static final String SITE_MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
     
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
