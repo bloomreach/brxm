@@ -14,7 +14,7 @@
     express or implied.
     See the License for the specific language governing permissions and
     limitations under the License. -->
-<sv:node sv:name="hst:testvirtualhosts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="hst:hosts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhosts</sv:value>
     </sv:property>
@@ -51,101 +51,105 @@
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
         <sv:value>127.0.0.1</sv:value>
     </sv:property>
-    
-    <sv:node sv:name="127.0.0.1">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:virtualhost</sv:value>
-        </sv:property>
-        <sv:node sv:name="hst:root">
+    <sv:node sv:name="dev">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:virtualhostgroup</sv:value>
+      </sv:property>
+      <sv:node sv:name="127.0.0.1">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemount</sv:value>
+              <sv:value>hst:virtualhost</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:mountpoint" sv:type="String">
-            <sv:value>/testlive/testproject</sv:value>
-          </sv:property>
-          <sv:node sv:name="restservice">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                  <sv:value>false</sv:value>
-              </sv:property>
-              <!-- mountpoint inherited here from parent  -->
-              <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>JaxrsPipeline</sv:value>
-              </sv:property>
-          </sv:node>
-          <sv:node sv:name="preview">
+          <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:ispreview" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
-              <sv:value>/testpreview/testproject</sv:value>
+              <sv:value>/testlive/testproject</sv:value>
             </sv:property>
             <sv:node sv:name="restservice">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                  <sv:value>false</sv:value>
-              </sv:property>
-              <!-- mountpoint inherited here from parent  -->
-              <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>JaxrsPipeline</sv:value>
-              </sv:property>
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                    <sv:value>false</sv:value>
+                </sv:property>
+                <!-- mountpoint inherited here from parent  -->
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsPipeline</sv:value>
+                </sv:property>
             </sv:node>
-           </sv:node>
-        </sv:node>
-    </sv:node>
-    
-    <sv:node sv:name="localhost">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:virtualhost</sv:value>
-        </sv:property>
-        <sv:node sv:name="hst:root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemount</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:mountpoint" sv:type="String">
-            <sv:value>/testlive/testproject</sv:value>
-          </sv:property>
-          <sv:node sv:name="services">
+            <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
               </sv:property>
-              
-               <!-- mountpoint inherited here from parent  -->
-              
-              <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>JaxrsPipeline</sv:value>
+              <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+                  <sv:value>true</sv:value>
               </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/testpreview/testproject</sv:value>
+              </sv:property>
+              <sv:node sv:name="restservice">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                    <sv:value>false</sv:value>
+                </sv:property>
+                <!-- mountpoint inherited here from parent  -->
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsPipeline</sv:value>
+                </sv:property>
+              </sv:node>
+             </sv:node>
           </sv:node>
-          <sv:node sv:name="preview">
+      </sv:node>
+      
+      <sv:node sv:name="localhost">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:virtualhost</sv:value>
+          </sv:property>
+          <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:ispreview" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
-              <sv:value>/testpreview/testproject</sv:value>
+              <sv:value>/testlive/testproject</sv:value>
             </sv:property>
-            <sv:node sv:name="restservice">
+            <sv:node sv:name="services">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                
+                 <!-- mountpoint inherited here from parent  -->
+                
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsPipeline</sv:value>
+                </sv:property>
+            </sv:node>
+            <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                  <sv:value>false</sv:value>
+              <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+                  <sv:value>true</sv:value>
               </sv:property>
-              <!-- mountpoint inherited here from parent  -->
-              <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>JaxrsPipeline</sv:value>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/testpreview/testproject</sv:value>
               </sv:property>
-              </sv:node>
-           </sv:node>
-        </sv:node>
-    </sv:node>
+              <sv:node sv:name="restservice">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                    <sv:value>false</sv:value>
+                </sv:property>
+                <!-- mountpoint inherited here from parent  -->
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsPipeline</sv:value>
+                </sv:property>
+                </sv:node>
+             </sv:node>
+          </sv:node>
+      </sv:node>
+   </sv:node>
 </sv:node>
