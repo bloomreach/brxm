@@ -18,6 +18,7 @@ package org.hippoecm.hst.security.impl;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -44,7 +45,13 @@ public class DefaultLoginModule implements LoginModule {
 
     /** <p>LoginModule debug mode is turned off by default.</p> */
     protected boolean debug;
-
+    
+    /** <p>LoginModule public credentials storing mode is turned off by default.</p> */
+    protected boolean storePubCreds;
+    
+    /** <p>LoginModule private credentials storing mode is turned off by default.</p> */
+    protected boolean storePrivCreds;
+    
     /** <p>The authentication status.</p> */
     protected boolean success;
 
@@ -86,6 +93,8 @@ public class DefaultLoginModule implements LoginModule {
         this.authProvider = authProvider;
         
         debug = false;
+        storePubCreds = false;
+        storePrivCreds = false;
         success = false;
         commitSuccess = false;
         username = null;
@@ -165,7 +174,11 @@ public class DefaultLoginModule implements LoginModule {
             success = false;
 
             try {
-                user = getAuthenticationProvider().authenticate(this.username, password.toCharArray(), subject);
+                user = getAuthenticationProvider().authenticate(username, password.toCharArray(), subject);
+                
+                if (storePrivCreds) {
+                    subject.getPrivateCredentials().add(new SimpleCredentials(username, password.toCharArray()));
+                }
             } catch (SecurityException se) {
                 if (se.getCause() != null) {
                     if (log.isDebugEnabled()) {
@@ -218,9 +231,16 @@ public class DefaultLoginModule implements LoginModule {
         this.sharedState = sharedState;
         this.options = options;
 
-        // Initialize debug mode if configure option.
         if (options.containsKey("debug")) {
             debug = "true".equalsIgnoreCase((String) options.get("debug"));
+        }
+        
+        if (options.containsKey("storePubCreds")) {
+            storePrivCreds = "true".equalsIgnoreCase((String) options.get("storePrivCreds"));
+        }
+        
+        if (options.containsKey("storePrivCreds")) {
+            storePrivCreds = "true".equalsIgnoreCase((String) options.get("storePrivCreds"));
         }
     }
 

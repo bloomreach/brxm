@@ -23,11 +23,9 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 
 import org.hippoecm.hst.security.HstSubject;
-import org.hippoecm.hst.security.User;
 
 /**
  * SubjectBasedStatefulRepository
@@ -84,15 +82,11 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
         Subject subject = HstSubject.getSubject(null);
         
         if (subject != null) {
-            Set<User> users = subject.getPrincipals(User.class);
+            Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);
             
-            if (!users.isEmpty()) {
-                String username = users.iterator().next().getName();
-                // FIXME: retrieve password credentials more properly and securely.
-                //        possibly store private credentials into subject with proper access controls.
-                String password = username;
-                Credentials creds = new SimpleCredentials(username, password.toCharArray());
-                return super.login(creds);
+            if (!repoCredsSet.isEmpty()) {
+                Credentials repoCreds = repoCredsSet.iterator().next();
+                return super.login(repoCreds);
             }
         }
         

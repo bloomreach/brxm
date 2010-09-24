@@ -27,11 +27,13 @@
     
   <bean id="org.hippoecm.hst.security.AuthenticationProvider" class="org.hippoecm.hst.security.impl.JcrAuthenticationProvider">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
-          value="config.containsKey('java.security.auth.login.config')" /> 
+          value="config.containsKey('java.security.auth.login.config')" />
+    <!-- System repository to retrieve roles for user. -->
     <constructor-arg index="0" ref="javax.jcr.Repository" />
+    <!-- System repository credentials to retrieve roles for user. -->
     <constructor-arg index="1" ref="javax.jcr.Credentials.hstconfigreader" />
-    <!-- FIXME: add session stateful repository here. -->
-    <constructor-arg index="2" ref="javax.jcr.Repository" />
+    <!-- User authentication repository against which each user will be authenticated. -->
+    <constructor-arg index="2" ref="javax.jcr.Repository.delegating" />
   </bean>
   
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

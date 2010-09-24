@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * <PRE><XMP>
  * <servlet>
  *   <servlet-name>LoginServlet</servlet-name>
- *   <servlet-class>org.hippoecm.hst.security.servlet.LoginProxyServlet</servlet-class>
+ *   <servlet-class>org.hippoecm.hst.security.servlet.LoginServlet</servlet-class>
  * </servlet>
  * 
  * <servlet-mapping>
@@ -111,12 +111,12 @@ public class LoginServlet extends HttpServlet {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     
-    public static final String DESTINATION_ATTR_NAME = LoginServlet.class.getName() + "." + DESTINATION;
-    public static final String USERNAME_ATTR_NAME = LoginServlet.class.getName() + "." + USERNAME;
-    public static final String PASSWORD_ATTR_NAME = LoginServlet.class.getName() + "." + PASSWORD;
+    public static final String DESTINATION_ATTR_NAME = LoginServlet.class.getPackage().getName() + "." + DESTINATION;
+    public static final String USERNAME_ATTR_NAME = LoginServlet.class.getPackage().getName() + "." + USERNAME;
+    public static final String PASSWORD_ATTR_NAME = LoginServlet.class.getPackage().getName() + "." + PASSWORD;
     
     public static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
-    public static final String DEFAULT_LOGIN_FORM_PAGE_PATH = "/WEB-INF/jsp/login.jsp";
+    public static final String DEFAULT_LOGIN_FORM_PAGE_PATH = "/WEB-INF/jsp/login_security_check.jsp";
     
     public static final String MODE_LOGIN_PROXY = "proxy";
     public static final String MODE_LOGIN_LOGIN = "login";
@@ -167,6 +167,11 @@ public class LoginServlet extends HttpServlet {
         if (mode == null) {
             String requestURI = request.getRequestURI();
             mode = requestURI.substring(requestURI.lastIndexOf('/') + 1);
+            int offset = mode.indexOf(';');
+            
+            if (offset != -1) {
+                mode = mode.substring(0, offset);
+            }
         }
         
         return mode;

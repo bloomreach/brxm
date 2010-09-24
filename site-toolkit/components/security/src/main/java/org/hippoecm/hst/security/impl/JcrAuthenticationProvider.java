@@ -53,15 +53,15 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
     
     private Repository systemRepository;
     private Credentials systemCreds;
-    private Repository userRepository;
+    private Repository userAuthRepository;
     
     private String rolesOfUserQuery = DEFAULT_ROLES_OF_USER_QUERY;
     private String queryLanguage = Query.XPATH;
     
-    public JcrAuthenticationProvider(Repository systemRepository, Credentials systemCreds, Repository userRepository) {
+    public JcrAuthenticationProvider(Repository systemRepository, Credentials systemCreds, Repository userAuthRepository) {
         this.systemRepository = systemRepository;
         this.systemCreds = systemCreds;
-        this.userRepository = userRepository;
+        this.userAuthRepository = userAuthRepository;
     }
     
     public void setRolesOfUserQuery(String rolesOfUserQuery) {
@@ -81,7 +81,7 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
         SimpleCredentials creds = new SimpleCredentials(userName, password);
         
         try {
-            session = userRepository.login(new SimpleCredentials(userName, password));
+            session = userAuthRepository.login(new SimpleCredentials(userName, password));
         } catch (LoginException e) {
             throw new SecurityException(e.getLocalizedMessage(), e);
         } catch (RepositoryException e) {

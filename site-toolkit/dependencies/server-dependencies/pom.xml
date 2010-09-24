@@ -66,6 +66,12 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-security</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.components</groupId>
       <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
