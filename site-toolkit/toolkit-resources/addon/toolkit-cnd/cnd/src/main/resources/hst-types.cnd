@@ -200,7 +200,7 @@
 + * (hst:sites) = hst:sites 
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
-[hst:contentmount] > hippo:mirror
+[hst:contentshare] > hippo:mirror
 
 [hst:formdata]
 - hst:creationtime (date) mandatory
