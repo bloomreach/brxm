@@ -28,13 +28,14 @@ import org.apache.commons.lang.SerializationUtils;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceFactory;
+import org.hippoecm.hst.test.basic.BasicHstTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestJCRServiceBean extends AbstractBeanTestCase {
     
-    private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/unittestpreview/unittestproject/hst:content/common/homepage/homepage";
+    private static final String TESTPROJECT_EXISTING_VIRTUALNODE = BasicHstTestCase.TEST_PREVIEW_SITE_CONTENT_PATH + "/common/homepage/homepage";
 
 
     @Before

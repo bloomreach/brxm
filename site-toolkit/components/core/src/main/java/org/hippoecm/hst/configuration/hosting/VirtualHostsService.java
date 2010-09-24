@@ -89,16 +89,23 @@ public class VirtualHostsService implements VirtualHosts {
             this.scheme = DEFAULT_SCHEME;
         }
         
-        for(HstNode virtualHostNode : virtualHostsConfigurationNode.getNodes()) {
-            try {
-                VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hstManager);
-                this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
-            } catch (IllegalArgumentException e) {
-                log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
-                        + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
-                        + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
-               throw e;
-           }
+        // now we loop through the hst:hostgroup nodes first:
+        for(HstNode hostGroupNode : virtualHostsConfigurationNode.getNodes()) {
+            // assert node is of type virtualhostgroup
+            if(!HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP.equals(hostGroupNode.getNodeTypeName())) {
+                throw new ServiceException("Expected a hostgroup node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP+"' but found a node of type '"+hostGroupNode.getNodeTypeName()+"' at '"+hostGroupNode.getValueProvider().getPath()+"'");
+            }
+            for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
+                try {
+                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hostGroupNode.getValueProvider().getName() ,hstManager);
+                    this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
+                } catch (IllegalArgumentException e) {
+                    log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
+                            + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
+                            + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
+                   throw e;
+               }
+            }
         }
         
     }

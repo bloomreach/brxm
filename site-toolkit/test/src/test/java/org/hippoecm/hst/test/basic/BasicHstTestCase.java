@@ -23,6 +23,14 @@ import org.junit.Test;
 
 public class BasicHstTestCase extends AbstractHstTestCase{
 
+    public final static String TEST_VIRTURALHOSTS_PATH = "/hst:hst/hst:hosts";
+    public final static String TEST_HSTCONFIGURATION_PATH = "/hst:hst/hst:configurations/unittest";
+    public final static String TEST_PREVIEW_SITE_PATH= "/hst:hst/hst:unittestsites/unittestproject-preview";
+    public final static String TEST_PREVIEW_SITE_CONTENT_PATH= "/hst:hst/hst:unittestsites/unittestproject-preview/hst:content";
+    public final static String TEST_LIVE_SITE_PATH= "/hst:hst/hst:unittestsites/unittestproject-live";
+    public final static String TEST_LIVE_SITE_CONTENT_PATH= "/hst:hst/hst:unittestsites/unittestproject-live/hst:content";
+   
+    
     /**
      * This test assures that their is some default node structure other tests
      * can rely on.
@@ -33,10 +41,10 @@ public class BasicHstTestCase extends AbstractHstTestCase{
         
        Session session = this.getSession();
        
-       assertTrue("Node /unittestpreview must exist",session.itemExists("/unittestpreview"));
-       assertTrue("Node /unittestlive must exist",session.itemExists("/unittestlive"));
-       assertTrue("Node /hst:unittestvirtualhosts must exist", session.itemExists("/hst:unittestvirtualhosts"));
-       assertTrue("Node /unittestpreview/unittestproject/hst:content/common/homepage must exist", session.itemExists("/unittestpreview/unittestproject/hst:content/common/homepage"));
+       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"' must exist",session.itemExists(TEST_PREVIEW_SITE_PATH));
+       assertTrue("Node '"+TEST_LIVE_SITE_PATH+"' must exist",session.itemExists(TEST_LIVE_SITE_PATH));
+       assertTrue("Node '"+TEST_VIRTURALHOSTS_PATH+"s' must exist", session.itemExists(TEST_VIRTURALHOSTS_PATH));
+       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"/hst:content/common/homepage' must exist", session.itemExists(TEST_PREVIEW_SITE_PATH+"/hst:content/common/homepage"));
 
     }
     

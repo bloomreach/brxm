@@ -30,6 +30,7 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_SITEMENU = "hst:sitemenu";
     public final static String NODETYPE_HST_SITEMENUITEM = "hst:sitemenuitem";
     public final static String NODETYPE_HST_VIRTUALHOSTS = "hst:virtualhosts";
+    public final static String NODETYPE_HST_VIRTUALHOSTGROUP = "hst:virtualhostgroup";
     public final static String NODETYPE_HST_VIRTUALHOST = "hst:virtualhost";
     public final static String NODETYPE_HST_PORTMOUNT = "hst:portmount";
     public final static String NODETYPE_HST_SITEMOUNT = "hst:sitemount";

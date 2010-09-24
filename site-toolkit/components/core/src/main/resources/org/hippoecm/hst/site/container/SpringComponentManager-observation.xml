@@ -72,22 +72,23 @@
           <property name="propertyAddedEnabled" value="true"/>
           <property name="propertyChangedEnabled" value="true"/>
           <property name="propertyRemovedEnabled" value="true"/>
-          <property name="absolutePath" value="/"/>
+          <property name="absolutePath" value="/hst:hst"/>
           <property name="deep" value="true"/>
           <property name="uuids">
             <null/>
           </property>
           <property name="nodeTypeNames">
-            <bean factory-bean="org.hippoecm.hst.configuration.nodeTypeNames" factory-method="toArray"/>
+            <null/>
           </property>
           <property name="noLocal" value="false"/>
           <property name="eventListener">
             <bean parent="baseDelegatingEventListener" class="org.hippoecm.hst.core.jcr.DelegatingEventListener">
               <constructor-arg>
                 <list>
-                  <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstSitesConfigurationEventListener">
+                  <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
                     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
                     <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
+                    <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
                   </bean>
                   <ref bean="hstconfigreaderSessionPoolRefresher" />
                 </list>

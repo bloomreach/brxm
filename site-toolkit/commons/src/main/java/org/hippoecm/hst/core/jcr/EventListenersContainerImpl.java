@@ -231,11 +231,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
 
             this.firstInitializationDone = true;
 
-            if (log.isInfoEnabled()) {
-                log.info("- INFO: EventListenersContainer's initialization done.");
-            } else {
-                log.warn("- INFO: EventListenersContainer's initialization done.");
-            }
+            log.info("EventListenersContainer's initialization done.");
+            
         } catch (LoginException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to get a session in EventListenersContainer. The repository might be not available yet or the credentials might be wrong. It will try initialization next time. " + e, e);

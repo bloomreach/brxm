@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.configuration.model;
 
-import java.util.List;
 import java.util.UUID;
 
 import javax.jcr.Item;
@@ -36,11 +35,11 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     private String contentPath;
     private String canonicalcontentPath;
     
-    public HstSiteRootNodeImpl(Node siteRootNode, HstNode parent, List<String> nodeTypeNames)
+    public HstSiteRootNodeImpl(Node siteRootNode, HstNode parent)
             throws HstNodeException {
         
         // do not load child nodes as this is the entire content
-        super(siteRootNode, parent, nodeTypeNames, false);
+        super(siteRootNode, parent, false);
         
         try {
             if(siteRootNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {

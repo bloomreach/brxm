@@ -23,9 +23,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
@@ -55,8 +54,13 @@ public class VirtualHostService implements VirtualHost {
      * Whether the {@link SiteMount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview SiteMount
      */
     private boolean versionInPreviewHeader;
-    
+
     private VirtualHosts virtualHosts;
+    
+    /**
+     * The name of the host group this virtualhost belongs to, for example, dev, acct or prod
+     */
+    private String hostGroupName;
     private VirtualHostService parentHost;
     
     private Map<Integer, PortMount> portMounts = new HashMap<Integer, PortMount>();
@@ -64,10 +68,11 @@ public class VirtualHostService implements VirtualHost {
     private boolean contextPathInUrl;
     private String scheme;
 
-    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, HstManagerImpl hstManager) throws ServiceException {        
+    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, HstManagerImpl hstManager) throws ServiceException {        
        
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
+        this.hostGroupName = hostGroupName;
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
         } else {
@@ -139,7 +144,7 @@ public class VirtualHostService implements VirtualHost {
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
-                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hstManager);
+                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName,  hstManager);
                 this.childVirtualHosts.put(childHost.name, childHost);
                 // we need to switch the attachPortMountToHost to the last host
             }
@@ -174,7 +179,7 @@ public class VirtualHostService implements VirtualHost {
         
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
-                VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hstManager);
+                VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, hstManager);
                 attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
                 PortMount portMount = new PortMountService(child, attachPortMountToHost, hstManager);
@@ -184,9 +189,10 @@ public class VirtualHostService implements VirtualHost {
        
     }
 
-    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, HstManagerImpl hstManager) {
+    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroup, HstManagerImpl hstManager) {
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
+        this.hostGroupName = hostGroup;
         this.scheme = parent.scheme;
         this.homepage = parent.homepage;
         this.pageNotFound = parent.pageNotFound;
@@ -195,7 +201,7 @@ public class VirtualHostService implements VirtualHost {
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
-            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hstManager);
+            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroup, hstManager);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
         hostName = buildHostName();
@@ -210,6 +216,10 @@ public class VirtualHostService implements VirtualHost {
         return hostName;
     }
     
+    public String getHostGroupName() {
+        return hostGroupName;
+    }
+
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
     }
@@ -276,6 +286,5 @@ public class VirtualHostService implements VirtualHost {
         return builder.toString();
     }
 
-   
     
 }

@@ -15,6 +15,7 @@
  */
 
 <nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/2.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 
@@ -22,17 +23,17 @@
 - hst:description (string)
 + hst:icon (hippo:resource) = hippo:resource
 
-[hst:template] > nt:base, hst:descriptive
+[hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
 - hst:containers (string) multiple
 
-[hst:templates] orderable
+[hst:templates] > nt:base, mix:referenceable orderable
 + * (hst:template)
 
-[hst:component] > nt:base, hst:descriptive orderable
+[hst:component] > nt:base, mix:referenceable, hst:descriptive orderable
 - hst:template (string)
 - hst:componentclassname (string)
-- hst:serveresourcepath(string)
+- hst:serveresourcepath (string)
 - hst:referencename (string)
 - hst:referencecomponent(string)
 - hst:page_errorhandlerclassname (string)
@@ -40,13 +41,17 @@
 - hst:parametervalues (string) multiple
 + * (hst:component)
 
-[hst:components] orderable
+[hst:componentcontainer] > hst:component
+
+[hst:componentcontaineritem] > hst:component
+
+[hst:components] > nt:base, mix:referenceable orderable
 + * (hst:component)
 
-[hst:pages] orderable
+[hst:pages] > nt:base, mix:referenceable orderable
 + * (hst:component)
 
-[hst:sitemapitemhandler] > nt:base
+[hst:sitemapitemhandler] > nt:base, mix:referenceable
 - hst:sitemapitemhandlerclassname (string) mandatory
 - * (string) 
 - * (string) multiple
@@ -59,18 +64,18 @@
 - * (date) 
 - * (date) multiple
 
-[hst:sitemapitemhandlers] orderable
+[hst:sitemapitemhandlers] >  nt:base, mix:referenceable orderable
 + * (hst:sitemapitemhandler)
 
-[hst:script] > nt:base
+[hst:script] > nt:base, mix:referenceable
 - hst:template (string) mandatory
 - hst:language (string) mandatory
 - * (string)
 
-[hst:scripts] orderable
+[hst:scripts] > nt:base, mix:referenceable orderable
 + * (hst:script)
 
-[hst:sitemapitem]
+[hst:sitemapitem] > nt:base, mix:referenceable
 - hst:value
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
@@ -87,10 +92,10 @@
 - hst:users (string) multiple
 + * (hst:sitemapitem)
 
-[hst:sitemap] orderable
+[hst:sitemap] > nt:base, mix:referenceable orderable
 + * (hst:sitemapitem)
 
-[hst:sitemenuitem] orderable
+[hst:sitemenuitem] > nt:base, mix:referenceable orderable
 - hst:referencesitemapitem (string)
 - hst:externallink (string)
 - hst:foldersonly (boolean)
@@ -100,14 +105,14 @@
 - hst:parametervalues (string) multiple
 + * (hst:sitemenuitem)
 
-[hst:sitemenu] orderable
+[hst:sitemenu] > nt:base, mix:referenceable orderable
 + * (hst:sitemenuitem)
 
-[hst:sitemenus]
+[hst:sitemenus] > nt:base, mix:referenceable
 + * (hst:sitemenu)
 
 
-[hst:configuration] > hippo:document
+[hst:configuration] > nt:base, mix:referenceable
 + hst:components (hst:components) = hst:components
 + hst:pages (hst:pages) = hst:pages
 + hst:sitemap (hst:sitemap) = hst:sitemap
@@ -116,22 +121,24 @@
 + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
 + hst:scripts (hst:scripts) = hst:scripts
 
+[hst:configurations] > nt:base, mix:referenceable
++ * (hst:configuration) = hst:configuration
 
-[hst:site]
+[hst:site] > nt:base, mix:referenceable
 + hst:content (hippo:facetselect) mandatory
 - hst:configurationpath (string) mandatory
 - hst:portalconfigurationenabled (boolean)
 
-[hst:sites]
+[hst:sites] > nt:base, mix:referenceable
 + * (hst:site) = hst:site
 
 [hst:primarydomain] mixin
 
-[hst:redirectdomain] mixin
+[hst:redirectdomain] mixin 
 - hst:redirect (string)
 
 
-[hst:sitemount]
+[hst:sitemount] > nt:base, mix:referenceable
 + * (hst:sitemount)
 // the path to the (sub)site. for example /preview/myproject
 - hst:mountpoint (string)
@@ -156,10 +163,10 @@
 - hst:users (string) multiple
 - hst:sessionstateful (boolean)
 
-[hst:portmount]
+[hst:portmount] > nt:base, mix:referenceable
 + hst:root (hst:sitemount)
 
-[hst:virtualhost]
+[hst:virtualhost] > nt:base, mix:referenceable
 + * (hst:virtualhost)
 + * (hst:portmount)
 + hst:root (hst:sitemount)
@@ -171,7 +178,10 @@
 - hst:pagenotfound (string)
 - hst:versioninpreviewheader (boolean)
 
-[hst:virtualhosts]
+[hst:virtualhostgroup] > nt:base, mix:referenceable
++ * (hst:virtualhost)
+
+[hst:virtualhosts] > nt:base, mix:referenceable
 - hst:showcontextpath (boolean)
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
@@ -182,11 +192,15 @@
 - hst:homepage (string)
 - hst:pagenotfound (string)
 - hst:versioninpreviewheader (boolean)
-+ * (hst:virtualhost)
++ * (hst:virtualhostgroup)
+
+[hst:hst] > nt:base, mix:referenceable
++ hst:configurations (hst:configurations) = hst:configurations 
++ hst:hosts (hst:virtualhosts) = hst:virtualhosts 
++ * (hst:sites) = hst:sites 
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
-// TODO rethink this nodetype: we rather do not depend on hippo namespace at all from hst namespace
-// [hst:contentmount] > hippo:mirror
+[hst:contentmount] > hippo:mirror
 
 [hst:formdata]
 - hst:creationtime (date) mandatory

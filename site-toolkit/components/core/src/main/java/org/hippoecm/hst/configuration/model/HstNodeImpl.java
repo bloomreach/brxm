@@ -57,17 +57,14 @@ public class HstNodeImpl implements HstNode {
      */
     private String nodeTypeName;
     
-    public HstNodeImpl(Node jcrNode, HstNode parent, List<String> nodeTypeNames, boolean loadChilds) throws HstNodeException {
+    public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws HstNodeException {
         this.parent = parent;
         
         provider = new JCRValueProviderImpl(jcrNode, false);
         
         try {
             nodeTypeName = jcrNode.getPrimaryNodeType().getName();
-            if(!nodeTypeNames.contains(nodeTypeName)) {
-                throw new HstNodeException("Not a known configuration node type '"+nodeTypeName+"'. Cannot build configuration");
-            }
-            
+           
             NodeIterator nodes = jcrNode.getNodes();
             if(loadChilds) {
                 while(nodes.hasNext()) {
@@ -77,7 +74,7 @@ public class HstNodeImpl implements HstNode {
                     }
                     HstNodeImpl childRepositoryNode = null;
                     try {
-                        childRepositoryNode = new HstNodeImpl(child, this, nodeTypeNames, loadChilds);
+                        childRepositoryNode = new HstNodeImpl(child, this, loadChilds);
                     } catch (HstNodeException e){
                         log.warn("Failed to load configuration node for '{}'. {}", child.getPath(), e.toString());
                     }

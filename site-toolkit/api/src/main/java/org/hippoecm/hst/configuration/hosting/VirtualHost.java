@@ -31,7 +31,7 @@ public interface VirtualHost {
      * @return The composite hostName of this VirtualHost, thus including parent VirtualHosts if present
      */
     String getHostName();
-    
+     
     /**
      * Returns the <code>name</code> of this VirtualHost. Note, this is not the hostName, but only part of it. If the hostName 
      * is www.apache.org, then the name of this VirtualHost might be 'www' or 'apache' or 'org'. It is thus one segment of the entire hostName.
@@ -40,6 +40,12 @@ public interface VirtualHost {
      * @return The <code>name</code> of this VirtualHost. Note, this is only part of the entire hostName
      */
     String getName();
+    
+    /**
+     * Returns the name of host group this virtual host belongs to, for example 'prod', 'acct' or 'dev' 
+     * @return the <code>name</code> of the host group this VirtualHost belongs to.
+     */
+    String getHostGroupName();
     
     /**
      * @param name the name segment of the hostname

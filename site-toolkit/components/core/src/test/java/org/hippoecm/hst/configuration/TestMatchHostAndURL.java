@@ -387,7 +387,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The mount for /preview/services should return that it is not mounted ", !mount.getSiteMount().isSiteMount());
                 assertNull("An not mounted sitemount should have a HstSite that is null", mount.getSiteMount().getHstSite());
                 assertTrue("The mountpath for /preview/services mount must be '/preview/services' but was '"+mount.getSiteMount().getMountPath()+"'", "/preview/services".equals(mount.getSiteMount().getMountPath()));
-                assertTrue("The mountpoint for /preview/services mount must be '/unittestpreview/unittestproject' but was '"+mount.getSiteMount().getMountPoint()+"'", "/unittestpreview/unittestproject".equals(mount.getSiteMount().getMountPoint()));
+                assertTrue("The mountpoint for /preview/services mount must be '/hst:hst/hst:unittestsites/unittestproject-preview' but was '"+mount.getSiteMount().getMountPoint()+"'", "/hst:hst/hst:unittestsites/unittestproject-preview".equals(mount.getSiteMount().getMountPoint()));
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();

@@ -13,18 +13,16 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-
-  sv:name="unittestlive">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:unittestsites">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sites</sv:value>
   </sv:property>
-  <sv:node sv:name="unittestproject">
+  <sv:node sv:name="unittestproject-live">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
     <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:unittestconfiguration/hst:configuration</sv:value>
+      <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
     </sv:property>
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -41,6 +39,31 @@
       </sv:property>
       <sv:property sv:name="hippo:modes" sv:type="String">
         <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="unittestproject-preview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippostd:state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>prefer-single</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

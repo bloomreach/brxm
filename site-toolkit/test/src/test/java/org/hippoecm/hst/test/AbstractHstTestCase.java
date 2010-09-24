@@ -50,9 +50,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractHstTestCase extends TestCase{
 
-    protected final static String TEST_VIRTURALHOSTS_PATH = "hst:testvirtualhosts";
-    protected final static String TEST_HSTCONFIGURATION_PATH = "hst:testconfiguration/hst:configuration";
-    
     protected final static Logger log = LoggerFactory.getLogger(AbstractHstTestCase.class);
     protected ComponentManager abstractTestComponentManager;
     

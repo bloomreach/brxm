@@ -52,15 +52,16 @@ public class HstManagerImpl implements HstManager {
     private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
     private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
-    /**
-     * the list of node types that we know about for the hst configuration.
-     */
-    List<String> nodeTypeNames;
     
+    /**
+     * The root path of all the hst configuations nodes, by default /hst:hst
+     */
+    private String rootPath;
+   
     /**
      * The root of the virtual hosts node. There should always be exactly one.
      */
-    HstNode virtualHostsRepositoryNode; 
+    HstNode virtualHostsNode; 
 
     /**
      * The map of all configurationRootNodes where the key is the path to the configuration
@@ -72,17 +73,16 @@ public class HstManagerImpl implements HstManager {
      */
     Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
     
-    
-    public void setNodeTypeNames(List<String> nodeTypeNames) {
-        this.nodeTypeNames = nodeTypeNames;
-    }
-
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
     
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
+    }
+    
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
     }
     
     public void setUrlFactory(HstURLFactory urlFactory) {
@@ -141,7 +141,7 @@ public class HstManagerImpl implements HstManager {
             
            // get all the root hst virtualhosts node: there is only allowed to be exactly ONE
             {
-                String xpath = "//element(*, "+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS+")";
+                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS+")";
                 QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
                 
                 NodeIterator virtualHostNodes = result.getNodes();
@@ -149,42 +149,44 @@ public class HstManagerImpl implements HstManager {
                     throw new RepositoryNotAvailableException("There must be exactly one node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS+"' but there are "+virtualHostNodes.getSize()+" .");
                 }
                 // there is exactly one virtualHostsNode
-                Node virtualHostsNode = virtualHostNodes.nextNode();
-                virtualHostsRepositoryNode = new HstNodeImpl(virtualHostsNode, null, nodeTypeNames, true);
-            }
+                Node virtualHostsJcrNode = virtualHostNodes.nextNode();
+                virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
+            } 
             
             
             // get all the root hst configuration nodes
             {
-                String xpath = "//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")";
+                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")";
                 QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
                 NodeIterator configurationRootJcrNodes = result.getNodes();
                 
                 while(configurationRootJcrNodes.hasNext()) {
                     Node configurationRootNode = configurationRootJcrNodes.nextNode();
-                    HstNode hstNode = new HstNodeImpl(configurationRootNode, null, nodeTypeNames, true);
+                    HstNode hstNode = new HstNodeImpl(configurationRootNode, null, true);
                     configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
                 }
             }
             
             // get all the mount points
-            String xpath = "//element(*, "+HstNodeTypes.NODETYPE_HST_SITE+")";
+            String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_SITE+")";
             QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator siteRootJcrNodes = result.getNodes();
             
             while(siteRootJcrNodes.hasNext()) {
                 Node rootSiteNode = siteRootJcrNodes.nextNode();
-                HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(rootSiteNode, null, nodeTypeNames);
+                HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(rootSiteNode, null);
                 siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
             }
-            
-            
             
         } catch (RepositoryException e) {
             throw new RepositoryNotAvailableException("Exception during loading configuration nodes. ",e);
         } finally {
             if (session != null) {
-                try { session.logout(); } catch (Exception ce) {}
+                try { 
+                    session.logout(); 
+                } catch (Exception ce) {
+                    throw new RepositoryNotAvailableException("Exception while loging out jcr session ",ce);
+                }
             }
         }
          
@@ -202,7 +204,7 @@ public class HstManagerImpl implements HstManager {
     
     
     public HstNode getVirtualHostsNode() {
-        return virtualHostsRepositoryNode;
+        return virtualHostsNode;
     }
     
     public Map<String, HstSiteRootNode> getHstSiteRootNodes(){

@@ -38,37 +38,10 @@
    <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry"
         class="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl"/>
           
-   
-    <bean id="org.hippoecm.hst.configuration.nodeTypeNames" class="java.util.ArrayList">
-       <constructor-arg>
-       <list>
-            <value>hst:virtualhosts</value>
-            <value>hst:virtualhost</value> 
-            <value>hst:portmount</value>
-            <value>hst:sitemount</value>
-            <value>hst:template</value>
-            <value>hst:templates</value>
-            <value>hst:component</value>
-            <value>hst:components</value>
-            <value>hst:pages</value>
-            <value>hst:sitemapitem</value>
-            <value>hst:sitemap</value>
-            <value>hst:sitemapitemhandlers</value>
-            <value>hst:sitemapitemhandler</value>
-            <value>hst:sitemenuitem</value>
-            <value>hst:sitemenu</value>
-            <value>hst:sitemenus</value>
-            <value>hst:configuration</value>
-            <value>hst:site</value>
-            <value>hst:sites</value>
-        </list>
-      </constructor-arg>
-    </bean>  
-        
    <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
+       <property name="rootPath" value="/hst:hst"/>
        <property name="repository" ref="javax.jcr.Repository" />
        <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
-       <property name="nodeTypeNames" ref="org.hippoecm.hst.configuration.nodeTypeNames"/>
        <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
        <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
        <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />

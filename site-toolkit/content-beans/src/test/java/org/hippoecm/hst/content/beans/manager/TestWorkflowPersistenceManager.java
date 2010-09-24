@@ -32,6 +32,7 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+import org.hippoecm.hst.test.basic.BasicHstTestCase;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
     private static final String TEST_DOCUMENT_NODE_TYPE = "unittestproject:textpage";
     
-    private static final String TEST_CONTENTS_PATH = "/unittestpreview/unittestproject/hst:content";
+    private static final String TEST_CONTENTS_PATH = BasicHstTestCase.TEST_PREVIEW_SITE_CONTENT_PATH;
     private static final String TEST_FOLDER_NODE_PATH = TEST_CONTENTS_PATH + "/common";
 
     private static final String TEST_EXISTING_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/homepage";
