@@ -930,7 +930,7 @@
         <module>components</module>
         <module>client</module>
         <module>dependencies</module>
-        <!-- module>testsuite</module-->
+        <module>testsuite</module>
         <module>demosuite</module>
       </modules>
     </profile>
