@@ -106,6 +106,31 @@
                 </sv:property>
               </sv:node>
             </sv:node>
+            <sv:node sv:name="composer">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:node sv:name="restservice">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                    <sv:value>false</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsPipeline</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
           </sv:node>
       </sv:node>
       
@@ -153,16 +178,14 @@
                 </sv:property>
               </sv:node>
             </sv:node>
-          </sv:node>
-          <sv:node sv:name="preview">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:virtualhost</sv:value>
-            </sv:property>
-            <sv:node sv:name="hst:root">
+            <sv:node sv:name="composer">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:sitemount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:ispreview" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
@@ -170,17 +193,17 @@
               </sv:property>
               <sv:node sv:name="restservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                    <sv:value>hst:sitemount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                 <sv:value>false</sv:value>
+                    <sv:value>false</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>JaxrsPipeline</sv:value>
                 </sv:property>
               </sv:node>
             </sv:node>
-          </sv:node>        
-      </sv:node>
+          </sv:node>       
+       </sv:node>
     </sv:node>  
 </sv:node>
