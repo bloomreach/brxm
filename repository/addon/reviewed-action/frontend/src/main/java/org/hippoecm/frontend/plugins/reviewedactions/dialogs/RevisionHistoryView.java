@@ -152,9 +152,28 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         super.detachModel();
     };
 
+    /**
+     * Gets a {@link org.hippoecm.frontend.plugins.standards.list.TableDefinition} whichs contains all columns and
+     * information needed for the view.
+     * @return the {@link org.hippoecm.frontend.plugins.standards.list.TableDefinition} with all data
+     */
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
+        addNameColumn(columns);
+        addTimeColumn(columns);
+        addUserColumn(columns);
+        addStateColumn(columns);
+
+        return new TableDefinition(columns);
+    }
+
+    /**
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the name of the document
+     * to the list of columns.
+     * @param columns the list of columns.
+     */
+    private void addNameColumn(List<ListColumn> columns) {
         ListColumn column = new ListColumn(new StringResourceModel("history-name", this, null), null);
         column.setRenderer(new IListCellRenderer() {
             private static final long serialVersionUID = 1L;
@@ -182,8 +201,15 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         });
         column.setAttributeModifier(new RevisionDocumentAttributeModifier());
         columns.add(column);
+    }
 
-        column = new ListColumn(new StringResourceModel("history-time", this, null), null);
+    /**
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the time information
+     * to the list of columns.
+     * @param columns the list of columns.
+     */
+    private void addTimeColumn(List<ListColumn> columns) {
+        ListColumn column = new ListColumn(new StringResourceModel("history-time", this, null), null);
         column.setRenderer(new IListCellRenderer() {
             private static final long serialVersionUID = 1L;
 
@@ -212,8 +238,52 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
         });
         columns.add(column);
+    }
 
-        column = new ListColumn(new StringResourceModel("history-state", this, null), "state");
+    /**
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the user
+     * to the list of columns.
+     * @param columns the list of columns.
+     */
+    private void addUserColumn(List<ListColumn> columns) {
+        ListColumn column = new ListColumn(new StringResourceModel("history-user", this, null), "user");
+        column.setRenderer(new IListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+
+            public Component getRenderer(String id, final IModel model) {
+                IModel labelModel = new IModel() {
+
+                    public Object getObject() {
+                        Revision revision = (Revision) model.getObject();
+                        StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
+                        return attrs.getLastModifiedBy();
+                    }
+
+                    public void setObject(Object object) {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    public void detach() {
+                        model.detach();
+                    }
+                };
+                return new Label(id, labelModel);
+            }
+
+            public IObservable getObservable(IModel model) {
+                return null;
+            }
+
+        });
+        columns.add(column);
+    }
+    
+    /**
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the state information to the list of columns.
+     * @param columns the list of columns.
+     */
+    private void addStateColumn(List<ListColumn> columns) {
+        ListColumn column = new ListColumn(new StringResourceModel("history-state", this, null), "state");
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new AbstractListAttributeModifier() {
             private static final long serialVersionUID = 1L;
@@ -234,8 +304,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
             }
         });
         columns.add(column);
-
-        return new TableDefinition(columns);
     }
 
     public int getPageSize() {
