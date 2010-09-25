@@ -69,7 +69,7 @@ public class UserSession extends WebSession {
 
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
-    private FacetSearchObserver facetSearchObserver;
+    private transient FacetSearchObserver facetSearchObserver;
 
     public static void setCredentials(UserCredentials credentials) throws RepositoryException {
         fallbackSession = JcrSessionModel.login(credentials);
