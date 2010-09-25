@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.security;
 
-import javax.security.auth.Subject;
 
 
 /**
@@ -27,27 +26,21 @@ public class TransientUser implements User {
     private static final long serialVersionUID = 1L;
     
     private String name;
-    private Subject subject;
     
-    public TransientUser(String name) {
-        this(name, null);
+    public TransientUser() {
+        
     }
     
-    public TransientUser(String name, Subject subject) {
+    public TransientUser(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The name is null.");
         }
         
         this.name = name;
-        this.subject = subject;
     }
     
     public String getName() {
         return name;
-    }
-    
-    public Subject getSubject() {
-        return subject;
     }
     
     public boolean equals(Object o) {

@@ -118,13 +118,9 @@ public class TestDefaultLoginModule {
         }
 
         public User authenticate(String userName, char[] password) throws SecurityException {
-            return authenticate(userName, password, null);
-        }
-        
-        public User authenticate(String userName, char[] password, Subject subject) throws SecurityException {
             for (String user : userRolesMap.keySet()) {
                 if (user.equals(userName)) {
-                    return new TransientUser(user, subject);
+                    return new TransientUser(user);
                 }
             }
             

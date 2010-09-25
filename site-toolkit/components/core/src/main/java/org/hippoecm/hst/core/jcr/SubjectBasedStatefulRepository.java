@@ -38,7 +38,7 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
     }
     
     public Session login() throws LoginException, RepositoryException {
-        Session session = loginBySubject();
+        Session session = loginBySubject(null);
         
         if (session != null) {
             return session;
@@ -48,7 +48,7 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
     }
 
     public Session login(Credentials credentials) throws LoginException, RepositoryException {
-        Session session = loginBySubject();
+        Session session = loginBySubject(null);
         
         if (session != null) {
             return session;
@@ -58,7 +58,7 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
     }
 
     public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
-        Session session = loginBySubject();
+        Session session = loginBySubject(workspaceName);
         
         if (session != null) {
             return session;
@@ -69,7 +69,7 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
 
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
-        Session session = loginBySubject();
+        Session session = loginBySubject(workspaceName);
         
         if (session != null) {
             return session;
@@ -78,7 +78,7 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
         return super.login(credentials, workspaceName);
     }
     
-    protected Session loginBySubject() throws LoginException, RepositoryException {
+    protected Session loginBySubject(String workspaceName) throws LoginException, RepositoryException {
         Subject subject = HstSubject.getSubject(null);
         
         if (subject != null) {
@@ -86,7 +86,12 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
             
             if (!repoCredsSet.isEmpty()) {
                 Credentials repoCreds = repoCredsSet.iterator().next();
-                return super.login(repoCreds);
+                
+                if (workspaceName == null) {
+                    return super.login(repoCreds);
+                } else {
+                    return super.login(repoCreds, workspaceName);
+                }
             }
         }
         

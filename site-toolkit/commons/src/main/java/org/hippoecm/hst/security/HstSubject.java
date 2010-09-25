@@ -34,7 +34,11 @@ import javax.security.auth.Subject;
 public class HstSubject {
 
     private static ThreadLocal<Subject> tlSubject = new ThreadLocal<Subject>();
-
+    
+    private HstSubject() {
+        
+    }
+    
     /**
      * Get the <code>Subject</code> associated with the provided
      * <code>AccessControlContext</code> fromn the current Thread or from the standard SUBJECT mechansim 

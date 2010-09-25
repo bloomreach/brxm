@@ -26,6 +26,10 @@ public class TransientRole implements Role {
     
     private String name;
     
+    public TransientRole() {
+        
+    }
+    
     public TransientRole(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The name is null.");

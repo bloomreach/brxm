@@ -18,6 +18,8 @@ package org.hippoecm.hst.security.servlet;
 import java.io.IOException;
 import java.security.Principal;
 
+import javax.jcr.Credentials;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.security.PolicyContextWrapper;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -223,9 +227,7 @@ public class LoginServlet extends HttpServlet {
             destination = (String) session.getAttribute(DESTINATION_ATTR_NAME);
         }
         
-        if (destination == null) {
-            destination = request.getContextPath() + "/";
-        }
+        destination = normalizeDestination(destination, request);
 
         response.sendRedirect(response.encodeURL(destination));
     }
@@ -236,34 +238,72 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         
         if (session != null) {
+            if (!PolicyContextWrapper.isAvailable()) {
+                Credentials repoCreds = createSubjectRepositoryCredentials(request);
+                
+                if (repoCreds != null) {
+                    session.setAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME, repoCreds);
+                }
+            }
+            
+            session.removeAttribute(USERNAME_ATTR_NAME);
+            session.removeAttribute(PASSWORD_ATTR_NAME);
+            
             destination = (String) session.getAttribute(DESTINATION_ATTR_NAME);
+            
+            if (destination != null) {
+                session.removeAttribute(DESTINATION_ATTR_NAME);
+            }
         }
         
-        if (destination == null || destination.equals(request.getContextPath())) {
-            destination = request.getContextPath() + "/";
-        } else {
-            session.removeAttribute(DESTINATION_ATTR_NAME);
-        }
-        
-        session.removeAttribute(USERNAME_ATTR_NAME);
-        session.removeAttribute(PASSWORD_ATTR_NAME);
+        destination = normalizeDestination(destination, request);
         
         response.sendRedirect(response.encodeURL(destination));
     }
     
     protected void doLoginLogout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String destination = request.getParameter(DESTINATION);
+        String destination = normalizeDestination(request.getParameter(DESTINATION), request);
         HttpSession session = request.getSession(false);
         
         if (session != null) {
             session.invalidate();
         }
         
-        if (destination == null) {
+        response.sendRedirect(response.encodeURL(destination));
+    }
+    
+    protected String normalizeDestination(String destination, HttpServletRequest request) {
+        if (destination == null || "".equals(destination.trim())) {
             destination = request.getContextPath() + "/";
         }
         
-        response.sendRedirect(response.encodeURL(destination));
+        return destination;
+    }
+    
+    /**
+     * Creates repository credentials for the subject.
+     * <P>
+     * This method is invoked to store a repository credentials for the subject.
+     * By default, this method creates a repository credentials with the same user/password credentials
+     * used during authentication.
+     * </P>
+     * <P>
+     * A child class can override this method to behave differently.
+     * </P>
+     * @param request
+     * @return
+     */
+    protected Credentials createSubjectRepositoryCredentials(HttpServletRequest request) {
+        String username = (String) request.getSession().getAttribute(USERNAME_ATTR_NAME);
+        String password = (String) request.getSession().getAttribute(PASSWORD_ATTR_NAME);
+        
+        if (username != null && password != null) {
+            return new SimpleCredentials(username, password.toCharArray());
+        } else {
+            log.warn("Invalid username or password: " + username);
+        }
+        
+        return null;
     }
 }
 

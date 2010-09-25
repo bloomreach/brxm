@@ -29,7 +29,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.security.auth.Subject;
 
 import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.Role;
@@ -73,10 +72,6 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
     }
     
     public User authenticate(String userName, char[] password) throws SecurityException {
-        return authenticate(userName, password, null);
-    }
-    
-    public User authenticate(String userName, char[] password, Subject subject) throws SecurityException {
         Session session = null;
         SimpleCredentials creds = new SimpleCredentials(userName, password);
         
@@ -95,11 +90,7 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
             }
         }
         
-        if (subject == null) {
-            return new TransientUser(creds.getUserID());
-        } else {
-            return new TransientUser(creds.getUserID(), subject);
-        }
+        return new TransientUser(creds.getUserID());
     }
     
     public Set<Role> getRolesByUsername(String username) throws SecurityException {

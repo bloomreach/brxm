@@ -15,8 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
+
 import javax.jcr.Repository;
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,11 +43,20 @@ public class StatefulSessionValve extends AbstractValve {
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         
-        Subject subject = requestContext.getSubject();
-        
-        if (subject != null) {
-            if (requestContext.getResolvedSiteMount().isSessionStateful()) {
+        if (requestContext.getResolvedSiteMount().isSessionStateful()) {
+            if (requestContext.getSubject() != null) {
                 ((HstMutableRequestContext) requestContext).setRepository(subjectBasedStatefulRepository);
+            } else {
+                try {
+                    servletResponse.sendError(403, "Authentication required.");
+                } catch (IOException ioe) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to send error code.", ioe);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to send error code. {}", ioe.toString());
+                    }
+                }
+                return;
             }
         }
         

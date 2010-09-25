@@ -18,10 +18,10 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 import java.security.Principal;
 import java.security.PrivilegedAction;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jcr.Credentials;
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.HstSubject;
+import org.hippoecm.hst.security.PolicyContextWrapper;
 import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.TransientUser;
 import org.hippoecm.hst.security.User;
@@ -174,15 +175,8 @@ public class SecurityValve extends AbstractValve {
             return null;
         }
         
-        Subject subject = null;
-        
-        if (userPrincipal instanceof User) {
-            subject = ((User) userPrincipal).getSubject();
-            
-            if (subject == null) {
-                log.warn("Subject is not found in the user principal.");
-            }
-        }
+        // In a container that supports JACC Providers, the following line will return the container subject.
+        Subject subject = (Subject) PolicyContextWrapper.getContext("javax.security.auth.Subject.container");
         
         if (subject == null) {
             HttpSession session = request.getSession(false);
@@ -193,32 +187,34 @@ public class SecurityValve extends AbstractValve {
         }
         
         if (subject == null) {
-            if (authProvider == null) {
-                log.warn("Cannot find authentication provider component.");
-                User user = new TransientUser(userPrincipal.getName());
-                Set<Principal> principals = new HashSet<Principal>();
-                principals.add(userPrincipal);
-                principals.add(user);
-                Set<Object> pubCred = Collections.emptySet();
-                Set<Object> privCred = Collections.emptySet();
-                subject = new Subject(true, principals, pubCred, privCred);
-            } else {
-                User user = new TransientUser(userPrincipal.getName());
+            User user = new TransientUser(userPrincipal.getName());
+            
+            Set<Principal> principals = new HashSet<Principal>();
+            principals.add(userPrincipal);
+            principals.add(user);
+            
+            if (authProvider != null) {
                 Set<Role> roleSet = authProvider.getRolesByUsername(userPrincipal.getName());
-                Set<Principal> principals = new HashSet<Principal>();
-                principals.add(userPrincipal);
-                principals.add(user);
                 principals.addAll(roleSet);
-                Set<Object> pubCred = Collections.emptySet();
-                Set<Object> privCred = Collections.emptySet();
-                subject = new Subject(true, principals, pubCred, privCred);
             }
+            
+            Set<Object> pubCred = new HashSet<Object>();
+            Set<Object> privCred = new HashSet<Object>();
             
             HttpSession session = request.getSession(false);
             
             if (session != null) {
-                session.setAttribute(ContainerConstants.SUBJECT_ATTR_NAME, subject);
+                Credentials subjectRepoCreds = (Credentials) session.getAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME);
+                
+                if (subjectRepoCreds != null) {
+                    session.removeAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME);
+                    privCred.add(subjectRepoCreds);
+                }
+                
             }
+            
+            subject = new Subject(true, principals, pubCred, privCred);
+            session.setAttribute(ContainerConstants.SUBJECT_ATTR_NAME, subject);
         }
         
         if (subject == null) {

@@ -18,6 +18,7 @@ package org.hippoecm.hst.security.impl;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -174,10 +175,10 @@ public class DefaultLoginModule implements LoginModule {
             success = false;
 
             try {
-                user = getAuthenticationProvider().authenticate(username, password.toCharArray(), subject);
+                user = getAuthenticationProvider().authenticate(username, password.toCharArray());
                 
                 if (storePrivCreds) {
-                    subject.getPrivateCredentials().add(new SimpleCredentials(username, password.toCharArray()));
+                    subject.getPrivateCredentials().add(createSubjectRepositoryCredentials(username, password.toCharArray()));
                 }
             } catch (SecurityException se) {
                 if (se.getCause() != null) {
@@ -269,5 +270,24 @@ public class DefaultLoginModule implements LoginModule {
         }
         
         return authProvider;
+    }
+    
+    /**
+     * Creates repository credentials for the authenticated user.
+     * <P>
+     * This method is invoked when the 'storedPrivCreds' option is true,
+     * to store a repository credentials for the authenticated user.
+     * By default, this method creates a repository credentials with the same user/password credentials
+     * used during authentication.
+     * </P>
+     * <P>
+     * A child class can override this method to behave differently.
+     * </P>
+     * @param username
+     * @param password
+     * @return
+     */
+    protected Credentials createSubjectRepositoryCredentials(String username, char [] password) {
+        return new SimpleCredentials(username, password);
     }
 }
