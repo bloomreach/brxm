@@ -78,6 +78,7 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
         return super.login(credentials, workspaceName);
     }
     
+    // TODO: How to clear jcr session stored in http session ??
     protected Session loginBySubject(String workspaceName) throws LoginException, RepositoryException {
         Subject subject = HstSubject.getSubject(null);
         
