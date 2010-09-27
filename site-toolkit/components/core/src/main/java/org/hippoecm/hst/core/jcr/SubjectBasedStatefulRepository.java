@@ -31,7 +31,7 @@ import org.hippoecm.hst.security.HstSubject;
  * SubjectBasedStatefulRepository
  * @version $Id$
  */
-public class SubjectBasedStatefulRepository extends DelegatingRepository {
+public class SubjectBasedStatefulRepository extends LazySessionDelegatingRepository {
     
     public SubjectBasedStatefulRepository(Repository delegatee) {
         super(delegatee);
@@ -78,7 +78,6 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
         return super.login(credentials, workspaceName);
     }
     
-    // TODO: How to clear jcr session stored in http session ??
     protected Session loginBySubject(String workspaceName) throws LoginException, RepositoryException {
         Subject subject = HstSubject.getSubject(null);
         
@@ -93,10 +92,12 @@ public class SubjectBasedStatefulRepository extends DelegatingRepository {
                 } else {
                     return super.login(repoCreds, workspaceName);
                 }
+            } else {
+                throw new LoginException("Repository credentials for the subject is not found.");
             }
+        } else {
+            throw new LoginException("Subject is not found. Authentication required.");
         }
-        
-        return null;
     }
 
 }

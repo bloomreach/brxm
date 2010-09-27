@@ -233,6 +233,7 @@
   <!-- Subject based non-pooling delegating repository -->
   <bean id="javax.jcr.Repository.subjectBasedStateful" class="org.hippoecm.hst.core.jcr.SubjectBasedStatefulRepository">
     <constructor-arg ref="javax.jcr.Repository.delegating" />
+    <property name="logoutOnSessionUnbound" value="true" />
   </bean>
   
 </beans>

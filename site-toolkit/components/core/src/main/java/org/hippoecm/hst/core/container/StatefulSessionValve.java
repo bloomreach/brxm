@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 
 import javax.jcr.Repository;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +31,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * @version $Id$
  */
 public class StatefulSessionValve extends AbstractValve {
+    
+    public static final String SESSION_ATTR_NAME = StatefulSessionValve.class.getName() + ".session";
     
     protected Repository subjectBasedStatefulRepository;
     
@@ -45,7 +48,12 @@ public class StatefulSessionValve extends AbstractValve {
         
         if (requestContext.getResolvedSiteMount().isSessionStateful()) {
             if (requestContext.getSubject() != null) {
-                ((HstMutableRequestContext) requestContext).setRepository(subjectBasedStatefulRepository);
+                try {
+                    Session session = subjectBasedStatefulRepository.login();
+                    ((HstMutableRequestContext) requestContext).setSession(session);
+                } catch (Exception e) {
+                    throw new ContainerException("Failed to create session based on subject.", e);
+                }
             } else {
                 try {
                     servletResponse.sendError(403, "Authentication required.");

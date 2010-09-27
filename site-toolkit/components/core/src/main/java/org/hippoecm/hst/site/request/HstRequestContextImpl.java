@@ -79,14 +79,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
     
-    public void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-    
-    public void setContextCredentialsProvider(ContextCredentialsProvider contextCredentialsProvider) {
-        this.contextCredentialsProvider = contextCredentialsProvider;
-    }
-    
     public boolean isPreview() {
     	return this.resolvedSiteMount.getSiteMount().isPreview();
     }    
