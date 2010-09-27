@@ -191,7 +191,8 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 
                 clearSession();
             } else if ("toString".equals(methodName)) {
-                return super.toString();
+                Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
+                return super.toString() + " (" + session + ")";
             }
             
             return ret;

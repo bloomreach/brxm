@@ -21,6 +21,7 @@ import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -48,12 +49,19 @@ public class StatefulSessionValve extends AbstractValve {
         
         if (requestContext.getResolvedSiteMount().isSessionStateful()) {
             if (requestContext.getSubject() != null) {
-                try {
-                    Session session = subjectBasedStatefulRepository.login();
-                    ((HstMutableRequestContext) requestContext).setSession(session);
-                } catch (Exception e) {
-                    throw new ContainerException("Failed to create session based on subject.", e);
+                HttpSession httpSession = context.getServletRequest().getSession(false);
+                Session session = (httpSession != null ? (Session) httpSession.getAttribute(SESSION_ATTR_NAME) : (Session) null);
+                
+                if (session == null) {
+                    try {
+                        session = subjectBasedStatefulRepository.login();
+                        context.getServletRequest().getSession(true).setAttribute(SESSION_ATTR_NAME, session);
+                    } catch (Exception e) {
+                        throw new ContainerException("Failed to create session based on subject.", e);
+                    }
                 }
+                
+                ((HstMutableRequestContext) requestContext).setSession(session);
             } else {
                 try {
                     servletResponse.sendError(403, "Authentication required.");
