@@ -1,16 +1,19 @@
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -23,7 +26,7 @@ public class SiteMountService implements SiteMount {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SiteMountService.class);
     
-    
+    private static final String DEFAULT_TYPE = "live";
     /**
      * The name of this sitemount. If it is the root, it is called hst:root
      */
@@ -49,13 +52,22 @@ public class SiteMountService implements SiteMount {
      */
     private Map<String, SiteMountService> childSiteMountServices = new HashMap<String, SiteMountService>();
 
+    /**
+     * the alias of this SiteMount. If there is no specific property defined, the nodename is used as alias. 
+     */
+    private String alias;
 
     /**
-     * Whether this sitemount points to a preview. Default is false
+     * The primary type of this SiteMount. If not specified, we use {@link #DEFAULT_TYPE} as a value
      */
-    private boolean preview;
+    private String type = DEFAULT_TYPE;
     
-
+    /**
+     * The list of all types this SiteMount also belongs to
+     */
+    private List<String> types;
+    
+    
     /**
      * When the SiteMount is preview, and this isVersionInPreviewHeader is true, the used HST version is set as a response header. 
      * Default this variable is true when it is not configured explicitly
@@ -124,6 +136,13 @@ public class SiteMountService implements SiteMount {
         
         this.name = siteMount.getValueProvider().getName();
 
+        // default for when there is no alias property
+        
+        this.alias = name;
+        
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ALIAS)) {
+            this.alias = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_ALIAS);
+        }
         
         if(parent == null) {
             mountPath = "";
@@ -211,11 +230,14 @@ public class SiteMountService implements SiteMount {
             }
         }
         
-        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW)) {
-            this.preview = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISPREVIEW);
-        } else if(parent != null) {
-            this.preview = parent.isPreview();
-        }
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_TYPE)) {
+            this.type = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_TYPE);
+        } 
+        
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_TYPES)) {
+            String[] typesProperty = siteMount.getValueProvider().getStrings(HstNodeTypes.SITEMOUNT_PROPERTY_TYPES);
+            this.types = Arrays.asList(typesProperty);
+        } 
         
         if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT)) {
             this.isSiteMount = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_ISSITEMOUNT);
@@ -313,8 +335,12 @@ public class SiteMountService implements SiteMount {
                 }
             }
         }
+        
+        // add this site mount to the maps in the VirtualHostsService
+        ((VirtualHostsService)virtualHost.getVirtualHosts()).addSiteMount(this);
     }
     
+
     public SiteMount getChildMount(String name) {
         return childSiteMountServices.get(name);
     }
@@ -327,6 +353,10 @@ public class SiteMountService implements SiteMount {
         return name;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+    
     public String getMountPath() {
         return mountPath;
     }
@@ -370,9 +400,30 @@ public class SiteMountService implements SiteMount {
     }
 
     public boolean isPreview() {
-        return preview;
+        return isOfType("preview");
     }
 
+    public String getType() {
+        return type;
+    }
+    
+    public List<String> getTypes(){
+        List<String> combined = new ArrayList<String>();
+        if(types != null) {
+             combined.addAll(types);
+        }
+        // add the primary type if it was not already in types:
+        if(!combined.contains(getType())) {
+            combined.add(getType());
+        }
+        return Collections.unmodifiableList(combined);
+    }
+    
+    public boolean isOfType(String type) {
+        return getTypes().contains(type);
+    }
+
+    
     public boolean isVersionInPreviewHeader() {
         return versionInPreviewHeader;
     }
@@ -404,5 +455,6 @@ public class SiteMountService implements SiteMount {
     public boolean isSessionStateful() {
         return sessionStateful;
     }
+
 
 }

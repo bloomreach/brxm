@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -111,11 +112,18 @@ import org.hippoecm.hst.core.request.ResolvedSiteMount;
  */
 public interface SiteMount {
 
-    
     /**
      * @return The name of this SiteMount item
      */
     String getName();
+    
+    /**
+     * Returns the alias of this SiteMount item. If there is no specific alias defined, then the {@link #getName()} is used. However,
+     * the alias of a SiteMount <b>must</b> be unique in combination with every type {@link #getTypes()} within a single host group, also 
+     * see {@link VirtualHosts#get}
+     * @return The alias of this SiteMount item. 
+     */
+    String getAlias();
     
     /**
      * When this SiteMount is not using a {@link HstSite} for the request processing, this method returns <code>true</code>. When it returns <code>true</code>, then 
@@ -203,9 +211,29 @@ public interface SiteMount {
     String getScheme();
     
     /**
-     * @return <code>true</code> when this SiteMount is configured to be a preview site mount
+     * This method returns the same as {@link SiteMount#isOfType(String type)} with <code>type="preview"</code>
+     * 
+     * @return <code>true</code> when this SiteMount is configured to be a preview site mount. 
      */
     boolean isPreview();
+    
+    
+    /**
+     * When a this SiteMount is of type <code>type</code> this returns <code>true</code>. A SiteMount can be of multiple types at once.
+     * @param type the type to test
+     * @return <code>true</code> when this SiteMount is of type <code>type</code>
+     */
+    boolean isOfType(String type);
+    
+    /**
+     * @return the primary type of this SiteMount
+     */
+    String getType();
+    
+    /**
+     * @return the list of all types this SiteMount belongs to, including the primary type {@link #getType()}
+     */
+    List<String> getTypes();
     
     /**
      * When this SiteMount has {@link #isPreview()} return <code>false</code>, this method always returns false. When the SiteMount is preview,

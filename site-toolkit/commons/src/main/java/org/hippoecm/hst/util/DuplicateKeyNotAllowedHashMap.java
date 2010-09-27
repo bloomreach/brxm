@@ -28,7 +28,7 @@ public class DuplicateKeyNotAllowedHashMap<K, V> extends HashMap<K, V> {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public V put(K key, V value) {
+    public V put(K key, V value) throws IllegalArgumentException {
         V prev = get(key);
         if (prev != null) {
             throw new IllegalArgumentException("DuplicateKeyNotAllowedHashMap is not allowed to have duplicate keys: The key '"+key+"' is already present");

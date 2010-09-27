@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.List;
+
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -88,9 +90,23 @@ public interface VirtualHosts {
     ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException;
  
     /**
-     * 
      * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.
      */
     String getDefaultHostName();
     
+    /**
+     * Returns the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. . Returns <code>null</code> when no match
+     * 
+     * @param hostGroupName
+     * @param alias
+     * @param type
+     * @return the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. Returns <code>null</code> when no match
+     */
+    SiteMount getSiteMountByGroupAliasAndType(String hostGroupName, String alias, String type);
+    
+    /**
+     * @param hostGroupName
+     * @return the List<{@link SiteMount}> belonging to <code>hostGroupName</code> or <code>null</code> when there are no SiteMount's for <code>hostGroupName</code>
+     */
+    List<SiteMount> getSiteMountsByHostGroup(String hostGroupName);
 }

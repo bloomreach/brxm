@@ -99,7 +99,9 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_SCHEME = "hst:scheme";
     public final static String SITEMOUNT_PROPERTY_MOUNTPATH = "hst:mountpoint";
     public final static String SITEMOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
-    public final static String SITEMOUNT_PROPERTY_ISPREVIEW = "hst:ispreview";
+    public final static String SITEMOUNT_PROPERTY_ALIAS = "hst:alias";
+    public final static String SITEMOUNT_PROPERTY_TYPE = "hst:type";
+    public final static String SITEMOUNT_PROPERTY_TYPES = "hst:types";
     public final static String SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH = "hst:embeddedsitemountpath";
     public final static String SITEMOUNT_PROPERTY_SECURED =  "hst:secured";
     public final static String SITEMOUNT_PROPERTY_ROLES =  "hst:roles";

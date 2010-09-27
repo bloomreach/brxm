@@ -151,7 +151,6 @@
 - hst:onlyforcontextpath (string)
 // for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
 - hst:embeddedsitemountpath
-- hst:ispreview (boolean)
 - hst:scheme (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
@@ -161,6 +160,12 @@
 - hst:secured (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
+// the alias of this sitemount. If not present, the alias is the current name
+- hst:alias (string)
+// the primary type of this SiteMount, for example 'preview'. Default when missing is 'live'
+- hst:type (string)
+// the types this SiteMount also belongs to, for example 'composer'.
+- hst:types (string) multiple
 - hst:sessionstateful (boolean)
 
 [hst:portmount] > nt:base, mix:referenceable

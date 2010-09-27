@@ -51,7 +51,7 @@
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
         <sv:value>127.0.0.1</sv:value>
     </sv:property>
-    <sv:node sv:name="dev">
+    <sv:node sv:name="dev-internal">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:virtualhostgroup</sv:value>
       </sv:property>
@@ -82,8 +82,8 @@
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:ispreview" sv:type="Boolean">
-                  <sv:value>true</sv:value>
+              <sv:property sv:name="hst:type" sv:type="String">
+                <sv:value>preview</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/testpreview/testproject</sv:value>
@@ -91,6 +91,9 @@
               <sv:node sv:name="restservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:type" sv:type="String">
+                  <sv:value>preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                     <sv:value>false</sv:value>
@@ -103,7 +106,11 @@
              </sv:node>
           </sv:node>
       </sv:node>
-      
+    </sv:node>
+    <sv:node sv:name="dev-local">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:virtualhostgroup</sv:value>
+      </sv:property>
       <sv:node sv:name="localhost">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:virtualhost</sv:value>
@@ -130,8 +137,8 @@
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:ispreview" sv:type="Boolean">
-                  <sv:value>true</sv:value>
+              <sv:property sv:name="hst:type" sv:type="String">
+                <sv:value>preview</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/testpreview/testproject</sv:value>
@@ -139,6 +146,9 @@
               <sv:node sv:name="restservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:type" sv:type="String">
+                  <sv:value>preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                     <sv:value>false</sv:value>

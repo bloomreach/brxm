@@ -15,13 +15,16 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -44,6 +47,10 @@ public class VirtualHostsService implements VirtualHosts {
 
     private HstManagerImpl hstManager;
     private Map<String, VirtualHostService> rootVirtualHosts = virtualHostHashMap();
+
+    private Map<String, List<SiteMount>> siteMountByHostGroup = new HashMap<String, List<SiteMount>>();
+    private Map<String, Map<String, SiteMount>> siteMountByGroupAliasAndType = new HashMap<String, Map<String, SiteMount>>();
+    
   
     private String defaultHostName;
     /**
@@ -68,8 +75,7 @@ public class VirtualHostsService implements VirtualHosts {
     private boolean contextPathInUrl;
     private String[] prefixExclusions;
     private String[] suffixExclusions;
-
-  
+    
     public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
         this.hstManager = hstManager;
         this.virtualHostsConfigured = true;
@@ -138,6 +144,39 @@ public class VirtualHostsService implements VirtualHosts {
         return false;
     }
     
+    /**
+     * Add this site mount for lookup through {@link #getSiteMountByAliasAndType(String, String)}
+     * @param siteMount
+     */
+    public void addSiteMount(SiteMount siteMount) throws ServiceException {
+
+        String hostGroup = siteMount.getVirtualHost().getHostGroupName();
+
+        List<SiteMount> siteMountsForGroup = siteMountByHostGroup.get(hostGroup);
+        if (siteMountsForGroup == null) {
+            siteMountsForGroup = new ArrayList<SiteMount>();
+            siteMountByHostGroup.put(hostGroup, siteMountsForGroup);
+        }
+        siteMountsForGroup.add(siteMount);
+
+        Map<String, SiteMount> aliasTypeMap = siteMountByGroupAliasAndType.get(hostGroup);
+        if (aliasTypeMap == null) {
+            // when a duplicate key is tried to be put, an IllegalArgumentException must be thrown, hence the DuplicateKeyNotAllowedHashMap
+            aliasTypeMap = new DuplicateKeyNotAllowedHashMap<String, SiteMount>();
+            siteMountByGroupAliasAndType.put(hostGroup, aliasTypeMap);
+        }
+        // add the sitemount for all alias-type combinations:
+        for (String type : siteMount.getTypes()) {
+            try {
+                aliasTypeMap.put(getAliasTypeKey(siteMount.getAlias(), type), siteMount);
+            } catch (IllegalArgumentException e) {
+                throw new ServiceException("Incorrect hst:hosts configuration. Not allowed to have multiple sitemount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
+                		". Failed for sitemount '"+siteMount.getName()+"'. Make sure that you either a unique 'alias' in combination with the 'types' on the sitemount within a single hostgroup.");
+            }
+        }
+
+    }
+
     
     public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException {
             
@@ -282,11 +321,33 @@ public class VirtualHostsService implements VirtualHosts {
         return versionInPreviewHeader;
     }
     
+    public SiteMount getSiteMountByAliasAndType(String alias, String type) {
+        return null;
+    }
+
+    public SiteMount getSiteMountByGroupAliasAndType(String hostGroupName, String alias, String type) {
+        Map<String, SiteMount> aliasTypeMap = siteMountByGroupAliasAndType.get(hostGroupName);
+        if(aliasTypeMap == null) {
+            return null;
+        }
+        return aliasTypeMap.get(getAliasTypeKey(alias, type));
+    }
+
+
+    public List<SiteMount> getSiteMountsByHostGroup(String hostGroupName) {
+        return Collections.unmodifiableList(siteMountByHostGroup.get(hostGroupName));
+    }
+    
     /**
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
     public final static HashMap<String, VirtualHostService> virtualHostHashMap(){
         return new DuplicateKeyNotAllowedHashMap<String, VirtualHostService>();
+    }
+    
+
+    private String getAliasTypeKey(String alias, String type) {
+        return alias + '\uFFFF' + type;
     }
     
 }
