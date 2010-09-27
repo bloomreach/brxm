@@ -119,14 +119,8 @@
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>preview</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                    <sv:value>false</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
                   <sv:value>true</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>PageComposerPipeline</sv:value>
                 </sv:property>
              </sv:node>
           </sv:node>
@@ -193,14 +187,8 @@
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>preview</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                    <sv:value>false</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
                   <sv:value>true</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>PageComposerPipeline</sv:value>
                 </sv:property>
              </sv:node>
           </sv:node>
