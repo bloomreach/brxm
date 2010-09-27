@@ -41,9 +41,9 @@
 - hst:parametervalues (string) multiple
 + * (hst:component)
 
-[hst:componentcontainer] > hst:component
+[hst:containercomponent] > hst:component
 
-[hst:componentcontaineritem] > hst:component
+[hst:containercomponentitem] > hst:component
 
 [hst:components] > nt:base, mix:referenceable orderable
 + * (hst:component)
