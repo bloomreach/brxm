@@ -20,10 +20,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <%
-String destination = request.getParameter(LoginServlet.DESTINATION);
-if (destination == null) {
-    destination = "";
-}
+String username = (String) session.getAttribute("org.hippoecm.hst.security.servlet.username");
+if (username == null) username = "";
+String password = (String) session.getAttribute("org.hippoecm.hst.security.servlet.password");
+if (password == null) password = "";
+String destination = request.getParameter("destination");
+if (destination == null) destination = "";
 %>
 
 <html>
@@ -38,16 +40,17 @@ if (destination == null) {
 <table>
   <tr>
     <td>Login</td>
-    <td><input type="text" name="<%=LoginServlet.USERNAME%>"/></td>
+    <td><input type="text" name="username" value="<%=username%>" /></td>
   </tr>
   <tr>
     <td>Password</td>
-    <td><input type="password" name="<%=LoginServlet.PASSWORD%>"/></td>
+    <td><input type="password" name="password" value="<%=password%>" /></td>
   </tr>
   <tr>
     <td colspan="2">
       <input type="hidden" name="destination" value="<%=destination%>" />
-      <input type="submit" value="login"/>
+      <input type="submit" value="Submit" />
+      <input type="button" value="Cancel" onclick="if ('<%=destination%>') location.href = '<%=destination%>'; return;" />
     </td>
   </tr>
 </table>

@@ -34,6 +34,8 @@
 <hst:head-contribution keyHint="yuiResetFontsGridCss" element="${yuiResetFontsGridCss}" />
 <hst:head-contribution keyHint="demoSiteCss" element="${demoSiteCss}" />
 
+<hst:link var="destination" path="/" />
+
   <div id="hd">        
     <div id="topnav" class="yui-gc">
       <div class="yui-u first"></div>
@@ -44,11 +46,12 @@
           </li>
           <% if (request.getUserPrincipal() == null) { %>
           <li>
-            <a title="Login" href="<c:url value='/jsp/login.jsp'/>">Log In</a>
+            <a title="Login" href="<c:url value='/jsp/login.jsp'><c:param name='destination' value='${destination}'/></c:url>">Log In</a>
           </li>
           <% } else { %>
           <li>
-            <a title="Login" href="<c:url value='/login/logout'/>">Log Out</a>
+            <span><%=request.getUserPrincipal().getName()%></span>&nbsp;
+            <a title="Login" href="<c:url value='/login/logout'><c:param name='destination' value='${destination}'/></c:url>">Log Out</a>
           </li>
           <% } %>
         </ul>

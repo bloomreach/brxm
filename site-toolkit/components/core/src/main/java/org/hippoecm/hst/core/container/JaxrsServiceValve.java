@@ -15,12 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.security.Principal;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -115,37 +112,5 @@ public class JaxrsServiceValve extends AbstractValve {
 			}
 			return new StringBuffer(requestURL);
 		}
-
-		@Override
-        public Principal getUserPrincipal() {
-            // initialize configuration of user principal class
-            HstRequestImpl.initUserPrincipalClass(requestContext);
-
-            // check for user principal in current thread's user subject
-            boolean [] subjectFound = new boolean[1];
-            Principal principal = HstRequestImpl.getSubjectUserPrincipal(subjectFound);
-            if (subjectFound[0]) {
-                return principal;
-            }
-
-            // return existing principal for request if any
-            return super.getUserPrincipal();
-        }
-        
-		@Override
-        public boolean isUserInRole(String role) {
-            // initialize configuration of role principal class
-            HstRequestImpl.initRolePrincipalClass(requestContext);
-
-            // check for role principals in current thread's user subject
-            boolean [] subjectFound = new boolean[1];
-            boolean userInRole = HstRequestImpl.isSubjectUserInRole(role, subjectFound);
-            if (subjectFound[0]) {
-                return userInRole;
-            }
-            
-            // return existing role tests if available
-            return super.isUserInRole(role);
-        }
     }
 }

@@ -275,7 +275,7 @@ public class BaseHstContentService {
     }
     
     /*
-     * TODO: This method is responsble for returning normal hst site url.
+     * TODO: This method is responsible for returning normal hst site url.
      *       Currently, the solution is too hacky based on proxying.
      *       A proper solution should be provided from the API side.
      */
