@@ -15,7 +15,16 @@
   limitations under the License.
 -->
 <Context crossContext="true">
-
+  
+  <Realm className="org.apache.catalina.realm.JAASRealm"
+         appName="HSTSITE"
+         userClassNames="org.hippoecm.hst.security.TransientUser"
+         roleClassNames="org.hippoecm.hst.security.TransientRole"
+         useContextClassLoader="true"
+         debug="0"/>
+  
+  <Valve className="org.apache.catalina.authenticator.FormAuthenticator" characterEncoding="UTF-8"/>
+  
   <!-- JCR Session Pooling Repository provided by HST-2 Core Components -->
   <!-- If you want to use a pooling JCR repository from JNDI, uncomment the following and configure the correct jndiName. -->
   <!--
