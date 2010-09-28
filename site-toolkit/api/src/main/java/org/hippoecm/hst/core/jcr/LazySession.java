@@ -37,9 +37,9 @@ public interface LazySession extends Session {
     long lastRefreshed();
     
     /**
-     * Returns true when the underlying session is loaded.
+     * Returns the last logged in time mills
      * @return
      */
-    boolean isLoaded();
+    long lastLoggedIn();
     
 }

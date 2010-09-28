@@ -100,6 +100,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         private Credentials credentials;
         private String workspaceName;
         private boolean logoutOnSessionUnbound;
+        private long lastLoggedIn;
         private long lastRefreshed;
         
         public LazySessionInvoker() {
@@ -123,11 +124,10 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             if (LazySession.class.isAssignableFrom(declaringClass)) {
                 if ("logoutSession".equals(methodName)) {
                     clearSession();
+                } else if ("lastLoggedIn".equals(methodName)) {
+                    return lastLoggedIn;
                 } else if ("lastRefreshed".equals(methodName)) {
                     return lastRefreshed;
-                } else if ("isLoaded".equals(methodName)) {
-                    Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
-                    return (session != null);
                 }
                 
                 return null;
@@ -157,6 +157,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                         session = repository.login(credentials, workspaceName);
                     }
                     
+                    lastLoggedIn = System.currentTimeMillis();
                     lastRefreshed = 0L;
                     sessionWeakRef = new WeakReference<Session>(session);
                 }
@@ -182,20 +183,13 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 return null;
             }
             
-            Object ret = null;
-            
-            if ("finalize".equals(methodName)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("LazySession object is being finalized.");
-                }
-                
-                clearSession();
-            } else if ("toString".equals(methodName)) {
+            // to override default toString() implemented in AbstractInvocationHandler.
+            if ("toString".equals(methodName)) {
                 Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
                 return super.toString() + " (" + session + ")";
             }
             
-            return ret;
+            return null;
         }
         
         protected void clearSession() {
@@ -203,7 +197,15 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 return;
             }
             
-            Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
+            Session session = null;
+            
+            if (sessionWeakRef != null) {
+                session = sessionWeakRef.get();
+                sessionWeakRef.clear();
+            }
+            
+            lastLoggedIn = 0L;
+            lastRefreshed = 0L;
             
             if (session == null) {
                 return;
@@ -222,10 +224,16 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                     log.warn("Failed to logout stateful session: " + th);
                 }
             }
-            
-            if (sessionWeakRef != null) {
-                sessionWeakRef.clear();
+        }
+        
+        @Override
+        protected void finalize() {
+            //System.out.println("LazySession object is being finalized.");
+            if (log.isDebugEnabled()) {
+                log.debug("LazySession object is being finalized.");
             }
+            
+            clearSession();
         }
     }
 

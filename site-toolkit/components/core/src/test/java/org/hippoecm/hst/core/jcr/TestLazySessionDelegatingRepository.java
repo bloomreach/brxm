@@ -35,7 +35,7 @@ public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
         Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
         Session session = repository.login(creds);
         
-        assertFalse(((LazySession) session).isLoaded());
+        assertFalse(((LazySession) session).lastLoggedIn() > 0);
         
         assertTrue(session instanceof Session);
         assertTrue(session instanceof LazySession);
@@ -43,10 +43,10 @@ public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
         assertTrue(session instanceof HttpSessionBindingListener);
         
         assertTrue(session.isLive());
-        assertFalse(((LazySession) session).isLoaded());
+        assertFalse(((LazySession) session).lastLoggedIn() > 0);
         
         String userID = session.getUserID();
-        assertTrue(((LazySession) session).isLoaded());
+        assertTrue(((LazySession) session).lastLoggedIn() > 0);
         assertEquals(0, ((LazySession) session).lastRefreshed());
         
         long time = System.currentTimeMillis();
@@ -61,11 +61,11 @@ public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
         Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
         Session session = repository.login(creds);
         String userID = session.getUserID();
-        assertTrue(((LazySession) session).isLoaded());
+        assertTrue(((LazySession) session).lastLoggedIn() > 0);
         
         ((LazySession) session).logoutSession();
         
-        assertFalse(((LazySession) session).isLoaded());
+        assertFalse(((LazySession) session).lastLoggedIn() > 0);
         
         session.logout();
     }
@@ -75,11 +75,11 @@ public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
         Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
         Session session = repository.login(creds);
         String userID = session.getUserID();
-        assertTrue(((LazySession) session).isLoaded());
+        assertTrue(((LazySession) session).lastLoggedIn() > 0);
         
         ((HttpSessionBindingListener) session).valueUnbound(null);
         
-        assertFalse(((LazySession) session).isLoaded());
+        assertFalse(((LazySession) session).lastLoggedIn() > 0);
         
         session.logout();
     }
@@ -97,8 +97,8 @@ public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
         String userID1 = session1.getUserID();
         String userID2 = session2.getUserID();
         
-        assertTrue(((LazySession) session1).isLoaded());
-        assertTrue(((LazySession) session2).isLoaded());
+        assertTrue(((LazySession) session1).lastLoggedIn() > 0);
+        assertTrue(((LazySession) session2).lastLoggedIn() > 0);
         assertTrue(userID1.equals(userID2));
         assertFalse(session1.equals(session2));
         assertFalse(session1.hashCode() == session2.hashCode());
@@ -106,6 +106,10 @@ public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
         
         session1.logout();
         session2.logout();
+        
+        // for debugging purpose, you can confirm the logging of "LazySession object is being finalized."
+        System.gc();
+        Thread.sleep(1000);
     }
     
 }
