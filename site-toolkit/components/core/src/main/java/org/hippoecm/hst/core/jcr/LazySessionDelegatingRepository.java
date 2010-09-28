@@ -209,23 +209,6 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 return;
             }
             
-            // Temporary fix for hippo ecm 2.06.07 and 2.07.00 versions only
-            // as a workaround to reduce memory kept by repo. 
-            // This problem has been fixed in hippo repo trunk already.
-            try {
-                session.refresh(false);
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("LazySession's session is refreshed.");
-                }
-            } catch (Throwable th) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to refresh stateful session.", th);
-                } else {
-                    log.warn("Failed to refresh stateful session: " + th);
-                }
-            }
-            
             try {
                 session.logout();
                 

@@ -94,11 +94,6 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
             } else if ("logoutSession".equals(methodName)) {
                 Session session = (Session) invocation.getProxy();
                 
-                // Temporary fix for hippo ecm 2.06.07 and 2.07.00 versions only
-                // as a workaround to reduce memory kept by repo. 
-                // This problem has been fixed in hippo repo trunk already. 
-                session.refresh(false);
-                
                 session.logout();
             } else if ("lastRefreshed".equals(methodName)) {
                 ret = new Long(lastRefreshed);
