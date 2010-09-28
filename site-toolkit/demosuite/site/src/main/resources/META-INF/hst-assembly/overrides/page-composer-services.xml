@@ -25,23 +25,23 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
   
-  <bean id="pageComposerService" class="org.hippoecm.hst.services.support.jaxrs.cxf.CXFJaxrsService">
-    <constructor-arg value="pageComposerService"/>
+  <bean id="composerService" class="org.hippoecm.hst.services.support.jaxrs.cxf.CXFJaxrsService">
+    <constructor-arg value="composerService"/>
     <property name="servletPath" value=""/>
-    <property name="jaxrsServerFactoryBean" ref="pageComposerCxfJaxrsServerFactoryBean"/>
+    <property name="jaxrsServerFactoryBean" ref="composerCxfJaxrsServerFactoryBean"/>
   </bean>
   
-  <bean id="pageComposerCxfJaxrsServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
+  <bean id="composerCxfJaxrsServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/" />
     <property name="providers">
       <list>
         <ref bean="jaxrsJsonProvider" />
       </list>
     </property>
-    <property name="resourceProviders" ref="pageComposerResourceProviders" />
+    <property name="resourceProviders" ref="composerResourceProviders" />
   </bean>
   
-  <bean id="pageComposerResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="composerResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
@@ -56,11 +56,11 @@
   <!-- ========================================================= -->
   
   <!-- Pipelining -->  
-   <bean id="pageComposerValve" class="org.hippoecm.hst.core.container.JaxrsServiceValve">
-    <constructor-arg ref="pageComposerService" />
+   <bean id="composerValve" class="org.hippoecm.hst.core.container.JaxrsServiceValve">
+    <constructor-arg ref="composerService" />
    </bean> 
  
-  <bean id="pageComposerPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
+  <bean id="composerPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
     <property name="preInvokingValves">
       <list>
         <ref bean="initializationValve" />
@@ -70,7 +70,7 @@
       <list>
         <ref bean="securityValve" />
         <ref bean="statefulSessionValve" />
-        <ref bean="pageComposerValve" />
+        <ref bean="composerValve" />
       </list>
     </property>
     <property name="postInvokingValves">
@@ -90,8 +90,8 @@
     <property name="targetMethod" value="put" />
     <property name="arguments">
       <list>
-        <value>PageComposerPipeline</value>
-        <ref local="pageComposerPipeline" />
+        <value>ComposerPipeline</value>
+        <ref local="composerPipeline" />
       </list>
     </property>
   </bean>
