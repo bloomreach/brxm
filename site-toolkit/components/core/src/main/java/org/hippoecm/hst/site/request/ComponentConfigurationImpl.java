@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @version $Id$
  */
-public class ComponentConfigurationImpl implements ComponentConfiguration{
+public class ComponentConfigurationImpl implements ComponentConfiguration {
 
     private final static Logger log = LoggerFactory.getLogger(ComponentConfigurationImpl.class);
     
@@ -98,5 +98,16 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
         return componentConfiguration.getCanonicalStoredLocation();
     }
 
+    public String getCanonicalIdentifier() {
+        return componentConfiguration.getCanonicalIdentifier();
+    }
+    
+    public String getContainerType() {
+        return componentConfiguration.getContainerType();
+    }
+
+    public String getComponentType() {
+        return componentConfiguration.getComponentType();
+    }
 
 }

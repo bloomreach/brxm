@@ -56,6 +56,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean hasClassNameConfigured;
 
     private String renderPath;
+    
+    private String containerType;
+    
+    private String componentType;
 
     private String hstTemplate;
 
@@ -78,6 +82,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Map<String, String> localParameters = new HashMap<String, String>();
     
     private String canonicalStoredLocation;
+    
+    private String canonicalIdentifier;
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -92,6 +98,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
 
         this.canonicalStoredLocation = node.getValueProvider().getCanonicalPath();
+        this.canonicalIdentifier = node.getValueProvider().getIdentifier();
+        this.componentType = node.getNodeTypeName();
         
         this.parent = parent;
 
@@ -99,7 +107,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // id is the relative path wrt configuration components path
         this.id = node.getValueProvider().getPath().substring(configurationRootNodePath.length() + 1);
 
-        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
+        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
+              ) {
             this.name = node.getValueProvider().getName();
             this.referenceName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
             this.componentClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
@@ -114,6 +125,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.serveResourcePath = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
             this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
             this.propertyMap = node.getValueProvider().getPropertyMap();
+            if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
+                this.containerType = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE);
+            } else if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE)){
+                log.warn("Ignoring property '{}' as this property is only allowed on nodes of type '{}'", HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+            }
             String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
             String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
 
@@ -130,7 +146,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         
         for(HstNode child : node.getNodes()) {
-            if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())) {
+            if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
+                    || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
+                    || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
+                  )  {
                 if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                     usedChildReferenceNames.add(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
                 }
@@ -169,6 +188,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public String getRenderPath() {
         return this.renderPath;
     }
+    
+    public String getContainerType() {
+        return this.containerType;
+    }
+
+    public String getComponentType() {
+        return this.componentType;
+    }
+
 
     public String getHstTemplate() {
         return this.hstTemplate;
@@ -239,6 +267,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public String getCanonicalStoredLocation() {
         return canonicalStoredLocation;
     }
+
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
+    }
     
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
@@ -258,8 +290,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.renderPath = child.renderPath;
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
+        copy.containerType = child.containerType;
+        copy.componentType = child.componentType;
         copy.serveResourcePath = child.serveResourcePath;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
+        copy.canonicalIdentifier = child.canonicalIdentifier;
+        
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);
@@ -329,9 +365,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.canonicalStoredLocation == null) {
                     this.canonicalStoredLocation = referencedComp.canonicalStoredLocation;
                 }
+                if (this.canonicalIdentifier == null) {
+                    this.canonicalIdentifier = referencedComp.canonicalIdentifier;
+                }
                 if (this.pageErrorHandlerClassName == null) {
                     this.pageErrorHandlerClassName = referencedComp.pageErrorHandlerClassName;
                 }
+                if (this.containerType == null) {
+                    this.containerType = referencedComp.containerType;
+                }
+                if (this.componentType == null) {
+                    this.componentType = referencedComp.componentType;
+                }
+                
+                
                 if (this.parameters == null) {
                     this.parameters = new HashMap<String, String>(referencedComp.parameters);
                 } else if (referencedComp.parameters != null) {
@@ -410,6 +457,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.pageErrorHandlerClassName == null) {
             this.pageErrorHandlerClassName = childToMerge.pageErrorHandlerClassName;
         }
+        if (this.containerType == null) {
+            this.containerType = childToMerge.containerType;
+        }
+        if (this.componentType == null) {
+            this.componentType = childToMerge.componentType;
+        }
+        
         if (this.parameters == null) {
             this.parameters = new HashMap<String, String>(childToMerge.parameters);
         } else if (childToMerge.parameters != null) {
@@ -483,5 +537,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
     }
+
 
 }

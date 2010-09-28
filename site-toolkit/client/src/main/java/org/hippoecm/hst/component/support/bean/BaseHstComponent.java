@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
@@ -55,6 +56,7 @@ import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 /**
  * A base HstComponent implementation to provide some facility methods for accessing content node POJO objects,
@@ -77,11 +79,15 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseHstComponent extends GenericHstComponent {
 
+    
+
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
     public static final String OBJECT_CONVERTER_CONTEXT_ATTRIBUTE = BaseHstComponent.class.getName() + ".objectConverter";
+    private static final String COMPOSER_NAME_TYPE = "composer";
+    private static final String COMPOSERSITE_NAME_TYPE = "composersite";
     
     private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
         "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
@@ -99,6 +105,28 @@ public class BaseHstComponent extends GenericHstComponent {
         }
     }
 
+    @Override
+    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+        super.doBeforeRender(request, response);
+        SiteMount mount = request.getRequestContext().getResolvedSiteMount().getSiteMount();
+        if(mount.isOfType(COMPOSERSITE_NAME_TYPE)) {
+            Element el = response.createElement("div");
+            el.setAttribute("class", "componentContentWrapper");
+            el.setAttribute("hst:id", getComponentConfiguration().getCanonicalIdentifier());
+            if(getContainerType() != null) {
+                el.setAttribute("hst:containerType", getContainerType());
+            }
+            
+            el.setAttribute("hst:type", getComponentConfiguration().getComponentType());
+
+            response.setWrapperElement(el);
+          
+        } else if(mount.isOfType(COMPOSER_NAME_TYPE)){
+            
+        }
+        
+    }
+    
     /**
      * Returns resolved parameter from HstComponentConfiguration : resolved means that possible property placeholders like
      * ${1} or ${year}, where the first refers to the first wildcard matcher in a resolved sitemap item, and the latter
@@ -453,6 +481,13 @@ public class BaseHstComponent extends GenericHstComponent {
         }
         
         return objectConverter;
+    }
+    
+    /**
+     * @return the String value of the container type or <code>null</code> in case that the component is not a container
+     */
+    public String getContainerType() {
+       return getComponentConfiguration().getContainerType();
     }
     
     /**

@@ -35,6 +35,12 @@ public interface ValueProvider extends Serializable {
     String getCanonicalPath();
     
     /**
+     * 
+     * @return the identifier of the object used to create this valueprovider with
+     */
+    String getIdentifier();
+    
+    /**
      * @return the name of the object used to create this valueprovider with
      */
     String getName();

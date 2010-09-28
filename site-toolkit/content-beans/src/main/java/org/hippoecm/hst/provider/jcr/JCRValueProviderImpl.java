@@ -45,6 +45,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
 
     private String nodePath;
     private String canonicalPath;
+    private String identifier;
     private String nodeName;
     private String localizedName;
     
@@ -87,6 +88,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             if(!lazyLoading) {
                 populate();
                 populateCanonicalPath();
+                populateIdentifier();
             }
         } catch (RepositoryException e) {
             log.error("RepositoryException ", e);
@@ -164,6 +166,19 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         populateCanonicalPath();
         
         return canonicalPath;
+    }
+    
+    /**
+     * We return the uuid of the jcr node. If we cannot get the uuid, we return the canonical path
+     */
+    public String getIdentifier() {
+        if(identifier != null) {
+            return identifier;
+        }
+        
+        populateIdentifier();
+        
+        return identifier;
     }
     
     
@@ -578,6 +593,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 Node canonical = ((HippoNode)jcrNode).getCanonicalNode();
                 if(canonical != null) {
                     this.canonicalPath = canonical.getPath();
+                } else {
+                    log.info("The canonical path of a virtual only node is the path of the virtual node");
+                    this.canonicalPath = jcrNode.getPath();
                 }
             } catch (RepositoryException e) {
                 log.warn("Repository Exception during fetching canonical path: ", e);
@@ -585,4 +603,31 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             
         }
     }
+    
+    private void populateIdentifier(){
+        if(isDetached()){
+            log.warn("Jcr Node is detatched. Cannot get identifier");
+            return;
+        } 
+       
+        if(jcrNode instanceof HippoNode) {
+            try {
+                Node canonical = ((HippoNode)jcrNode).getCanonicalNode();
+                if(canonical != null) {
+                    if(canonical.isNodeType("mix:referenceable")) {
+                        this.identifier = canonical.getUUID();
+                    } else {
+                        log.info("We take as the identifier of a node that is not mix:referenceable the canonical path");
+                        this.identifier = canonical.getPath();
+                    }
+                } else {
+                    log.warn("Cannot get an identifier for a virtual only node '{}'", jcrNode.getPath());
+                }
+            } catch (RepositoryException e) {
+                log.warn("Repository Exception during fetching canonical path: ", e);
+            }
+            
+        }
+    }
+
 }

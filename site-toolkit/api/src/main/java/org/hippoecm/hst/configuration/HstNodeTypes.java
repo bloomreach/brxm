@@ -26,6 +26,8 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_SITEMAP = "hst:sitemap";
     public final static String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";
     public final static String NODETYPE_HST_COMPONENT = "hst:component";
+    public final static String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
+    public final static String NODETYPE_HST_CONTAINERITEMCOMPONENT = "hst:containeritemcomponent";
     public final static String NODETYPE_HST_SITEMENUS = "hst:sitemenus";
     public final static String NODETYPE_HST_SITEMENU = "hst:sitemenu";
     public final static String NODETYPE_HST_SITEMENUITEM = "hst:sitemenuitem";
@@ -51,6 +53,7 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
     public final static String COMPONENT_PROPERTY_TEMPLATE_ = "hst:template";
     public final static String COMPONENT_PROPERTY_SERVE_RESOURCE_PATH = "hst:serveresourcepath";
+    public final static String COMPONENT_PROPERTY_CONTAINERTYPE = "hst:containertype";
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";

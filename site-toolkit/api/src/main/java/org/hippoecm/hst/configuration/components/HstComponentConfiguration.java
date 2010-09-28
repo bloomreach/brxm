@@ -172,6 +172,24 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return the canonical location where the configuration is stored
      */
     String getCanonicalStoredLocation();
-  
+
+
+    /**
+     * Returns the identifier of the backing stored component configuration. Note that multiple <code>HstComponentConfiguration</code>'s can share the same
+     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers 
+     * 
+     * @return the identifier of the backing stored component configuration
+     */
+    String getCanonicalIdentifier();
+    
+    /**
+     * @return the container type of this ComponentConfiguration and <code>null</code> if the component is not a container component
+     */
+    String getContainerType();
+    
+    /**
+     * @return the type of this component, for example 'hst:component', 'hst:containercomponent' or 'hst:containeritemcomponent' 
+     */
+    String getComponentType();
     
 }

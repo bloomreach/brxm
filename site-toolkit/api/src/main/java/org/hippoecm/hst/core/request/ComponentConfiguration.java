@@ -85,4 +85,24 @@ public interface ComponentConfiguration {
      */
     String getCanonicalPath();
     
+    /**
+     * Returns the identifier of the backing stored component configuration. Note that multiple <code>ComponentConfiguration</code>'s can share the same
+     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers 
+     * 
+     * @return the identifier of the backing stored component configuration
+     */
+    String getCanonicalIdentifier();
+    
+    /**
+     * 
+     * @return the container type of this ComponentConfiguration and <code>null</code> if the component is not a container component
+     */
+    String getContainerType();
+    
+    /**
+     * 
+     * @return the type of this component, for example 'hst:component', 'hst:containercomponent' or 'hst:containeritemcomponent' 
+     */
+    String getComponentType();
+    
 }

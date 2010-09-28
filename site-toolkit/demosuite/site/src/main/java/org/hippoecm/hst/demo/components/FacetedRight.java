@@ -31,7 +31,7 @@ public class FacetedRight extends AbstractFacetedComponnent {
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-       
+        super.doBeforeRender(request, response);
         HstQuery hstQuery = getHstQuery(request);
         
         HippoFacetNavigationBean facNavBean = BeanUtils.getFacetNavigationBean(request, hstQuery , getObjectConverter());

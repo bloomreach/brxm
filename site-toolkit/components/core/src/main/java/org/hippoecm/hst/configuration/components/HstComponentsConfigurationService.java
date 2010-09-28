@@ -136,7 +136,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     private void init(HstNode node, String configurationNodePath) {
         for(HstNode child : node.getNodes()) {
-            if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())){
+            if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())
+              || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(child.getNodeTypeName())
+              || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(child.getNodeTypeName())
+            )
+            {
                 if(child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                  // add to the used referencenames set 
                     usedReferenceNames.add(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));

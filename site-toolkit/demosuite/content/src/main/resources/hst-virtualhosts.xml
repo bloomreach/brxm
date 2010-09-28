@@ -109,7 +109,21 @@
                 </sv:property>
               </sv:node>
             </sv:node>
-            <sv:node sv:name="pagecomposer">
+            <sv:node sv:name="composersite">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:type" sv:type="String">
+                  <sv:value>composersite</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:types" sv:type="String">
+                  <sv:value>preview</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+             </sv:node>
+             <sv:node sv:name="composer">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemount</sv:value>
                 </sv:property>
@@ -122,7 +136,10 @@
                 <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
-             </sv:node>
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>ComposerPipeline</sv:value>
+                </sv:property>
+              </sv:node>
           </sv:node>
       </sv:node>
     </sv:node>
@@ -177,7 +194,21 @@
                 </sv:property>
               </sv:node>
             </sv:node>
-            <sv:node sv:name="pagecomposer">
+            <sv:node sv:name="composersite">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:type" sv:type="String">
+                  <sv:value>composersite</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:types" sv:type="String">
+                  <sv:value>preview</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+             </sv:node>
+             <sv:node sv:name="composer">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemount</sv:value>
                 </sv:property>
@@ -190,7 +221,10 @@
                 <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
-             </sv:node>
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>ComposerPipeline</sv:value>
+                </sv:property>
+              </sv:node>
           </sv:node>
       </sv:node>
     </sv:node>  

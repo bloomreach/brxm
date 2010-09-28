@@ -204,6 +204,9 @@ public abstract class AbstractValve implements Valve {
 					public Map<String, String> getLocalParameters() {return null;}
 					public String getCanonicalStoredLocation() {return null;}
                     public String getPageErrorHandlerClassName() {return null;}
+                    public String getContainerType() {return null;}
+                    public String getCanonicalIdentifier() {return null;}
+                    public String getComponentType() {return null;}
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);

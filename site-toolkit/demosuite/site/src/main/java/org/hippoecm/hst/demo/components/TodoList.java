@@ -106,7 +106,7 @@ public class TodoList extends BaseHstComponent {
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        
+        super.doBeforeRender(request, response);
         try {
             String todoItemsQuery = DEFAULT_TODO_ITEMS_QUERY;
             long queryLimit = DEFAULT_QUERY_LIMIT;

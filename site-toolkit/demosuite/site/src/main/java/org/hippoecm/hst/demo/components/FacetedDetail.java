@@ -30,7 +30,7 @@ public class FacetedDetail extends AbstractFacetedComponnent {
   
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-         
+        super.doBeforeRender(request, response);
         HstQuery hstQuery = getHstQuery(request);
         
         ProductBean product = BeanUtils.getFacetedNavigationResultDocument(request, hstQuery, getObjectConverter(), ProductBean.class);

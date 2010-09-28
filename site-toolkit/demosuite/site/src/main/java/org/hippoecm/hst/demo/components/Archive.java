@@ -28,7 +28,7 @@ public class Archive extends AbstractSearchComponent {
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-       
+        super.doBeforeRender(request, response);
         HippoBean currentBean = this.getContentBean(request);
         
         doSearch(request, response, null, null, "demosite:date", DEFAULT_PAGE_SIZE, currentBean);

@@ -39,7 +39,6 @@ public class RSS extends BaseHstComponent {
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        // TODO Auto-generated method stub
         super.doBeforeRender(request, response);
 
         HippoBean contentBean = this.getContentBean(request);

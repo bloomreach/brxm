@@ -30,7 +30,7 @@
 [hst:templates] > nt:base, mix:referenceable orderable
 + * (hst:template)
 
-[hst:component] > nt:base, mix:referenceable, hst:descriptive orderable
+[hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
 - hst:template (string)
 - hst:componentclassname (string)
 - hst:serveresourcepath (string)
@@ -39,17 +39,21 @@
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
-+ * (hst:component)
 
-[hst:containercomponent] > hst:component
+[hst:component] > hst:abstractcomponent orderable
++ * (hst:abstractcomponent)
 
-[hst:containercomponentitem] > hst:component
+[hst:containeritemcomponent] > hst:abstractcomponent orderable
+
+[hst:containercomponent] > hst:abstractcomponent orderable
+- hst:containertype (string) mandatory
++ * (hst:containeritemcomponent)
 
 [hst:components] > nt:base, mix:referenceable orderable
-+ * (hst:component)
++ * (hst:abstractcomponent)
 
 [hst:pages] > nt:base, mix:referenceable orderable
-+ * (hst:component)
++ * (hst:abstractcomponent)
 
 [hst:sitemapitemhandler] > nt:base, mix:referenceable
 - hst:sitemapitemhandlerclassname (string) mandatory
