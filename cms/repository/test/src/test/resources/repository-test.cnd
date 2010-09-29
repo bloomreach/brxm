@@ -67,3 +67,7 @@
 [hippo:testsearchdocument] > hippo:document
 + * (hippo:testcompoundstructure) = hippo:testcompoundstructure multiple
 - * 
+
+[hippo:testproplvlinit] > nt:base
+- hippo:single (string)
+- hippo:multi (string) multiple
