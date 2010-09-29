@@ -46,12 +46,14 @@
           </li>
           <% if (request.getUserPrincipal() == null) { %>
           <li>
-            <a title="Login" href="<c:url value='/jsp/login.jsp'><c:param name='destination' value='${destination}'/></c:url>">Log In</a>
+            <hst:link var="login" path="/jsp/login.jsp" />
+            <a title="Login" href="${login}?destination=${destination}">Log In</a>
           </li>
           <% } else { %>
           <li>
             <span><%=request.getUserPrincipal().getName()%></span>&nbsp;
-            <a title="Login" href="<c:url value='/login/logout'><c:param name='destination' value='${destination}'/></c:url>">Log Out</a>
+            <hst:link var="logout" path="/login/logout" />
+            <a title="Logout" href="${logout}?destination=${destination}">Log Out</a>
           </li>
           <% } %>
         </ul>
