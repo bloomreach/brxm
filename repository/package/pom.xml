@@ -41,6 +41,8 @@
     <module>war</module>
     <module>ear</module>
     <module>test</module>
+    <module>resources</module>
+    <module>dependencies</module>
   </modules>
 
   <build>
