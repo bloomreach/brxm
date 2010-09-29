@@ -182,6 +182,15 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         return session.getQPath(path);
     }
 
+    private static Modules<DataProviderModule> dataProviderModules = null;
+
+    private static synchronized Modules<DataProviderModule> getDataProviderModules(ClassLoader loader) {
+        if(dataProviderModules == null) {
+            dataProviderModules = new Modules<DataProviderModule>(loader, DataProviderModule.class);
+        }
+        return dataProviderModules;
+    }
+
     void initialize(org.apache.jackrabbit.core.SessionImpl session,
                     FacetedNavigationEngine<Query, Context> facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) {
@@ -192,8 +201,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
         LinkedHashSet<DataProviderModule> providerInstances = new LinkedHashSet<DataProviderModule>();
         if (virtualLayerEnabled) {
-            Modules<DataProviderModule> modules;
-            modules = new Modules<DataProviderModule>(getClass().getClassLoader(), DataProviderModule.class);
+            Modules<DataProviderModule> modules = getDataProviderModules(getClass().getClassLoader());
             for(DataProviderModule module : modules) {
                 log.info("Provider module "+module.toString());
                 providerInstances.add(module);
