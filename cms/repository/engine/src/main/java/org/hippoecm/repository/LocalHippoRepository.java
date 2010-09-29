@@ -530,6 +530,12 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             LoadInitializationModule.refresh(rootSession);
 
+            if (!hasHippoNamespace) {
+                Session initializeSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
+                UpdaterEngine.migrate(initializeSession);
+                initializeSession.logout();
+            }
+
             for(DaemonModule module : new Modules<DaemonModule>(Modules.getModules(), DaemonModule.class)) {
                 Session moduleSession = syncSession.impersonate(new SimpleCredentials("system", new char[]{}));
                 moduleSession = DecoratorFactoryImpl.getSessionDecorator(moduleSession);
