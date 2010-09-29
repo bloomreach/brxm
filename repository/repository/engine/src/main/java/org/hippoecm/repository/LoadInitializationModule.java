@@ -23,21 +23,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -46,7 +53,9 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.commons.cnd.ParseException;
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +77,9 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
         "OR " + HippoNodeType.HIPPO_NODETYPES + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_CONTENTRESOURCE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_CONTENT + " IS NOT NULL " +
-        "OR " + HippoNodeType.HIPPO_CONTENTDELETE + " IS NOT NULL) " +
+        "OR " + HippoNodeType.HIPPO_CONTENTDELETE + " IS NOT NULL " +
+        "OR " + HippoNodeType.HIPPO_CONTENTPROPSET + " IS NOT NULL " +
+        "OR " + HippoNodeType.HIPPO_CONTENTPROPADD + " IS NOT NULL) " +
         "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
     private Session session;
@@ -238,11 +249,9 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
 
                     // Delete content
                     if (node.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Found content delete configuration");
-                        }
                         Property p = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE);
                         String path = p.getString();
+                        log.warn("Delete content in initialization has been deprecrated: " + node.getName() + " " + path);
                         boolean immediateSave;
                         if(node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) || node.hasProperty(HippoNodeType.HIPPO_CONTENT))
                             immediateSave = false;
@@ -315,7 +324,7 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
                     // CONTENT FROM NODE
                     if (node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Found content resource configuration");
+                            log.debug("Found content configuration");
                         }
 
                         Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT);
@@ -345,6 +354,97 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
                             contentProperty.remove();
                         }
                     }
+
+                    // SET OR ADD PROPERTY CONTENT
+                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET) || node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found content property set/add configuration");
+                        }
+                        LinkedList<String> newValues = new LinkedList<String>();
+                        Property contentSetProperty = (node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET) ?
+                                                       node.getProperty(HippoNodeType.HIPPO_CONTENTPROPSET) : null);
+                        Property contentAddProperty = (node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD) ?
+                                                       node.getProperty(HippoNodeType.HIPPO_CONTENTPROPADD) : null);
+                        if (contentSetProperty != null) {
+                            if (contentSetProperty.isMultiple()) {
+                                for (Value value : contentSetProperty.getValues())
+                                    newValues.add(value.getString());
+                            } else
+                                newValues.add(contentSetProperty.getString());
+                        }
+                        if (contentAddProperty != null) {
+                            if (contentAddProperty.isMultiple()) {
+                                for (Value value : contentAddProperty.getValues())
+                                    newValues.add(value.getString());
+                            } else
+                                newValues.add(contentAddProperty.getString());
+                        }
+                        String root = "/";
+                        Property rootProperty = null;
+                        if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
+                            root = (rootProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT)).getString();
+                        }
+                        log.info("Initializin content set/add property " + root);
+                        HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                        HierarchyResolver hierarchyResolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
+                        Property property = hierarchyResolver.getProperty(session.getRootNode(), root.substring(1), last);
+                        if (property == null) {
+                            String propertyName = root.substring(root.lastIndexOf("/") + 1);
+                            if (!root.substring(0, root.lastIndexOf("/")).equals(last.node.getPath())) {
+                                throw new PathNotFoundException(root);
+                            }
+                            boolean isMultiple = false;
+                            boolean isSingle = false;
+                            Set<NodeType> nodeTypes = new TreeSet<NodeType>();
+                            nodeTypes.add(last.node.getPrimaryNodeType());
+                            for (NodeType nodeType : last.node.getMixinNodeTypes())
+                                nodeTypes.add(nodeType);
+                            for (NodeType nodeType : nodeTypes) {
+                                for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
+                                    if (propertyDefinition.getName().equals("*") || propertyDefinition.getName().equals(propertyName)) {
+                                        if (propertyDefinition.isMultiple())
+                                            isMultiple = true;
+                                        else
+                                            isSingle = true;
+                                    }
+                                }
+                            }
+                            if (newValues.size() == 1 && contentAddProperty == null && (isSingle || (!isSingle && !isMultiple))) {
+                                last.node.setProperty(last.relPath, newValues.get(0));
+                            } else if (newValues.isEmpty() && (isSingle || (!isSingle && !isMultiple))) {
+                                // no-op, the property does not exist
+                            } else {
+                                last.node.setProperty(last.relPath, newValues.toArray(new String[newValues.size()]));
+                            }
+                        } else {
+                            if (contentSetProperty == null && property.isMultiple()) {
+                                LinkedList<String> currentValues = new LinkedList<String>();
+                                for (Value value : property.getValues())
+                                    currentValues.add(value.getString());
+                                currentValues.addAll(newValues);
+                                newValues = currentValues;
+                            }
+                            if (property.isMultiple()) {
+                                property.setValue(newValues.toArray(new String[newValues.size()]));
+                            } else if (newValues.size() == 1 && contentAddProperty == null) {
+                                property.setValue(newValues.get(0));
+                            } else if (newValues.isEmpty()) {
+                                property.remove();
+                            } else {
+                                property.setValue(newValues.toArray(new String[newValues.size()]));
+                            }
+                        }
+                        if (rootProperty != null) {
+                            rootProperty.remove();
+                        }
+                        if (contentSetProperty != null) {
+                            contentSetProperty.remove();
+                        }
+                        if (contentAddProperty != null) {
+                            contentAddProperty.remove();
+                        }
+                    }
+
                     session.save();
                 } catch (MalformedURLException ex) {
                     log.error("configuration at specified by " + node.getPath() + " failed", ex);
@@ -370,12 +470,14 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
                     log.error("configuration at specified by " + node.getPath() + " failed", ex);
                 } catch (VersionException ex) {
                     log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (PathNotFoundException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
                 } finally {
                     session.refresh(false);
                 }
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 }

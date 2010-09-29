@@ -18,7 +18,7 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.3'>
 
 [rep:jarFile] mixin
 - rep:jarExpanded (date) mandatory copy
@@ -110,7 +110,9 @@
 - hippo:contentresource (string)
 - hippo:content (string)
 - hippo:contentroot (string)
-- hippo:contentdelete (string)
+- hippo:contentdelete (string) // deprecated
+- hippo:contentpropset (string) multiple
+- hippo:contentpropadd (string) multiple
 
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // never specify this item at this time
