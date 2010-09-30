@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+import java.util.Map;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -22,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.hippoecm.hst.statistics.Counter;
 
 /**
  * Interface extending {@link javax.jcr.Repository} to allow
@@ -48,7 +51,37 @@ public interface PoolingRepository extends Repository {
      * the request. This option will make the max active count limit meaningless.
      */
     String WHEN_EXHAUSTED_GROW = "grow";
-
+    
+    /**
+     * The key name of the counter which counts session creation.
+     */
+    String COUNTER_SESSION_CREATED = "Created";
+    
+    /**
+     * The key name of the counter which counts session activation.
+     */
+    String COUNTER_SESSION_ACTIVATED = "Activated";
+    
+    /**
+     * The key name of the counter which counts session obtained by login.
+     */
+    String COUNTER_SESSION_OBTAINED = "Obtained";
+    
+    /**
+     * The key name of the counter which counts session returned by logout.
+     */
+    String COUNTER_SESSION_RETURNED = "Returned";
+    
+    /**
+     * The key name of the counter which counts session passivation.
+     */
+    String COUNTER_SESSION_PASSIVATED = "Passivated";
+    
+    /**
+     * The key name of the counter which counts session destroying.
+     */
+    String COUNTER_SESSION_DESTROYED = "Destroyed";
+    
     /**
      * Initializes the pool
      * @throws Exception
@@ -121,5 +154,35 @@ public interface PoolingRepository extends Repository {
      * @param sessionsRefreshPendingTimeMillis
      */
     void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis);
+    
+    /**
+     * Returns the initial size of the connection pool.
+     * @return
+     */
+    int getInitialSize();
+    
+    /**
+     * Returns the maximum number of active connections that can be allocated at the same time.
+     * @return
+     */
+    int getMaxActive();
+    
+    /**
+     * Returns the maximum number of connections that can remain idle in the pool. 
+     * @return
+     */
+    int getMaxIdle();
+    
+    /**
+     * Returns the minimum number of idle connections in the pool
+     * @return
+     */
+    int getMinIdle();
+    
+    /**
+     * Returns counters map in which available counters are associated by keys.
+     * @return
+     */
+    Map<String, Counter> getCounters();
     
 }

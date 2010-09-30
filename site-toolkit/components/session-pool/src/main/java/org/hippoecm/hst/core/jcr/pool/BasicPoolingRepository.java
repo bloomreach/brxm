@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.jcr.Credentials;
@@ -31,6 +33,8 @@ import org.apache.commons.pool.PoolUtils;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.hippoecm.hst.statistics.Counter;
+import org.hippoecm.hst.statistics.DefaultCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +68,15 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     private long sessionsRefreshPendingTimeMillis; 
     private ResourceLifecycleManagement pooledSessionLifecycleManagement;
     private MultipleRepository multipleRepository;
+    
+    private Counter sessionCreatedCounter = new DefaultCounter(COUNTER_SESSION_CREATED);
+    private Counter sessionActivatedCounter = new DefaultCounter(COUNTER_SESSION_ACTIVATED);
+    private Counter sessionObtainedCounter = new DefaultCounter(COUNTER_SESSION_OBTAINED);
+    private Counter sessionReturnedCounter = new DefaultCounter(COUNTER_SESSION_RETURNED);
+    private Counter sessionPassivatedCounter = new DefaultCounter(COUNTER_SESSION_PASSIVATED);
+    private Counter sessionDestroyedCounter = new DefaultCounter(COUNTER_SESSION_DESTROYED);
+    
+    private Map<String, Counter> sessionCounters;
     
     public void setLogger(Logger log) {
         this.log = log;
@@ -260,6 +273,8 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
                 pooledSessionLifecycleManagement.registerResource(session);
             }
+            
+            sessionObtainedCounter.increment();
         } catch (NoSuchElementException e) {
             throw new NoAvailableSessionException("No session is available now. Probably the session pool was exhasuted.");
         } catch (Exception e) {
@@ -318,6 +333,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         
         try {
             this.sessionPool.returnObject(session);
+            sessionReturnedCounter.increment();
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to return session to the pool.", e);
@@ -924,6 +940,34 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         this.whenExhaustedAction = (whenExhaustedAction != null ? whenExhaustedAction.trim() : WHEN_EXHAUSTED_BLOCK);
     }
     
+    public void setSessionCountersEnabled(boolean sessionCountersEnabled) {
+        sessionCreatedCounter.setEnabled(sessionCountersEnabled);
+        sessionActivatedCounter.setEnabled(sessionCountersEnabled);
+        sessionObtainedCounter.setEnabled(sessionCountersEnabled);
+        sessionReturnedCounter.setEnabled(sessionCountersEnabled);
+        sessionPassivatedCounter.setEnabled(sessionCountersEnabled);
+        sessionDestroyedCounter.setEnabled(sessionCountersEnabled);
+    }
+    
+    /**
+     * Returns counters map in which available counters are associated by keys.
+     * @return
+     */
+    public Map<String, Counter> getCounters() {
+        if (sessionCounters == null) {
+            Map<String, Counter> tempMap = new HashMap<String, Counter>();
+            tempMap.put(COUNTER_SESSION_CREATED, sessionCreatedCounter);
+            tempMap.put(COUNTER_SESSION_ACTIVATED, sessionActivatedCounter);
+            tempMap.put(COUNTER_SESSION_OBTAINED, sessionObtainedCounter);
+            tempMap.put(COUNTER_SESSION_RETURNED, sessionReturnedCounter);
+            tempMap.put(COUNTER_SESSION_PASSIVATED, sessionPassivatedCounter);
+            tempMap.put(COUNTER_SESSION_DESTROYED, sessionDestroyedCounter);
+            sessionCounters = tempMap;
+        }
+        
+        return sessionCounters;
+    }
+    
     private boolean equalsCredentials(Credentials credentials) {
         if (isSimpleDefaultCredentials && (credentials instanceof SimpleCredentials)) {
             SimpleCredentials other = (SimpleCredentials) credentials;
@@ -941,6 +985,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             if (object instanceof PooledSession) {
                 PooledSession session = (PooledSession) object;
                 session.activate();
+                sessionActivatedCounter.increment();
             
                 if (sessionsRefreshPendingTimeMillis > 0L) { 
                     if (session.lastRefreshed() < sessionsRefreshPendingTimeMillis) {  
@@ -971,6 +1016,8 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
                     log.warn("Failed to log out session. {}", e.toString());
                 }
             }
+            
+            sessionDestroyedCounter.increment();
         }
 
         public Object makeObject() throws RepositoryException {
@@ -989,6 +1036,8 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             if (session != null && sessionDecorator != null) {
                 session = sessionDecorator.decorate(session, getDefaultCredentialsUserID());
             }
+            
+            sessionCreatedCounter.increment();
             
             return session;
         }
@@ -1010,6 +1059,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
                 }
                 
                 pooledSession.passivate();
+                sessionPassivatedCounter.increment();
             }
         }
 
