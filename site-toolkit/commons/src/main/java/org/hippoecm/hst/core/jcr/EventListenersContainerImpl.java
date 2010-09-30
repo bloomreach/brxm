@@ -310,13 +310,15 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         public void run() {
             while (!EventListenersContainerImpl.this.stopped) {
                 boolean isSessionLive = false;
-                
+
                 try {
-                    isSessionLive = EventListenersContainerImpl.this.session.isLive();
-                } catch (Exception e) {
-                    
+                    if(EventListenersContainerImpl.this.session != null){
+                        isSessionLive = EventListenersContainerImpl.this.session.isLive();
+                    }
+                } catch (Exception ignore) {
+
                 }
-                
+
                 if (EventListenersContainerImpl.this.session == null || !isSessionLive) {
                     doDeinit();
                     doInit();
