@@ -130,6 +130,7 @@
             <value>setKeepChangesOnRefresh</value>
             <value>getRefreshOnPassivate</value>
             <value>setRefreshOnPassivate</value>
+            <value>getCounters</value>
           </list>
         </property>
       </bean>
