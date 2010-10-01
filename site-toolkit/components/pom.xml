@@ -33,6 +33,7 @@
       <module>session-pool</module>
       <module>core</module>
       <module>caching</module>
+      <module>jaxrs</module>
     </modules>
     
 </project>
