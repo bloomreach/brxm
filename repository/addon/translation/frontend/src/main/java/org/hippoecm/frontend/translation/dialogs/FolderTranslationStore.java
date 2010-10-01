@@ -23,11 +23,11 @@ import org.hippoecm.frontend.translation.FolderTranslation;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.wicketstuff.extjs.data.ExtField;
-import org.onehippo.wicketstuff.extjs.data.ExtJsonStore;
-import org.onehippo.wicketstuff.extjs.util.JSONIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.data.ExtField;
+import org.wicketstuff.js.ext.data.ExtJsonStore;
+import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
     private static final long serialVersionUID = 1L;
