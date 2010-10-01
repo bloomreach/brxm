@@ -91,7 +91,8 @@ public class HstRequestUtils {
      * @return
      */
     public static String getPathInfo(HttpServletRequest request, String characterEncoding) {
-        String encodePathInfo = request.getRequestURI().substring(request.getContextPath().length() + request.getServletPath().length());
+        String requestURI = HstRequestUtils.getRequestURI(request, true);
+        String encodePathInfo = requestURI.substring(request.getContextPath().length() + request.getServletPath().length());
         
         if (characterEncoding == null) {
             characterEncoding = request.getCharacterEncoding();
@@ -214,6 +215,51 @@ public class HstRequestUtils {
      */
     public static String getFarthestRemoteAddr(HttpServletRequest request) {
         return getRemoteAddrs(request)[0];
+    }
+    
+    /**
+     * @param request
+     * @return
+     */
+    public static String getRequestURI(HttpServletRequest request, boolean excludeMatrixParameters) {
+        String requestURI = request.getRequestURI();
+        
+        if (excludeMatrixParameters) {
+            int endIndex = requestURI.indexOf(';');
+            
+            if (endIndex != -1) {
+                requestURI = requestURI.substring(0, endIndex);
+            }
+        }
+        
+        return requestURI;
+    }
+    
+    /**
+     * @param request
+     * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
+     */
+    public static String getRequestPath(HttpServletRequest request) {
+        return getDecodedPath(request, null);
+    }
+    
+    private static String getDecodedPath(HttpServletRequest request, String characterEncoding) {
+        String requestURI = getRequestURI(request, true);
+        String encodePathInfo = requestURI.substring(request.getContextPath().length());
+        
+        if (characterEncoding == null) {
+            characterEncoding = request.getCharacterEncoding();
+            
+            if (characterEncoding == null) {
+                characterEncoding = "ISO-8859-1";
+            }
+        }
+        
+        try {
+            return URLDecoder.decode(encodePathInfo, characterEncoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Invalid character encoding: " + characterEncoding, e);
+        }
     }
     
 }

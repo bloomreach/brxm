@@ -365,7 +365,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         String requestURI = (String) request.getAttribute("javax.servlet.include.request_uri");
         
         if (requestURI == null) {
-            requestURI = request.getRequestURI();
+            requestURI = HstRequestUtils.getRequestURI(request, true);
         }
         
         String temp = requestURI.substring(requestURI.indexOf(urlNamespacePrefixedPath));

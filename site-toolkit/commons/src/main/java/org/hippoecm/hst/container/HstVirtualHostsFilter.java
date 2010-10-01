@@ -89,7 +89,7 @@ public class HstVirtualHostsFilter implements Filter {
             
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
             
-            String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
+            String pathInfo = HstRequestUtils.getRequestPath(req);
             
             if(pathInfo.equals("")) {
                 pathInfo += "/"+welcome_page;
