@@ -18,6 +18,8 @@ package org.hippoecm.hst.mock;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Credentials;
@@ -59,6 +61,8 @@ public class MockHstRequestContext implements HstRequestContext {
     protected ContainerConfiguration containerConfiguration;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Subject subject;
+    protected Locale preferredLocale;
+    protected List<Locale> locales;
 
     public boolean isPreview() {
     	return this.resolvedSiteMount.getSiteMount().isPreview();
@@ -221,4 +225,13 @@ public class MockHstRequestContext implements HstRequestContext {
     public Subject getSubject() {
         return subject;
     }
+    
+    public Locale getPreferredLocale() {
+        return preferredLocale;
+    }
+    
+    public Enumeration<Locale> getLocales() {
+        return Collections.enumeration(locales);
+    }
+    
 }

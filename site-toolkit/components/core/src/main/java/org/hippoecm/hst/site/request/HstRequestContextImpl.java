@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.LoginException;
@@ -69,6 +70,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected String embeddingContextPath;
     protected ResolvedSiteMount resolvedEmbeddingSiteMount;  
     protected Subject subject;
+    protected Locale preferredLocale;
+    protected List<Locale> locales;
     
     private Map<String, Object> unmodifiableAttributes;
     
@@ -307,6 +310,26 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     public Subject getSubject() {
         return subject;
+    }
+    
+    public void setPreferredLocale(Locale preferredLocale) {
+        this.preferredLocale = preferredLocale;
+    }
+    
+    public Locale getPreferredLocale() {
+        return preferredLocale;
+    }
+    
+    public void setLocales(List<Locale> locales) {
+        this.locales = locales;
+    }
+    
+    public Enumeration<Locale> getLocales() {
+        if (locales != null) {
+            return Collections.enumeration(locales);
+        }
+        
+        return null;
     }
     
 }

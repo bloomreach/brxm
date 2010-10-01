@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.request;
 
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.LoginException;
@@ -217,5 +218,18 @@ public interface HstRequestContext {
      * @return The JAAS subject on this request.
      */
     Subject getSubject();
+    
+    /**
+     * Gets the preferred locale associated with this request.
+     *
+     * @return The preferred locale associated with this request.
+     */
+    Locale getPreferredLocale();
+    
+    /**
+     * Returns an Enumeration of Locale objects
+     * @return The locale associated with this request.
+     */
+    Enumeration<Locale> getLocales();
     
 }

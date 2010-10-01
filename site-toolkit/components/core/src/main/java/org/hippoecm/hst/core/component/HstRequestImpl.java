@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -301,6 +302,29 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
             String prefix = getFullNamespacePrefix(this.componentWindow.getReferenceNamespace(), false);
             super.removeAttribute(prefix + name);
         }
+    }
+    
+    @Override
+    public Locale getLocale() {
+        Locale preferredLocale = requestContext.getPreferredLocale();
+        
+        if (preferredLocale == null) {
+            preferredLocale = super.getLocale();
+        }
+        
+        return preferredLocale;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public Enumeration getLocales() {
+        Enumeration localesEnum = requestContext.getLocales();
+        
+        if (localesEnum == null) {
+            localesEnum = super.getLocales();
+        }
+        
+        return localesEnum;
     }
     
     public HstRequestContext getRequestContext() {

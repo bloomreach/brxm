@@ -16,18 +16,21 @@
 package org.hippoecm.hst.core.component;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -44,6 +47,7 @@ import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 
 public class TestHstRequest extends AbstractSpringTestCase {
@@ -122,14 +126,36 @@ public class TestHstRequest extends AbstractSpringTestCase {
         assertNull("The name attribute of body window request is still available! name: " + hstRequestForBodyWindow.getAttribute("name"), hstRequestForBodyWindow.getAttribute("name"));
     }
     
-    private SortedSet getSortedAttributeNames(HttpServletRequest request) {
-        SortedSet attrNames = new TreeSet();
+    @Test
+    public void testLocales() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        assertNotNull(request.getLocale());
+        List<?> locales = EnumerationUtils.toList(request.getLocales());
+        assertFalse(locales.isEmpty());
         
-        for (Enumeration enumParams = request.getAttributeNames(); enumParams.hasMoreElements(); ) {
-            attrNames.add(enumParams.nextElement());
+        HstRequestContextImpl rc = new HstRequestContextImpl(null);
+        HstURLFactory urlFactory = getComponent(HstURLFactory.class.getName());
+        rc.setURLFactory(urlFactory);
+        
+        HstRequest hstRequest = new HstRequestImpl(request, rc, null, HstRequest.RENDER_PHASE);
+        
+        assertEquals(request.getLocale(), hstRequest.getLocale());
+        List<?> hstLocales = EnumerationUtils.toList(hstRequest.getLocales());
+        assertNotNull(hstLocales);
+        assertEquals(locales.size(), hstLocales.size());
+        
+        for (Object loc : locales) {
+            assertTrue(hstLocales.contains(loc));
         }
         
-        return attrNames;
+        rc.setPreferredLocale(Locale.KOREAN);
+        List<Locale> newLocales = new ArrayList<Locale>();
+        newLocales.add(Locale.KOREAN);
+        newLocales.addAll((List<Locale>) locales);
+        rc.setLocales(newLocales);
+        
+        assertEquals(Locale.KOREAN, hstRequest.getLocale());
+        assertEquals(Locale.KOREAN, hstRequest.getLocales().nextElement());
     }
     
     @Ignore

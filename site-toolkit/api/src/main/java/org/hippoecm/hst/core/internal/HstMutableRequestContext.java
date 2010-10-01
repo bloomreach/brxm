@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.core.internal;
 
+import java.util.List;
+import java.util.Locale;
+
 import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
@@ -69,5 +72,17 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	public void setResolvedEmbeddingSiteMount(ResolvedSiteMount resolvedEmbeddingSiteMount);
 	
     public void setSubject(Subject subject);
-
+    
+    /**
+     * Sets the preferred locale associated with this request.
+     * @param The preferred locale associated with this request.
+     */
+    public void setPreferredLocale(Locale locale);
+    
+    /**
+     * Sets the locales assocaited with this request.
+     * @param locales
+     */
+    public void setLocales(List<Locale> locales);
+    
 }

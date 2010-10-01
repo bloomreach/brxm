@@ -62,8 +62,11 @@
   </bean>
   
   <!-- Main invocable valves for each request -->
-    
+  
   <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
+  </bean>
+  
+  <bean id="localizationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.LocalizationValve">
   </bean>
   
   <bean id="securityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SecurityValve">
@@ -107,6 +110,7 @@
             <property name="invokingValves">
               <list>
                 <ref bean="contextResolvingValve" />
+                <ref bean="localizationValve" />
                 <ref bean="securityValve" />
                 <ref bean="statefulSessionValve" />
                 <ref bean="siteMenusResolvingValve" />
