@@ -119,7 +119,7 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
                             entries.add(uuid);
                         }
                     } catch (ItemNotFoundException ex) {
-                        entries.add(uuid);
+                        log.debug("Reference to UUID " + uuid + " could not be dereferenced.");
                     }
                 }
             } catch (RepositoryException ex) {
