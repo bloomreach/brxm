@@ -68,8 +68,13 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
         
         HstQueryManager manager = getQueryManager();
         try {
-
-            final HstQuery hstQuery = manager.createQuery(scope);
+            
+            final HstQuery hstQuery;
+            if(nodeType == null) {
+               hstQuery = manager.createQuery(scope);
+            } else {
+               hstQuery = manager.createQuery(scope, nodeType);
+            }
             
             if (sortBy != null) {
                 hstQuery.addOrderByDescending(sortBy);
@@ -86,7 +91,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             PageableCollection<SearchResult<HippoBean>> results = new PageableCollection<SearchResult<HippoBean>>(
                     result.getSize());
             results.setPageNumber(page);
-            results.setPageSize(DEFAULT_PAGE_SIZE);
+            results.setPageSize(pageSize);
             int startAt = results.getStartOffset();
 
             final HippoBeanIterator iterator = result.getHippoBeans();
@@ -96,7 +101,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             int count = 0;
 
-            while (iterator.hasNext() && count < DEFAULT_PAGE_SIZE) {
+            while (iterator.hasNext() && count < pageSize) {
                 HippoBean bean = iterator.nextHippoBean();
                 // note: bean can be null
                 if (bean != null && bean instanceof BaseBean) {
