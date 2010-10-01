@@ -4,11 +4,6 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
 
 import javax.servlet.ServletConfig;
 
@@ -72,6 +67,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("cache-max-objects-mem")).andReturn("350");
         expect(servletConfig.getInitParameter("cache-config-file")).andReturn("/no/such/file.xml");
         expect(servletConfig.getInitParameter("cache-name")).andReturn("testCache");
+        expect(servletConfig.getInitParameter("cache-enable")).andReturn("true");
 
         replay(servletConfig);
         binariesServlet.init(servletConfig);
@@ -104,6 +100,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("cache-max-objects-mem")).andReturn(null);
         expect(servletConfig.getInitParameter("cache-config-file")).andReturn(null);
         expect(servletConfig.getInitParameter("cache-name")).andReturn(null);
+        expect(servletConfig.getInitParameter("cache-enable")).andReturn(null);
 
         replay(servletConfig);
         binariesServlet.init(servletConfig);

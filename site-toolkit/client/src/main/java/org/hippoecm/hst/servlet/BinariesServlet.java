@@ -46,6 +46,7 @@ import org.hippoecm.hst.servlet.utils.BinariesCache;
 import org.hippoecm.hst.servlet.utils.BinaryPage;
 import org.hippoecm.hst.servlet.utils.ContentDispositionUtils;
 import org.hippoecm.hst.servlet.utils.HeaderUtils;
+import org.hippoecm.hst.servlet.utils.NoopBinariesCache;
 import org.hippoecm.hst.servlet.utils.ResourceUtils;
 import org.hippoecm.hst.servlet.utils.SessionUtils;
 import org.hippoecm.hst.site.HstServices;
@@ -121,6 +122,8 @@ public class BinariesServlet extends HttpServlet {
 
     private static final String CACHE_NAME_INIT_PARAM = "cache-name";
 
+    private static final String CACHE_ENABLE_PARAM = "cache-enable";
+
     private static final String SET_EXPIRES_HEADERS_INIT_PARAM = "set-expires-headers";
 
     public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
@@ -145,6 +148,8 @@ public class BinariesServlet extends HttpServlet {
 
     private static final boolean DEFAULT_SET_EXPIRES_HEADERS = true;
 
+    private static final boolean DEFAULT_CACHE_ENABLE = true;
+
     private String baseBinariesContentPath = ResourceUtils.DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
     private Set<String> contentDispositionContentTypes;
@@ -160,6 +165,8 @@ public class BinariesServlet extends HttpServlet {
     private boolean initialized = false;
 
     private boolean setExpires = DEFAULT_SET_EXPIRES_HEADERS;
+
+    private boolean cacheEnabled = DEFAULT_CACHE_ENABLE;
 
     private String binaryResourceNodeType = ResourceUtils.DEFAULT_BINARY_RESOURCE_NODE_TYPE;
 
@@ -478,17 +485,23 @@ public class BinariesServlet extends HttpServlet {
     }
 
     private void initBinariesCache() {
-        binariesCache = new BinariesCache(getInitParameter(CACHE_NAME_INIT_PARAM, BinariesCache.DEFAULT_NAME));
-        binariesCache.setLockTimeOutMillis(getIntegerInitParameter(CACHE_LOCK_TIMEOUT_MILLIS_INIT_PARAM,
-                BinariesCache.DEFAULT_LOCK_TIMEOUT_MILLIS));
-        binariesCache.setTTLMillis(getIntegerInitParameter(CACHE_TTL_MILLIS_INIT_PARAM,
-                BinariesCache.DEFAULT_TTL_MILLIS));
-        binariesCache.setMaxObjectsInMem(getIntegerInitParameter(CACHE_MAX_OBJECTS_MEM_INIT_PARAM,
-                BinariesCache.DEFAULT_MAX_OBJECTS_IN_MEM));
-        binariesCache.setMaxFileSizeBytes(getLongInitParameter(CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM,
-                BinariesCache.DEFAULT_MAX_OBJECT_SIZE_BYTES));
-        binariesCache.setConfigFile(getInitParameter(CACHE_CONFIG_FILE_INIT_PARAM, null));
-        binariesCache.init();
+        cacheEnabled = getBooleanInitParameter(CACHE_ENABLE_PARAM, DEFAULT_CACHE_ENABLE);
+        if (cacheEnabled) {
+            binariesCache = new BinariesCache(getInitParameter(CACHE_NAME_INIT_PARAM, BinariesCache.DEFAULT_NAME));
+            binariesCache.setLockTimeOutMillis(getIntegerInitParameter(CACHE_LOCK_TIMEOUT_MILLIS_INIT_PARAM,
+                    BinariesCache.DEFAULT_LOCK_TIMEOUT_MILLIS));
+            binariesCache.setTTLMillis(getIntegerInitParameter(CACHE_TTL_MILLIS_INIT_PARAM,
+                    BinariesCache.DEFAULT_TTL_MILLIS));
+            binariesCache.setMaxObjectsInMem(getIntegerInitParameter(CACHE_MAX_OBJECTS_MEM_INIT_PARAM,
+                    BinariesCache.DEFAULT_MAX_OBJECTS_IN_MEM));
+            binariesCache.setMaxFileSizeBytes(getLongInitParameter(CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM,
+                    BinariesCache.DEFAULT_MAX_OBJECT_SIZE_BYTES));
+            binariesCache.setConfigFile(getInitParameter(CACHE_CONFIG_FILE_INIT_PARAM, null));
+            binariesCache.init();
+        } else {
+            binariesCache = new NoopBinariesCache();
+            log.info("Caching disabled for {}", getServletName());
+        }
     }
 
     private String getInitParameter(String paramName, String defaultValue) {
