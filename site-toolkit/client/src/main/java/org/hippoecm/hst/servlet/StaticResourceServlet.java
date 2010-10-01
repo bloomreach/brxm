@@ -240,7 +240,9 @@ public class StaticResourceServlet extends HttpServlet {
             bos.flush();
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
-                log.warn("Exception during writing content of {}: {}", path, e.toString());
+                log.warn("Exception during writing content of {}", path, e);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
         } finally {
             if (bos != null) try { bos.close(); } catch (Exception ce) { }
