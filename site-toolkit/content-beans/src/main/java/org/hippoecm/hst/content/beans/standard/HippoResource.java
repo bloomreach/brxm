@@ -45,11 +45,13 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
     }
     
     public BigDecimal getLengthKB() {
-        return calculate(getLength(), DIVISOR_K_BYTE);
+        // multiple getLength() by 8 to get size in bits
+        return calculate(getLength() * 8 , DIVISOR_K_BYTE);
     }
     
     public BigDecimal getLengthMB() {
-        return calculate(getLength(), DIVISOR_M_BYTE);
+        // multiple getLength() by 8 to get size in bits
+        return calculate(getLength() * 8, DIVISOR_M_BYTE);
     }
 
     /**
