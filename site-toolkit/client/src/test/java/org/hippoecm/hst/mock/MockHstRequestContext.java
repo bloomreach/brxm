@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.mock;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -78,6 +80,10 @@ public class MockHstRequestContext implements HstRequestContext {
         return this.attributes.keys();
     }
     
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(attributes);
+    }
+
     public HstContainerURL getBaseURL() {
         return this.baseURL;
     }

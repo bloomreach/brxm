@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.request;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -162,6 +163,12 @@ public interface HstRequestContext {
      * Enumerates the attribute names
      */
     Enumeration<String> getAttributeNames();
+    
+    /**
+     * Returns attribute map which is immutable or unmodifiable.
+     * @return
+     */
+    Map<String, Object> getAttributes();
     
     /**
      * Returns the matched virtual host object 
