@@ -49,6 +49,10 @@
     <constructor-arg value="${binaries.repository.password}"/>
   </bean>
   
+  <bean id="defaultPoolingCounter" class="org.hippoecm.hst.core.jcr.pool.DefaultPoolingCounter" scope="prototype">
+    <property name="enabled" value="${repository.pool.counter.enabled}" />
+  </bean>
+  
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
@@ -76,6 +80,7 @@
             <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
+            <property name="poolingCounter" ref="defaultPoolingCounter" />
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.preview">
@@ -102,6 +107,7 @@
             <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
+            <property name="poolingCounter" ref="defaultPoolingCounter" />
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.writable">
@@ -128,6 +134,7 @@
             <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
+            <property name="poolingCounter" ref="defaultPoolingCounter" />
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.hstconfigreader">
@@ -154,6 +161,7 @@
             <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
+            <property name="poolingCounter" ref="defaultPoolingCounter" />
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.binaries">
@@ -180,6 +188,7 @@
             <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
+            <property name="poolingCounter" ref="defaultPoolingCounter" />
           </bean>
         </entry>
       </map>

@@ -25,25 +25,14 @@ public class DefaultCounter implements Counter {
     
     private static final long serialVersionUID = 1L;
     
-    private String name;
     private AtomicLong atomicValue;
-    private volatile boolean enabled;
     
     public DefaultCounter() {
-        this(null);
+        this(0L);
     }
     
-    public DefaultCounter(String name) {
-        this(name, 0L);
-    }
-    
-    public DefaultCounter(String name, long initialValue) {
-        this.name = name;
+    public DefaultCounter(long initialValue) {
         this.atomicValue = new AtomicLong(initialValue);
-    }
-    
-    public String getName() {
-        return name;
     }
     
     public long getValue() {
@@ -51,33 +40,19 @@ public class DefaultCounter implements Counter {
     }
     
     public long increment() {
-        if (enabled) {
-            return atomicValue.incrementAndGet();
-        }
-        return 0L;
+        return atomicValue.incrementAndGet();
     }
     
     public long decrement() {
-        if (enabled) {
-            return atomicValue.decrementAndGet();
-        }
-        return 0L;
+        return atomicValue.decrementAndGet();
     }
     
     public void reset() {
         atomicValue.set(0L);
     }
     
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
-    public boolean isEnabled() {
-        return enabled;
-    }
-    
     @Override
     public String toString() {
-        return "Counter('" + name + "'): " + getValue() + ", " + super.toString();
+        return super.toString() + ": " + getValue();
     }
 }
