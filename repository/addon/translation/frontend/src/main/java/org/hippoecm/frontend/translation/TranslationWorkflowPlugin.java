@@ -50,6 +50,7 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
+import org.hippoecm.frontend.translation.dialogs.DocumentTranslationDialog;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -86,8 +87,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                     return translations.hasNode(locale);
                 }
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("Failed to determine whether model is of locale " + locale);
             }
         }
         return false;
@@ -173,6 +173,10 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                                 }
                                 folders = new LinkedList<FolderTranslation>();
                                 Node folder = node.getParent();
+                                FolderTranslation docTranslation = new FolderTranslation(folder, language);
+                                docTranslation.setEditable(true);
+                                folders.add(docTranslation);
+
                                 boolean mutable = true;
                                 // FIXME: OUCH!
                                 while (!"/content/documents".equals(folder.getPath())) {
@@ -186,14 +190,14 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                                         } else {
                                             ft = new FolderTranslation(folder, language);
                                         }
-                                        ft.setMutable(mutable);
+                                        ft.setEditable(mutable);
                                         folders.add(ft);
                                     }
                                     folder = folder.getParent();
                                 }
                                 Collections.reverse(folders);
 
-                                return new TranslateDocumentDialog(
+                                return new DocumentTranslationDialog(
                                         TranslationWorkflowPlugin.this,
                                         this,
                                         new StringResourceModel("translate-title", TranslationWorkflowPlugin.this, null),
@@ -207,14 +211,19 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
                         @Override
                         protected String execute(Workflow wf) throws Exception {
-                            for (FolderTranslation folder : folders) {
-                                if (!folder.isMutable()) {
+                            for (int i = 0; i < (folders.size() - 1); i++ ) {
+                                FolderTranslation folder = folders.get(i);
+                                if (!folder.isEditable()) {
                                     continue;
                                 }
                                 if (!folder.persist()) {
                                     return COULD_NOT_CREATE_FOLDERS;
                                 }
                             }
+
+                            FolderTranslation docTranslation = folders.get(folders.size() - 1);
+                            this.name = docTranslation.getNamefr();
+                            this.url = docTranslation.getUrlfr();
 
                             TranslationWorkflow workflow = (TranslationWorkflow) wf;
                             Document translation = workflow.addTranslation(language, url);
