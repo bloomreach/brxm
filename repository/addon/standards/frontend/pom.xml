@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>htmldiff</artifactId>
-      <version>1.01.01</version>
+      <version>1.01.02</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
