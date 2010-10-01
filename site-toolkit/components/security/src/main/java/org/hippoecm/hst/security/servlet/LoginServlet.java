@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.security.PolicyContextWrapper;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,13 +170,8 @@ public class LoginServlet extends HttpServlet {
         String mode = request.getParameter("mode");
         
         if (mode == null) {
-            String requestURI = request.getRequestURI();
+            String requestURI = HstRequestUtils.getRequestURI(request, true);
             mode = requestURI.substring(requestURI.lastIndexOf('/') + 1);
-            int offset = mode.indexOf(';');
-            
-            if (offset != -1) {
-                mode = mode.substring(0, offset);
-            }
         }
         
         return mode;

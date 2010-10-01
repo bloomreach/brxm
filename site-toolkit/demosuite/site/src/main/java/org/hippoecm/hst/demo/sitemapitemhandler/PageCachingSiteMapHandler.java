@@ -82,8 +82,9 @@ public class PageCachingSiteMapHandler extends AbstractHstSiteMapHandler {
         StringBuilder builder = new StringBuilder();
         
         builder.append(HstRequestUtils.getFarthestRequestHost(request));
-        builder.append(request.getRequestURI());
+        builder.append(HstRequestUtils.getRequestURI(request, true));
         if(request.getQueryString() != null) {
+            builder.append('?');
             builder.append(request.getQueryString());
         }
         return builder.toString();

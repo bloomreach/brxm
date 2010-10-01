@@ -77,10 +77,29 @@ public class HstRequestUtils {
     public static HstRequestContext getHstRequestContext(HttpServletRequest servletRequest) {
     	return (HstRequestContext)servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
-
+    
     /**
      * @param request
-     * @return the decoded getRequestURI after the context path but before the query string in the request URL
+     * @param excludeMatrixParameters
+     * @return
+     */
+    public static String getRequestURI(HttpServletRequest request, boolean excludeMatrixParameters) {
+        String requestURI = request.getRequestURI();
+        
+        if (excludeMatrixParameters) {
+            int endIndex = requestURI.indexOf(';');
+            
+            if (endIndex != -1) {
+                requestURI = requestURI.substring(0, endIndex);
+            }
+        }
+        
+        return requestURI;
+    }
+    
+    /**
+     * @param request
+     * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request) {
         return getDecodedPath(null, request, null, false);
@@ -89,7 +108,7 @@ public class HstRequestUtils {
     /**
      * @param request
      * @param characterEncoding
-     * @return the decoded getRequestURI after the context path but before the query string in the request URL
+     * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request, String characterEncoding) {
         return getDecodedPath(null, request, characterEncoding, false);
@@ -125,7 +144,9 @@ public class HstRequestUtils {
     }
     
     private static String getDecodedPath(ResolvedSiteMount resSiteMount, HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
-        String encodePathInfo = request.getRequestURI().substring(request.getContextPath().length());
+        String requestURI = getRequestURI(request, true);
+        String encodePathInfo = requestURI.substring(request.getContextPath().length());
+        
         if(stripMountPath) {
             encodePathInfo = encodePathInfo.substring(resSiteMount.getResolvedMountPath().length());
         }
