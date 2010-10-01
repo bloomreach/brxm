@@ -25,17 +25,17 @@ public class HippoResourceTest {
 
     @Test
     public void testGetLengthKB() throws Exception {
-        resource = new MockHippoResource(1024);
+        resource = new MockHippoResource(1024 / 8);
         assertTrue("Expected 0,125 KB, but got: " + resource.getLengthKB(), resource.getLengthKB().equals(new BigDecimal("0.125")));
-        resource = new MockHippoResource(1024 * 8);
+        resource = new MockHippoResource(1024);
         assertTrue("Expected 1 KB, but got: " + resource.getLengthKB(), resource.getLengthKB().equals(new BigDecimal("1")));
     }
 
     @Test
     public void testGetLengthMB() throws Exception {
-        resource = new MockHippoResource(1024 * 1024 * 8);
+        resource = new MockHippoResource(1024 * 1024);
         assertTrue("Expected 1 MB, but got: " + resource.getLengthMB(), resource.getLengthMB().equals(new BigDecimal("1")));
-        resource = new MockHippoResource(1024*1024*8 * 10);
+        resource = new MockHippoResource(1024*1024 * 10);
         assertTrue("Expected 10 MB, but got: " + resource.getLengthMB(), resource.getLengthMB().equals(new BigDecimal("10")));
 
     }
