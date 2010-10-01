@@ -86,8 +86,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
     public static final String OBJECT_CONVERTER_CONTEXT_ATTRIBUTE = BaseHstComponent.class.getName() + ".objectConverter";
-    private static final String COMPOSER_NAME_TYPE = "composer";
-    private static final String COMPOSERSITE_NAME_TYPE = "composersite";
+    private static final String COMPOSERMODE_NAME_TYPE = "composermode";
     
     private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
         "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
@@ -109,22 +108,17 @@ public class BaseHstComponent extends GenericHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         SiteMount mount = request.getRequestContext().getResolvedSiteMount().getSiteMount();
-        if(mount.isOfType(COMPOSERSITE_NAME_TYPE)) {
+        if(mount.isOfType(COMPOSERMODE_NAME_TYPE)) {
+            // we are in composer mode. Add some wrapper elements that are needed for the composer
             Element el = response.createElement("div");
             el.setAttribute("class", "componentContentWrapper");
             el.setAttribute("hst:id", getComponentConfiguration().getCanonicalIdentifier());
             if(getContainerType() != null) {
                 el.setAttribute("hst:containerType", getContainerType());
             }
-            
             el.setAttribute("hst:type", getComponentConfiguration().getComponentType());
-
             response.setWrapperElement(el);
-          
-        } else if(mount.isOfType(COMPOSER_NAME_TYPE)){
-            
-        }
-        
+        } 
     }
     
     /**

@@ -25,8 +25,8 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
   
-  <bean id="composerService" class="org.hippoecm.hst.services.support.jaxrs.cxf.CXFJaxrsService">
-    <constructor-arg value="composerService"/>
+  <bean id="composerService1" class="org.hippoecm.hst.services.support.jaxrs.cxf.CXFJaxrsService">
+    <constructor-arg value="composerService1"/>
     <property name="servletPath" value=""/>
     <property name="jaxrsServerFactoryBean" ref="composerCxfJaxrsServerFactoryBean"/>
   </bean>
@@ -45,11 +45,13 @@
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg ref="jaxrsContentService" />
+          <constructor-arg ref="composerService" />
         </bean>
       </list>
     </property>
   </bean>
+  
+  <bean id="composerService" class="org.hippoecm.hst.demo.services.support.jaxrs.composer.ComposerService" scope="singleton"/>
  
   <!-- ========================================================= -->
   <!-- The followings need to be moved to SpringComponentManager-pipelines.xml. -->
@@ -57,7 +59,7 @@
   
   <!-- Pipelining -->  
    <bean id="composerValve" class="org.hippoecm.hst.core.container.JaxrsServiceValve">
-    <constructor-arg ref="composerService" />
+    <constructor-arg ref="composerService1" />
    </bean> 
  
   <bean id="composerPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
