@@ -289,6 +289,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             try {
                 this.session.logout();
             } catch (Exception ce) {
+                getLogger().debug("Exception while logging out jcr session: {}", ce.toString());
             }
         }
 
@@ -307,13 +308,13 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         public void run() {
             while (!EventListenersContainerImpl.this.stopped) {
                 boolean isSessionLive = false;
-
+                
                 try {
                     if(EventListenersContainerImpl.this.session != null){
                         isSessionLive = EventListenersContainerImpl.this.session.isLive();
                     }
-                } catch (Exception ignore) {
-                    
+                } catch (Exception e) {
+                    getLogger().debug("Exception while checking jcr session: {}", e.toString());
                 }
                 
                 if (EventListenersContainerImpl.this.session == null || !isSessionLive) {
