@@ -24,12 +24,6 @@ import java.io.Serializable;
 public interface Counter extends Serializable {
     
     /**
-     * Returns the name of the counter.
-     * @return
-     */
-    String getName();
-    
-    /**
      * Gets the current counter value, regardless whether it's enabled or not.
      * @return
      */
@@ -51,17 +45,5 @@ public interface Counter extends Serializable {
      * Resets the counter, regardless whether it's enabled or not.
      */
     void reset();
-    
-    /**
-     * Enables or disables the counter.
-     * @param enabled
-     */
-    void setEnabled(boolean enabled);
-    
-    /**
-     * Returns true if the counter is enabled.
-     * @return
-     */
-    boolean isEnabled();
     
 }

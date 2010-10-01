@@ -33,7 +33,6 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.hippoecm.hst.core.ResourceVisitor;
-import org.hippoecm.hst.statistics.Counter;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,13 +41,6 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
     
     private BasicPoolingRepository poolingRepository;
     private BasicPoolingRepository readOnlyPoolingRepository;
-    
-    private Counter sessionCreatedCounter;
-    private Counter sessionActivatedCounter;
-    private Counter sessionObtainedCounter;
-    private Counter sessionReturnedCounter;
-    private Counter sessionPassivatedCounter;
-    private Counter sessionDestroyedCounter;
     
     @Before
     public void setUp() throws Exception {
@@ -61,20 +53,6 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
                 this.poolingRepository.getMaxActive() >= this.poolingRepository.getMaxIdle());
         assertEquals("The whenExhaustedAction must be 'block' for test", PoolingRepository.WHEN_EXHAUSTED_BLOCK, this.poolingRepository.getWhenExhaustedAction());
         assertTrue("The maxWait configuration must be greater than zero for test.", this.poolingRepository.getMaxWait() > 0);
-        
-        sessionCreatedCounter = poolingRepository.getCounters().get(PoolingRepository.COUNTER_SESSION_CREATED);
-        sessionActivatedCounter = poolingRepository.getCounters().get(PoolingRepository.COUNTER_SESSION_ACTIVATED);
-        sessionObtainedCounter = poolingRepository.getCounters().get(PoolingRepository.COUNTER_SESSION_OBTAINED);
-        sessionReturnedCounter = poolingRepository.getCounters().get(PoolingRepository.COUNTER_SESSION_RETURNED);
-        sessionPassivatedCounter = poolingRepository.getCounters().get(PoolingRepository.COUNTER_SESSION_PASSIVATED);
-        sessionDestroyedCounter = poolingRepository.getCounters().get(PoolingRepository.COUNTER_SESSION_DESTROYED);
-        
-        assertEquals(0L, sessionCreatedCounter.getValue());
-        assertEquals(0L, sessionActivatedCounter.getValue());
-        assertEquals(0L, sessionObtainedCounter.getValue());
-        assertEquals(0L, sessionReturnedCounter.getValue());
-        assertEquals(0L, sessionPassivatedCounter.getValue());
-        assertEquals(0L, sessionDestroyedCounter.getValue());
     }
     
     @Test
@@ -335,7 +313,8 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
     @Test
     public void testBasicPoolingRepositoryCounters() throws Exception {
         Repository repository = poolingRepository;
-        poolingRepository.setSessionCountersEnabled(true);
+        PoolingCounter counter = new DefaultPoolingCounter(true);
+        poolingRepository.setPoolingCounter(counter);
         int maxActive = poolingRepository.getMaxActive();
         int maxIdle = poolingRepository.getMaxIdle();
         
@@ -345,47 +324,42 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
             sessions[i] = repository.login();
         }
         
-        assertEquals(maxActive, sessionCreatedCounter.getValue());
-        assertEquals(maxActive, sessionActivatedCounter.getValue());
-        assertEquals(maxActive, sessionObtainedCounter.getValue());
+        assertEquals(maxActive, counter.getNumSessionsCreated());
+        assertEquals(maxActive, counter.getNumSessionsActivated());
+        assertEquals(maxActive, counter.getNumSessionsObtained());
         
         for (int i = 0; i < maxActive; i++) {
             sessions[i].logout();
         }
         
-        assertEquals(maxActive, sessionReturnedCounter.getValue());
-        assertEquals(maxActive, sessionPassivatedCounter.getValue());
-        assertEquals(maxActive - maxIdle, sessionDestroyedCounter.getValue());
+        assertEquals(maxActive, counter.getNumSessionsReturned());
+        assertEquals(maxActive, counter.getNumSessionsPassivated());
+        assertEquals(maxActive - maxIdle, counter.getNumSessionsDestroyed());
         
         for (int i = 0; i < maxActive; i++) {
             sessions[i] = repository.login();
         }
         
-        assertEquals(2 * maxActive - maxIdle, sessionCreatedCounter.getValue());
-        assertEquals(2 * maxActive, sessionActivatedCounter.getValue());
-        assertEquals(2 * maxActive, sessionObtainedCounter.getValue());
+        assertEquals(2 * maxActive - maxIdle, counter.getNumSessionsCreated());
+        assertEquals(2 * maxActive, counter.getNumSessionsActivated());
+        assertEquals(2 * maxActive, counter.getNumSessionsObtained());
         
         for (int i = 0; i < maxActive; i++) {
             sessions[i].logout();
         }
         
-        assertEquals(2 * maxActive, sessionReturnedCounter.getValue());
-        assertEquals(2 * maxActive, sessionPassivatedCounter.getValue());
-        assertEquals(2 * (maxActive - maxIdle), sessionDestroyedCounter.getValue());
+        assertEquals(2 * maxActive, counter.getNumSessionsReturned());
+        assertEquals(2 * maxActive, counter.getNumSessionsPassivated());
+        assertEquals(2 * (maxActive - maxIdle), counter.getNumSessionsDestroyed());
         
-        sessionCreatedCounter.reset();
-        sessionActivatedCounter.reset();
-        sessionObtainedCounter.reset();
-        sessionReturnedCounter.reset();
-        sessionPassivatedCounter.reset();
-        sessionDestroyedCounter.reset();
+        counter.reset();
         
-        assertEquals(0L, sessionCreatedCounter.getValue());
-        assertEquals(0L, sessionActivatedCounter.getValue());
-        assertEquals(0L, sessionObtainedCounter.getValue());
-        assertEquals(0L, sessionReturnedCounter.getValue());
-        assertEquals(0L, sessionPassivatedCounter.getValue());
-        assertEquals(0L, sessionDestroyedCounter.getValue());
+        assertEquals(0L, counter.getNumSessionsCreated());
+        assertEquals(0L, counter.getNumSessionsActivated());
+        assertEquals(0L, counter.getNumSessionsObtained());
+        assertEquals(0L, counter.getNumSessionsReturned());
+        assertEquals(0L, counter.getNumSessionsPassivated());
+        assertEquals(0L, counter.getNumSessionsDestroyed());
     }
     
     @Ignore

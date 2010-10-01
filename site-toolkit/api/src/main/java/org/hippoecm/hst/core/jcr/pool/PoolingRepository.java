@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
-import java.util.Map;
-
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -24,7 +22,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
-import org.hippoecm.hst.statistics.Counter;
 
 /**
  * Interface extending {@link javax.jcr.Repository} to allow
@@ -32,84 +29,7 @@ import org.hippoecm.hst.statistics.Counter;
  * 
  * @version $Id$
  */
-public interface PoolingRepository extends Repository {
-
-    /**
-     * When the sessions in the pool are exhausted, the pool will be blocked for the specified interval
-     * to wait for available idle session.
-     */
-    String WHEN_EXHAUSTED_BLOCK = "block";
-    
-    /**
-     * When the sessions in the pool are exhausted, the pool will throw exception instantly without
-     * waiting for available idle session. 
-     */
-    String WHEN_EXHAUSTED_FAIL = "fail";
-    
-    /**
-     * When the sessions in the pool are exhausted, the pool will grow the action session count to serve
-     * the request. This option will make the max active count limit meaningless.
-     */
-    String WHEN_EXHAUSTED_GROW = "grow";
-    
-    /**
-     * The key name of the counter which counts session creation.
-     */
-    String COUNTER_SESSION_CREATED = "Created";
-    
-    /**
-     * The key name of the counter which counts session activation.
-     */
-    String COUNTER_SESSION_ACTIVATED = "Activated";
-    
-    /**
-     * The key name of the counter which counts session obtained by login.
-     */
-    String COUNTER_SESSION_OBTAINED = "Obtained";
-    
-    /**
-     * The key name of the counter which counts session returned by logout.
-     */
-    String COUNTER_SESSION_RETURNED = "Returned";
-    
-    /**
-     * The key name of the counter which counts session passivation.
-     */
-    String COUNTER_SESSION_PASSIVATED = "Passivated";
-    
-    /**
-     * The key name of the counter which counts session destroying.
-     */
-    String COUNTER_SESSION_DESTROYED = "Destroyed";
-    
-    /**
-     * Initializes the pool
-     * @throws Exception
-     */
-    void initialize() throws Exception;
-    
-    /**
-     * Clears any sessions sitting idle in the pool by removing them from the idle instance pool.
-     */
-    void clear();
-    
-    /**
-     * Closes the pool
-     */
-    void close() throws Exception;
-    
-    /**
-     * Returns the current active session count in the pool.
-     * 
-     * @return
-     */
-    int getNumActive();
-
-    /**
-     * Returns the current idle session count in the pool.
-     * @return
-     */
-    int getNumIdle();
+public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
 
     /**
      * Returns the session to the pool.
@@ -156,33 +76,9 @@ public interface PoolingRepository extends Repository {
     void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis);
     
     /**
-     * Returns the initial size of the connection pool.
+     * Returns pooling counter.
      * @return
      */
-    int getInitialSize();
-    
-    /**
-     * Returns the maximum number of active connections that can be allocated at the same time.
-     * @return
-     */
-    int getMaxActive();
-    
-    /**
-     * Returns the maximum number of connections that can remain idle in the pool. 
-     * @return
-     */
-    int getMaxIdle();
-    
-    /**
-     * Returns the minimum number of idle connections in the pool
-     * @return
-     */
-    int getMinIdle();
-    
-    /**
-     * Returns counters map in which available counters are associated by keys.
-     * @return
-     */
-    Map<String, Counter> getCounters();
+    PoolingCounter getPoolingCounter();
     
 }
