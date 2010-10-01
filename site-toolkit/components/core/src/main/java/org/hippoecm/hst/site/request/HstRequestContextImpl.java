@@ -65,6 +65,8 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected ContainerConfiguration containerConfiguration;
     protected HstEmbeddedRequestContext embeddedRequestContext;
     
+    private Map<String, Object> unmodifiableAttributes;
+    
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
     }
@@ -217,7 +219,19 @@ public class HstRequestContextImpl implements HstRequestContext {
         
         this.attributes.put(name, object);
     }
-
+    
+    public Map<String, Object> getAttributes() {
+        if (unmodifiableAttributes == null && attributes != null) {
+            unmodifiableAttributes = Collections.unmodifiableMap(attributes);
+        }
+        
+        if (unmodifiableAttributes == null) {
+            return Collections.emptyMap();
+        }
+        
+        return unmodifiableAttributes;
+    }
+    
     public ContainerConfiguration getContainerConfiguration() {
         return this.containerConfiguration;
     }
