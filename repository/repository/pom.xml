@@ -42,6 +42,7 @@
     <module>jca</module>
     <module>utilities</module>
     <module>test</module>
+    <module>servlets</module>
     <module>application</module>
     <module>checker</module>
   </modules>
