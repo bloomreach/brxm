@@ -24,11 +24,11 @@ import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.translation.FolderTranslation;
 import org.json.JSONException;
-import org.onehippo.wicketstuff.extjs.ExtPanel;
-import org.onehippo.wicketstuff.extjs.data.ExtJsonStore;
-import org.onehippo.wicketstuff.extjs.util.JSONIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.ExtPanel;
+import org.wicketstuff.js.ext.data.ExtJsonStore;
+import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 public class DocumentTranslationView extends ExtPanel {
     private static final long serialVersionUID = 1L;
