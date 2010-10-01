@@ -20,6 +20,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -177,8 +178,18 @@ public interface HstLinkCreator {
      * @param hstSite the HstSite the siteMapPath should be in
      * @param containerResource whether it is a static link, for example for css/js
      * @return an <code>HstLink</code> instance or <code>null<code> 
+     * @deprecated Use {@link #create(String, SiteMount, boolean)}
      */
     HstLink create(String path, HstSite hstSite, boolean containerResource);
+    
+    /**
+     * Regardless the current context, create a HstLink to the path that you use as argument. 
+     * @param path the path to the sitemap item
+     * @param SiteMount the SiteMount for which the link should be created
+     * @param containerResource whether it is a static link, for example for css/js
+     * @return an <code>HstLink</code> instance or <code>null<code> 
+     */
+    HstLink create(String path, SiteMount siteMount, boolean containerResource);
     
     /**
      * create a link to a HstSiteMapItem with id <code>toSiteMapItemId</code> that belongs to <code>HstSite</code> hstSite.

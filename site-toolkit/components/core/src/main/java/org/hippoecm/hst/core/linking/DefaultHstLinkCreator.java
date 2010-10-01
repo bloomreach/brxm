@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -142,15 +143,19 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
 
     public HstLink create(String path, HstSite hstSite) {
-        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite));
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getSiteMount()));
+    }
+
+    public HstLink create(String path, HstSite hstSite, boolean containerResource) {
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getSiteMount(), containerResource));
     }
     
-    public HstLink create(String path, HstSite hstSite, boolean containerResource) {
-        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite, containerResource));
+    public HstLink create(String path, SiteMount siteMount, boolean containerResource) {
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount, containerResource));
     }
 
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
-        return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite()));
+        return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getSiteMount()));
     }
 
     public HstLink create(HstSite hstSite, String toSiteMapItemId) {
@@ -164,7 +169,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return null;
         }
         
-        return postProcess(new HstLinkImpl(getPath(siteMapItem), hstSite));
+        return postProcess(new HstLinkImpl(getPath(siteMapItem), hstSite.getSiteMount()));
     }
 
 
@@ -343,7 +348,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
                         pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
                         containerResource = true;
-                        return new HstLinkImpl(pathInfo, hstSite, containerResource);
+                        return new HstLinkImpl(pathInfo, hstSite.getSiteMount(), containerResource);
                         
                     } else {
                         if(!virtual && nodePath.startsWith(hstSite.getCanonicalContentPath())) {
@@ -401,7 +406,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return pageNotFoundLink(hstSite);
             }
             
-            HstLink link = new HstLinkImpl(pathInfo, hstSite, containerResource);
+            HstLink link = new HstLinkImpl(pathInfo, hstSite.getSiteMount(), containerResource);
             if(postProcess) {
                 link = postProcess(link);
             }
@@ -411,7 +416,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
         
         private HstLink pageNotFoundLink(HstSiteService hstSite) {
-            HstLink link =  new HstLinkImpl(DefaultHstLinkCreator.this.pageNotFoundPath, hstSite);
+            HstLink link =  new HstLinkImpl(DefaultHstLinkCreator.this.pageNotFoundPath, hstSite.getSiteMount());
             link.setNotFound(true);
             return link;
         }

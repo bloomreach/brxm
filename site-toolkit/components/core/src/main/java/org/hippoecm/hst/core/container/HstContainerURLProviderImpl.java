@@ -433,6 +433,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return toURLString(containerURL, requestContext, null);
     }
     
+    
+    // TODO for cross domain linking, we might need the SiteMount here as well
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
     	if (requestContext.isPortletContext()) {
     		if (requestContext.isEmbeddedRequest()) {

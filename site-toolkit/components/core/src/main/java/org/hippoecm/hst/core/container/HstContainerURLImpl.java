@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -121,7 +122,8 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     public void setParameter(String name, String[] values) {
         if (this.parameterMap == null) {
-            this.parameterMap = new HashMap<String, String[]>();
+            // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
+            this.parameterMap = new LinkedHashMap<String, String[]>();
         }
 
         if (values == null || values.length == 0) {

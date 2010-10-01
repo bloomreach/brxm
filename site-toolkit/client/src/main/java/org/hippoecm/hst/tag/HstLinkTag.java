@@ -16,12 +16,11 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -30,15 +29,13 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +90,6 @@ public class HstLinkTag extends TagSupport {
      */
     protected boolean fallback = true;
         
-    protected Map<String, List<String>> parametersMap = new HashMap<String, List<String>>();
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -108,7 +104,6 @@ public class HstLinkTag extends TagSupport {
         return EVAL_BODY_INCLUDE;
     }
     
-    
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
      */
@@ -122,24 +117,17 @@ public class HstLinkTag extends TagSupport {
             return EVAL_PAGE;
         }
         
-        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-
-        if(hstRequest == null) {
-            log.warn("The request is not an HstRequest. Cannot create an HstLink outside the hst request processing. Return");
-            return EVAL_PAGE;
-        }
-        
-        HstRequestContext reqContext = hstRequest.getRequestContext();
-        if(this.hippoBean != null) {
+       HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+       HstRequestContext reqContext = getHstRequestContext(servletRequest);
+       
+       if(reqContext == null) {
+           log.warn("There is no HstRequestContext on the request. Cannot create an HstLink outside the hst request processing. Return");
+           return EVAL_PAGE;
+       } 
+       
+       if(this.hippoBean != null) {
             if(hippoBean.getNode() == null) {
                 log.warn("Cannot get a link for a detached node");
-                return EVAL_PAGE;
-            }
-            if(hstRequest == null){
-                log.warn("Cannot only get links for HstRequest");
                 return EVAL_PAGE;
             }
             if(canonical) {
@@ -150,10 +138,10 @@ public class HstLinkTag extends TagSupport {
         }
         
         if(this.link == null && this.path != null) {
-            HstSite site = reqContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite();
+            SiteMount siteMount = reqContext.getResolvedSiteMount().getSiteMount();
             VirtualHost virtualHost = reqContext.getVirtualHost();
             boolean containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(this.path));
-            this.link = reqContext.getHstLinkCreator().create(this.path, site, containerResource);
+            this.link = reqContext.getHstLinkCreator().create(this.path, siteMount, containerResource);
         }
         
         if(this.link == null) {
@@ -161,13 +149,34 @@ public class HstLinkTag extends TagSupport {
             return EVAL_PAGE;
         }
         
-        String urlString = this.link.toUrlForm(hstRequest, hstResponse, external);
-        if(contextRelative) {
-            // append again the current queryString as we are context relative
-            if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {
-                urlString += "?"+hstRequest.getQueryString();
+        String urlString = this.link.toUrlForm(reqContext , external);
+        
+        try {
+            if(contextRelative) {
+                // append again the current queryString as we are context relative
+                if(reqContext.getBaseURL().getParameterMap() != null && !reqContext.getBaseURL().getParameterMap().isEmpty()) {
+                    StringBuilder queryString = new StringBuilder();
+                    boolean firstParamDone = false;
+                    for(Entry<String, String[]> entry : reqContext.getBaseURL().getParameterMap().entrySet()) {
+                        String name = entry.getKey();
+                        
+                        for (String value : entry.getValue()) {
+                            queryString.append(firstParamDone ? "&" : "?")
+                            .append(name)
+                            .append("=")
+                            .append(URLEncoder.encode(value, reqContext.getBaseURL().getCharacterEncoding()));
+                        
+                            firstParamDone = true;
+                        }
+                        
+                    }
+                    urlString += queryString.toString();
+                }
             }
+        } catch (UnsupportedEncodingException e) {
+           throw new JspException("UnsupportedEncodingException on the base url", e);
         }
+        
         
         if (var == null) {
             try {               
@@ -195,7 +204,6 @@ public class HstLinkTag extends TagSupport {
         }
         
         /*cleanup*/
-        parametersMap.clear();
         var = null;
         hippoBean = null;
         scope = null;
@@ -329,4 +337,10 @@ public class HstLinkTag extends TagSupport {
     public void setFallback(boolean fallback) {
        this.fallback = fallback;
     }
+    
+
+    protected HstRequestContext getHstRequestContext(HttpServletRequest servletRequest) {
+        return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+    }
+    
 }

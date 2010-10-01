@@ -16,7 +16,7 @@
 package org.hippoecm.hst.core.util;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,8 @@ public class HttpUtils {
         if (queryString == null) {
             queryParamMap = Collections.emptyMap();
         } else {
-            queryParamMap = new HashMap<String, String []>();
+            // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
+            queryParamMap = new LinkedHashMap<String, String []>();
             String[] paramPairs = StringUtils.split(queryString, '&');
             String paramName = null;
             

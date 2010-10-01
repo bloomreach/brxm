@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * HstLink is the object representing a link. The {@link #getPath()} return you the value of the link, and {@link #getPathElements()}
@@ -57,20 +59,39 @@ public interface HstLink {
      * @param request
      * @param external if true, the returned url is external, in other words including http/https etc
      * @return the url form of this HstLink, which is a url
+     * @deprecated use {@link #toUrlForm(HstRequestContext, boolean)} instead
      */
     String toUrlForm(HstRequest request, HstResponse response, boolean external);
+    
+    /**
+     * @param requestContext
+     * @param external if true, the returned url is external, in other words including http/https etc
+     * @return the url form of this HstLink, which is a url
+     */
+    String toUrlForm(HstRequestContext requestContext, boolean external);
     
     /**
      * @return the path elements of this HstLink, which is the {@link #getPath()} splitted on slashes
      */
     String[] getPathElements();
     
+    
     /**
      * @return the HstSite that can represent this link. This might be an HstSite which is a different one then the
      * HstSite the link was created in. This could result in a cross-domain (different hostname) link being created, depending
      * on the backing {@link org.hippoecm.hst.configuration.hosting.VirtualHost}. If no HstSite is set, <code>null</code> can be returned
+     * @deprecated use {@link #getSiteMount} instead
      */
+    @Deprecated
     HstSite getHstSite();
+    
+    /**
+     * @return the {@link SiteMount} that can represent this link. This might be an  {@link SiteMount} which is a different one then the
+     *  {@link SiteMount} the link was created in. This could result in a cross-domain (different hostname) link being created, depending
+     * on the backing {@link SiteMount#getVirtualHost()}. If no SiteMount is set, <code>null</code> can be returned
+     * 
+     */
+    SiteMount getSiteMount();
     
     /**
      * When for example for some bean the (real) link cannot be created through the HstLinkCreator, a HstLink can be returned

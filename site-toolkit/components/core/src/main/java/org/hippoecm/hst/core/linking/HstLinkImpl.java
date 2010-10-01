@@ -15,12 +15,14 @@
  */
 package org.hippoecm.hst.core.linking;
 
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,22 +32,47 @@ public class HstLinkImpl implements HstLink{
     private final static Logger log = LoggerFactory.getLogger(HstLinkImpl.class);
     
     private String path;
-    private HstSite hstSite;
+    private SiteMount siteMount;
     private boolean containerResource;
     private boolean notFound = false;
     
+    
+    public HstLinkImpl(String path, SiteMount siteMount) {
+        this(path, siteMount,false);
+    }
+    
+    public HstLinkImpl(String path, SiteMount siteMount, boolean containerResource) {
+        this.path = PathUtils.normalizePath(path);
+        this.siteMount = siteMount;
+        this.containerResource = containerResource;
+    }
+    
+    
+    /**
+     * @deprecated use {@link HstLinkImpl(String, SiteMount)} instead
+     */
+    @Deprecated
     public HstLinkImpl(String path, HstSite hstSite){
          this(path, hstSite,false);
     }
     
+    /**
+     * @deprecated use {@link HstLinkImpl(String, SiteMount, boolean)} instead
+     */
+    @Deprecated
     public HstLinkImpl(String path, HstSite hstSite, boolean containerResource) {
         this.path = PathUtils.normalizePath(path);
-        this.hstSite = hstSite;
+        this.siteMount = hstSite.getSiteMount();
         this.containerResource = containerResource;
     }
     
+    public SiteMount getSiteMount() {
+        return siteMount;
+    }
+    
+    @Deprecated
     public HstSite getHstSite() {
-        return this.hstSite;
+        return siteMount.getHstSite();
     }
 
     public String getPath() {
@@ -71,9 +98,9 @@ public class HstLinkImpl implements HstLink{
         return this.path.split("/");
     }
 
-    public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
-        String characterEncoding = response.getCharacterEncoding();
-        
+
+    public String toUrlForm(HstRequestContext requestContext, boolean external) {
+        String characterEncoding = requestContext.getBaseURL().getCharacterEncoding();
         if (characterEncoding == null) {
             characterEncoding = "UTF-8";
         }
@@ -85,19 +112,40 @@ public class HstLinkImpl implements HstLink{
         String urlString = null;
         
         if (this.containerResource) {
-            HstURL hstUrl = response.createResourceURL(ContainerConstants.CONTAINER_REFERENCE_NAMESPACE);
+            // TODO below, we need for cross-domain linking the SiteMount as well
+            HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext);
             hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
         } else {
-            urlString = response.createNavigationalURL(path).toString();
+            // TODO below, we need for cross-domain linking the SiteMount as well
+            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(requestContext.getBaseURL(), path);
+            urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext).toString();
         }
         
-        if(external) {
-           VirtualHost vhost =  request.getRequestContext().getResolvedSiteMapItem().getResolvedSiteMount().getSiteMount().getVirtualHost();
-           urlString = vhost.getBaseURL(request) + urlString;
+        if(external || requestContext.getResolvedSiteMount().getSiteMount().getVirtualHost() != siteMount.getVirtualHost()) {
+           // TODO siteMount.getVirtualHost().getHostName() does not work when the hostname contains wildcards like *.onehippo.com. Do we need to support this?
+           String host = siteMount.getVirtualHost().getScheme() + "://" + siteMount.getVirtualHost().getHostName();
+           
+           // TODO INLCUDE PORTNUMBER FOR SITEMOUNT ... We take for now the port number of the base url which is most likely 
+           // always the correct one
+           int port = requestContext.getBaseURL().getPortNumber();
+           if(port == 80 || port == 443) {
+               // do not include default ports
+           } else {
+               host += ":"+port;
+           }
+           
+           urlString =  host + urlString;
         }
-        
+       
         return urlString;
+    }
+    
+    /**
+     * @deprecated
+     */
+    public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
+        return toUrlForm(request.getRequestContext(), external);
     }
 
     public boolean isNotFound() {
@@ -108,6 +156,5 @@ public class HstLinkImpl implements HstLink{
         this.notFound = notFound;
     }
 
-    
 
 }
