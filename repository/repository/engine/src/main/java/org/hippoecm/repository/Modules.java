@@ -65,6 +65,21 @@ public final class Modules<T extends Object> implements Iterable<T> {
         this(loader, null);
     }
 
+    public Modules(Modules<T> original) {
+        this();
+        for(T instance : original) {
+            Class<? extends T> moduleClass = (Class<? extends T>) instance.getClass();
+            try {
+                T moduleInstance = moduleClass.newInstance();
+                modules.add(moduleInstance);
+            } catch (InstantiationException ex) {
+                log.warn("Failure instantiating module class {}: {}", moduleClass.getName(), ex);
+            } catch (IllegalAccessException ex) {
+                log.warn("Failed instantiating module class {}: {}", moduleClass.getName(), ex);
+            }
+        }
+    }
+
     public Modules(ClassLoader loader, Class<T> clazz) {
         this();
         try {
