@@ -25,7 +25,7 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     
     
-  <bean id="org.hippoecm.hst.security.AuthenticationProvider" class="org.hippoecm.hst.security.impl.JcrAuthenticationProvider">
+  <bean id="org.hippoecm.hst.security.AuthenticationProvider" class="org.hippoecm.hst.security.impl.HippoAuthenticationProvider">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="config.containsKey('java.security.auth.login.config')" />
     <!-- System repository to retrieve roles for user. -->
@@ -34,6 +34,9 @@
     <constructor-arg index="1" ref="javax.jcr.Credentials.hstconfigreader" />
     <!-- User authentication repository against which each user will be authenticated. -->
     <constructor-arg index="2" ref="javax.jcr.Repository.delegating" />
+    
+    <property name="defaultRoleName" value="everybody" />
+    
   </bean>
   
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
