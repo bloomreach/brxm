@@ -333,10 +333,20 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
     
     public String getPathSuffix() {
-        String pathSuffix = getResolvedSiteMapItem().getPathSuffix();
+        String pathSuffix = null;
+        
+        ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem();
+        
+        if (resolvedSiteMapItem != null) {
+            pathSuffix = resolvedSiteMapItem.getPathSuffix();
+        }
         
         if (pathSuffix == null) {
-            pathSuffix = getResolvedSiteMount().getPathSuffix();
+            ResolvedSiteMount resolvedSiteMount = getResolvedSiteMount();
+            
+            if (resolvedSiteMount != null) {
+                pathSuffix = resolvedSiteMount.getPathSuffix();
+            }
         }
         
         return pathSuffix;

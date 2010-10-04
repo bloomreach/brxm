@@ -51,19 +51,20 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     
     private HstLinkProcessor linkProcessor;
     
-    private String pathSuffixDelimiter = "./";
+    private String pathSuffixDelimiter;
     
     public void setlinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
     }
     
-    public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
-        this.pathSuffixDelimiter = pathSuffixDelimiter;
-    }
-    
     public ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) throws NotFoundException {
         String itemPathInfo = PathUtils.normalizePath(pathInfo);
         String itemPathSuffix = null;
+        
+        if (pathSuffixDelimiter == null) {
+            pathSuffixDelimiter = resolvedSiteMount.getSiteMount().getPathSuffixDelimiter();
+        }
+        
         String [] pathInfoAndPathSuffix = StringUtils.splitByWholeSeparatorPreserveAllTokens(pathInfo, pathSuffixDelimiter, 2);
         if (pathInfoAndPathSuffix != null && pathInfoAndPathSuffix.length > 1) {
             itemPathInfo = PathUtils.normalizePath(pathInfoAndPathSuffix[0]);

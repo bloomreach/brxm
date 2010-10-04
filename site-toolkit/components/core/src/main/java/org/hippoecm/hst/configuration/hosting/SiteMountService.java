@@ -129,6 +129,8 @@ public class SiteMountService implements SiteMount {
     private String embeddedSiteMountPath;
     
     private boolean sessionStateful;
+    
+    private String pathSuffixDelimiter = "./";
      
     public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
         this.virtualHost = virtualHost;
@@ -301,7 +303,13 @@ public class SiteMountService implements SiteMount {
             this.sessionStateful = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SESSIONSTATEFUL);
         } else if (parent != null){
             this.sessionStateful = parent.isSessionStateful();
-        } 
+        }
+        
+        if (siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_PATHSUFFIXDELIMITER)) {
+            this.pathSuffixDelimiter = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_PATHSUFFIXDELIMITER);
+        } else if (parent != null){
+            this.pathSuffixDelimiter = parent.getPathSuffixDelimiter();
+        }
         
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
@@ -455,6 +463,8 @@ public class SiteMountService implements SiteMount {
     public boolean isSessionStateful() {
         return sessionStateful;
     }
-
-
+    
+    public String getPathSuffixDelimiter() {
+        return pathSuffixDelimiter;
+    }
 }

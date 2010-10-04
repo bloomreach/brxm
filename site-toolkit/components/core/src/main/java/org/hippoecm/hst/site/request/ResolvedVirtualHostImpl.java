@@ -35,7 +35,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     private String hostName;
     private int portNumber;
     
-    private String pathSuffixDelimiter = "./";
+    private String pathSuffixDelimiter;
     
     public ResolvedVirtualHostImpl(VirtualHost virtualHost, String hostName, int portNumber) {
         this.virtualHost = virtualHost;
@@ -45,10 +45,6 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
 
     public VirtualHost getVirtualHost() {
         return virtualHost;
-    }
-    
-    public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
-        this.pathSuffixDelimiter = pathSuffixDelimiter;
     }
     
     public ResolvedSiteMount matchSiteMount(String contextPath, String requestPath) throws MatchException {
@@ -67,8 +63,15 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             return null;
         }
         
+        SiteMount siteMount = portMount.getRootSiteMount();
+        
         String mountPath = PathUtils.normalizePath(requestPath);
         String pathSuffix = null;
+        
+        if (pathSuffixDelimiter == null) {
+            pathSuffixDelimiter = siteMount.getPathSuffixDelimiter();
+        }
+        
         String [] mountPathAndPathSuffix = StringUtils.splitByWholeSeparatorPreserveAllTokens(requestPath, pathSuffixDelimiter, 2);
         if (mountPathAndPathSuffix != null && mountPathAndPathSuffix.length > 1) {
             // strip leading and trailing slashes
@@ -78,7 +81,6 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         
         String[] requestPathSegments = mountPath.split("/");
         int position = 0;
-        SiteMount siteMount = portMount.getRootSiteMount();
         
         while(position < requestPathSegments.length) {
             if(siteMount.getChildMount(requestPathSegments[position]) != null) {
