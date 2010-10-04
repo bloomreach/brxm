@@ -188,7 +188,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         if(dataProviderModules == null) {
             dataProviderModules = new Modules<DataProviderModule>(loader, DataProviderModule.class);
         }
-        return dataProviderModules;
+        return new Modules(dataProviderModules);
     }
 
     void initialize(org.apache.jackrabbit.core.SessionImpl session,
