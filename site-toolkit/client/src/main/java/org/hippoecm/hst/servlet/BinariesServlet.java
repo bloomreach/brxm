@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,12 +18,8 @@ package org.hippoecm.hst.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,14 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFormatException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -47,18 +38,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.james.mime4j.codec.EncoderUtil;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.ResourceLocationResolver;
+import org.hippoecm.hst.servlet.utils.BinariesCache;
+import org.hippoecm.hst.servlet.utils.BinaryPage;
+import org.hippoecm.hst.servlet.utils.ContentDispositionUtils;
+import org.hippoecm.hst.servlet.utils.HeaderUtils;
+import org.hippoecm.hst.servlet.utils.NoopBinariesCache;
+import org.hippoecm.hst.servlet.utils.ResourceUtils;
+import org.hippoecm.hst.servlet.utils.SessionUtils;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
-import org.hippoecm.hst.utils.EncodingUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,18 +102,34 @@ import org.slf4j.LoggerFactory;
  * &lt;/init-param&gt;
  * </pre>
  * 
- * You can also configure multiple JCR property names in the above init parameter by comma-separated value. 
- * 
- * @version $Id$
+ * You can also configure multiple JCR property names in the above init parameter by comma-separated value.
  */
 public class BinariesServlet extends HttpServlet {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
+    private static Logger log = LoggerFactory.getLogger(BinariesServlet.class);
+
+    private static final String CACHE_LOCK_TIMEOUT_MILLIS_INIT_PARAM = "cache-lock-timeout-millis";
+
+    private static final String CACHE_TTL_MILLIS_INIT_PARAM = "cache-ttl-millis";
+
+    private static final String CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM = "cache-max-object-size-bytes";
+
+    private static final String CACHE_MAX_OBJECTS_MEM_INIT_PARAM = "cache-max-objects-mem";
+
+    private static final String CACHE_CONFIG_FILE_INIT_PARAM = "cache-config-file";
+
+    private static final String CACHE_NAME_INIT_PARAM = "cache-name";
+
+    private static final String CACHE_ENABLE_PARAM = "cache-enable";
+
+    private static final String SET_EXPIRES_HEADERS_INIT_PARAM = "set-expires-headers";
+
     public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
-    
+
     public static final String CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM = "contentDispositionContentTypes";
-    
+
     public static final String CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM = "contentDispositionFilenameProperty";
 
     /**
@@ -129,308 +137,272 @@ public class BinariesServlet extends HttpServlet {
      * 'user-agent-agnostic', also see {@link #encodeContentDispositionFileName(HttpServletRequest, HttpServletResponse, String)}
      */
     public static final String CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM = "contentDispositionFilenameEncoding";
-    
-    /**
-     * The default encoding for content disposition fileName is 'user-agent-agnostic', also see 
-     * {@link #encodeContentDispositionFileName(HttpServletRequest, HttpServletResponse, String)}
-     */
-    public static final String USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING = "user-agent-agnostic";
 
-    public static final String USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING = "user-agent-specific";
-    
     public static final String BINARY_RESOURCE_NODE_TYPE_INIT_PARAM = "binaryResourceNodeType";
-    
+
     public static final String BINARY_DATA_PROP_NAME_INIT_PARAM = "binaryDataPropName";
-    
+
     public static final String BINARY_MIME_TYPE_PROP_NAME_INIT_PARAM = "binaryMimeTypePropName";
-    
+
     public static final String BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM = "binaryLastModifiedPropName";
-    
-    public static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "";
-    
-    public static final String DEFAULT_BINARY_RESOURCE_NODE_TYPE = HippoNodeType.NT_RESOURCE;
-    
-    public static final String DEFAULT_BINARY_DATA_PROP_NAME = "jcr:data";
-    
-    public static final String DEFAULT_BINARY_MIME_TYPE_PROP_NAME = "jcr:mimeType";
-    
-    public static final String DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME = "jcr:lastModified";
-    
-    private static Logger log = LoggerFactory.getLogger(BinariesServlet.class);
-    
-    private Repository repository;
-    
-    private Credentials binariesCredentials;
-    
-    protected String baseBinariesContentPath = DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
-    protected Set<String> contentDispositionContentTypes;
+    private static final boolean DEFAULT_SET_EXPIRES_HEADERS = true;
 
-    protected String [] contentDispositionFilenamePropertyNames;
-    
-    protected Map<String, List<ResourceContainer>> prefix2ResourceContainer;
-    
-    protected List<ResourceContainer> allResourceContainers;
-    
+    private static final boolean DEFAULT_CACHE_ENABLE = true;
+
+    private String baseBinariesContentPath = ResourceUtils.DEFAULT_BASE_BINARIES_CONTENT_PATH;
+
+    private Set<String> contentDispositionContentTypes;
+
+    private String[] contentDispositionFilenamePropertyNames;
+
+    private String contentDispositionFileNameEncoding = ContentDispositionUtils.USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING;
+
+    private Map<String, List<ResourceContainer>> prefix2ResourceContainer;
+
+    private List<ResourceContainer> allResourceContainers;
+
     private boolean initialized = false;
-    
-    private String binaryResourceNodeType = DEFAULT_BINARY_RESOURCE_NODE_TYPE;
-    
-    private String binaryDataPropName = DEFAULT_BINARY_DATA_PROP_NAME;
-    
-    private String binaryMimeTypePropName = DEFAULT_BINARY_MIME_TYPE_PROP_NAME;
-    
-    private String binaryLastModifiedPropName = DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
-    
-    protected  String contentDispositionFileNameEncoding = USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING;
-    
+
+    private boolean setExpires = DEFAULT_SET_EXPIRES_HEADERS;
+
+    private boolean cacheEnabled = DEFAULT_CACHE_ENABLE;
+
+    private String binaryResourceNodeType = ResourceUtils.DEFAULT_BINARY_RESOURCE_NODE_TYPE;
+
+    private String binaryDataPropName = ResourceUtils.DEFAULT_BINARY_DATA_PROP_NAME;
+
+    private String binaryMimeTypePropName = ResourceUtils.DEFAULT_BINARY_MIME_TYPE_PROP_NAME;
+
+    private String binaryLastModifiedPropName = ResourceUtils.DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
+
+    /** FIXME: BinariesCache is not serializable. */
+    private BinariesCache binariesCache;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        
-        baseBinariesContentPath = ServletConfigUtils.getInitParameter(config, null, BASE_BINARIES_CONTENT_PATH_INIT_PARAM, baseBinariesContentPath);
-        contentDispositionFilenamePropertyNames = StringUtils.split(ServletConfigUtils.getInitParameter(config, null, CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM, null), ", \t\r\n");
-        
-        // Parse mime types from init-param
-        contentDispositionContentTypes = new HashSet<String>();
-        String mimeTypesString = ServletConfigUtils.getInitParameter(config, null, CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM, null);
-        if (mimeTypesString != null) {
-            contentDispositionContentTypes.addAll(Arrays.asList(StringUtils.split(mimeTypesString, ", \t\r\n")));
-        }
-        
-        binaryDataPropName = ServletConfigUtils.getInitParameter(config, null, BINARY_DATA_PROP_NAME_INIT_PARAM, binaryDataPropName);
-        binaryMimeTypePropName = ServletConfigUtils.getInitParameter(config, null, BINARY_MIME_TYPE_PROP_NAME_INIT_PARAM, binaryMimeTypePropName);
-        binaryLastModifiedPropName = ServletConfigUtils.getInitParameter(config, null, BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM, binaryLastModifiedPropName);
-        contentDispositionFileNameEncoding = ServletConfigUtils.getInitParameter(config, null, CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM , contentDispositionFileNameEncoding);
-        if(!USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding) && !USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding)) {
-            throw new ServletException("Invalid init-param: the only allowed values for contentDispositionFilenameEncoding are '"+USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"' or '"+USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"'");
+        initBinariesConfig();
+        initContentDispostion();
+        initExpires();
+        initBinariesCache();
+    }
+
+    @Override
+    public void destroy() {
+        if (binariesCache != null) {
+            binariesCache.destroy();
         }
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String relPath = getResourceRelPath(request);
-        String resourcePath = null;
-        Session session = null;
-        
         if (!initialized) {
-            synchronized(this) {
+            synchronized (this) {
                 doInit();
             }
         }
-        
-        try {
-            String baseContentPath = this.baseBinariesContentPath;
-            StringBuilder resourcePathBuilder = new StringBuilder(80);
-            
-            if (baseContentPath != null && !"".equals(baseContentPath)) {
-                resourcePathBuilder.append('/').append(PathUtils.normalizePath(baseContentPath));
-            }
-            
-            if (relPath != null) {
-                resourcePathBuilder.append('/').append(PathUtils.normalizePath(relPath));
-            }
-            
-            resourcePath = resourcePathBuilder.toString();
-            
-            if (resourcePath == null || !resourcePath.startsWith("/")) {
-                if (log.isWarnEnabled()) {
-                    log.warn("item at path " + resourcePath + " not found, response status = 404)");
-                }
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-            
-            session = getSession(request);
-            
-            Node resourceNode = lookUpResource(session, resourcePath);
-            
-            if (resourceNode == null) {
-                log.warn("item at path " + resourcePath + " cannot be found.");
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-            
-            if (!resourceNode.isNodeType(binaryResourceNodeType)) {
-                response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-                log.warn("Found node is not of type '{}' but was of type '{}'. Return HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE", binaryResourceNodeType, resourceNode.getPrimaryNodeType().getName());
-                return;
-            }
-            
-            if (!resourceNode.hasProperty(binaryMimeTypePropName)) {
-                if (log.isWarnEnabled()) {
-                    log.warn("item at path " + resourcePath + " does not have a property: {}. The response status will be 415", binaryMimeTypePropName);
-                }
-                
-                response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-                return;
-            }
-            
-            String mimeType = resourceNode.getProperty(binaryMimeTypePropName).getString();
 
-            if (!resourceNode.hasProperty(binaryDataPropName)) {
-                if (log.isWarnEnabled()) {
-                    log.warn("item at path " + resourcePath + " does not have a property: {}. The response status will be 404", binaryDataPropName);
-                }
-                
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-            
-            Calendar lastModifiedDate = getLastModifiedDate(resourceNode);
-            long ifModifiedSince = -1L;
-            
-            try {
-                ifModifiedSince = request.getDateHeader("If-Modified-Since");
-            } catch (IllegalArgumentException ignore) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The header, If-Modified-Since, contains invalid value: " + request.getHeader("If-Modified-Since"));
-                }
-            }
-            
-            if (ifModifiedSince != -1 && ifModifiedSince / 1000 >= lastModifiedDate.getTimeInMillis() / 1000) {
-            //    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            //    return;
-            }
-            
-            InputStream input = null;
-            OutputStream output = null;
-            
-            try {
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.setContentType(mimeType);
-                
-                // Add the Content-Disposition header for configured content types
-                addContentDispositionHeader(request, response, mimeType, resourceNode);
-                
-                // TODO add a configurable factor + default minimum for expires. Ideally, this value is
-                // stored in the repository
-                if (lastModifiedDate != null) {
-                    long expires = System.currentTimeMillis() - lastModifiedDate.getTimeInMillis();
-                    if (expires > 0) {
-                        response.setDateHeader("Expires", expires + System.currentTimeMillis());
-                        response.setDateHeader("Last-Modified", lastModifiedDate.getTimeInMillis()); 
-                        response.setHeader("Cache-Control", "max-age=" + (expires / 1000));
-                    }
-                } else {
-                    response.setDateHeader("Expires", 0);
-                    response.setHeader("Cache-Control", "max-age=0");
-                }
-                
-                Property data = resourceNode.getProperty(binaryDataPropName);
-                input = data.getStream();
-                output = response.getOutputStream();
-                IOUtils.copy(input, output);
-                output.flush();
-            } finally {
-                if (input != null) {
-                    IOUtils.closeQuietly(input);
-                }
-                if (output != null) {
-                    IOUtils.closeQuietly(output);
-                }
-            }
-        } catch (PathNotFoundException ex) {
-            if (log.isWarnEnabled()) {
-                log.warn("PathNotFoundException with message " + ex.getMessage() + " while getting binary data stream item "
-                        + "at path " + resourcePath + ", response status = 404)");
-            }
-            
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (RepositoryException ex) {
-            if (log.isWarnEnabled()) {
-                log.warn("Repository exception while resolving binaries request '" + request.getRequestURI() + "' : " + ex.getMessage());
-            }
-            
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } finally {
-            if (session != null) {
-                releaseSession(request, session);
-            }
-        }
-    }
-    
-    
-    protected Node lookUpResource(Session session, String resourcePath) {
-        Node resourceNode = null;
-        
-        // find the correct item
-        String[] elems = resourcePath.substring(1).split("/");
-        List<ResourceContainer> resourceContainersForPrefix = prefix2ResourceContainer.get(elems[0]);
-        if(resourceContainersForPrefix == null) {
-            for(ResourceContainer container : allResourceContainers) {
-                resourceNode = container.resolveToResourceNode(session, resourcePath);
-                if(resourceNode != null) {
-                    return resourceNode;
-                }
-            }
-        } else {
-           // use the first resourceContainer that can fetch a resourceNode for this path
-           for(ResourceContainer container : resourceContainersForPrefix) {
-               resourceNode = container.resolveToResourceNode(session, resourcePath);
-               if(resourceNode != null) {
-                   return resourceNode;
-               }
-           }
-           
-           // we did not find a container that could resolve the node. Fallback to test any container who can resolve the path
-           for(ResourceContainer container : allResourceContainers) {
-               if(resourceContainersForPrefix.contains(container)) {
-                   // skip already tested resource containers
-                   continue;
-               }
-               resourceNode = container.resolveToResourceNode(session, resourcePath);
-               if(resourceNode != null) {
-                   return resourceNode;
-               }
-           }
-        }
-        return null;
-    }
-    
-    protected void doInit() {
-        if(initialized) {
+        final BinaryPage page = getPageFromCacheOrLoadPage(request);
+
+        response.setStatus(page.getStatus());
+        if (page.getStatus() != HttpServletResponse.SC_OK) {
+            // nothing left to do
             return;
         }
-        if(HstServices.isAvailable()) {
+
+        if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes)) {
+            setExpires = false;
+            ContentDispositionUtils.addContentDispositionHeader(request, response, page.getFileName(),
+                    contentDispositionFileNameEncoding);
+        }
+
+        HeaderUtils.setLastModifiedHeaders(response, page);
+        if (setExpires) {
+            HeaderUtils.setExpiresHeaders(response, page);
+        }
+
+        if (HeaderUtils.hasMatchingEtag(request, page)) {
+            log.debug("Matching ETag for uri {} , page {}", request.getRequestURI(), page.getResourcePath());
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+
+        if (!HeaderUtils.isModifiedSince(request, page)) {
+            log.debug("Page not modified for uri {} , page {}", request.getRequestURI(), page.getResourcePath());
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+
+        response.setContentType(page.getMimeType());
+        response.setHeader("ETag", page.getETag());
+
+        InputStream input = null;
+        OutputStream output = null;
+        Session session = null;
+        try {
+            if (page.containsData()) {
+                input = page.getStream();
+            } else {
+                session = SessionUtils.getBinariesSession(request);
+                input = getRepositoryResourceStream(session, page);
+            }
+            output = response.getOutputStream();
+            IOUtils.copy(input, output);
+            output.flush();
+        } catch (RepositoryException e) {
+            log.error(
+                    "RepositoryException while getting stream for binaries request '" + request.getRequestURI() + "'",
+                    e);
+            binariesCache.removePage(page);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Unable to stream binary content to client: " + e.getMessage());
+        } catch (IOException e) {
+            log.error("IOException while getting stream for binaries request '" + request.getRequestURI() + "'", e);
+        } finally {
+            IOUtils.closeQuietly(input);
+            IOUtils.closeQuietly(output);
+            SessionUtils.releaseSession(request, session);
+        }
+    }
+
+    private InputStream getRepositoryResourceStream(Session session, BinaryPage page) throws RepositoryException {
+        Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
+                allResourceContainers);
+        return resourceNode.getProperty(binaryDataPropName).getStream();
+    }
+
+    private BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request) {
+        String resourcePath = ResourceUtils.getResourcePath(request, baseBinariesContentPath);
+        BinaryPage page = binariesCache.getPageFromBlockingCache(resourcePath);
+        if (page != null) {
+            validatePageInCache(request, page);
+        } else {
+            page = getPage(request, resourcePath);
+            binariesCache.putPage(page);
+        }
+        return page;
+    }
+
+    private void validatePageInCache(HttpServletRequest request, BinaryPage page) {
+        if (HeaderUtils.isForcedCheck(request) || binariesCache.hasPageExpired(page)) {
+            long lastModified = getLastModifiedFromResource(request, page.getResourcePath());
+            if (binariesCache.isPageStale(page, lastModified)) {
+                binariesCache.removePage(page);
+                page = getPage(request, page.getResourcePath());
+                binariesCache.putPage(page);
+            } else {
+                binariesCache.updateExpirationTime(page);
+            }
+        }
+    }
+
+    private long getLastModifiedFromResource(HttpServletRequest request, String resourcePath) {
+        Session session = null;
+        try {
+            session = SessionUtils.getBinariesSession(request);
+            Node resourceNode = ResourceUtils.lookUpResource(session, resourcePath, prefix2ResourceContainer,
+                    allResourceContainers);
+            return ResourceUtils.getLastModifiedDate(resourceNode, binaryLastModifiedPropName);
+        } catch (RepositoryException e) {
+            log.error("Repository exception while resolving binaries request '" + request.getRequestURI() + "' : "
+                    + e.getMessage(), e);
+        } finally {
+            SessionUtils.releaseSession(request, session);
+        }
+        return -1L;
+    }
+
+    private BinaryPage getPage(HttpServletRequest request, String resourcePath) {
+        BinaryPage page = new BinaryPage(resourcePath);
+        Session session = null;
+        try {
+            session = SessionUtils.getBinariesSession(request);
+            initPageValues(session, page);
+            log.info("Page loaded: " + page);
+        } catch (RepositoryException e) {
+            page.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.error("Repository exception while resolving binaries request '" + request.getRequestURI() + "' : "
+                    + e.getMessage(), e);
+        } finally {
+            SessionUtils.releaseSession(request, session);
+        }
+        return page;
+    }
+
+    private void initPageValues(Session session, BinaryPage page) throws RepositoryException {
+        if (!ResourceUtils.isValidResourcePath(page.getResourcePath())) {
+            page.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
+                allResourceContainers);
+        if (resourceNode == null) {
+            page.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        if (!ResourceUtils.hasValideType(resourceNode, binaryResourceNodeType)) {
+            page.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+            return;
+        }
+
+        if (!ResourceUtils.hasBinaryProperty(resourceNode, binaryDataPropName)) {
+            page.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        if (!ResourceUtils.hasMimeTypeProperty(resourceNode, binaryMimeTypePropName)) {
+            page.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+            return;
+        }
+
+        page.setStatus(HttpServletResponse.SC_OK);
+        page.setMimeType(resourceNode.getProperty(binaryMimeTypePropName).getString());
+        page.setLastModified(ResourceUtils.getLastModifiedDate(resourceNode, binaryLastModifiedPropName));
+        page.setExpirationTime(System.currentTimeMillis() + binariesCache.getTTLMillis());
+        page.setFileName(ResourceUtils.getFileName(resourceNode, contentDispositionFilenamePropertyNames));
+        page.setLength(ResourceUtils.getDataLength(resourceNode, binaryDataPropName));
+
+        if (binariesCache.isBinaryDataCacheable(page)) {
+            cacheBinaryData(page, resourceNode);
+        }
+    }
+
+    private void cacheBinaryData(BinaryPage page, Node resourceNode) {
+        try {
+            InputStream input = resourceNode.getProperty(binaryDataPropName).getStream();
+            page.loadDataFromStream(input);
+        } catch (RepositoryException e) {
+            log.warn("Unable to cache page data for " + page.getResourcePath(), e);
+        } catch (IOException e) {
+            page.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.error("Error while copying datastream from resource node " + page.getResourcePath(), e);
+        }
+    }
+
+    private void doInit() {
+        if (initialized) {
+            return;
+        }
+        if (HstServices.isAvailable()) {
             initPrefix2ResourceMappers();
             initAllResourceContainers();
             initialized = true;
         }
     }
 
-    
-    protected void initAllResourceContainers() {
-        if (allResourceContainers != null) {
-            return;
-        }
-        HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
-        if (linkCreator.getLocationResolvers() == null) {
-            allResourceContainers = Collections.EMPTY_LIST;
-            return;
-        }
-        allResourceContainers = new ArrayList<ResourceContainer>();
-        for (LocationResolver resolver : linkCreator.getLocationResolvers()) {
-            if (resolver instanceof ResourceLocationResolver) {
-                ResourceLocationResolver resourceResolver = (ResourceLocationResolver) resolver;
-                for (ResourceContainer container : resourceResolver.getResourceContainers()) {
-                    allResourceContainers.add(container);
-                }
-            }
-        }
-    }
-
-    protected void initPrefix2ResourceMappers() {
-
+    private void initPrefix2ResourceMappers() {
         if (prefix2ResourceContainer != null) {
             return;
         }
         HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
         if (linkCreator.getLocationResolvers() == null) {
-            prefix2ResourceContainer = Collections.EMPTY_MAP;
+            prefix2ResourceContainer = Collections.emptyMap();
             return;
         }
         prefix2ResourceContainer = new HashMap<String, List<ResourceContainer>>();
@@ -452,240 +424,119 @@ public class BinariesServlet extends HttpServlet {
                 }
             }
         }
-
     }
 
-    /**
-     * Adds a Content-Disposition header to the given <code>binaryFileNode</code>. The HTTP header is only set when the
-     * content type matches one of the configured <code>contentDispositionContentTypes</code>.
-     *
-     * <p/>When the Content-Disposition header is set, the filename is retrieved from the <code>binaryFileNode</code>
-     * and added to the header value. The property in which the filename is stored should be configured using
-     * <code>contentDispositionFilenameProperty</code>.
-     *
-     * @param request             HTTP request
-     * @param response            HTTP response to set header in
-     * @param responseContentType content type of the binary file
-     * @param binaryFileNode      the node representing the binary file that is streamed to the client
-     * @throws javax.jcr.RepositoryException when something goes wrong during repository access
-     */
-    protected void addContentDispositionHeader(HttpServletRequest request, HttpServletResponse response, String responseContentType, Node binaryFileNode) throws RepositoryException {
-        boolean isContentDispositionType = contentDispositionContentTypes.contains(responseContentType);
-        
-        if (!isContentDispositionType) {
-            isContentDispositionType = contentDispositionContentTypes.contains("*/*");
-            
-            if (!isContentDispositionType) {
-                int offset = responseContentType.indexOf('/');
-                if (offset != -1) {
-                    isContentDispositionType = contentDispositionContentTypes.contains(responseContentType.substring(0, offset) + "/*");
-                }
-            }
+    private void initAllResourceContainers() {
+        if (allResourceContainers != null) {
+            return;
         }
-        
-        if (isContentDispositionType) {
-            // The response content type matches one of the configured content types so add a Content-Disposition
-            // header to the response
-            StringBuilder headerValue = new StringBuilder("attachment");
-            
-            if (contentDispositionFilenamePropertyNames != null && contentDispositionFilenamePropertyNames.length > 0) {
-                String fileName = null;
-                for (String name : contentDispositionFilenamePropertyNames) {
-                    if (binaryFileNode.hasProperty(name)) {
-                        fileName = binaryFileNode.getProperty(name).getString();
-                        break;
-                    }
-                }
-                // A filename is set for the binary node, so add this to the Content-Disposition header value
-                if (!StringUtils.isBlank(fileName)) {
-                    String encodedFilename = encodeContentDispositionFileName(request, response, fileName);
-                    headerValue.append("; filename=\"").append(encodedFilename).append("\"");
+        HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
+        if (linkCreator.getLocationResolvers() == null) {
+            allResourceContainers = Collections.emptyList();
+            return;
+        }
+        allResourceContainers = new ArrayList<ResourceContainer>();
+        for (LocationResolver resolver : linkCreator.getLocationResolvers()) {
+            if (resolver instanceof ResourceLocationResolver) {
+                ResourceLocationResolver resourceResolver = (ResourceLocationResolver) resolver;
+                for (ResourceContainer container : resourceResolver.getResourceContainers()) {
+                    allResourceContainers.add(container);
                 }
             }
-            
-            response.addHeader("Content-Disposition", headerValue.toString());
         }
     }
-    
-    
-    /**
-     * <p>When the <code>fileName</code> consists only of US-ASCII chars, we can safely return the <code>fileName</code> <b>as is</b>. However, when the  <code>fileName</code>
-     * does contains non-ascii-chars there is a problem because of different browsers expect different encoding: there is no uniform version that works for 
-     * all browsers. So, we are either stuck to user-agent sniffing to return the correct encoding, or try to return a US-ASCII form as best as we can.</p>
-     *  
-     * <p>The problem with user-agent sniffing is that in general, when you use reverse proxies, you do not want to cache pages <b>per</b> browser type. If one version
-     * is demanded for all different user agents, the best we can do is trying to bring the fileName back to its base form, thus, replacing diacritics by their
-     * base form. This will work fine for most Latin alphabets.</p> 
-     * 
-     * <p>However, a language like Chinese won't be applicable for this approach. The only way to have it correct in such languages, is to return 
-     * a different version for different browsers</p>
-     * 
-     * <p>To be able to serve both usecases, we make it optional <b>how</b> you'd like your encoding strategy to be. The default strategy, is assuming
-     * Latin alphabets and try to get the non-diacritical version of a fileName: The default strategy is thus (browser) user-agent-agnostic.</p>
-     * 
-     * <p>For languages like Chinese, you can if you do want all browser version to display the correct fileName for the Content-Disposition, tell the 
-     * binaries servlet to do so with the following init-param. Note that in this case, you might have to account for the user-agent in your reverse proxy setup</p>
-     * 
-     * <pre>
-     * &lt;init-param&gt;
-     *     &lt;param-name&gt;contentDispositionFilenameEncoding&lt;/param-name&gt;
-     *     &lt;param-value&gt;user-agent-specific&lt;/param-value&gt;
-     * &lt;/init-param&gt;
-     * </pre>
-     * 
-     * @param request
-     * @param response
-     * @param fileName the un-encoded filename
-     * @return
-     */
-    protected String encodeContentDispositionFileName(HttpServletRequest request, HttpServletResponse response, String fileName) {
-        
-        try {
-            String responseEncoding = response.getCharacterEncoding();
-            String encodedFileName =  URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
-            
-            if(encodedFileName.equals(fileName)) {
-                log.debug("The filename did not contains non-ascii chars: we can safely return an un-encoded version");
-                return fileName;
-            }
-            
-            if(USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding)){
-                // let's try to bring the filename to it's baseform by replacing diacritics: if then still there are non-ascii chars, we log an info 
-                // message that you might need user-agent-specific mode, and return a utf-8 encoded version. 
-                
-                String asciiFileName = EncodingUtils.isoLatin1AccentReplacer(fileName); 
-                
-                // now check whether the asciiFileName really only contains ascii chars:
-                String encodedAsciiFileName = URLEncoder.encode(asciiFileName, responseEncoding != null ? responseEncoding : "UTF-8");
-                if(encodedAsciiFileName.equals(asciiFileName)) {
-                    log.debug("Replaced fileName '{}' with its un-accented equivalent '{}'", fileName, asciiFileName);
-                    return asciiFileName;
-                } else {
-                    log.info("Filename '{}' consists of non latin chars. We have to utf-8 encode the filename, which might be shown with unencoded in some browsers." +
-                    		" If you want to avoid this, use '{}'. However, this influences reverse proxies.", fileName, USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING);
-                    return encodedAsciiFileName;
-                }
-                
-            } else if(USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING.equals(contentDispositionFileNameEncoding)) {
-                String userAgent = request.getHeader("User-Agent");
-                if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
-                    return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
-                } else {
-                    return EncoderUtil.encodeEncodedWord(fileName, EncoderUtil.Usage.WORD_ENTITY, 0, Charset.forName("UTF-8"), EncoderUtil.Encoding.B);
-                }
-            } else {
-                log.warn("Invalid encoding strategy: only allowed is '"+USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"' or '"+USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING+"'. Return utf-8 encoded version.");
-                return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
-            }
-           
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to encode filename.", e);
-            } else {
-                log.warn("Failed to encode filename. {}", e.toString());
-            }
-        }
-        
-        return fileName;
+
+    private void initBinariesConfig() {
+        baseBinariesContentPath = getInitParameter(BASE_BINARIES_CONTENT_PATH_INIT_PARAM, baseBinariesContentPath);
+
+        binaryDataPropName = getInitParameter(BINARY_DATA_PROP_NAME_INIT_PARAM, binaryDataPropName);
+        binaryMimeTypePropName = getInitParameter(BINARY_MIME_TYPE_PROP_NAME_INIT_PARAM, binaryMimeTypePropName);
+        binaryLastModifiedPropName = getInitParameter(BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM,
+                binaryLastModifiedPropName);
     }
-    
-    protected Session getSession(HttpServletRequest request) throws RepositoryException {
-        Session session = null;
-        
-        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
-        
-        if (hstRequest != null) {
-            session = hstRequest.getRequestContext().getSession();
+
+    private void initContentDispostion() throws ServletException {
+        contentDispositionFilenamePropertyNames = StringUtils.split(getInitParameter(
+                CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM, null), ", \t\r\n");
+
+        // Parse mime types from init-param
+        contentDispositionContentTypes = new HashSet<String>();
+        String mimeTypesString = getInitParameter(CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM, null);
+        if (mimeTypesString != null) {
+            contentDispositionContentTypes.addAll(Arrays.asList(StringUtils.split(mimeTypesString, ", \t\r\n")));
+        }
+
+        contentDispositionFileNameEncoding = getInitParameter(CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM,
+                contentDispositionFileNameEncoding);
+        if (!ContentDispositionUtils.USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING
+                .equals(contentDispositionFileNameEncoding)
+                && !ContentDispositionUtils.USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING
+                        .equals(contentDispositionFileNameEncoding)) {
+            throw new ServletException(
+                    "Invalid init-param: the only allowed values for contentDispositionFilenameEncoding are '"
+                            + ContentDispositionUtils.USER_AGENT_AGNOSTIC_CONTENT_DISPOSITION_FILENAME_ENCODING
+                            + "' or '"
+                            + ContentDispositionUtils.USER_AGENT_SPECIFIC_CONTENT_DISPOSITION_FILENAME_ENCODING + "'");
+        }
+    }
+
+    private void initExpires() {
+        setExpires = getBooleanInitParameter(SET_EXPIRES_HEADERS_INIT_PARAM, DEFAULT_SET_EXPIRES_HEADERS);
+    }
+
+    private void initBinariesCache() {
+        cacheEnabled = getBooleanInitParameter(CACHE_ENABLE_PARAM, DEFAULT_CACHE_ENABLE);
+        if (cacheEnabled) {
+            binariesCache = new BinariesCache(getInitParameter(CACHE_NAME_INIT_PARAM, BinariesCache.DEFAULT_NAME));
+            binariesCache.setLockTimeOutMillis(getIntegerInitParameter(CACHE_LOCK_TIMEOUT_MILLIS_INIT_PARAM,
+                    BinariesCache.DEFAULT_LOCK_TIMEOUT_MILLIS));
+            binariesCache.setTTLMillis(getIntegerInitParameter(CACHE_TTL_MILLIS_INIT_PARAM,
+                    BinariesCache.DEFAULT_TTL_MILLIS));
+            binariesCache.setMaxObjectsInMem(getIntegerInitParameter(CACHE_MAX_OBJECTS_MEM_INIT_PARAM,
+                    BinariesCache.DEFAULT_MAX_OBJECTS_IN_MEM));
+            binariesCache.setMaxFileSizeBytes(getLongInitParameter(CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM,
+                    BinariesCache.DEFAULT_MAX_OBJECT_SIZE_BYTES));
+            binariesCache.setConfigFile(getInitParameter(CACHE_CONFIG_FILE_INIT_PARAM, null));
+            binariesCache.init();
         } else {
-            if (this.repository == null) {
-                if (HstServices.isAvailable()) {
-                    this.binariesCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".binaries");
-                    this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
-                }
-            }
-
-            if (this.repository != null) {
-                if (this.binariesCredentials != null) {
-                    session = this.repository.login(this.binariesCredentials);
-                } else {
-                    session = this.repository.login();
-                }
-            }
+            binariesCache = new NoopBinariesCache();
+            log.info("Caching disabled for {}", getServletName());
         }
-        
-        return session;
     }
-    
-    protected void releaseSession(HttpServletRequest request, Session session) {
-        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
 
-        if (hstRequest == null) {
+    private String getInitParameter(String paramName, String defaultValue) {
+        return ServletConfigUtils.getInitParameter(getServletConfig(), null, paramName, defaultValue);
+    }
+
+    private long getLongInitParameter(String paramName, long defaultValue) {
+        String value = ServletConfigUtils.getInitParameter(getServletConfig(), null, paramName, null);
+        if (value != null) {
             try {
-                session.logout();
-            } catch (Exception e) {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                log.warn("Expecting type long for parameter '{}', got '{}'", paramName, value);
             }
         }
+        return defaultValue;
     }
-    
-    protected String getResourceRelPath(HttpServletRequest request) {
-        String path = null;
-        
-        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
-        
-        if (hstRequest != null) {
-            path = hstRequest.getResourceID();
-        }
 
-        if (path == null) {
-            path = HstRequestUtils.getRequestPath(request);
-            path = path.substring(request.getServletPath().length());
+    private int getIntegerInitParameter(String paramName, int defaultValue) {
+        String value = ServletConfigUtils.getInitParameter(getServletConfig(), null, paramName, null);
+        if (value != null) {
             try {
-                String characterEncoding = request.getCharacterEncoding();
-                
-                if (characterEncoding == null) {
-                    characterEncoding = "ISO-8859-1";
-                }
-
-                path = URLDecoder.decode(path, characterEncoding);
-            } catch (Exception e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Cannot decode path: {}. {}", path, e.toString());
-                }
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                log.warn("Expecting type integer for parameter '{}', got '{}'", paramName, value);
             }
         }
-
-        if (path != null && !path.startsWith("/") && path.indexOf(':') > 0) {
-            path = path.substring(path.indexOf(':') + 1);
-        }
-        
-        return path;
+        return defaultValue;
     }
-    
-    protected Calendar getLastModifiedDate(Node resourceNode) {
-        Calendar lastModifiedDate = null;
-        
-        try {
-            if (resourceNode.hasProperty(binaryLastModifiedPropName)) {
-                lastModifiedDate = resourceNode.getProperty(binaryLastModifiedPropName).getDate();
-            }
-        } catch (ValueFormatException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("The property, {}, is not in valid format. {}", binaryLastModifiedPropName, e);
-            }
-        } catch (PathNotFoundException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("The property, {}, is not found. {}", binaryLastModifiedPropName, e);
-            }
-        } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("The property, {}, cannot be retrieved. {}", binaryLastModifiedPropName, e);
-            }
+
+    private boolean getBooleanInitParameter(String paramName, boolean defaultValue) {
+        String value = ServletConfigUtils.getInitParameter(getServletConfig(), null, paramName, null);
+        if (value != null) {
+            return Boolean.parseBoolean(value);
         }
-        
-        return lastModifiedDate;
+        return defaultValue;
     }
-    
 }
