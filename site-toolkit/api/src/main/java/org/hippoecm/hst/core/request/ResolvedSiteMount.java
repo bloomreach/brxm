@@ -45,12 +45,18 @@ public interface ResolvedSiteMount {
     
     /**
      * Returns the mountPath from the backing {@link SiteMount} where possible wildcard values might have been replaced. When there is no 
-     * mountPath, an empty String will be returned. When the mountPath is non-empty, it always starts with a  <code>"/"</code>
+     * mountPath, an empty String will be returned. When the mountPath is non-empty, it always starts with a  <code>"/"</code>.
      * @see SiteMount#getMountPath()
      * @return the resolved mountPath for this ResolvedSiteMount
      */
     String getResolvedMountPath();
-
+    
+    /**
+     * Returns a path suffix from the backing {@link SiteMount}. This path <b>never</b> starts with a "/".
+     * @return the matched path suffix
+     */
+    String getPathSuffix();
+    
     /**
      * matches a pathInfo to a {@link ResolvedSiteMapItem} item or throws a 
      * {@link MatchException} or {@link NotFoundException} when cannot resolve to a sitemap item

@@ -50,10 +50,16 @@ public interface ResolvedSiteMapItem {
     String getRelativeContentPath();
     
     /**
-     * Returns a relative path from hst request path to the SiteMapItem that was matched. This path <b>never</b> starts with a "/"
+     * Returns a relative path from hst request path to the SiteMapItem that was matched. This path <b>never</b> starts with a "/".
      * @return the matched path to this <code>ResolvedSiteMapItem</code>, relative to the mount path
      */
     String getPathInfo();
+    
+    /**
+     * Returns a path suffix from hst request path. This path <b>never</b> starts with a "/".
+     * @return the matched path suffix
+     */
+    String getPathSuffix();
     
     /**
      * Returns a property from the HstSiteMapItem configuration but should have replaced possible property placeholders. If a property 

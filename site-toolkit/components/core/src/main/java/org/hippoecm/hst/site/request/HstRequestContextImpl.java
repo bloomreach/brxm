@@ -332,4 +332,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return null;
     }
     
+    public String getPathSuffix() {
+        String pathSuffix = getResolvedSiteMapItem().getPathSuffix();
+        
+        if (pathSuffix == null) {
+            pathSuffix = getResolvedSiteMount().getPathSuffix();
+        }
+        
+        return pathSuffix;
+    }
+    
 }

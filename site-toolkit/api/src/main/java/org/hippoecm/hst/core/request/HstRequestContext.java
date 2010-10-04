@@ -232,4 +232,11 @@ public interface HstRequestContext {
      */
     Enumeration<Locale> getLocales();
     
+    /**
+     * Returns the path suffix from the resolved site map item.
+     * If it is null, then returns the path suffix from the resolved site mount.
+     * @return the matched path suffix
+     */
+    String getPathSuffix();
+    
 }

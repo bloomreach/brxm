@@ -234,4 +234,13 @@ public class MockHstRequestContext implements HstRequestContext {
         return Collections.enumeration(locales);
     }
     
+    public String getPathSuffix() {
+        String pathSuffix = getResolvedSiteMapItem().getPathSuffix();
+        
+        if (pathSuffix == null) {
+            pathSuffix = getResolvedSiteMount().getPathSuffix();
+        }
+        
+        return pathSuffix;
+    }
 }

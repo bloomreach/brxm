@@ -16,7 +16,6 @@
 package org.hippoecm.hst.configuration.model;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
