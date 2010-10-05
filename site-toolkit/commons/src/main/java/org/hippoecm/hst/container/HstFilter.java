@@ -230,38 +230,42 @@ public class HstFilter implements Filter {
     		}
 
     		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
-
+    		
+    		// Sets up the container request wrapper
+            HstContainerRequest containerRequest = new HstContainerRequest(req, hstSitesManager.getPathSuffixDelimiter());
+            
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
-    		if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(req))) {
+    		if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(containerRequest))) {
     			chain.doFilter(request, response);
     			return;
     		}
     		
-    		HstMutableRequestContext requestContext = (HstMutableRequestContext)req.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);    		
+    		HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);    		
     		if (requestContext == null) {
         		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent("org.hippoecm.hst.core.internal.HstRequestContextComponent");
         		requestContext = rcc.create(false);
         		if (this.contextNamespace != null) {
         			requestContext.setContextNamespace(contextNamespace);
         		}
-        		req.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
+        		containerRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
     		}
     		requestContext.setServletContext(filterConfig.getServletContext());
+    		requestContext.setPathSuffix(containerRequest.getPathSuffix());
     		
     		ResolvedSiteMount mount = requestContext.getResolvedSiteMount();
     		if (mount == null) {
     			try {
-    				mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(req), req.getContextPath() , HstRequestUtils.getRequestPath(req));
+    				mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(containerRequest), containerRequest.getContextPath() , HstRequestUtils.getRequestPath(containerRequest));
     				if(mount != null) {
     					requestContext.setResolvedSiteMount(mount);
     				} 
     				else {
-    					throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
+    					throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"'");
     				}
     			} 
     			catch (MatchException e) {
-    				logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: {}" , e.getMessage());
+    				logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: {}" , e.getMessage());
     				res.sendError(HttpServletResponse.SC_NOT_FOUND);
     				return;
     			} 
@@ -271,7 +275,7 @@ public class HstFilter implements Filter {
 			
     		HstContainerURL hstContainerURL = requestContext.getBaseURL();
     		if (hstContainerURL == null) {
-				hstContainerURL = factory.getContainerURLProvider().parseURL(req, res, mount);
+				hstContainerURL = factory.getContainerURLProvider().parseURL(containerRequest, res, mount);
 				requestContext.setBaseURL(hstContainerURL);
     		}
     		
@@ -284,24 +288,24 @@ public class HstFilter implements Filter {
 					resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
 					if(resolvedSiteMapItem == null) {
 						// should not be possible as when it would be null, an exception should have been thrown
-						logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
+						logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
 						res.sendError(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
 					requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
     			}
     			
-				processResolvedSiteMapItem(req, res, requestContext, processSiteMapItemHandlers, logger);				
+				processResolvedSiteMapItem(containerRequest, res, requestContext, processSiteMapItemHandlers, logger);				
 					
     		}
     		else {
 				if(mount.getNamedPipeline() == null) {
-					logger.warn(HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for SiteMount");
+					logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for SiteMount");
 					res.sendError(HttpServletResponse.SC_NOT_FOUND);
 				}
 				else {
 					logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
-					HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, mount.getNamedPipeline());
+					HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, mount.getNamedPipeline());
 				}
     		}
     	} 

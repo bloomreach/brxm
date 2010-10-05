@@ -52,5 +52,11 @@ public interface HstManager {
      * the backing hosts configuration has been changed.
      */
     void invalidate(String path);
-
+    
+    /**
+     * Returns the request path suffix delimiter.
+     * @return
+     */
+    String getPathSuffixDelimiter();
+    
 }

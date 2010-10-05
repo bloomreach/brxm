@@ -23,28 +23,29 @@
                            http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-3.0.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-   
-   <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor" class="org.hippoecm.hst.core.linking.HstLinkProcessorChain"/>
-   
-   <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
-      <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
-   </bean>
-   
-   <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory"
+  
+  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor" class="org.hippoecm.hst.core.linking.HstLinkProcessorChain" />
+  
+  <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
+    <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
+  </bean>
+  
+  <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory"
         class="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactoryImpl">
-       <constructor-arg ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />  
-   </bean>
-   
-   <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry"
+    <constructor-arg ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />  
+  </bean>
+  
+  <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry"
         class="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl"/>
-          
-   <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
-       <property name="rootPath" value="/hst:hst"/>
-       <property name="repository" ref="javax.jcr.Repository" />
-       <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
-       <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
-       <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
-       <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
-   </bean>
-    
+  
+  <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
+    <property name="rootPath" value="/hst:hst"/>
+    <property name="repository" ref="javax.jcr.Repository" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
+    <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
+    <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
+    <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
+    <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
+  </bean>
+  
 </beans>

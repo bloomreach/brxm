@@ -85,4 +85,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
      */
     public void setLocales(List<Locale> locales);
     
+    /**
+     * Sets the path suffix
+     * @param pathSuffix
+     */
+    public void setPathSuffix(String pathSuffix);
+    
 }

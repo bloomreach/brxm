@@ -35,13 +35,11 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
     private SiteMount siteMount;
     private ResolvedVirtualHost resolvedVirtualHost;
     private String resolvedMountPath;
-    private String pathSuffix;
     
-    public ResolvedSiteMountImpl(SiteMount siteMount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath, String pathSuffix){
+    public ResolvedSiteMountImpl(SiteMount siteMount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath){
         this.siteMount = siteMount;
         this.resolvedVirtualHost = resolvedVirtualHost;
         this.resolvedMountPath = resolvedMountPath;
-        this.pathSuffix = pathSuffix;
     }
     
     public SiteMount getSiteMount() {
@@ -54,10 +52,6 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
     
     public String getResolvedMountPath() {
         return resolvedMountPath;
-    }
-    
-    public String getPathSuffix() {
-        return this.pathSuffix;
     }
     
     public String getNamedPipeline() {

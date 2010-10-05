@@ -72,6 +72,11 @@ public class HstManagerImpl implements HstManager {
      */
     Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
     
+    /**
+     * Request path suffix delimiter
+     */
+    private String pathSuffixDelimiter = "./";
+    
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
@@ -214,5 +219,11 @@ public class HstManagerImpl implements HstManager {
         return configurationRootNodes;
     }
 
+    public String getPathSuffixDelimiter() {
+        return pathSuffixDelimiter;
+    }
     
+    public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
+        this.pathSuffixDelimiter = pathSuffixDelimiter;
+    }
 }

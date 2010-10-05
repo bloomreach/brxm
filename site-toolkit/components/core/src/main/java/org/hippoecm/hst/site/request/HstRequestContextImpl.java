@@ -72,6 +72,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Subject subject;
     protected Locale preferredLocale;
     protected List<Locale> locales;
+    protected String pathSuffix;
     
     private Map<String, Object> unmodifiableAttributes;
     
@@ -332,23 +333,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return null;
     }
     
+    public void setPathSuffix(String pathSuffix) {
+        this.pathSuffix = pathSuffix;
+    }
+    
     public String getPathSuffix() {
-        String pathSuffix = null;
-        
-        ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem();
-        
-        if (resolvedSiteMapItem != null) {
-            pathSuffix = resolvedSiteMapItem.getPathSuffix();
-        }
-        
-        if (pathSuffix == null) {
-            ResolvedSiteMount resolvedSiteMount = getResolvedSiteMount();
-            
-            if (resolvedSiteMount != null) {
-                pathSuffix = resolvedSiteMount.getPathSuffix();
-            }
-        }
-        
         return pathSuffix;
     }
     

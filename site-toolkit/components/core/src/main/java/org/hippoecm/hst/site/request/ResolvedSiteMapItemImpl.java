@@ -45,12 +45,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
-    private String pathSuffix;
     
-    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, String pathSuffix, ResolvedSiteMount resolvedSiteMount) {
+    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedSiteMount resolvedSiteMount) {
       
        this.pathInfo = PathUtils.normalizePath(pathInfo);
-       this.pathSuffix = PathUtils.normalizePath(pathSuffix);
        this.hstSiteMapItem = hstSiteMapItem;
        this.resolvedSiteMount = resolvedSiteMount;
        
@@ -145,10 +143,6 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
     public String getPathInfo() {
         return this.pathInfo;
-    }
-    
-    public String getPathSuffix() {
-        return this.pathSuffix;
     }
     
     public ResolvedSiteMount getResolvedSiteMount() {

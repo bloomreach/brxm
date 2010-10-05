@@ -56,12 +56,6 @@ public interface ResolvedSiteMapItem {
     String getPathInfo();
     
     /**
-     * Returns a path suffix from hst request path. This path <b>never</b> starts with a "/".
-     * @return the matched path suffix
-     */
-    String getPathSuffix();
-    
-    /**
      * Returns a property from the HstSiteMapItem configuration but should have replaced possible property placeholders. If a property 
      * placeholder cannot be resolved, the implementation can return <code>null</code>. Parameters are inherited from ancestor items,
      * but in case of the same name, ancestor items have a lower precedence

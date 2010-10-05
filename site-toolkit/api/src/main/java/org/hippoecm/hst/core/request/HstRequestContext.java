@@ -166,7 +166,7 @@ public interface HstRequestContext {
     Enumeration<String> getAttributeNames();
     
     /**
-     * Returns attribute map which is immutable or unmodifiable.
+     * Returns attribute map which is unmodifiable. So, do not try to put or remove items directly from the returned map.
      * @return
      */
     Map<String, Object> getAttributes();

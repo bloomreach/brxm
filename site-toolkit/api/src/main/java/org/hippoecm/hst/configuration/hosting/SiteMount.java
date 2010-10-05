@@ -296,10 +296,4 @@ public interface SiteMount {
      */
     boolean isSessionStateful();
     
-    /**
-     * Returns the path suffix delimiter which enables splitting the request path and the remainder/suffix path.
-     * @return
-     */
-    String getPathSuffixDelimiter();
-    
 }

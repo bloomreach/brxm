@@ -63,6 +63,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected Subject subject;
     protected Locale preferredLocale;
     protected List<Locale> locales;
+    protected String pathSuffix;
 
     public boolean isPreview() {
     	return this.resolvedSiteMount.getSiteMount().isPreview();
@@ -234,13 +235,11 @@ public class MockHstRequestContext implements HstRequestContext {
         return Collections.enumeration(locales);
     }
     
+    public void setPathSuffix(String pathSuffix) {
+        this.pathSuffix = pathSuffix;
+    }
+    
     public String getPathSuffix() {
-        String pathSuffix = getResolvedSiteMapItem().getPathSuffix();
-        
-        if (pathSuffix == null) {
-            pathSuffix = getResolvedSiteMount().getPathSuffix();
-        }
-        
         return pathSuffix;
     }
 }

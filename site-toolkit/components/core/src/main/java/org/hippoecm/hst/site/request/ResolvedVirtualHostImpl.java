@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.site.request;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
@@ -26,6 +25,10 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * ResolvedVirtualHostImpl
+ * @version $Id$
+ */
 public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
 
     private final static Logger log = LoggerFactory.getLogger(ResolvedVirtualHostImpl.class);
@@ -34,8 +37,6 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     
     private String hostName;
     private int portNumber;
-    
-    private String pathSuffixDelimiter;
     
     public ResolvedVirtualHostImpl(VirtualHost virtualHost, String hostName, int portNumber) {
         this.virtualHost = virtualHost;
@@ -46,7 +47,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     public VirtualHost getVirtualHost() {
         return virtualHost;
     }
-    
+
     public ResolvedSiteMount matchSiteMount(String contextPath, String requestPath) throws MatchException {
         PortMount portMount = virtualHost.getPortMount(portNumber);
         if(portMount == null && portNumber != 0) {
@@ -63,24 +64,11 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             return null;
         }
         
-        SiteMount siteMount = portMount.getRootSiteMount();
-        
-        String mountPath = PathUtils.normalizePath(requestPath);
-        String pathSuffix = null;
-        
-        if (pathSuffixDelimiter == null) {
-            pathSuffixDelimiter = siteMount.getPathSuffixDelimiter();
-        }
-        
-        String [] mountPathAndPathSuffix = StringUtils.splitByWholeSeparatorPreserveAllTokens(requestPath, pathSuffixDelimiter, 2);
-        if (mountPathAndPathSuffix != null && mountPathAndPathSuffix.length > 1) {
-            // strip leading and trailing slashes
-            mountPath = PathUtils.normalizePath(mountPathAndPathSuffix[0]);
-            pathSuffix = PathUtils.normalizePath(mountPathAndPathSuffix[1]);
-        }
-        
-        String[] requestPathSegments = mountPath.split("/");
+        // strip leading and trailing slashes
+        String path = PathUtils.normalizePath(requestPath);
+        String[] requestPathSegments = path.split("/");
         int position = 0;
+        SiteMount siteMount = portMount.getRootSiteMount();
         
         while(position < requestPathSegments.length) {
             if(siteMount.getChildMount(requestPathSegments[position]) != null) {
@@ -118,7 +106,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         }
         String resolvedMountPath = builder.toString();
         
-        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this, resolvedMountPath, pathSuffix);
+        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedMountPath);
         log.debug("Found ResolvedSiteMount is '{}' and the mount prefix for it is :", resolvedSiteMount.getResolvedMountPath());
         
         return resolvedSiteMount;

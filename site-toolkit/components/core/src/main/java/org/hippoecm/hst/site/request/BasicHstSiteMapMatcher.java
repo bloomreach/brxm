@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -48,40 +47,28 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     
     // the equivalence for **
     public final static String ANY = "_any_";
-    
+     
     private HstLinkProcessor linkProcessor;
-    
-    private String pathSuffixDelimiter;
     
     public void setlinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
     }
+
     
     public ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) throws NotFoundException {
-        String itemPathInfo = PathUtils.normalizePath(pathInfo);
-        String itemPathSuffix = null;
-        
-        if (pathSuffixDelimiter == null) {
-            pathSuffixDelimiter = resolvedSiteMount.getSiteMount().getPathSuffixDelimiter();
-        }
-        
-        String [] pathInfoAndPathSuffix = StringUtils.splitByWholeSeparatorPreserveAllTokens(pathInfo, pathSuffixDelimiter, 2);
-        if (pathInfoAndPathSuffix != null && pathInfoAndPathSuffix.length > 1) {
-            itemPathInfo = PathUtils.normalizePath(pathInfoAndPathSuffix[0]);
-            itemPathSuffix = PathUtils.normalizePath(pathInfoAndPathSuffix[1]);
-        }
-        
         HstSite hstSite = resolvedSiteMount.getSiteMount().getHstSite();
-        
+       
         Properties params = new Properties();
         
+        pathInfo = PathUtils.normalizePath(pathInfo);
+        
         if(linkProcessor != null) {
-            HstLink link = new HstLinkImpl(itemPathInfo, resolvedSiteMount.getSiteMount());
+            HstLink link = new HstLinkImpl(pathInfo, resolvedSiteMount.getSiteMount());
             link = linkProcessor.preProcess(link);
-            itemPathInfo = link.getPath();
+            pathInfo = link.getPath();
         }
         
-        String[] elements = itemPathInfo.split("/"); 
+        String[] elements = pathInfo.split("/"); 
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
         
@@ -125,8 +112,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
          // check for partial wildcard (**.xxx) matcher first
             for(HstSiteMapItem item : hstSite.getSiteMap().getSiteMapItems()) {
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
-                if(service.containsAny() && service.patternMatch(itemPathInfo, service.getPrefix(), service.getPostfix())) {
-                    String parameter = getStrippedParameter((HstSiteMapItemService)service, itemPathInfo);
+                if(service.containsAny() && service.patternMatch(pathInfo, service.getPrefix(), service.getPostfix())) {
+                    String parameter = getStrippedParameter((HstSiteMapItemService)service, pathInfo);
                     params.put(String.valueOf(params.size()+1), parameter);
                     matchedSiteMapItem = item;
                     // we have a matching sitemap item.
@@ -142,11 +129,11 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
                 log.warn("Did not find a matching sitemap item for path '{}', SiteMount '{}' and Host '"+resolvedSiteMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
-                		". Return null", itemPathInfo, resolvedSiteMount.getSiteMount().getParent() == null ? "hst:root" : resolvedSiteMount.getSiteMount().getMountPath() );
-                throw new NotFoundException("PathInfo '"+itemPathInfo+"' could not be matched");
+                        ". Return null", pathInfo, resolvedSiteMount.getSiteMount().getParent() == null ? "hst:root" : resolvedSiteMount.getSiteMount().getMountPath() );
+                throw new NotFoundException("PathInfo '"+pathInfo+"' could not be matched");
             } else {
                 // The ** has the value of the entire pathInfo
-                params.put(String.valueOf(params.size()+1), itemPathInfo);
+                params.put(String.valueOf(params.size()+1), pathInfo);
                 matchedSiteMapItem = hstSiteMapItemAny;
             }
             
@@ -156,11 +143,11 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             String path = matchedSiteMapItem.getId();
             path = path.replace("_default_", "*");
             path = path.replace("_any_", "**");
-            log.info("For path '{}' we found SiteMapItem with path '{}'", itemPathInfo, path);
+            log.info("For path '{}' we found SiteMapItem with path '{}'", pathInfo, path);
             log.debug("Params for resolved sitemap item: '{}'", params);
         }
         
-        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, itemPathInfo, itemPathSuffix, resolvedSiteMount);
+        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo, resolvedSiteMount);
         return r;
     
     }
