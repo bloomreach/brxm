@@ -41,6 +41,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
+    private static final String PARENT_PROPERTY_PLACEHOLDER = "${parent}";
+    
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
 
     private String siteMapRootNodePath;
@@ -188,6 +190,13 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         }
         
         this.relativeContentPath = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
+        if(relativeContentPath != null && relativeContentPath.indexOf(PARENT_PROPERTY_PLACEHOLDER) > -1 ) {
+            if(parentItem == null || parentItem.getRelativeContentPath() == null) {
+                log.error("Cannot use '{}' for a sitemap item that does not have a parent or a parent without relative content path. Used at: '{}'", PARENT_PROPERTY_PLACEHOLDER, id);
+            } else {
+                relativeContentPath = relativeContentPath.replace(PARENT_PROPERTY_PLACEHOLDER, parentItem.getRelativeContentPath());
+            }
+        }
         this.componentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         this.portletComponentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         
