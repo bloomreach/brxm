@@ -26,9 +26,12 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.LoggerFactory;
 
 public class FilterImpl implements Filter{
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(FilterImpl.class);
+    
     private StringBuilder jcrExpressionBuilder;
     
     private boolean negated = false;
@@ -39,6 +42,14 @@ public class FilterImpl implements Filter{
      * @see #getJcrExpression()
      */
     private List<FilterTypeWrapper> childFilters = new ArrayList<FilterTypeWrapper>();
+    
+    private ChildFilterType firstAddedType; 
+    
+    private enum ChildFilterType {
+        OR, AND
+    }
+
+    
     
     /**
      * @deprecated use {@link FilterImpl()}
@@ -220,28 +231,45 @@ public class FilterImpl implements Filter{
     }
 
     public Filter addOrFilter(BaseFilter filter) {
+        if(firstAddedType == null) {
+            firstAddedType = ChildFilterType.OR;
+        } else if (firstAddedType == ChildFilterType.AND) {
+            log.warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
+        }
         childFilters.add(new FilterTypeWrapper(filter, false));
         return this;
     }
 
-    private void processOrFilter(BaseFilter filter){
+    private void processOrFilter(BaseFilter filter, StringBuilder builder){
         if(filter.getJcrExpression() == null || "".equals(filter.getJcrExpression())) {
             return;
         }
-        if(this.jcrExpressionBuilder == null) {
-            this.jcrExpressionBuilder = new StringBuilder(filter.getJcrExpression());
+        if(builder.length() == 0) {
+            builder.append("(").append(filter.getJcrExpression()).append(")");;
         } else {
-            this.jcrExpressionBuilder.append(" or ").append("(").append(filter.getJcrExpression()).append(")");
+            builder.append(" or ").append("(").append(filter.getJcrExpression()).append(")");
         }
     }
 
     public Filter addAndFilter(BaseFilter filter) {
+       if(firstAddedType == null) {
+           firstAddedType = ChildFilterType.AND;
+       } else if (firstAddedType == ChildFilterType.OR) {
+           log.warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
+       }
        childFilters.add(new FilterTypeWrapper(filter, true));       
        return this;
     }
 
-    private void processAndFilter(BaseFilter filter){
-        this.addExpression(filter.getJcrExpression());
+    private void processAndFilter(BaseFilter filter, StringBuilder builder){
+        if(filter.getJcrExpression() == null || "".equals(filter.getJcrExpression())) {
+            return;
+        }
+        if(builder.length() == 0) {
+            builder.append("(").append(filter.getJcrExpression()).append(")");;
+        } else {
+            builder.append(" and ").append("(").append(filter.getJcrExpression()).append(")");
+        }
     }
     
     private void addNotExpression(String jcrExpression){
@@ -258,17 +286,33 @@ public class FilterImpl implements Filter{
         if(this.jcrExpressionBuilder == null) {
             this.jcrExpressionBuilder = new StringBuilder(jcrExpression);
         } else {
-            this.jcrExpressionBuilder.append(" and ").append("(").append(jcrExpression).append(")");
+            this.jcrExpressionBuilder.append(" and ").append(jcrExpression);
         }
     }
 
     public String getJcrExpression() {
-        // if we have and or filters, we'll always have expression:
+        // if we have AND or OR filters, we'll always have expression:
         
         StringBuilder originalExpr = jcrExpressionBuilder == null ?  null : new StringBuilder(jcrExpressionBuilder);
-       
+        StringBuilder childFiltersExpression = null;
         if (childFilters.size() > 0) {
-             processChildFilters();
+             childFiltersExpression = new StringBuilder();
+             processChildFilters(childFiltersExpression);
+        }
+        
+        if(childFiltersExpression != null && childFiltersExpression.length() > 0) {
+            if(jcrExpressionBuilder == null) {
+                jcrExpressionBuilder = new StringBuilder(childFiltersExpression);
+            } else {
+                if(firstAddedType == ChildFilterType.AND) {
+                    // and
+                    jcrExpressionBuilder.append(" and ");
+                } else {
+                    // or
+                    jcrExpressionBuilder.append(" or ");
+                }
+                jcrExpressionBuilder.append(childFiltersExpression);
+            }
         }
         // no experssion, no filters, nothing to do:
         if (this.jcrExpressionBuilder == null) {
@@ -290,12 +334,12 @@ public class FilterImpl implements Filter{
      * Process AND or OR filters
      * @return  jcr query expression  or null 
      */
-    private void processChildFilters() {
+    private void processChildFilters(StringBuilder childFiltersExpression) {
         for (FilterTypeWrapper filter : childFilters) {
             if (filter.isAnd()) {
-                processAndFilter(filter.getFilter());
+                processAndFilter(filter.getFilter(), childFiltersExpression);
             } else {
-                processOrFilter(filter.getFilter());
+                processOrFilter(filter.getFilter(), childFiltersExpression);
             }
         }
     }
