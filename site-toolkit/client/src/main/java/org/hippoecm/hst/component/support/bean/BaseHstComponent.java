@@ -432,15 +432,10 @@ public class BaseHstComponent extends GenericHstComponent {
     
     /**
      * <p>
-     * Facility method for sending a redirect to a SiteMapItemId.  
-     * </p>
-     * <p>
-     * <b>note</b> A sendRedirect is only honored in action phase, thus from {@link HstComponent#doAction(HstRequest, HstResponse)}. 
-     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} a 
-     * sendRedirect is ignored, even when called directly on the {@link HstResponse#sendRedirect(String)}. You can use an internal forward instead
-     * by {@link HstResponse#forward(String)}
+     * Facility method for sending a redirect to a sitemap path. You do not have to take into account the context path or SiteMount path
      * </p>
      * 
+     * @see HstResponse#sendRedirect(String)
      * @param path the sitemap path you want to redirect to 
      * @param request the HstRequest
      * @param response the HstResponse
@@ -451,17 +446,12 @@ public class BaseHstComponent extends GenericHstComponent {
     
     /**
      * <p>
-     * Facility method for sending a redirect to a SiteMapItemId.  
+     * Facility method for sending a redirect to a sitemap path including query params. You do not have to take into account the context path or SiteMount path
      * </p>
-     * <p>
-     * <b>note</b> A sendRedirect is only honored in action phase, thus from {@link HstComponent#doAction(HstRequest, HstResponse)}. 
-     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} a 
-     * sendRedirect is ignored, even when called directly on the {@link HstResponse#sendRedirect(String)}. You can use an internal forward instead
-     * by {@link HstResponse#forward(String)}
-     * </p>
-     * 
+     * @see HstResponse#sendRedirect(String)
      * @param path the sitemap path you want to redirect to 
      * @param request the HstRequest
+     * @param queryParams query parameters to append to the redirection url
      * @param response the HstResponse
      */
     public void sendRedirect(String path, HstRequest request, HstResponse response, Map<String, String []> queryParams) {
