@@ -56,9 +56,9 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Path("/")
-public class RepositoryNodeResource {
+public class NodeResource {
 
-    private static Logger log = LoggerFactory.getLogger(RepositoryNodeResource.class);
+    private static Logger log = LoggerFactory.getLogger(NodeResource.class);
     
     private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;

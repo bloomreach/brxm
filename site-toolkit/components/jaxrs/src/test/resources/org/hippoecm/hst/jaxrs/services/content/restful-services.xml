@@ -88,14 +88,14 @@
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg ref="repositoryNodeResource" />
+          <constructor-arg ref="nodeResource" />
         </bean>
       </list>
     </property>
   </bean>
   
   <!-- JAX-RS Resources -->
-  <bean id="repositoryNodeResource" class="org.hippoecm.hst.jaxrs.services.content.RepositoryNodeResource"/>
+  <bean id="nodeResource" class="org.hippoecm.hst.jaxrs.services.content.NodeResource"/>
   
   <!-- ========================================================= -->
   <!-- The followings need to be moved to SpringComponentManager-pipelines.xml. -->

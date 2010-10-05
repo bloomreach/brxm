@@ -19,6 +19,6 @@ package org.hippoecm.hst.jaxrs.services.content;
  * @version $Id$
  *
  */
-public class HippoImageResource extends RepositoryNodeResource {
+public class HippoImageResource extends NodeResource {
 
 }
