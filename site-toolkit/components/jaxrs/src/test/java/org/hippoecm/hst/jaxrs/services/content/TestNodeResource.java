@@ -15,16 +15,24 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.ByteArrayInputStream;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.container.Pipeline;
 import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -35,8 +43,11 @@ import org.hippoecm.hst.jaxrs.services.AbstractJaxrsSpringTestCase;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
+import org.w3c.dom.Document;
 
 /**
  * TestContentService
@@ -56,6 +67,8 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     protected SiteMount siteMount;
     protected ResolvedSiteMount resolvedSiteMount;
     protected HstMutableRequestContext requestContext;
+    protected HstURLFactory urlFactory;
+    protected HstContainerURLProvider urlProvider;
     
     protected String[] getConfigurations() {
         return new String[] { "org/hippoecm/hst/jaxrs/services/content/TestContentServices.xml" };
@@ -101,14 +114,66 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
         requestContext.setServletContext(servletContext);
         requestContext.setResolvedSiteMount(resolvedSiteMount);
+        
+        urlFactory = getComponent(HstURLFactory.class.getName());
+        urlProvider = this.urlFactory.getContainerURLProvider();        
     }
     
     @Test
     public void testRepositoryNodeResource() throws Exception {
+        /*
+         * Retrieves document xml by path
+         */
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+    
+    @Test
+    public void testRepositoryNodeResourceChildren() throws Exception {
+        /*
+         * Retrieves document xml by path
+         */
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/News/2009/April./children");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/News/2009/April./children");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        assertEquals(3, document.getDocumentElement().getChildNodes().getLength());
     }
     
     private void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
+    	requestContext.setBaseURL(urlProvider.parseURL(request, response, requestContext.getResolvedSiteMount()));
         jaxrsPipeline.beforeInvoke(hstContainerConfig, requestContext, request, response);
         
         try {
