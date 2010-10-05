@@ -19,6 +19,6 @@ package org.hippoecm.hst.jaxrs.model.content;
  * @version $Id$
  *
  */
-public class HippoHtmlRepresentation extends RepositoryNodeRepresentation {
+public class HippoHtmlRepresentation extends NodeRepresentation {
 
 }

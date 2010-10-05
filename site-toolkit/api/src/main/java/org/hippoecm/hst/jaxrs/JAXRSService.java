@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.jaxrs;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -29,6 +29,10 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public interface JAXRSService {
 	
+	String REQUEST_CONTENT_PATH_KEY = "org.hippoecm.hst.request.contentPath";
+	String REQUEST_CONTENT_NODE_KEY = "org.hippoecm.hst.request.contentNode";
+	
+	/** @deprecated **/
 	String getBasePath();
-	void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ServletException;
+	void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException;
 }

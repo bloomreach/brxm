@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * JaxrsServiceValve
  * 
  * @version $Id$
+ * @deprecated
  */
 public class JaxrsServiceValve extends AbstractValve {
     

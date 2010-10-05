@@ -130,18 +130,17 @@
       <version>${pom.version}</version>
     </dependency>
   
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-core</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    
     <!-- Test dependencies -->
     
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.components</groupId>
-      <artifactId>hst-core</artifactId>
-      <version>${pom.version}</version>
       <scope>test</scope>
     </dependency>
     
