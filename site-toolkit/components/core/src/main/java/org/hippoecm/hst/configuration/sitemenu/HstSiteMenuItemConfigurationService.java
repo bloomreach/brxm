@@ -34,6 +34,8 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMenuItemConfigurationService.class);
     
+    private static final String PARENT_PROPERTY_PLACEHOLDER = "${parent}";
+    
     private HstSiteMenuConfiguration hstSiteMenuConfiguration;
     private HstSiteMenuItemConfiguration parent;
     private String name;
@@ -56,7 +58,13 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         }else if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
            // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
            this.siteMapItemPath = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
-           
+           if(siteMapItemPath != null && siteMapItemPath.indexOf(PARENT_PROPERTY_PLACEHOLDER) > -1 ) {
+                 if(parent == null || parent.getSiteMapItemPath() == null) {
+                     log.error("Cannot use '{}' for a sitemenu item that does not have a parent or a parent without sitemap item path. Used for: '{}'", PARENT_PROPERTY_PLACEHOLDER, name);
+                 } else {
+                     siteMapItemPath = siteMapItemPath.replace(PARENT_PROPERTY_PLACEHOLDER, parent.getSiteMapItemPath());
+                 }
+           }
         } else {
            log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
         }

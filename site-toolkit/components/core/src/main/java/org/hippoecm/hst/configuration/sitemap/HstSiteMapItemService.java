@@ -39,6 +39,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
+    
+    private static final String PARENT_PROPERTY_PLACEHOLDER = "${parent}";
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
     
@@ -195,6 +197,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         }
         
         this.relativeContentPath = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
+        if(relativeContentPath != null && relativeContentPath.indexOf(PARENT_PROPERTY_PLACEHOLDER) > -1 ) {
+             if(parentItem == null || parentItem.getRelativeContentPath() == null) {
+                 log.error("Cannot use '{}' for a sitemap item that does not have a parent or a parent without relative content path. Used at: '{}'", PARENT_PROPERTY_PLACEHOLDER, id);
+             } else {
+                 relativeContentPath = relativeContentPath.replace(PARENT_PROPERTY_PLACEHOLDER, parentItem.getRelativeContentPath());
+             }
+        }
         this.componentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
