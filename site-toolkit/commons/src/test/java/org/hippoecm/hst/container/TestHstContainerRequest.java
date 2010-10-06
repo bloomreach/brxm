@@ -47,7 +47,7 @@ public class TestHstContainerRequest {
         
         replay(request);
         
-        HstContainerRequest containerRequest = new HstContainerRequest(request, "./");
+        HstContainerRequest containerRequest = new HstContainerRequestImpl(request, "./");
         assertEquals("/site/preview/news/2009", containerRequest.getRequestURI());
         assertEquals("http://localhost:8085/site/preview/news/2009", containerRequest.getRequestURL().toString());
         assertEquals("/preview/news/2009", containerRequest.getPathInfo());
@@ -56,8 +56,9 @@ public class TestHstContainerRequest {
     
     @Test
     public void testContainerRequestWithMatrixURIs() {
-        String matrixParams = ";JSESSIONID=12345;foo=bar";
-        String pathInfo = "/preview/news/2009./comments/314" + matrixParams;
+        String matrixParams1 = ";lat=50;long=20";
+        String matrixParams2 = ";orderBy=author";
+        String pathInfo = "/preview/news/2009" + matrixParams1 + "./comments/314" + matrixParams2;
         String pathTranslated = null;
         String requestURI = "/site" + pathInfo;
         StringBuffer requestURL = new StringBuffer("http://localhost:8085" + requestURI);
@@ -70,9 +71,9 @@ public class TestHstContainerRequest {
         
         replay(request);
         
-        HstContainerRequest containerRequest = new HstContainerRequest(request, "./");
-        assertEquals("/site/preview/news/2009" + matrixParams, containerRequest.getRequestURI());
-        assertEquals("http://localhost:8085/site/preview/news/2009" + matrixParams, containerRequest.getRequestURL().toString());
+        HstContainerRequest containerRequest = new HstContainerRequestImpl(request, "./");
+        assertEquals("/site/preview/news/2009" + matrixParams1, containerRequest.getRequestURI());
+        assertEquals("http://localhost:8085/site/preview/news/2009" + matrixParams1, containerRequest.getRequestURL().toString());
         assertEquals("/preview/news/2009", containerRequest.getPathInfo());
         assertNull(containerRequest.getPathTranslated());
     }

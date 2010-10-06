@@ -232,7 +232,7 @@ public class HstFilter implements Filter {
     		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
     		
     		// Sets up the container request wrapper
-            HstContainerRequest containerRequest = new HstContainerRequest(req, hstSitesManager.getPathSuffixDelimiter());
+            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstSitesManager.getPathSuffixDelimiter());
             
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 

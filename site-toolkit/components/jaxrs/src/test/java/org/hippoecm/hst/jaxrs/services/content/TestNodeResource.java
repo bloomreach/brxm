@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.container.HstContainerRequest;
+import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -174,7 +175,7 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     
     private void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
-    	HstContainerRequest cr = new HstContainerRequest(request, "./");
+    	HstContainerRequest cr = new HstContainerRequestImpl(request, "./");
     	requestContext.setPathSuffix(cr.getPathSuffix());
     	requestContext.setBaseURL(urlProvider.parseURL(cr, response, requestContext.getResolvedSiteMount()));
         jaxrsPipeline.beforeInvoke(hstContainerConfig, requestContext, cr, response);
