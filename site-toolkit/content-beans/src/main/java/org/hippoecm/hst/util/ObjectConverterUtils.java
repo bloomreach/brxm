@@ -286,11 +286,14 @@ public class ObjectConverterUtils {
         
         if (jcrPrimaryNodeTypeClassPairs.containsKey(jcrPrimaryNodeType)) {
             if (builtinType) {
-                log.debug("Builtin annotated class for primary type '{}' is overridden. Builtin version is ignored.", jcrPrimaryNodeType);
+                log.debug("Builtin annotated class '{}' for primary type '{}' is overridden with already registered class '{}'. Builtin version is ignored.", 
+                		new Object[]{clazz.getName(), jcrPrimaryNodeType, jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName()});
             } else if (ignoreDuplicates) {
-                log.debug("Duplicate annotated class found for primary type '{}'. The previous one is overriden.", jcrPrimaryNodeType);
+                log.debug("Duplicate annotated class '{}' found for primary type '{}'. The already registered class '{}' is preserved.", 
+                		new Object[]{clazz.getName(), jcrPrimaryNodeType, jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName()});
             } else {
-                throw new IllegalArgumentException("Annotated class for primarytype '" + jcrPrimaryNodeType + "' is duplicate. " +
+                throw new IllegalArgumentException("Annotated class '" + clazz.getName() + "' for primarytype '" + jcrPrimaryNodeType +
+                		"' is a duplicate of already registered class '" + jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName() + "'. " +
                         "You might have configured a bean that does not have a annotation for the jcrType and " +
                         "inherits the jcrType from the bean it extends, resulting in 2 beans with the same jcrType. Correct your beans.");
             }
