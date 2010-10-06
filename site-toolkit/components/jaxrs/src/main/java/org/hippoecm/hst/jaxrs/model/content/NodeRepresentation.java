@@ -46,17 +46,10 @@ public class NodeRepresentation {
     public NodeRepresentation() {    	
     }
     
-	public NodeRepresentation(String name) {
-		this(name, null);
-	}
-	
-	public NodeRepresentation(String name, String path) {
-		this.name = name;
-		this.path = path;
-	}
-    
-    public NodeRepresentation(HippoBean hippoBean, final Set<String> propertyFilter) throws RepositoryException {
+	public NodeRepresentation represent(HippoBean hippoBean, Set<String> propertyFilter) throws RepositoryException {
 		this.name = hippoBean.getName();
+		this.localizedName = hippoBean.getLocalizedName();
+		
 		this.path = hippoBean.getPath();
         
 		// TODO: shouldn't primaryNodeType be added to hippoBean interface?
@@ -75,6 +68,7 @@ public class NodeRepresentation {
                 properties.add(new NodeProperty(prop.getName()));
             }
         }
+        return this;
     }
     
     public String getName() {

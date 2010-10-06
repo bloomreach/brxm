@@ -40,11 +40,13 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
@@ -120,7 +122,10 @@ public class NodeResource {
     
     /* TODO: temporary simple NodeRepresentation Factory */
     protected NodeRepresentation getRepresentation(HippoBean hippoBean, Set<String> pf) throws RepositoryException {
-    	return new NodeRepresentation(hippoBean, pf);
+    	if (hippoBean instanceof HippoDocumentBean) {
+        	return new HippoDocumentRepresentation().represent(hippoBean, pf);
+    	}
+    	return new NodeRepresentation().represent(hippoBean, pf);
     }
     
     @GET
