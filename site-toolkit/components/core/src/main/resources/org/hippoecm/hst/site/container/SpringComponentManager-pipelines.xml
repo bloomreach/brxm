@@ -61,6 +61,30 @@
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
   
+  <!-- Generic no-cache response headers setting valve -->
+  <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">
+    <property name="settableHeaders">
+      <list>
+        <bean class="org.hippoecm.hst.util.DefaultKeyValue">
+          <constructor-arg value="Cache-Control" />
+          <constructor-arg value="no-cache" />
+        </bean>
+        <bean class="org.hippoecm.hst.util.DefaultKeyValue">
+          <constructor-arg value="Pragma" />
+          <constructor-arg value="no-cache" />
+        </bean>
+        <bean class="org.hippoecm.hst.util.DefaultKeyValue">
+          <constructor-arg value="Expires" />
+          <constructor-arg>
+            <bean class="java.lang.Long">
+              <constructor-arg value="0" />
+            </bean>
+          </constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
   <!-- Main invocable valves for each request -->
   
   <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">

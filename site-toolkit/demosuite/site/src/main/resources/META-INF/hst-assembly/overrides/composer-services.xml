@@ -72,6 +72,7 @@
       <list>
         <ref bean="securityValve" />
         <ref bean="statefulSessionValve" />
+        <ref bean="noCacheResponseHeadersValve" />
         <ref bean="composerValve" />
       </list>
     </property>

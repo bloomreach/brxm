@@ -139,6 +139,7 @@
       <list>
         <ref bean="securityValve" />
         <ref bean="statefulSessionValve" />
+        <ref bean="noCacheResponseHeadersValve" />
         <ref bean="restfulServicesValve" />
       </list>
     </property>
