@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,10 @@ package org.hippoecm.hst.tag;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * Abstract supporting class for Hst Link tags
  */
 
-public class HstLinkTag extends TagSupport {
+public class HstLinkTag extends ParamContainerTag {
     
 
     private final static Logger log = LoggerFactory.getLogger(HstLinkTag.class);
@@ -152,29 +156,56 @@ public class HstLinkTag extends TagSupport {
         String urlString = this.link.toUrlForm(reqContext , external);
         
         try {
-            if(navigationStateful) {
+            if (navigationStateful) {
                 // append again the current queryString as we are context relative
-                if(reqContext.getBaseURL().getParameterMap() != null && !reqContext.getBaseURL().getParameterMap().isEmpty()) {
+                Map<String, String[]> currentRequestParameterMap = reqContext.getBaseURL().getParameterMap();
+                Map<String, String[]> parameterMapForLink = combineParametersMap(parametersMap,
+                        currentRequestParameterMap);
+                if (parameterMapForLink != null && !parameterMapForLink.isEmpty()) {
                     StringBuilder queryString = new StringBuilder();
                     boolean firstParamDone = false;
-                    for(Entry<String, String[]> entry : reqContext.getBaseURL().getParameterMap().entrySet()) {
-                        String name = entry.getKey();
-                        
-                        for (String value : entry.getValue()) {
-                            queryString.append(firstParamDone ? "&" : "?")
-                            .append(name)
-                            .append("=")
-                            .append(URLEncoder.encode(value, reqContext.getBaseURL().getCharacterEncoding()));
-                        
-                            firstParamDone = true;
+                    for (Entry<String, String[]> entry : parameterMapForLink.entrySet()) {
+                        if(removedParametersList.contains(entry.getKey())) {
+                            // set to null by hst:param tag, thus skip
+                            continue;
                         }
-                        
+                        String name = entry.getKey();
+                        if (entry.getValue() != null) {
+                            for (String value : entry.getValue()) {
+                                if(value != null) {
+                                    queryString.append(firstParamDone ? "&" : "?").append(name).append("=").append(URLEncoder.encode(value, reqContext.getBaseURL().getCharacterEncoding()));
+                                    firstParamDone = true;
+                                }
+                            }
+                        }
+
                     }
                     urlString += queryString.toString();
                 }
+            } else if (!parametersMap.isEmpty()) {
+                boolean firstParamDone = false;
+                StringBuilder queryString = new StringBuilder();
+                for (Entry<String, List<String>> entry : parametersMap.entrySet()) {
+                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                        String name = entry.getKey();
+                        if(removedParametersList.contains(name)) {
+                            // set to null by hst:param tag, thus skip
+                            continue;
+                        }
+                        if (entry.getValue() != null) {
+                            for (String value : entry.getValue()) {
+                                if(value != null) {
+                                    queryString.append(firstParamDone ? "&" : "?").append(name).append("=").append(URLEncoder.encode(value, reqContext.getBaseURL().getCharacterEncoding()));
+                                    firstParamDone = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                urlString += queryString.toString();
             }
         } catch (UnsupportedEncodingException e) {
-           throw new JspException("UnsupportedEncodingException on the base url", e);
+            throw new JspException("UnsupportedEncodingException on the base url", e);
         }
         
         
@@ -204,6 +235,9 @@ public class HstLinkTag extends TagSupport {
         }
         
         /*cleanup*/
+        
+        parametersMap.clear();
+        removedParametersList.clear();
         var = null;
         hippoBean = null;
         scope = null;
@@ -349,5 +383,36 @@ public class HstLinkTag extends TagSupport {
     protected HstRequestContext getHstRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
-    
+    private Map<String, String[]> combineParametersMap(Map<String, List<String>> parametersMap,
+            Map<String, String[]> currentRequestParameterMap) {
+        if((parametersMap == null || parametersMap.isEmpty()) && (currentRequestParameterMap == null || currentRequestParameterMap.isEmpty())) {
+           // no params at all
+            return null;
+        }
+        LinkedHashMap<String, String[]> combinedParametersMap = new LinkedHashMap<String, String[]>();
+        List<String> alreadyAddedParameters = new ArrayList<String>();
+        // to maintain correct order, first inject the parameters from the current request if there are request parameters
+        if((currentRequestParameterMap != null && !currentRequestParameterMap.isEmpty())) {
+            for(Entry<String, String[]> entry : currentRequestParameterMap.entrySet()) {
+                if(parametersMap != null && parametersMap.containsKey(entry.getKey())) {
+                    // replace an existing query param for the current url.
+                    combinedParametersMap.put(entry.getKey(), parametersMap.get(entry.getKey()).toArray(new String[parametersMap.get(entry.getKey()).size()]));
+                    alreadyAddedParameters.add(entry.getKey());
+                } else {
+                    combinedParametersMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        if(parametersMap != null && !parametersMap.isEmpty()) {
+            for(Entry<String, List<String>> entry : parametersMap.entrySet()) {
+                if(alreadyAddedParameters.contains(entry.getKey())) {
+                    // already added: skip
+                    continue;
+                }
+                combinedParametersMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
+            }
+        }
+        
+        return combinedParametersMap;
+    }
 }

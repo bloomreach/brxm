@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
@@ -27,7 +24,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.core.component.HstURL;
@@ -36,20 +32,14 @@ import org.hippoecm.hst.core.component.HstURL;
  * Abstract supporting class for Hst URL tags (action, redner and resource)
  */
 
-public abstract class BaseHstURLTag extends TagSupport {
+public abstract class BaseHstURLTag extends ParamContainerTag {
     
     private static final long serialVersionUID = 1L;
 
     protected String var = null;
     
     protected Boolean escapeXml = true;
-        
-    protected Map<String, List<String>> parametersMap = 
-        new HashMap<String, List<String>>();
-
-    protected List<String> removedParametersList = 
-        new ArrayList<String>();
-    
+  
     protected String resourceId;
     
 
@@ -173,41 +163,6 @@ public abstract class BaseHstURLTag extends TagSupport {
      */
     public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
-    }
-    
-    
-    /**
-     * Adds a key,value pair to the parameter map. 
-     * @param key String
-     * @param value String
-     * @return void
-     */
-    protected void addParameter(String key,String value) {
-        if((key == null) || (key.length() == 0)){
-            throw new IllegalArgumentException(
-                    "the argument key must not be null or empty!");
-        }
-        
-        if((value == null) || (value.length() == 0)){//remove parameter
-            if(parametersMap.containsKey(key)){
-                parametersMap.remove(key);
-            }
-            removedParametersList.add(key);
-        }
-        else{//add value
-            List<String> valueList = null;
-        
-            if(parametersMap.containsKey(key)){
-                valueList = parametersMap.get(key);//get old value list                 
-            }
-            else{
-                valueList = new ArrayList<String>();// create new value list                        
-            }
-        
-            valueList.add(value);
-        
-            parametersMap.put(key, valueList);
-        }
     }
     
     
