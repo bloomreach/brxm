@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,14 +40,14 @@ public class ParamTag extends TagSupport {
      */
     @Override
     public int doStartTag() throws JspException {
-        BaseHstURLTag urlTag = (BaseHstURLTag)
-                findAncestorWithClass(this, BaseHstURLTag.class);
+        ParamContainerTag paramContainerTag = (ParamContainerTag)
+                findAncestorWithClass(this, ParamContainerTag.class);
 
-        if (urlTag == null) {
-            throw new JspException("the 'param' Tag must have a HST's url tag as a parent");
+        if (paramContainerTag == null) {
+            throw new JspException("the 'param' Tag must have a ParamContainerTag as a parent");
         }
 
-        urlTag.addParameter(getName(), getValue());
+        paramContainerTag.addParameter(getName(), getValue());
 
         return SKIP_BODY;
     }

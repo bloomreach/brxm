@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@
         <name>param</name>
         <tag-class>org.hippoecm.hst.tag.ParamTag</tag-class>
         <body-content>empty</body-content>
-        <description> This param tag can be nested into renderURL and actionURL to provide
+        <description> This param tag can be nested into 'link', 'renderURL' and 'actionURL' to provide
             parameters. </description>
         <attribute>
             <name>name</name>
