@@ -83,4 +83,9 @@ public interface ContainerConstants {
      */
     String SUBJECT_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
     
+    /**
+     * Preferred local request or session attribute name
+     */
+    String PREFERRED_LOCALE_ATTR_NAME = "org.hippoecm.hst.container.preferred.locale";
+    
 }

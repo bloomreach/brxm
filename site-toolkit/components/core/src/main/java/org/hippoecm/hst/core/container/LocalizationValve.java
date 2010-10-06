@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -36,9 +37,25 @@ public class LocalizationValve extends AbstractValve {
         
         HttpServletRequest servletRequest = context.getServletRequest();
         HstMutableRequestContext requestContext = (HstMutableRequestContext) context.getRequestContext();
-
+        
         Locale preferredLocale = findPreferredLocale(servletRequest, requestContext);
-
+        
+        // when site mount or site map item doesn't force a preferred locale,
+        // allow to override preferred locale from the request or session attribute.
+        // In some environment, they can just implement a filter to set request attirbute or
+        // they can simply store a session attribute for a transient session sepecific locale setting.
+        if (preferredLocale == null) {
+            preferredLocale = (Locale) servletRequest.getAttribute(ContainerConstants.PREFERRED_LOCALE_ATTR_NAME);
+            
+            if (preferredLocale == null) {
+                HttpSession session = servletRequest.getSession(false);
+                
+                if (session != null) {
+                    preferredLocale = (Locale) session.getAttribute(ContainerConstants.PREFERRED_LOCALE_ATTR_NAME);
+                }
+            }
+        }
+        
         if (preferredLocale != null) {
             List<Locale> locales = new ArrayList<Locale>();
             locales.add(preferredLocale);
