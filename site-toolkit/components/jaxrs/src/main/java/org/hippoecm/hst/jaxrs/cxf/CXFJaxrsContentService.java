@@ -50,26 +50,12 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 	 * temporarily splitting off and saving suffix from pathInfo until this is generally handled with HSTTWO-1189
 	 */
 	protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
-		String jaxrsSuffixPath = super.getJaxrsPathInfo(requestContext, request);
-		if (jaxrsSuffixPath != null) {
-			int suffixIndex = jaxrsSuffixPath.indexOf("./");
-			if (suffixIndex > 0) {
-				requestContext.setAttribute("org.hippoecm.hst.jaxrs.request.contentPathInfo", jaxrsSuffixPath.substring(0, suffixIndex));
-				jaxrsSuffixPath = jaxrsSuffixPath.substring(suffixIndex+1);
-			}
-			else {
-				requestContext.setAttribute("org.hippoecm.hst.jaxrs.request.contentPathInfo", jaxrsSuffixPath);
-				jaxrsSuffixPath = null;
-			}
-		}
-		return jaxrsSuffixPath;
+		return requestContext.getPathSuffix();
 	}
 
 	@Override
 	protected HttpServletRequest getJaxrsRequest( HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
-		String jaxrsSuffixPath = getJaxrsPathInfo(requestContext, request);
-		String contentPathInfo = (String)requestContext.getAttribute("org.hippoecm.hst.jaxrs.request.contentPathInfo");
-		// temporary retrieve contentPathInfo from requestContext attribute, see HSTTWO-1189
+		String contentPathInfo = requestContext.getBaseURL().getPathInfo();
 		String requestContentPath = getMountPointContentPath(requestContext) + (contentPathInfo != null ? contentPathInfo : "");
 
 		Node node = null;
@@ -92,10 +78,13 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 		requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
     	requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, node);
     	
-    	// use JAX-RS service endpoint url-template: /{resourceType}{suffix}
-    	jaxrsSuffixPath = "/"+resourceType+(jaxrsSuffixPath != null ? jaxrsSuffixPath : "/");
+    	// use JAX-RS service endpoint url-template: /{resourceType}/{suffix}
+    	StringBuilder jaxrsEndpointURL = new StringBuilder("/").append(resourceType).append("/");
+    	if (requestContext.getPathSuffix() != null) {
+    		jaxrsEndpointURL.append(requestContext.getPathSuffix());
+    	}
 		
-    	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsSuffixPath);
+    	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointURL.toString());
 	}
 	
 	@Override
