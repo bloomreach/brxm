@@ -16,9 +16,12 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -166,8 +169,30 @@ public class HstLinkTag extends TagSupport {
         String urlString = this.link.toUrlForm(hstRequest, hstResponse, external);
         if(navigationStateful) {
             // append again the current queryString as we are context relative
-            if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {
-                urlString += "?"+hstRequest.getQueryString();
+            try {
+                if(navigationStateful) {
+                    // append again the current queryString as we are context relative
+                    if(reqContext.getBaseURL().getParameterMap() != null && !reqContext.getBaseURL().getParameterMap().isEmpty()) {
+                        StringBuilder queryString = new StringBuilder();
+                        boolean firstParamDone = false;
+                        for(Entry<String, String[]> entry : reqContext.getBaseURL().getParameterMap().entrySet()) {
+                            String name = entry.getKey();
+                            
+                            for (String value : entry.getValue()) {
+                                queryString.append(firstParamDone ? "&" : "?")
+                                .append(name)
+                                .append("=")
+                                .append(URLEncoder.encode(value, reqContext.getBaseURL().getCharacterEncoding()));
+                            
+                                firstParamDone = true;
+                            }
+                            
+                        }
+                        urlString += queryString.toString();
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+               throw new JspException("UnsupportedEncodingException on the base url", e);
             }
         }
         
