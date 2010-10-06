@@ -190,26 +190,37 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 throw new HstContextualizeException("Cannot compute a context where clause for a non HippoNode : " + node.getPath());
             }
             
-            HippoNode hnode = (HippoNode)node;
-            HippoNode canonical = (HippoNode)hnode.getCanonicalNode();
+            HippoNode currentNode = (HippoNode)node;
+            Node canonical = (HippoNode)currentNode.getCanonicalNode();
             
-            if(canonical == null) {
-                throw new HstContextualizeException("Cannot compute a context where clause for a node that does not have a physical equivalence : " + node.getPath());
+            
+            while(canonical == null) {
+                // the current <code>node</code> is a virtual only node. Take the parent until there is a canonical version.
+                // before we hit the jcr root, we certainly get a non null canonical node
+                log.debug("The current scope '{}' is part of a virtual only node. We take the first ancestor that has a canonical version as scope." , node.getPath());
+                currentNode = (HippoNode)currentNode.getParent();
+                canonical = currentNode.getCanonicalNode();
             }
             
-            if(!canonical.isNodeType("mix:referenceable") && !canonical.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                throw new  HstContextualizeException("Cannot create a context where clause for node '"+canonical.getPath()+"'");
+            while(!canonical.isNodeType("mix:referenceable") && !canonical.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                log.info("The current scope '{}' does not point to a referenceable node. Take the first referenceable ancestor.", canonical.getPath());
+                if(canonical.isSame(canonical.getSession().getRootNode())) {
+                    log.info("First referenceable node for canonical is the jcr root node. Take the root node as scope");
+                    break;
+                }
+                canonical = canonical.getParent();
             }
-            if (canonical.isSame(node)){
+            
+            if (canonical.isSame(currentNode)){
                 // either the site content root node (hst:content) or just a physical node.
-                if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                   String scopeUUID = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                if(currentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                   String scopeUUID = currentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                    facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
-                   appendFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , false);
+                   appendFacetSelectClauses(currentNode.getSession(), currentNode, facetSelectClauses , false);
                 } else {
                     // We are not searching in a virtual structure: the context where is the scope of the node
                     if(log.isDebugEnabled()) {
-                        log.debug("Not a search in a virtual structure. Return the scope for the node '{}' only.", node.getPath());
+                        log.debug("Not a search in a virtual structure. Return the scope for the node '{}' only.", currentNode.getPath());
                     }
                     String scopeUUID =  canonical.getUUID();
                     facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
@@ -219,7 +230,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 // when we can get a canonical, we know for sure it is referenceable
                 String scopeUUID =  canonical.getUUID();
                 facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
-                appendFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , true);
+                appendFacetSelectClauses(currentNode.getSession(), currentNode, facetSelectClauses , true);
             }
         } catch (RepositoryException e) {
            log.warn("Unable to get Context where clause: '{}'", e);
