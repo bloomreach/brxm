@@ -247,7 +247,16 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.Boolean</type>
+            <description>Deprecated: use navigationStateful instead.</description>
             <description>If the link should be created for the virtual location of the jcr node behind the bean, use this attr with value true. When having canonical='true', this 
+            attribute is ignored.</description>
+        </attribute>
+        <attribute>
+            <name>navigationStateful</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+            <description>If the link should be created in the context of the current URL, use this attr with value true. When having canonical='true', this 
             attribute is ignored.</description>
         </attribute>
         <example><![CDATA[

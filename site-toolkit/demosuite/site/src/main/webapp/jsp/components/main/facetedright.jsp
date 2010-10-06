@@ -49,7 +49,7 @@
                                   </c:if>
                                </c:when>
                                <c:otherwise>
-                                 <hst:link var="link" hippobean="${facetvalue}" contextRelative="true"/>
+                                 <hst:link var="link" hippobean="${facetvalue}" navigationStateful="true"/>
                                  <a href="${link}"><c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b></a> 
                                </c:otherwise>
                              </c:choose>

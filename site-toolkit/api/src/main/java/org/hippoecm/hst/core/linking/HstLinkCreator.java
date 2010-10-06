@@ -73,7 +73,7 @@ public interface HstLinkCreator {
      * <p>
      * This method returns an {@link HstLink} that takes the current URL into account, but does compute the link with respect to the physical (canonical) location
      * of the jcr Node. <b>If</b> you need a {@link HstLink} within the context of the possible virtual jcr Node (for example in case of in context showing documents in faceted navigation), use
-     * {@link #create(Node, ResolvedSiteMapItem, HstSiteMapItem, boolean, boolean)} with <code>contextRelative = true</code>
+     * {@link #create(Node, ResolvedSiteMapItem, HstSiteMapItem, boolean, boolean)} with <code>navigationStateful = true</code>
      * </p>
      * @see #create(Node, ResolvedSiteMapItem, HstSiteMapItem, boolean, boolean) 
      * @param node the jcr node
@@ -86,7 +86,7 @@ public interface HstLinkCreator {
     
     /**
      * <p>
-     * This method creates the same {@link HstLink} as {@link #create(Node, ResolvedSiteMapItem, HstSiteMapItem, boolean)} when <code>contextRelative = false</code>. When <code>contextRelative = true</code>, 
+     * This method creates the same {@link HstLink} as {@link #create(Node, ResolvedSiteMapItem, HstSiteMapItem, boolean)} when <code>navigationStateful = false</code>. When <code>navigationStateful = true</code>, 
      * the link that is created is with respect to the jcr Node <code>node</code>, even if this node is a virtual location. This is different then {@link #create(Node, ResolvedSiteMapItem, HstSiteMapItem, boolean)}: that
      * method always first tries to find the canonical location of the jcr Node before it is creating a link for the node. 
      * </p>
@@ -94,7 +94,7 @@ public interface HstLinkCreator {
      * <p>
      * <b>Expert:</b> Note there is a difference between context relative with respect to the current URL and with respect to the current jcr Node. <b>Default</b>, links in the HST are
      * created always taking into account the current URL (thus context aware linking) unless you call {@link #createCanonical(Node, ResolvedSiteMapItem)} or {@link #createCanonical(Node, ResolvedSiteMapItem, HstSiteMapItem)}. Also,
-     * <b>default</b>, it always (unless there is no) takes the <i>canonical</i> location of the jcr Node. Thus, multiple virtual versions of the same physical Node, result in the same HstLink. Only when having <code>contextRelative = true</code>, 
+     * <b>default</b>, it always (unless there is no) takes the <i>canonical</i> location of the jcr Node. Thus, multiple virtual versions of the same physical Node, result in the same HstLink. Only when having <code>navigationStateful = true</code>, 
      * also the jcr Node is context relative, and thus multiple virtual versions of the same jcr Node can result in multiple links. This is interesting for example in 
      * faceted navigation views, where you want 'in context' documents to be shown.
      * </p>
@@ -103,10 +103,10 @@ public interface HstLinkCreator {
      * @param resolvedSiteMapItem  the current resolved sitemap item
      * @param preferredItem  if not null (null means no preferred sitemap item), first a link is trying to be created for this item
      * @param fallback value true or false
-     * @param contextRelative value true or false
+     * @param navigationStateful value true or false
      * @return  the HstLink for this jcr Node or <code>null</code>
      */
-    HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem, boolean fallback, boolean contextRelative);
+    HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem, boolean fallback, boolean navigationStateful);
     
     /**
      * This creates a canonical HstLink: regardless the context, one and the same jcr Node is garantueed to return the same HstLink. This is
