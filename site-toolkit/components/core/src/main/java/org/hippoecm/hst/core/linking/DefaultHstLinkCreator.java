@@ -115,11 +115,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
     
     public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem,
-            boolean fallback, boolean contextRelative) {
+            boolean fallback, boolean navigationStateful) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
         linkResolver.preferredItem = preferredItem;
         linkResolver.fallback = fallback;
-        linkResolver.contextRelative = contextRelative;
+        linkResolver.navigationStateful = navigationStateful;
         return linkResolver.resolve();
     }
     
@@ -284,7 +284,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         boolean canonicalLink;
         boolean representsDocument;
         boolean fallback;
-        boolean contextRelative;
+        boolean navigationStateful;
         
         
         /**
@@ -321,8 +321,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             
             Node canonicalNode = null;
             
-            if(!contextRelative) {
-                // not context relative, so we try to compute a link wrt the canonical location of the jcr node. If the canonical location is null (virtual only nodes)
+            if(!navigationStateful) {
+                // not navigationStateful, so we try to compute a link wrt the canonical location of the jcr node. If the canonical location is null (virtual only nodes)
                 // we'll continue with the non canonical node
                 canonicalNode = JCRUtilities.getCanonical(node);
             }

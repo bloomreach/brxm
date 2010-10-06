@@ -77,7 +77,9 @@ public class HstLinkTag extends TagSupport {
      * Note that this is different then the variable <code>canonical</code> : <code>canonical</code> true or false refers to whether the link should be
      * created wrt the current url or not. 
      */
-    protected boolean contextRelative;
+    
+    protected boolean navigationStateful;
+    
     
     protected boolean skipTag; 
 
@@ -145,7 +147,7 @@ public class HstLinkTag extends TagSupport {
             if(canonical) {
                 this.link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem);
             } else {
-                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem, fallback, contextRelative);
+                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem, fallback, navigationStateful);
             }
         }
         
@@ -162,7 +164,7 @@ public class HstLinkTag extends TagSupport {
         }
         
         String urlString = this.link.toUrlForm(hstRequest, hstResponse, external);
-        if(contextRelative) {
+        if(navigationStateful) {
             // append again the current queryString as we are context relative
             if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {
                 urlString += "?"+hstRequest.getQueryString();
@@ -206,7 +208,7 @@ public class HstLinkTag extends TagSupport {
         preferSiteMapItem = null;
         fallback = true;
         canonical = false;
-        contextRelative = false;
+        navigationStateful = false;
         
         return EVAL_PAGE;
     }
@@ -268,9 +270,16 @@ public class HstLinkTag extends TagSupport {
         this.canonical = canonical;
     }
     
+    /**
+     * @deprecated use {@link #setNavigationStateful(boolean)} instead
+     */
+    @Deprecated
+    public void setContextRelative(boolean navigationStateful) {
+        this.navigationStateful = navigationStateful;
+    }
     
-    public void setContextRelative(boolean contextRelative) {
-        this.contextRelative = contextRelative;
+    public void setNavigationStateful(boolean navigationStateful) {
+        this.navigationStateful = navigationStateful;
     }
     
     public void setHippobean(HippoBean hippoBean) {

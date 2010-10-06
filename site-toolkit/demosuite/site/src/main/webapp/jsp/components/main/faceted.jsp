@@ -57,7 +57,7 @@
             <table class="facetedTable">
              <tbody>
 	            <c:forEach var="result" items="${resultset}">
-	              <hst:link var="link" hippobean="${result}" contextRelative="true" />
+	              <hst:link var="link" hippobean="${result}" navigationStateful="true" />
 	                
 	                 <tr>
 	                    <td>
