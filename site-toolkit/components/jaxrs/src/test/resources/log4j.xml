@@ -36,7 +36,17 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-
+  
+  <category additivity="false" name="org.hippoecm.hst.jaxrs">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+  
+  <category additivity="false" name="org.apache.cxf">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathFactory;
 
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
@@ -171,6 +172,89 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         assertEquals(3, document.getDocumentElement().getChildNodes().getLength());
+    }
+    
+    @Test
+    public void testRepositoryNodeResourceProperty() throws Exception {
+        /*
+         * Retrieves property xml by path
+         */
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./property/testproject:title");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        String name = XPathFactory.newInstance().newXPath().compile("//name").evaluate(document);
+        assertEquals("testproject:title", name);
+        
+        /*
+         * Sets property by path and form parameter
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("POST");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./property/testproject:title");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.setContent("pv=Hippo CMS2".getBytes());
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        String title = XPathFactory.newInstance().newXPath().compile("//value").evaluate(document);
+        assertEquals("Hippo CMS2", title);
+        
+        /*
+         * Restore the original title of the property by path and form parameter
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("POST");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./property/testproject:title");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.setContent("pv=Hippo CMS".getBytes());
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        title = XPathFactory.newInstance().newXPath().compile("//value").evaluate(document);
+        assertEquals("Hippo CMS", title);
     }
     
     private void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {

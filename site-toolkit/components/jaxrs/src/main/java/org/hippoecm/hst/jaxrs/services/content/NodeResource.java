@@ -25,9 +25,13 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -47,9 +51,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
 import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.PropertyValue;
+import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.hippoecm.hst.util.PropertyDefinitionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,5 +190,65 @@ public class NodeResource {
             throw new WebApplicationException(e);
         }
     	return children;
+    }
+    
+    @GET
+    @Path("/{resourceType}/property/{propertyName}")
+    public NodeProperty getNodeProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("resourceType") String resourceType, @PathParam("propertyName") String propertyName) {
+        NodeRepresentation representation = getResource(servletRequest, servletResponse, uriInfo, resourceType, null);
+        return representation.getProperty(propertyName);
+    }
+    
+    @POST
+    @Path("/{resourceType}/property/{propertyName}")
+    public NodeProperty setNodeProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, @PathParam("resourceType") String resourceType, @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        Node requestContentNode = getRequestContentNode(requestContext);
+        PropertyDefinition propDef = null;
+        
+        try {
+            propDef = PropertyDefinitionUtils.getPropertyDefinition(requestContentNode, propertyName);
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve property definition.", e);
+            } else {
+                log.warn("Failed to retrieve property definition. {}", e.toString());
+            }
+            throw new WebApplicationException(e);
+        }
+        
+        if (propDef == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to retrieve property definition: " + propertyName);
+            }
+            throw new WebApplicationException(new IllegalArgumentException("No property definition found: " + propertyName));
+        }
+        
+        NodeProperty nodeProperty = new NodeProperty(propertyName);
+        nodeProperty.setType(propDef.getRequiredType());
+        nodeProperty.setMultiple(propDef.isMultiple());
+        PropertyValue [] values = null;
+        if (propertyValues != null) {
+            values = new PropertyValue[propertyValues.size()];
+            int index = 0;
+            for (String pv : propertyValues) {
+                values[index++] = new PropertyValue(pv);
+            }
+        }
+        nodeProperty.setValues(values);
+        
+        try {
+            NodePropertyUtils.setProperty(requestContentNode, nodeProperty);
+            requestContentNode.save();
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to set property.", e);
+            } else {
+                log.warn("Failed to set property. {}", e.toString());
+            }
+            throw new WebApplicationException(e);
+        }
+        
+        return nodeProperty;
     }
 }
