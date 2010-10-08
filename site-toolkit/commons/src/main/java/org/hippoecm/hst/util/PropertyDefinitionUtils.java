@@ -32,7 +32,7 @@ public class PropertyDefinitionUtils {
     
     /**
      * Returns the <code>PropertyDefinition</code> for the name property in
-     * the given node type. If the node type has no matching node type
+     * the given node type. If the node type has no matching property
      * definition <code>null</code> is returned.
      * @param nodeType
      * @param propertyName
