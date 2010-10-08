@@ -165,8 +165,6 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         }
         if(draftDocument != null)
             throw new WorkflowException("cannot publish document being edited");
-        if(current != null)
-            throw new WorkflowException("cannot publish document with pending request");
         doPublish();
     }
 
@@ -191,8 +189,6 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void depublish() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication on document ");
-        if(current != null)
-            throw new WorkflowException("cannot depublish document with pending request");
         if(draftDocument != null)
             throw new WorkflowException("cannot publish document being edited");
         doDepublish();
