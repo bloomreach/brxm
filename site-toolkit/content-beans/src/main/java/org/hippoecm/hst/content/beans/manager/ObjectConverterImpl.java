@@ -21,7 +21,6 @@ import java.util.Map.Entry;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -169,10 +168,53 @@ public class ObjectConverterImpl implements ObjectConverter {
         } catch (Exception e) {
             throw new ObjectBeanManagerException("Impossible to convert the node", e);
         }
-        log.warn("No Descriptor found for node type '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
+        log.warn("No Descriptor found for node '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
         return null;
     }
 
+    public String getPrimaryNodeType(Node node) throws ObjectBeanManagerException {
+        String jcrPrimaryNodeType;
+        String path;
+        try { 
+            if(node.isNodeType(HippoNodeType.NT_HANDLE) ) {
+                if(node.hasNode(node.getName())) {
+                    return getPrimaryNodeType(node.getNode(node.getName()));
+                } else {
+                    return null;
+                }
+            }
+            jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
+            Class<? extends HippoBean> proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
+          
+            if (proxyInterfacesOrDelegateeClass == null) {
+                // no exact match, try a fallback type
+                for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
+                    
+                    if(!node.isNodeType(fallBackJcrPrimaryNodeType)) {
+                        continue;
+                    }
+                    // take the first fallback type
+                    proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
+                    if(proxyInterfacesOrDelegateeClass != null) {
+                    	log.debug("No primary node type found for {}, using fallback type {} instead", jcrPrimaryNodeType, fallBackJcrPrimaryNodeType);
+                    	jcrPrimaryNodeType = fallBackJcrPrimaryNodeType;
+                        break;
+                    }
+                }
+            }
+            
+            if (proxyInterfacesOrDelegateeClass != null) {
+            	return jcrPrimaryNodeType;
+            }
+            path = node.getPath();
+        } catch (RepositoryException e) {
+            throw new ObjectBeanManagerException("Impossible to get the node from the repository", e);
+        } catch (Exception e) {
+            throw new ObjectBeanManagerException("Impossible to determine node type for node", e);
+        }
+        log.warn("No Descriptor found for node '{}'. Cannot return a matching node type for '{}'.", path , jcrPrimaryNodeType);
+        return null;
+    }
    
     
     private void checkUUID(String uuid) throws ObjectBeanManagerException{

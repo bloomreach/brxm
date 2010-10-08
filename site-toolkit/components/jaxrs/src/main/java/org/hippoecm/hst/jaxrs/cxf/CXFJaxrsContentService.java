@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.jaxrs.cxf;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.LoginException;
@@ -27,9 +29,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Id$
@@ -37,6 +45,11 @@ import org.hippoecm.hst.jaxrs.JAXRSService;
  */
 public class CXFJaxrsContentService extends CXFJaxrsService {
 
+    private static Logger log = LoggerFactory.getLogger(CXFJaxrsContentService.class);
+    
+    private List<Class<? extends HippoBean>> annotatedClasses;
+	private ObjectConverter objectConverter;
+	
 	public CXFJaxrsContentService(String serviceName) {
 		super(serviceName);
 	}
@@ -45,6 +58,29 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 		super(serviceName, jaxrsConfigParameters);
 	}
 
+    public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
+        this.annotatedClasses = annotatedClasses;
+    }
+    
+    public void setObjectConverter(ObjectConverter objectConverter) {
+    	this.objectConverter = objectConverter;
+    }
+    
+    protected List<Class<? extends HippoBean>> getAnnotatedClasses() {
+        if (annotatedClasses == null) {
+            return Collections.emptyList();
+        }
+        return annotatedClasses;
+    }
+    
+    protected ObjectConverter getObjectConverter() {
+        if (objectConverter == null) {
+            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
+            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+        }
+        return objectConverter;
+    }
+    
 	@Override
 	/*
 	 * temporarily splitting off and saving suffix from pathInfo until this is generally handled with HSTTWO-1189
@@ -66,13 +102,18 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
         	if (node == null) {
                 throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
         	}
-        	resourceType = node.getPrimaryNodeType().getName();
+        	resourceType = getObjectConverter().getPrimaryNodeType(node);
+        	if (resourceType == null) {
+        		throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
+        	}
         }
         catch (PathNotFoundException pnf) {
             throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
         } catch (LoginException e) {
             throw new ContainerException(e);
 		} catch (RepositoryException e) {
+            throw new ContainerException(e);
+		} catch (ObjectBeanManagerException e) {
             throw new ContainerException(e);
 		}
 		requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
@@ -83,7 +124,9 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
     	if (requestContext.getPathSuffix() != null) {
     		jaxrsEndpointURL.append(requestContext.getPathSuffix());
     	}
-		
+    	if (log.isDebugEnabled()) {
+    		log.debug("\n\tInvoking JAX-RS endpoint {}: {} for contentPath {}", new Object[]{request.getMethod(), jaxrsEndpointURL.toString(), requestContentPath});
+    	}
     	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointURL.toString());
 	}
 	

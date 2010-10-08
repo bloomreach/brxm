@@ -32,6 +32,15 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
  */
 public interface ObjectConverter
 {
+	/**
+	 * Returns the Primary Node Type for a Node to be used for Object conversion, 
+	 * possibly using a fallback Node Type if no exact match can be determined.
+	 * 
+	 * @param node to determine the Primary Node Type for
+	 * @return Primary Node Type to be used for Object conversion
+	 * @throws ObjectBeanManagerException
+	 */
+    String getPrimaryNodeType(Node node) throws ObjectBeanManagerException;
     
     Object getObject(Session session, String path) throws ObjectBeanManagerException;
     
