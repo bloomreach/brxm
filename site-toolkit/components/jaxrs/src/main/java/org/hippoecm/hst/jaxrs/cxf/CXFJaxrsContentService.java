@@ -102,7 +102,7 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
         	if (node == null) {
                 throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
         	}
-        	resourceType = getObjectConverter().getPrimaryNodeType(node);
+        	resourceType = getObjectConverter().getPrimaryObjectType(node);
         	if (resourceType == null) {
         		throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
         	}

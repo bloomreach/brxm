@@ -172,21 +172,21 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
 
-    public String getPrimaryNodeType(Node node) throws ObjectBeanManagerException {
+    public String getPrimaryObjectType(Node node) throws ObjectBeanManagerException {
         String jcrPrimaryNodeType;
         String path;
         try { 
             if(node.isNodeType(HippoNodeType.NT_HANDLE) ) {
                 if(node.hasNode(node.getName())) {
-                    return getPrimaryNodeType(node.getNode(node.getName()));
+                    return getPrimaryObjectType(node.getNode(node.getName()));
                 } else {
                     return null;
                 }
             }
             jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
-            Class<? extends HippoBean> proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
+            boolean isObjectType = jcrPrimaryNodeTypeBeanPairs.containsKey(jcrPrimaryNodeType);
           
-            if (proxyInterfacesOrDelegateeClass == null) {
+            if (!isObjectType) {
                 // no exact match, try a fallback type
                 for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
                     
@@ -194,8 +194,8 @@ public class ObjectConverterImpl implements ObjectConverter {
                         continue;
                     }
                     // take the first fallback type
-                    proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
-                    if(proxyInterfacesOrDelegateeClass != null) {
+                    isObjectType = jcrPrimaryNodeTypeBeanPairs.containsKey(fallBackJcrPrimaryNodeType);
+                    if(isObjectType) {
                     	log.debug("No primary node type found for {}, using fallback type {} instead", jcrPrimaryNodeType, fallBackJcrPrimaryNodeType);
                     	jcrPrimaryNodeType = fallBackJcrPrimaryNodeType;
                         break;
@@ -203,7 +203,7 @@ public class ObjectConverterImpl implements ObjectConverter {
                 }
             }
             
-            if (proxyInterfacesOrDelegateeClass != null) {
+            if (isObjectType) {
             	return jcrPrimaryNodeType;
             }
             path = node.getPath();
