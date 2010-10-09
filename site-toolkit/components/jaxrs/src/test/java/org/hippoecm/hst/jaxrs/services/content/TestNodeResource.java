@@ -16,6 +16,7 @@
 package org.hippoecm.hst.jaxrs.services.content;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 
@@ -144,11 +145,15 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         
         invokeJaxrsPipeline(request, response);
         
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
     
     @Test
-    public void testRepositoryNodeResourceChildren() throws Exception {
+    public void testRepositoryNodeResourceFolders() throws Exception {
         /*
          * Retrieves document xml by path
          */
@@ -159,19 +164,60 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         request.setServerPort(8085);
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/News/2009/April./children");
+        request.setRequestURI("/testapp/preview/services/News/2009/April./folders");
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
-        request.setPathInfo("/News/2009/April./children");
+        request.setPathInfo("/News/2009/April./folders");
         request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         invokeJaxrsPipeline(request, response);
         
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
-        assertEquals(3, document.getDocumentElement().getChildNodes().getLength());
+        int folderNodeCount = Integer.parseInt(XPathFactory.newInstance().newXPath().compile("count(//folder)").evaluate(document));
+        assertTrue(folderNodeCount > 0);
+        int documentNodeCount = Integer.parseInt(XPathFactory.newInstance().newXPath().compile("count(//document)").evaluate(document));
+        assertEquals(0, documentNodeCount);
+    }
+    
+    @Test
+    public void testRepositoryNodeResourceDocuments() throws Exception {
+        /*
+         * Retrieves document xml by path
+         */
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/News/2009/April./documents");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/News/2009/April./documents");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        int folderNodeCount = Integer.parseInt(XPathFactory.newInstance().newXPath().compile("count(//folder)").evaluate(document));
+        assertEquals(0, folderNodeCount);
+        int documentNodeCount = Integer.parseInt(XPathFactory.newInstance().newXPath().compile("count(//document)").evaluate(document));
+        assertTrue(documentNodeCount > 0);
     }
     
     @Test
@@ -195,6 +241,10 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
         
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         
@@ -222,6 +272,10 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         response = new MockHttpServletResponse();
         
         invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
         
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         

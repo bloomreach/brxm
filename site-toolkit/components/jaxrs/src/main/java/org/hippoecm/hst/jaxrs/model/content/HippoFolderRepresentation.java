@@ -15,10 +15,23 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
+import java.util.Set;
+
+import javax.jcr.RepositoryException;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+
 /**
  * @version $Id$
  *
  */
+@XmlRootElement(name = "folder")
 public class HippoFolderRepresentation extends NodeRepresentation {
-
+    
+    public HippoFolderRepresentation represent(HippoFolderBean hippoBean, Set<String> propertyFilter) throws RepositoryException {
+        super.represent(hippoBean, propertyFilter);
+        return this;
+    }
+    
 }

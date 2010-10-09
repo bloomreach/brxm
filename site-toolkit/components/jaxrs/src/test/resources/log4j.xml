@@ -38,7 +38,7 @@
   </category>
   
   <category additivity="false" name="org.hippoecm.hst.jaxrs">
-    <level value="debug"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   
