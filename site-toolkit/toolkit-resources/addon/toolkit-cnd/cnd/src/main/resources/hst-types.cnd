@@ -156,6 +156,8 @@
 // for embedded delegation of sites a sitemountpath needs to point to the delegated sitemount. This is only relevant for portal environment
 - hst:embeddedsitemountpath
 - hst:scheme (string)
+// whether the port should be visible in the created urls
+- hst:showport (boolean)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)

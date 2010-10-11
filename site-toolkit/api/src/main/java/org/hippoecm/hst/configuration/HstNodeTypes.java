@@ -81,7 +81,6 @@ public interface HstNodeTypes {
     public final static String SITEMENUITEM_PROPERTY_REPOBASED =  "hst:repobased";
     public final static String SITEMENUITEM_PROPERTY_DEPTH =  "hst:depth";
 
-    public final static String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
     public final static String VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS = "hst:prefixexclusions";
     public final static String VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS = "hst:suffixexclusions";
     public final static String VIRTUALHOSTS_PROPERTY_PORT = "hst:port";
@@ -97,7 +96,6 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
     public final static String SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH = "hst:onlyforcontextpath";
     public final static String SITEMOUNT_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
-    public final static String SITEMOUNT_PROPERTY_PORT = "hst:port";
     public final static String SITEMOUNT_PROPERTY_SHOWPORT = "hst:showport";
     public final static String SITEMOUNT_PROPERTY_SCHEME = "hst:scheme";
     public final static String SITEMOUNT_PROPERTY_MOUNTPATH = "hst:mountpoint";
@@ -110,7 +108,7 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMOUNT_PROPERTY_USERS =  "hst:users";
     public final static String SITEMOUNT_PROPERTY_SESSIONSTATEFUL =  "hst:sessionstateful";
-    
+
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     
     public final static String SITE_CONFIGURATIONPATH = "hst:configurationpath";

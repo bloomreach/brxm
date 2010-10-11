@@ -168,7 +168,7 @@ public class VirtualHostService implements VirtualHost {
             // a portmount service with portnumber 0, which means any port
             HstNode siteMountNode = virtualHostNode.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(siteMountNode.getNodeTypeName())) {
-                SiteMount siteMount = new SiteMountService(siteMountNode, null, attachPortMountToHost, hstManager);
+                SiteMount siteMount = new SiteMountService(siteMountNode, null, attachPortMountToHost, hstManager, 0);
                  
                 PortMount portMount = new PortMountService(siteMount, this);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);

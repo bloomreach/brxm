@@ -69,8 +69,6 @@ public class VirtualHostsService implements VirtualHosts {
     private boolean versionInPreviewHeader = true;
     
     private boolean virtualHostsConfigured;
-    private boolean portVisible;
-    private int portNumber;
     private String scheme;
     private boolean contextPathInUrl;
     private String[] prefixExclusions;
@@ -79,8 +77,6 @@ public class VirtualHostsService implements VirtualHosts {
     public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
         this.hstManager = hstManager;
         this.virtualHostsConfigured = true;
-        this.portNumber = virtualHostsConfigurationNode.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PORT).intValue();
-        this.portVisible = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
         this.contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         this.prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
@@ -171,7 +167,7 @@ public class VirtualHostsService implements VirtualHosts {
                 aliasTypeMap.put(getAliasTypeKey(siteMount.getAlias(), type), siteMount);
             } catch (IllegalArgumentException e) {
                 throw new ServiceException("Incorrect hst:hosts configuration. Not allowed to have multiple sitemount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
-                		". Failed for sitemount '"+siteMount.getName()+"'. Make sure that you either a unique 'alias' in combination with the 'types' on the sitemount within a single hostgroup.");
+                		". Failed for sitemount '"+siteMount.getName()+"'. Make sure that you add a unique 'alias' in combination with the 'types' on the sitemount within a single hostgroup.");
             }
         }
 
@@ -287,15 +283,6 @@ public class VirtualHostsService implements VirtualHosts {
             return traverseInToHost(vhost, hostNameSegments, depth);
         }
         return null;
-    }
-
-    public boolean isPortVisible() {
-        return portVisible;
-    }
-
-
-    public int getPortNumber() {
-        return portNumber;
     }
 
     public boolean isContextPathInUrl() {

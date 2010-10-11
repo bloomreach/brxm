@@ -63,7 +63,7 @@ public class SiteMountService implements SiteMount {
     private String type = DEFAULT_TYPE;
     
     /**
-     * The list of all types this SiteMount also belongs to
+     * The list of types excluding the primary <code>type</code> this SiteMount also belongs to
      */
     private List<String> types;
     
@@ -117,8 +117,21 @@ public class SiteMountService implements SiteMount {
      * taken (which still might be <code>null</code> though)
      */
     private String pageNotFound;
-    
+
+    /**
+     * whether the context path should be in the url.
+     */
     private boolean contextPathInUrl;
+    
+    /**
+     * whether the port number should be in the url. Default true
+     */
+    private boolean showPort = true;
+    
+    /**
+     * default port is 0, which means, the site mount is port agnostic
+     */
+    private int port;
     
     /**
      *  when this sitemount is only applicable for certain contextpath, this property for the contextpath tells which value it must have. It must start with a slash.
@@ -140,10 +153,10 @@ public class SiteMountService implements SiteMount {
     
     private boolean sessionStateful;
      
-    public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
+    public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
         this.virtualHost = virtualHost;
         this.parent = parent;
-        
+        this.port = port;
         this.name = siteMount.getValueProvider().getName();
 
         // default for when there is no alias property
@@ -168,6 +181,15 @@ public class SiteMountService implements SiteMount {
                 this.contextPathInUrl = parent.isContextPathInUrl();
             } else {
                 this.contextPathInUrl = virtualHost.isContextPathInUrl();
+            }
+        }
+     
+        // is the port number visible in the url
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWPORT)) {
+            this.showPort = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SHOWPORT);
+        } else {
+            if(parent != null) {
+                this.showPort = parent.isPortInUrl();
             }
         }
         
@@ -340,7 +362,7 @@ public class SiteMountService implements SiteMount {
         
         for(HstNode childMount : siteMount.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(childMount.getNodeTypeName())) {
-                SiteMountService childMountService = new SiteMountService(childMount, this, virtualHost, hstManager);
+                SiteMountService childMountService = new SiteMountService(childMount, this, virtualHost, hstManager, port);
                 SiteMountService prevValue = this.childSiteMountServices.put(childMountService.getName(), childMountService);
                 if(prevValue != null) {
                     log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", siteMount.getValueProvider().getPath());
@@ -414,7 +436,14 @@ public class SiteMountService implements SiteMount {
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
     }
-    
+
+    public int getPort() {
+        return port;
+    }
+
+    public boolean isPortInUrl() {
+        return showPort;
+    }
     public String onlyForContextPath() {
         return onlyForContextPath;
     }
@@ -429,12 +458,23 @@ public class SiteMountService implements SiteMount {
     
     public List<String> getTypes(){
         List<String> combined = new ArrayList<String>();
+        // add the primary type  first
+        combined.add(getType());
+        
         if(types != null) {
-             combined.addAll(types);
-        }
-        // add the primary type if it was not already in types:
-        if(!combined.contains(getType())) {
-            combined.add(getType());
+            if(types.contains(getType())) {
+                for(String extraType : types) {
+                    if(extraType != null) {
+                       if(extraType.equals(getType())) {
+                           // already got it
+                           continue;
+                       } 
+                       combined.add(extraType);
+                    }
+                }
+            } else {
+                combined.addAll(types);
+            }
         }
         return Collections.unmodifiableList(combined);
     }
@@ -475,6 +515,8 @@ public class SiteMountService implements SiteMount {
     public boolean isSessionStateful() {
         return sessionStateful;
     }
+
+
 
     
 }

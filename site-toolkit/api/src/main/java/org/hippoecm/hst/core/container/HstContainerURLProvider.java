@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -92,6 +93,16 @@ public interface HstContainerURLProvider {
     HstContainerURL createURL(HstContainerURL baseContainerURL, String pathInfo);
     
     /**
+     * Creates an {@link HstContainerURL} instance for a new pathInfo (without query parameters)
+     * based on the {@link SiteMount} and the base {@link HstContainerURL} instance. 
+     * @param siteMount
+     * @param baseURL
+     * @param path
+     * @return
+     */
+    HstContainerURL createURL(SiteMount siteMount, HstContainerURL baseURL, String path);
+     
+    /**
      * Creates an {@link HstContainerURL} instance by merging the information of hstUrl 
      * based on the base {@link HstContainerURL} instance
      * 
@@ -146,5 +157,5 @@ public interface HstContainerURLProvider {
      * @throws ContainerException
      */
     String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException;
-    
+
 }

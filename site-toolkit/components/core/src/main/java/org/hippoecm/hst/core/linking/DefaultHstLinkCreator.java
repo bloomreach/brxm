@@ -143,7 +143,44 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         HstLinkResolver linkResolver = new HstLinkResolver(node, siteMount);
         return linkResolver.resolve();
     }
+    
+    public HstLink create(Node node, HstRequestContext requestContext,  String siteMountAlias) {
+        SiteMount currentSiteMount = requestContext.getResolvedSiteMount().getSiteMount();
+        SiteMount targetSiteMount = null; 
+        for(String type: currentSiteMount.getTypes()) {
+            targetSiteMount = requestContext.getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(currentSiteMount.getVirtualHost().getHostGroupName(), siteMountAlias, type);
+            if(targetSiteMount != null) {
+                break;
+            }
+        }
+        if(targetSiteMount == null) {
+            StringBuffer types = new StringBuffer();
+            for(String type: currentSiteMount.getTypes()) {
+                if(types.length() > 0) {
+                    types.append(",");
+                }
+                types.append(type);
+            }
+            String[] messages = {siteMountAlias , currentSiteMount.getVirtualHost().getHostGroupName(), types.toString()};
+            log.warn("Cannot create a link for siteMountAlias '{}' as it cannot be found in the host group '{}' and one of the the types '{}'", messages);
+            return null;
+        }
+        
+        log.debug("Target SiteMount found for siteMountAlias '{}'. Create link for target site mount", siteMountAlias);
+        return create(node, targetSiteMount);
+    }
 
+
+    public HstLink create(Node node, HstRequestContext requestContext,  String siteMountAlias, String type) {
+        SiteMount targetSiteMount = requestContext.getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(requestContext.getVirtualHost().getHostGroupName(), siteMountAlias, type);
+        if(targetSiteMount == null) {
+            String[] messages = {siteMountAlias , requestContext.getVirtualHost().getHostGroupName(), type};
+            log.warn("Cannot create a link for siteMountAlias '{}' as it cannot be found in the host group '{}' for type '{}'", messages);
+            return null;
+        }
+        log.debug("Target SiteMount found for siteMountAlias '{}'. Create link for target site mount", siteMountAlias);
+        return create(node, targetSiteMount);
+    }
     public HstLink create(String path, SiteMount siteMount) {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount));
     }

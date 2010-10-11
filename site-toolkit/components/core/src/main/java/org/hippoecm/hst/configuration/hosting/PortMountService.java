@@ -36,7 +36,7 @@ public class PortMountService implements PortMount {
         HstNode siteMount = portMount.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
         if(siteMount != null && HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(siteMount.getNodeTypeName())) {
             try {
-                rootSiteMount = new SiteMountService(siteMount, null, virtualHost, hstManager);
+                rootSiteMount = new SiteMountService(siteMount, null, virtualHost, hstManager, portNumber);
             } catch (ServiceException e) {
                 log.warn("The host '{}' for port '"+portNumber+"' contains an incorrect configured SiteMount. The host with port cannot be used for hst request processing: {}", virtualHost.getHostName(), e.getMessage());
             } 

@@ -117,23 +117,33 @@ public class HstLinkImpl implements HstLink{
             hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
         } else {
-            // TODO below, we need for cross-domain linking the SiteMount as well
-            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(requestContext.getBaseURL(), path);
+            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(siteMount, requestContext.getBaseURL() , path);
             urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext).toString();
         }
         
-        if(external || requestContext.getResolvedSiteMount().getSiteMount().getVirtualHost() != siteMount.getVirtualHost()) {
-           // TODO siteMount.getVirtualHost().getHostName() does not work when the hostname contains wildcards like *.onehippo.com. Do we need to support this?
+        SiteMount requestSiteMount = requestContext.getResolvedSiteMount().getSiteMount();
+        /*
+         * we create a url including http when one of the lines below is true
+         * 1) external = true
+         * 2) The virtualhost from current request sitemount is different than the sitemount for this link
+         * 3) The portnumber is in the url, and the current request sitemount has a different portnumber than the sitemount for this link
+         */
+        if (external || requestSiteMount.getVirtualHost() != siteMount.getVirtualHost()
+                     || (siteMount.isPortInUrl() && requestSiteMount.getPort() != siteMount.getPort())) {
            String host = siteMount.getVirtualHost().getScheme() + "://" + siteMount.getVirtualHost().getHostName();
-           
-           // TODO INLCUDE PORTNUMBER FOR SITEMOUNT ... We take for now the port number of the base url which is most likely 
-           // always the correct one
-           int port = requestContext.getBaseURL().getPortNumber();
-           if(port == 80 || port == 443) {
-               // do not include default ports
-           } else {
-               host += ":"+port;
+           if(siteMount.isPortInUrl()) {
+               int port = siteMount.getPort();
+               if(port == 0) {
+                   // the siteMount is port agnostic. Take port from current container url
+                  port = requestContext.getBaseURL().getPortNumber();
+               }
+               if(port == 80 || port == 443) {
+                   // do not include default ports
+               } else {
+                   host += ":"+port;
+               }
            }
+           
            
            urlString =  host + urlString;
         }

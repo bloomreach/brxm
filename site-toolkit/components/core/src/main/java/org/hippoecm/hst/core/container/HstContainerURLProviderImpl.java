@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -173,6 +174,32 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setRequestPath(baseContainerURL.getResolvedMountPath()+pathInfo);
         url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
         url.setResolvedMountPath(baseContainerURL.getResolvedMountPath());
+        url.setPathInfo(pathInfo);
+        
+        return url;
+    }
+    
+    public HstContainerURL createURL(SiteMount siteMount ,HstContainerURL baseContainerURL, String pathInfo) {
+        HstContainerURLImpl url = new HstContainerURLImpl();
+        
+        url.setContextPath(baseContainerURL.getContextPath());
+        url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
+        
+        // if the SiteMount is port agnostic, in other words, has port = 0, we take the port from the baseContainerURL
+        if(siteMount.getPort() == 0) {
+            url.setPortNumber(baseContainerURL.getPortNumber());
+        } else {
+            url.setPortNumber(siteMount.getPort());
+        }
+        
+        pathInfo = PathUtils.normalizePath(pathInfo);
+        if (pathInfo != null) {
+            pathInfo = "/" + pathInfo;
+        }
+
+        url.setHostName(siteMount.getVirtualHost().getHostName());
+        url.setRequestPath(siteMount.getMountPath() + pathInfo);
+        url.setResolvedMountPath(siteMount.getMountPath());
         url.setPathInfo(pathInfo);
         
         return url;
@@ -433,8 +460,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return toURLString(containerURL, requestContext, null);
     }
     
-    
-    // TODO for cross domain linking, we might need the SiteMount here as well
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
     	if (requestContext.isPortletContext()) {
     		if (requestContext.isEmbeddedRequest()) {
@@ -448,8 +473,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         StringBuilder urlBuilder = new StringBuilder(100);
         if(contextPath != null) {
             urlBuilder.append(contextPath);
-        } 
-        else if (requestContext.getVirtualHost().isContextPathInUrl()) {
+        } else if (requestContext.getVirtualHost().isContextPathInUrl()) {
             urlBuilder.append(containerURL.getContextPath());
         }
         

@@ -98,8 +98,8 @@ public interface VirtualHosts {
      * Returns the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. . Returns <code>null</code> when no match
      * 
      * @param hostGroupName
-     * @param alias
-     * @param type
+     * @param alias the alias the site mount must have
+     * @param type  the type (for example preview, live, composer) the siteMount must have. 
      * @return the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. Returns <code>null</code> when no match
      */
     SiteMount getSiteMountByGroupAliasAndType(String hostGroupName, String alias, String type);

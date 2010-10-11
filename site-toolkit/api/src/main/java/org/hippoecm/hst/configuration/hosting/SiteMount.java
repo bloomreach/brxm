@@ -201,6 +201,17 @@ public interface SiteMount {
      * @return <code>true</code> when the created url should have the contextpath in it
      */
     boolean isContextPathInUrl();
+
+    /**
+     * @return <code>true</code> when the created url should have contain the port number
+     */
+    boolean isPortInUrl();
+    
+
+    /**
+     * @return the portnumber for this siteMount
+     */
+    int getPort();
     
     /**
      * In case the {@link HttpServletRequest#getContextPath()} does not matter, this method must return <code>null</code> or empty. <b>If</b> only this SiteMount 
@@ -247,7 +258,7 @@ public interface SiteMount {
     String getType();
     
     /**
-     * @return the list of all types this SiteMount belongs to, including the primary type {@link #getType()}
+     * @return the list of all types this SiteMount belongs to, including the primary type {@link #getType()}. The primary type is the first item in the List
      */
     List<String> getTypes();
     
