@@ -338,24 +338,6 @@ public class EditorFactoryTest extends PluginTest {
     }
 
     @Test
-    public void closeFilterIsInvoked() throws Exception {
-        createDocument("document");
-
-        EditorFactory factory = new EditorFactory(context, config);
-        IEditor<Node> editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel("/test/content/document"),
-                Mode.VIEW);
-
-        // open editor
-        assertEquals(1, getCloseFilters().size());
-        List<CloseFilter> filters = getCloseFilters();
-
-        // close editor
-        editor.close();
-        assertTrue(filters.get(0).closed);
-    }
-
-
-    @Test
     public void testTemplateType() throws Exception {
         Node test = root.getNode("test/content").addNode("template", HippoNodeType.NT_TEMPLATETYPE);
         test.addNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE, HippoNodeType.NT_HANDLE);
