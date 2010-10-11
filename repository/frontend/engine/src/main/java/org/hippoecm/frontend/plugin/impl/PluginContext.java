@@ -408,7 +408,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (stopping && Application.exists()) {
             if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
-                throw new WicketRuntimeException("Stopped plugin is still being referenced");
+                throw new WicketRuntimeException("Stopped plugin is still being referenced" + plugin.getClass().getName());
             }
         }
         output.defaultWriteObject();

@@ -18,16 +18,28 @@ package org.hippoecm.frontend.plugins.standards.tabs;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.jcr.Node;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -48,16 +60,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Plugin that manages a number of {@link IRenderService}s using a tabbing interface.
- * <p>
+ * <p/>
  * Configuration:
  * <ul>
- *   <li><b>title.maxlength</b><br>
- *     The maximum length (in characters) of the title.  When exceeded, the title
- *     will be shown truncated with ellipses.  The title attribute will contain the
- *     full title.
- *   <li><b>icon.size</b><br>
- *     The size of the icon in the tab.  Can be one of the {@link IconSize}
- *     sizes.  By default, 'tiny' will be used.
+ * <li><b>title.maxlength</b><br>
+ * The maximum length (in characters) of the title.  When exceeded, the title
+ * will be shown truncated with ellipses.  The title attribute will contain the
+ * full title.
+ * <li><b>icon.size</b><br>
+ * The size of the icon in the tab.  Can be one of the {@link IconSize}
+ * sizes.  By default, 'tiny' will be used.
  * </ul>
  */
 public class TabsPlugin extends RenderPlugin {
@@ -74,8 +86,7 @@ public class TabsPlugin extends RenderPlugin {
 
     private final TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
-    private List<Tab> tabs;
-    private ServiceTracker<IRenderService> tabsTracker;
+    private final List<Tab> tabs;
     private int selectCount;
     private boolean openleft = false;
 
@@ -115,7 +126,7 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         selectCount = 0;
-        tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
+        ServiceTracker<IRenderService> tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -175,10 +186,8 @@ public class TabsPlugin extends RenderPlugin {
 
     @Override
     public void onDetach() {
-        Iterator<Tab> tabIter = tabs.iterator();
-        while (tabIter.hasNext()) {
-            Tab tabbie = tabIter.next();
-            tabbie.detach();
+        for (Tab tab : tabs) {
+            tab.detach();
         }
         super.onDetach();
     }
@@ -208,34 +217,137 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     /**
+     * Get the list of tabs (editors) that are modified.
+     *
+     * @return List<Tab> of changed tabs, empty if there are none.
+     */
+    List<JcrNodeModel> getChangedTabs() {
+        List<JcrNodeModel> changedTabs = new ArrayList<JcrNodeModel>();
+        for (Tab tab : tabs) {
+            IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
+            if (reference == null) {
+                continue;
+            }
+            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+
+            try {
+                if (editor != null && editor.isModified()) {
+                    changedTabs.add(new JcrNodeModel((Node) editor.getModel().getObject()));
+                }
+            } catch (EditorException e) {
+                log.warn("Failed to find out if the editor is modified: " + e.getMessage());
+            }
+        }
+        return changedTabs;
+    }
+
+    /**
      * Template method for subclasses.  Called when a tab is selected, either
      * explicitly (user clicks tab) or implicitly (tabbie requests focus).
+     *
+     * @param index Index of the tab
      */
     protected void onSelectTab(int index) {
     }
 
-    void onClose(Tab tabbie, AjaxRequestTarget target) {
-        IServiceReference<IRenderService> reference = getPluginContext().getReference(tabbie.renderer);
-        if (reference == null) {
-            log.error("Could not find render service for a tab");
-            return;
-        }
-        IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-        if (editor != null) {
-            try {
-                editor.close();
-            } catch (EditorException ex) {
-                log.info("Failed to close editor: " + ex.getMessage());
+    void closeAll(final AjaxRequestTarget target) {
+        List<JcrNodeModel> changedTabs = getChangedTabs();
+
+        if (changedTabs.size() > 0) {
+            IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(), IDialogService.class);
+            dialogService.show(new CloseAllDialog());
+
+        } else {
+
+            List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+            for (TabsPlugin.Tab currentTab : tabsCopy) {
+                onClose(currentTab, target);
             }
         }
     }
 
+    /**
+     * Closes the editor regardless of the mode the editor is currently in.
+     *
+     * @param tabbie tab to close
+     * @param target AjaxRequestTarget (unused)
+     */
+    void onClose(Tab tabbie, AjaxRequestTarget target) {
+        onClose(tabbie, target, false);
+    }
+
+    /**
+     * Closes the tab only if the editor is in non-edit mode.
+     *
+     * @param tab        the tab to close
+     * @param target     AjaxRequestTarget (unused)
+     * @param unmodified if true, only the editors which are NOT in EDIT mode (i.e. which are unmodified) are closed.
+     */
+    void onClose(Tab tab, AjaxRequestTarget target, boolean unmodified) {
+        IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
+        if (reference == null) {
+            log.error("Could not find render service for a tab");
+            return;
+        }
+        final IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+        try {
+            if (editor.isModified()) {
+                OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
+                    public void revert() {
+                        try {
+                            editor.discard();
+                        } catch (EditorException e) {
+                            log.warn("Unable to discard the document in the editor", e);
+                            throw new RuntimeException("Unable to discard the document in the editor", e);
+                        }
+                    }
+
+                    public void save() {
+                        try {
+                            editor.done();
+                        } catch (EditorException e) {
+                            log.warn("Unable to save the document in the editor", e);
+                            throw new RuntimeException("Unable to save the document in the editor", e);
+                        }
+                    }
+
+                    public void close() {
+
+                        try {
+                            editor.close();
+                        } catch (EditorException ex) {
+                            log.error(ex.getMessage());
+                        }
+                    }
+                }, editor.isValid(), (JcrNodeModel) editor.getModel());
+
+                IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
+                        IDialogService.class);
+                dialogService.show(onCloseDialog);
+
+            } else {
+                if (unmodified) {
+                    if (!editor.getMode().equals(IEditor.Mode.EDIT)) {
+                        editor.close();
+                    }
+                } else {
+                    if (editor.getMode().equals(IEditor.Mode.EDIT)) {
+                        editor.done();
+                    }
+                    editor.close();
+                }
+            }
+        } catch (EditorException e) {
+            log.warn("Unable to save the document in the editor", e);
+            throw new RuntimeException("Unable to save the document in the editor", e);
+        }
+
+    }
+
     private Tab findTabbie(IRenderService service) {
-        Iterator<Tab> iter = tabs.iterator();
-        while (iter.hasNext()) {
-            Tab tabbie = iter.next();
-            if (tabbie.renderer == service) {
-                return tabbie;
+        for (Tab tab : tabs) {
+            if (tab.renderer == service) {
+                return tab;
             }
         }
         return null;
@@ -311,12 +423,10 @@ public class TabsPlugin extends RenderPlugin {
                 // look for previously selected tab
                 int lastCount = 0;
                 Tab lastTab = tabs.get(0);
-                Iterator<Tab> tabIterator = getTabbedPanel().getTabs().iterator();
-                while (tabIterator.hasNext()) {
-                    Tab tabbie = tabIterator.next();
-                    if (tabbie.lastSelected > lastCount) {
-                        lastCount = tabbie.lastSelected;
-                        lastTab = tabbie;
+                for (Tab tab : getTabbedPanel().getTabs()) {
+                    if (tab.lastSelected > lastCount) {
+                        lastCount = tab.lastSelected;
+                        lastTab = tab;
                     }
                 }
                 getTabbedPanel().setSelectedTab(tabs.indexOf(lastTab));
@@ -328,6 +438,13 @@ public class TabsPlugin extends RenderPlugin {
 
         public IObservable getObservable() {
             return (IObservable) titleModel;
+        }
+
+
+        public IModel<Node> getModel() {
+            IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
+            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+            return editor.getModel();
         }
 
         public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
@@ -365,10 +482,7 @@ public class TabsPlugin extends RenderPlugin {
         boolean canClose() {
             IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
             IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-            if (editor != null) {
-                return true;
-            }
-            return false;
+            return (editor != null);
         }
 
         void select() {
@@ -391,4 +505,178 @@ public class TabsPlugin extends RenderPlugin {
         }
     }
 
+    private class CloseAllDialog extends AbstractDialog {
+
+        public CloseAllDialog() {
+            super();
+            setOkVisible(false);
+
+            AjaxButton button = new AjaxButton(getButtonId()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+                    for (TabsPlugin.Tab currentTab : tabsCopy) {
+                        IServiceReference<IRenderService> reference = getPluginContext().getReference(currentTab.renderer);
+                        if (reference == null) {
+                            log.error("Could not find render service for a tab");
+                            return;
+                        }
+                        IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+                        try {
+
+                            if (editor.isModified()) {
+                                editor.done(); //save the document and switch to VIEW mode
+                            }
+                            editor.close();
+                        } catch (EditorException e) {
+                            log.error("Unable to save the document {}", e.getMessage());
+                        }
+
+
+                    }
+                    closeDialog();
+                }
+            };
+
+            button.setModel(new ResourceModel("save-all"));
+
+            addButton(button);
+
+            button = new AjaxButton(getButtonId()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+                    for (TabsPlugin.Tab currentTab : tabsCopy) {
+                        IServiceReference<IRenderService> reference = getPluginContext().getReference(currentTab.renderer);
+                        if (reference == null) {
+                            log.error("Could not find render service for a tab");
+                            return;
+                        }
+                        IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+                        try {
+
+                            if (editor.isModified()) {
+                                editor.discard(); ///discard the document and switch to VIEW mode
+                            }
+                            editor.close();
+                        } catch (EditorException e) {
+                            log.error("Unable to discard/close the document {}", e.getMessage());
+                        }
+                    }
+                    closeDialog();
+                }
+            };
+
+            button.setModel(new ResourceModel("discard-all"));
+
+            addButton(button);
+
+            ModifiedDocumentsProvider provider = new ModifiedDocumentsProvider(getChangedTabs());
+            add(new ModifiedDocumentsView("modified-docs-view", provider));
+        }
+
+        public IModel getTitle() {
+            return new StringResourceModel("title", this, null);
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return MEDIUM;
+        }
+    }
+
+    private static class OnCloseDialog extends AbstractDialog {
+        @SuppressWarnings("unused")
+        private final static String SVN_ID = "$Id$";
+
+        private static final long serialVersionUID = 1L;
+
+        static final Logger log = LoggerFactory.getLogger(OnCloseDialog.class);
+
+        public interface Actions extends IClusterable {
+
+            void save();
+
+            void revert();
+
+            void close();
+        }
+
+        public OnCloseDialog(final Actions actions, final boolean isValid, JcrNodeModel model) {
+            super(model);
+
+            setOkVisible(false);
+
+            if (isValid) {
+                add(new Label("label", new ResourceModel("message")));
+            } else {
+                add(new Label("label", new ResourceModel("invalid")));
+            }
+
+            final Label exceptionLabel = new Label("exception", "");
+            exceptionLabel.setOutputMarkupId(true);
+            add(exceptionLabel);
+
+            AjaxButton button = new AjaxButton(getButtonId()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    try {
+                        actions.revert();
+                        actions.close();
+                        closeDialog();
+                    } catch (Exception ex) {
+                        exceptionLabel.setDefaultModel(new Model<String>(ex.getMessage()));
+                        target.addComponent(exceptionLabel);
+                    }
+                }
+            };
+
+            if (isValid) {
+                button.setModel(new ResourceModel("discard", "Discard"));
+            } else {
+                button.setModel(new ResourceModel("discard-invalid"));
+            }
+            addButton(button);
+
+            button = new AjaxButton(getButtonId()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public boolean isVisible() {
+                    return isValid;
+                }
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    try {
+                        actions.save();
+                        actions.close();
+                        closeDialog();
+                    } catch (Exception ex) {
+                        exceptionLabel.setDefaultModel(new Model<String>(ex.getMessage()));
+                        target.addComponent(exceptionLabel);
+                    }
+                }
+            };
+            button.setModel(new ResourceModel("save", "Save"));
+            addButton(button);
+        }
+
+        public IModel getTitle() {
+            return new StringResourceModel("close-document", this, null, new Object[]{new PropertyModel(getModel(),
+                    "name")}, "Close {0}");
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return SMALL;
+        }
+
+    }
 }

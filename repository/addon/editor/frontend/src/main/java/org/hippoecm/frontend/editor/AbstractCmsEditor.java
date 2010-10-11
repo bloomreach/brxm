@@ -38,14 +38,18 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceContext;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
+abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static int editorCount = 0;
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractCmsEditor.class);
 
     private class EditorWrapper extends RenderService {
         private static final long serialVersionUID = 1L;
@@ -138,7 +142,7 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
     private Mode mode;
 
     AbstractCmsEditor(IEditorContext editorContext, IPluginContext context, IPluginConfig config, IModel<T> model,
-            Mode mode) throws EditorException {
+                      Mode mode) throws EditorException {
         this.editorContext = editorContext;
         this.model = model;
         this.context = context;
@@ -177,6 +181,52 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         return model;
     }
 
+    public boolean isModified() throws EditorException {
+        return false;
+    }
+
+    public boolean isValid() throws EditorException {
+        return true;
+    }
+
+    /**
+     * Default implementation that does nothing. Subclasses are expected to override this behaviour.
+     *
+     * @throws EditorException
+     */
+    public void save() throws EditorException {
+        //INTENTIONALLY LEFT BLANK
+    }
+
+    /**
+     * Default implementation that does nothing. Subclasses are expected to override this behaviour.
+     *
+     * @throws EditorException
+     */
+    public void done() throws EditorException {
+        //INTENTIONALLY LEFT BLANK
+    }
+
+    /**
+     * Default implementation that does nothing. Subclasses are expected to override this behaviour.
+     *
+     * @throws EditorException
+     */
+    public void revert() throws EditorException {
+        //INTENTIONALLY LEFT BLANK
+    }
+
+
+    /**
+     * Default implementation that does nothing. Subclasses are expected to override this behaviour.
+     *
+     * @throws EditorException
+     */
+    public void discard() throws EditorException {
+        //INTENTIONALLY LEFT BLANK
+    }
+
+
     public void close() throws EditorException {
         if (context.getReference(this) != null) {
             Map<IEditorFilter, Object> filterContexts = preClose();
@@ -194,13 +244,13 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
                 IEditorFilter.class);
         IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
-        for (IEditorFilter filter : filters) {
-            Object filterContext = filter.preClose();
-            if (filterContext == null) {
-                throw new EditorException("Close operation cancelled by filter");
-            }
-            filterContexts.put(filter, filterContext);
-        }
+//        for (IEditorFilter filter : filters) {
+//            Object filterContext = filter.preClose();
+//            if (filterContext == null) {
+//                throw new EditorException("Close operation cancelled by filter");
+//            }
+//            filterContexts.put(filter, filterContext);
+//        }
         return filterContexts;
     }
 
@@ -226,23 +276,27 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         throw new EditorException("Compare not supported");
     }
 
+    protected IClusterConfig getClusterConfig() {
+        return cluster.getClusterConfig();
+    }
+
     protected void start() throws EditorException {
         String clusterName;
         IPluginConfig parameters;
         switch (mode) {
-        case EDIT:
-            clusterName = config.getString("cluster.edit.name", "cms-editor");
-            parameters = config.getPluginConfig("cluster.edit.options");
-            break;
-        case COMPARE:
-            clusterName = config.getString("cluster.compare.name", "cms-compare");
-            parameters = config.getPluginConfig("cluster.compare.options");
-            break;
-        case VIEW:
-        default:
-            clusterName = config.getString("cluster.preview.name", "cms-preview");
-            parameters = config.getPluginConfig("cluster.preview.options");
-            break;
+            case EDIT:
+                clusterName = config.getString("cluster.edit.name", "cms-editor");
+                parameters = config.getPluginConfig("cluster.edit.options");
+                break;
+            case COMPARE:
+                clusterName = config.getString("cluster.compare.name", "cms-compare");
+                parameters = config.getPluginConfig("cluster.compare.options");
+                break;
+            case VIEW:
+            default:
+                clusterName = config.getString("cluster.preview.name", "cms-preview");
+                parameters = config.getPluginConfig("cluster.preview.options");
+                break;
         }
         JavaPluginConfig editorConfig = new JavaPluginConfig(parameters);
         editorConfig.put("wicket.id", editorId);
@@ -316,10 +370,12 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
             baseService = null;
         }
 
-        modelService.destroy();
+        if (modelService != null) {
+            modelService.destroy();
+            modelService = null;
+        }
 
         cluster = null;
-        modelService = null;
         focusListener = null;
     }
 
