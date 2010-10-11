@@ -20,6 +20,7 @@ import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
+import org.hippoecm.hst.core.linking.LocationMapTree;
 
 /**
  * The <code>HstSite</code> object is the object representing a site. It contains a reference to the site content base
@@ -41,15 +42,19 @@ public interface HstSite {
     /**
      * Returns the absolute content path for this <code>HstSite</code> 
      * @return The absolute content path for this <code>HstSite</code>
+     * @deprecated Use {@link SiteMount#getContentPath()}
      */
+    @Deprecated
     String getContentPath();
     
     /**
      * Returns the absolute canonical content path for this <code>HstSite</code>
      * 
      * This path differs from {@link #getContentPath()} when the {@link #getContentPath()} points to a mirror node.
-     * @return @return The absolute absolute content path for this <code>HstSite</code>
+     * @return The absolute absolute content path for this <code>HstSite</code>
+     * @deprecated Use {@link SiteMount#getCanonicalContentPath()}
      */
+    @Deprecated
     String getCanonicalContentPath();
     
     /**
@@ -66,6 +71,14 @@ public interface HstSite {
      * @return the hstSiteMap for this <code>HstSite</code>
      */
     HstSiteMap getSiteMap();
+    
+
+    /**
+     * The location map is an inverted version from the {@link HstSiteMap}: Instead of mapping for <code>URL</code>s to 
+     * <code>relativecontentpath</code>'s, the location map is a mapping from  <code>relativecontentpath</code>s to <code>URL</code>s
+     * @return the location map for this <code>HstSite</code>
+     */
+    LocationMapTree getLocationMapTree();
     
     /**
      * Returns the configured {@link HstSiteMenusConfiguration} for this HstSite or <code>null</code> if this <code>HstSite</code> does

@@ -86,6 +86,16 @@ public class SiteMountService implements SiteMount {
     private String mountPath;
     
     /**
+     * The absolute canonical path of the content
+     */
+    private String contentPath;
+    
+    /**
+     * The absolute canonical path of the content
+     */
+    private String canonicalContentPath;
+
+    /**
      * The path where the mount is pointing to
      */
     private String mountPoint;
@@ -321,6 +331,8 @@ public class SiteMountService implements SiteMount {
             }
             
             this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
+            this.canonicalContentPath = hstSiteNodeForMount.getCanonicalcontentPath();
+            this.contentPath = hstSiteNodeForMount.getContentPath();
             log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
         }
         
@@ -361,6 +373,14 @@ public class SiteMountService implements SiteMount {
         return mountPath;
     }
     
+    public String getContentPath() {
+        return contentPath;
+    }
+
+    public String getCanonicalContentPath() {
+        return canonicalContentPath;
+    }
+
     public String getMountPoint() {
         return mountPoint;
     }
@@ -455,5 +475,6 @@ public class SiteMountService implements SiteMount {
     public boolean isSessionStateful() {
         return sessionStateful;
     }
+
     
 }

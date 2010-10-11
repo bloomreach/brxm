@@ -97,7 +97,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
         
         HstRequestContext reqContext = hstRequest.getRequestContext();
         
-        HstLink link = reqContext.getHstLinkCreator().create(current.getNode(), reqContext.getResolvedSiteMapItem(),null, true, true);
+        HstLink link = reqContext.getHstLinkCreator().create(current.getNode(), reqContext,null, true, true);
         
         if(link == null || link.getPath() == null) {
             log.warn("Unable to rewrite link for '{}'. Return EVAL_PAGE", current.getPath());

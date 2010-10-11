@@ -28,8 +28,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.site.HstSiteService;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -77,12 +75,92 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         this.pageNotFoundPath = PathUtils.normalizePath(pageNotFoundPath);
     }
     
+    
+    
     /**
      * If the uuid points to a node that is of type hippo:document and it is below a hippo:handle, we will
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document.
      * 
      * If the uuid cannot be found, we return null
+     * 
+     * {@inheritDoc}
      */
+    public HstLink create(String uuid, Session session, HstRequestContext requestContext) {
+        try {
+            Node node = session.getNodeByUUID(uuid);
+            return create(node, requestContext);
+        } catch (ItemNotFoundException e) {
+            log.warn("Node with uuid '{}' cannot be found. Cannot create a HstLink, return null", uuid);
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException Cannot create a HstLink, return null", uuid);
+        } 
+        return null;
+    }
+
+    public HstLink create(HippoBean bean, HstRequestContext hstRequestContext) {
+        return create(bean.getNode(), hstRequestContext);
+    }
+    
+    
+    public HstLink create(Node node, HstRequestContext hstRequestContext) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, hstRequestContext);
+        return linkResolver.resolve();
+    }
+    
+    
+    public HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem,
+            boolean fallback) {
+        return this.create(node, requestContext, preferredItem, fallback, false);
+    }
+    
+    public HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem,
+            boolean fallback, boolean navigationStateful) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
+        linkResolver.preferredItem = preferredItem;
+        linkResolver.fallback = fallback;
+        linkResolver.navigationStateful = navigationStateful;
+        return linkResolver.resolve();
+    }
+    
+    public HstLink createCanonical(Node node, HstRequestContext requestContext) {
+        return this.createCanonical(node, requestContext, null);
+    }
+
+    public HstLink createCanonical(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
+        linkResolver.canonicalLink = true;
+        linkResolver.preferredItem = preferredItem;
+        // when no canonical can be found for the preferred item, we fallback to linkrewriting without the canonical 
+        linkResolver.fallback = true;
+        return linkResolver.resolve();
+    }
+    
+    public HstLink create(Node node, HstSite hstSite) {
+        return create(node, hstSite.getSiteMount());
+    }
+    
+    public HstLink create(Node node, SiteMount siteMount) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, siteMount);
+        return linkResolver.resolve();
+    }
+
+    public HstLink create(String path, SiteMount siteMount) {
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount));
+    }
+    
+    public HstLink create(String path, SiteMount siteMount, boolean containerResource) {
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount, containerResource));
+    }
+
+    /**
+     * If the uuid points to a node that is of type hippo:document and it is below a hippo:handle, we will
+     * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document.
+     * 
+     * If the uuid cannot be found, we return null
+     * 
+     * {@inheritDoc}
+     */
+    @Deprecated
     public HstLink create(String uuid, Session session, ResolvedSiteMapItem resolvedSiteMapItem) {
         try {
             Node node = session.getNodeByUUID(uuid);
@@ -94,22 +172,20 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         } 
         return null;
     }
-
-    public HstLink create(HippoBean bean, HstRequestContext hstRequestContext) {
-        return create(bean.getNode(), hstRequestContext.getResolvedSiteMapItem());
-    }
     
+    @Deprecated
     public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
         return linkResolver.resolve();
     }
-    
 
+    @Deprecated
     public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem,
             boolean fallback) {
         return this.create(node, resolvedSiteMapItem, preferredItem, fallback, false);
     }
     
+    @Deprecated
     public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem,
             boolean fallback, boolean navigationStateful) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
@@ -118,46 +194,23 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         linkResolver.navigationStateful = navigationStateful;
         return linkResolver.resolve();
     }
-    
-    public HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem) {
-        return this.createCanonical(node, resolvedSiteMapItem, null);
-    }
-    
-    public HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
-        linkResolver.canonicalLink = true;
-        linkResolver.preferredItem = preferredItem;
-        // when no canonical can be found for the preferred item, we fallback to linkrewriting without the canonical 
-        linkResolver.fallback = true;
-        return linkResolver.resolve();
-    }
-    
 
-    public HstLink create(Node node, HstSite hstSite) {
-        if(!(hstSite instanceof HstSiteService)) {
-            throw new IllegalArgumentException("hstSite must be an instance of HstSiteService");
-        }
-        HstLinkResolver linkResolver = new HstLinkResolver(node, (HstSiteService)hstSite);
-        return linkResolver.resolve();
-    }
-
-
+    @Deprecated
     public HstLink create(String path, HstSite hstSite) {
-        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getSiteMount()));
+        return create(path, hstSite.getSiteMount());
     }
 
+    @Deprecated
     public HstLink create(String path, HstSite hstSite, boolean containerResource) {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getSiteMount(), containerResource));
     }
     
-    public HstLink create(String path, SiteMount siteMount, boolean containerResource) {
-        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount, containerResource));
-    }
-
+    @Deprecated
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
         return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getSiteMount()));
     }
 
+    @Deprecated
     public HstLink create(HstSite hstSite, String toSiteMapItemId) {
         HstSiteMapItem siteMapItem = hstSite.getSiteMap().getSiteMapItemById(toSiteMapItemId);
 
@@ -172,7 +225,21 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return postProcess(new HstLinkImpl(getPath(siteMapItem), hstSite.getSiteMount()));
     }
 
+    @Deprecated
+    public HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem) {
+        return this.createCanonical(node, resolvedSiteMapItem, null);
+    }
 
+    @Deprecated
+    public HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
+        linkResolver.canonicalLink = true;
+        linkResolver.preferredItem = preferredItem;
+        // when no canonical can be found for the preferred item, we fallback to linkrewriting without the canonical 
+        linkResolver.fallback = true;
+        return linkResolver.resolve();
+    } 
+    
     private HstLink postProcess(HstLink link) {
         if(linkProcessor != null) {
             link = linkProcessor.postProcess(link);
@@ -245,7 +312,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         String nodePath;
        
         ResolvedSiteMapItem resolvedSiteMapItem;
-        HstSiteService hstSite;
+        SiteMount siteMount;
         
         HstSiteMapItem preferredItem;
         boolean virtual;
@@ -256,32 +323,49 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         
         
         /**
-         * Create a HstLinkResolver instance with the current context <code>resolvedSiteMapItem</code>. The {@link HstSite} is taken from this context
+         * Create a HstLinkResolver instance with the current <code>requestContext</code>. The {@link SiteMount} is taken from this context. If
+         * we have a {@link ResolvedSiteMapItem} on the <code>requestContext</code>, we also set this also for the {@link HstLinkResolver} for context aware link rewriting
          * @param node
          * @param resolvedSiteMapItem
+         */
+        HstLinkResolver(Node node, HstRequestContext requestContext){
+            this.node = node;
+            // note: the resolvedSiteMapItem can be null
+            this.resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+            this.siteMount = requestContext.getResolvedSiteMount().getSiteMount();
+        }
+        
+        /**
+         * Create a HstLinkResolver instance with the current context <code>resolvedSiteMapItem</code>. The {@link SiteMount} is taken from this context
+         * @param node
+         * @param resolvedSiteMapItem
+         * @deprecated Use {@link #HstLinkResolver(Node, HstRequestContext)} instead
          */
         HstLinkResolver(Node node, ResolvedSiteMapItem resolvedSiteMapItem){
             this.node = node;
             this.resolvedSiteMapItem = resolvedSiteMapItem;
-            HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
-            hstSite =  (HstSiteService)hstSiteMap.getSite(); 
+            this.siteMount = resolvedSiteMapItem.getResolvedSiteMount().getSiteMount();
         }
         
         /**
-         * Create a HstLinkResolver instance for creating a link in this <code>hstSite</code>. We do not take into account the current context from {@link ResolvedSiteMapItem}
+         * Create a HstLinkResolver instance for creating a link in this <code>SiteMount</code>. We do not take into account the current context from {@link ResolvedSiteMapItem}
          * when creating a {@link HstLinkResolver} through this constructor
          * @param node
          * @param hstSite
          */
-        HstLinkResolver(Node node, HstSiteService hstSite){
+        HstLinkResolver(Node node, SiteMount siteMount){
             this.node = node;
-            this.hstSite = hstSite;
+            this.siteMount = siteMount;
         }
         
         HstLink resolve(){
+            if(siteMount == null) {
+                log.warn("Cannot create link when the siteMount is null. Return null");
+                return null;
+            }
             if(node == null) {
-                log.warn("Cannot create link for bean. Return page not found link");
-                return pageNotFoundLink(hstSite);
+                log.warn("Cannot create link when the jcr node null. Return a page not found link");
+                return pageNotFoundLink(siteMount);
             }
             boolean containerResource = false;
             String pathInfo = null;
@@ -302,8 +386,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                      */
                     for(LocationResolver resolver : DefaultHstLinkCreator.this.locationResolvers) {
                         if(node.isNodeType(resolver.getNodeType())) {
-                            resolver.setLocationMapTree(hstSite.getLocationMapTree());
-                            HstLink link = resolver.resolve(node, hstSite);
+                            if(siteMount.getHstSite() != null) {
+                                resolver.setLocationMapTree(siteMount.getHstSite().getLocationMapTree());
+                            }
+                            HstLink link = resolver.resolve(node, siteMount);
                             if(link != null) {
                                return link; 
                             } else {
@@ -314,7 +400,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                    
                     log.warn("There is no resolver that can handle a resource of type '{}'. Return do not found link", node.getPrimaryNodeType().getName());
                     
-                    return pageNotFoundLink(hstSite);
+                    return pageNotFoundLink(siteMount);
                 } else {
                     if(canonicalNode != null) {
                         node = canonicalNode;
@@ -326,7 +412,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         node = JCRUtilities.getDeref(node);
                         if( node == null ) {
                             log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
-                            return pageNotFoundLink(hstSite);
+                            return pageNotFoundLink(siteMount);
                         }
                     }
         
@@ -348,17 +434,17 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
                         pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
                         containerResource = true;
-                        return new HstLinkImpl(pathInfo, hstSite.getSiteMount(), containerResource);
+                        return new HstLinkImpl(pathInfo, siteMount, containerResource);
                         
                     } else {
-                        if(!virtual && nodePath.startsWith(hstSite.getCanonicalContentPath())) {
-                            nodePath = nodePath.substring(hstSite.getCanonicalContentPath().length());
-                        } else if (virtual && nodePath.startsWith(hstSite.getContentPath())) { 
-                            nodePath = nodePath.substring(hstSite.getContentPath().length());
+                        if(!virtual && nodePath.startsWith(siteMount.getCanonicalContentPath())) {
+                            nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
+                        } else if (virtual && nodePath.startsWith(siteMount.getContentPath())) { 
+                            nodePath = nodePath.substring(siteMount.getContentPath().length());
                         } else {
-                            log.warn("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), nodePath);
+                            log.info("For SiteMount '{}' we cannot create a link for node '{}' because it is outside its scope. We'll try other sitemount's now", siteMount.getName(), nodePath);
                             // TODO try subsites CROSS-SITE/DOMAIN-LINKING!!!
-                            return pageNotFoundLink(hstSite);
+                            return pageNotFoundLink(siteMount);
                         }
                         
                         ResolvedLocationMapTreeItem resolvedLocation = null;
@@ -371,31 +457,33 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             resolvedLocation = subResolver.resolve(nodePath);
                             if( (resolvedLocation == null || resolvedLocation.getPath() == null) && !fallback) {
                                 log.warn("Could not create a link for preferredItem '{}'. Fallback is false, so return a not found link.", preferredItem.getId());
-                                return pageNotFoundLink(hstSite);
+                                return pageNotFoundLink(siteMount);
                             }
+                        }
+                        if(siteMount.getHstSite() != null) {
+                            if(resolvedLocation == null) {
+                                LocationMapResolver resolver = new LocationMapResolver(siteMount.getHstSite().getLocationMapTree());
+                                resolver.setRepresentsDocument(representsDocument);
+                                resolver.setCanonical(canonicalLink);
+                                resolver.setResolvedSiteMapItem(resolvedSiteMapItem);
+                                resolvedLocation = resolver.resolve(nodePath);
+                            }
+                            if(resolvedLocation != null && resolvedLocation.getPath() != null) {
+                                if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", nodePath);
+                                if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", nodePath, resolvedLocation.getPath());
+                                pathInfo = resolvedLocation.getPath();
+                            } else {
+                                 if (log.isWarnEnabled()) {
+                                    log.warn("Unable to create a link for '{}' for siteMount '{}'. Return page not found HstLink to '"+DefaultHstLinkCreator.this.pageNotFoundPath+"'", nodePath, siteMount.getName());
+                                    return pageNotFoundLink(siteMount);
+                                }
+                            }
+                        } else {
+                            // the SiteMount does not have a HstSite attached to it. Just use the 'nodePath' we have so far as
+                            // we do not have a further SiteMap mapping. We only have a site content base path mapping
+                            pathInfo = nodePath;
                         }
                         
-                        if(resolvedLocation == null) {
-                            LocationMapResolver resolver = new LocationMapResolver(hstSite.getLocationMapTree());
-                            resolver.setRepresentsDocument(representsDocument);
-                            resolver.setCanonical(canonicalLink);
-                            resolver.setResolvedSiteMapItem(resolvedSiteMapItem);
-                            resolvedLocation = resolver.resolve(nodePath);
-                        }
-                        if(resolvedLocation != null && resolvedLocation.getPath() != null) {
-                            if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", nodePath);
-                            if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", nodePath, resolvedLocation.getPath());
-                            pathInfo = resolvedLocation.getPath();
-                        } else {
-                             if (log.isWarnEnabled()) {
-                                String msg = "";
-                                if(resolvedLocation != null) {
-                                    msg = " We cannot create a pathInfo for resolved sitemap item : '" +resolvedLocation.getHstSiteMapItemId() +"'."   ;
-                                }
-                                log.warn("Unable to create a link for '{}' for HstSite '{}'. " +msg+ "  Return page not found HstLink to '"+DefaultHstLinkCreator.this.pageNotFoundPath+"'", nodePath, hstSite.getName());
-                                return pageNotFoundLink(hstSite);
-                            }
-                        }
                     }
                 }
             } catch(RepositoryException e){
@@ -403,10 +491,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
             
             if(pathInfo == null) {
-                return pageNotFoundLink(hstSite);
+                return pageNotFoundLink(siteMount);
             }
             
-            HstLink link = new HstLinkImpl(pathInfo, hstSite.getSiteMount(), containerResource);
+            HstLink link = new HstLinkImpl(pathInfo, siteMount, containerResource);
             if(postProcess) {
                 link = postProcess(link);
             }
@@ -415,8 +503,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         }
 
         
-        private HstLink pageNotFoundLink(HstSiteService hstSite) {
-            HstLink link =  new HstLinkImpl(DefaultHstLinkCreator.this.pageNotFoundPath, hstSite.getSiteMount());
+        private HstLink pageNotFoundLink(SiteMount siteMount) {
+            HstLink link =  new HstLinkImpl(DefaultHstLinkCreator.this.pageNotFoundPath, siteMount);
             link.setNotFound(true);
             return link;
         }

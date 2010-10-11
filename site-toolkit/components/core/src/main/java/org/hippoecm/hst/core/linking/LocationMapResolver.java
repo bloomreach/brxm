@@ -200,7 +200,7 @@ public class LocationMapResolver {
         log.info("Succesfully rewrote path '{}' into new sitemap path '{}'", path, resolvedPath);
         log.debug("creating link for '{}' took '{}' ms.", path, String.valueOf((System.nanoTime() - start)/ 1000000D) );
         
-        ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath, matchingSiteMapItem.getId());
+        ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath);
         
         
         return r;

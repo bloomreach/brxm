@@ -135,9 +135,9 @@ public class HstLinkTag extends ParamContainerTag {
                 return EVAL_PAGE;
             }
             if(canonical) {
-                this.link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem);
+                this.link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext, preferSiteMapItem);
             } else {
-                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem, fallback, navigationStateful);
+                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext, preferSiteMapItem, fallback, navigationStateful);
             }
         }
         

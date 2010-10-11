@@ -95,7 +95,7 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
                     } else {
                         HstLink href = getDocumentLink(documentPath,node, request, response);
                         if(href != null && href.getPath() != null) {
-                            sb.append(href.toUrlForm(request, response, false));
+                            sb.append(href.toUrlForm(request.getRequestContext(),false));
                         } else {
                            log.warn("Skip href because url is null"); 
                         }
@@ -146,7 +146,7 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
                     } else {
                         HstLink binaryLink = getBinaryLink(srcPath, node, request, response);
                         if(binaryLink != null && binaryLink.getPath() != null) {
-                             sb.append(binaryLink.toUrlForm(request, response, false));
+                             sb.append(binaryLink.toUrlForm(request.getRequestContext(),false));
                         } else {
                             log.warn("Could not translate image src. Skip src");
                         }
@@ -190,7 +190,7 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
         // translate the documentPath to a URL in combination with the Node and the mapping object
         if (path.startsWith("/")) {
             // this is an absolute path, which is not an internal content link. We just try to create a link for it directly
-            return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite());
+            return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedSiteMount().getSiteMount());
         } else {
             // relative node, most likely a mirror node:
             try {
@@ -205,7 +205,7 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
                  */
                 Node mirrorNode = ((HippoWorkspace)((HippoSession)node.getSession()).getWorkspace()).getHierarchyResolver().getNode(node, path);    
                 if (mirrorNode != null) {
-                    return reqContext.getHstLinkCreator().create(mirrorNode, reqContext.getResolvedSiteMapItem());
+                    return reqContext.getHstLinkCreator().create(mirrorNode, reqContext);
                 } else {
                     log.warn("Cannot find node '{}' for internal link for document '{}'. Cannot create link", path, node.getPath());
                 }

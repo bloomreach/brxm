@@ -22,7 +22,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.linking.AbstractResourceContainer;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -40,19 +40,19 @@ public class DemositeResourceContainer extends AbstractResourceContainer {
     }
 
     @Override
-    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, HstSite site) {
+    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, SiteMount siteMount) {
         try {
             if(resourceNode.getDefinition().allowsSameNameSiblings()) {
                 // there can be multiple ones
-                return super.resolveToPathInfo(resourceContainerNode, resourceNode, site) + "/["+resourceNode.getIndex()+"]";
+                return super.resolveToPathInfo(resourceContainerNode, resourceNode, siteMount) + "/["+resourceNode.getIndex()+"]";
             } else {
                 // there can be only one 
-                return super.resolveToPathInfo(resourceContainerNode, resourceNode, site);
+                return super.resolveToPathInfo(resourceContainerNode, resourceNode, siteMount);
             }
         } catch (RepositoryException e) {
            
         }
-        return super.resolveToPathInfo(resourceContainerNode, resourceNode, site);
+        return super.resolveToPathInfo(resourceContainerNode, resourceNode, siteMount);
     }
 
     public Node resolveToResourceNode(Session session, String pathInfo) {

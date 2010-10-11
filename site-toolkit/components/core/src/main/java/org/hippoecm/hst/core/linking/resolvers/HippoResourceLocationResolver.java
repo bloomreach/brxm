@@ -20,7 +20,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.LocationMapTree;
@@ -64,9 +64,8 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     public String getNodeType() {
         return NODE_TYPE;
     }
-    
-    public HstLink resolve(Node node, HstSite hstSite) {
-        
+
+    public HstLink resolve(Node node, SiteMount siteMount) {
         try {
             Node canonicalNode = null;
             if(node instanceof HippoNode) {
@@ -84,16 +83,16 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
             Node resourceContainerNode = node.getParent();
             for(ResourceContainer container : resourceContainers) {
                 if(resourceContainerNode.isNodeType(container.getNodeType())) {
-                    String pathInfo = container.resolveToPathInfo(resourceContainerNode, node, hstSite);
+                    String pathInfo = container.resolveToPathInfo(resourceContainerNode, node, siteMount);
                     if(pathInfo != null) {
-                        return new HstLinkImpl(getBinariesPrefix() + pathInfo, hstSite, true);
+                        return new HstLinkImpl(getBinariesPrefix() + pathInfo, siteMount, true);
                     }
                     log.debug("resourceContainer for '{}' unable to create a HstLink for path '{}'. Try next", container.getNodeType(), node.getPath());
                 }
             }
             log.debug("No resource container found for '{}'. Fallback to default link for binary which is '{}'/_nodepath_", resourceContainerNode.getPrimaryNodeType().getName(), getBinariesPrefix());
             // fallback
-            return defaultResourceLink(node, hstSite);
+            return defaultResourceLink(node, siteMount);
             
         } catch (RepositoryException e) {
             log.warn("RepositoryException during creating HstLink for resource. Return null");
@@ -102,10 +101,10 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     }
 
     
-    private HstLink defaultResourceLink(Node node, HstSite hstSite) throws RepositoryException {
+    private HstLink defaultResourceLink(Node node, SiteMount siteMount) throws RepositoryException {
         String pathInfo = getBinariesPrefix()+node.getPath();
         boolean containerResource = true;
-        return new HstLinkImpl(pathInfo, hstSite, containerResource);
+        return new HstLinkImpl(pathInfo, siteMount, containerResource);
     }
 
     public boolean isBinaryLocation(String path) {

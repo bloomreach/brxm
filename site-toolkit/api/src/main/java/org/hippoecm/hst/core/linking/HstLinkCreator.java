@@ -28,17 +28,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
- * HstLinkCreator implementations must be able to create a <code>{@link HstLink}</code> for the methods
- * <ul>
- *  <li>{@link #create(HstSiteMapItem)}</li>
- *  <li>{@link #create(HstSite, String)}</li>
- *  <li>{@link #create(Node, ResolvedSiteMapItem)}</li>
- *  <li>{@link #create(String, ResolvedSiteMapItem)}</li>
- * </ul>
- * 
- * A specific implementation must be available on the <code>HstRequestContext</code> through the 
- * {@link org.hippoecm.hst.core.request.HstRequestContext#getHstLinkCreator()}.
- *
+ * HstLinkCreator interface for creating {@link HstLink}'s
  */
 public interface HstLinkCreator {
 
@@ -49,8 +39,20 @@ public interface HstLinkCreator {
      * @param session jcr session 
      * @param resolvedSiteMapItem
      * @return an <code>HstLink</code> instance or <code>null<code> 
+     * @deprecated Use {@link #create(String, Session, HstRequestContext)} instead
      */
+    @Deprecated
     HstLink create(String uuid, Session session, ResolvedSiteMapItem resolvedSiteMapItem);
+    
+
+    /**
+     * Rewrite a jcr uuid to a HstLink wrt its current ResolvedSiteMapItem. 
+     * @param uuid the uuid of the node that must be used to link to
+     * @param session jcr session 
+     * @param requestContext
+     * @return an <code>HstLink</code> instance or <code>null<code> 
+     */
+    HstLink create(String uuid, Session session, HstRequestContext requestContext);
     
     
     /**
@@ -58,8 +60,18 @@ public interface HstLinkCreator {
      * @param node
      * @param resolvedSiteMapItem
      * @return the HstLink for this jcr Node or <code>null</code>
+     * @deprecated Use {@link #create(Node, HstRequestContext)} instead
      */
+    @Deprecated
     HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem);
+    
+    /**
+     * Rewrite a jcr Node to a HstLink wrt its current ResolvedSiteMapItem
+     * @param node
+     * @param requestContext
+     * @return the HstLink for this jcr Node or <code>null</code>
+     */
+    HstLink create(Node node, HstRequestContext requestContext);
     
     /**
      * Rewrite a jcr Node to a HstLink wrt its current ResolvedSiteMapItem and preferredItem. When <code>preferredItem</code> is not <code>null</code>, the link is tried to be rewritten to 
@@ -80,9 +92,34 @@ public interface HstLinkCreator {
      * @param resolvedSiteMapItem the current resolved sitemap item
      * @param preferredItem if not null (null means no preferred sitemap item), first a link is trying to be created for this item
      * @param fallback value true or false
+     * @return the HstLink for this jcr Node or <code>null</code>
+     * @deprecated use {@link #create(Node, HstRequestContext, HstSiteMapItem, boolean)} instead
+     */
+    @Deprecated
+    HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem, boolean fallback);
+    
+    /**
+     * Rewrite a jcr Node to a HstLink wrt its current HstRequestContext and preferredItem. When <code>preferredItem</code> is not <code>null</code>, the link is tried to be rewritten to 
+     * one of the descendants (including itself) of the preferred {@link HstSiteMapItem}. When <code>preferredItem</code> is <code>null</code>, a link is created against the entire sitemap item tree. When there cannot be created an HstLink to a descendant HstSiteMapItem 
+     * or self, then:
+     * 
+     * <ol>
+     *  <li>when <code>fallback = true</code>, a fallback to {@link #create(Node, HstRequestContext)} is done</li>
+     *  <li>when <code>fallback = false</code>, dependent on the implementation some error HstLink or <code>null</code> can be returned</li>
+     * </ol>
+     * <p>
+     * This method returns an {@link HstLink} that takes the current URL into account, but does compute the link with respect to the physical (canonical) location
+     * of the jcr Node. <b>If</b> you need a {@link HstLink} within the context of the possible virtual jcr Node (for example in case of in context showing documents in faceted navigation), use
+     * {@link #create(Node, HstRequestContext, HstSiteMapItem, boolean, boolean)} with <code>navigationStateful = true</code>
+     * </p>
+     * @see #create(Node, HstRequestContext, HstSiteMapItem, boolean, boolean) 
+     * @param node the jcr node
+     * @param requestContext the current requestContext
+     * @param preferredItem if not null (null means no preferred sitemap item), first a link is trying to be created for this item
+     * @param fallback value true or false
       * @return the HstLink for this jcr Node or <code>null</code>
      */
-    HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem, boolean fallback);
+    HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem, boolean fallback);
     
     /**
      * <p>
@@ -105,9 +142,36 @@ public interface HstLinkCreator {
      * @param fallback value true or false
      * @param navigationStateful value true or false
      * @return  the HstLink for this jcr Node or <code>null</code>
+     * @deprecated use {@link #create(Node, HstRequestContext, HstSiteMapItem, boolean, boolean)} instead
      */
+    @Deprecated
     HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem, boolean fallback, boolean navigationStateful);
     
+    /**
+     * <p>
+     * This method creates the same {@link HstLink} as {@link #create(Node, HstRequestContext, HstSiteMapItem, boolean)} when <code>navigationStateful = false</code>. When <code>navigationStateful = true</code>, 
+     * the link that is created is with respect to the jcr Node <code>node</code>, even if this node is a virtual location. This is different then {@link #create(Node, HstRequestContext, HstSiteMapItem, boolean)}: that
+     * method always first tries to find the canonical location of the jcr Node before it is creating a link for the node. 
+     * </p>
+     * 
+     * <p>
+     * <b>Expert:</b> Note there is a difference between context relative with respect to the current URL and with respect to the current jcr Node. <b>Default</b>, links in the HST are
+     * created always taking into account the current URL (thus context aware linking) unless you call {@link #createCanonical(Node, HstRequestContext)} or {@link #createCanonical(Node, HstRequestContext, HstSiteMapItem)}. Also,
+     * <b>default</b>, it always (unless there is no) takes the <i>canonical</i> location of the jcr Node. Thus, multiple virtual versions of the same physical Node, result in the same HstLink. Only when having <code>navigationStateful = true</code>, 
+     * also the jcr Node is context relative, and thus multiple virtual versions of the same jcr Node can result in multiple links. This is interesting for example in 
+     * faceted navigation views, where you want 'in context' documents to be shown.
+     * </p>
+     * @see #create(Node, HstRequestContext, HstSiteMapItem, boolean)
+     * @param node the jcr node 
+     * @param HstRequestContext  the current requestContext
+     * @param preferredItem  if not null (null means no preferred sitemap item), first a link is trying to be created for this item
+     * @param fallback value true or false
+     * @param navigationStateful value true or false
+     * @return  the HstLink for this jcr Node or <code>null</code>
+     */
+    HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem, boolean fallback, boolean navigationStateful);
+    
+
     /**
      * This creates a canonical HstLink: regardless the context, one and the same jcr Node is garantueed to return the same HstLink. This is
      * useful when showing one and the same content via multiple urls, for example in faceted navigation. Search engines can better index your
@@ -117,8 +181,23 @@ public interface HstLinkCreator {
      * @param node
      * @param resolvedSiteMapItem
      * @return the HstLink for this jcr Node or <code>null</code>
+     * @deprecated use {@link #createCanonical(Node, HstRequestContext)} instead
      */
+    @Deprecated
     HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem);
+    
+
+    /**
+     * This creates a canonical HstLink: regardless the current requestContext, one and the same jcr Node is garantueed to return the same HstLink. This is
+     * useful when showing one and the same content via multiple urls, for example in faceted navigation. Search engines can better index your
+     * website when defining a canonical location for duplicate contents: See 
+     * <a href="http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html">specify-your-canonical</a> for more info on this subject.
+     * 
+     * @param node
+     * @param HstRequestContext
+     * @return the HstLink for this jcr Node or <code>null</code>
+     */
+    HstLink createCanonical(Node node, HstRequestContext requestContext);
     
     /**
      * @see {@link #createCanonical(Node, ResolvedSiteMapItem)}.
@@ -129,8 +208,22 @@ public interface HstLinkCreator {
      * @param resolvedSiteMapItem
      * @param preferredItem if <code>null</code>, a fallback to {@link #createCanonical(Node, ResolvedSiteMapItem)} is done
      * @return the HstLink for this jcr Node or <code>null</code>
+     * @deprecated use {@link #createCanonical(Node, HstRequestContext, HstSiteMapItem)} instead
      */
+    @Deprecated
     HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem);
+    
+    /**
+     * @see {@link #createCanonical(Node, ResolvedSiteMapItem)}.
+     * When specifying a preferredItem, we try to create a canonical link wrt this preferredItem. If the link cannot be created for this preferredItem,
+     * a fallback to {@link #createCanonical(Node, HstRequestContext)} without preferredItem is done.
+     * 
+     * @param node
+     * @param HstRequestContext
+     * @param preferredItem if <code>null</code>, a fallback to {@link #createCanonical(Node, HstRequestContext)} is done
+     * @return the HstLink for this jcr Node or <code>null</code>
+     */
+    HstLink createCanonical(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem);
     
     
     /**
@@ -144,14 +237,30 @@ public interface HstLinkCreator {
      * @param node the jcr node for that should be translated into a HstLink
      * @param hstSite the (sub)site for which the hstLink should be created for
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>hstSite</code> or <code>null</code> when no link for the node can be made in the <code>hstSite</code>
+     * @deprecated Use {@link #create(Node, SiteMount))}
      */
+    @Deprecated
     HstLink create(Node node, HstSite hstSite);
+    
+    /**
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>siteMount</code>. Note that this HstLink creation does only take into account the
+     * <code>siteMount</code> and not the current context.
+     * This might be a different one then the one of the current request context, reflected in the {@link ResolvedSiteMapItem}, 
+     * for example in the method {@link #create(Node, ResolvedSiteMapItem)}. 
+     * If the <code>siteMount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
+     * to a different (sub)site, <code>null</code> is returned. </p>
+     * <p>note: if an link is returned, this is always the canonical link, also see {@link #createCanonical(Node, ResolvedSiteMapItem)}</p>
+     * @param node the jcr node for that should be translated into a HstLink
+     * @param siteMount the (sub)site for which the hstLink should be created for
+     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>hstSite</code> or <code>null</code> when no link for the node can be made in the <code>siteMount</code>
+     */
+    HstLink create(Node node, SiteMount siteMount);
 
     /**
      * 
      * @param bean
      * @param hstRequestContext
-     * @return
+     * @return a HstLink for <code>bean</code> and the <code>hstRequestContext</code> or <code>null</code> when no link for the node can be made
      */
     HstLink create(HippoBean bean, HstRequestContext hstRequestContext);
    
@@ -161,16 +270,29 @@ public interface HstLinkCreator {
      * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
      * @param toHstSiteMapItem the {@link HstSiteMapItem} to link to
      * @return an <code>HstLink</code> instance or <code>null<code> 
+     * @deprecated Use {@link #create(String, SiteMount)} instead
      */
+    @Deprecated
     HstLink create(HstSiteMapItem toHstSiteMapItem);
-    
+
     /**
-     * Regardless the current context, create a HstLink to the path that you use as argument. 
+     * Regardless the current context, create a HstLink for the <code>path</code> and <code>hstSite</code>
      * @param path the path to the sitemap item
      * @param hstSite the HstSite the siteMapPath should be in
      * @return an <code>HstLink</code> instance or <code>null<code> 
+     * @deprecated Use {@link #create(String, SiteMount)} instead
      */
+    @Deprecated
     HstLink create(String path, HstSite hstSite);
+    
+
+    /**
+     * Regardless the current context, create a HstLink for the <code>path</code> and <code>siteMount</code>
+     * @param path the path to the sitemap item
+     * @param siteMount the SiteMount the path should be in
+     * @return an <code>HstLink</code> instance or <code>null<code> 
+     */
+    HstLink create(String path, SiteMount siteMount);
     
     /**
      * Regardless the current context, create a HstLink to the path that you use as argument. 
@@ -180,6 +302,7 @@ public interface HstLinkCreator {
      * @return an <code>HstLink</code> instance or <code>null<code> 
      * @deprecated Use {@link #create(String, SiteMount, boolean)}
      */
+    @Deprecated
     HstLink create(String path, HstSite hstSite, boolean containerResource);
     
     /**
@@ -192,15 +315,9 @@ public interface HstLinkCreator {
     HstLink create(String path, SiteMount siteMount, boolean containerResource);
     
     /**
-     * create a link to a HstSiteMapItem with id <code>toSiteMapItemId</code> that belongs to <code>HstSite</code> hstSite.
-     * Note that the HstSite can be a different one then the current, possibly resulting in a cross-domain (host) link. 
-     * A <code>HstLink</code> can only be created unambiguous if the <code>HstSiteMapItem</code> belonging to toSiteMapItemId does not
-     * contain any ancestor including itself with a wildcard. 
-     * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
-     * @param hstSite the HstSite the toSiteMapItemId should be in
-     * @param toSiteMapItemId the id of the SiteMapItem ({@link HstSiteMapItem#getId()})
-     * @return HstLink
+     * @deprecate Use {@link #create(String, SiteMount)} instead
      */
+    @Deprecated
     HstLink create(HstSite hstSite, String toSiteMapItemId);
     
     /**

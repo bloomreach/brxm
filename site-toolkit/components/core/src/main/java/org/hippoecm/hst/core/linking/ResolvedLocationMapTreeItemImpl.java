@@ -20,17 +20,12 @@ public class ResolvedLocationMapTreeItemImpl implements ResolvedLocationMapTreeI
     private static final long serialVersionUID = 1L;
     
     private String path;
-    private String hstSiteMapItemId;
     
-    public ResolvedLocationMapTreeItemImpl(String path, String hstSiteMapItemId){
+    public ResolvedLocationMapTreeItemImpl(String path){
         this.path = path;
-        this.hstSiteMapItemId = hstSiteMapItemId;
     }
     
-    public String getHstSiteMapItemId() {
-        return hstSiteMapItemId;
-    }
-
+    
     public String getPath() {
         return path;
     }

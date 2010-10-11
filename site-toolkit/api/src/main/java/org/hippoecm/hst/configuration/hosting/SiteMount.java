@@ -138,9 +138,8 @@ public interface SiteMount {
     
     /**
      * <p>
-     * Returns the mount point for this SiteMount object. The root SiteMount has an empty mount point. A mountPoint for a 
-     * SiteMount is its own {@link #getName()} plus all ancestors up to the root and always starts with a "/" (unless for the root, this one is empty).
-     * It can contain wildcards, for example /preview/*. Typically, these wildcards are replaced by their request specific values in the {@link ResolvedSiteMount}.
+     * Returns the mount point for this SiteMount object. The mount point is the absolute jcr path to the root site node, for example 
+     * something like '/hst:hst/hst:sites/mysite-live'
      * </p>
      * 
      * @see ResolvedSiteMount#getResolvedMountPath()
@@ -148,6 +147,24 @@ public interface SiteMount {
      */
     String getMountPoint();
     
+    /**
+     * <p>
+     * Returns the content path for this SiteMount object. The content path is the absolute jcr path to the root site node content, for example 
+     * something like '/hst:hst/hst:sites/mysite-live/hst:content'
+     * </p>
+     * 
+     * @return the content path for this <code>SiteMount</code> and <code>null</code> if it doesn't have one
+     */
+    String getContentPath();
+    
+    /**
+     * Returns the absolute canonical content path for the content of this <code>SiteMount</code>. 
+     * 
+     * @return The absolute absolute content path for this <code>SiteMount</code> and <code>null</code> if it doesn't have one
+     */
+    String getCanonicalContentPath();
+    
+
     /**
      * <p>
      * Returns the mount path for this SiteMount object. The root SiteMount has an empty mount path. A mountPath for a 
@@ -163,7 +180,6 @@ public interface SiteMount {
      * @return the mountPath for this siteMount
      */
     String getMountPath();
-    
     /**
      * 
      * @param name of the child SiteMount
