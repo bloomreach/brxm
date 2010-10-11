@@ -30,8 +30,8 @@ public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior imp
 
     private static final long serialVersionUID = 1L;
 
-    public static final String MOUSE_X_PARAM = "HippoMouseX";
-    public static final String MOUSE_Y_PARAM = "HippoMouseY";
+    public static final String MOUSE_X_PARAM = "x";
+    public static final String MOUSE_Y_PARAM = "y";
     
     MarkupContainer contextmenu;
     MarkupContainer componentToUpdate;
@@ -53,7 +53,10 @@ public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior imp
 
         String handler = getCallbackScript().toString();
         String addEvent = "YAHOO.util.Event.addListener('" + getComponent().getMarkupId()
-                + "','contextmenu', function(env) { var " + MOUSE_X_PARAM + " = YAHOO.util.Event.getPageX(env); var " + MOUSE_Y_PARAM + " = YAHOO.util.Event.getPageY(env);YAHOO.util.Event.stopEvent(env); " + handler + " });";
+                + "','contextmenu', " +
+                " function(env) { var " + MOUSE_X_PARAM + " = YAHOO.util.Event.getPageX(env); " +
+                "var " + MOUSE_Y_PARAM + " = YAHOO.util.Event.getPageY(env);" +
+                "YAHOO.util.Event.stopEvent(env); " + handler + " });";
         response.renderOnLoadJavascript(addEvent);
     }
     

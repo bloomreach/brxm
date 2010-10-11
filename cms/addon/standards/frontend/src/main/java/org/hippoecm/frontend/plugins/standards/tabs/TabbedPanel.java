@@ -15,10 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -26,6 +28,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -41,6 +44,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
 
 public class TabbedPanel extends WebMarkupContainer {
@@ -61,7 +66,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private transient boolean redraw = false;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
-        super(id, new Model<Integer>(Integer.valueOf(-1)));
+        super(id, new Model<Integer>(-1));
 
         if (tabs == null) {
             throw new IllegalArgumentException("argument [tabs] cannot be null");
@@ -78,7 +83,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
             @Override
             public Integer getObject() {
-                return Integer.valueOf(TabbedPanel.this.tabs.size());
+                return TabbedPanel.this.tabs.size();
             }
         };
 
@@ -90,9 +95,30 @@ public class TabbedPanel extends WebMarkupContainer {
             protected void populateItem(LoopItem item) {
                 final int index = item.getIteration();
 
-                final WebMarkupContainer titleLink = newLink(index);
-                item.add(titleLink);
+                final WebMarkupContainer titleMarkupContainer = getTitleMarkupContainer(index);
+                item.add(titleMarkupContainer);
                 item.add(newBehavior(index));
+
+                final WebMarkupContainer menu = createContextMenu("contextMenu", index);
+
+                item.add(menu);
+                item.add(new RightClickBehavior(menu, item) {
+
+                    @Override
+                    protected void respond(AjaxRequestTarget target) {
+                        getContextmenu().setVisible(true);
+                        target.addComponent(getComponentToUpdate());
+                        IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class);
+                        if (menuManager != null) {
+                            menuManager.showContextMenu(this);
+                            String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
+                            String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
+                            target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
+                                    + menu.getMarkupId() + "', " + x + ", " + y + ");");
+                        }
+                    }
+                });
+                item.setOutputMarkupId(true);
             }
 
             @Override
@@ -108,8 +134,69 @@ public class TabbedPanel extends WebMarkupContainer {
         add(panelContainer);
     }
 
+    private WebMarkupContainer createContextMenu(String contextMenu, final int index) {
+        final TabsPlugin.Tab tab = getTabs().get(index);
+        WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
+        menuContainer.setOutputMarkupId(true);
+        menuContainer.setVisible(false);
+        AjaxLink closeLink = new AjaxLink("editor-close") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                plugin.onClose(tab, target);
+            }
+        };
+
+
+        menuContainer.add(closeLink);
+
+        AjaxLink closeOthersLink = new AjaxLink("editor-close-others") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                //Create a copy so we won't run into ConcurrentModificationException
+                List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+                for (TabsPlugin.Tab currentTab : tabsCopy) {
+                    if (!currentTab.equals(tab)) {
+                        plugin.onClose(currentTab, target);
+                    }
+                }
+            }
+        };
+
+        menuContainer.add(closeOthersLink);
+
+        AjaxLink closeAllLink = new AjaxLink("editor-close-all") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                 plugin.closeAll(target);
+            }
+        };
+
+
+        menuContainer.add(closeAllLink);
+
+        AjaxLink closeUnmodifiedLink = new AjaxLink("editor-close-unmodified") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                //Create a copy so we won't run into ConcurrentModificationException
+                List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
+                for (TabsPlugin.Tab currentTab : tabsCopy) {
+                    plugin.onClose(currentTab, target, true);
+                }
+            }
+        };
+
+        menuContainer.add(closeUnmodifiedLink);
+
+        return menuContainer;
+    }
+
+
     protected LoopItem newTabContainer(final int tabIndex) {
-        LoopItem item = new LoopItem(tabIndex) {
+        return new LoopItem(tabIndex) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -130,17 +217,15 @@ public class TabbedPanel extends WebMarkupContainer {
                 tag.put("class", cssClass.trim());
             }
         };
-        return item;
     }
 
     // used by superclass to add title to the container
-
-    protected WebMarkupContainer newLink(final int index) {
-        WebMarkupContainer container = new WebMarkupContainer("container", new Model<Integer>(Integer.valueOf(index)));
-        TabsPlugin.Tab tabbie = getTabs().get(index);
-        final IModel<TabsPlugin.Tab> tabbieModel = new Model<TabsPlugin.Tab>(tabbie);
-        if (tabbie.canClose()) {
-            container.add(new AjaxFallbackLink<TabsPlugin.Tab>("close", tabbieModel) {
+    protected WebMarkupContainer getTitleMarkupContainer(final int index) {
+        WebMarkupContainer container = new WebMarkupContainer("container", new Model<Integer>(index));
+        TabsPlugin.Tab tab = getTabs().get(index);
+        final IModel<TabsPlugin.Tab> tabModel = new Model<TabsPlugin.Tab>(tab);
+        if (tab.canClose()) {
+            container.add(new AjaxFallbackLink<TabsPlugin.Tab>("close", tabModel) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -151,7 +236,7 @@ public class TabbedPanel extends WebMarkupContainer {
         } else {
             container.add(new Label("close").setVisible(false));
         }
-        WebMarkupContainer link = new AjaxFallbackLink<TabsPlugin.Tab>("link", tabbieModel) {
+        WebMarkupContainer link = new AjaxFallbackLink<TabsPlugin.Tab>("link", tabModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -160,7 +245,7 @@ public class TabbedPanel extends WebMarkupContainer {
             }
         };
 
-        ResourceReference iconResource = tabbie.getIcon(iconType);
+        ResourceReference iconResource = tab.getIcon(iconType);
         Image image;
         if (iconResource == null) {
             image = new Image("icon");
@@ -178,7 +263,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
             @Override
             protected String load() {
-                IModel<String> titleModel = tabbieModel.getObject().getTitle();
+                IModel<String> titleModel = tabModel.getObject().getTitle();
                 if (titleModel != null) {
                     String title = titleModel.getObject();
                     if (title.length() > maxTabLength) {
@@ -195,7 +280,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
             @Override
             protected String load() {
-                IModel<String> titleModel = tabbieModel.getObject().getTitle();
+                IModel<String> titleModel = tabModel.getObject().getTitle();
                 if (titleModel != null) {
                     return titleModel.getObject();
                 }
@@ -267,7 +352,7 @@ public class TabbedPanel extends WebMarkupContainer {
             return;
         }
 
-        setDefaultModelObject(Integer.valueOf(index));
+        setDefaultModelObject(index);
 
         ITab tab = tabs.get(index);
 
@@ -291,7 +376,7 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     public final int getSelectedTab() {
-        return ((Integer) getDefaultModelObject()).intValue();
+        return (Integer) getDefaultModelObject();
     }
 
     public void setIconType(IconSize iconType) {

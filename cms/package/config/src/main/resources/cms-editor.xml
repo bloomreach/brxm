@@ -27,6 +27,7 @@
   </sv:property>
   <sv:property sv:name="frontend:services" sv:type="String">
     <sv:value>wicket.id</sv:value>
+    <sv:value>validator.id</sv:value>
   </sv:property>
   <sv:property sv:name="validator.id" sv:type="String">
     <sv:value>${cluster.id}.validator</sv:value>

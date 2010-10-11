@@ -45,7 +45,7 @@ public interface IEditor<T> extends IClusterable {
         public String toString() {
             return name().toLowerCase();
         }
-        
+
     }
 
     Mode getMode();
@@ -53,20 +53,65 @@ public interface IEditor<T> extends IClusterable {
     void setMode(Mode mode) throws EditorException;
 
     /**
-     * Requests that the editor be closed.
-     * @throws EditorException when the editor is in a state where it cannot be closed.
-     */
-    void close() throws EditorException;
-
-    /**
      * Requests focus on the editor.
      */
     void focus();
 
     /**
-     * The model that can be used to identify the editor.  For publishable documents,
-     * this is the parent handle.
+     * Model of the Editor.
+     *
+     * @return The model that can be used to identify the editor.  For publishable documents,
+     *         this is the parent handle.
      */
     IModel<T> getModel();
+
+    boolean isModified() throws EditorException;
+
+    boolean isValid() throws EditorException;
+
+
+
+
+    /**
+     * Saves the document, and keeps the editor in its current mode (EDIT).
+     *
+     * @throws EditorException should be thrown in case of the editor is unable to save the document or
+     *                         the document is not in Edit mode.
+     */
+    void save() throws EditorException;
+
+    /**
+     * Saves the document, and switches the editor to VIEW mode.
+     *
+     * @throws EditorException should be thrown in case of the editor is unable to save the document or
+     *                         the document is not in Edit mode.
+     */
+    void done() throws EditorException;
+
+
+    /**
+     * Reverts the current document to last saved state and should keep the editor in its current mode (EDIT).
+     *
+     * @throws EditorException should be thrown in case of the editor is unable to revert the document or
+     *                         the document is not in Edit mode.
+     */
+    void revert() throws EditorException;
+
+    /**
+     * Discards all changes to the document and switches the editor to VIEW mode.
+     *
+     * @throws EditorException should be thrown in case of the editor is unable to revert the document or
+     *                         the document is not in Edit mode.
+     */
+    void discard() throws EditorException;
+
+    /**
+     * Requests that the editor be closed. In case the editor contains modified document,
+     * the implementation should ask the user what to be done with the changes to the document.
+     *
+     * @throws EditorException when the editor is in a state where it cannot be closed.
+     */
+    void close() throws EditorException;
+
 
 }
