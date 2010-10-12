@@ -48,6 +48,8 @@
       <sv:value>$now</sv:value>
       <sv:value>./hippostd:holder</sv:value>
       <sv:value>$holder</sv:value>
+      <sv:value>./hippotranslation:locale</sv:value>
+      <sv:value>$inherited</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -197,6 +199,8 @@
       <sv:value>$name</sv:value>
       <sv:value>./hippotranslation:id</sv:value>
       <sv:value>$uuid</sv:value>
+      <sv:value>./hippotranslation:locale</sv:value>
+      <sv:value>$inherited</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -229,6 +233,9 @@
         </sv:property>
         <sv:property sv:name="hippotranslation:id" sv:type="String">
           <sv:value>generated id</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>inherited locale</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
