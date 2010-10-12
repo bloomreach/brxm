@@ -63,11 +63,9 @@ public class NodeRepresentation {
             
             if (propertyFilter == null || propertyFilter.contains(prop.getName())) {
                 properties.add(new NodeProperty(prop));
-            } 
-            else {
-                properties.add(new NodeProperty(prop.getName()));
             }
         }
+        
         return this;
     }
     

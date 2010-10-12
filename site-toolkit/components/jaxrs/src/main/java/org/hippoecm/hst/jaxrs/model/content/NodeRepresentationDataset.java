@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -28,22 +27,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Id$
  */
 @XmlRootElement(name = "dataset")
-public class NodeRepresentationDataset implements Serializable {
+public class NodeRepresentationDataset extends AbstractNodeRepresentationDataset {
 
     private static final long serialVersionUID = 1L;
     
-    private List<NodeRepresentation> nodeRepresentations;
-    
     public NodeRepresentationDataset() {
+        super();
+    }
+    
+    public NodeRepresentationDataset(List<NodeRepresentation> nodeRepresentations) {
+        super(nodeRepresentations);
     }
     
     @XmlElementWrapper(name="nodes")
     @XmlElements(@XmlElement(name="node"))
-    public List<NodeRepresentation> getNodeRepresentations() {
-        return nodeRepresentations;
-    }
-    
-    public void setNodeRepresentations(List<NodeRepresentation> nodeRepresentations) {
-        this.nodeRepresentations = nodeRepresentations;
+    public List<NodeRepresentation> getNodes() {
+        return getNodeRepresentations();
     }
 }

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -28,22 +27,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Id$
  */
 @XmlRootElement(name = "dataset")
-public class HippoFolderRepresentationDataset implements Serializable {
+public class HippoFolderRepresentationDataset extends AbstractNodeRepresentationDataset {
 
     private static final long serialVersionUID = 1L;
     
-    private List<NodeRepresentation> nodeRepresentations;
-    
     public HippoFolderRepresentationDataset() {
+        super();
+    }
+    
+    public HippoFolderRepresentationDataset(List<NodeRepresentation> nodeRepresentations) {
+        super(nodeRepresentations);
     }
     
     @XmlElementWrapper(name="folders")
     @XmlElements(@XmlElement(name="folder"))
-    public List<NodeRepresentation> getNodeRepresentations() {
-        return nodeRepresentations;
-    }
-    
-    public void setNodeRepresentations(List<NodeRepresentation> nodeRepresentations) {
-        this.nodeRepresentations = nodeRepresentations;
+    public List<NodeRepresentation> getFolders() {
+        return getNodeRepresentations();
     }
 }

@@ -17,11 +17,13 @@ package org.hippoecm.hst.jaxrs.services.content;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 
@@ -39,8 +41,15 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
+import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.PropertyValue;
+import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.hippoecm.hst.util.PropertyDefinitionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,11 +111,38 @@ public abstract class AbstractNodeResource {
     }
     
     protected String getRequestContentPath(HstRequestContext requestContext) {
-    	return (String)requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
+    	return (String) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
     }
     
     protected Node getRequestContentNode(HstRequestContext requestContext) {
-    	return (Node)requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);
+    	return (Node) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);
+    }
+    
+    protected NodeRepresentation getNodeRepresentation(Node contentNode, Set<String> propertyFilters) throws WebApplicationException {
+        NodeRepresentation nodeRepresentation = null;
+        
+        try {
+            HippoBean hippoBean = (HippoBean) getObjectConverter().getObject(contentNode);
+            
+            if (hippoBean instanceof HippoDocumentBean) {
+                nodeRepresentation = new HippoDocumentRepresentation().represent(hippoBean, propertyFilters);
+            } else if (hippoBean instanceof HippoFolderBean) {
+                nodeRepresentation = new HippoFolderRepresentation().represent(hippoBean, propertyFilters);
+            } else {
+                nodeRepresentation = new NodeRepresentation().represent(hippoBean, propertyFilters);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } 
+            else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return nodeRepresentation;
     }
     
     protected HippoBean getRequestContentAsHippoBean(HstRequestContext requestContext) throws WebApplicationException {
@@ -183,7 +219,20 @@ public abstract class AbstractNodeResource {
         }
     }
     
-    protected void deleteContentNode(HttpServletRequest servletRequest, HippoFolderBean baseFolderBean, String relPath) {
+    protected void deleteContentNode(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws WebApplicationException {
+        HippoBean child = baseBean.getBean(relPath);
+        
+        if (child == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Child node not found: " + relPath);
+            }
+            throw new WebApplicationException(new IllegalArgumentException("Child node not found: " + relPath));
+        }
+        
+        deleteContentNode(servletRequest, child);
+    }
+    
+    protected void deleteContentNode(HttpServletRequest servletRequest, HippoBean hippoBean) throws WebApplicationException {
         ObjectBeanPersistenceManager obpm = null;
         
         try {
@@ -197,24 +246,66 @@ public abstract class AbstractNodeResource {
             throw new WebApplicationException(e);
         }
         
-        HippoBean child = baseFolderBean.getBean(relPath);
-        
-        if (child == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Child node not found: " + relPath);
-            }
-            throw new WebApplicationException(new IllegalArgumentException("Child node not found: " + relPath));
-        }
-        
         try {
-            obpm.remove(child);
+            obpm.remove(hippoBean);
         } catch (ObjectBeanPersistenceException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to create folder.", e);
+                log.warn("Failed to remove hippo bean.", e);
             } else {
-                log.warn("Failed to create folder. {}", e.toString());
+                log.warn("Failed to remove hippo bean. {}", e.toString());
             }
             throw new WebApplicationException(e);
         }
     }
+    
+    protected NodeProperty setResourceNodeProperty(Node resourceNode, String propertyName, List<String> propertyValues) {
+        
+        PropertyDefinition propDef = null;
+        
+        try {
+            propDef = PropertyDefinitionUtils.getPropertyDefinition(resourceNode, propertyName);
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve property definition.", e);
+            } else {
+                log.warn("Failed to retrieve property definition. {}", e.toString());
+            }
+            throw new WebApplicationException(e);
+        }
+        
+        if (propDef == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to retrieve property definition: " + propertyName);
+            }
+            throw new WebApplicationException(new IllegalArgumentException("No property definition found: " + propertyName));
+        }
+        
+        NodeProperty nodeProperty = new NodeProperty(propertyName);
+        nodeProperty.setType(propDef.getRequiredType());
+        nodeProperty.setMultiple(propDef.isMultiple());
+        PropertyValue [] values = null;
+        if (propertyValues != null) {
+            values = new PropertyValue[propertyValues.size()];
+            int index = 0;
+            for (String pv : propertyValues) {
+                values[index++] = new PropertyValue(pv);
+            }
+        }
+        nodeProperty.setValues(values);
+        
+        try {
+            NodePropertyUtils.setProperty(resourceNode, nodeProperty);
+            resourceNode.save();
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to set property.", e);
+            } else {
+                log.warn("Failed to set property. {}", e.toString());
+            }
+            throw new WebApplicationException(e);
+        }
+        
+        return nodeProperty;
+    }
+
 }
