@@ -15,8 +15,12 @@
  */
 package org.hippoecm.repository.translation.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
 
@@ -70,7 +74,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         log.debug("populating " + state.getNodeId());
-        
+
         if (subNodesProvider == null) {
             subNodesProvider = getDataProviderContext().lookupProvider(resolveName(HippoNodeType.NT_MIRROR));
             if (subNodesProvider == null) {
@@ -108,46 +112,54 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
         FacetedNavigationEngine.Result facetedResult = facetedEngine.query(
                 "//element(*,hippotranslation:translated)[@hippotranslation:id='" + id + "']", facetedContext);
         if (facetedResult.length() > 0) { // NPE if we don't check
+
+            ArrayList<ViewNodeId.Child> viewNodesOrdered = new ArrayList<ViewNodeId.Child>();
             for (NodeId t9nDocId : facetedResult) {
-                if (t9nDocId == null)
+                if (t9nDocId == null) {
                     continue;
+                }
+
+                String[] languages = getProperty(t9nDocId, localeName);
+                if (languages == null || languages.length != 1) {
+                    continue;
+                }
+                Name name = resolveName(languages[0]);
+
+                ViewNodeId ard = new ViewNodeId(subNodesProvider, state.getNodeId(), t9nDocId, context, name, view,
+                        order, singledView);
+                viewNodesOrdered.add(ard.new Child(name, ard));
+            }
+            ViewNodeId.Child[] childrenArray = viewNodesOrdered.toArray(new ViewNodeId.Child[viewNodesOrdered.size()]);
+            if (order != null) {
+                Arrays.sort(childrenArray);
+            }
+
+            Set<NodeId> handles = new TreeSet<NodeId>();
+            for (ViewNodeId.Child child : childrenArray) {
+                NodeId t9nDocId = child.getValue().getCanonicalId();
 
                 NodeState t9nDocState = getCanonicalNodeState(t9nDocId);
-                if (t9nDocState == null)
+                if (t9nDocState == null) {
                     continue;
+                }
 
                 NodeId t9nParentId = t9nDocState.getParentId();
                 if (t9nParentId == null) {
                     continue;
                 }
-                NodeState grandParentState = getNodeState(t9nParentId, context);
-                if (grandParentState.getNodeTypeName().equals(handleName)) {
-                    if (view != null && !match(view, t9nDocId)) {
+
+                NodeState t9nParentState = getNodeState(t9nParentId, context);
+                if (t9nParentState.getNodeTypeName().equals(handleName)) {
+                    if ((singledView && handles.contains(t9nParentId))
+                            || (view != null && !match(view, t9nDocId))) {
                         continue;
                     }
+                    handles.add(t9nParentState.getNodeId());
                 }
 
-                boolean found = true;
-                String[] languages = getProperty(t9nDocId, localeName);
-                NodeId ancestorId = t9nDocId;
-                while (languages == null || languages.length != 1) {
-                    NodeState ancestorState = getNodeState(ancestorId, context);
-                    ancestorId = ancestorState.getParentId();
-                    if (ancestorId == null) {
-                        found = false;
-                        break;
-                    }
-                    // FIXME: check node of ancestor?
-                    languages = getProperty(ancestorId, localeName);
-                }
-                if (!found) {
-                    continue;
-                }
-                Name name = resolveName(languages[0]);
-
-                state.addChildNodeEntry(name, new ViewNodeId(subNodesProvider, state.getNodeId(), t9nDocId, context,
-                        name, view, order, singledView));
+                state.addChildNodeEntry(child.getValue().name, child.getValue());
             }
+
         }
         return state;
     }

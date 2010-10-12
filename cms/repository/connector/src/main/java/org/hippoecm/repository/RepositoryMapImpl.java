@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import java.util.AbstractMap;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -23,16 +24,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
@@ -41,6 +42,8 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
     @SuppressWarnings("unused")
@@ -353,7 +356,66 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                     return new RepositoryMapImpl((Node)found);
                 } else {
                     Property property = (Property)found;
-                    switch (property.getType()) {
+                    if (property.isMultiple()) {
+                        Value[] values = property.getValues();
+                        Object[] result;
+                        int type = property.getType();
+                        switch (type) {
+                        case PropertyType.STRING:
+                            result = new String[values.length];
+                            break;
+                        case PropertyType.LONG:
+                            result = new Long[values.length];
+                            break;
+                        case PropertyType.DATE:
+                            result = new Calendar[values.length];
+                            break;
+                        case PropertyType.BOOLEAN:
+                            result = new Boolean[values.length];
+                            break;
+                        case PropertyType.REFERENCE:
+                            result = new RepositoryMap[values.length];
+                            break;
+                        case PropertyType.PATH:
+                            result = new String[values.length];
+                            break;
+                        case PropertyType.UNDEFINED:
+                        default:
+                            result = new String[values.length];
+                            break;
+                        }
+                        int i = 0;
+                        for (Value value : values) {
+                            Object object;
+                            switch (type) {
+                            case PropertyType.STRING:
+                                object = value.getString();
+                                break;
+                            case PropertyType.LONG:
+                                object = value.getLong();
+                                break;
+                            case PropertyType.DATE:
+                                object = value.getDate();
+                                break;
+                            case PropertyType.BOOLEAN:
+                                object = value.getBoolean();
+                                break;
+                            case PropertyType.REFERENCE:
+                                object = new RepositoryMapImpl(session.getNodeByUUID(value.getString()));
+                                break;
+                            case PropertyType.PATH:
+                                object = value.getString();
+                                break;
+                            case PropertyType.UNDEFINED:
+                            default:
+                                object = value.getString();
+                                break;
+                            }
+                            result[i++] = object;
+                        }
+                        return result;
+                    } else {
+                        switch (property.getType()) {
                         case PropertyType.STRING:
                             return property.getString();
                         case PropertyType.LONG:
@@ -369,6 +431,7 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                         case PropertyType.UNDEFINED:
                         default:
                             return property.getString();
+                        }
                     }
                 }
             } else {

@@ -186,26 +186,13 @@ public class EditPerspective extends Perspective {
                 if (node != null) {
                     try {
                         if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                            Node localeNode = node;
-                            String localeName = null;
-                            while (localeNode.getDepth() > 0) {
-                                if (localeNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
-                                        && localeNode.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                                    localeName = localeNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
-                                    break;
+                            String localeName = node.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                            for (HippoLocale locale : localeProvider.getLocales()) {
+                                if (localeName.equals(locale.getName())) {
+                                    return locale.getIcon(iconSize, LocaleState.EXISTS);
                                 }
-                                localeNode = localeNode.getParent();
                             }
-                            if (localeName != null) {
-                                for (HippoLocale locale : localeProvider.getLocales()) {
-                                    if (localeName.equals(locale.getName())) {
-                                        return locale.getIcon(iconSize, LocaleState.EXISTS);
-                                    }
-                                }
-                                log.warn("Locale '" + localeName + "' was not found in provider");
-                            } else {
-                                log.warn("Node '" + node.getPath() + "' is translated, but locale was not found");
-                            }
+                            log.warn("Locale '" + localeName + "' was not found in provider");
                         } else {
                             if (log.isDebugEnabled()) {
                                 log.debug("Node " + node.getPath() + " is not translated");

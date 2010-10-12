@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -105,9 +106,10 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         if(publishedDocument == null && unpublishedDocument == null)
             throw new WorkflowException("cannot copy unsaved document");
 
+        String folderWorkflowCategory = getFolderWorkflowCategory();
         if (unpublishedDocument == null) {
             Document folder = getWorkflowContext().getDocument("embedded", publishedDocument.getIdentity());
-            Workflow workflow = getWorkflowContext(null).getWorkflow("internal", folder);
+            Workflow workflow = getWorkflowContext(null).getWorkflow(folderWorkflowCategory, folder);
             if (workflow instanceof FolderWorkflow) {
                 Document copy = ((FolderWorkflow)workflow).copy(publishedDocument, destination, newName);
                 FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext(null).getWorkflow("default", copy);
@@ -116,12 +118,21 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
         } else {
             Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
-            Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
             if(workflow instanceof FolderWorkflow)
                 ((FolderWorkflow)workflow).copy(unpublishedDocument, destination, newName);
             else
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
         }
+    }
+
+    private String getFolderWorkflowCategory() {
+        String folderWorkflowCategory = "internal";
+        RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
+        if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
+            folderWorkflowCategory = (String) config.get("folder-workflow-category");
+        }
+        return folderWorkflowCategory;
     }
 
     public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
@@ -134,7 +145,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot move document being edited");
 
         Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).move(unpublishedDocument, destination, newName);
         else

@@ -35,11 +35,14 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TranslationWorkflowTest extends TestCase {
+    private static final String INVALID_ID = "invalid id - to be overwritten by folderworkflow";
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
@@ -59,6 +62,12 @@ public class TranslationWorkflowTest extends TestCase {
             "hippostdpubwf:lastModifiedBy", "admin",
         "/test/folder_nl", "hippostd:folder",
             "jcr:mixinTypes", "hippo:harddocument",
+        "/test/hipposysedit:prototype", "hippo:testdocument",
+            "jcr:mixinTypes", "hippostdpubwf:document",
+            "hippostd:state", "draft",
+            "hippostd:holder", "admin",
+            "hippostdpubwf:createdBy", "admin",
+            "hippostdpubwf:lastModifiedBy", "admin",
     };
 
     @Override
@@ -82,6 +91,14 @@ public class TranslationWorkflowTest extends TestCase {
                 }
             }
         }
+        Node newDocTemplateQuery = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates/new-document");
+        newDocTemplateQuery.setProperty("jcr:statement", "/jcr:root/test/hipposysedit:prototype");
+        Node prototype = session.getNode("/test/hipposysedit:prototype");
+        prototype.setProperty("hippostdpubwf:lastModificationDate", ISO8601.parse("2010-02-04T16:32:28.068+02:00"));
+        prototype.setProperty("hippostdpubwf:creationDate", ISO8601.parse("2010-02-04T16:32:28.068+02:00"));
+        prototype.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        prototype.setProperty(HippoTranslationNodeType.LOCALE, "en");
+        prototype.setProperty(HippoTranslationNodeType.ID, INVALID_ID);
 
         Node document = session.getRootNode().getNode("test/folder/document/document");
         document.addMixin("hippo:harddocument");
@@ -118,6 +135,7 @@ public class TranslationWorkflowTest extends TestCase {
         Node document = handle.getNode(handle.getName());
         document.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         document.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
+        document.setProperty(HippoTranslationNodeType.LOCALE, "en");
         session.save();
         session.refresh(false);
 
@@ -162,6 +180,7 @@ public class TranslationWorkflowTest extends TestCase {
         subFolder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         String id = UUID.randomUUID().toString();
         subFolder.setProperty(HippoTranslationNodeType.ID, id);
+        subFolder.setProperty(HippoTranslationNodeType.LOCALE, "en");
 
         ((HippoSession) session).copy(session.getNode("/test/folder/document"), "/test/folder/subfolder/document");
 
@@ -178,6 +197,22 @@ public class TranslationWorkflowTest extends TestCase {
         assertTrue(session.nodeExists("/test/folder_nl/ondermap"));
         assertEquals(id, session.getNode("/test/folder_nl/ondermap").getProperty(HippoTranslationNodeType.ID).getString());
         assertFalse(session.nodeExists("/test/folder_nl/ondermap/document"));
+    }
+
+    @Test
+    public void testFolderWorkflowCreatesNewDocumentThatInheritsLocale() throws Exception {
+        WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflowInterface = manager.getWorkflow("internal", session.getRootNode().getNode("test/folder"));
+        assertTrue(workflowInterface instanceof FolderWorkflow);
+        FolderWorkflow fw = (FolderWorkflow) workflowInterface;
+        fw.add("new-document", "hippo:testdocument", "test-document");
+        session.refresh(true);
+
+        assertTrue(session.nodeExists("/test/folder/test-document/test-document"));
+        Node docNode = session.getNode("/test/folder/test-document/test-document");
+        assertTrue(docNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED));
+        assertEquals("en", docNode.getProperty(HippoTranslationNodeType.LOCALE).getString());
+        assertFalse(INVALID_ID.equals(docNode.getProperty(HippoTranslationNodeType.ID).getString()));
     }
 
 }

@@ -45,12 +45,14 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     private static final long serialVersionUID = 1L;
 
+    WorkflowContext context;
     Document document;
     Session session;
     Node subject;
     Session rootSession; // FIXME; having the need for a rootSession is PLAIN WRONG, however because the document manager cannot read its own confiugration because of authorization rules, editors and authors cannot access documents
 
-    public DefaultWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RepositoryException {
+    public DefaultWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject) throws RepositoryException {
+        this.context = context;
         document = new Document(subject.getUUID());
         this.subject = subject;
         this.session = rootSession; // FIXME SHOULD BE THE USERSESSION!
@@ -58,35 +60,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     private WorkflowContext getWorkflowContext() {
-        try {
-            final DocumentManager documentManager = ((HippoWorkspace)rootSession.getWorkspace()).getDocumentManager();
-            final WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-            return new WorkflowContext() {
-                public WorkflowContext getWorkflowContext(Object jobSpecification) throws MappingException, RepositoryException {
-                    throw new MappingException("No workflow context defined for class "+jobSpecification.getClass().getName());
-                }
-                public RepositoryMap getWorkflowConfiguration() {
-                    return null;
-                }
-                public Document getDocument(String category, String identifier) throws RepositoryException {
-                    return documentManager.getDocument(category, identifier);
-                }
-
-                public Workflow getWorkflow(String category, Document document) throws MappingException, WorkflowException, RepositoryException {
-                    return workflowManager.getWorkflow(category, session.getNodeByUUID(document.getIdentity()));
-                }
-
-                public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException {
-                    return workflowManager.getWorkflow(category, subject);
-                }
-
-                public String getUserIdentity() {
-                    return session.getUserID();
-                }
-            };
-        } catch (RepositoryException ex) {
-            return null;
-        }
+        return context;
     }
 
     public Map<String,Serializable> hints() {
@@ -110,16 +84,25 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     public void delete() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).delete(document);
         else
             throw new WorkflowException("cannot delete document which is not contained in a folder");
     }
 
+    private String getFolderWorkflowCategory() {
+        String folderWorkflowCategory = "internal";
+        RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
+        if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
+            folderWorkflowCategory = (String) config.get("folder-workflow-category");
+        }
+        return folderWorkflowCategory;
+    }
+
     public void archive() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).archive(document);
         else
@@ -128,7 +111,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     public void rename(String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).rename(document, newName);
         else
@@ -225,7 +208,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).copy(document, destination, newName);
         else
@@ -234,7 +217,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).move(document, destination, newName);
         else
