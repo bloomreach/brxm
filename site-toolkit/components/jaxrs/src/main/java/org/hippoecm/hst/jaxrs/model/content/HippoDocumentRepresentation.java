@@ -31,8 +31,8 @@ public class HippoDocumentRepresentation extends NodeRepresentation {
 
     private String canonicalHandleUuid;
 
-	public HippoDocumentRepresentation represent(HippoDocumentBean hippoBean, Set<String> propertyFilter) throws RepositoryException {
-		super.represent(hippoBean, propertyFilter);
+	public HippoDocumentRepresentation represent(HippoDocumentBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
+		super.represent(hippoBean, propertyFilters);
 		this.canonicalHandleUuid = hippoBean.getCanonicalHandleUUID();
 		return this;
 	}

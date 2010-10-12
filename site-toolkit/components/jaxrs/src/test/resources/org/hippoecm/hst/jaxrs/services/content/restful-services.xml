@@ -88,6 +88,12 @@
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg ref="hippoDocumentContentResource" />
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg ref="hippoFolderContentResource" />
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg ref="defaultContentResource" />
         </bean>
       </list>
@@ -95,6 +101,8 @@
   </bean>
   
   <!-- JAX-RS Resources -->
+  <bean id="hippoDocumentContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoDocumentContentResource"/>
+  <bean id="hippoFolderContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoFolderContentResource"/>
   <bean id="defaultContentResource" class="org.hippoecm.hst.jaxrs.services.content.DefaultContentResource"/>
   
   <!-- ========================================================= -->

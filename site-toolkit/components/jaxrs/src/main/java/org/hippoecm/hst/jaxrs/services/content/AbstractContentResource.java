@@ -21,9 +21,11 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
@@ -34,8 +36,12 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
+import org.hippoecm.hst.jaxrs.model.content.PropertyValue;
+import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.hippoecm.hst.util.PropertyDefinitionUtils;
 
 /**
  * @version $Id$
@@ -110,4 +116,44 @@ public abstract class AbstractContentResource {
         return (HippoBean) getObjectConverter().getObject(requestContentNode);
     }
     
+    protected void deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
+        HippoBean child = baseBean.getBean(relPath);
+        
+        if (child == null) {
+            throw new IllegalArgumentException("Child node not found: " + relPath);
+        }
+        
+        deleteContentBean(servletRequest, child);
+    }
+    
+    protected void deleteContentBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {
+        ObjectBeanPersistenceManager obpm = getContentPersistenceManager(getRequestContext(servletRequest).getSession());
+        obpm.remove(hippoBean);
+        obpm.save();
+    }
+    
+    protected NodeProperty setResourceNodeProperty(Node resourceNode, String propertyName, List<String> propertyValues) throws RepositoryException {
+        PropertyDefinition propDef = PropertyDefinitionUtils.getPropertyDefinition(resourceNode, propertyName);
+        
+        if (propDef == null) {
+            throw new IllegalArgumentException("No property definition found: " + propertyName);
+        }
+        
+        NodeProperty nodeProperty = new NodeProperty(propertyName);
+        nodeProperty.setType(propDef.getRequiredType());
+        nodeProperty.setMultiple(propDef.isMultiple());
+        PropertyValue [] values = null;
+        
+        if (propertyValues != null) {
+            values = new PropertyValue[propertyValues.size()];
+            int index = 0;
+            for (String pv : propertyValues) {
+                values[index++] = new PropertyValue(pv);
+            }
+        }
+        
+        nodeProperty.setValues(values);
+        NodePropertyUtils.setProperty(resourceNode, nodeProperty);
+        return nodeProperty;
+    }
 }

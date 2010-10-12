@@ -46,7 +46,7 @@ public class NodeRepresentation {
     public NodeRepresentation() {    	
     }
     
-	public NodeRepresentation represent(HippoBean hippoBean, Set<String> propertyFilter) throws RepositoryException {
+	public NodeRepresentation represent(HippoBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
 		this.name = hippoBean.getName();
 		this.localizedName = hippoBean.getLocalizedName();
 		
@@ -61,7 +61,7 @@ public class NodeRepresentation {
         for (PropertyIterator it = hippoBean.getNode().getProperties(); it.hasNext(); ) {
             Property prop = it.nextProperty();
             
-            if (propertyFilter == null || propertyFilter.contains(prop.getName())) {
+            if (propertyFilters == null || propertyFilters.contains(prop.getName())) {
                 properties.add(new NodeProperty(prop));
             }
         }

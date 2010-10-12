@@ -29,8 +29,8 @@ import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 @XmlRootElement(name = "folder")
 public class HippoFolderRepresentation extends NodeRepresentation {
     
-    public HippoFolderRepresentation represent(HippoFolderBean hippoBean, Set<String> propertyFilter) throws RepositoryException {
-        super.represent(hippoBean, propertyFilter);
+    public HippoFolderRepresentation represent(HippoFolderBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
+        super.represent(hippoBean, propertyFilters);
         return this;
     }
     
