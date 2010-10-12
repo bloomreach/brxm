@@ -58,7 +58,7 @@ import org.w3c.dom.Document;
  * 
  * @version $Id$
  **/
-public class TestNodeResource extends AbstractJaxrsSpringTestCase {
+public class TestDefaultContentResource extends AbstractJaxrsSpringTestCase {
     
     private static final String SITE_MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
     
@@ -92,7 +92,7 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         
         hstContainerConfig = new HstContainerConfig() {
             public ClassLoader getContextClassLoader() {
-                return TestNodeResource.class.getClassLoader();
+                return TestDefaultContentResource.class.getClassLoader();
             }
             public ServletContext getServletContext() {
                 return servletContext;
@@ -124,9 +124,9 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     }
     
     @Test
-    public void testGetContentNode() throws Exception {
+    public void testGetContentResource() throws Exception {
         
-        log.debug("\n****** testGetContentNode *******\n");
+        log.debug("\n****** testGetContentResource *******\n");
         
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
@@ -153,9 +153,9 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     }
     
     @Test
-    public void testSetContentNodeProperty() throws Exception {
+    public void testSetContentResourceProperty() throws Exception {
         
-        log.debug("\n****** testSetContentNodeProperty *******\n");
+        log.debug("\n****** testSetContentResourceProperty *******\n");
         
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
@@ -214,9 +214,9 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     }
     
     @Test
-    public void testDeleteContentNode() throws Exception {
+    public void testDeleteContentResource() throws Exception {
         
-        log.debug("\n****** testDeleteContentNode *******\n");
+        log.debug("\n****** testDeleteContentResource *******\n");
 
     }
     
