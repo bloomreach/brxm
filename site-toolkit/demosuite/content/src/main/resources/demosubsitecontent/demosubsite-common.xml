@@ -100,6 +100,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>5fcb8231-2afb-403a-aa5c-881179fc74cb</sv:value>
+    </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:hardhandle</sv:value>
       <sv:value>hippo:translated</sv:value>
@@ -147,12 +150,29 @@
       </sv:property>
       <sv:node sv:name="demosite:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippostd:html</sv:value>
+            <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>&lt;p&gt;Now go ahead and build your own
-                        website!&lt;/p&gt; </sv:value>
+          <sv:value>&lt;html&gt;
+          &lt;body&gt;
+          
+          &lt;p&gt;You are at the demo subsite. Here is an &lt;strong&gt;internal cross domain link&lt;/strong&gt; to the
+          &lt;strong&gt;&lt;a href="about-us"&gt;demosite About us page&lt;/a&gt;&lt;/strong&gt;...&lt;/p&gt;
+          
+          &lt;/body&gt;
+          &lt;/html&gt;</sv:value>
         </sv:property>
+        <sv:node sv:name="about-us">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:facetselect</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>c30cab27-5317-44f0-a9eb-977f87e0d904</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:facets" sv:type="String"/>
+          <sv:property sv:name="hippo:modes" sv:type="String"/>
+          <sv:property sv:name="hippo:values" sv:type="String"/>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">

@@ -23,13 +23,6 @@
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:paths" sv:type="String">
-    <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
-    <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-    <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-    <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-  </sv:property>
   <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-folder</sv:value>
@@ -53,9 +46,6 @@
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>4707447c-f1c2-422f-909f-65195d3912f9</sv:value>
-      </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
         <sv:value>Who we are. erg wer</sv:value>
       </sv:property>
@@ -65,15 +55,6 @@
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>4707447c-f1c2-422f-909f-65195d3912f9</sv:value>
-        <sv:value>c30cab27-5317-44f0-a9eb-977f87e0d904</sv:value>
-        <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:related___pathreference" sv:type="String">
         <sv:value>common/about-us</sv:value>
@@ -143,9 +124,6 @@
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>143140f9-1e75-457f-a782-381cd4eade7c</sv:value>
-      </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
         <sv:value>This is the home page of the generated HST website.</sv:value>
       </sv:property>
@@ -155,18 +133,6 @@
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>143140f9-1e75-457f-a782-381cd4eade7c</sv:value>
-        <sv:value>120c9e06-2bac-4997-9ba2-ba90d8280cac</sv:value>
-        <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>common/home-page</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -194,12 +160,33 @@
       </sv:property>
       <sv:node sv:name="demosite:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippostd:html</sv:value>
+           <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>&lt;p&gt;Now go ahead and build your own
-                        website!&lt;/p&gt; </sv:value>
+           <sv:value>&lt;html&gt;
+            &lt;body&gt;
+            
+            &lt;p&gt;Now go ahead and build your own website!&lt;/p&gt;
+            
+            &lt;p&gt;This is a &lt;strong&gt;cross-domain&lt;/strong&gt; link to the &lt;strong&gt;&lt;a href="home-page"&gt;demo subsite&lt;/a&gt;&lt;/strong&gt;.  If
+            you change the virtual hosts such that the demo subsite is located at a
+            different host, you'll see that there is an automatic cross-domain link to the
+            different host name&lt;/p&gt;
+            
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
         </sv:property>
+        <sv:node sv:name="home-page">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+             <sv:value>hippo:facetselect</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>5fcb8231-2afb-403a-aa5c-881179fc74cb</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:facets" sv:type="String"/>
+          <sv:property sv:name="hippo:modes" sv:type="String"/>
+          <sv:property sv:name="hippo:values" sv:type="String"/>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
