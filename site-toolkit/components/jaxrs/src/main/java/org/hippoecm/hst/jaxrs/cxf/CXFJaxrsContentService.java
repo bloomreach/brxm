@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.jaxrs.cxf;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.LoginException;
@@ -27,9 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +44,11 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class CXFJaxrsContentService extends CXFJaxrsService {
-
+    
     private static Logger log = LoggerFactory.getLogger(CXFJaxrsContentService.class);
+    
+    private List<Class<? extends HippoBean>> annotatedClasses;
+    private ObjectConverter objectConverter;
     
 	public CXFJaxrsContentService(String serviceName) {
 		super(serviceName);
@@ -48,7 +57,30 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 	public CXFJaxrsContentService(String serviceName, Map<String, String> jaxrsConfigParameters) {
 		super(serviceName, jaxrsConfigParameters);
 	}
-
+	
+    public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
+        this.annotatedClasses = annotatedClasses;
+    }
+    
+    public void setObjectConverter(ObjectConverter objectConverter) {
+        this.objectConverter = objectConverter;
+    }
+    
+    protected List<Class<? extends HippoBean>> getAnnotatedClasses() {
+        if (annotatedClasses == null) {
+            return Collections.emptyList();
+        }
+        return annotatedClasses;
+    }
+    
+    protected ObjectConverter getObjectConverter() {
+        if (objectConverter == null) {
+            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
+            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+        }
+        return objectConverter;
+    }
+    
 	@Override
 	/*
 	 * temporarily splitting off and saving suffix from pathInfo until this is generally handled with HSTTWO-1189
@@ -63,6 +95,7 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 		String requestContentPath = getMountPointContentPath(requestContext) + (contentPathInfo != null ? contentPathInfo : "");
 
 		Node node = null;
+		String resourceType = "";
 		
         try {
         	Session jcrSession = requestContext.getSession();
@@ -70,19 +103,25 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
         	if (node == null) {
                 throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
         	}
+        	resourceType = getObjectConverter().getPrimaryObjectType(node);
+            if (resourceType == null) {
+                throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
+            }
         } catch (PathNotFoundException pnf) {
             throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
         } catch (LoginException e) {
             throw new ContainerException(e);
 		} catch (RepositoryException e) {
             throw new ContainerException(e);
+		} catch (ObjectBeanManagerException e) {
+		    throw new ContainerException(e);
 		}
 		
 		requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
     	requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, node);
     	
-    	// use JAX-RS service endpoint url-template: /{suffix}
-    	StringBuilder jaxrsEndpointURL = new StringBuilder("/");
+        // use JAX-RS service endpoint url-template: /{resourceType}/{suffix}
+        StringBuilder jaxrsEndpointURL = new StringBuilder("/").append(resourceType).append("/");
     	if (requestContext.getPathSuffix() != null) {
     		jaxrsEndpointURL.append(requestContext.getPathSuffix());
     	}

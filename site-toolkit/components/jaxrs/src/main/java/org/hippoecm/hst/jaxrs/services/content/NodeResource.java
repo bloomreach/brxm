@@ -59,34 +59,35 @@ public class NodeResource extends AbstractNodeResource {
     private static Logger log = LoggerFactory.getLogger(NodeResource.class);
     
     @GET
-    @Path("/")
+    @Path("/{resourceType}/")
     public NodeRepresentation getContentNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("pf") Set<String> propertyFilters) {
+            @PathParam("resourceType") String resourceType, @MatrixParam("pf") Set<String> propertyFilters) {
     	HstRequestContext requestContext = getRequestContext(servletRequest);    	
     	Node requestContentNode = getRequestContentNode(requestContext);
     	return getNodeRepresentation(requestContentNode, propertyFilters);
     }
     
     @POST
-    @Path("/property/{propertyName}/")
+    @Path("/{resourceType}/property/{propertyName}/")
     public NodeProperty setContentNodeProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
+            @PathParam("resourceType") String resourceType, @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         Node requestContentNode = getRequestContentNode(requestContext);
         return setResourceNodeProperty(requestContentNode, propertyName, propertyValues);
     }
     
     @DELETE
-    @Path("/")
-    public void deleteContentNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+    @Path("/{resourceType}/")
+    public void deleteContentNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("resourceType") String resourceType) {
         HippoBean hippoBean = getRequestContentAsHippoBean(getRequestContext(servletRequest));
         deleteContentNode(servletRequest, hippoBean);
     }
     
     @GET
-    @Path("/folders/")
+    @Path("/{resourceType}/folders/")
     public HippoFolderRepresentationDataset getFolders(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
+            @PathParam("resourceType") String resourceType, @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         List<NodeRepresentation> folderNodes = new ArrayList<NodeRepresentation>();
         HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset(folderNodes);
@@ -108,9 +109,9 @@ public class NodeResource extends AbstractNodeResource {
     }
     
     @GET
-    @Path("/folders/{folderName}/")
+    @Path("/{resourceType}/folders/{folderName}/")
     public HippoFolderRepresentation getFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("folderName") String folderName, @MatrixParam("pf") Set<String> propertyFilters) {
+            @PathParam("resourceType") String resourceType, @PathParam("folderName") String folderName, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         HippoFolderBean childFolderBean = hippoFolderBean.getBean(folderName, HippoFolderBean.class);
         
@@ -134,25 +135,25 @@ public class NodeResource extends AbstractNodeResource {
     }
     
     @POST
-    @Path("/folders/{folderName}/")
+    @Path("/{resourceType}/folders/{folderName}/")
     public void createFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("folderName") String folderName) {
+            @PathParam("resourceType") String resourceType, @PathParam("folderName") String folderName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         createContentNode(servletRequest, hippoFolderBean, "hippostd:folder", folderName);
     }
     
     @DELETE
-    @Path("/folders/{folderName}/")
+    @Path("/{resourceType}/folders/{folderName}/")
     public void deleteFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("folderName") String folderName) {
+            @PathParam("resourceType") String resourceType, @PathParam("folderName") String folderName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         deleteContentNode(servletRequest, hippoFolderBean, folderName);
     }
     
     @GET
-    @Path("/documents/")
+    @Path("/{resourceType}/documents/")
     public HippoDocumentRepresentationDataset getDocuments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
+            @PathParam("resourceType") String resourceType, @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         List<NodeRepresentation> documentNodes = new ArrayList<NodeRepresentation>();
         HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset(documentNodes);
@@ -174,9 +175,9 @@ public class NodeResource extends AbstractNodeResource {
     }
     
     @GET
-    @Path("/documents/{documentName}/")
+    @Path("/{resourceType}/documents/{documentName}/")
     public HippoDocumentRepresentation getDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("documentName") String documentName, @MatrixParam("pf") Set<String> propertyFilters) {
+            @PathParam("resourceType") String resourceType, @PathParam("documentName") String documentName, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         HippoDocumentBean childDocumentBean = hippoFolderBean.getBean(documentName, HippoDocumentBean.class);
         
@@ -200,25 +201,25 @@ public class NodeResource extends AbstractNodeResource {
     }
     
     @POST
-    @Path("/documents/{nodeTypeName}/{documentName}/")
+    @Path("/{resourceType}/documents/{nodeTypeName}/{documentName}/")
     public void createDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("nodeTypeName") String nodeTypeName, @PathParam("documentName") String documentName) {
+            @PathParam("resourceType") String resourceType, @PathParam("nodeTypeName") String nodeTypeName, @PathParam("documentName") String documentName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         createContentNode(servletRequest, hippoFolderBean, nodeTypeName, documentName);
     }
     
     @DELETE
-    @Path("/documents/{documentName}/")
+    @Path("/{resourceType}/documents/{documentName}/")
     public void deleteDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("documentName") String documentName) {
+            @PathParam("resourceType") String resourceType, @PathParam("documentName") String documentName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         deleteContentNode(servletRequest, hippoFolderBean, documentName);
     }
     
     @GET
-    @Path("/childbeans/")
+    @Path("/{resourceType}/childbeans/")
     public NodeRepresentationDataset getChildBeans(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("type") String childNodePrimaryNodeType, @MatrixParam("name") String childNodeName, @MatrixParam("pf") Set<String> propertyFilters) {
+            @PathParam("resourceType") String resourceType, @MatrixParam("type") String childNodePrimaryNodeType, @MatrixParam("name") String childNodeName, @MatrixParam("pf") Set<String> propertyFilters) {
         if (StringUtils.isBlank(childNodePrimaryNodeType) && StringUtils.isBlank(childNodeName)) {
             if (log.isWarnEnabled()) {
                 log.warn("primary node type name or node name must be provided.");
@@ -255,9 +256,9 @@ public class NodeResource extends AbstractNodeResource {
     }
     
     @GET
-    @Path("/childbeans/{childName}/")
+    @Path("/{resourceType}/childbeans/{childName}/")
     public NodeRepresentation getChildBean(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("childName") String childName, @MatrixParam("pf") Set<String> propertyFilters) {
+            @PathParam("resourceType") String resourceType, @PathParam("childName") String childName, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoBean hippoBean = getRequestContentAsHippoBean(getRequestContext(servletRequest));
         HippoBean childBean = hippoBean.getBean(childName);
         
@@ -281,9 +282,9 @@ public class NodeResource extends AbstractNodeResource {
     }
     
     @POST
-    @Path("/childbeans/{childName}/property/{propertyName}/")
+    @Path("/{resourceType}/childbeans/{childName}/property/{propertyName}/")
     public NodeProperty setChildResourceProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("childName") String childName, @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
+            @PathParam("resourceType") String resourceType, @PathParam("childName") String childName, @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
         HippoBean hippoBean = getRequestContentAsHippoBean(getRequestContext(servletRequest));
         HippoBean childBean = hippoBean.getBean(childName);
         
@@ -298,9 +299,9 @@ public class NodeResource extends AbstractNodeResource {
     }
     
     @DELETE
-    @Path("/childbeans/{childName}/")
+    @Path("/{resourceType}/childbeans/{childName}/")
     public void deleteChildBean(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("childName") String childName) {
+            @PathParam("resourceType") String resourceType, @PathParam("childName") String childName) {
         HippoBean hippoBean = getRequestContentAsHippoBean(getRequestContext(servletRequest));
         deleteContentNode(servletRequest, hippoBean, childName);
     }

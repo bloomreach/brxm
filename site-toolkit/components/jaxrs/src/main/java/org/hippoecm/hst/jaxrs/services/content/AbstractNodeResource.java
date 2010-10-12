@@ -248,6 +248,7 @@ public abstract class AbstractNodeResource {
         
         try {
             obpm.remove(hippoBean);
+            obpm.save();
         } catch (ObjectBeanPersistenceException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to remove hippo bean.", e);

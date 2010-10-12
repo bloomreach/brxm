@@ -125,9 +125,9 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     
     @Test
     public void testGetContentNode() throws Exception {
-        /*
-         * Retrieves document xml by path
-         */
+        
+        log.debug("\n****** testGetContentNode *******\n");
+        
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
         request.setScheme("http");
@@ -149,14 +149,14 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
             log.debug("Response Content:\n" + response.getContentAsString() + "\n");
         }
         
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
     
     @Test
     public void testSetContentNodeProperty() throws Exception {
-        /*
-         * Sets property by path and form parameter
-         */
+        
+        log.debug("\n****** testSetContentNodeProperty *******\n");
+        
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
         request.setScheme("http");
@@ -179,7 +179,7 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
             log.debug("Response Content:\n" + response.getContentAsString() + "\n");
         }
         
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
         
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         String title = XPathFactory.newInstance().newXPath().compile("//value").evaluate(document);
@@ -206,7 +206,7 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
         
         invokeJaxrsPipeline(request, response);
         
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
         
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         title = XPathFactory.newInstance().newXPath().compile("//value").evaluate(document);
@@ -215,14 +215,16 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     
     @Test
     public void testDeleteContentNode() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testDeleteContentNode *******\n");
+
     }
     
     @Test
     public void testGetFolders() throws Exception {
-        /*
-         * Retrieves document xml by path
-         */
+        
+        log.debug("\n****** testGetFolders *******\n");
+        
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
         request.setScheme("http");
@@ -244,7 +246,7 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
             log.debug("Response Content:\n" + response.getContentAsString() + "\n");
         }
         
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         int folderNodeCount = Integer.parseInt(XPathFactory.newInstance().newXPath().compile("count(//folder)").evaluate(document));
         assertTrue(folderNodeCount > 0);
@@ -254,24 +256,30 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     
     @Test
     public void testGetFolder() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testGetFolder *******\n");
+        
     }
     
     @Test
     public void testCreateFolder() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testCreateFolder *******\n");
+        
     }
     
     @Test
     public void testDeleteFolder() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testDeleteFolder *******\n");
+        
     }
     
     @Test
     public void testGetDocuments() throws Exception {
-        /*
-         * Retrieves document xml by path
-         */
+        
+        log.debug("\n****** testGetDocuments *******\n");
+        
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
         request.setScheme("http");
@@ -293,7 +301,7 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
             log.debug("Response Content:\n" + response.getContentAsString() + "\n");
         }
         
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         int folderNodeCount = Integer.parseInt(XPathFactory.newInstance().newXPath().compile("count(//folder)").evaluate(document));
         assertEquals(0, folderNodeCount);
@@ -303,37 +311,137 @@ public class TestNodeResource extends AbstractJaxrsSpringTestCase {
     
     @Test
     public void testGetDocument() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testGetDocument *******\n");
+        
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products./documents/HippoCMS");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products./documents/HippoCMS");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        String name = XPathFactory.newInstance().newXPath().compile("/document/name/text()").evaluate(document);
+        assertEquals("HippoCMS", name);
     }
     
     @Test
-    public void testCreateDocument() throws Exception {
-        // TODO
-    }
-    
-    @Test
-    public void testDeleteDocument() throws Exception {
-        // TODO
+    public void testCreateAndDeleteDocument() throws Exception {
+        
+        log.debug("\n****** testCreateAndDeleteDocument *******\n");
+        
+        log.debug("Create a document first.");
+        
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("POST");
+        request.setRequestURI("/testapp/preview/services/Products./documents/testproject:textpage/newdocumentfortest/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products./documents/testproject:textpage/newdocumentfortest/");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+
+        log.debug("Retrieve the created document.");
+        
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products./documents/newdocumentfortest");
+        request.setContent(new byte[0]);
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        log.debug("Delete the created document.");
+        
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("DELETE");
+        request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products./documents/newdocumentfortest/");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.setContent(new byte[0]);
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
     
     @Test
     public void testGetChildBeans() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testGetChildBeans *******\n");
+        
     }
     
     @Test
     public void testGetChildBean() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testGetChildBean *******\n");
+        
     }
     
     @Test
     public void testSetChildResourceProperty() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testSetChildResourceProperty *******\n");
+        
     }
     
     @Test
     public void testDeleteChildBean() throws Exception {
-        // TODO
+        
+        log.debug("\n****** testDeleteChildBean *******\n");
+        
     }
     
     private void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
