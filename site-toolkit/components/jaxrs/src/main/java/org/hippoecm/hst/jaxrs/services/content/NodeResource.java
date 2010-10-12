@@ -16,14 +16,11 @@
 package org.hippoecm.hst.jaxrs.services.content;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,21 +36,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
-import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.search.HstQueryManagerFactory;
-import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentationDataset;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentation;
@@ -62,8 +48,6 @@ import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
 import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.PropertyValue;
 import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
-import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.hst.util.PropertyDefinitionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,189 +56,14 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 @Path("/")
-public class NodeResource {
+public class NodeResource extends AbstractNodeResource {
 
     private static Logger log = LoggerFactory.getLogger(NodeResource.class);
     
-    private List<Class<? extends HippoBean>> annotatedClasses;
-    private ObjectConverter objectConverter;
-    private HstQueryManager hstQueryManager;
-    private WorkflowPersistenceManager workflowPersistenceManager;
-    
-    public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
-        this.annotatedClasses = annotatedClasses;
-    }
-    
-    public void setObjectConverter(ObjectConverter objectConverter) {
-    	this.objectConverter = objectConverter;
-    }
-    
-    public void setHstQueryManager(HstQueryManager hstQueryManager) {
-    	this.hstQueryManager = hstQueryManager;
-    }
-    
-    protected List<Class<? extends HippoBean>> getAnnotatedClasses() {
-        if (annotatedClasses == null) {
-            return Collections.emptyList();
-        }
-        return annotatedClasses;
-    }
-    
-    protected ObjectConverter getObjectConverter() {
-        if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
-            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-        }
-        return objectConverter;
-    }
-    
-    protected HstQueryManager getHstQueryManager() {
-        if (hstQueryManager == null) {
-            ComponentManager compManager = HstServices.getComponentManager();
-            if (compManager != null) {
-                HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
-                hstQueryManager = hstQueryManagerFactory.createQueryManager(getObjectConverter());
-            }
-        }
-        return hstQueryManager;
-    }
-    
-    protected WorkflowPersistenceManager getWorkflowPersistenceManager(HttpServletRequest servletRequest) throws RepositoryException {
-        if (workflowPersistenceManager == null) {
-            workflowPersistenceManager = new WorkflowPersistenceManagerImpl(getRequestContext(servletRequest).getSession(), getObjectConverter());
-        }
-        return workflowPersistenceManager;
-    }
-    
-    protected ObjectBeanPersistenceManager getContentPersistenceManager(Session jcrSession) throws LoginException, RepositoryException {
-        return new WorkflowPersistenceManagerImpl(jcrSession, getObjectConverter());
-    }
-    
-    protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
-        return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-    }
-    
-    protected String getRequestContentPath(HstRequestContext requestContext) {
-    	return (String)requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
-    }
-    
-    protected Node getRequestContentNode(HstRequestContext requestContext) {
-    	return (Node)requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);
-    }
-    
-    protected HippoBean getRequestContentAsHippoBean(HstRequestContext requestContext) throws WebApplicationException {
-        Node requestContentNode = getRequestContentNode(requestContext);
-        
-        if (requestContentNode == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Request content node is not found.");
-            }
-            throw new WebApplicationException(new IllegalStateException("Request content node is not found."));
-        }
-        
-        try {
-            return (HippoBean) getObjectConverter().getObject(requestContentNode);
-        } catch (ObjectBeanManagerException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to convert content node.", e);
-            } else {
-                log.warn("Failed to convert content node. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-    }
-    
-    protected HippoFolderBean getRequestContentAsHippoFolderBean(HstRequestContext requestContext) throws WebApplicationException {
-        HippoBean hippoBean = getRequestContentAsHippoBean(requestContext);
-        
-        if (!hippoBean.isHippoFolderBean()) {
-            if (log.isWarnEnabled()) {
-                log.warn("The content bean is not a folder bean.");
-            }
-            throw new WebApplicationException(new IllegalArgumentException("The content bean is not a folder bean."));
-        }
-        
-        return (HippoFolderBean) hippoBean;
-    }
-    
-    protected HippoDocumentBean getRequestContentAsHippoDocumentBean(HstRequestContext requestContext) throws WebApplicationException {
-        HippoBean hippoBean = getRequestContentAsHippoBean(requestContext);
-        
-        if (!hippoBean.isHippoDocumentBean()) {
-            if (log.isWarnEnabled()) {
-                log.warn("The content bean is not a document bean.");
-            }
-            throw new WebApplicationException(new IllegalArgumentException("The content bean is not a document bean."));
-        }
-        
-        return (HippoDocumentBean) hippoBean;
-    }
-    
-    protected void createContentNode(HttpServletRequest servletRequest, HippoFolderBean baseFolderBean, String nodeTypeName, String name) throws WebApplicationException {
-        WorkflowPersistenceManager wpm = null;
-        
-        try {
-            wpm = getWorkflowPersistenceManager(servletRequest);
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to create workflow persistence manager.", e);
-            } else {
-                log.warn("Failed to create workflow persistence manager. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-        
-        try {
-            wpm.create(baseFolderBean.getPath(), nodeTypeName, name);
-        } catch (ObjectBeanPersistenceException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to create node.", e);
-            } else {
-                log.warn("Failed to create node. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-    }
-    
-    public void deleteContentNode(HttpServletRequest servletRequest, HippoFolderBean baseFolderBean, String relPath) {
-        WorkflowPersistenceManager wpm = null;
-        
-        try {
-            wpm = getWorkflowPersistenceManager(servletRequest);
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to create workflow persistence manager.", e);
-            } else {
-                log.warn("Failed to create workflow persistence manager. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-        
-        HippoBean child = baseFolderBean.getBean(relPath);
-        
-        if (child == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Child node not found: " + relPath);
-            }
-            throw new WebApplicationException(new IllegalArgumentException("Child node not found: " + relPath));
-        }
-        
-        try {
-            wpm.remove(child);
-        } catch (ObjectBeanPersistenceException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to create folder.", e);
-            } else {
-                log.warn("Failed to create folder. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-    }
-    
     @GET
-    @Path("/{resourceType}/")
+    @Path("/")
     public NodeRepresentation getResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @MatrixParam("pf") Set<String> pf) {
+            @MatrixParam("pf") Set<String> pf) {
         
     	HstRequestContext requestContext = getRequestContext(servletRequest);    	
     	Node requestContentNode = getRequestContentNode(requestContext);
@@ -284,9 +93,9 @@ public class NodeResource {
     }
     
     @GET
-    @Path("/{resourceType}/folders")
+    @Path("/folders")
     public HippoFolderRepresentationDataset getFolders(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> pf) {
+            @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> pf) {
         
         HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset();
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
@@ -310,25 +119,25 @@ public class NodeResource {
     }
     
     @POST
-    @Path("/{resourceType}/folders")
+    @Path("/folders")
     public void createFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @QueryParam("name") String folderName) {
+            @QueryParam("name") String folderName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         createContentNode(servletRequest, hippoFolderBean, "hippostd:folder", folderName);
     }
     
     @DELETE
-    @Path("/{resourceType}/folders")
+    @Path("/folders")
     public void deleteFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @QueryParam("name") String folderName) {
+            @QueryParam("name") String folderName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         deleteContentNode(servletRequest, hippoFolderBean, folderName);
     }
     
     @GET
-    @Path("/{resourceType}/documents")
+    @Path("/documents")
     public HippoDocumentRepresentationDataset getDocuments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> pf) {
+            @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> pf) {
         
         HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset();
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
@@ -352,34 +161,34 @@ public class NodeResource {
     }
     
     @POST
-    @Path("/{resourceType}/documents")
+    @Path("/documents")
     public void createDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @QueryParam("type") String nodeTypeName, @QueryParam("name") String documentName) {
+            @QueryParam("type") String nodeTypeName, @QueryParam("name") String documentName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         createContentNode(servletRequest, hippoFolderBean, nodeTypeName, documentName);
     }
     
     @DELETE
-    @Path("/{resourceType}/documents")
+    @Path("/documents")
     public void deleteDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @QueryParam("name") String documentName) {
+            @QueryParam("name") String documentName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         deleteContentNode(servletRequest, hippoFolderBean, documentName);
     }
     
     @GET
-    @Path("/{resourceType}/property/{propertyName}")
+    @Path("/property/{propertyName}")
     public NodeProperty getNodeProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @PathParam("propertyName") String propertyName) {
+            @PathParam("propertyName") String propertyName) {
         
-        NodeRepresentation representation = getResource(servletRequest, servletResponse, uriInfo, resourceType, null);
+        NodeRepresentation representation = getResource(servletRequest, servletResponse, uriInfo, null);
         return representation.getProperty(propertyName);
     }
     
     @POST
-    @Path("/{resourceType}/property/{propertyName}")
+    @Path("/property/{propertyName}")
     public NodeProperty setNodeProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("resourceType") String resourceType, @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
+            @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
         
         HstRequestContext requestContext = getRequestContext(servletRequest);
         Node requestContentNode = getRequestContentNode(requestContext);

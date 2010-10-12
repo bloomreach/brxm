@@ -29,8 +29,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public interface JAXRSService {
 	
-	String REQUEST_CONTENT_PATH_KEY = "org.hippoecm.hst.request.contentPath";
-	String REQUEST_CONTENT_NODE_KEY = "org.hippoecm.hst.request.contentNode";
+	String REQUEST_CONTENT_PATH_KEY = "org.hippoecm.hst.jaxrs.request.contentPath";
+	String REQUEST_CONTENT_NODE_KEY = "org.hippoecm.hst.jaxrs.request.contentNode";
 	
 	/** @deprecated **/
 	String getBasePath();

@@ -26,7 +26,6 @@ import javax.jcr.Session;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -34,6 +33,7 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,45 +153,29 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 		}
 	}
 	
-    protected static class PathsAdjustedHttpServletRequestWrapper extends HttpServletRequestWrapper {
+    protected static class PathsAdjustedHttpServletRequestWrapper extends GenericHttpServletRequestWrapper {
 
     	private String requestURI;
     	private String requestURL;
-        private String servletPath;
-        private String pathInfo;
         private HstRequestContext requestContext;
         
         public PathsAdjustedHttpServletRequestWrapper(HstRequestContext requestContext, HttpServletRequest request, String servletPath, String pathInfo) {
             super(request);
-            this.servletPath = servletPath;
-            this.pathInfo = pathInfo;
+            setServletPath(servletPath);
+            setPathInfo(pathInfo);
             this.requestContext = requestContext;
         }
         
-        @Override
-        public String getServletPath() {
-            return (servletPath != null ? servletPath : "");
-        }
-        
-        @Override
-        public String getPathInfo() {
-            return pathInfo;
-        }
-
-        @Override
-		public String getPathTranslated() {
-			return null;
-		}
-
 		@Override
 		public String getRequestURI() {
 			if (requestURI == null) {
-				String pathInfo = getPathInfo() == null ? "" : getPathInfo();
-				requestURI = new StringBuilder(getContextPath()).append(getServletPath()).append(pathInfo).toString();
+				String pathInfo = getPathInfo();
+				requestURI = new StringBuilder(getContextPath()).append(getServletPath()).append(pathInfo != null ? pathInfo : "").toString();
 				if (requestURI.length() == 0) {
 					requestURI = "/";
 				}
 			}
+			
 			return requestURI;
 		}
 
@@ -201,6 +185,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 				ResolvedVirtualHost host = requestContext.getResolvedSiteMount().getResolvedVirtualHost();
 				requestURL = new StringBuilder(super.getScheme()).append("://").append(host.getResolvedHostName()).append(":").append(host.getPortNumber()).append(getRequestURI()).toString();
 			}
+			
 			return new StringBuffer(requestURL);
 		}
     }
