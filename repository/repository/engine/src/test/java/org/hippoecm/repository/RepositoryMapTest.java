@@ -19,7 +19,10 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public class RepositoryMapTest extends TestCase {
@@ -45,6 +48,8 @@ public class RepositoryMapTest extends TestCase {
             root = root.getNode("test");
         else
             root = root.addNode("test");
+        root.setProperty("aap", "noot");
+        root.setProperty("mies", new String[] { "a", "b" });
 
         root = session.getRootNode();
         if(root.hasNode("content")) {
@@ -63,4 +68,14 @@ public class RepositoryMapTest extends TestCase {
         assertNotNull(map);
         map = (Map) map.get(root.getNode("articles/myarticle1/myarticle1").getUUID());
     }
+
+    @Test
+    public void testMapProperty() throws Exception {
+        Map map = server.getRepositoryMap(session.getNode("/test"));
+        assertNotNull(map);
+        assertEquals("noot", map.get("aap"));
+        String[] mies = (String[]) map.get("mies");
+        assertEquals(new String[] { "a", "b" }, mies);
+    }
+
 }

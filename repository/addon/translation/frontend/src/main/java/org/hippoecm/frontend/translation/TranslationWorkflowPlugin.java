@@ -196,6 +196,10 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                                     folder = folder.getParent();
                                 }
                                 Collections.reverse(folders);
+                                int index = 0;
+                                for (FolderTranslation translation : folders) {
+                                    translation.setId(index++);
+                                }
 
                                 return new DocumentTranslationDialog(
                                         TranslationWorkflowPlugin.this,

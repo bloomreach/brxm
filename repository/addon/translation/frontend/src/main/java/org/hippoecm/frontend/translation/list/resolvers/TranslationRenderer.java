@@ -29,7 +29,6 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.html.resources.PackagedResourceReference;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -93,16 +92,7 @@ public class TranslationRenderer extends AbstractNodeRenderer {
 
             add(CSSPackageResource.getHeaderContribution(getClass(), "style.css"));
 
-            locale = null;
-            Node localeHolder = document;
-            while (localeHolder.getDepth() > 0) {
-                if (localeHolder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
-                        && localeHolder.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                    locale = localeHolder.getProperty(HippoTranslationNodeType.LOCALE).getString();
-                    break;
-                }
-                localeHolder = localeHolder.getParent();
-            }
+            locale = document.getProperty(HippoTranslationNodeType.LOCALE).getString();
 
             localeNames = new TreeSet<String>();
             NodeIterator translationNodes = document.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes();

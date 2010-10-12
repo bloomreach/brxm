@@ -91,7 +91,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         Document targetFolder = new Document(folderTranslation.getUUID());
         Node copiedDoc = null;
         if (userSubject.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("default",
+            Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("translation-copy",
                     new Document(rootSubject.getUUID()));
             if (defaultWorkflow instanceof DefaultWorkflow) {
                 ((DefaultWorkflow) defaultWorkflow).copy(targetFolder, name);

@@ -38,7 +38,7 @@ public final class FolderTranslation implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(FolderTranslation.class);
 
-    private final int id;
+    private int id;
     private final JcrNodeModel originalFolder;
     private final String localeName;
     private final String name;
@@ -50,7 +50,6 @@ public final class FolderTranslation implements IDetachable {
     private boolean mutable = false;
 
     public FolderTranslation(Node node, String localeName) throws RepositoryException {
-        this.id = node.getDepth();
         this.originalFolder = new JcrNodeModel(node);
         this.localeName = localeName;
         this.url = node.getName();
@@ -74,6 +73,10 @@ public final class FolderTranslation implements IDetachable {
         }
     }
 
+    void setId(int id) {
+        this.id = id;
+    }
+    
     public int getId() {
         return id;
     }

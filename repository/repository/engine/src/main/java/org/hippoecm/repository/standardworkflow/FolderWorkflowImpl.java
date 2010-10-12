@@ -50,18 +50,19 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
@@ -179,6 +180,58 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return types;
     }
 
+    private void populateRenames(Map<String, String[]> renames, String[] values, Node target, 
+            Map<String, String> arguments) throws ValueFormatException, IllegalStateException, RepositoryException,
+            WorkflowException {
+        String name = arguments.get("name");
+        String currentTime = null;
+        for (int i = 0; i + 1 < values.length; i += 2) {
+            String newValue = values[i + 1];
+            if (newValue.equals("$name")) {
+                newValue = name;
+            } else if (newValue.equals("$holder")) {
+                newValue = workflowContext.getUserIdentity();
+            } else if (newValue.equals("$now")) {
+                if (currentTime == null) {
+                    currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                            .format(new java.util.Date());
+                    currentTime = currentTime.substring(0, currentTime.length() - 2) + ":"
+                            + currentTime.substring(currentTime.length() - 2);
+                }
+                newValue = currentTime;
+            } else if (newValue.startsWith("$inherit")) {
+                String relpath = values[i];
+                HierarchyResolver hr = ((HippoWorkspace) userSession.getWorkspace()).getHierarchyResolver();
+                Property parentProperty = hr.getProperty(target, relpath);
+                if (parentProperty == null) {
+                    continue;
+                } else {
+                    newValue = parentProperty.getValue().getString();
+                }
+            } else if (newValue.startsWith("$")) {
+                String key = newValue.substring(1);
+                if (arguments.containsKey(key)) {
+                    newValue = arguments.get(key);
+                } else {
+                    if (key.equals("uuid")) {
+                        newValue = UUID.randomUUID().toString();
+                    } else {
+                        throw new WorkflowException("No value specified for parameter " + key);
+                    }
+                }
+            }
+            if (renames.containsKey(values[i])) {
+                String[] oldValues = renames.get(values[i]);
+                String[] newValues = new String[oldValues.length + 1];
+                System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                newValues[oldValues.length] = newValue;
+                renames.put(values[i], newValues);
+            } else {
+                renames.put(values[i], new String[] { newValue });
+            }
+        }
+    }
+
     public String add(String category, String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Map<String,String> arguments = new TreeMap<String,String>();
         arguments.put("name", name);
@@ -203,41 +256,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Map<String, String[]> renames = new TreeMap<String, String[]>();
         if (foldertype.hasProperty("hippostd:modify")) {
             Value[] values = foldertype.getProperty("hippostd:modify").getValues();
-            String currentTime = null;
-            for (int i = 0; i + 1 < values.length; i += 2) {
-                String newValue = values[i + 1].getString();
-                if (newValue.equals("$name")) {
-                    newValue = name;
-                } else if (newValue.equals("$holder")) {
-                    newValue = workflowContext.getUserIdentity();
-                } else if (newValue.equals("$now")) {
-                    if (currentTime == null) {
-                        currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new java.util.Date());
-                        currentTime = currentTime.substring(0, currentTime.length()-2)+":"+currentTime.substring(currentTime.length()-2);
-                    }
-                    newValue = currentTime;
-                } else if (newValue.startsWith("$")) {
-                    String key = newValue.substring(1);
-                    if (arguments.containsKey(key)) {
-                        newValue = arguments.get(key);
-                    } else {
-                        if (key.equals("uuid")) {
-                            newValue = UUID.randomUUID().toString();
-                        } else {
-                            throw new WorkflowException("No value specified for parameter " + key);
-                        }
-                    }
-                }
-                if (renames.containsKey(values[i].getString())) {
-                    String[] oldValues = renames.get(values[i].getString());
-                    String[] newValues = new String[oldValues.length + 1];
-                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                    newValues[oldValues.length] = newValue;
-                    renames.put(values[i].getString(), newValues);
-                } else {
-                    renames.put(values[i].getString(), new String[] {newValue});
-                }
+            String[] params = new String[values.length];
+            for (int i = 0; i < values.length; i++) {
+                params[i] = values[i].getString();
             }
+            populateRenames(renames, params, target, arguments);
         }
         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
             Node prototypeNode = iter.nextNode();
@@ -684,10 +707,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Node handle = userSubject.addNode(targetName, HippoNodeType.NT_HANDLE);
             handle.addMixin(HippoNodeType.NT_HARDHANDLE);
-            ((HippoSession)userSession).copy(source, handle.getPath() + "/" + targetName);
+
+            Node document = copyDocument(targetName, Collections.EMPTY_MAP, source, handle);
+
             renameChildDocument(handle);
             userSubject.save();
-            return new Document(userSubject.getNode(targetName).getNode(targetName).getUUID());
+            return new Document(document.getUUID());
         } else {
             renameChildDocument(((HippoSession)userSubject.getSession()).copy(source, userSubject.getPath() + "/" + targetName));
             userSubject.save();
@@ -781,17 +806,42 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Node handle = folder.addNode(targetName, HippoNodeType.NT_HANDLE);
             handle.addMixin(HippoNodeType.NT_HARDHANDLE);
-            ((HippoSession)folder.getSession()).copy(source, handle.getPath() + "/" + targetName);
+
+            Node document = copyDocument(targetName, (arguments == null ? Collections.EMPTY_MAP : arguments), source, handle);
             renameChildDocument(handle);
+
             folder.save();
-            ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
-            return new Document(folder.getNode(targetName).getNode(targetName).getUUID());
+            ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(handle.getUUID()), arguments);
+            return new Document(document.getUUID());
         } else {
             renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
             folder.save();
             ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
             return new Document(folder.getNode(targetName).getUUID());
         }
+    }
+
+    protected Node copyDocument(String targetName, Map<String, String> arguments, Node source, Node handle)
+            throws WorkflowException, ValueFormatException, RepositoryException {
+        RepositoryMap config = workflowContext.getWorkflowConfiguration();
+        Object modifyOnCopy = config.get("modify-on-copy");
+        Map<String, String[]> renames = new TreeMap<String, String[]>();
+        if (arguments.containsKey("name")) {
+            log.warn("Arguments key 'name' ({}) is ignored, using targetName ({}) instead", arguments.get("name"), targetName);
+        }
+        renames.put("name", new String[] { targetName });
+        if (modifyOnCopy != null) {
+            String[] params;
+            if (modifyOnCopy instanceof String[]) {
+                params = (String[]) modifyOnCopy;
+            } else if (modifyOnCopy instanceof String) {
+                params = new String[] {(String) modifyOnCopy};
+            } else {
+                throw new WorkflowException("Invalid workflow configuration; expected multi-valued String for property modify-on-copy");
+            }
+            populateRenames(renames, params, handle, arguments);
+        }
+        return copy(source, handle, renames, ".");
     }
 
     public Document copyOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
