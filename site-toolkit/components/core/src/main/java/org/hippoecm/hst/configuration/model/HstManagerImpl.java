@@ -89,6 +89,10 @@ public class HstManagerImpl implements HstManager {
         this.rootPath = rootPath;
     }
     
+    public String getRootPath() {
+        return rootPath;
+    }
+    
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
     }

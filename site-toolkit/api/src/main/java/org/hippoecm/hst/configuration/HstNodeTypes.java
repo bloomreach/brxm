@@ -43,6 +43,7 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_CONTENTMOUNT = "hst:contentmount";
 
     
+    public final static String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     public final static String GENERAL_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
     public final static String GENERAL_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
     public final static String GENERAL_PROPERTY_HOMEPAGE = "hst:homepage";

@@ -43,6 +43,36 @@
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-folder</sv:value>
         </sv:property>
+        <sv:node  sv:name="demosite">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:folder</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:foldertype" sv:type="String">
+            <sv:value>new-folder</sv:value>
+            <sv:value>new-document</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node  sv:name="demosubsite">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:folder</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffc</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:foldertype" sv:type="String">
+            <sv:value>new-folder</sv:value>
+            <sv:value>new-document</sv:value>
+          </sv:property>
+        </sv:node>
     </sv:node>
     <sv:node sv:name="gallery">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

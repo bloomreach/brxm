@@ -70,6 +70,58 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  
+  <sv:node sv:name="demosubsite-live">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/demosubsite</sv:value>
+    </sv:property>
+    
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffc</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippostd:state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="demosubsite-preview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/demosubsite</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffc</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippostd:state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>prefer-single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 </sv:node>
   
   

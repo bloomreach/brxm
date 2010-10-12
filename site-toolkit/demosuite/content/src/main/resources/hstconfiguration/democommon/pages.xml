@@ -15,7 +15,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/header</sv:value>
+				<sv:value>democommon/hst:components/header</sv:value>
 			</sv:property>
 		</sv:node>
         <sv:node sv:name="footer">
@@ -23,7 +23,7 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/footer</sv:value>
+                <sv:value>democommon/hst:components/footer</sv:value>
             </sv:property>
         </sv:node>
 	</sv:node>
@@ -32,14 +32,14 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>hst:pages/standard</sv:value>
+			<sv:value>democommon/hst:pages/standard</sv:value>
 		</sv:property>
 		<sv:node sv:name="body">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodyhome</sv:value>
+				<sv:value>democommon/hst:components/bodyhome</sv:value>
 			</sv:property>
 		</sv:node>
 	</sv:node>
@@ -48,14 +48,14 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>hst:pages/standard</sv:value>
+			<sv:value>democommon/hst:pages/standard</sv:value>
 		</sv:property>
 		<sv:node sv:name="body">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodynewsarchive</sv:value>
+				<sv:value>democommon/hst:components/bodynewsarchive</sv:value>
 			</sv:property>
 		</sv:node>
 	</sv:node>
@@ -64,7 +64,7 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+            <sv:value>democommon/hst:pages/standard</sv:value>
         </sv:property>
         <sv:property sv:name="hst:page_errorhandlerclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.util.SimplePageErrorHandler</sv:value>
@@ -80,7 +80,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodydetailpage</sv:value>
+				<sv:value>democommon/hst:components/bodydetailpage</sv:value>
 			</sv:property>
 		</sv:node>
 	</sv:node>
@@ -89,14 +89,14 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>hst:pages/standard</sv:value>
+			<sv:value>democommon/hst:pages/standard</sv:value>
 		</sv:property>
 		<sv:node sv:name="body">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodysearch</sv:value>
+				<sv:value>democommon/hst:components/bodysearch</sv:value>
 			</sv:property>
 		</sv:node>
 	</sv:node>
@@ -105,14 +105,14 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+            <sv:value>democommon/hst:pages/standard</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/bodyfaceted</sv:value>
+                <sv:value>democommon/hst:components/bodyfaceted</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -121,14 +121,14 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+            <sv:value>democommon/hst:pages/standard</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/bodyfacetedaddproduct</sv:value>
+                <sv:value>democommon/hst:components/bodyfacetedaddproduct</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -137,14 +137,14 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+            <sv:value>democommon/hst:pages/standard</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/bodyfaceted_detailpage</sv:value>
+                <sv:value>democommon/hst:components/bodyfaceted_detailpage</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -153,7 +153,7 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>hst:pages/standard</sv:value>
+			<sv:value>democommon/hst:pages/standard</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:componentclassname" sv:type="String">
 			<sv:value>org.hippoecm.hst.demo.components.Set404Component</sv:value>
@@ -163,7 +163,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodyerror</sv:value>
+				<sv:value>democommon/hst:components/bodyerror</sv:value>
 			</sv:property>
 		</sv:node>
 	</sv:node>
@@ -172,14 +172,14 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>hst:pages/standard</sv:value>
+			<sv:value>democommon/hst:pages/standard</sv:value>
 		</sv:property>
 		<sv:node sv:name="body">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodyproductpage</sv:value>
+				<sv:value>democommon/hst:components/bodyproductpage</sv:value>
 			</sv:property>
 		</sv:node>
 	</sv:node>

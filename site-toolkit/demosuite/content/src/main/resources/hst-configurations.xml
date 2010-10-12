@@ -22,6 +22,19 @@
       <sv:value>hst:configuration</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="democommon">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="demosubsite">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../democommon</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
     
 

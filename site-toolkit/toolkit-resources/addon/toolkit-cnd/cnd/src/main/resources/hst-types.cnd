@@ -28,6 +28,7 @@
 - hst:containers (string) multiple
 
 [hst:templates] > nt:base, mix:referenceable orderable
+- hst:inheritsfrom (string) 
 + * (hst:template)
 
 [hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
@@ -39,6 +40,7 @@
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:inheritsfrom (string)
 
 [hst:component] > hst:abstractcomponent orderable
 + * (hst:abstractcomponent)
@@ -50,9 +52,12 @@
 + * (hst:containeritemcomponent)
 
 [hst:components] > nt:base, mix:referenceable orderable
+- hst:inheritsfrom (string)
 + * (hst:abstractcomponent)
 
+
 [hst:pages] > nt:base, mix:referenceable orderable
+- hst:inheritsfrom (string)
 + * (hst:abstractcomponent)
 
 [hst:sitemapitemhandler] > nt:base, mix:referenceable
@@ -69,6 +74,7 @@
 - * (date) multiple
 
 [hst:sitemapitemhandlers] >  nt:base, mix:referenceable orderable
+- hst:inheritsfrom (string)
 + * (hst:sitemapitemhandler)
 
 [hst:script] > nt:base, mix:referenceable
@@ -77,6 +83,7 @@
 - * (string)
 
 [hst:scripts] > nt:base, mix:referenceable orderable
+- hst:inheritsfrom (string)
 + * (hst:script)
 
 [hst:sitemapitem] > nt:base, mix:referenceable
@@ -94,9 +101,11 @@
 - hst:secured (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
+- hst:inheritsfrom (string)
 + * (hst:sitemapitem)
 
 [hst:sitemap] > nt:base, mix:referenceable orderable
+- hst:inheritsfrom (string)
 + * (hst:sitemapitem)
 
 [hst:sitemenuitem] > nt:base, mix:referenceable orderable
@@ -107,16 +116,20 @@
 - hst:depth (long)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:inheritsfrom (string)
 + * (hst:sitemenuitem)
 
 [hst:sitemenu] > nt:base, mix:referenceable orderable
+- hst:inheritsfrom (string)
 + * (hst:sitemenuitem)
 
 [hst:sitemenus] > nt:base, mix:referenceable
+- hst:inheritsfrom (string)
 + * (hst:sitemenu)
 
 
 [hst:configuration] > nt:base, mix:referenceable
+- hst:inheritsfrom (string)
 + hst:components (hst:components) = hst:components
 + hst:pages (hst:pages) = hst:pages
 + hst:sitemap (hst:sitemap) = hst:sitemap

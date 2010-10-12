@@ -23,9 +23,11 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
@@ -57,38 +59,80 @@ public class HstNodeImpl implements HstNode {
      */
     private String nodeTypeName;
     
+    private boolean isInherited;
+    
     public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws HstNodeException {
+        this(jcrNode, parent, loadChilds, false );
+    }
+    
+    public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds, boolean inherited) throws HstNodeException {
         this.parent = parent;
-        
-        provider = new JCRValueProviderImpl(jcrNode, false);
-        
+        this.isInherited = inherited;
         try {
+            
+            provider = new JCRValueProviderImpl(jcrNode, false);
             nodeTypeName = jcrNode.getPrimaryNodeType().getName();
-           
-            NodeIterator nodes = jcrNode.getNodes();
+            
             if(loadChilds) {
-                while(nodes.hasNext()) {
-                    Node child = nodes.nextNode();
-                    if(child == null) {
-                        throw new HstNodeException("Configuration changed while loading. Reload");
-                    }
-                    HstNodeImpl childRepositoryNode = null;
-                    try {
-                        childRepositoryNode = new HstNodeImpl(child, this, loadChilds);
-                    } catch (HstNodeException e){
-                        log.warn("Failed to load configuration node for '{}'. {}", child.getPath(), e.toString());
-                    }
-                    if(childRepositoryNode != null) {
-                        children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
-                    }
-                }
+                loadChilds(jcrNode, parent, loadChilds, inherited);
             }
         } catch (RepositoryException e) {
            throw new HstNodeException(e);
         }
         
-        // detach the backing jcr node now we are done.
+        // detach the backing jcr node now we are done.                     
         provider.detach();
+        
+        // check whether there are nodes to inherit:
+        try {
+            if(jcrNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
+                try {
+                   Node inheritNode = jcrNode.getNode(jcrNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM).getString());
+                   // mark the loaded childs as inherited, hence 'true'
+                   loadChilds(inheritNode, parent, loadChilds, true);
+                } catch (PathNotFoundException e) {
+                    throw new HstNodeException("Relative inherit path '"+jcrNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM).getString()+"' for node '"+provider.getPath()+"' can not be found. Fix this path.");
+                }
+            }
+        } catch (RepositoryException e) {
+            throw new HstNodeException(e);
+        }
+    }
+
+    private void loadChilds(Node jcrNode, HstNode parent, boolean loadChilds, boolean inherited)
+            throws RepositoryException {
+        NodeIterator nodes = jcrNode.getNodes();
+        while(nodes.hasNext()) {
+            Node child = nodes.nextNode();
+            if(child == null) {
+                throw new HstNodeException("Configuration changed while loading. Reload");
+            }
+            HstNodeImpl childRepositoryNode = null;
+            try {
+                childRepositoryNode = new HstNodeImpl(child, this, loadChilds, inherited);
+            } catch (HstNodeException e){
+                log.warn("Failed to load configuration node for '{}'. {}", child.getPath(), e.toString());
+            }
+            if(childRepositoryNode != null) {
+                HstNodeImpl existing = (HstNodeImpl)children.get(childRepositoryNode.getValueProvider().getName());
+                if(existing != null) {
+                    log.info("Duplicate configuration because of same names and inheritance for '{}' and '{}'. We keep the one that is not inherited. If both are inherited, an exception is thrown", existing.getValueProvider().getCanonicalPath(), childRepositoryNode.getValueProvider().getCanonicalPath());
+               
+                    if(existing.isInherited && childRepositoryNode.isInherited) {
+                        throw new HstNodeException("Not allowed to have two same name nodes through inheritance for node '"+provider.getPath()+"'. Delete one of the inherited nodes or remove the inheritance");
+                    } else if(existing.isInherited){
+                        // The existing is inherited. Replace this one. 
+                        children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
+                        log.info("Replaced inherit node configuration '{}' at '{}' because we have a non-inherited version added", existing.getValueProvider().getPath(), provider.getPath());
+                    } else {
+                        log.info("Ignoring node configuration at '{}' for '{}' because it already has a non-inherited version", provider.getPath(), childRepositoryNode.getValueProvider().getPath());
+                    }
+                } else {
+                 // does not exist yet
+                    children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
+                }
+            }
+        }
     }
     
     /* (non-Javadoc)

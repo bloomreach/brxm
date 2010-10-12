@@ -91,8 +91,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
-            String configurationRootNodePath) throws ServiceException {
-        if (!node.getValueProvider().getPath().startsWith(configurationRootNodePath)) {
+            String hstConfigurationsNodePath) throws ServiceException {
+        if (!node.getValueProvider().getPath().startsWith(hstConfigurationsNodePath)) {
             throw new ServiceException(
                     "Node path of the component cannot start without the global components path. Skip Component");
         }
@@ -103,9 +103,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         
         this.parent = parent;
 
-        this.configurationRootNodePath = configurationRootNodePath;
+        this.configurationRootNodePath = hstConfigurationsNodePath;
         // id is the relative path wrt configuration components path
-        this.id = node.getValueProvider().getPath().substring(configurationRootNodePath.length() + 1);
+        this.id = node.getValueProvider().getPath().substring(hstConfigurationsNodePath.length() + 1);
 
         if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
@@ -155,7 +155,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 try {
                     HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(
-                            child, this, configurationRootNodePath);
+                            child, this, hstConfigurationsNodePath);
                     componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
 
                     // we also need an ordered list

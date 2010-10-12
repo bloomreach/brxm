@@ -26,7 +26,7 @@
             <sv:value>News</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/newsoverview</sv:value>
+            <sv:value>testsite/hst:pages/newsoverview</sv:value>
         </sv:property>
         <sv:node sv:name="_default_.html">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -36,7 +36,7 @@
                 <sv:value>News/${1}</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/standarddetail</sv:value>
+                <sv:value>testsite/hst:pages/standarddetail</sv:value>
             </sv:property>
         </sv:node>
         <sv:node sv:name="_default_">
@@ -47,7 +47,7 @@
                 <sv:value>News/${1}</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/newsoverview</sv:value>
+                <sv:value>testsite/hst:pages/newsoverview</sv:value>
             </sv:property>
             <sv:node sv:name="_default_.html">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -57,7 +57,7 @@
                     <sv:value>News/${1}/${2}</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>hst:pages/standarddetail</sv:value>
+                    <sv:value>testsite/hst:pages/standarddetail</sv:value>
                 </sv:property>
             </sv:node>
             <sv:node sv:name="_default_">
@@ -68,7 +68,7 @@
                     <sv:value>News/${1}/${2}</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>hst:pages/newsoverview</sv:value>
+                    <sv:value>testsite/hst:pages/newsoverview</sv:value>
                 </sv:property>
                 <sv:node sv:name="_default_">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -78,7 +78,7 @@
                         <sv:value>News/${1}/${2}/${3}</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>hst:pages/newsoverview</sv:value>
+                        <sv:value>testsite/hst:pages/newsoverview</sv:value>
                     </sv:property>
                 </sv:node>
                 <sv:node sv:name="_default_.html">
@@ -89,7 +89,7 @@
                         <sv:value>News/${1}/${2}/${3}</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>hst:pages/standarddetail</sv:value>
+                        <sv:value>testsite/hst:pages/standarddetail</sv:value>
                     </sv:property>
                 </sv:node>
                 <sv:node sv:name="_any_">
@@ -100,7 +100,7 @@
                         <sv:value>News/${1}/${2}/${3}</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>hst:pages/newsoverview</sv:value>
+                        <sv:value>testsite/hst:pages/newsoverview</sv:value>
                     </sv:property>
                 </sv:node>
                 <sv:node sv:name="_any_.html">
@@ -111,7 +111,7 @@
                         <sv:value>News/${1}/${2}/${3}</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>hst:pages/standarddetail</sv:value>
+                        <sv:value>testsite/hst:pages/standarddetail</sv:value>
                     </sv:property>
                 </sv:node>
             </sv:node>
@@ -126,7 +126,7 @@
             <sv:value>Products</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>pages/productsview</sv:value>
+            <sv:value>testsite/pages/productsview</sv:value>
         </sv:property>
         <sv:node sv:name="someproduct">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -136,7 +136,7 @@
                 <sv:value>Products/SomeProduct</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/productpage</sv:value>
+                <sv:value>testsite/hst:pages/productpage</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -148,7 +148,7 @@
             <sv:value>Solutions</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/solutionsview</sv:value>
+            <sv:value>testsite/hst:pages/solutionsview</sv:value>
         </sv:property>
     </sv:node>
     
@@ -157,14 +157,14 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactpage</sv:value>
+            <sv:value>testsite/hst:pages/contactpage</sv:value>
         </sv:property>
         <sv:node sv:name="thankyou">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
+                <sv:value>testsite/hst:pages/thankyou</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -174,14 +174,14 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactspringpage</sv:value>
+            <sv:value>testsite/hst:pages/contactspringpage</sv:value>
         </sv:property>
         <sv:node sv:name="thankyou">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
+                <sv:value>testsite/hst:pages/thankyou</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -191,14 +191,14 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactdispatchpage</sv:value>
+            <sv:value>testsite/hst:pages/contactdispatchpage</sv:value>
         </sv:property>
         <sv:node sv:name="thankyou">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
+                <sv:value>testsite/hst:pages/thankyou</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -208,14 +208,14 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactspringmvcpage</sv:value>
+            <sv:value>testsite/hst:pages/contactspringmvcpage</sv:value>
         </sv:property>
         <sv:node sv:name="thankyou">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
+                <sv:value>testsite/hst:pages/thankyou</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -225,7 +225,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/searchpage</sv:value>
+            <sv:value>testsite/hst:pages/searchpage</sv:value>
         </sv:property>
     </sv:node>
     
@@ -234,14 +234,14 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/uniquelinkspage</sv:value>
+            <sv:value>testsite/hst:pages/uniquelinkspage</sv:value>
         </sv:property>
         <sv:node sv:name="_any_">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/uniquelinkspage</sv:value>
+                <sv:value>testsite/hst:pages/uniquelinkspage</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>

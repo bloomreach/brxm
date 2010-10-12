@@ -50,19 +50,19 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
 
-    public HstComponentsConfigurationService(HstNode configurationNode, Map<String, String> templateRenderMap) throws ServiceException {
+    public HstComponentsConfigurationService(HstNode configurationNode, String hstConfigurationsRootPath, Map<String, String> templateRenderMap) throws ServiceException {
 
         HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
         
         if (components != null) {
             log.debug("Initializing the components for '{}'", HstNodeTypes.NODENAME_HST_COMPONENTS);
-            init(components, configurationNode.getValueProvider().getPath());
+            init(components, hstConfigurationsRootPath);
         }
 
         HstNode pages =  configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES);
         if (pages != null) {
             log.debug("Initializing the pages for '{}'", HstNodeTypes.NODENAME_HST_PAGES);
-            init(pages, configurationNode.getValueProvider().getPath());
+            init(pages, hstConfigurationsRootPath);
         }
 
         for (HstComponentConfiguration child : childComponents) {
@@ -134,7 +134,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
-    private void init(HstNode node, String configurationNodePath) {
+    private void init(HstNode node, String hstConfigurationsRootPath) {
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())
               || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(child.getNodeTypeName())
@@ -147,7 +147,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                 }
                 try {
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
-                            null, configurationNodePath);
+                            null, hstConfigurationsRootPath);
                     childComponents.add(componentConfiguration);
                     log.debug("Added component service with key '{}'", componentConfiguration.getId());
                 } catch (ServiceException e) {

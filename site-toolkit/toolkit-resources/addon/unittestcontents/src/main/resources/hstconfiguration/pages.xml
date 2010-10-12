@@ -30,7 +30,7 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/header</sv:value>
+                <sv:value>unittest/hst:components/header</sv:value>
             </sv:property>
         </sv:node>
         <sv:node sv:name="leftmenu">
@@ -38,7 +38,7 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/leftmenu</sv:value>
+                <sv:value>unittest/hst:components/leftmenu</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -48,7 +48,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
     </sv:node>
     
@@ -57,7 +57,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
     </sv:node>
     
@@ -67,7 +67,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -84,7 +84,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -101,7 +101,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standardoverview</sv:value>
+            <sv:value>unittest/hst:pages/standardoverview</sv:value>
         </sv:property>
     </sv:node>
     
@@ -110,7 +110,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standardoverview</sv:value>
+            <sv:value>unittest/hst:pages/standardoverview</sv:value>
         </sv:property>
     </sv:node>
   
@@ -119,14 +119,14 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactform</sv:value>
+                <sv:value>unittest/hst:components/contactform</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -136,7 +136,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -152,7 +152,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -178,14 +178,14 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactspringform</sv:value>
+                <sv:value>unittest/hst:components/contactspringform</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -195,14 +195,14 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactdispatchform</sv:value>
+                <sv:value>unittest/hst:components/contactdispatchform</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -212,14 +212,14 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactspringmvcform</sv:value>
+                <sv:value>unittest/hst:components/contactspringmvcform</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -229,7 +229,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
+            <sv:value>unittest/hst:pages/basepage</sv:value>
         </sv:property>
         <sv:node sv:name="body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
