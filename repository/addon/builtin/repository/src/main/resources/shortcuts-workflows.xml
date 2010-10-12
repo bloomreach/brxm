@@ -87,6 +87,10 @@
       <sv:property sv:name="attic" sv:type="Path">
         <sv:value>/content/attic</sv:value>
       </sv:property>
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="directory">
@@ -124,6 +128,10 @@
       </sv:property>
       <sv:property sv:name="attic" sv:type="Path">
         <sv:value>/content/attic</sv:value>
+      </sv:property>
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
