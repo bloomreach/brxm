@@ -35,10 +35,10 @@
         <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
+        <sv:value>hippo:availability</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:values" sv:type="String">
-        <sv:value>published</sv:value>
+        <sv:value>live</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:modes" sv:type="String">
         <sv:value>single</sv:value>
@@ -60,13 +60,13 @@
         <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
+        <sv:value>hippo:availability</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:values" sv:type="String">
-        <sv:value>unpublished</sv:value>
+        <sv:value>preview</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:modes" sv:type="String">
-        <sv:value>prefer-single</sv:value>
+        <sv:value>single</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -87,10 +87,10 @@
         <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffc</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
+        <sv:value>hippo:availability</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:values" sv:type="String">
-        <sv:value>published</sv:value>
+        <sv:value>live</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:modes" sv:type="String">
         <sv:value>single</sv:value>
@@ -112,13 +112,13 @@
         <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffc</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
+        <sv:value>hippo:availability</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:values" sv:type="String">
-        <sv:value>unpublished</sv:value>
+        <sv:value>preview</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:modes" sv:type="String">
-        <sv:value>prefer-single</sv:value>
+        <sv:value>single</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
