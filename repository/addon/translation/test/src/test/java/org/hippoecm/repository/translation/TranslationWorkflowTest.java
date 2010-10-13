@@ -82,7 +82,7 @@ public class TranslationWorkflowTest extends TestCase {
 
         build(session, content);
 
-        for (String category : new String[] { "translation", "default", "embedded" }) {
+        for (String category : new String[] { "translation", "default", "embedded", "translation-copy", "translation-internal" }) {
             Node workflowsNode = session.getRootNode().getNode("hippo:configuration/hippo:workflows/" + category);
             for (NodeIterator handlers = workflowsNode.getNodes(); handlers.hasNext();) {
                 Node wfNode = handlers.nextNode();
