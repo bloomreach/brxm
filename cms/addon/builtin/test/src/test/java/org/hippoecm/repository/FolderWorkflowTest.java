@@ -18,40 +18,53 @@ package org.hippoecm.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.Random;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
+import javax.jcr.Value;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class FolderWorkflowTest extends TestCase {
+
+    private static final String CONTENT_ON_COPY = "new-content";
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -73,6 +86,9 @@ public class FolderWorkflowTest extends TestCase {
         "jcr:mixinTypes", "hippo:harddocument"
     };
 
+    Value[] embeddedModifyOnCopy;
+    Value[] internalModifyOnCopy;
+    
     @Before
     public void setUp() throws Exception {
         super.setUp(true);
@@ -86,10 +102,28 @@ public class FolderWorkflowTest extends TestCase {
         session.save();
         node = root.getNode("f");
         manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+
+        Node folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/embedded/folder-extended/hipposys:config");
+        if (folderWorkflowConfig.hasProperty("modify-on-copy")) {
+            embeddedModifyOnCopy = folderWorkflowConfig.getProperty("modify-on-copy").getValues();
+        }
+        folderWorkflowConfig.setProperty("modify-on-copy", new String[] { "./hippostd:content", CONTENT_ON_COPY });
+
+        folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/internal/folder/hipposys:config");
+        if (folderWorkflowConfig.hasProperty("modify-on-copy")) {
+            internalModifyOnCopy = folderWorkflowConfig.getProperty("modify-on-copy").getValues();
+        }
+        folderWorkflowConfig.setProperty("modify-on-copy", new String[] { "./hippostd:content", CONTENT_ON_COPY });
+
+        session.save();
     }
 
     @After
     public void tearDown() throws Exception {
+        Node folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/embedded/folder/hipposys:config");
+        folderWorkflowConfig.setProperty("modify-on-copy", embeddedModifyOnCopy);
+        folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/internal/folder/hipposys:config");
+        folderWorkflowConfig.setProperty("modify-on-copy", internalModifyOnCopy);
         root = session.getRootNode();
         if(root.hasNode("test"))
             root.getNode("test").remove();
@@ -286,6 +320,42 @@ public class FolderWorkflowTest extends TestCase {
     }
 
     */
+
+    @Test
+    public void testCopyDocument() throws RepositoryException, RemoteException, WorkflowException {
+        Node originalDocument = createDocument();
+
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        Document copy = workflow.copy(new Document(originalDocument.getUUID()), new Document(node.getUUID()), "dc");
+        Node copyNode = session.getNodeByUUID(copy.getIdentity());
+        assertEquals("/test/f/dc/dc", copyNode.getPath());
+        assertTrue(copyNode.isNodeType("hippostd:document"));
+        assertEquals(CONTENT_ON_COPY, copyNode.getProperty("hippostd:content").getString());
+    }
+
+    @Test
+    public void testCopyDocumentToDifferentFolder() throws RepositoryException, RemoteException, WorkflowException {
+        Node originalDocument = createDocument();
+
+        Node target = session.getNode("/test/aap");
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        Document copy = workflow.copy(new Document(originalDocument.getUUID()), new Document(target.getUUID()), "dc");
+        Node copyNode = session.getNodeByUUID(copy.getIdentity());
+        assertEquals("/test/aap/dc/dc", copyNode.getPath());
+        assertTrue(copyNode.isNodeType("hippostd:document"));
+        assertEquals(CONTENT_ON_COPY, copyNode.getProperty("hippostd:content").getString());
+    }
+
+    private Node createDocument() throws PathNotFoundException, RepositoryException, ItemExistsException,
+            VersionException, ConstraintViolationException, LockException, AccessDeniedException,
+            ReferentialIntegrityException, InvalidItemStateException, NoSuchNodeTypeException {
+        Node source = session.getNode("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document");
+        Node originalHandle = ((HippoSession) session).copy(source, node.getPath() + "/d");
+        Node originalDocument = originalHandle.getNode("new-document");
+        session.move(originalDocument.getPath(), originalHandle.getPath() + "/d");
+        session.save();
+        return originalDocument;
+    }
 
     private static void createDirectories(Session session, WorkflowManager manager, Node node, Random random, int numiters)
         throws RepositoryException, WorkflowException, RemoteException {
