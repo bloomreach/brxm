@@ -52,6 +52,9 @@
       <sv:property sv:name="editor.id" sv:type="String">
         <sv:value>${editor.id}</sv:value>
       </sv:property>
+      <sv:property sv:name="gallery.processor.id" sv:type="String">
+        <sv:value>service.gallery.processor</sv:value>
+      </sv:property>
       <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
         <sv:value>60</sv:value>
       </sv:property>

@@ -21,6 +21,16 @@
 <hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <hippogallery='http://www.onehippo.org/jcr/hippogallery/nt/2.0'>
 
+[hippogallery:image] > hippo:resource
+- hippogallery:width (long)
+- hippogallery:height (long)
+
+[hippogallery:imageset] > hippo:document orderable
+- hippogallery:filename (string)
+- hippogallery:description (string)
++ hippogallery:thumbnail (hippogallery:image) = hippogallery:image primary mandatory autocreated
++ hippogallery:original (hippogallery:image) = hippogallery:image
+
 [hippogallery:exampleImageSet] > hippo:document
 + hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
 + hippogallery:picture (hippo:resource) = hippo:resource
@@ -35,3 +45,4 @@
 [hippogallery:stdImageGallery] > hippostd:gallery orderable
 
 [hippogallery:stdAssetGallery] > hippostd:gallery orderable
+

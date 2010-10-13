@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,6 +37,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 
+import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
+import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,9 +92,9 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             throw new IllegalArgumentException("We cannot create a thumbnail for a NULL input stream");
         }
 
-        //IE uploads jpeg files with the non-standard mimetype image/pjpeg for which ImageIO 
+        //IE uploads jpeg files with the non-standard mimetype image/pjpeg for which ImageIO
         //doesn't have an ImageReader. Simply replacing the mimetype with image/jpeg solves this.
-        //For more info see http://www.iana.org/assignments/media-types/image/ and 
+        //For more info see http://www.iana.org/assignments/media-types/image/ and
         //http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
         if (mimeType.equals(ResourceHelper.MIME_IMAGE_PJPEG)) {
             mimeType = ResourceHelper.MIME_IMAGE_JPEG;
@@ -177,7 +180,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
     /**
     * Convenience method that returns a scaled instance of the provided {@code
     * BufferedImage}.
-    * 
+    *
     * @param img
     *            the original image to be scaled
     * @param targetWidth
@@ -256,7 +259,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         }
     }
 
-    public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
+    public void makeImage(Node node, InputStream istream, String mimeType, String fileName) throws GalleryException,
             RepositoryException {
         Node primaryChild = null;
         try {
@@ -269,7 +272,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
                 primaryChild.setProperty("jcr:mimeType", mimeType);
                 primaryChild.setProperty("jcr:data", istream);
             }
-            ResourceHelper.validateResource(primaryChild, filename);
+            validateResource(primaryChild, fileName);
             for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
                 if (childDef.getDefaultPrimaryType() != null
                         && childDef.getDefaultPrimaryType().isNodeType("hippo:resource")) {
@@ -304,6 +307,21 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             node.setProperty("jcr:data", resourceData);
         }
         node.setProperty("jcr:mimeType", mimeType);
+    }
+
+    public void validateResource(Node node, String fileName) throws GalleryException, RepositoryException {
+        try {
+            ResourceHelper.validateResource(node, fileName);
+        } catch (ResourceException e) {
+            throw new GalleryException("Invalid resource: " + fileName, e);
+        }
+    }
+
+    public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
+            throws GalleryException, RepositoryException {
+        node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
+        node.setProperty(JcrConstants.JCR_DATA, data);
+        node.setProperty(JcrConstants.JCR_LASTMODIFIED, lastModified);
     }
 
 }
