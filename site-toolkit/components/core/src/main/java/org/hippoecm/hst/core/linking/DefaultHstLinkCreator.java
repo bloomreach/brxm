@@ -495,19 +495,31 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             
                             List<SiteMount> siteMountsForHostGroup = siteMount.getVirtualHost().getVirtualHosts().getSiteMountsByHostGroup(siteMount.getVirtualHost().getHostGroupName());
                             
-                            SiteMount suitedMount = null;
+                            /*
+                             * There can be multiple suited sitemounts (for example the sitemount for preview and composermode can be the 'same' subsite). We
+                             * choose the best suited sitemount as follows:
+                             * 1) The sitemount must have canonical content path that is a prefix of the nodePath
+                             * 2) The sitemount must have at least ONE type in common as the current sitemount of this HstLinkResolver
+                             * 3) If multiple sitemount's result from (1) and (2), we pick the sitemount that has the same primary type as the current sitemount of this HstLinkResolver
+                             * 4) If multiple sitemount's result from (1), (2) and (3), we pick the sitemount that has the most 'types' in common as the current sitemount of this HstLinkResolver
+                             * 5) If multiple sitemount's result from (1), (2), (3) and (4), we pick the sitemount that has the fewest types: The less types it has, and the number of matching types is equal to the current sitemount, indicates
+                             * that it can be considered more precise
+                             * 6) If multiple sitemount's result from (1), (2), (3), (4) and (5) , we pick the first one: cannot do better
+                             */
+                            List<SiteMount> possibleSuitedMounts = new ArrayList<SiteMount>();
+                            
                             for(SiteMount mount : siteMountsForHostGroup) {
                                if(mount.getCanonicalContentPath() == null) {
+                                   // not a sitemount for a HstSite
                                    continue;
                                }
+                               // (1)
                                if(nodePath.startsWith(mount.getCanonicalContentPath())) {
-                                   // check whether one of the types of this siteMount matches the types of the currentSiteMount: if so, we have a possible hit.
-                                   
+                                  // check whether one of the types of this siteMount matches the types of the currentSiteMount: if so, we have a possible hit.
+                                  // (2)
                                   if(!Collections.disjoint(mount.getTypes(), siteMount.getTypes())) {
-                                      log.info("Found a SiteMount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Try to create a HstLink wrt this SiteMount",  mount.getName(), mount.getAlias());
-                                      suitedMount = mount;
-                                      // There was at least one type in common! We have found a suitable sitemount for the nodepath. Use this one
-                                      break;
+                                      log.info("Found a SiteMount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this sitemount to the list of possible suited mounts",  mount.getName(), mount.getAlias());
+                                      possibleSuitedMounts.add(mount);
                                   } else {
                                       // The sitemount did not have a type in common with the current sitemount. Try another one.
                                       log.debug("SiteMount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request sitemount hence cannot be used. Try next one",  mount.getName(), mount.getAlias());
@@ -515,15 +527,21 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                                }
                             }
                             
-                            if(suitedMount == null) {
+                            if(possibleSuitedMounts.size() == 0) {
                                 log.warn("There is no SiteMount available that is suited to linkrewrite '{}'. Return page not found link.", nodePath);
                                 return pageNotFoundLink(siteMount);
                             }
                             
-                            // set the currentSiteMount to the suitedMount
-                            siteMount = suitedMount;
+                            
+                            if(possibleSuitedMounts.size() > 1) {
+                                // this returns the algorithm (3), (4), (5) and (6) applied
+                                siteMount = findBestSuitedMount(possibleSuitedMounts);
+                            } else {
+                                siteMount = possibleSuitedMounts.get(0);
+                            }
+                            
                             // we know for sure the the nodePath starts with the canonical path now
-                            nodePath = nodePath.substring(suitedMount.getCanonicalContentPath().length());
+                            nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
                             
                             if(preferredItem != null) {
                                 // cannot use preferredItem and cross domain linking at same time. We set it to null
@@ -589,6 +607,89 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         }
 
         
+        private SiteMount findBestSuitedMount(List<SiteMount> possibleSuitedMounts) {
+            if(possibleSuitedMounts.size() == 0) {
+                throw new IllegalStateException("At this point, there should be at least found a single SiteMount. This is a bug in the  DefaultHstLinkCreator");
+            }
+            // Algorithm step 3: find the sitemount's with the same primary type
+            List<SiteMount> narrowedSuitedMounts = new ArrayList<SiteMount>();
+            for(SiteMount s : possibleSuitedMounts) {
+                if(s.getType().equals(siteMount.getType())) {
+                    narrowedSuitedMounts.add(s);
+                }
+            }
+            if(narrowedSuitedMounts.size() > 0) {
+                // possibly some suited mounts have been removed
+                possibleSuitedMounts = narrowedSuitedMounts;
+            }
+            
+            if(possibleSuitedMounts.size() == 1) {
+                // when we have 1 left, we are always done
+                return possibleSuitedMounts.get(0);
+            }
+            
+            // Algorithm step 4:
+            if(possibleSuitedMounts.size() > 1) {
+                // find the sitemount's with the most types in common
+                narrowedSuitedMounts.clear();
+                int mostCommon = 0;
+                for(SiteMount s : possibleSuitedMounts) {
+                    int inCommon = countCommon(s.getTypes(), siteMount.getTypes());
+                    if(inCommon > mostCommon) {
+                        narrowedSuitedMounts.clear();
+                        narrowedSuitedMounts.add(s);
+                    } else if (inCommon == mostCommon) {
+                        narrowedSuitedMounts.add(s);
+                    } else {
+                        // do nothing, there where less types in common
+                    }
+                }
+                if(narrowedSuitedMounts.size() > 0) {
+                    // possibly some suited mounts have been removed
+                    possibleSuitedMounts = narrowedSuitedMounts;
+                }
+            }
+            
+            if(possibleSuitedMounts.size() == 1) {
+                // when we have 1 left, we are always done
+                return possibleSuitedMounts.get(0);
+            }
+            
+            // Algorithm step 5:
+            if(possibleSuitedMounts.size() > 1) {
+               // find the sitemount's with the most types in common
+                narrowedSuitedMounts.clear();
+                int lowestNumberOfTypes = Integer.MAX_VALUE;
+                for(SiteMount s : possibleSuitedMounts) {
+                   if(s.getTypes().size() < lowestNumberOfTypes) {
+                       lowestNumberOfTypes = s.getTypes().size();
+                       narrowedSuitedMounts.clear();
+                       narrowedSuitedMounts.add(s);
+                   } else if (s.getTypes().size() == lowestNumberOfTypes) {
+                       narrowedSuitedMounts.add(s);
+                   } else {
+                       // ignore: it has more types than already found sitemounts
+                   }
+                }
+                if(narrowedSuitedMounts.size() > 0) {
+                    // possibly some suited mounts have been removed
+                    possibleSuitedMounts = narrowedSuitedMounts;
+                }
+            }
+            
+            return possibleSuitedMounts.get(0);
+        }
+
+        private int countCommon(List<String> types, List<String> types2) {
+            int counter = 0;
+            for(String type : types) {
+                if(types2.contains(type)) {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
         private HstLink pageNotFoundLink(SiteMount siteMount) {
             HstLink link =  new HstLinkImpl(DefaultHstLinkCreator.this.pageNotFoundPath, siteMount);
             link.setNotFound(true);
