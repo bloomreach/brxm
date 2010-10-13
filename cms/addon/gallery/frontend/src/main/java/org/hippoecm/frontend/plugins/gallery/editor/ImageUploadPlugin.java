@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.plugins.resource;
+package org.hippoecm.frontend.plugins.gallery.editor;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -33,24 +33,27 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceUploadPlugin extends RenderPlugin {
+public class ImageUploadPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ResourceUploadPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
 
     private IValueMap types;
     private FileUploadForm form;
 
-    public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
+    public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         // if the types config is not set, all extensions are allowed
@@ -59,7 +62,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
             types = new ValueMap(typesConfig);
         }
 
-        add(form = new FileUploadForm("form"));
+        add(form = new FileUploadForm("form", context));
         String mode = config.getString("mode", "edit");
         form.setVisible("edit".equals(mode));
 
@@ -73,7 +76,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
         private FileUploadField fileUploadField;
         private FileUploadWidget widget;
 
-        public FileUploadForm(String name) {
+        public FileUploadForm(String name, final IPluginContext context) {
             super(name);
 
             FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
@@ -86,7 +89,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
 
                 @Override
                 protected void onFileUpload(FileUpload fileUpload) {
-                    handleUpload(fileUpload);
+                    handleUpload(fileUpload, context);
                 }
 
             });
@@ -100,7 +103,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
         }
     }
 
-    private void handleUpload(FileUpload upload) {
+    private void handleUpload(FileUpload upload, IPluginContext context) {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
 
@@ -110,8 +113,8 @@ public class ResourceUploadPlugin extends RenderPlugin {
         if (types != null && types.getString(extension.toLowerCase()) == null) {
             String extensions = StringUtils.join(types.keySet().toArray(), ", ");
             getDialogService().show(
-                    new ExceptionDialog(new StringResourceModel("unrecognized", ResourceUploadPlugin.this,
-                            null, new Object[]{extension, extensions}).getString()) {
+                    new ExceptionDialog(new StringResourceModel("unrecognized", ImageUploadPlugin.this, null,
+                            new Object[] { extension, extensions }).getString()) {
                         public IValueMap getProperties() {
                             return SMALL;
                         }
@@ -119,20 +122,23 @@ public class ResourceUploadPlugin extends RenderPlugin {
                     });
             log.warn("Unrecognised file type");
         } else {
-            JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) ImageUploadPlugin.this.getDefaultModel();
             Node node = nodeModel.getNode();
             try {
-                node.setProperty("jcr:mimeType", mimeType);
-                node.setProperty("jcr:data", upload.getInputStream());
-                node.setProperty("jcr:lastModified", Calendar.getInstance());
-                ResourceHelper.validateResource(node, fileName);
+                GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
+                    "gallery.processor.service"), GalleryProcessor.class);
+                if (processor == null) {
+                    processor = new DefaultGalleryProcessor();
+                }
+                processor.initGalleryResource(node, upload.getInputStream(), mimeType, fileName, Calendar.getInstance());
+                processor.validateResource(node, fileName);
             } catch (RepositoryException ex) {
                 error(ex);
                 log.error(ex.getMessage());
             } catch (IOException ex) {
                 // FIXME: report back to user
                 log.error(ex.getMessage());
-            } catch (ResourceException ex) {
+            } catch (GalleryException ex) {
                 error(ex);
                 log.error(ex.getMessage());
             }

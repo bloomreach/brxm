@@ -10,7 +10,7 @@
  *
  * Contributed to the Public Domain.
  */
-package org.hippoecm.frontend.plugins.gallery.model;
+package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.DataInput;
 import java.io.IOException;

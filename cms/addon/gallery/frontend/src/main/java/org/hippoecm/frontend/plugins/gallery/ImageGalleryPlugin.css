@@ -5,7 +5,7 @@
 }
 
 .hippo-gallery-images .hippo-list-details{
-    margin-top: 10px;    
+    margin-top: 10px;
 }
 
 ul.gallery-list li a {
@@ -34,15 +34,13 @@ ul.gallery-list li {
 }
 
 ul.gallery-list li.selected {
-    background-color: #FFE29A;    
+    background-color: #FFE29A;
 }
 
 .folder-icon, ul.gallery-list li div img {
     vertical-align: middle;
     padding: 5px;
     border: 1px solid #eee;
-    width: 60px;
-    height: 60px;
 }
 
 .title {
@@ -59,3 +57,6 @@ ul.gallery-list li.selected {
 .hippo-list-details tr td.image-gallery-icon,
 .hippo-list-details tr th.image-gallery-icon { width:16px; }
 
+.img-wrapper {
+  overflow: hidden;
+}

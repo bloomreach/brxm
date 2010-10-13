@@ -581,7 +581,7 @@
       <sv:value>new-image-folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:gallerytype" sv:type="String">
-      <sv:value>hippogallery:exampleImageSet</sv:value>
+      <sv:value>hippogallery:imageset</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:availability" sv:type="String">
       <sv:value>preview</sv:value>
