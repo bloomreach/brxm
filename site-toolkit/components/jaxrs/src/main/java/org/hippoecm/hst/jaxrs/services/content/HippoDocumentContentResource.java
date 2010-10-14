@@ -31,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
@@ -132,14 +133,20 @@ public class HippoDocumentContentResource extends AbstractContentResource {
     
     @GET
     @Path("/html/")
-    public HippoHtmlRepresentation getHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+    public HippoHtmlRepresentation getHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("path") String relPath) {
         
         HippoHtml htmlBean = null;
         
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            
+            if (StringUtils.isBlank(relPath)) {
+                htmlBean = (HippoHtml) getFirstChildBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            } else {
+                htmlBean = (HippoHtml) documentBean.getBean(relPath);
+            }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -163,7 +170,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
     @PUT
     @Path("/html/")
     public HippoHtmlRepresentation updateHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            HippoHtmlRepresentation htmlRepresentation) {
+            @MatrixParam("path") String relPath, HippoHtmlRepresentation htmlRepresentation) {
         HippoDocumentBean documentBean = null;
         HippoHtml htmlBean = null;
         
@@ -171,7 +178,12 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         
         try {
             documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            
+            if (StringUtils.isBlank(relPath)) {
+                htmlBean = (HippoHtml) getFirstChildBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            } else {
+                htmlBean = (HippoHtml) documentBean.getBean(relPath);
+            }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -207,7 +219,13 @@ public class HippoDocumentContentResource extends AbstractContentResource {
             wpm.save();
             
             documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
-            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            
+            if (StringUtils.isBlank(relPath)) {
+                htmlBean = (HippoHtml) getFirstChildBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            } else {
+                htmlBean = (HippoHtml) documentBean.getBean(relPath);
+            }
+            
             htmlRepresentation = new HippoHtmlRepresentation().represent(htmlBean);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -224,14 +242,20 @@ public class HippoDocumentContentResource extends AbstractContentResource {
     
     @GET
     @Path("/html/content/")
-    public String getHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+    public String getHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("path") String relPath) {
         
         HippoHtml htmlBean = null;
         
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            
+            if (StringUtils.isBlank(relPath)) {
+                htmlBean = (HippoHtml) getFirstChildBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            } else {
+                htmlBean = (HippoHtml) documentBean.getBean(relPath);
+            }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -255,7 +279,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
     @PUT
     @Path("/html/content/")
     public String updateHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            String htmlContent) {
+            @MatrixParam("path") String relPath, String htmlContent) {
         HippoDocumentBean documentBean = null;
         HippoHtml htmlBean = null;
         
@@ -263,7 +287,12 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         
         try {
             documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            
+            if (StringUtils.isBlank(relPath)) {
+                htmlBean = (HippoHtml) getFirstChildBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            } else {
+                htmlBean = (HippoHtml) documentBean.getBean(relPath);
+            }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -299,7 +328,12 @@ public class HippoDocumentContentResource extends AbstractContentResource {
             wpm.save();
             
             documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
-            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            
+            if (StringUtils.isBlank(relPath)) {
+                htmlBean = (HippoHtml) getFirstChildBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            } else {
+                htmlBean = (HippoHtml) documentBean.getBean(relPath);
+            }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -313,7 +347,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         return htmlBean.getContent();
     }
     
-    private HippoBean getFirstBeanByPrimaryNodeType(HippoDocumentBean documentBean, String primaryNodeType) {
+    private HippoBean getFirstChildBeanByPrimaryNodeType(HippoDocumentBean documentBean, String primaryNodeType) {
         List<HippoBean> childBeans = documentBean.getChildBeans(primaryNodeType);
         
         if (!childBeans.isEmpty()) {
