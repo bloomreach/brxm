@@ -202,11 +202,4 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         }
 
     }
-
-    private void printSystemView(String path) throws Exception{
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        this.session.exportSystemView(path, out, true, false);
-        String export = prettyPrint(out.toByteArray());
-        System.out.println(export);
-    }
 }
