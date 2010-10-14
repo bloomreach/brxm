@@ -220,4 +220,109 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         invokeJaxrsPipeline(request, response);
     }
     
+    @Test
+    public void testGetDocumentHtmlContent() throws Exception {
+        
+        log.debug("\n****** testGetDocumentHtmlContent *******\n");
+        
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./html/content/");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+    }
+    
+    @Test
+    public void testUpdateDocumentHtmlContent() throws Exception {
+        
+        log.debug("\n****** testUpdateDocumentHtmlContent *******\n");
+        
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./html/content/");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        String html = response.getContentAsString();
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+        
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("PUT");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./html/content/");
+        request.setContentType("text/html");
+        request.setContent(html.replace("CMS", "Content_Management_System").getBytes());
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+        
+        html = response.getContentAsString();
+        assertTrue(html != null && !html.contains("CMS") && html.contains("Content_Management_System"));
+        
+        // revert the change
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("PUT");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./html/content/");
+        request.setContentType("text/html");
+        request.setContent(html.replace("Content_Management_System", "CMS").getBytes());
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+    }
 }

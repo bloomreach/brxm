@@ -139,10 +139,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-            List<HippoHtml> htmlBeans = documentBean.getChildBeans("hippostd:html");
-            if (!htmlBeans.isEmpty()) {
-                htmlBean = htmlBeans.get(0);
-            }
+            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -223,6 +220,97 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         }
         
         return htmlRepresentation;
+    }
+    
+    @GET
+    @Path("/html/content/")
+    public String getHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        
+        HippoHtml htmlBean = null;
+        
+        try {
+            HstRequestContext requestContext = getRequestContext(servletRequest);       
+            HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
+            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        if (htmlBean == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("HippoHtml child bean not found.");
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        
+        return htmlBean.getContent();
+    }
+    
+    @PUT
+    @Path("/html/content/")
+    public String updateHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            String htmlContent) {
+        HippoDocumentBean documentBean = null;
+        HippoHtml htmlBean = null;
+        
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
+        try {
+            documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
+            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        if (htmlBean == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("HippoHtml child bean not found.");
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        
+        try {
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            final String html = htmlContent;
+            final String htmlRelPath = PathUtils.normalizePath(htmlBean.getPath().substring(documentBean.getPath().length()));
+            wpm.update(documentBean, new ContentNodeBinder() {
+                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
+                    try {
+                        Node htmlNode = node.getNode(htmlRelPath);
+                        htmlNode.setProperty("hippostd:content", html);
+                        return true;
+                    } catch (RepositoryException e) {
+                        throw new ContentNodeBindingException(e);
+                    }
+                }
+            });
+            wpm.save();
+            
+            documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
+            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return htmlBean.getContent();
     }
     
     private HippoBean getFirstBeanByPrimaryNodeType(HippoDocumentBean documentBean, String primaryNodeType) {
