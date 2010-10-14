@@ -36,46 +36,40 @@ public class Main {
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
+        String location = args[0];
+        String driver = "org.gjt.mm.mysql.Driver"; // alternative: com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource
+	String indices = args[1];
         try {
             Traverse traverse = new Traverse();
-
-            /*{
-                Connection connection = getConnection("com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource",
-                        "jdbc:mysql://localhost:3306/hreptwo", "hippo", "hippo");
+            Connection connection = getConnection(driver, location, null, null);
+            {
                 BundleReader bundleReader = new BundleReader(connection, "version_", true);
                 int size = bundleReader.getSize();
                 System.err.println("Traversing through "+size+" bundles");
                 Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
                 traverse.checkVersionBundles(iterable);
-                connection.close();
-            }*/
+            }
             {
-                Connection connection = getConnection("com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource",
-                        "jdbc:mysql://localhost:3306/hreptwo", "hippo", "hippo");
                 BundleReader bundleReader = new BundleReader(connection, "default_", false);
                 int size = bundleReader.getSize();
                 System.err.println("Traversing through "+size+" bundles");
                 Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
                 traverse.checkBundles(iterable);
-                connection.close();
             }
             {
-                Connection connection = getConnection("com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource",
-                        /*"jdbc:mysql:mxj:///hreptwo"*/ "jdbc:mysql://localhost:3306/hreptwo",
-                        "hippo", "hippo");
                 ReferencesReader referenceReader = new ReferencesReader(connection);
                 Iterable<NodeReference> iterable = Coroutine.<NodeReference>toIterable(referenceReader, referenceReader.getSize());
                 traverse.checkReferences(iterable);
-                connection.close();
             }
-            /*{
-                IndicesReader indicesReader = new IndicesReader(new File("/alt/berry/storage/workspaces/default/index"));
+            connection.close();
+            {
+                IndicesReader indicesReader = new IndicesReader(new File(indices));
                 Iterable<NodeIndexed> iterable = Coroutine.<NodeIndexed>toIterable(indicesReader);
                 Iterable<UUID> corrupted = traverse.checkIndices(iterable);
-                for(UUID uuid : corrupted) {
-                    indicesReader.writeIndex(new File("/alt/berry/storage/workspaces/default/index"), uuid, null);
-                }
-            }*/
+                /*for(UUID uuid : corrupted) {
+                    indicesReader.writeIndex(new File(indices), uuid, null);
+                }*/
+            }
         } catch (SQLException ex) {
             System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
             ex.printStackTrace(System.err);

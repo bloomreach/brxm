@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 class Coroutine {
     @SuppressWarnings("unused")
@@ -60,16 +58,11 @@ class Coroutine {
         }
 
         public void run() {
-            try {
-                visitable.accept(this);
-                synchronized (this) {
-                    done = true;
-                    progress.close();
-                    notify();
-                }
-            } catch (Throwable ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
+            visitable.accept(this);
+            synchronized (this) {
+                done = true;
+                progress.close();
+                notify();
             }
         }
 
@@ -80,8 +73,6 @@ class Coroutine {
                     notify();
                 }
             } catch (InterruptedException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
             }
         }
 
@@ -94,8 +85,6 @@ class Coroutine {
                             try {
                                 Bridge.this.wait();
                             } catch (InterruptedException ex) {
-                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                ex.printStackTrace(System.err);
                             }
                         }
                         return !done;
@@ -108,8 +97,6 @@ class Coroutine {
                             try {
                                 Bridge.this.wait();
                             } catch (InterruptedException ex) {
-                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                ex.printStackTrace(System.err);
                             }
                         }
                     }

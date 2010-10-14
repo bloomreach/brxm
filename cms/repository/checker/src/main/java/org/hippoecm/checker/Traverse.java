@@ -15,6 +15,7 @@
  */
 package org.hippoecm.checker;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -30,9 +31,14 @@ public class Traverse {
     private final static String SVN_ID = "$Id$";
 
     protected final Set<UUID> all = createSetAllNodes();
+    protected final Set<UUID> version = createSetAllNodes();
     protected final Bag<UUID, UUID> childParentRelation = createChildParentBag();
     protected final Bag<UUID, UUID> parentChildRelation = createParentChildBag();
     protected final Bag<UUID, UUID> sourceTargetRelation = createSourceTargetBag();
+
+    PrintStream progressOut = System.out;
+    PrintStream reportOut = System.err;
+    PrintStream verboseOut = System.err;
 
     protected Bag<UUID, UUID> createChildParentBag() {
         return new BagImpl<UUID, UUID>(new TreeMap<UUID, Collection<UUID>>(), TreeSet.class);
@@ -85,6 +91,8 @@ public class Traverse {
 
     Iterable<UUID> checkIndices(Iterable<NodeIndexed> allIterable) {
         int count = 0;
+        int nonexistentCount = 0;
+        int misparentedCount = 0;
 
         Set<UUID> unvisited = new TreeSet<UUID>();
         unvisited.addAll(all);
@@ -95,16 +103,20 @@ public class Traverse {
             ++count;
             boolean needsReindex = false;
             if (!all.contains(current)) {
-                System.err.println("  nonexistent node " + current + " parented by " + parent);
+                ++nonexistentCount;
+                // System.err.println("  nonexistent node " + current + " parented by " + parent);
                 needsReindex = true;
             } else {
                 if (!parentChildRelation.contains(parent, current)) {
                     needsReindex = true;
-                    System.err.println("  inconsitent node " + current + " not below parent " + parent);
+                    //System.err.println("  inconsitent node " + current + " not below parent " + parent);
                 }
                 if (!childParentRelation.contains(current, parent)) {
                     needsReindex = true;
-                    System.err.println("  inconsitent node " + current + " does not have correct parent " + parent);
+                    //System.err.println("  inconsitent node " + current + " does not have correct parent " + parent);
+                }
+                if (needsReindex) {
+                    ++misparentedCount;
                 }
             }
             unvisited.remove(current);
@@ -112,10 +124,13 @@ public class Traverse {
                 corrupted.add(current);
             }
         }
-        for (UUID current : unvisited) {
+        System.err.println("FOUND " + nonexistentCount + " INDEXED NON EXISTENT NODES");
+        System.err.println("FOUND " + misparentedCount + " INDEXED NODES WITH WRONG PARENT");
+        System.err.println("FOUND " + unvisited.size() + " UNINDEXED NODES ");
+        /*for (UUID current : unvisited) {
             corrupted.add(current);
             System.err.println("  node " + current + " not indexed");
-        }
+        }*/
         return corrupted;
     }
 
@@ -129,19 +144,20 @@ public class Traverse {
             } else if (!all.contains(item.getTarget())) {
                 missingTargets.add(item.getTarget());
             } else if (!refs.contains(item.getSource(), item.getTarget())) {
-                System.err.println("  bad reference from "+item.getSource()+" to "+item.getTarget());
+                //System.err.println("  bad reference from "+item.getSource()+" to "+item.getTarget());
             } else {
                 refs.remove(item.getSource(), item.getTarget());
             }
         }
         System.err.println("MISSING REFERENCE SOURCES " + missingSources.size());
         System.err.println("MISSING REFERENCE TARGETS " + missingTargets.size());
+        System.err.println("ORPHANED REFERENCES " + refs.size());
     }
 
     void checkVersionBundles(Iterable<NodeDescription> allIterable) {
         System.err.println("Reading version bundle information");
         for (NodeDescription item : allIterable) {
-            all.add(item.getNode());
+            version.add(item.getNode()); // all.add(item.getNode());
         }
     }
 
@@ -164,7 +180,7 @@ public class Traverse {
                     Set<UUID> unvisited = createSetUnvisitedNodes();
                     Set<UUID> visited = createSetVisitedNodes();
                     unvisited.addAll(all);
-                    System.err.println("Traversing up");
+                    System.out.println("Traversing up");
 
                     Progress progress = new Progress(unvisited.size());
                     for (UUID current = null; !unvisited.isEmpty() || current != null;) {
@@ -216,10 +232,10 @@ public class Traverse {
                     assert (visited.size() == all.size());
                     assert (unvisited.size() == 0);
                 }
-                System.err.println("FOUND " + roots.size() + " ROOTS");
-                for (UUID root: roots) {
+                System.err.println("FOUND " + roots.size() + " " + (roots.size() == 1 ? "ROOT" : " ROOTS"));
+                /* for (UUID root: roots) {
                     System.err.println("  "+root);
-                }
+                } */
                 System.err.println("FOUND " + cyclic.size() + " CYCLIC REFERENCES");
                 for (UUID cycleStart : cyclic) {
                     System.err.println("Cyclic reference:");
@@ -243,10 +259,10 @@ public class Traverse {
                 }
                 System.err.println("FOUND " + orphaned.size() + " ORPHANED PATHS");
                 if (orphaned.size() > 0) {
-                    System.err.println("Orphaned reference:");
+                    /*System.err.println("Orphaned reference:");
                     for (UUID orphan : orphaned) {
                         System.err.println("  orphaned node "+ orphan);
-                    }
+                    }*/
                     /*for (UUID orphanedStart : orphaned) {
                         LinkedList<UUID> orphanedPath = new LinkedList<UUID>();
                         for (UUID current = orphanedStart; current != null; current = parentChildRelation.getFirst(current)) {
@@ -279,27 +295,27 @@ public class Traverse {
                     UUID child = entry.getKey();
                     UUID parent = entry.getValue();
                     UUID childParent = childParentRelation.getFirst(child);
-                    if (parentChildRelation.contains(childParent, child)) {
+                    /*if (parentChildRelation.contains(childParent, child)) {
                         System.err.println("  node " + parent + " references child " + child + " which is correctly located at parent " + childParent);
                     } else if (all.contains(parent)) {
                         System.err.println("  node " + parent + " references child " + child + " which is incorrectly located at parent " + childParent);
                     } else {
                         System.err.println("  node " + parent + " references child " + child + " which is orphaned located at parent " + childParent);
-                    }
+                    }*/
                 }
             }
         }
 
-        Bag<UUID, UUID> danlingReferences = createSourceTargetCopyBag(childParentRelation);
+        Bag<UUID, UUID> danglingReferences = createSourceTargetCopyBag(null);
         for(Map.Entry<UUID,UUID> reference : sourceTargetRelation) {
             UUID source = reference.getKey();
             UUID target = reference.getValue();
-            if(!all.contains(target)) {
-                danlingReferences.put(source, target);
+            if(!all.contains(target) && !version.contains(target)) {
+                danglingReferences.put(source, target);
             }
         }
-        System.err.println("FOUND " + danlingReferences.size() + " DANGLING REFERENCES");
-        /*for(Map.Entry<UUID,UUID> reference : danlingReferences) {
+        System.err.println("FOUND " + danglingReferences.size() + " DANGLING REFERENCES");
+        /*for(Map.Entry<UUID,UUID> reference : danglingReferences) {
             UUID source = reference.getKey();
             UUID target = reference.getValue();
             System.err.println("  dangling reference from "+source+" to "+target);

@@ -104,7 +104,7 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
         if(nodeId == null)
             return nullUUID;
         //return UUID.nameUUIDFromBytes(getUUID(nodeId).getRawBytes());
-        return UUID.fromString(getUUID(nodeId).toString());
+        return UUID.fromString(UUID.fromString(nodeId.toString()).toString());
     }
 
     static UUID create(String string) {
