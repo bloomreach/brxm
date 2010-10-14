@@ -59,7 +59,11 @@ public class ClientHierarchyResolver extends ClientObject implements HierarchyRe
                 }
                 last.relPath = result.relPath;
             }
-            return getItem(session, result.item);
+            if (result.item == null) {
+                return null;
+            } else {
+                return getItem(session, result.item);
+            }
         } catch(RemoteException ex) {
             throw new RemoteRuntimeException(ex);
         }
