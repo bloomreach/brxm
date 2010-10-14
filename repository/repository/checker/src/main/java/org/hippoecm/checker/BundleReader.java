@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,6 +49,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
     private final static String SVN_ID = "$Id$";
 
     boolean onlyReferenceable;
+    int batchSize=1000000;
 
     BundleReader(Connection connection, String schemaObjectPrefix, boolean onlyReferenceable) {
         super(connection, schemaObjectPrefix);
@@ -55,42 +57,49 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
     }
 
     public int getSize() {
+        int size = -1;
         try {
-            String bundleSelectAllSQL = "select COUNT(*) from " + schemaObjectPrefix + "BUNDLE";
-            PreparedStatement stmt = connection.prepareStatement(bundleSelectAllSQL);
-            stmt.clearParameters();
-            stmt.clearWarnings();
-            stmt.execute();
+            String bundleCountSQL = "select COUNT(*) from " + schemaObjectPrefix + "BUNDLE";
+            Statement stmt = connection.createStatement();
+            stmt.execute(bundleCountSQL);
             ResultSet rs = stmt.getResultSet();
             if (rs.next()) {
-                return rs.getInt(1);
+                size = rs.getInt(1);
             } else {
-                return -1;
+                size = -1;
             }
+            rs.close();
+            stmt.close();
+            return size;
         } catch (SQLException ex) {
+            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+            ex.printStackTrace(System.err);
             return 0;
         }
     }
 
     public void accept(Visitor<NodeDescription> visitor) {
         try {
-            String bundleSelectAllSQL = "select NODE_ID, BUNDLE_DATA from " + schemaObjectPrefix + "BUNDLE";
-            PreparedStatement stmt = connection.prepareStatement(bundleSelectAllSQL);
-            stmt.clearParameters();
-            stmt.clearWarnings();
-            stmt.execute();
-            ResultSet rs = stmt.getResultSet();
-            while (rs.next()) {
-                byte[] nodeIdBytes = rs.getBytes(1);
-                Blob blob = rs.getBlob(2);
-                final NodeId nodeId = new NodeId(nodeIdBytes);
-                byte[] bytes = getBytes(blob);
-                DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
-                if(onlyReferenceable) {
-                    readBundle(nodeId, in, visitor, onlyReferenceable);
-                } else {
-                    readBundle(nodeId, in, visitor, onlyReferenceable);
+            int totalSize = getSize();
+            for (int position = 0; position < totalSize; position += batchSize) {
+                String bundleSelectAllSQL = "select NODE_ID, BUNDLE_DATA from " + schemaObjectPrefix + "BUNDLE LIMIT " + position + "," + batchSize;
+                Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                stmt.execute(bundleSelectAllSQL);
+                ResultSet rs = stmt.getResultSet();
+                while (rs.next()) {
+                    byte[] nodeIdBytes = rs.getBytes(1);
+                    Blob blob = rs.getBlob(2);
+                    final NodeId nodeId = new NodeId(nodeIdBytes);
+                    byte[] bytes = getBytes(blob);
+                    DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
+                    if (onlyReferenceable) {
+                        readBundle(nodeId, in, visitor, onlyReferenceable);
+                    } else {
+                        readBundle(nodeId, in, visitor, onlyReferenceable);
+                    }
                 }
+                rs.close();
+                stmt.close();
             }
         } catch (SQLException ex) {
             System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
@@ -119,7 +128,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             bundle.setParentId(NodeId.valueOf(parent.toString()));
             for(Iterator<ChildNodeEntry> iter = ((List<ChildNodeEntry>) bundle.getChildNodeEntries()).iterator(); iter.hasNext(); ) {
                 ChildNodeEntry childNodeEntry = (ChildNodeEntry) iter.next();
-                if(!children.contains(UUID.fromString(getUUID(childNodeEntry.getId()).toString()))) {
+                if(!children.contains(create(childNodeEntry.getId()))) {
                     iter.remove();
                 }
             }
@@ -167,7 +176,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                 public Collection<UUID> getChildren() {
                     List<UUID> children = new LinkedList<UUID>();
                     for (ChildNodeEntry child : (List<ChildNodeEntry>)bundle.getChildNodeEntries()) {
-                        children.add(UUID.fromString(getUUID(child.getId()).toString()));
+                        children.add(create(child.getId()));
                     }
                     return children;
                 }
@@ -177,7 +186,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                     for (PropertyEntry entry : (Collection<PropertyEntry>)bundle.getPropertyEntries()) {
                         if (entry.getType() == PropertyType.REFERENCE) {
                             for (InternalValue value : entry.getValues()) {
-				references.add(UUID.fromString(value.getNodeId().toString()));
+				references.add(create(value.getNodeId()));
                             }
                         }
                     }
