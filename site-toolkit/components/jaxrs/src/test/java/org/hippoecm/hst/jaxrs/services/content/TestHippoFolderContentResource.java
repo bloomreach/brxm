@@ -37,9 +37,9 @@ import org.w3c.dom.Document;
 public class TestHippoFolderContentResource extends AbstractTestContentResource {
     
     @Test
-    public void testGetFolders() throws Exception {
+    public void testGetFolderResources() throws Exception {
         
-        log.debug("\n****** testGetFolders *******\n");
+        log.debug("\n****** testGetFolderResources *******\n");
         
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
@@ -71,30 +71,81 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
     }
     
     @Test
-    public void testGetFolder() throws Exception {
+    public void testGetFolderResource() throws Exception {
         
-        log.debug("\n****** testGetFolder *******\n");
+        log.debug("\n****** testGetFolderResource *******\n");
         
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/News/2009/April./folders/Day5/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/News/2009/April./folders/Day5/");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        String name = XPathFactory.newInstance().newXPath().compile("//folder/name").evaluate(document);
+        assertEquals("Day5", name);
     }
     
     @Test
-    public void testCreateFolder() throws Exception {
+    public void testCreateAndDeleteFolderResource() throws Exception {
         
-        log.debug("\n****** testCreateFolder *******\n");
+        log.debug("\n****** testCreateAndDeleteFolderResource *******\n");
         
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("POST");
+        request.setRequestURI("/testapp/preview/services/News/2009/April./folders/unittestfolder1/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/News/2009/April./folders/unittestfolder1/");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+        
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("DELETE");
+        request.setRequestURI("/testapp/preview/services/News/2009/April./folders/unittestfolder1/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/News/2009/April./folders/unittestfolder1/");
+        request.setContent(new byte[0]);
+        
+        response = new MockHttpServletResponse();
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
     
     @Test
-    public void testDeleteFolder() throws Exception {
+    public void testGetDocumentResources() throws Exception {
         
-        log.debug("\n****** testDeleteFolder *******\n");
-        
-    }
-    
-    @Test
-    public void testGetDocuments() throws Exception {
-        
-        log.debug("\n****** testGetDocuments *******\n");
+        log.debug("\n****** testGetDocumentResources *******\n");
         
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
@@ -126,9 +177,9 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
     }
     
     @Test
-    public void testGetDocument() throws Exception {
+    public void testGetDocumentResource() throws Exception {
         
-        log.debug("\n****** testGetDocument *******\n");
+        log.debug("\n****** testGetDocumentResource *******\n");
         
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
@@ -158,9 +209,9 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
     }
     
     @Test
-    public void testCreateAndDeleteDocument() throws Exception {
+    public void testCreateAndDeleteDocumentResource() throws Exception {
         
-        log.debug("\n****** testCreateAndDeleteDocument *******\n");
+        log.debug("\n****** testCreateAndDeleteDocumentResource *******\n");
         
         log.debug("Create a document first.");
         

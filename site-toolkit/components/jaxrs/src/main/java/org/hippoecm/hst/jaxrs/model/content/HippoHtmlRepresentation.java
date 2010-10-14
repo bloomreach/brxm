@@ -23,7 +23,7 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
  * @version $Id$
  */
 @XmlRootElement(name = "html")
-public class HippoHtmlRepresentation {
+public class HippoHtmlRepresentation extends NodeRepresentation {
     
     private String content;
     

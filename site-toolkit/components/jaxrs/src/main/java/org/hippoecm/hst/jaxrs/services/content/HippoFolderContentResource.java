@@ -77,7 +77,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @GET
     @Path("/folders/")
-    public HippoFolderRepresentationDataset getFolders(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public HippoFolderRepresentationDataset getFolderResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         List<NodeRepresentation> folderNodes = new ArrayList<NodeRepresentation>();
@@ -101,7 +101,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @GET
     @Path("/folders/{folderName}/")
-    public HippoFolderRepresentation getFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public HippoFolderRepresentation getFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("folderName") String folderName, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         HippoFolderBean childFolderBean = hippoFolderBean.getBean(folderName, HippoFolderBean.class);
@@ -127,7 +127,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @POST
     @Path("/folders/{folderName}/")
-    public void createFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public void createFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("folderName") String folderName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         createContentResource(servletRequest, hippoFolderBean, "hippostd:folder", folderName);
@@ -135,7 +135,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @DELETE
     @Path("/folders/{folderName}/")
-    public void deleteFolder(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public void deleteFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("folderName") String folderName) {
         try {
             HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
@@ -159,7 +159,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @GET
     @Path("/documents/")
-    public HippoDocumentRepresentationDataset getDocuments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public HippoDocumentRepresentationDataset getDocumentResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         List<NodeRepresentation> documentNodes = new ArrayList<NodeRepresentation>();
@@ -183,7 +183,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @GET
     @Path("/documents/{documentName}/")
-    public HippoDocumentRepresentation getDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public HippoDocumentRepresentation getDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("documentName") String documentName, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         HippoDocumentBean childDocumentBean = hippoFolderBean.getBean(documentName, HippoDocumentBean.class);
@@ -209,7 +209,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @POST
     @Path("/documents/{nodeTypeName}/{documentName}/")
-    public void createDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public void createDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("nodeTypeName") String nodeTypeName, @PathParam("documentName") String documentName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         createContentResource(servletRequest, hippoFolderBean, nodeTypeName, documentName);
@@ -217,7 +217,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @DELETE
     @Path("/documents/{documentName}/")
-    public void deleteDocument(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public void deleteDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("documentName") String documentName) {
         try {
             HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));

@@ -40,6 +40,8 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
+import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +71,63 @@ public class HippoDocumentContentResource extends AbstractContentResource {
             
             throw new WebApplicationException(e);
         }
+    }
+    
+    @PUT
+    @Path("/")
+    public HippoDocumentRepresentation updateDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+            HippoDocumentRepresentation documentRepresentation, @MatrixParam("pf") Set<String> propertyFilters) {
+        HippoDocumentBean documentBean = null;
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
+        try {
+            documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        try {
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext.getSession());
+            final HippoDocumentRepresentation documentRepresentationInput = documentRepresentation;
+            
+            wpm.update(documentBean, new ContentNodeBinder() {
+                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
+                    try {
+                        List<NodeProperty> nodeProps = documentRepresentationInput.getProperties();
+                        if (nodeProps != null && !nodeProps.isEmpty()) {
+                            for (NodeProperty nodeProp : nodeProps) {
+                                NodePropertyUtils.setProperty(node, nodeProp);
+                            }
+                            return true;
+                        }
+                    } catch (RepositoryException e) {
+                        throw new ContentNodeBindingException(e);
+                    }
+                    
+                    return false;
+                }
+            });
+            wpm.save();
+            
+            documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
+            documentRepresentation = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return documentRepresentation;
     }
     
     @GET
