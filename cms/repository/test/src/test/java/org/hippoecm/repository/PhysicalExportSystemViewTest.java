@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -69,9 +67,6 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         Result result = new Result();
         ContentHandler handler = new ContentHandlerImpl(result, new String[] {"facetsearch"} );
         this.session.exportSystemView("/test/facetsearch", handler, true, false);
-        if(verbose) {
-            printSystemView("/test/factsearch");
-        }
         // if issue solved, assertTrue
         assertTrue(result.isSucces());
     }
@@ -84,9 +79,6 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         Result result = new Result();
         ContentHandler handler = new ContentHandlerImpl(result,  new String[] {"facetselect"});
         this.session.exportSystemView("/test/facetselect", handler, true, false);
-        if(verbose) {
-            printSystemView("/test/facetselect");
-        }
         assertTrue(result.isSucces());
     }
 
@@ -98,9 +90,6 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         Result result = new Result();
         ContentHandler handler = new ContentHandlerImpl(result, new String[] {"facetsearch", "facetselect"});
         this.session.exportSystemView("/test", handler, true, false);
-        if(verbose) {
-            printSystemView("/test");
-        }
         assertTrue(result.isSucces());
     }
 
@@ -219,25 +208,5 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         this.session.exportSystemView(path, out, true, false);
         String export = prettyPrint(out.toByteArray());
         System.out.println(export);
-    }
-
-    private String prettyPrint(byte[] bytes) throws Exception {
-        Source source = new StreamSource(new ByteArrayInputStream(bytes));
-        DOMResult result = new DOMResult();
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer identityTransformer = transformerFactory.newTransformer();
-        identityTransformer.transform(source, result);
-        org.w3c.dom.Document doc = (org.w3c.dom.Document) result.getNode();
-
-        OutputFormat format = new OutputFormat(doc);
-        format.setEncoding("UTF-8");
-        format.setIndenting(true);
-        format.setIndent(2);
-        format.setLineWidth(80);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XMLSerializer xmlSerializer = new XMLSerializer(out, format);
-        xmlSerializer.serialize(doc);
-        return out.toString("UTF-8");
     }
 }

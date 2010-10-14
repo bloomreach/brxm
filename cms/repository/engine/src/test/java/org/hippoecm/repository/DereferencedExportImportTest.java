@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -312,23 +310,5 @@ public class DereferencedExportImportTest extends TestCase {
 
         assertTrue(testImport.hasNode(TEST_EXPORT_NODE));
         assertEquals(10L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());
-    }
-
-    private void prettyPrint(byte[] bytes, OutputStream out) throws Exception {
-        Source source = new StreamSource(new ByteArrayInputStream(bytes));
-        DOMResult result = new DOMResult();
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer identityTransformer = transformerFactory.newTransformer();
-        identityTransformer.transform(source, result);
-        org.w3c.dom.Document doc = (org.w3c.dom.Document) result.getNode();
-
-        OutputFormat format = new OutputFormat(doc);
-        format.setEncoding("UTF-8");
-        format.setIndenting(true);
-        format.setIndent(2);
-        format.setLineWidth(80);
-
-        XMLSerializer xmlSerializer = new XMLSerializer(out, format);
-        xmlSerializer.serialize(doc);
     }
 }
