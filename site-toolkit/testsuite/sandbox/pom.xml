@@ -31,7 +31,7 @@
 
   <modules>
     <module>ocm</module>
-    <module>jaxrs</module>
+    <!-- module>jaxrs</module-->
   </modules>
 
 </project>

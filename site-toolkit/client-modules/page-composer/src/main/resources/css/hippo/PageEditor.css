@@ -1,0 +1,55 @@
+.hst-container{}
+
+.hst-container-table {
+    width: 100%;
+}
+
+div.componentContentWrapper .hst-container .hst-dd-item .componentContentWrapper *{
+    background: transparent;
+}
+
+.componentContentWrapper.hst-activated-container.hst-selected-container {
+    border: 1px dashed red;
+}
+
+.empty-container-placeholder {
+  height:30px;
+  font-size: 15px;
+  padding-top: 10px;
+}
+
+div.hst-empty-container ul,
+div.hst-empty-container ol{
+    padding-left: 5px;
+}
+
+li.hst-empty-container-item {
+    list-style: none;
+}
+
+li.placeholdert {
+    list-style: none;
+}
+
+.hst-dd-helper {
+    border: 2px solid green;
+}
+
+.hst-dd-item {
+    cursor: move;
+}
+
+.hst-empty-container {
+    background-color: #999;
+}
+
+.ui-selectable .ui-selected {
+    background: #F39814;
+    color: white;
+}
+
+#switcher {
+    position: absolute;
+    left: 10px;
+    top:10px;
+}

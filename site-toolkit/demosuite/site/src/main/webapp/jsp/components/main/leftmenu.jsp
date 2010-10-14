@@ -27,7 +27,7 @@
               <b>${item.name}</b>
           </c:when>
           <c:otherwise>
-              <hst:link var="link" link="${item.hstLink}" />
+              <hst:link var="link" link="${item.hstLink}" external="true" />
               <a href="${link}">
                   ${item.name}
               </a>

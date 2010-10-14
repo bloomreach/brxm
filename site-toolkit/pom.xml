@@ -929,6 +929,7 @@
         <module>toolkit-resources</module>
         <module>components</module>
         <module>client</module>
+        <module>client-modules</module>
         <module>dependencies</module>
         <module>testsuite</module>
         <module>demosuite</module>

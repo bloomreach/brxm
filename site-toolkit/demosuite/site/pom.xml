@@ -136,6 +136,13 @@
       <artifactId>hst-jaxrs</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <!-- TODO  SHOULD THIS GO INTO SERVER / CLIENT DEPENDENCIES? -->
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.client-modules</groupId>
+      <artifactId>hst-page-composer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- Apache CXF Runtime for JAX-RS Services -->
     <dependency>
@@ -164,6 +171,8 @@
         </exclusion>
       </exclusions>
     </dependency>
+    
+    
     
   </dependencies>
 
