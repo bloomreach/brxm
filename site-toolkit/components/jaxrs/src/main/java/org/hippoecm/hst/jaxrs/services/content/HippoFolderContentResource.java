@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
@@ -208,9 +209,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
     }
     
     @POST
-    @Path("/documents/{nodeTypeName}/{documentName}/")
+    @Path("/documents/{documentName}/")
     public void createDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("nodeTypeName") String nodeTypeName, @PathParam("documentName") String documentName) {
+            @PathParam("documentName") String documentName, @FormParam("type") String nodeTypeName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
         createContentResource(servletRequest, hippoFolderBean, nodeTypeName, documentName);
     }

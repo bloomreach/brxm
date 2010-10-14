@@ -222,12 +222,12 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerPort(8085);
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("POST");
-        request.setRequestURI("/testapp/preview/services/Products./documents/testproject:textpage/newdocumentfortest/");
+        request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest/");
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
-        request.setPathInfo("/Products./documents/testproject:textpage/newdocumentfortest/");
+        request.setPathInfo("/Products./documents/newdocumentfortest/");
         request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        request.setContent(new byte[0]);
+        request.setContent("type=testproject:textpage".getBytes());
         
         MockHttpServletResponse response = new MockHttpServletResponse();
         
