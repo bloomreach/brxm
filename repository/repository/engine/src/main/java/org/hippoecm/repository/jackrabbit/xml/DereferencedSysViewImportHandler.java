@@ -30,7 +30,6 @@ import org.apache.jackrabbit.core.id.NodeId;
 
 import org.apache.jackrabbit.core.xml.ImportHandler;
 import org.apache.jackrabbit.core.xml.Importer;
-import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
@@ -47,6 +46,8 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private final String NS_XMLIMPORT = "http://www.onehippo.org/jcr/xmlimport";
+
     /**
      * stack of ImportState instances; an instance is pushed onto the stack
      * in the startElement method every time a sv:node element is encountered;
@@ -60,6 +61,8 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
      */
     private Name currentPropName;
     private int currentPropType = PropertyType.UNDEFINED;
+    private String currentMergeBehavior = null;
+    private String currentMergeLocation = null;
     // list of AppendableValue objects
     private ArrayList<BufferedStringValue> currentPropValues = new ArrayList<BufferedStringValue>();
     private BufferedStringValue currentPropValue;
@@ -150,7 +153,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         if (state.uuid != null) {
             id = NodeId.valueOf(state.uuid);
         }
-        NodeInfo node = new NodeInfo(state.nodeName, state.nodeTypeName, mixinNames, id);
+        NodeInfo node = new NodeInfo(state.nodeName, state.nodeTypeName, mixinNames, id, state.mergeBehavior, state.location);
         // call Importer
         try {
             if (start) {
@@ -200,6 +203,8 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
 
             // push new ImportState instance onto the stack
             ImportState state = new ImportState();
+            state.mergeBehavior = atts.getValue(NS_XMLIMPORT, "merge");
+            state.location = atts.getValue(NS_XMLIMPORT, "location");
             try {
                 state.nodeName = resolver.getQName(svName);
             } catch (NameException e) {
@@ -233,6 +238,8 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                 throw new SAXException(new InvalidSerializedDataException(
                         "missing mandatory sv:type attribute of element sv:property"));
             }
+            currentMergeBehavior = atts.getValue(NS_XMLIMPORT, "merge");
+            currentMergeLocation = atts.getValue(NS_XMLIMPORT, "location");
             try {
                 currentPropType = PropertyType.valueFromName(type);
             } catch (IllegalArgumentException e) {
@@ -350,7 +357,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                 }
             } else {
                 PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, currentPropValues
-                        .toArray(new TextValue[currentPropValues.size()]));
+                        .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation);
                 state.props.add(prop);
             }
             // reset temp fields
@@ -394,6 +401,16 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
          * flag indicating whether startNode() has been called for current node
          */
         boolean started = false;
+
+        /**
+         * Merge behavior for current Node
+         */
+        String mergeBehavior;
+
+        /**
+         * Optional location to be used for mergeBehavior
+         */
+        String location;
     }
 
     //-------------------------------------------------------------< private >

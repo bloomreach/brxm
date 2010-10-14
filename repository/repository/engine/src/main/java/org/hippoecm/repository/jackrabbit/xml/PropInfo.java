@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.hippoecm.repository.jackrabbit.xml;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.jcr.ItemExistsException;
+import javax.jcr.Property;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -79,6 +81,10 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
      */
     private boolean isPathReference = false;
 
+    private String mergeBehavior = null;
+
+    private String mergeLocation = null;
+
     /**
      * Value(s) of the property being imported.
      */
@@ -91,8 +97,10 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
      * @param type type of the property being imported
      * @param values value(s) of the property being imported
      */
-    public PropInfo(NamePathResolver resolver, Name name, int type, TextValue[] values) {
+    public PropInfo(NamePathResolver resolver, Name name, int type, TextValue[] values, String mergeBehavior, String mergeLocation) {
         super(name, type, values);
+        this.mergeBehavior = mergeBehavior;
+        this.mergeLocation = mergeLocation;
         if (name.getLocalName().endsWith(Reference.REFERENCE_SUFFIX)) {
             String local = name.getLocalName();
             local = local.substring(0, (local.length() - Reference.REFERENCE_SUFFIX.length()));
@@ -107,6 +115,32 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
         this.values = values.clone();
         this.resolver = resolver;
+    }
+
+    public boolean mergeOverride() {
+        return "override".equalsIgnoreCase(mergeBehavior);
+    }
+
+    public boolean mergeCombine() {
+        return "append".equalsIgnoreCase(mergeBehavior) || "insert".equalsIgnoreCase(mergeBehavior);
+    }
+
+    public boolean mergeConflict() {
+        return "conflict".equalsIgnoreCase(mergeBehavior);
+    }
+
+    public int mergeLocation(Value[] values) {
+        if("append".equalsIgnoreCase(mergeBehavior)) {
+            return values.length;
+        } else if("insert".equalsIgnoreCase(mergeBehavior)) {
+            if(mergeLocation == null || mergeLocation.trim().equals("")) {
+                return 0;
+            } else {
+                return Integer.parseInt(mergeLocation);
+            }
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -148,8 +182,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
     }
 
-    public void apply(
-            NodeImpl node, NamePathResolver resolver,
+    public void apply(NodeImpl node, NamePathResolver resolver,
             Map<NodeId, List<Reference>> derefNodes, String basePath, int referenceBehavior) throws RepositoryException {
 
         // find applicable definition
@@ -174,6 +207,33 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
                 va[i] = values[i].getValue(PropertyType.STRING, resolver);
             } else {
                 va[i] = values[i].getValue(targetType, resolver);
+            }
+        }
+
+        if (node.hasProperty(name)) {
+            if (mergeOverride()) {
+                node.getProperty(name).remove();
+            } else if (mergeCombine()) {
+                Property oldProperty = node.getProperty(name);
+                Value[] oldValues;
+                if (oldProperty.isMultiple()) {
+                    oldValues = oldProperty.getValues();
+                } else {
+                    oldValues = new Value[1];
+                    oldValues[0] = oldProperty.getValue();
+                }
+                Value[] newValues = new Value[va.length + oldValues.length];
+                int pos = mergeLocation(oldValues);
+                System.arraycopy(oldValues, 0, newValues, 0, pos);
+                System.arraycopy(va, 0, newValues, pos, va.length);
+                System.arraycopy(oldValues, pos, newValues, pos+va.length, oldValues.length-pos);
+                va = newValues;
+            } else if (mergeConflict()) {
+                throw new ItemExistsException("Property " + node.getPath() + "/" + name + " already exist");
+            } else {
+                if (!def.isAutoCreated()) {
+                    log.warn("Property "+node.getPath()+"/"+name+" already exist");
+                }
             }
         }
 
@@ -212,7 +272,6 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
 
             return;
         }
-
 
         // multi- or single-valued property?
         if (va.length == 1 && !def.isMultiple()) {

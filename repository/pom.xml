@@ -453,6 +453,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.5</version>
+        <configuration>
+          <workingDirectory>target</workingDirectory>
+        </configuration>
       </plugin>
       <plugin>
         <inherited>true</inherited>
