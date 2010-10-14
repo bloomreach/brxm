@@ -23,6 +23,8 @@
 
 [hippo:ntunstructured] > nt:unstructured
 
+[hippo:ntunstructuredordered] > nt:unstructured orderable
+
 [hippo:testdocument] > hippo:document
 + * (nt:base) = hippo:ntunstructured multiple
 - *

@@ -55,6 +55,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,6 +213,9 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         //session.save();
     }
 
+    public void importXML(String parentAbsPath, InputStream in, int uuidBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
+        importDereferencedXML(parentAbsPath, in, uuidBehavior, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_DISABLE);
+    }
 
     public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {

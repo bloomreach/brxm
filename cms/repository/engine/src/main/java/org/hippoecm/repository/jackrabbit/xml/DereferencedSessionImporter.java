@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,10 @@ import java.util.UUID;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -36,7 +40,6 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.xml.Importer;
-import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
@@ -104,12 +107,44 @@ public class DereferencedSessionImporter implements Importer {
                     + mergeBehavior);
     }
 
-    protected NodeImpl createNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id)
+    protected NodeImpl createNode(NodeImpl parent, Name nodeName, Name nodeTypeName, Name[] mixinNames, NodeId id, NodeInfo nodeInfo)
             throws RepositoryException {
         NodeImpl node;
 
         // add node
-        node = parent.addNode(nodeName, nodeTypeName, id);
+        if(nodeInfo.mergeCombine() && nodeInfo.getOrigin() != null) {
+            node = nodeInfo.getOrigin();
+            // 'replace' current parent with parent of conflicting
+            // parent = (NodeImpl) conflicting.getParent();
+            // replace child node
+            // node = parent.replaceChildNode(nodeInfo.getId(), nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
+        } else if (nodeInfo.mergeOverlay() && nodeInfo.getOrigin() != null) {
+            node = nodeInfo.getOrigin();
+            if (mixinNames != null) {
+                for (int i = 0; i < mixinNames.length; i++) {
+                    node.addMixin(mixinNames[i]);
+                }
+            }
+            node.setPrimaryType(nodeTypeName.toString());
+           /*NodeImpl origin = nodeInfo.getOrigin();
+            node = parent.replaceChildNode(origin.getNodeId(), nodeName, nodeTypeName, mixinNames);
+            for(PropertyIterator iter = origin.getProperties(); iter.hasNext(); ) {
+                Property p = iter.nextProperty();
+                if(p.isMultiple()) {
+                    node.setProperty(p.getName(), p.getValues());
+                } else {
+                    node.setProperty(p.getName(), p.getValue());
+                }
+            }
+            for(NodeIterator iter = origin.getNodes(); iter.hasNext(); ) {
+                NodeImpl child = (NodeImpl) iter.nextNode();
+                child.getSession().move(child.getPath(), node.getPath()+"/"+child.getName());
+            }*/
+            return node;
+        } else {
+            node = parent.addNode(nodeName, nodeTypeName, id);
+        }
+
         // add mixins
         if (mixinNames != null) {
             for (int i = 0; i < mixinNames.length; i++) {
@@ -132,7 +167,7 @@ public class DereferencedSessionImporter implements Importer {
         NodeImpl node;
         if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW) {
             // create new with new uuid
-            node = createNode(parent, nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(), null);
+            node = createNode(parent, nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(), null, nodeInfo);
         } else if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW) {
             String msg = "a node with uuid " + nodeInfo.getId() + " already exists!";
             log.debug(msg);
@@ -148,7 +183,7 @@ public class DereferencedSessionImporter implements Importer {
             conflicting.remove();
             // create new with given uuid
             node = createNode(parent, nodeInfo.getName(), nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(),
-                    nodeInfo.getId());
+                    nodeInfo.getId(), nodeInfo);
         } else if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING) {
             if (conflicting.getDepth() == 0) {
                 String msg = "root node cannot be replaced";
@@ -189,7 +224,11 @@ public class DereferencedSessionImporter implements Importer {
             conflicting.remove();
             return nodeInfo;
         }
-        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP) {
+        if (nodeInfo.mergeCombine() || nodeInfo.mergeOverlay()) {
+            nodeInfo.originItem = conflicting;
+            return nodeInfo;
+        }
+        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP || nodeInfo.mergeSkip()) {
             String msg = "Import merge skip node " + conflicting.safeGetJCRPath();
             log.debug(msg);
             return null;
@@ -302,7 +341,7 @@ public class DereferencedSessionImporter implements Importer {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public void startNode(NodeInfo nodeInfo, List propInfos) throws RepositoryException {
+    public void startNode(org.apache.jackrabbit.core.xml.NodeInfo nodeInfo, List propInfos) throws RepositoryException {
         NodeImpl parent = parents.peek();
 
         // process node
@@ -333,7 +372,7 @@ public class DereferencedSessionImporter implements Importer {
                     return;
                 }
             }
-            nodeInfo = resolveMergeConflict(parent, parent.getNode(nodeName), nodeInfo);
+            nodeInfo = resolveMergeConflict(parent, parent.getNode(nodeName), (NodeInfo)nodeInfo);
             if (nodeInfo == null) {
                 parents.push(null); // push null onto stack for skipped node
                 return;
@@ -343,7 +382,7 @@ public class DereferencedSessionImporter implements Importer {
         // create node
         if (id == null) {
             // no potential uuid conflict, always add new node
-            node = createNode(parent, nodeName, ntName, mixins, null);
+            node = createNode(parent, nodeName, ntName, mixins, null, (NodeInfo)nodeInfo);
         } else {
             // potential uuid conflict
             NodeImpl conflicting;
@@ -354,10 +393,35 @@ public class DereferencedSessionImporter implements Importer {
             }
             if (conflicting != null) {
                 // resolve uuid conflict
-                node = resolveUUIDConflict(parent, conflicting, nodeInfo);
+                node = resolveUUIDConflict(parent, conflicting, (NodeInfo) nodeInfo);
             } else {
                 // create new with given uuid
-                node = createNode(parent, nodeName, ntName, mixins, id);
+                node = createNode(parent, nodeName, ntName, mixins, id, (NodeInfo) nodeInfo);
+            }
+        }
+
+        String insertBeforeLocation = ((NodeInfo)nodeInfo).mergeInsertBefore();
+        if (insertBeforeLocation != null) {
+            String relPath = node.getName();
+            if (node.getIndex() > 1) {
+                relPath += "[" + node.getIndex() + "]";
+            }
+            if (insertBeforeLocation.equals("")) {
+                NodeIterator iter = parent.getNodes();
+                if (iter.hasNext()) {
+                    Node firstChild = iter.nextNode();
+                    if (iter.hasNext()) {
+                        // Note that if there is just one node, it isn't the node before which to insert, but actually the
+                        // node we just created.  In this case the created node is already the first and there is nothing to do.
+                        parent.orderBefore(relPath, firstChild.getName());
+                    }
+                }
+            } else {
+                if (parent.hasNode(insertBeforeLocation)) {
+                    parent.orderBefore(relPath, insertBeforeLocation);
+                } else {
+                    throw new ItemNotFoundException(parent.getPath() + "/" + insertBeforeLocation);
+                }
             }
         }
 
@@ -377,7 +441,7 @@ public class DereferencedSessionImporter implements Importer {
     /**
      * {@inheritDoc}
      */
-    public void endNode(NodeInfo nodeInfo) throws RepositoryException {
+    public void endNode(org.apache.jackrabbit.core.xml.NodeInfo nodeInfo) throws RepositoryException {
         if (parents.peek() != null)
             log.debug("endNode: " + parents.peek().safeGetJCRPath());
         parents.pop();
