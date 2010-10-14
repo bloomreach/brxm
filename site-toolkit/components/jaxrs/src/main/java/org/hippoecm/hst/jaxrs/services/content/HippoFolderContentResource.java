@@ -19,12 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
@@ -46,7 +44,6 @@ import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentationDataset;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentationDataset;
-import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
 import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,29 +73,6 @@ public class HippoFolderContentResource extends AbstractContentResource {
             
             throw new WebApplicationException(e);
         }
-    }
-    
-    @POST
-    @Path("/property/{propertyName}/")
-    public NodeProperty setFolderResourceProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        Node requestContentNode = getRequestContentNode(requestContext);
-        NodeProperty nodeProperty = null; 
-        
-        try {
-            nodeProperty = setResourceNodeProperty(requestContentNode, propertyName, propertyValues);
-            requestContentNode.save();
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to save node.", e);
-            } else {
-                log.warn("Failed to save node. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-        
-        return nodeProperty;
     }
     
     @GET

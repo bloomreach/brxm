@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,27 +22,25 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.MatrixParam;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ContentNodeBindingException;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
-import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
-import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
-import org.hippoecm.hst.jaxrs.model.content.NodeRepresentationDataset;
+import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +63,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
-            } 
-            else {
+            } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             
@@ -75,67 +71,18 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         }
     }
     
-    @POST
-    @Path("/property/{propertyName}/")
-    public NodeProperty setDocumentResourceProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        Node requestContentNode = getRequestContentNode(requestContext);
-        NodeProperty nodeProperty = null; 
-        
-        try {
-            nodeProperty = setResourceNodeProperty(requestContentNode, propertyName, propertyValues);
-            requestContentNode.save();
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to save node.", e);
-            } else {
-                log.warn("Failed to save node. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-        
-        return nodeProperty;
-    }
-    
     @GET
-    @Path("/childbeans/")
-    public NodeRepresentationDataset getChildBeans(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("type") String childNodePrimaryNodeType, @MatrixParam("name") String childNodeName, @MatrixParam("pf") Set<String> propertyFilters) {
-        if (StringUtils.isBlank(childNodePrimaryNodeType) && StringUtils.isBlank(childNodeName)) {
-            if (log.isWarnEnabled()) {
-                log.warn("primary node type name or node name must be provided.");
-            }
-            throw new WebApplicationException(new IllegalArgumentException("primary node type name or node name must be provided."));
-        }
+    @Path("/html/")
+    public HippoHtmlRepresentation getHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         
-        HippoBean hippoBean = null;
+        HippoHtml htmlBean = null;
         
         try {
-            hippoBean = getRequestContentBean(getRequestContext(servletRequest));
-        } catch (ObjectBeanManagerException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to convert content node to content bean.", e);
-            } else {
-                log.warn("Failed to convert content node to content bean. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-        
-        List<NodeRepresentation> childNodeRepresentations = new ArrayList<NodeRepresentation>();
-        NodeRepresentationDataset dataset = new NodeRepresentationDataset(childNodeRepresentations);
-        
-        List<HippoBean> childBeans = null;
-        
-        if (!StringUtils.isBlank(childNodePrimaryNodeType)) {
-            childBeans = hippoBean.getChildBeans(childNodePrimaryNodeType);
-        } else {
-            childBeans = hippoBean.getChildBeansByName(childNodeName);
-        }
-        
-        try {
-            for (HippoBean childBean : childBeans) {
-                childNodeRepresentations.add(new NodeRepresentation().represent(childBean, propertyFilters));
+            HstRequestContext requestContext = getRequestContext(servletRequest);       
+            HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
+            List<HippoHtml> htmlBeans = documentBean.getChildBeans("hippostd:html");
+            if (!htmlBeans.isEmpty()) {
+                htmlBean = htmlBeans.get(0);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -143,113 +90,89 @@ public class HippoDocumentContentResource extends AbstractContentResource {
             } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
+            
             throw new WebApplicationException(e);
         }
         
-        return dataset;
-    }
-    
-    @GET
-    @Path("/childbeans/{childName}/")
-    public NodeRepresentation getChildBean(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("childName") String childName, @MatrixParam("pf") Set<String> propertyFilters) {
-        HippoBean childBean = null;
-        
-        try {
-            HippoBean hippoBean = getRequestContentBean(getRequestContext(servletRequest));
-            childBean = hippoBean.getBean(childName);
-        } catch (ObjectBeanManagerException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to convert content node to content bean.", e);
-            } else {
-                log.warn("Failed to convert content node to content bean. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        }
-        
-        if (childBean == null) {
+        if (htmlBean == null) {
             if (log.isWarnEnabled()) {
-                log.warn("Cannot find a bean named '{}'", childName);
+                log.warn("HippoHtml child bean not found.");
             }
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
+        return new HippoHtmlRepresentation().represent(htmlBean);
+    }
+    
+    @PUT
+    @Path("/html/")
+    public HippoHtmlRepresentation updateHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            HippoHtmlRepresentation htmlRepresentation) {
+        HippoDocumentBean documentBean = null;
+        HippoHtml htmlBean = null;
+        
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
         try {
-            return new NodeRepresentation().represent(childBean, propertyFilters);
-        } catch (RepositoryException e) {
+            documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
+            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
             } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
-            throw new WebApplicationException(e);
-        }
-    }
-    
-    @POST
-    @Path("/childbeans/{childName}/property/{propertyName}/")
-    public NodeProperty setChildResourceProperty(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("childName") String childName, @PathParam("propertyName") String propertyName, @FormParam("pv") List<String> propertyValues) {
-        HippoBean childBean = null;
-        
-        try {
-            HippoBean hippoBean = getRequestContentBean(getRequestContext(servletRequest));
-            childBean = hippoBean.getBean(childName);
-        } catch (ObjectBeanManagerException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to convert content node to content bean.", e);
-            } else {
-                log.warn("Failed to convert content node to content bean. {}", e.toString());
-            }
+            
             throw new WebApplicationException(e);
         }
         
-        if (childBean == null) {
+        if (htmlBean == null) {
             if (log.isWarnEnabled()) {
-                log.warn("Cannot find a bean named '{}'", childName);
+                log.warn("HippoHtml child bean not found.");
             }
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        Node childBeanNode = childBean.getNode();
-        NodeProperty nodeProperty = null;
-        
         try {
-            nodeProperty = setResourceNodeProperty(childBeanNode, propertyName, propertyValues);
-            childBeanNode.save();
-        } catch (RepositoryException e) {
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext.getSession());
+            final String html = htmlRepresentation.getContent();
+            final String htmlRelPath = PathUtils.normalizePath(htmlBean.getPath().substring(documentBean.getPath().length()));
+            wpm.update(documentBean, new ContentNodeBinder() {
+                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
+                    try {
+                        Node htmlNode = node.getNode(htmlRelPath);
+                        htmlNode.setProperty("hippostd:content", html);
+                        return true;
+                    } catch (RepositoryException e) {
+                        throw new ContentNodeBindingException(e);
+                    }
+                }
+            });
+            wpm.save();
+            
+            documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
+            htmlBean = (HippoHtml) getFirstBeanByPrimaryNodeType(documentBean, "hippostd:html");
+            htmlRepresentation = new HippoHtmlRepresentation().represent(htmlBean);
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to save node.", e);
+                log.warn("Failed to retrieve content bean.", e);
             } else {
-                log.warn("Failed to save node. {}", e.toString());
+                log.warn("Failed to retrieve content bean. {}", e.toString());
             }
+            
             throw new WebApplicationException(e);
         }
         
-        return nodeProperty;
+        return htmlRepresentation;
     }
     
-    @DELETE
-    @Path("/childbeans/{childName}/")
-    public void deleteChildBean(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @PathParam("childName") String childName) {
-        try {
-            HippoBean hippoBean = getRequestContentBean(getRequestContext(servletRequest));
-            deleteContentResource(servletRequest, hippoBean, childName);
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to delete content resource.", e);
-            } else {
-                log.warn("Failed to delete content resource. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
-        } catch (ObjectBeanManagerException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to convert content node to content bean.", e);
-            } else {
-                log.warn("Failed to convert content node to content bean. {}", e.toString());
-            }
-            throw new WebApplicationException(e);
+    private HippoBean getFirstBeanByPrimaryNodeType(HippoDocumentBean documentBean, String primaryNodeType) {
+        List<HippoBean> childBeans = documentBean.getChildBeans(primaryNodeType);
+        
+        if (!childBeans.isEmpty()) {
+            return childBeans.get(0);
         }
+        
+        return null;
     }
 }

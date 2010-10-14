@@ -13,17 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.jaxrs.services.content;
+package org.hippoecm.hst.jaxrs.model.content;
 
-import org.junit.Ignore;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 /**
- * TestDefaultContentResource
- * 
  * @version $Id$
- **/
-@Ignore
-public class TestDefaultContentResource extends AbstractTestContentResource {
+ */
+@XmlRootElement(name = "html")
+public class HippoHtmlRepresentation {
     
+    private String content;
+    
+	public HippoHtmlRepresentation represent(HippoHtml hippoHtml) {
+	    setContent(hippoHtml.getContent());
+		return this;
+	}
+	
+	public String getContent() {
+	    return content;
+	}
+	
+	public void setContent(String content) {
+	    this.content = content;
+	}
 }
