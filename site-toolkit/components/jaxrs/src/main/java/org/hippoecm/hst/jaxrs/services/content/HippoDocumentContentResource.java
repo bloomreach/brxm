@@ -93,7 +93,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext.getSession());
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
             final HippoDocumentRepresentation documentRepresentationInput = documentRepresentation;
             
             wpm.update(documentBean, new ContentNodeBinder() {
@@ -193,7 +193,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext.getSession());
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
             final String html = htmlRepresentation.getContent();
             final String htmlRelPath = PathUtils.normalizePath(htmlBean.getPath().substring(documentBean.getPath().length()));
             wpm.update(documentBean, new ContentNodeBinder() {

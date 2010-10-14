@@ -15,15 +15,14 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
-import java.util.Collections;
+import java.net.URL;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
@@ -36,26 +35,81 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
-import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
-import org.hippoecm.hst.jaxrs.model.content.PropertyValue;
-import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.hst.util.PropertyDefinitionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Id$
  */
 public abstract class AbstractContentResource {
     
+    private static Logger log = LoggerFactory.getLogger(AbstractContentResource.class);
+    
+    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
+    public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
+    
+    private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
+        "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
+        "You can set a servlet context parameter named '" + BEANS_ANNOTATED_CLASSES_CONF_PARAM + "' with xml or classes location filter.\n" +
+        "For example, '" + DEFAULT_BEANS_ANNOTATED_CLASSES_CONF + "' or 'classpath*:org/examples/beans/**/*.class";
+
+    
+    private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;
     private HstQueryManager hstQueryManager;
     
-    public List<Class<? extends HippoBean>> getAnnotatedClasses() {
+    public String getAnnotatedClassesResourcePath() {
+        return annotatedClassesResourcePath;
+    }
+    
+    public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
+        this.annotatedClassesResourcePath = annotatedClassesResourcePath;
+    }
+    
+    public List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
         if (annotatedClasses == null) {
-            return Collections.emptyList();
+            String annoClassPathResourcePath = getAnnotatedClassesResourcePath();
+            
+            if (!StringUtils.isBlank(annoClassPathResourcePath)) {
+                annoClassPathResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
+            }
+            
+            if (!StringUtils.isBlank(annoClassPathResourcePath)) {
+                if (annoClassPathResourcePath.startsWith("classpath*:")) {
+                    ComponentManager compManager = HstServices.getComponentManager();
+                    if (compManager != null) {
+                        ClasspathResourceScanner scanner = (ClasspathResourceScanner) compManager.getComponent(ClasspathResourceScanner.class.getName());
+                        
+                        if (scanner != null) {
+                            try {
+                                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, StringUtils.split(annotatedClassesResourcePath, ", \t\r\n"));
+                            } catch (Exception e) {
+                                if (log.isWarnEnabled()) {
+                                    log.warn("Failed to collect annotated classes", e);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    try {
+                        URL xmlConfURL = requestContext.getServletContext().getResource(annoClassPathResourcePath);
+                        if (xmlConfURL == null) {
+                            throw new IllegalStateException(BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG);
+                        }
+                        annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(xmlConfURL);
+                    } catch (Exception e) {
+                        if (log.isWarnEnabled()) {
+                            log.warn("Failed to collect annotated classes", e);
+                        }
+                    }
+                }
+            }
         }
+        
         return annotatedClasses;
     }
     
@@ -63,9 +117,9 @@ public abstract class AbstractContentResource {
         this.annotatedClasses = annotatedClasses;
     }
     
-    public ObjectConverter getObjectConverter() {
+    public ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
+            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
             objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
         }
         return objectConverter;
@@ -75,12 +129,12 @@ public abstract class AbstractContentResource {
     	this.objectConverter = objectConverter;
     }
     
-    public HstQueryManager getHstQueryManager() {
+    public HstQueryManager getHstQueryManager(HstRequestContext requestContext) {
         if (hstQueryManager == null) {
             ComponentManager compManager = HstServices.getComponentManager();
             if (compManager != null) {
                 HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
-                hstQueryManager = hstQueryManagerFactory.createQueryManager(getObjectConverter());
+                hstQueryManager = hstQueryManagerFactory.createQueryManager(getObjectConverter(requestContext));
             }
         }
         return hstQueryManager;
@@ -90,8 +144,8 @@ public abstract class AbstractContentResource {
     	this.hstQueryManager = hstQueryManager;
     }
     
-    protected ObjectBeanPersistenceManager getContentPersistenceManager(Session jcrSession) throws RepositoryException {
-        return new WorkflowPersistenceManagerImpl(jcrSession, getObjectConverter());
+    protected ObjectBeanPersistenceManager getContentPersistenceManager(HstRequestContext requestContext) throws RepositoryException {
+        return new WorkflowPersistenceManagerImpl(requestContext.getSession(), getObjectConverter(requestContext));
     }
     
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
@@ -113,7 +167,7 @@ public abstract class AbstractContentResource {
             throw new ObjectBeanManagerException("Invalid request content node: null");
         }
         
-        return (HippoBean) getObjectConverter().getObject(requestContentNode);
+        return (HippoBean) getObjectConverter(requestContext).getObject(requestContentNode);
     }
     
     protected void deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
@@ -127,33 +181,8 @@ public abstract class AbstractContentResource {
     }
     
     protected void deleteContentBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {
-        ObjectBeanPersistenceManager obpm = getContentPersistenceManager(getRequestContext(servletRequest).getSession());
+        ObjectBeanPersistenceManager obpm = getContentPersistenceManager(getRequestContext(servletRequest));
         obpm.remove(hippoBean);
         obpm.save();
-    }
-    
-    protected NodeProperty setResourceNodeProperty(Node resourceNode, String propertyName, List<String> propertyValues) throws RepositoryException {
-        PropertyDefinition propDef = PropertyDefinitionUtils.getPropertyDefinition(resourceNode, propertyName);
-        
-        if (propDef == null) {
-            throw new IllegalArgumentException("No property definition found: " + propertyName);
-        }
-        
-        NodeProperty nodeProperty = new NodeProperty(propertyName);
-        nodeProperty.setType(propDef.getRequiredType());
-        nodeProperty.setMultiple(propDef.isMultiple());
-        PropertyValue [] values = null;
-        
-        if (propertyValues != null) {
-            values = new PropertyValue[propertyValues.size()];
-            int index = 0;
-            for (String pv : propertyValues) {
-                values[index++] = new PropertyValue(pv);
-            }
-        }
-        
-        nodeProperty.setValues(values);
-        NodePropertyUtils.setProperty(resourceNode, nodeProperty);
-        return nodeProperty;
     }
 }

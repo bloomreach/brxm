@@ -267,7 +267,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
         ObjectBeanPersistenceManager obpm = null;
         
         try {
-            obpm = getContentPersistenceManager(getRequestContext(servletRequest).getSession());
+            obpm = getContentPersistenceManager(getRequestContext(servletRequest));
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to create workflow persistence manager.", e);

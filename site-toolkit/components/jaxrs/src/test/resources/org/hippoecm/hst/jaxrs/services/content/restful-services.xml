@@ -84,7 +84,18 @@
     <property name="resourceProviders" ref="jaxrsResourceProviders" />
   </bean>
   
-  <bean id="jaxrsResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="jaxrsResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="customResourceProviders" />
+        <ref bean="defaultResourceProviders" />
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="defaultResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
@@ -96,6 +107,14 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg ref="defaultContentResource" />
         </bean>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- Custom resource providers to be overriden. -->
+  <bean id="customResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
       </list>
     </property>
   </bean>

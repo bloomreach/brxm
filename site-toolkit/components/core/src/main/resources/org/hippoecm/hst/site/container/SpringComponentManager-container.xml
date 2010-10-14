@@ -63,5 +63,9 @@
     <property name="referenceNamespaceIgnored" value="${parameter.namespace.ignored}" />
   </bean>
   
+  <!-- The default classpath resource scanner -->
+  <bean id="org.hippoecm.hst.util.ClasspathResourceScanner" class="org.hippoecm.hst.site.container.SpringMetadataReaderClasspathResourceScanner">
+  </bean>
+  
 </beans>
 
