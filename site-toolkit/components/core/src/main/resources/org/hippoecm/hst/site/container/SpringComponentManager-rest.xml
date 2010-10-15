@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -24,23 +24,23 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
-  <bean id="jacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper">
+  <bean id="jaxrsRestJacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper">
   </bean>
   
-  <bean id="jacksonJaxbIntrospector" class="org.codehaus.jackson.xc.JaxbAnnotationIntrospector">
+  <bean id="jaxrsRestJacksonJaxbIntrospector" class="org.codehaus.jackson.xc.JaxbAnnotationIntrospector">
   </bean>
   
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-        <property name="targetObject" ref="jacksonObjectMapper" />
+        <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
         <property name="propertyPath" value="serializationConfig"/>
       </bean>
     </property>
     <property name="targetMethod" value="setAnnotationIntrospector"/>
     <property name="arguments">
       <list>
-        <ref bean="jacksonJaxbIntrospector" />
+        <ref bean="jaxrsRestJacksonJaxbIntrospector" />
       </list>
     </property>
   </bean>
@@ -48,110 +48,87 @@
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-        <property name="targetObject" ref="jacksonObjectMapper" />
+        <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
         <property name="propertyPath" value="deserializationConfig"/>
       </bean>
     </property>
     <property name="targetMethod" value="setAnnotationIntrospector"/>
     <property name="arguments">
       <list>
-        <ref bean="jacksonJaxbIntrospector" />
+        <ref bean="jaxrsRestJacksonJaxbIntrospector" />
       </list>
     </property>
   </bean>
   
-  <bean id="jaxrsJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
-    <property name="mapper" ref="jacksonObjectMapper" />
+  <bean id="jaxrsRestJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+    <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />
   </bean>
 
-  <bean id="jaxrsContentService" class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsContentService">
+  <bean id="jaxrsRestContentService" class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsContentService">
     <constructor-arg value="jaxrsContentService"/>
     <property name="servletPath" value=""/>
-    <property name="jaxrsServerFactoryBean" ref="cxfJaxrsServerFactoryBean"/>
+    <property name="jaxrsServerFactoryBean" ref="jaxrsRestCxfServerFactoryBean"/>
   </bean>
   
   <!-- 
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
   -->
-  <bean id="cxfJaxrsServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
+  <bean id="jaxrsRestCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/" />
     <property name="providers">
       <list>
-        <ref bean="jaxrsJsonProvider" />
+        <ref bean="jaxrsRestJsonProvider" />
       </list>
     </property>
-    <property name="resourceProviders" ref="jaxrsResourceProviders" />
+    <property name="resourceProviders" ref="jaxrsRestResourceProviders" />
   </bean>
   
-  <bean id="jaxrsResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="jaxrsRestResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
       <list>
-        <ref bean="customResourceProviders" />
-        <ref bean="defaultResourceProviders" />
+        <ref bean="customRestResourceProviders" />
+        <ref bean="defaultRestResourceProviders" />
       </list>
     </property>
   </bean>
   
-  <bean id="defaultResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="defaultRestResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg ref="hippoDocumentContentResource" />
+          <constructor-arg>
+            <bean id="hippoDocumentContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoDocumentContentResource"/>
+          </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg ref="hippoFolderContentResource" />
+          <constructor-arg>
+            <bean id="hippoFolderContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoFolderContentResource"/>
+          </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg ref="defaultContentResource" />
+          <constructor-arg>
+            <bean id="defaultContentResource" class="org.hippoecm.hst.jaxrs.services.content.DefaultContentResource"/>
+          </constructor-arg>
         </bean>
       </list>
     </property>
   </bean>
-  
+    
   <!-- Custom resource providers to be overriden. -->
-  <bean id="customResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="customRestResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
       </list>
     </property>
   </bean>
-  
-  <!-- JAX-RS Resources -->
-  <bean id="hippoDocumentContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoDocumentContentResource"/>
-  <bean id="hippoFolderContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoFolderContentResource"/>
-  <bean id="defaultContentResource" class="org.hippoecm.hst.jaxrs.services.content.DefaultContentResource"/>
-  
-  <!-- ========================================================= -->
-  <!-- The followings need to be moved to SpringComponentManager-pipelines.xml. -->
-  <!-- ========================================================= -->
   
   <!-- Pipelining -->
   
-  <bean id="jaxrsContentServiceValve" class="org.hippoecm.hst.jaxrs.JaxrsServiceValve"> 
-    <constructor-arg ref="jaxrsContentService" />
-  </bean>
-  
-  <bean id="jaxrsPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
-    <property name="preInvokingValves">
-      <list>
-        <ref bean="initializationValve" />
-      </list>
-    </property>
-    <property name="invokingValves">
-      <list>
-        <ref bean="securityValve" />
-        <ref bean="noCacheResponseHeadersValve" />
-        <ref bean="jaxrsContentServiceValve" />
-      </list>
-    </property>
-    <property name="postInvokingValves">
-      <list>
-        <ref bean="cleanupValve" />
-      </list>
-    </property>
+  <bean id="jaxrsRestServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"> 
+    <constructor-arg ref="jaxrsRestContentService" />
   </bean>
   
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -164,8 +141,26 @@
     <property name="targetMethod" value="put" />
     <property name="arguments">
       <list>
-        <value>JaxrsPipeline</value>
-        <ref local="jaxrsPipeline" />
+        <value>JaxrsRestPipeline</value>
+        <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+          <property name="preInvokingValves">
+            <list>
+              <ref bean="initializationValve" />
+            </list>
+          </property>
+          <property name="invokingValves">
+            <list>
+              <ref bean="securityValve" />
+              <ref bean="noCacheResponseHeadersValve" />
+              <ref bean="jaxrsRestServiceValve" />
+            </list>
+          </property>
+          <property name="postInvokingValves">
+            <list>
+              <ref bean="cleanupValve" />
+            </list>
+          </property>
+        </bean>
       </list>
     </property>
   </bean>

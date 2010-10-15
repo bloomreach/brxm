@@ -73,7 +73,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         HstServices.setComponentManager(getComponentManager());
         
         pipelines = (Pipelines) getComponent(Pipelines.class.getName());
-        jaxrsPipeline = this.pipelines.getPipeline("JaxrsPipeline");
+        jaxrsPipeline = this.pipelines.getPipeline("JaxrsRestPipeline");
         
         servletConfig = new MockServletConfig(new MockServletContext() { public String getRealPath(String path) { return null; } });
         servletContext = servletConfig.getServletContext();

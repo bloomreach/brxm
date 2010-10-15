@@ -24,24 +24,18 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="locations">
+  <!-- Custom JAX-RS REST Resource Providers to be overriden. -->
+  <bean id="customRestResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
       <list>
-        <value>classpath:/org/hippoecm/hst/site/container/SpringComponentManager.properties</value>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean id="textPageContentResource" class="org.hippoecm.hst.jaxrs.services.content.TextPageContentResource" />
+          </constructor-arg>
+        </bean>
       </list>
     </property>
   </bean>
   
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-sitemenu.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-search.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-rest.xml" />
-  <import resource="classpath:/org/hippoecm/hst/jaxrs/services/content/GeneralMultiplePoolingRepository.xml" />
-  <import resource="classpath:/org/hippoecm/hst/jaxrs/services/content/custom-restful-services.xml" />
-  
 </beans>
+

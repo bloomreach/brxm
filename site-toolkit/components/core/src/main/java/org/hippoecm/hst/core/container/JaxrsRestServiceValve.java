@@ -13,26 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.jaxrs;
+package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.core.container.AbstractValve;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
+import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JaxrsServiceValve
+ * JaxrsRestServiceValve
  * 
  * @version $Id$
  */
-public class JaxrsServiceValve extends AbstractValve {
+public class JaxrsRestServiceValve extends AbstractValve {
     
-    private static final Logger log = LoggerFactory.getLogger(JaxrsServiceValve.class);
+    private static final Logger log = LoggerFactory.getLogger(JaxrsRestServiceValve.class);
     
     private JAXRSService service;
     
-    public JaxrsServiceValve(JAXRSService service) {
+    public JaxrsRestServiceValve(JAXRSService service) {
     	this.service = service;
     }
     
