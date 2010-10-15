@@ -343,15 +343,15 @@ public class AggregationValve extends AbstractValve {
     private static final String COMPOSERMODE_NAME_TYPE = "composermode";
     
     private void addHeadElements(HstRequest request, HstResponse response, SiteMount mount ){    
-        addCssHeadElement(request, response, mount, "/css/hippo/PageEditor.css");        
-        addScriptHeadElement(request, response, mount, "/js/jquery/jquery-1.4.2.min.js"); 
-        addScriptHeadElement(request, response, mount, "/js/jquery/jquery-ui-1.8.5.custom.min.js");       
-        addScriptHeadElement(request, response, mount, "/js/jquery/jquery.class.js");       
-        addScriptHeadElement(request, response, mount, "/js/jquery/jquery.tablednd_0_5.js");       
-        addScriptHeadElement(request, response, mount, "/js/jquery/jquery.namespace.js");       
-        addScriptHeadElement(request, response, mount, "/js/hippo-jquery/Containers.js");       
-        addScriptHeadElement(request, response, mount, "/js/hippo-jquery/Containers.js");         
-        addScriptHeadElement(request, response, mount, "/js/hippo-jquery/Main.js");         
+        addCssHeadElement(request, response, mount, "/pagecomposer/source/css/hippo/PageEditor.css");        
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/jquery/jquery-1.4.2.min.js"); 
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/jquery/jquery-ui-1.8.5.custom.min.js");       
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/jquery/jquery.class.js");       
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/jquery/jquery.tablednd_0_5.js");       
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/jquery/jquery.namespace.js");       
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/hippo-jquery/Containers.js");       
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/hippo-jquery/Containers.js");         
+        addScriptHeadElement(request, response, mount, "/pagecomposer/source/js/hippo-jquery/Main.js");         
     }
     
     private void addCssHeadElement(HstRequest request, HstResponse response, SiteMount mount, String href) {
