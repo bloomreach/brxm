@@ -41,7 +41,7 @@
   <!-- ====================================================================== -->
   
   <category additivity="false" name="org.hippoecm.hst">
-    <level value="DEBUG"/>
+    <level value="WARN"/>
     <appender-ref ref="console"/>
   </category>
   
