@@ -18,10 +18,10 @@ package org.hippoecm.hst.configuration.components;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -37,7 +37,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfigurationService.class);
 
-    private SortedMap<String, HstComponentConfiguration> componentConfigurations = new TreeMap<String, HstComponentConfiguration>();
+    private Map<String, HstComponentConfiguration> componentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
 
     private Map<String, HstComponentConfigurationService> childConfByName = new HashMap<String, HstComponentConfigurationService>();
 
@@ -249,8 +249,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     
-    public SortedMap<String, HstComponentConfiguration> getChildren() {
-        return Collections.unmodifiableSortedMap(this.componentConfigurations);
+    public Map<String, HstComponentConfiguration> getChildren() {
+        return Collections.unmodifiableMap(this.componentConfigurations);
     }
 
     public HstComponentConfiguration getChildByName(String name) {

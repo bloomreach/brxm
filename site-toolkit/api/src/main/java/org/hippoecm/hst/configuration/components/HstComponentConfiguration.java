@@ -16,8 +16,6 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.Map;
-import java.util.SortedMap;
-
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.container.PageErrorHandler;
@@ -50,10 +48,10 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
  * root HstComponentConfiguration objects. This id is used for lookup from the {@link HstComponentsConfiguration} and as reference 
  * by a {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}.
  * <p/>
- * A HstComponentConfiguration provides access to its children through a <code>SortedMap<String, HstComponentConfiguration></code>, allowing 
+ * A HstComponentConfiguration provides access to its children through a <code>LinkedHashMap<String, HstComponentConfiguration></code>, allowing 
  * the HST2 runtime to look them up by <code>referenceName</code> and/or <code>referencePath</code>, as well as process them in a sorted order. 
  * As the ordering in which <code>HstComponent</code> children are processed might be significant, the <code>HstComponentConfiguration</code> 
- * implementation is required to use a <code>SortedMap</code> implementation (like a TreeMap) which returns the children in the order 
+ * implementation is required to use a <code>LinkedHashMap</code> implementation (like a TreeMap) which returns the children in the order 
  * of the configuration/creation (not the "natural" ordering based only on the referenceName).
  * <p/>
  * A <code>HstComponentConfiguration</code> may define a <code>rendererPath</code> to a view renderer (resource) which is a 
@@ -155,11 +153,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     Map<String, String> getLocalParameters();
     
     /**
-     * Implementations should return an unmodifiable sorted map, for example {@link java.util.Collections$UnmodifiableSortedMap} to avoid 
+     * Implementations should return an unmodifiable linked map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
      * client code changing configuration
-     * @return all <code>HstComponentConfiguration</code> childrens, and an empty Map if no children present
+     * @return all <code>HstComponentConfiguration</code> children in order they were added, and an empty Map if no children present
      */
-    SortedMap<String, HstComponentConfiguration> getChildren();
+     Map<String, HstComponentConfiguration> getChildren();
 
     /**
      * Returns the child HstComponentConfiguration by its name, or null if it doens't exist
