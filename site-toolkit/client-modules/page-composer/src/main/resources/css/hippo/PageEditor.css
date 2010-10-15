@@ -53,3 +53,16 @@ li.placeholdert {
     left: 10px;
     top:10px;
 }
+
+.hst-menu-overlay {
+    width: 60px;
+    height: 16px;
+
+    opacity: 0.25;
+    position: absolute;
+    background-color: #000;
+}
+
+.hst-menu-overlay-hover {
+    opacity: 0.6;
+}

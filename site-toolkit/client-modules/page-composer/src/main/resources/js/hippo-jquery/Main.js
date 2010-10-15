@@ -9,22 +9,18 @@ $.namespace('Hippo.DD');
 
     DDImpl.prototype = {
 
-        init: function() {
-            $('<div id="switcher"></div>').appendTo($(document.body)).themeswitcher({
-                sloadTheme: ''
-            });
+        init: function(debug) {
 
             //do try/catch because else errors will disappear
             try {
                 //attach mouseover/mouseclick for components
                 var me = this;
                 $('div.componentContentWrapper').each(function(index) {
-                    var id = this.getAttribute('hst:id');
-                    var type = this.getAttribute('hst:type');
-                    if (type == 'container') {
-                        me.active[id] = Hippo.DD.Factory.create(this);
-                        me.active[id].render();
-                        me.active[id].activate();
+                    var o = Hippo.DD.Factory.create(this);
+                    if (o instanceof Hippo.DD.Container.Base) {
+                        me.active[o.id] = o;
+                        o.render();
+                        o.activate();
                     }
                 });
 
@@ -55,22 +51,33 @@ $.namespace('Hippo.DD');
         },
 
         registerEvents: function(el) {
-//            var type = el.getAttribute('hst:type');
-//            if (type == 'container' || type == 'containerItem') {
-//                var hoverClass = 'hst-hover-' + type;
-//                $(el).click(function(e) {
-//                    e.stopPropagation();
-//                    sendMessage({element: this}, 'onclick');
-//                }).hover(function() {
+            if ($(el).attr('hst:type') == 'containerItem') {
+
+//                $(el).hover(function() {
 //                    $(this).addClass(hoverClass);
 //                }, function() {
 //                    $(this).removeClass(hoverClass);
 //                });
-//            }
+//
+//
+//                var id = $(el).attr('hst:id');
+//                $(el).contextmenu({
+//                    width: 150,
+//                    items: [
+//                        {
+//                            text: "Delete", action: function() {
+//                                //console.log('Id = ' + this.data.alias);
+//                                //sendMessage({element: el}, 'remove');
+//                            }
+//                        }
+//                    ]
+//                });
+
+            }
         },
 
         select: function(element) {
-            if(this.current != null && this.current.element == element) {
+            if (this.current != null && this.current.element == element) {
                 return;
             }
 
@@ -87,7 +94,7 @@ $.namespace('Hippo.DD');
 
         //TODO: delegate this to the affected Container instance in this.active
         remove : function(element) {
-            if(!element.hasAttribute('hst:id')) {
+            if (!element.hasAttribute('hst:id')) {
                 element = $(element).parents('.componentContentWrapper')[0];
             }
 
@@ -96,10 +103,10 @@ $.namespace('Hippo.DD');
 
             if (type == 'containerItem') {
                 id = $(element).parents('.componentContentWrapper').attr('hst:id');
-                if(typeof this.active[id] !== 'undefined') {
+                if (typeof this.active[id] !== 'undefined') {
                     this.active[id].removeItem(element);
                 }
-            } else if(type == 'container') {
+            } else if (type == 'container') {
                 if (typeof this.active[id] !== 'undefined') {
                     this.active[id].remove();
                     delete this.active[id];
@@ -108,7 +115,7 @@ $.namespace('Hippo.DD');
         },
 
         add: function(element, parentId) {
-            if(typeof this.active[parentId] !== 'undefined') {
+            if (typeof this.active[parentId] !== 'undefined') {
                 this.active[parentId].add(element);
             }
         }

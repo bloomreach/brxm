@@ -191,7 +191,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     loadComponentsFromIframe : function(frm) {
         //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
-        frm.execScript('Hippo.DD.Main.init()', true);
+        frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', true);
 
         this.currentIframe = frm;
         var store = this.pageModelStore;
@@ -463,6 +463,18 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         return actions;
     },
 
+    remove : function(element) {
+        var store = this.pageModelStore;
+        var id = Ext.fly(element).getAttribute('hst:id');
+        console.log(id);
+        Ext.Msg.confirm('Confirm delete', 'Are your sure?', function(btn, text) {
+            if (btn == 'yes') {
+                var index = store.findExact('id', id);
+                store.removeAt(index);
+            }
+        });
+    },
+
     /**
      * It's not possible to register message:afterselect style listeners..
      * This should work and I'm probably doing something stupid, but I could not
@@ -476,6 +488,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 this.handleOnClick(msg.data.element);
             } else if (msg.tag == 'receiveditem') {
                 this.handleReceivedItem(msg.data.id, msg.data.element);
+            } else if (msg.tag == 'remove') {
+                this.remove(msg.data.element);
             }
         } catch(e) {
             console.error(e);
