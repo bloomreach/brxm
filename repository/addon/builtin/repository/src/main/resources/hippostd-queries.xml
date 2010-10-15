@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2009 Hippo
+  Copyright 2007-2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -76,6 +76,20 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nieuw document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>nouveau document</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -180,6 +194,20 @@
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>simple</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="new-folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -264,6 +292,20 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nieuwe map</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>nouveau dossier</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -356,6 +398,20 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nieuwe map</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>nouveau dossier</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
