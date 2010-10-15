@@ -104,23 +104,6 @@ public class BaseHstComponent extends GenericHstComponent {
         }
     }
 
-    @Override
-    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        super.doBeforeRender(request, response);
-        SiteMount mount = request.getRequestContext().getResolvedSiteMount().getSiteMount();
-        if(mount.isOfType(COMPOSERMODE_NAME_TYPE)) {
-            // we are in composer mode. Add some wrapper elements that are needed for the composer
-            Element el = response.createElement("div");
-            el.setAttribute("class", "componentContentWrapper");
-            el.setAttribute("hst:id", getComponentConfiguration().getCanonicalIdentifier());
-            if(getContainerType() != null) {
-                el.setAttribute("hst:containerType", getContainerType());
-            }
-            el.setAttribute("hst:type", getComponentConfiguration().getComponentType());
-            response.setWrapperElement(el);
-        } 
-    }
-    
     /**
      * Returns resolved parameter from HstComponentConfiguration : resolved means that possible property placeholders like
      * ${1} or ${year}, where the first refers to the first wildcard matcher in a resolved sitemap item, and the latter

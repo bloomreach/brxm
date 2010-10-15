@@ -26,14 +26,18 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
+import org.w3c.dom.Element;
 
 /**
  * AggregationValve
@@ -306,9 +310,68 @@ public class AggregationValve extends AbstractValve {
             if (rootWindow.getResponseState().getForwardPathInfo() != null) {
                 break;
             }
+            
+            // TODO Should we move this post processing to an injectable piece of code of 'generic' post processors
+            // TODO ////////////////////////////////////////////////////////////////////////////
+            SiteMount mount = request.getRequestContext().getResolvedSiteMount().getSiteMount();
+            if(mount.isOfType(COMPOSERMODE_NAME_TYPE)) {
+             // we are in composer mode. Add the wrapper elements that are needed for the composer around all components
+                if(window == rootWindow) {
+                    // the root window does *not* have a wrapper element but sets some needed javascript files as head elements
+                    
+                    addHeadElements(request, response, mount);
+                    
+                } else {
+                    HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
+                    Element el = response.createElement("div");
+                    el.setAttribute("class", "componentContentWrapper");
+                    el.setAttribute("hst:id", compConfig.getCanonicalIdentifier());
+                    if(compConfig.getContainerType() != null) {
+                        el.setAttribute("hst:containerType", compConfig.getContainerType());
+                    }
+                    el.setAttribute("hst:type", compConfig.getComponentType());
+                    response.setWrapperElement(el);
+                }
+            } 
+            // TODO ////////////////////////////////////////////////////////////////////////////
         }
 
     }
+
+// TODO Should we move this post processing to an injectable piece of code of 'generic' post processors
+// TODO ////////////////////////////////////////////////////////////////////////////
+    private static final String COMPOSERMODE_NAME_TYPE = "composermode";
+    
+    private void addHeadElements(HstRequest request, HstResponse response, SiteMount mount ){    
+        addCssHeadElement(request, response, mount, "/css/hippo/PageEditor.css");        
+        addScriptHeadElement(request, response, mount, "/js/jquery/jquery-1.4.2.min.js"); 
+        addScriptHeadElement(request, response, mount, "/js/jquery/jquery-ui-1.8.5.custom.min.js");       
+        addScriptHeadElement(request, response, mount, "/js/jquery/jquery.class.js");       
+        addScriptHeadElement(request, response, mount, "/js/jquery/jquery.tablednd_0_5.js");       
+        addScriptHeadElement(request, response, mount, "/js/jquery/jquery.namespace.js");       
+        addScriptHeadElement(request, response, mount, "/js/hippo-jquery/Containers.js");       
+        addScriptHeadElement(request, response, mount, "/js/hippo-jquery/Containers.js");         
+        addScriptHeadElement(request, response, mount, "/js/hippo-jquery/Main.js");         
+    }
+    
+    private void addCssHeadElement(HstRequest request, HstResponse response, SiteMount mount, String href) {
+        Element el = response.createElement("link");
+        el.setAttribute("rel", "stylesheet");
+        el.setAttribute("media", "screen");
+        HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
+        el.setAttribute("href", creator.create(href, mount, true).toUrlForm(request.getRequestContext(), false));
+        response.addHeadElement(el, href);
+    }
+
+    private void addScriptHeadElement(HstRequest request, HstResponse response, SiteMount mount, String src) {
+        Element el = response.createElement("script");
+        el.setAttribute("type", "text/javascript");
+        HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
+        el.setAttribute("src", creator.create(src, mount, true).toUrlForm(request.getRequestContext(), false));
+        response.addHeadElement(el, src);
+    }
+// TODO //////////////////////////////////////////////////////////////////////////////
+// TODO //////////////////////////////////////////////////////////////////////////////
     
     protected void processWindowsRender(
             final HstContainerConfig requestContainerConfig, 
