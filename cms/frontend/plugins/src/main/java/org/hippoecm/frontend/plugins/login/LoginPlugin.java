@@ -37,13 +37,7 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.IFormVisitorParticipant;
-import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
@@ -97,7 +91,7 @@ public class LoginPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         protected final DropDownChoice locale;
-        private List<String> locales = Arrays.asList(new String[] { "nl", "en" });
+        private List<String> locales = Arrays.asList(new String[] { "nl", "en", "fr" });
         public String selectedLocale;
         protected final RequiredTextField usernameTextField;
         protected final PasswordTextField passwordTextField;

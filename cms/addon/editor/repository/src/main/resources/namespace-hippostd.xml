@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2009 Hippo
+  Copyright 2007-2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -99,6 +99,17 @@
         <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Publiable</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
@@ -120,6 +131,23 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>Live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Publié</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:property" sv:type="String">
         <sv:value>hippostd:state</sv:value>
@@ -167,6 +195,23 @@
         <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Non publié</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
@@ -188,6 +233,23 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>Draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Brouillon</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:property" sv:type="String">
         <sv:value>hippostd:state</sv:value>
@@ -273,6 +335,17 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>Tags toestaan</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Tags autorisés</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hipposysedit:nodetype">
@@ -395,6 +468,17 @@
         <sv:value>map</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>dossier</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -443,6 +527,17 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>ongeordende map</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>dossier non ordonné</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hipposysedit:nodetype">
