@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008 Hippo.
- * 
+ *  Copyright 2010 Hippo.
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,7 +91,10 @@ public class LoginPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         protected final DropDownChoice locale;
-        private List<String> locales = Arrays.asList(new String[] { "nl", "en", "fr" });
+
+        // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
+        private List<String> locales = Arrays.asList(new String[] { "en", "fr", "nl" });
+
         public String selectedLocale;
         protected final RequiredTextField usernameTextField;
         protected final PasswordTextField passwordTextField;
@@ -126,7 +129,16 @@ public class LoginPlugin extends RenderPlugin {
                     "username")));
             add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this,
                     "password")));
-            add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales));
+            add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales,
+                // Display the language name from i18n properties
+                new IChoiceRenderer<String>() {
+                    public String getDisplayValue(String object) {
+                        return new StringResourceModel(object, LoginPlugin.this, null).getString();
+                    }
+                    public String getIdValue(String object, int index) {
+                        return object;
+                    }
+                }));
 
             passwordTextField.setResetPassword(false);
 
