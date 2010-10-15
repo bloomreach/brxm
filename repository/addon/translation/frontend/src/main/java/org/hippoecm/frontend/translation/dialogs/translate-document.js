@@ -95,6 +95,7 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
                 frame: false,
                 clicksToEdit: 1,
                 enableColumnMove: false,
+                enableColumnResize: false,
                 cm: self.cm,
                 sm: new Ext.grid.RowSelectionModel({
                     singleSelect: true,
