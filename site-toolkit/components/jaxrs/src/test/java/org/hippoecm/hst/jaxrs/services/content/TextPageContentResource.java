@@ -15,8 +15,26 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
-import javax.ws.rs.Path;
+import java.util.Set;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.MatrixParam;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
+
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ContentNodeBindingException;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.jaxrs.model.beans.TextPage;
+import org.hippoecm.hst.jaxrs.model.content.TextPageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,4 +46,75 @@ public class TextPageContentResource extends AbstractContentResource {
     
     private static Logger log = LoggerFactory.getLogger(TextPageContentResource.class);
     
+    @GET
+    @Path("/")
+    public TextPageRepresentation getTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+            @MatrixParam("pf") Set<String> propertyFilters) {
+        try {
+            HstRequestContext requestContext = getRequestContext(servletRequest);       
+            TextPage textPage = (TextPage) getRequestContentBean(requestContext);
+            return new TextPageRepresentation().represent(textPage, propertyFilters);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+    }
+    
+    @PUT
+    @Path("/")
+    public TextPageRepresentation updateTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+            TextPageRepresentation textPageRepresentation, @MatrixParam("pf") Set<String> propertyFilters) {
+        TextPage textPage = null;
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
+        try {
+            textPage = (TextPage) getRequestContentBean(requestContext);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        try {
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            final TextPageRepresentation textPageRepresentationInput = textPageRepresentation;
+            
+            wpm.update(textPage, new ContentNodeBinder() {
+                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
+                    try {
+                        node.setProperty("testproject:title", textPageRepresentationInput.getTitle());
+                        node.setProperty("testproject:summary", textPageRepresentationInput.getSummary());
+                        Node htmlNode = node.getNode("testproject:body");
+                        htmlNode.setProperty("hippostd:content", textPageRepresentationInput.getBodyContent());
+                        return true;
+                    } catch (RepositoryException e) {
+                        throw new ContentNodeBindingException(e);
+                    }
+                }
+            });
+            wpm.save();
+            
+            textPage = (TextPage) wpm.getObject(textPage.getPath());
+            textPageRepresentation = new TextPageRepresentation().represent(textPage, propertyFilters);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return textPageRepresentation;
+    }
 }

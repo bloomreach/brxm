@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
-import java.net.URL;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -35,8 +34,8 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +48,6 @@ public abstract class AbstractContentResource {
     private static Logger log = LoggerFactory.getLogger(AbstractContentResource.class);
     
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
-    public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
-    
-    private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
-        "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
-        "You can set a servlet context parameter named '" + BEANS_ANNOTATED_CLASSES_CONF_PARAM + "' with xml or classes location filter.\n" +
-        "For example, '" + DEFAULT_BEANS_ANNOTATED_CLASSES_CONF + "' or 'classpath*:org/examples/beans/**/*.class";
-
     
     private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;
@@ -74,40 +66,11 @@ public abstract class AbstractContentResource {
         if (annotatedClasses == null) {
             String annoClassPathResourcePath = getAnnotatedClassesResourcePath();
             
-            if (!StringUtils.isBlank(annoClassPathResourcePath)) {
+            if (StringUtils.isBlank(annoClassPathResourcePath)) {
                 annoClassPathResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
             }
             
-            if (!StringUtils.isBlank(annoClassPathResourcePath)) {
-                if (annoClassPathResourcePath.startsWith("classpath*:")) {
-                    ComponentManager compManager = HstServices.getComponentManager();
-                    if (compManager != null) {
-                        ClasspathResourceScanner scanner = (ClasspathResourceScanner) compManager.getComponent(ClasspathResourceScanner.class.getName());
-                        
-                        if (scanner != null) {
-                            try {
-                                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, StringUtils.split(annotatedClassesResourcePath, ", \t\r\n"));
-                            } catch (Exception e) {
-                                if (log.isWarnEnabled()) {
-                                    log.warn("Failed to collect annotated classes", e);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    try {
-                        URL xmlConfURL = requestContext.getServletContext().getResource(annoClassPathResourcePath);
-                        if (xmlConfURL == null) {
-                            throw new IllegalStateException(BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG);
-                        }
-                        annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(xmlConfURL);
-                    } catch (Exception e) {
-                        if (log.isWarnEnabled()) {
-                            log.warn("Failed to collect annotated classes", e);
-                        }
-                    }
-                }
-            }
+            annotatedClasses = AnnotatedContentBeanClassesScanner.scanAnnotatedContentBeanClasses(requestContext, annoClassPathResourcePath);
         }
         
         return annotatedClasses;

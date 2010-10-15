@@ -91,7 +91,7 @@ public class BaseHstComponent extends GenericHstComponent {
     private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
         "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
         "You can set a servlet context parameter named '" + BEANS_ANNOTATED_CLASSES_CONF_PARAM + "' with xml or classes location filter.\n" +
-        "For example, '" + DEFAULT_BEANS_ANNOTATED_CLASSES_CONF + "' or 'classpath*:org/examples/beans/**/*.class";
+        "For example, '" + DEFAULT_BEANS_ANNOTATED_CLASSES_CONF + "' or 'classpath*:org/examples/beans/**/*.class'";
     
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,8 +51,8 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
-    protected ServletConfig servletConfig;
-    protected ServletContext servletContext;
+    protected MockServletConfig servletConfig;
+    protected MockServletContext servletContext;
     protected HstContainerConfig hstContainerConfig;
     protected ResolvedVirtualHost resolvedVirtualHost;
     protected SiteMount siteMount;
@@ -75,8 +74,8 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         jaxrsPipeline = this.pipelines.getPipeline("JaxrsRestPipeline");
         
-        servletConfig = new MockServletConfig(new MockServletContext() { public String getRealPath(String path) { return null; } });
-        servletContext = servletConfig.getServletContext();
+        servletContext = new MockServletContext() { public String getRealPath(String path) { return null; } };
+        servletConfig = new MockServletConfig(servletContext);
         
         hstContainerConfig = new HstContainerConfig() {
             public ClassLoader getContextClassLoader() {

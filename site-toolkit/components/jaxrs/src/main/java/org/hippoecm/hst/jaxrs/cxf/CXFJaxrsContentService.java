@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.cxf;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,12 +28,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,9 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
     
     private static Logger log = LoggerFactory.getLogger(CXFJaxrsContentService.class);
     
+    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
+    
+    private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;
     
@@ -58,6 +62,14 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 		super(serviceName, jaxrsConfigParameters);
 	}
 	
+    public String getAnnotatedClassesResourcePath() {
+        return annotatedClassesResourcePath;
+    }
+    
+    public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
+        this.annotatedClassesResourcePath = annotatedClassesResourcePath;
+    }
+
     public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
         this.annotatedClasses = annotatedClasses;
     }
@@ -66,16 +78,23 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
         this.objectConverter = objectConverter;
     }
     
-    protected List<Class<? extends HippoBean>> getAnnotatedClasses() {
+    protected List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
         if (annotatedClasses == null) {
-            return Collections.emptyList();
+            String annoClassPathResourcePath = getAnnotatedClassesResourcePath();
+            
+            if (StringUtils.isBlank(annoClassPathResourcePath)) {
+                annoClassPathResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
+            }
+            
+            annotatedClasses = AnnotatedContentBeanClassesScanner.scanAnnotatedContentBeanClasses(requestContext, annoClassPathResourcePath);
         }
+        
         return annotatedClasses;
     }
     
-    protected ObjectConverter getObjectConverter() {
+    protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
+            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
             objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
         }
         return objectConverter;
@@ -103,7 +122,7 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
         	if (node == null) {
                 throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
         	}
-        	resourceType = getObjectConverter().getPrimaryObjectType(node);
+        	resourceType = getObjectConverter(requestContext).getPrimaryObjectType(node);
             if (resourceType == null) {
                 throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
             }

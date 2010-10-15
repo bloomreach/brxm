@@ -35,7 +35,9 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
  */
 @XmlRootElement(name = "node")
 public class NodeRepresentation {
-
+    
+    private static final String ANY_NAME = "*";
+    
     private String name;
     private String localizedName;
     private String path;
@@ -56,13 +58,21 @@ public class NodeRepresentation {
         primaryNodeTypeName = hippoBean.getNode().getPrimaryNodeType().getName(); 
         leaf = hippoBean.isLeaf();
         
-        properties = new ArrayList<NodeProperty>();
-        
-        for (PropertyIterator it = hippoBean.getNode().getProperties(); it.hasNext(); ) {
-            Property prop = it.nextProperty();
+        if (propertyFilters != null && !propertyFilters.isEmpty()) {
+            properties = new ArrayList<NodeProperty>();
             
-            if (propertyFilters == null || propertyFilters.contains(prop.getName())) {
-                properties.add(new NodeProperty(prop));
+            if (propertyFilters.size() == 1 && propertyFilters.contains(ANY_NAME)) {
+                for (PropertyIterator it = hippoBean.getNode().getProperties(); it.hasNext(); ) {
+                    Property prop = it.nextProperty();
+                    properties.add(new NodeProperty(prop));
+                }
+            } else {
+                for (PropertyIterator it = hippoBean.getNode().getProperties(); it.hasNext(); ) {
+                    Property prop = it.nextProperty();
+                    if (propertyFilters.contains(prop.getName())) {
+                        properties.add(new NodeProperty(prop));
+                    }
+                }
             }
         }
         
