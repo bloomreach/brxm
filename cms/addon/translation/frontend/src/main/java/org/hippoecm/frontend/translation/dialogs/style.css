@@ -1,0 +1,14 @@
+.hippo-root .x-form-text, textarea.x-form-field {
+  background-image: none;
+}
+.hippo-root .x-grid3-row-selected {
+  border-color: transparent;
+  background-color: #FFE29A !important;
+}
+.hippo-root .x-fieldset legend {
+  color: black;
+}
+.hippo-root .x-panel-body {
+  border-color: #ccc;
+  border-top-color: #ccc;
+}

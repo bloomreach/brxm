@@ -16,10 +16,15 @@
 package org.hippoecm.frontend.translation.dialogs;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.hippoecm.frontend.service.ISettingsService;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -29,13 +34,19 @@ final class NodeNameCodecBehavior extends AbstractAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NodeNameCodecBehavior.class);
+
+    private final IModel<StringCodec> codec;
+    
+    NodeNameCodecBehavior(IModel<StringCodec> codec) {
+        this.codec = codec;
+    }
     
     public void onRequest() {
         final RequestCycle requestCycle = RequestCycle.get();
         String name = requestCycle.getRequest().getParameter("name");
         final JSONObject response = new JSONObject();
         try {
-            response.put("data", name.toLowerCase().replace(' ', '-'));
+            response.put("data", codec.getObject().encode(name));
             response.put("success", true);
         } catch (JSONException e) {
             log.error(e.getMessage());
@@ -64,5 +75,11 @@ final class NodeNameCodecBehavior extends AbstractAjaxBehavior {
 
         };
         requestCycle.setRequestTarget(requestTarget);
+    }
+
+    @Override
+    public void detach(Component component) {
+        codec.detach();
+        super.detach(component);
     }
 }

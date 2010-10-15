@@ -2,8 +2,7 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
 
     labelWidth: 75, // label settings here cascade unless overridden
     frame:false,
-    bodyStyle:'padding:5px 5px 0',
-    width: 630,
+    width: 661,
     defaultType: 'textfield',
 
     constructor: function(config) {
@@ -58,14 +57,14 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
                 id: 'name',
                 header: "<img src='" + self.imgLeft + "' style='vertical-align: top;' /> " + self.folderName,
                 dataIndex: 'name',
-                width: 300,
+                width: 323,
                 renderer: self.renderFolder.createDelegate(self, [], 3),
                 // use shorthand alias defined above
             }, {
                 id: 'namefr',
                 header: "<img src='" + self.imgRight + "' style='vertical-align: top;' /> " + self.folderName,
                 dataIndex: 'namefr',
-                width: 310,
+                width: 334,
                 renderer: self.renderFolder.createDelegate(self, [], 3),
                 editor: new Ext.form.TextField({
                     allowBlank: false,
@@ -91,8 +90,8 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
                 xtype: 'editorgrid',
                 name: 'grid',
                 store: config.store,
-                width: 630,
-                height: 150,
+                width: 666,
+                height: 245,
                 frame: false,
                 clicksToEdit: 1,
                 enableColumnMove: false,
@@ -118,7 +117,7 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
             	}
             }, {
                 xtype: 'compositefield',
-                width: 630,
+                width: 666,
                 hideLabel: true,
                 frame: true,
                 items: [{
@@ -127,7 +126,7 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
                     height: 60,
                     items: [{
                         xtype: 'compositefield',
-                        width: 282,
+                        width: 297,
                         hideLabel: true,
                         frame: true,
                         items: [{
@@ -147,7 +146,7 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
                     height: 60,
                     items: [{
                         xtype: 'compositefield',
-                        width: 282,
+                        width: 312,
                         hideLabel: true,
                         frame: true,
                         items: [{
@@ -159,7 +158,7 @@ HippoTranslator = Ext.extend(Ext.FormPanel, {
                             disabled: true,
                             name: 'urlfr',
                             id: 'urlfr',
-                            width: 210,
+                            width: 225,
                         }, {
                             xtype: 'checkbox',
                             name: 'edit',

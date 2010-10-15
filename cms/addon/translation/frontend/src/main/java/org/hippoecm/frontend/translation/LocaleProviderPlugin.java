@@ -23,17 +23,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
-import org.hippoecm.frontend.translation.dialogs.DocumentTranslationView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
  * Provider of {@link HippoLocale}s, based on plugin configuration.  Icons should
@@ -49,11 +45,6 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         super(context, config);
 
         context.registerService(this, config.getString("locale.id", ILocaleProvider.class.getName()));
-
-//        Home page = context.getService(Home.class.getName(), Home.class);
-//        page.add(new ExtResourcesBehaviour());
-//        page.add(JavascriptPackageResource
-//                .getHeaderContribution(DocumentTranslationView.class, "translate-document.js"));
     }
 
     public List<HippoLocale> getLocales() {

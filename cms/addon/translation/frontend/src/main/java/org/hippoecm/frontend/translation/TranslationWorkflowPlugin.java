@@ -203,6 +203,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
                                 return new DocumentTranslationDialog(
                                         TranslationWorkflowPlugin.this,
+                                        getPluginContext().getService(ISettingsService.SERVICE_ID,
+                                                ISettingsService.class),
                                         this,
                                         new StringResourceModel("translate-title", TranslationWorkflowPlugin.this, null),
                                         folders);
@@ -213,14 +215,49 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                             return null;
                         }
 
+                        private boolean saveFolder(FolderTranslation ft) {
+                            if (!ft.isEditable()) {
+                                throw new UnsupportedOperationException("Translation is immutable");
+                            }
+                            JcrNodeModel original = ft.getOriginalFolder();
+                            Node node = original.getNode();
+                            if (node != null) {
+                                try {
+                                    WorkflowManager manager = ((HippoWorkspace) node.getSession().getWorkspace())
+                                            .getWorkflowManager();
+                                    TranslationWorkflow tw = (TranslationWorkflow) manager.getWorkflow("translation",
+                                            node);
+                                    String namefr = ft.getNamefr();
+                                    String urlfr = ft.getUrlfr();
+                                    Document translationDoc = tw.addTranslation(language, urlfr);
+                                    if (namefr != null && !urlfr.equals(namefr)) {
+                                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core",
+                                                translationDoc);
+                                        defaultWorkflow.localizeName(namefr);
+                                    }
+                                    return true;
+                                } catch (RepositoryException e) {
+                                    log.error("Could not persist folder translation for "
+                                            + original.getItemModel().getPath() + " due to " + e.getMessage());
+                                } catch (RemoteException e) {
+                                    log.error("Could not contact repository when storing folder translation for "
+                                            + original.getItemModel().getPath() + " due to " + e.getMessage());
+                                } catch (WorkflowException e) {
+                                    log.error("Workflow prevented storing translation for "
+                                            + original.getItemModel().getPath() + " due to " + e.getMessage());
+                                }
+                            }
+                            return false;
+                        }
+
                         @Override
                         protected String execute(Workflow wf) throws Exception {
-                            for (int i = 0; i < (folders.size() - 1); i++ ) {
+                            for (int i = 0; i < (folders.size() - 1); i++) {
                                 FolderTranslation folder = folders.get(i);
                                 if (!folder.isEditable()) {
                                     continue;
                                 }
-                                if (!folder.persist()) {
+                                if (!saveFolder(folder)) {
                                     return COULD_NOT_CREATE_FOLDERS;
                                 }
                             }
@@ -236,7 +273,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager
                                     .getWorkflow("core", translation);
                             if (name != null && !url.equals(name)) {
-                                defaultWorkflow.localizeName(name);
+                                String localized = getLocalizeCodec().encode(name);
+                                defaultWorkflow.localizeName(localized);
                             }
                             IBrowseService<JcrNodeModel> browser = getBrowserService();
                             if (browser != null) {
@@ -317,7 +355,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                                 }
                                 return IVisitor.CONTINUE_TRAVERSAL;
                             }
-                            
+
                         });
                     }
                 } catch (RepositoryException e) {
@@ -342,13 +380,6 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 ISettingsService.class);
         StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
         return stringCodecFactory.getStringCodec("encoding.display");
-    }
-
-    protected StringCodec getNodeNameCodec() {
-        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
-                ISettingsService.class);
-        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
-        return stringCodecFactory.getStringCodec("encoding.node");
     }
 
 }

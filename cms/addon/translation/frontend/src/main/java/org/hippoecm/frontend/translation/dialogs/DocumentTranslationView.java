@@ -20,9 +20,12 @@ import java.util.List;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.translation.FolderTranslation;
+import org.hippoecm.repository.api.StringCodec;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,15 +41,17 @@ public class DocumentTranslationView extends ExtPanel {
     private ExtJsonStore<FolderTranslation> store;
     private AbstractAjaxBehavior codecBehavior;
 
-    public DocumentTranslationView(String id, final List<FolderTranslation> translations) {
+    public DocumentTranslationView(String id, final List<FolderTranslation> translations, IModel<StringCodec> codec) {
         super(id);
 
         store = new FolderTranslationStore(translations);
         add(store);
 
         add(JavascriptPackageResource.getHeaderContribution(DocumentTranslationView.class, "translate-document.js"));
-        codecBehavior = new NodeNameCodecBehavior();
+        codecBehavior = new NodeNameCodecBehavior(codec);
         add(codecBehavior);
+
+        add(CSSPackageResource.getHeaderContribution(getClass(), "style.css"));
     }
 
     @Override

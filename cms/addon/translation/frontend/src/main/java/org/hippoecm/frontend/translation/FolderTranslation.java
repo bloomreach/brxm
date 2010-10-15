@@ -15,21 +15,13 @@
  */
 package org.hippoecm.frontend.translation;
 
-import java.rmi.RemoteException;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
-import org.hippoecm.repository.translation.TranslationWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +63,10 @@ public final class FolderTranslation implements IDetachable {
         } else {
             this.namefr = this.urlfr;
         }
+    }
+
+    JcrNodeModel getOriginalFolder() {
+        return originalFolder;
     }
 
     void setId(int id) {
@@ -115,32 +111,6 @@ public final class FolderTranslation implements IDetachable {
         this.namefr = name;
     }
 
-    public boolean persist() {
-        if (!mutable) {
-            throw new UnsupportedOperationException("Translation is immutable");
-        }
-        Node node = originalFolder.getNode();
-        if (node != null) {
-            try {
-                WorkflowManager manager = ((HippoWorkspace) node.getSession().getWorkspace()).getWorkflowManager();
-                TranslationWorkflow tw = (TranslationWorkflow) manager.getWorkflow("translation", node);
-                Document translationDoc = tw.addTranslation(localeName, urlfr);
-                if (namefr != null && !urlfr.equals(namefr)) {
-                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translationDoc);
-                    defaultWorkflow.localizeName(namefr);
-                }
-                return true;
-            } catch (RepositoryException e) {
-                log.error("Could not persist folder translation for " + originalFolder.getItemModel().getPath() + " due to " + e.getMessage());
-            } catch (RemoteException e) {
-                log.error("Could not contact repository when storing folder translation for " + originalFolder.getItemModel().getPath() + " due to " + e.getMessage());
-            } catch (WorkflowException e) {
-                log.error("Workflow prevented storing translation for " + originalFolder.getItemModel().getPath() + " due to " + e.getMessage());
-            }
-        }
-        return false;
-    }
-
     public void setEditable(boolean mutable) {
         this.mutable = mutable;
     }
@@ -150,7 +120,7 @@ public final class FolderTranslation implements IDetachable {
     }
 
     public void detach() {
-        originalFolder.detach();
+        getOriginalFolder().detach();
     }
 
 }

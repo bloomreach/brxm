@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.translation.FolderTranslation;
 import org.hippoecm.frontend.translation.TranslationWorkflowPlugin;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 
 public class DocumentTranslationDialog extends WorkflowAction.WorkflowDialog {
     private static final long serialVersionUID = 1L;
@@ -21,17 +24,27 @@ public class DocumentTranslationDialog extends WorkflowAction.WorkflowDialog {
     private TextField<String> uriComponent;
     private boolean uriModified;
     private List<FolderTranslation> folders;
+    private ISettingsService settingsService;
 
-    public DocumentTranslationDialog(TranslationWorkflowPlugin translationWorkflowPlugin, WorkflowAction action,
-            IModel<String> title, List<FolderTranslation> folders) {
+    public DocumentTranslationDialog(TranslationWorkflowPlugin translationWorkflowPlugin, ISettingsService settings,
+            WorkflowAction action, IModel<String> title, List<FolderTranslation> folders) {
         action.super();
         this.translationWorkflowPlugin = translationWorkflowPlugin;
+        this.settingsService = settings;
         this.title = title;
         this.folders = folders;
 
-        DocumentTranslationView dtv = new DocumentTranslationView("grid", folders);
+        DocumentTranslationView dtv = new DocumentTranslationView("grid", folders,
+                new LoadableDetachableModel<StringCodec>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected StringCodec load() {
+                        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+                        return stringCodecFactory.getStringCodec("encoding.node");
+                    }
+                });
         dtv.setFrame(false);
-        //        dtv.setWidth(600);
         add(dtv);
     }
 
@@ -49,6 +62,6 @@ public class DocumentTranslationDialog extends WorkflowAction.WorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=675,height=450").makeImmutable();
+        return new ValueMap("width=675,height=378").makeImmutable();
     }
 }
