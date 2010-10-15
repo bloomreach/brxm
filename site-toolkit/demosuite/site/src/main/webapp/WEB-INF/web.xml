@@ -160,6 +160,15 @@
   </servlet>
 
   <servlet>
+    <servlet-name>PageComposerResourceServlet</servlet-name>
+    <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+    <init-param>
+    <param-name>jarPathPrefix</param-name>
+    <param-value>/org/hippoecm/hst</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet>
     <servlet-name>DojoResourceServlet</servlet-name>
     <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
   </servlet>
@@ -217,6 +226,12 @@
   <servlet-mapping>
     <servlet-name>YUIResourceServlet</servlet-name>
     <url-pattern>/javascript/yui/*</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet-mapping>
+    <servlet-name>PageComposerResourceServlet</servlet-name>
+    <url-pattern>/pagecomposer/sources/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>

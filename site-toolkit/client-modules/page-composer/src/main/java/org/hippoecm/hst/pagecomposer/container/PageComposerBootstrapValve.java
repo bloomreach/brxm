@@ -56,61 +56,61 @@ public class PageComposerBootstrapValve extends AbstractValve
             writer.append("\n<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
             
             // ext-css
-            HstLink css = creator.create("/js/ext/resources/css/ext-all.css", siteMount, true);
+            HstLink css = creator.create("/pagecomposer/sources/js/ext/resources/css/ext-all.css", siteMount, true);
             writer.append("\n<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" href=\""+css.toUrlForm(requestContext, false)+"\"/>");
             
             // Application dependencies 
             // ext Base
-            HstLink base = creator.create("/js/ext/adapter/ext/ext-base.js", siteMount, true);
+            HstLink base = creator.create("/pagecomposer/sources/js/ext/adapter/ext/ext-base.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+base.toUrlForm(requestContext, false)+"\"></script>");
 
             // ext AllDebug
-            HstLink allDebug = creator.create("/js/ext/ext-all-debug-w-comments.js", siteMount, true);            
+            HstLink allDebug = creator.create("/pagecomposer/sources/js/ext/ext-all-debug-w-comments.js", siteMount, true);            
             writer.append("\n<script type=\"text/javascript\" src=\""+allDebug.toUrlForm(requestContext, false)+"\"></script>");
 
             // extBlankImageUrl
-            HstLink blankImageUrl = creator.create("/js/ext/s.gif", siteMount, true);            
+            HstLink blankImageUrl = creator.create("/pagecomposer/sources/js/ext/s.gif", siteMount, true);            
             writer.append("\n<script type=\"text/javascript\">Ext.BLANK_IMAGE_URL= '"+blankImageUrl.toUrlForm(requestContext, false)+"';</script>");
 
             // baseApp
-            HstLink baseApp = creator.create("/js/hippo-ext/app/BaseApp.js", siteMount, true);
+            HstLink baseApp = creator.create("/pagecomposer/sources/js/hippo-ext/app/BaseApp.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+baseApp.toUrlForm(requestContext, false)+ "\"></script>");
 
             // baseGrid
-            HstLink baseGrid = creator.create("/js/hippo-ext/app/BaseGrid.js", siteMount, true);
+            HstLink baseGrid = creator.create("/pagecomposer/sources/js/hippo-ext/app/BaseGrid.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+baseGrid.toUrlForm(requestContext, false)+ "\"></script>");
           
             // baseGrid
-            HstLink floatingWindow = creator.create("/js/hippo-ext/ux/FloatingWindow.js", siteMount, true);
+            HstLink floatingWindow = creator.create("/pagecomposer/sources/js/hippo-ext/ux/FloatingWindow.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+floatingWindow.toUrlForm(requestContext, false)+ "\"></script>");
           
             // propsPanel
-            HstLink propsPanel = creator.create("/js/hippo-ext/app/PropertiesPanel.js", siteMount, true);
+            HstLink propsPanel = creator.create("/pagecomposer/sources/js/hippo-ext/app/PropertiesPanel.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+propsPanel.toUrlForm(requestContext, false)+ "\"></script>");
           
             // pageModel
-            HstLink pageModel = creator.create("/js/hippo-ext/app/PageModel.js", siteMount, true);
+            HstLink pageModel = creator.create("/pagecomposer/sources/js/hippo-ext/app/PageModel.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+pageModel.toUrlForm(requestContext, false)+ "\"></script>");
             
             // miframe
-            HstLink miframe = creator.create("/js/ext-plugins/miframe/miframe-debug.js", siteMount, true);
+            HstLink miframe = creator.create("/pagecomposer/sources/js/ext-plugins/miframe/miframe-debug.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+miframe.toUrlForm(requestContext, false)+ "\"></script>");
            
             // mifmsg
-            HstLink mifmsg = creator.create("/js/ext-plugins/miframe/mifmsg.js", siteMount, true);
+            HstLink mifmsg = creator.create("/pagecomposer/sources/js/ext-plugins/miframe/mifmsg.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+mifmsg.toUrlForm(requestContext, false)+ "\"></script>");
             
             // theme
-            HstLink theme = creator.create("/js/ext/resources/css/xtheme-slate.css", siteMount, true);
+            HstLink theme = creator.create("/pagecomposer/sources/js/ext/resources/css/xtheme-slate.css", siteMount, true);
             writer.append("\n<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" title=\"gray\" href=\""+theme.toUrlForm(requestContext, false)+"\">");
            
 
             // Application files 
-            HstLink pageEditorStyle = creator.create("/css/hippo/PageEditor.css", siteMount, true);
+            HstLink pageEditorStyle = creator.create("/pagecomposer/sources/css/hippo/PageEditor.css", siteMount, true);
             writer.append("\n<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" href=\""+pageEditorStyle.toUrlForm(requestContext, false)+"\">");
            
             // editor
-            HstLink editor = creator.create("/js/hippo-ext/PageEditor.js", siteMount, true);
+            HstLink editor = creator.create("/pagecomposer/sources/js/hippo-ext/PageEditor.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+editor.toUrlForm(requestContext, false)+ "\"></script>");
 
             // Application bootstrap 
