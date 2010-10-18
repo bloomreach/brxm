@@ -348,8 +348,9 @@ public class AggregationValve extends AbstractValve {
         addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery-ui-1.8.5.custom.min.js");       
         addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery.class.js");       
         addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery.tablednd_0_5.js");       
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery.namespace.js");       
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/hippo-jquery/Containers.js");       
+        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery.namespace.js");
+        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/globals.js");
+        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/hippo-jquery/Containers.js");
         addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/hippo-jquery/Containers.js");         
         addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/hippo-jquery/Main.js");         
     }

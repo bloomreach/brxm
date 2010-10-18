@@ -38,11 +38,11 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class PageComposerBootstrapValve extends AbstractValve
 {
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
-    
+
     public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
         this.resourceLifecycleManagements = resourceLifecycleManagements;
     }
-    
+
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
@@ -54,12 +54,16 @@ public class PageComposerBootstrapValve extends AbstractValve
             PrintWriter writer = context.getServletResponse().getWriter();
             writer.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
             writer.append("\n<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
-            
+
             // ext-css
             HstLink css = creator.create("/pagecomposer/sources/js/ext/resources/css/ext-all.css", siteMount, true);
             writer.append("\n<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" href=\""+css.toUrlForm(requestContext, false)+"\"/>");
             
-            // Application dependencies 
+            // Application dependencies
+            // globals
+            HstLink globals = creator.create("/pagecomposer/sources/js/globals.js", siteMount, true);
+            writer.append("\n<script type=\"text/javascript\" src=\"" + globals.toUrlForm(requestContext, false) + "\"></script>");
+
             // ext Base
             HstLink base = creator.create("/pagecomposer/sources/js/ext/adapter/ext/ext-base.js", siteMount, true);
             writer.append("\n<script type=\"text/javascript\" src=\""+base.toUrlForm(requestContext, false)+"\"></script>");
@@ -122,7 +126,7 @@ public class PageComposerBootstrapValve extends AbstractValve
             
             SiteMount parentMount = siteMount.getParent();
             if(parentMount == null || !parentMount.isOfType("composermode")) {
-                context.getServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Page Composer Tool can only be started if the composer SiteMount is 'below' the SiteMount of type 'composermode'.");
+                context.getServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Page Composer Tool can only be started if the composer SiteMount is a descendant of the SiteMount of type 'composermode'.");
                 return;
             }
 
@@ -134,7 +138,8 @@ public class PageComposerBootstrapValve extends AbstractValve
                     writer.append("\n\t\t //clear DOM");
                     writer.append("\n\t\t Ext.getBody().update('');");
                     writer.append("\n\t\t var config = {");
-                        writer.append("\n\t\t\t iframeUrl: '"+editableUrl+"', ");
+                        writer.append("\n\t\t debug: true,");
+                        writer.append("\n\t\t\t iframeUrl: '").append(editableUrl).append("',");
                         writer.append("\n\t\t\t rootComponentName: 'home'");
                     writer.append("\n\t\t };");
                     writer.append("\n\t\t Ext.namespace('Hippo.App');");
@@ -143,7 +148,7 @@ public class PageComposerBootstrapValve extends AbstractValve
             writer.append("\n </script>");
            
             
-            writer.append("</meta>");
+            writer.append("</head>");
             writer.append("</html>");
             writer.flush();
             
