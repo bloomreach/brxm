@@ -164,6 +164,9 @@ public class TestBaseHstComponent {
         assertNotNull(paramsInfo);
         assertEquals(10, paramsInfo.getPageSize());
         assertEquals("Test description", paramsInfo.getDescription());
+        
+        // should return same object for the same hstRequest.
+        assertTrue(paramsInfo == component.getParametersInfo(hstRequest));
     }
     
     @Node(jcrType="test:textdocument")
