@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.rest;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,17 +29,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.xml.ws.Response;
 
 import org.hippoecm.hst.services.support.jaxrs.content.BaseHstContentService;
 
 /**
- * HstConfigService provides the JAX-RS service to GET and POST HST components
+ * PropertiesService provides the JAX-RS service to GET and POST HST Component Properties
  */
-@Path("/configservice/")
-public class ConfigService extends BaseHstContentService {
+@Path("/PropertiesService/")
+public class PropertiesService extends BaseHstContentService {
 
-    public ConfigService() {
+    public PropertiesService() {
         super();
     }
 
@@ -60,7 +63,7 @@ public class ConfigService extends BaseHstContentService {
         } catch (RepositoryException e) {
             e.printStackTrace(); //TODO fix me
             throw new WebApplicationException(e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace(); //TODO fix me
             throw new WebApplicationException(e);
         }
@@ -69,9 +72,28 @@ public class ConfigService extends BaseHstContentService {
     @POST
     @Path("/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @PathParam("path") String path, String json) {
+    public Response setNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @PathParam("path") String path, MultivaluedMap<String, String> params) {
         Response r = null;
-            
+
+        try {
+            Node jcrNode = getJcrSession(servletRequest).getRootNode().getNode(path);
+            String[] values = new String[params.size()];
+            jcrNode.setProperty("hst:parameternames", params.keySet().toArray(values));
+            jcrNode.setProperty("hst:parametervalues", flattenMapValues(params).toArray(values));
+            jcrNode.save();
+        } catch (RepositoryException e) {
+            e.printStackTrace();  //TODO fix me
+
+        }
+
         return r;
+    }
+
+    private List<String> flattenMapValues(MultivaluedMap<String, String> params) {
+        List<String> values = new ArrayList<String>();
+        for (String paramName : params.keySet()) {
+            values.add(params.getFirst(paramName));
+        }
+        return values;
     }
 }
