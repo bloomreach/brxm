@@ -25,8 +25,8 @@ public class ContainerItemModel extends BaseModel {
     public ContainerItemModel() {
     }
 
-    public ContainerItemModel(Node node, HttpSession http) {
-        super(node, http);
+    public ContainerItemModel(Node node) {
+        super(node);
     }
 
     @Override

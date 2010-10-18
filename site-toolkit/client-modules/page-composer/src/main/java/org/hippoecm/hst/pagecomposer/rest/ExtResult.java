@@ -15,18 +15,26 @@
  */
 package org.hippoecm.hst.pagecomposer.rest;
 
-public class ExtResult<T> {
+public class ExtResult {
     final static String SVN_ID = "$Id$";
 
     private boolean success;
     private String message;
-    private T data;
+    private Object data;
 
-    public T getData() {
+    public ExtResult() {
+        this(new String[0]);
+    }
+
+    public ExtResult(Object data) {
+        this.data = data;
+    }
+
+    public Object getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(Object data) {
         this.data = data;
     }
 

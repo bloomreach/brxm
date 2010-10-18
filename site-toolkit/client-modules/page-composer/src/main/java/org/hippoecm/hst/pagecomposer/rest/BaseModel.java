@@ -35,13 +35,14 @@ public class BaseModel {
     public BaseModel() {
     }
 
-    public BaseModel(Node node, HttpSession http) {
+    public BaseModel(Node node) {
 
         try {
             path = node.getPath();
-            id = IdUtil.getId(path, http);
-            String parentPath = path.substring(0, path.lastIndexOf('/'));
-            parentId = IdUtil.getId(parentPath, http);
+            id = node.getUUID();
+
+            Node parent = node.getParent();
+            parentId = parent != null ? parent.getUUID() : null;
 
             componentClassName = node.getProperty("hst:componentclassname").getString();
             name = node.getName();
