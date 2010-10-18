@@ -16,8 +16,6 @@
 package org.hippoecm.hst.utils;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
@@ -63,11 +61,14 @@ public class ParameterUtils {
         }
         
         Class<?> parametersInfoType = anno.type();
+        
+        if (!parametersInfoType.isInterface()) {
+            throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
+        }
+        
         ProxyFactory factory = new ProxyFactory();
         
         Invoker invoker = new Invoker() {
-            
-            private Map<String, Object> dirtyParams;
             
             public Object invoke(Object object, Method method, Object[] args) throws Throwable {
                 String methodName = method.getName();
@@ -93,28 +94,20 @@ public class ParameterUtils {
                 
                 Class<?> returnType = method.getReturnType();
                 
-                if (isGetter) {
-                    if (dirtyParams != null && dirtyParams.containsKey(parameterName)) {
-                        return dirtyParams.get(parameterName);
-                    } else {
-                        String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
-                        
-                        if (parameterValue == null) {
-                            parameterValue = panno.defaultValue();
-                        }
-                        
-                        if (parameterValue == null) {
-                            return null;
-                        }
-                        
-                        return ConvertUtils.convert(parameterValue, returnType);
-                    }
-                } else if (isSetter) {
-                    if (dirtyParams == null) {
-                        dirtyParams = new HashMap<String, Object>();
+                if (isSetter) {
+                    throw new UnsupportedOperationException("Setter method is not supported.");
+                } else if (isGetter) {
+                    String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
+                    
+                    if (parameterValue == null) {
+                        parameterValue = panno.defaultValue();
                     }
                     
-                    dirtyParams.put(parameterName, args[0]);
+                    if (parameterValue == null) {
+                        return null;
+                    }
+                    
+                    return ConvertUtils.convert(parameterValue, returnType);
                 }
                 
                 return null;
@@ -122,6 +115,7 @@ public class ParameterUtils {
         };
         
         parametersInfo = (T) factory.createInvokerProxy(invoker, new Class [] { parametersInfoType });
+        
         request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
         
         return parametersInfo;
