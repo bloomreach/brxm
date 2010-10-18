@@ -360,6 +360,7 @@ public class AggregationValve extends AbstractValve {
         el.setAttribute("media", "screen");
         HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
         el.setAttribute("href", creator.create(href, mount, true).toUrlForm(request.getRequestContext(), false));
+        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer"); 
         response.addHeadElement(el, href);
     }
 
@@ -368,6 +369,7 @@ public class AggregationValve extends AbstractValve {
         el.setAttribute("type", "text/javascript");
         HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
         el.setAttribute("src", creator.create(src, mount, true).toUrlForm(request.getRequestContext(), false));
+        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer"); 
         response.addHeadElement(el, src);
     }
 // TODO //////////////////////////////////////////////////////////////////////////////
