@@ -15,57 +15,90 @@
  */
 package org.hippoecm.hst.pagecomposer.rest;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.jcr.Node;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hippoecm.hst.pagecomposer.annotations.Parameter;
+import org.hippoecm.hst.pagecomposer.annotations.ParameterInfo;
+import org.hippoecm.hst.pagecomposer.annotations.ParameterType;
 
+
+/**
+ * Component node wrapper that will be mapped automatically by the JAXRS (Jettison or JAXB) for generating the JSON/XML
+ */
 @XmlRootElement(name = "component")
 public class ComponentWrapper {
+
+    private static final String HST_PARAMETERNAMES = "hst:parameternames";
+    private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
+    private static final String HST_PARAMETERVALUES = "hst:parametervalues";
+
     private List<Property> properties;
-    private Boolean success;
-    private Value[] parameterNames;
-    private Value[] parameterValues;
+    private Boolean success = false;
+    private Map<String, String> hstParameters;
 
-    public ComponentWrapper(Node node) {
-        this.success = true;
+    /**
+     * Constructs a component node wrapper
+     *
+     * @param node JcrNode for a component.
+     * @throws RepositoryException    Thrown if the reposiotry exception occurred during reading of the properties.
+     * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
+     */
+    public ComponentWrapper(Node node) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<Property>();
-
-        PropertyIterator nodePropsIterator = null;
-        try {
-            nodePropsIterator = node.getProperties();
-            while (nodePropsIterator.hasNext()) { //Do some silly hacking to get the properties and set them to JSON
-                javax.jcr.Property jcrProp = nodePropsIterator.nextProperty();
-                if (jcrProp.getType() == PropertyType.STRING) {  //Take only String properties others are not much of a use to us, I guess
-                    if (!jcrProp.getDefinition().isMultiple()) {
-                        properties.add(new Property(jcrProp.getName(), jcrProp.getValue().getString()));
-                    }
-
-                }
-                if (jcrProp.getName().equals("hst:parameternames")) {
-                    parameterNames = jcrProp.getValues();
-                }
-                if (jcrProp.getName().equals("hst:parametervalues")) {
-                    parameterValues = jcrProp.getValues();
-                }
+        //Get the parameter names and values from the component node.
+        if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
+            hstParameters = new HashMap<String, String>();
+            Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
+            Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
+            for (int i = 0; i < paramNames.length; i++) {
+                hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
             }
-            if(parameterNames != null) {
-                //Process Parameter Names and values
-                for (int i = 0; i < parameterNames.length; i++) {
-                    properties.add(new Property(parameterNames[i].getString(), parameterValues[i].getString()));
-                }
-            }
-        } catch (RepositoryException e) {
-            e.printStackTrace();  //TODO Fix me
-            this.success = false;
         }
 
+        //Get the properties via annotation on the component class
+        String componentClassName = null;
+        if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
+            componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
+        }
+
+        if (componentClassName != null) {
+            Class componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
+            if (componentClass.isAnnotationPresent(ParameterInfo.class)) {
+                ParameterInfo parameterInfo = (ParameterInfo) componentClass.getAnnotation(ParameterInfo.class);
+                Field[] fields = parameterInfo.className().getDeclaredFields();
+                for (Field field : fields) {
+                    if (field.isAnnotationPresent(Parameter.class)) {
+                        Parameter propAnnotation = field.getAnnotation(Parameter.class);
+                        Property prop = new Property();
+                        prop.setName(propAnnotation.name());
+                        prop.setDefaultValue(propAnnotation.defaultValue());
+                        prop.setDescription(propAnnotation.description());
+                        prop.setType(propAnnotation.type());
+                        prop.setRequired(propAnnotation.required());
+                        if (propAnnotation.label().equals("")) {
+                            prop.setLabel(propAnnotation.name());
+                        } else {
+                            prop.setLabel(propAnnotation.label());
+                        }
+                        if (hstParameters != null && hstParameters.get(propAnnotation.name()) != null) {
+                            prop.setValue(hstParameters.get(propAnnotation.name()));
+                        }
+
+                        properties.add(prop);
+                    }
+                }
+
+            }
+        }
+        this.success = true;
     }
 
     public List<Property> getProperties() {
@@ -86,28 +119,85 @@ public class ComponentWrapper {
 
     class Property {
         private String name;
-        private Object value;
+        private String value;
+        private ParameterType type;
+        private String label;
+        private String defaultValue;
+        private String description;
+        private boolean required;
 
-        Property(String name, Object value) {
+        Property() {
+            name = "";
+            value = "";
+            type = ParameterType.STRING;
+            label = "";
+            defaultValue = "";
+            description = "";
+            required = false;
+        }
+
+        Property(String name, String value, ParameterType type, String label, String defaultValue, String description) {
             this.name = name;
             this.value = value;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public void setValue(Object value) {
-            this.value = value;
+            this.type = type;
+            this.label = label;
+            this.defaultValue = defaultValue;
         }
 
         public String getName() {
-
             return name;
         }
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public ParameterType getType() {
+            return type;
+        }
+
+        public void setType(ParameterType type) {
+            this.type = type;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public boolean isRequired() {
+            return required;
+        }
+
+        public void setRequired(boolean required) {
+            this.required = required;
         }
     }
 }
