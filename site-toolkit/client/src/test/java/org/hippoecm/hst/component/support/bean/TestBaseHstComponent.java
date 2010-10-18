@@ -23,13 +23,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.mock.MockHstRequest;
+import org.hippoecm.hst.proxy.ProxyFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -45,6 +51,7 @@ public class TestBaseHstComponent {
     private String beansAnnotatedClassResourcePath;
     private String annotationClassesLocationFilter;
     private ComponentConfiguration componentConfig;
+    private HstRequestContext requestContext;
     
     @Before
     public void setUp() throws Exception {
@@ -56,6 +63,9 @@ public class TestBaseHstComponent {
         
         componentConfig = createNiceMock(ComponentConfiguration.class);
         replay(componentConfig);
+        
+        requestContext = createNiceMock(HstRequestContext.class);
+        replay(requestContext);
     }
     
     @Test
@@ -121,6 +131,39 @@ public class TestBaseHstComponent {
         assertEquals("test:textdocument", comp.objectConverter.getPrimaryNodeTypeNameFor(TextBean.class));
         assertEquals("test:comment", comp.objectConverter.getPrimaryNodeTypeNameFor(CommentBean.class));
         assertEquals("test:bookmark", comp.objectConverter.getPrimaryNodeTypeNameFor(BookmarkBean.class));
+    }
+    
+    @Test
+    public void testGetParametersInfo() throws Exception {
+        // set dummy beans-annotated-classes configuration
+        servletContext.addInitParameter(BaseHstComponent.BEANS_ANNOTATED_CLASSES_CONF_PARAM, "classpath*:org/hippoecm/hst/component/support/beans/*.class");
+        
+        // create a dummy component configuration for test.
+        ProxyFactory factory = new ProxyFactory();
+        ComponentConfiguration compConfig = (ComponentConfiguration) factory.createInvokerProxy(new Invoker() {
+            public Object invoke(Object o, Method m, Object[] args) throws Throwable {
+                if ("pagesize".equals(args[0])) {
+                    return "10";
+                } else if ("description".equals(args[0])) {
+                    return "Test description";
+                }
+                return null;
+            }
+        }, new Class [] { ComponentConfiguration.class });
+        
+        // now initialize the component with the component configuration
+        ANewsArticleComponent component = new ANewsArticleComponent();
+        component.init(servletContext, compConfig);
+        
+        // do testing now..
+        MockHstRequest hstRequest = new MockHstRequest();
+        // set dummy requestcontext
+        hstRequest.setRequestContext(requestContext);
+        
+        ANewsArticleComponentParametersInfo paramsInfo = component.getParametersInfo(hstRequest);
+        assertNotNull(paramsInfo);
+        assertEquals(10, paramsInfo.getPageSize());
+        assertEquals("Test description", paramsInfo.getDescription());
     }
     
     @Node(jcrType="test:textdocument")
