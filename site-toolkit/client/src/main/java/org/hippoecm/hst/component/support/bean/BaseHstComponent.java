@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.component.support.bean;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +25,8 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
-import org.hippoecm.hst.configuration.components.Parameter;
-import org.hippoecm.hst.configuration.components.ParametersInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
@@ -53,12 +48,12 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
-import org.hippoecm.hst.proxy.ProxyFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.HstResponseUtils;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.utils.ParameterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +85,6 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
     public static final String OBJECT_CONVERTER_CONTEXT_ATTRIBUTE = BaseHstComponent.class.getName() + ".objectConverter";
-    public static final String PARAMETERS_INFO_ATTRIBUTE = BaseHstComponent.class.getName() + ".parametersInfo";
     private static final String COMPOSERMODE_NAME_TYPE = "composermode";
     
     private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
@@ -586,55 +580,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param request
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
-    @SuppressWarnings("unchecked")
     protected <T> T getParametersInfo(final HstRequest request) {
-        T parametersInfo = (T) request.getAttribute(PARAMETERS_INFO_ATTRIBUTE);
-        
-        if (parametersInfo != null) {
-            return parametersInfo;
-        }
-        
-        ParametersInfo anno = getClass().getAnnotation(ParametersInfo.class);
-        
-        if (anno == null) {
-            throw new IllegalArgumentException("The component does not have ParametersInfo annotation.");
-        }
-        
-        Class<?> parametersInfoType = anno.type();
-        ProxyFactory factory = new ProxyFactory();
-        
-        Invoker invoker = new Invoker() {
-            public Object invoke(Object object, Method method, Object[] args) throws Throwable {
-                String methodName = method.getName();
-                
-                if (!methodName.startsWith("get")) {
-                    return null;
-                }
-                
-                Parameter panno = method.getAnnotation(Parameter.class);
-                String parameterName = panno.name();
-                
-                if (StringUtils.isBlank(parameterName)) {
-                    throw new IllegalArgumentException("The parameter name is empty.");
-                }
-                
-                String parameterValue = getComponentConfiguration().getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
-                
-                if (parameterValue == null) {
-                    parameterValue = panno.defaultValue();
-                }
-                
-                if (parameterValue == null) {
-                    return null;
-                }
-                
-                return ConvertUtils.convert(parameterValue, method.getReturnType());
-            }
-        };
-        
-        parametersInfo = (T) factory.createInvokerProxy(invoker, new Class [] { parametersInfoType });
-        request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
-        
-        return parametersInfo;
+        return ParameterUtils.getParametersInfo(this, getComponentConfiguration(), request);
     }
 }
