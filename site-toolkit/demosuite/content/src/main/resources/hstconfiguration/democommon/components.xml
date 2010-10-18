@@ -104,20 +104,17 @@
 		</sv:node>
 		<sv:node sv:name="bodymain">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
-				<sv:value>hst:containercomponent</sv:value>
+				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
                 <sv:value>org.hippoecm.hst.demo.components.Home</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:containertype" sv:type="String">
-                <sv:value>Hippo.DD.Container.Table</sv:value>
             </sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>homepage</sv:value>
 			</sv:property>
             <sv:node sv:name="todolist">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:containeritemcomponent</sv:value>
+                    <sv:value>hst:component</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentclassname" sv:type="String">
                     <sv:value>org.hippoecm.hst.demo.components.TodoList</sv:value>
@@ -125,6 +122,78 @@
                 <sv:property sv:name="hst:template" sv:type="String">
                     <sv:value>todolist</sv:value>
                 </sv:property>
+            </sv:node>
+            <sv:node sv:name="banners">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:containercomponent</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentclassname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.demo.components.Banners</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:containertype" sv:type="String">
+                    <sv:value>Hippo.DD.Container.Table</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:template" sv:type="String">
+                    <sv:value>table</sv:value>
+                </sv:property>
+                <sv:node sv:name="banner1">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:containeritemcomponent</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:template" sv:type="String">
+                        <sv:value>banner</sv:value>
+                    </sv:property>
+                </sv:node>
+                <sv:node sv:name="banner2">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:containeritemcomponent</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:template" sv:type="String">
+                        <sv:value>banner</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:node>
+            <sv:node sv:name="morebanners">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:containercomponent</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentclassname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.demo.components.Banners</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:containertype" sv:type="String">
+                    <sv:value>Hippo.DD.Container.Table</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:template" sv:type="String">
+                    <sv:value>table</sv:value>
+                </sv:property>
+                <sv:node sv:name="banner1">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:containeritemcomponent</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:template" sv:type="String">
+                        <sv:value>banner</sv:value>
+                    </sv:property>
+                </sv:node>
+                <sv:node sv:name="banner2">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:containeritemcomponent</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:template" sv:type="String">
+                        <sv:value>banner</sv:value>
+                    </sv:property>
+                </sv:node>
             </sv:node>
 		</sv:node>
 	</sv:node>

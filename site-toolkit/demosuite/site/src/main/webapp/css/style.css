@@ -216,3 +216,7 @@ ul.facets li {
 div.right {
     float:right;
 }
+
+div.bannersHome {
+    margin: 10px 0 10px 0;
+}

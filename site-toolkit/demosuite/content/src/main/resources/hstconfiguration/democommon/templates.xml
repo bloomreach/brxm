@@ -164,4 +164,36 @@
 			<sv:value>jsp/components/main/productpage.jsp</sv:value>
 		</sv:property>
 	</sv:node>
+	<sv:node sv:name="table">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/composer/templates/table.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="ul">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/composer/templates/ul.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="ol">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/composer/templates/ol.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="banner">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/banner.jsp</sv:value>
+		</sv:property>
+	</sv:node>
 </sv:node>

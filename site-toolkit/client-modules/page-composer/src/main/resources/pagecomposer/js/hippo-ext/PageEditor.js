@@ -64,7 +64,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         },
                         'exception' : {
                             fn: function(e) {
-                                console.error(e);
+                                //console.error(e); //ignore for now..
                             },
                             scope: this
                         }
@@ -193,35 +193,26 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
         frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', true);
 
-        this.currentIframe = frm;
-        var store = this.pageModelStore;
-
+        //Aggregate components from DOM
         var models = [Hippo.App.PageModel.Factory.createModel(Ext.getBody(), {isRoot: true, type: 'page'})];
-        var count = 0;
         frm.select('div.componentContentWrapper', true).each(function(el, c, idx) {
             var index = models.length - 1;
             while (index > 0 && !Ext.fly(models[index].element).contains(el)) {
                 --index;
             }
-            var model = Hippo.App.PageModel.Factory.createModel(el.dom, {parent: models[index]});
-            models.push(model);
-            store.insert(count++, Hippo.App.PageModel.Factory.createRecord(model));
+            models.push(Hippo.App.PageModel.Factory.createModel(el.dom, {parent: models[index]}));
         });
 
-        this.models = models; //TODO: probably not needed
-
-        this.pageModelStore.filterBy(function(record, id) {
-            return record.data.type === 'hst:containercomponent' || record.data.type === 'hst:containeritemcomponent';
-        });
-
-        //TODO: load pageModel data from server
-        this.initPageModelStore();
+        //instantiate new store
+        this.initPageModelStore(models);
     },
 
-    initPageModelStore : function() {
+    initPageModelStore : function(models) {
+        this.models = models; //TODO: remove
+
         var containers = '';
         Ext.iterate(this.models, function(item){
-            if(item.type == 'hst:containercomponent') {
+            if(item.type == HST.CONTAINER) {
                 if(containers.length > 0) {
                     containers += ',';
                 }
@@ -270,7 +261,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             records = Ext.isArray(records) ? records : [records];
                             for(var i=0; i<records.length; i++) {
                                 var record = records[i];
-                                if (record.get('type') == 'hst:containeritemcomponent') {
+                                if (record.get('type') == HST.CONTAINERITEM) {
                                     //add element to the iframe DOM
                                     this.sendFrameMessage({parentId: record.get('parentId'), element: record.get('element')}, 'add');
 
@@ -300,11 +291,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 },
                 remove : {
                     fn : function(store, record, index) {
-                        if (store.silentRemove) {
-                            return;
-                        }
 
-                        if (record.get('type') == 'hst:containercomponent') {
+                        if (record.get('type') == HST.CONTAINER) {
                             //remove all children as well
                             Ext.each(record.get('children'), function(id) {
                                 var childIndex = store.findExact('id', id);
@@ -385,7 +373,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         this.sendFrameMessage({element: record.data.element}, 'select');
         this.showProperties(record);
 
-        G_canDrag = record.data.type == 'hst:containercomponent';
+        G_canDrag = record.data.type == HST.CONTAINER;
     },
 
     deselect : function(model, index, record) {
@@ -396,6 +384,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     onRearrangeContainer: function(id, children) {
+        console.log('rearrange with id: ' + id);
         var recordIndex = this.pageModelStore.findExact('id', id);//should probably do this through the selectionModel
         var record = this.pageModelStore.getAt(recordIndex);
         record.set('children', children);
@@ -439,7 +428,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             })
         ];
         var children = record.get('children');
-        if (record.get('type') == 'hst:containercomponent' && children.length > 0) {
+        if (record.get('type') == HST.CONTAINER && children.length > 0) {
             actions.push(new Ext.Action({
                 text: 'Delete items',
                 handler: function() {
@@ -466,7 +455,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     remove : function(element) {
         var store = this.pageModelStore;
         var id = Ext.fly(element).getAttribute('hst:id');
-        console.log(id);
         Ext.Msg.confirm('Confirm delete', 'Are your sure?', function(btn, text) {
             if (btn == 'yes') {
                 var index = store.findExact('id', id);
@@ -517,9 +505,10 @@ Hippo.App.DragDropOne = (function() {
             this.dragZone = new Ext.grid.GridDragZone(this, {
                 containerScroll: true,
                 ddGroup: 'blabla',
+                CRE : new RegExp('^' + HST.CONTAINER + '$'),
 
                 onInitDrag : function() {
-                    var containerRecords = Hippo.App.Main.pageModelStore.query('type', /^hst:containercomponent$/).each(function(item, index, length) {
+                    var containerRecords = Hippo.App.Main.pageModelStore.query('type', this.CRE).each(function(item, index, length) {
                         var box = Ext.Element.fly(item.get('element')).getBox();
                         self.boxs.push({record: item, box: box});
                         return true;
@@ -586,7 +575,7 @@ Hippo.App.DragDropOne = (function() {
                             var cfg = {
                                 parentId: parentId,
                                 name: null,
-                                type: 'hst:containeritemcomponent',
+                                type: HST.CONTAINERITEM,
                                 template: record.get('template'),
                                 componentClassName : record.get('componentClassName') 
                             };

@@ -51,7 +51,7 @@ $.namespace('Hippo.DD');
         },
 
         registerEvents: function(el) {
-            if ($(el).attr('hst:type') == 'containerItem') {
+            if ($(el).attr('hst:type') == HST.CONTAINERITEM) {
 
 //                $(el).hover(function() {
 //                    $(this).addClass(hoverClass);
@@ -81,7 +81,7 @@ $.namespace('Hippo.DD');
                 return;
             }
 
-            this.current = Hippo.DD.Factory.create(element);
+            this.current = Hippo.DD.Factory.createOrRetrieve(element);
             this.current.select();
         },
 
@@ -101,12 +101,12 @@ $.namespace('Hippo.DD');
             var id = $(element).attr('hst:id');
             var type = $(element).attr('hst:type');
 
-            if (type == 'containerItem') {
+            if (type == HST.CONTAINERITEM) {
                 id = $(element).parents('.componentContentWrapper').attr('hst:id');
                 if (typeof this.active[id] !== 'undefined') {
                     this.active[id].removeItem(element);
                 }
-            } else if (type == 'container') {
+            } else if (type == HST.CONTAINER) {
                 if (typeof this.active[id] !== 'undefined') {
                     this.active[id].remove();
                     delete this.active[id];

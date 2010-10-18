@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 public class Home extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Home.class);
-
  
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {

@@ -33,7 +33,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
                 die('Attribute hst:type not found');
             }
 
-            if (type === 'container') {
+            if (type === HST.CONTAINER) {
                 var cType = el.attr('hst:containertype');
                 if (typeof cType === 'undefined') {
                     die('Attribute hst:containertype not found');
@@ -48,10 +48,34 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
                 } else {
                     die('Container instance of ' + cType + ' should be a subclass of Hippo.DD.Container.Base');
                 }
-            } else if (type === 'containerItem') {
+            } else if (type === HST.CONTAINERITEM) {
                 //for now use a generic component for containerItems
                 return new Hippo.DD.ContainerItem.Generic(id, element);
             }
+            return null;
+            //die('Could not instantiate new object of type ' + type + ' for element ' + element);
+        },
+
+        createOrRetrieve : function(element) {
+            var die = function(msg) {
+                console.error(msg);
+                throw new Error(msg);
+            };
+
+            if (typeof element === 'undefined' || element === null) {
+                die("element is undefined or null");
+            }
+
+            var el = $(element);
+            var id = el.attr('hst:id');
+            if (typeof id === 'undefined') {
+                die('Attribute hst:id not found');
+            }
+
+            if(typeof this.active[id] === 'undefined') {
+                this.create(element);
+            }
+            return this.active[id];
         },
 
         register : function(key, value) {
@@ -130,8 +154,15 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
                 self.onMouseOutMenuOverlay(this);
             });
             this.menuOverlay.click(function() {
-
+                sendMessage({element: element}, 'onclick');
             });
+
+            var deleteButton = $('<div/>').addClass('hst-menu-overlay-button').html('X');
+            deleteButton.click(function() {
+                sendMessage({element: element}, 'remove');
+            });
+
+            this.menuOverlay.append(deleteButton);
 
             this.syncOverlays();
         },
@@ -146,6 +177,16 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
                 at: 'right top',
                 of: this.element
             });
+        },
+
+        select : function() {
+            this._super();
+            $(this.menuOverlay).addClass(this.selCls);
+        },
+
+        deselect : function() {
+            this._super();
+            $(this.menuOverlay).removeClass(this.selCls);
         },
 
         update : function() {
@@ -166,6 +207,12 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
         onMouseOutMenuOverlay : function(element) {
             this.menuOverlay.removeClass('hst-menu-overlay-hover');
+        },
+
+        destroy : function() {
+            console.log('destroy item');
+            this._super();
+            this.menuOverlay.remove();
         }
     });
 
@@ -247,6 +294,9 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
         },
 
         removeItem : function(element) {
+            if(Hippo.DD.Factory.active[element.id]) {
+                Hippo.DD.Factory.active[element.id].destroy();
+            }
             //remove item wrapper elements
             $(element).parents('.' + this.itemCls).remove();
             this.checkEmpty();
@@ -300,12 +350,9 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
         onRemove : function(event, ui) {
         }
-
     });
 
-
     //Container implementations
-
     Hippo.DD.Container.Table = Hippo.DD.Container.Base.extend({
 
         createItem : function(element) {

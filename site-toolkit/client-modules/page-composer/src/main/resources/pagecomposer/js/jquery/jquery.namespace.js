@@ -1,4 +1,3 @@
-console.dir(jQuery.namespace);
 jQuery.namespace = function() {
     var a = arguments, o = null, i, j, d;
     for (i = 0; i < a.length; i = i + 1) {

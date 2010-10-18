@@ -30,7 +30,14 @@
   <div>
     <@hst.include ref="todolist"/>
   </div>
-  
+
+  <div class="bannersHome">
+    <@hst.include ref="banners"/>
+  </div>
+  <div class="bannersHome">
+    <@hst.include ref="morebanners"/>
+  </div>
+
   <p style="height: 30em;">  </p>
   
 </div>
