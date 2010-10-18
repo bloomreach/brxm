@@ -128,7 +128,7 @@
 + * (hst:sitemenu)
 
 
-[hst:configuration] > nt:base, mix:referenceable
+[hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string)
 + hst:components (hst:components) = hst:components
 + hst:pages (hst:pages) = hst:pages
@@ -138,16 +138,16 @@
 + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
 + hst:scripts (hst:scripts) = hst:scripts
 
-[hst:configurations] > nt:base, mix:referenceable
-+ * (hst:configuration) = hst:configuration
+[hst:configurations] > nt:base, mix:referenceable, mix:versionable
++ * (hst:configuration) = hst:configuration version
 
-[hst:site] > nt:base, mix:referenceable
+[hst:site] > nt:base, mix:referenceable, mix:versionable
 + hst:content (hippo:facetselect) mandatory
 - hst:configurationpath (string) mandatory
 - hst:portalconfigurationenabled (boolean)
 
-[hst:sites] > nt:base, mix:referenceable
-+ * (hst:site) = hst:site
+[hst:sites] > nt:base, mix:referenceable, mix:versionable
++ * (hst:site) = hst:site version
 
 [hst:primarydomain] mixin
 
@@ -205,7 +205,7 @@
 [hst:virtualhostgroup] > nt:base, mix:referenceable
 + * (hst:virtualhost)
 
-[hst:virtualhosts] > nt:base, mix:referenceable
+[hst:virtualhosts] > nt:base, mix:referenceable, mix:versionable
 - hst:showcontextpath (boolean)
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
@@ -218,10 +218,10 @@
 - hst:versioninpreviewheader (boolean)
 + * (hst:virtualhostgroup)
 
-[hst:hst] > nt:base, mix:referenceable
-+ hst:configurations (hst:configurations) = hst:configurations 
-+ hst:hosts (hst:virtualhosts) = hst:virtualhosts 
-+ * (hst:sites) = hst:sites 
+[hst:hst] > nt:base, mix:referenceable, mix:versionable
++ hst:configurations (hst:configurations) = hst:configurations version
++ hst:hosts (hst:virtualhosts) = hst:virtualhosts version
++ * (hst:sites) = hst:sites version
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
 [hst:contentshare] > hippo:mirror
