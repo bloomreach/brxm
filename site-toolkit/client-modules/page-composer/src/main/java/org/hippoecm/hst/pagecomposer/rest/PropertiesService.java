@@ -15,10 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.rest;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -39,6 +40,8 @@ import org.hippoecm.hst.services.support.jaxrs.content.BaseHstContentService;
  */
 @Path("/PropertiesService/")
 public class PropertiesService extends BaseHstContentService {
+    private static final String HST_PARAMETERVALUES = "hst:parametervalues";
+    private static final String HST_PARAMETERNAMES = "hst:parameternames";
 
     public PropertiesService() {
         super();
@@ -77,23 +80,28 @@ public class PropertiesService extends BaseHstContentService {
 
         try {
             Node jcrNode = getJcrSession(servletRequest).getRootNode().getNode(path);
-            String[] values = new String[params.size()];
-            jcrNode.setProperty("hst:parameternames", params.keySet().toArray(values));
-            jcrNode.setProperty("hst:parametervalues", flattenMapValues(params).toArray(values));
+
+            Map<String, String> hstParameters = new HashMap<String, String>();
+            if (jcrNode.hasProperty(HST_PARAMETERNAMES) && jcrNode.hasProperty(HST_PARAMETERVALUES)) {
+                hstParameters = new HashMap<String, String>();
+                Value[] paramNames = jcrNode.getProperty(HST_PARAMETERNAMES).getValues();
+                Value[] paramValues = jcrNode.getProperty(HST_PARAMETERVALUES).getValues();
+                for (int i = 0; i < paramNames.length; i++) {
+                    hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                }
+            }
+            for (String param : params.keySet()) {
+                hstParameters.put(param, params.getFirst(param));
+            }
+
+            String[] values = new String[hstParameters.size()];
+            jcrNode.setProperty(HST_PARAMETERNAMES, hstParameters.keySet().toArray(values));
+            jcrNode.setProperty(HST_PARAMETERVALUES, hstParameters.values().toArray(values));
             jcrNode.save();
         } catch (RepositoryException e) {
             e.printStackTrace();  //TODO fix me
-
+            throw new WebApplicationException(e);
         }
-
         return r;
-    }
-
-    private List<String> flattenMapValues(MultivaluedMap<String, String> params) {
-        List<String> values = new ArrayList<String>();
-        for (String paramName : params.keySet()) {
-            values.add(params.getFirst(paramName));
-        }
-        return values;
     }
 }
