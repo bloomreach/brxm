@@ -581,6 +581,6 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
     protected <T> T getParametersInfo(final HstRequest request) {
-        return ParameterUtils.getParametersInfo(this, getComponentConfiguration(), request);
+        return (T) ParameterUtils.getParametersInfo(this, getComponentConfiguration(), request);
     }
 }
