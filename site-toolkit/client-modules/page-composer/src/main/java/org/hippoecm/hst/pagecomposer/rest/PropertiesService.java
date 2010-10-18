@@ -31,7 +31,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.xml.ws.Response;
+import javax.ws.rs.core.Response;
+
 
 import org.hippoecm.hst.services.support.jaxrs.content.BaseHstContentService;
 
