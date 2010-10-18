@@ -33,11 +33,13 @@ import org.hippoecm.hst.content.beans.standard.HippoRequestBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.pagecomposer.annotations.ParameterInfo;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ParameterInfo(className = TodoListParameterInfo.class)
 public class TodoList extends BaseHstComponent {
     
     private static final Logger log = LoggerFactory.getLogger(Home.class);
@@ -108,6 +110,8 @@ public class TodoList extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         try {
+
+
             String todoItemsQuery = DEFAULT_TODO_ITEMS_QUERY;
             long queryLimit = DEFAULT_QUERY_LIMIT;
             

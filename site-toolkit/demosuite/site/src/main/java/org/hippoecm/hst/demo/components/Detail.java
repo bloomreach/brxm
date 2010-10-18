@@ -18,7 +18,6 @@ package org.hippoecm.hst.demo.components;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
-
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
@@ -46,13 +45,13 @@ import org.slf4j.LoggerFactory;
 public class Detail extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Detail.class);
-    
+
     private String cmsApplicationUrl = "/cms/";
 
     @Override
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletContext, componentConfig);
-        
+
         String param = servletContext.getInitParameter("cmsApplicationUrl");
         if (param != null) {
             cmsApplicationUrl = param;
@@ -65,16 +64,16 @@ public class Detail extends BaseHstComponent {
 
         super.doBeforeRender(request, response);
         HippoBean crBean = this.getContentBean(request);
-        
+
         request.setAttribute("isPreview", isPreview(request) ? Boolean.TRUE : Boolean.FALSE);
-        
+
         request.setAttribute("cmsApplicationUrl", cmsApplicationUrl);
 
         // we only have a goBackLink for sitemap items that have configured one. 
         String goBackLink = request.getRequestContext().getResolvedSiteMapItem().getParameter("go-back-link");
         request.setAttribute("goBackLink", goBackLink);
-        
-        
+
+
         if (crBean == null || !(crBean instanceof BaseBean)) {
             response.setStatus(HstResponse.SC_NOT_FOUND);
             try {
@@ -85,29 +84,29 @@ public class Detail extends BaseHstComponent {
             }
         }
         request.setAttribute("document", crBean);
-        
+
         try {
-            HstQuery commentQuery = BeanUtils.createIncomingBeansQuery((BaseBean)crBean, this.getSiteContentBaseBean(request), "demosite:commentlink/@hippo:docbase", this , CommentBean.class, false);
+            HstQuery commentQuery = BeanUtils.createIncomingBeansQuery((BaseBean) crBean, this.getSiteContentBaseBean(request), "demosite:commentlink/@hippo:docbase", this, CommentBean.class, false);
             commentQuery.addOrderByDescending("demosite:date");
             commentQuery.setLimit(15);
-            
+
             boolean onlyLastWeek = false;
-            if(onlyLastWeek) {
+            if (onlyLastWeek) {
                 // example how to get the comments only of last week
                 Calendar sinceLastWeek = Calendar.getInstance();
                 sinceLastWeek.add(Calendar.DAY_OF_MONTH, -7);
                 Filter f = new FilterImpl();
                 f.addGreaterOrEqualThan("demosite:date", sinceLastWeek);
-                ((Filter)commentQuery.getFilter()).addAndFilter(f);
+                ((Filter) commentQuery.getFilter()).addAndFilter(f);
             }
             List<CommentBean> comments = BeanUtils.getIncomingBeans(commentQuery, CommentBean.class);
             request.setAttribute("comments", comments);
         } catch (QueryException e) {
             log.warn("QueryException ", e);
         }
-        
+
     }
-    
+
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         String type = request.getParameter("type");
@@ -116,11 +115,11 @@ public class Detail extends BaseHstComponent {
             String title = request.getParameter("title");
             String comment = request.getParameter("comment");
             HippoBean commentTo = this.getContentBean(request);
-            if( !(commentTo instanceof HippoDocumentBean)) {
+            if (!(commentTo instanceof HippoDocumentBean)) {
                 log.warn("Cannot comment on non documents");
                 return;
             }
-            String commentToUuidOfHandle = ((HippoDocumentBean)commentTo).getCanonicalHandleUUID();
+            String commentToUuidOfHandle = ((HippoDocumentBean) commentTo).getCanonicalHandleUUID();
             if (title != null && !"".equals(title.trim()) && comment != null) {
                 Session persistableSession = null;
                 WorkflowPersistenceManager wpm = null;
@@ -139,11 +138,11 @@ public class Detail extends BaseHstComponent {
                     // it is not important where we store comments. WE just use some (canonical) time path below our project content
                     String siteCanonicalBasePath = this.getHstSite(request).getCanonicalContentPath();
                     Calendar currentDate = Calendar.getInstance();
-                    
+
                     String commentsFolderPath = siteCanonicalBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
                             + currentDate.get(Calendar.MONTH) + "/" + currentDate.get(Calendar.DAY_OF_MONTH);
                     // comment node name is simply a concatenation of 'comment-' and current time millis. 
-                    String commentNodeName = "comment-for-"+commentTo.getName()+"-" + System.currentTimeMillis();
+                    String commentNodeName = "comment-for-" + commentTo.getName() + "-" + System.currentTimeMillis();
 
                     // create comment node now
                     wpm.create(commentsFolderPath, "demosite:commentdocument", commentNodeName, true);
@@ -151,21 +150,21 @@ public class Detail extends BaseHstComponent {
                     // retrieve the comment content to manipulate
                     CommentBean commentBean = (CommentBean) wpm.getObject(commentsFolderPath + "/" + commentNodeName);
                     // update content properties
-                    if(commentBean == null) {
+                    if (commentBean == null) {
                         throw new HstComponentException("Failed to add Comment");
                     }
                     commentBean.setTitle(title);
 
                     commentBean.setHtml(comment);
-                    
+
                     commentBean.setDate(currentDate);
-                    
+
                     commentBean.setCommentTo(commentToUuidOfHandle);
-                    
+
                     // update now
                     wpm.update(commentBean);
 
-                    
+
                 } catch (Exception e) {
                     log.warn("Failed to create a comment: ", e);
 
@@ -185,22 +184,22 @@ public class Detail extends BaseHstComponent {
         } else if ("remove".equals(type)) {
         }
     }
-    
+
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-        
+
         super.doBeforeServeResource(request, response);
-        
+
         boolean succeeded = true;
         String errorMessage = "";
-        
+
         String workflowAction = request.getParameter("workflowAction");
-        
+
         String field = request.getParameter("field");
-        
+
         final boolean requestPublication = "requestPublication".equals(workflowAction);
         final boolean saveDocument = ("save".equals(workflowAction) || requestPublication);
-        
+
         if (saveDocument || requestPublication) {
             String documentPath = this.getContentBean(request).getPath();
             Session persistableSession = null;
@@ -223,7 +222,7 @@ public class Detail extends BaseHstComponent {
 
                 if (saveDocument) {
                     String content = request.getParameter("editor");
-                    
+
                     if ("demosite:summary".equals(field)) {
                         page.setSummary(content);
                     } else if ("demosite:body".equals(field)) {
@@ -249,7 +248,7 @@ public class Detail extends BaseHstComponent {
                 }
             }
         }
-        
+
         request.setAttribute("payload", "{\"success\": " + succeeded + ", \"message\": \"" + errorMessage + "\"}");
     }
 
