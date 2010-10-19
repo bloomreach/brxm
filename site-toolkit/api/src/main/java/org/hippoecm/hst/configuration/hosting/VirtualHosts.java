@@ -95,6 +95,11 @@ public interface VirtualHosts {
     String getDefaultHostName();
     
     /**
+     * @return the locale of this VirtualHosts object or <code>null</code> if no locale is configured
+     */
+    String getLocale();
+    
+    /**
      * Returns the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. . Returns <code>null</code> when no match
      * 
      * @param hostGroupName

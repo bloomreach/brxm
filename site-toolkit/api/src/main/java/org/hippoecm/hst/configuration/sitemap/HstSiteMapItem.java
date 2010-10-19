@@ -240,6 +240,13 @@ public interface HstSiteMapItem {
     String getNamedPipeline();
     
     /**
+     * the locale for this sitemapItem or <code>null</code> when it does not contain one. Note that if an ancestor sitemapItem contains a 
+     * locale, this value is inherited unless this sitemapItem explicitly defines its own. 
+     * @return the locale for this sitemapItem or <code>null</code> when it does not contain one. 
+     */
+    String getLocale();
+    
+    /**
      * @param handlerId
      * @return the {@link HstSiteMapItemHandlerConfiguration} for <code>handlerId</code> or <code>null</code> if no handler present for <code>handlerId</code>
      */

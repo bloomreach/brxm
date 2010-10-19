@@ -48,6 +48,14 @@ public interface VirtualHost {
     String getHostGroupName();
     
     /**
+     * the locale for this VirtualHost or <code>null</code> when it does not contain one. Note that if an ancestor VirtualHost contains a 
+     * locale, this value is inherited unless this VirtualHost explicitly defines its own. The VirtualHost directly below the  {@link VirtualHosts} inherits the value from 
+     * the {@link VirtualHosts}
+     * @return the locale for this VirtualHost or <code>null</code> when it does not contain one. 
+     */
+    String getLocale();
+    
+    /**
      * @param name the name segment of the hostname
      * @return the child <code>VirtualHost</code> or <code>null</code> if none found
      */

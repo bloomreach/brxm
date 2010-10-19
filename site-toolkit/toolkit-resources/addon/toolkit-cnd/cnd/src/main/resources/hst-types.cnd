@@ -101,6 +101,7 @@
 - hst:secured (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
+- hst:locale (string)
 - hst:inheritsfrom (string)
 + * (hst:sitemapitem)
 
@@ -175,6 +176,7 @@
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
 - hst:pagenotfound (string)
+- hst:locale (string)
 - hst:versioninpreviewheader (boolean)
 - hst:secured (boolean)
 - hst:roles (string) multiple
@@ -200,6 +202,7 @@
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
 - hst:pagenotfound (string)
+- hst:locale (string)
 - hst:versioninpreviewheader (boolean)
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
@@ -215,6 +218,7 @@
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
 - hst:pagenotfound (string)
+- hst:locale (string)
 - hst:versioninpreviewheader (boolean)
 + * (hst:virtualhostgroup)
 

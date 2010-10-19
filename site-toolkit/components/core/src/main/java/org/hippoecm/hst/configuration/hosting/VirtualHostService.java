@@ -51,6 +51,12 @@ public class VirtualHostService implements VirtualHost {
     private String pageNotFound;
     
     /**
+     * The locale configured on this Virtual host. When the backing configuration does not contain a locale, it is taken from the parent {@link VirtualHost}. When there is no parent {@link VirtualHost},
+     * the value is taken from {@link VirtualHosts#getLocale()}. The locale can be <code>null</code>
+     */
+    private String locale;
+    
+    /**
      * Whether the {@link SiteMount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview SiteMount
      */
     private boolean versionInPreviewHeader;
@@ -95,6 +101,17 @@ public class VirtualHostService implements VirtualHost {
                 this.scheme = parentHost.scheme;
             } else {
                 this.scheme = virtualHosts.getScheme();
+            }
+        }
+        
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
+            this.locale = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        } else {
+            // try to get the one from the parent
+            if(parentHost != null) {
+                this.locale = parentHost.locale;
+            } else {
+                this.locale = virtualHosts.getLocale();
             }
         }
         
@@ -194,6 +211,7 @@ public class VirtualHostService implements VirtualHost {
         this.virtualHosts = parent.virtualHosts;
         this.hostGroupName = hostGroup;
         this.scheme = parent.scheme;
+        this.locale = parent.locale;
         this.homepage = parent.homepage;
         this.pageNotFound = parent.pageNotFound;
         this.versionInPreviewHeader = parent.versionInPreviewHeader;
@@ -227,6 +245,11 @@ public class VirtualHostService implements VirtualHost {
     public String getScheme(){
         return this.scheme;
     }
+
+    public String getLocale() {
+        return locale;
+    }
+
     
     public String getHomePage() {
         return homepage;

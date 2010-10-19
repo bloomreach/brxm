@@ -27,6 +27,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
@@ -51,6 +54,12 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String qualifiedId;
     
     private String value;
+    
+    /**
+     * The locale for this HstSiteMapItem. When the backing configuration does not contain a locale, it is taken from the parent {@link HstSiteMapItem} if there is
+     * a parent. If there is no parent, we inherit the locale from the {@link SiteMount#getLocale()} for this item. The locale can be <code>null</code>
+     */
+    private String locale;
 
     private int statusCode; 
     
@@ -220,6 +229,14 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         
         this.portletComponentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         
+        if (node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
+            this.locale = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        } else if(this.parentItem != null){
+            this.locale = parentItem.getLocale();
+        } else {
+            this.locale = hstSiteMap.getSite().getSiteMount().getLocale();
+        }
+        
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
             this.secured = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED);
         } else if(this.parentItem != null){
@@ -351,6 +368,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
     public String getValue() {
         return this.value;
+    }
+
+    public String getLocale() {
+        return locale;
     }
     
     public boolean isWildCard() {
@@ -501,5 +522,6 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public boolean isExcludedForLinkRewriting() {
         return isExcludedForLinkRewriting;
     }
+
 
 }

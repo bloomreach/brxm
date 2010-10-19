@@ -59,9 +59,15 @@ public class VirtualHostsService implements VirtualHosts {
     private String homepage;
 
     /**
-     * The pageNotFound for this VirtualHosts. When the backing configuration does not contain a pageNotFound, the value is <code>null
+     * The pageNotFound for this VirtualHosts. When the backing configuration does not contain a pageNotFound, the value is <code>null</code>
      */
     private String pageNotFound;
+    
+
+    /**
+     * The general locale configured on VirtualHosts. When the backing configuration does not contain a locale, the value is <code>null</code>
+     */
+    private String locale;
     
     /**
      * Whether the {@link SiteMount}'s below this VirtualHostsService should show the hst version as a response header when they are a preview SiteMount
@@ -81,6 +87,7 @@ public class VirtualHostsService implements VirtualHosts {
         this.prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
         this.scheme = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
+        this.locale = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
         this.homepage = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
         this.pageNotFound = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
         if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
@@ -293,6 +300,10 @@ public class VirtualHostsService implements VirtualHosts {
         return this.scheme;
     }
 
+    public String getLocale() {
+        return locale;
+    }
+
     public String getDefaultHostName() {
         return this.defaultHostName;
     }
@@ -336,5 +347,6 @@ public class VirtualHostsService implements VirtualHosts {
     private String getAliasTypeKey(String alias, String type) {
         return alias + '\uFFFF' + type;
     }
+
     
 }

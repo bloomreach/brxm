@@ -274,6 +274,14 @@ public interface SiteMount {
      * @return the named pipeline to be used for this SiteMount or <code>null</code> when the default pipeline is to be used
      */
     String getNamedPipeline();
+    
+    /**
+     * the locale for this siteMount or <code>null</code> when it does not contain one. Note that if an ancestor siteMount contains a 
+     * locale, this value is inherited unless this siteMount explicitly defines its own. The root siteMount inherits the value from 
+     * the {@link VirtualHost} if the virtual host contains a locale
+     * @return the locale for this siteMount or <code>null</code> when it does not contain one. 
+     */
+    String getLocale();
 
     /**
      * This is a shortcut method fetching the HstSiteMapMatcher from the backing {@link HstManager}

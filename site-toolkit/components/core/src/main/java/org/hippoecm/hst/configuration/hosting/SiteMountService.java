@@ -137,8 +137,14 @@ public class SiteMountService implements SiteMount {
      *  when this sitemount is only applicable for certain contextpath, this property for the contextpath tells which value it must have. It must start with a slash.
      */
     private String onlyForContextPath;
-    
+
     private String scheme;
+    
+    /**
+     * The locale for this Mount. When the backing configuration does not contain a locale, the value from a parent Mount is used. If there is
+     * no parent, the value will be {@link VirtualHosts#getLocale()}. The locale can be <code>null</code>
+     */
+    private String locale;
     
     private boolean secured;
     
@@ -236,6 +242,17 @@ public class SiteMountService implements SiteMount {
                 this.homepage = parent.getHomePage();
             } else {
                 this.homepage = virtualHost.getHomePage();
+            }
+        }
+        
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
+            this.locale = siteMount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        } else {
+           // try to get the one from the parent
+            if(parent != null) {
+                this.locale = parent.getLocale();
+            } else {
+                this.locale = virtualHost.getLocale();
             }
         }
         
@@ -421,6 +438,10 @@ public class SiteMountService implements SiteMount {
         return scheme;
     }
 
+    public String getLocale() {
+        return locale;
+    }
+
     public String getHomePage() {
         return homepage;
     }
@@ -515,6 +536,7 @@ public class SiteMountService implements SiteMount {
     public boolean isSessionStateful() {
         return sessionStateful;
     }
+
 
 
 
