@@ -58,7 +58,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             fn: this.handleFrameMessages,
                             scope:this
                         },
-                        'domready' : {
+                        'documentloaded' : {
                             fn: this.loadComponentsFromIframe,
                             scope: this
                         },
