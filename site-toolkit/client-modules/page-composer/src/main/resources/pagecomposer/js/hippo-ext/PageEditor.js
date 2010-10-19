@@ -191,7 +191,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     loadComponentsFromIframe : function(frm) {
         //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
-        frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', false);
+        frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', true);
 
         //Aggregate components from DOM
         var models = [Hippo.App.PageModel.Factory.createModel(Ext.getBody(), {isRoot: true, type: 'page'})];

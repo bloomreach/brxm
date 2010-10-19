@@ -181,16 +181,23 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             this.syncOverlays();
         },
 
+        //Webkit does not work with the 'new' position function
+        //Webkit also doesn't work with setting position through .offset so we are back to css.left/top
         syncOverlays : function() {
-            var el = this.element;
-            var elW = $(el).outerWidth(), elH = $(el).outerHeight();
-            var elOffset = $(el).offset();
+            var el = $(this.element);
 
-            this.menuOverlay.position({
-                my: 'right top',
-                at: 'right top',
-                of: this.element
-            });
+            var elOffset = $(el).offset();
+            var left = (elOffset.left + $(el).outerWidth()) - this.menuOverlay.width();
+            var top = elOffset.top;
+
+            this.menuOverlay.css('left', left);
+            this.menuOverlay.css('top', top);
+
+//            this.menuOverlay.position({
+//                my: 'right top',
+//                at: 'right top',
+//                of: el
+//            });
         },
 
         select : function() {
