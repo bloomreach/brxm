@@ -86,7 +86,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             $.each(this.active, function(key, value) {
                 if(value instanceof Hippo.DD.Container.Base) {
                     value.sync();
-        }
+                }
             });
         }
     };
@@ -262,7 +262,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
                 connectWith: '.' + this.hostCls,
                 update: $.proxy(this.onUpdate, this),
                 helper: $.proxy(this.onHelper, this),
-                revert: true,
+                revert: 100,
                 receive: $.proxy(this.onReceive, this),
                 remove: $.proxy(this.onRemove, this),
                 placeholder : {
@@ -274,7 +274,14 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
                         //TODO
                     }
 
+                },
+                start: function() {
+                    $('div.hst-menu-overlay').hide();
+                },
+                stop: function() {
+                    $('div.hst-menu-overlay').show();
                 }
+
             }).disableSelection();
 
             this.sync();
