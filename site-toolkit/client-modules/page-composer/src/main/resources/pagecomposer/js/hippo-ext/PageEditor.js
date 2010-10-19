@@ -49,7 +49,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 {
                     id: 'Iframe',
                     xtype: 'iframepanel',
-                    loadMask: false,
+                    loadMask: true,
                     defaultSrc: this.iframeUrl,
                     collapsible: false,
                     disableMessaging: false,
@@ -58,15 +58,12 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             fn: this.handleFrameMessages,
                             scope:this
                         },
-                        'documentloaded' : {
+                        'domready' : {
                             fn: this.loadComponentsFromIframe,
                             scope: this
                         },
                         'exception' : {
                             fn: function(frm, e) {
-                                console.group('error from iframe');
-                                console.dir(arguments);
-                                console.groupEnd();
                                 console.error(e); //ignore for now..
                             },
                             scope: this
@@ -194,7 +191,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     loadComponentsFromIframe : function(frm) {
         //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
-        frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', true);
+        frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', false);
 
         //Aggregate components from DOM
         var models = [Hippo.App.PageModel.Factory.createModel(Ext.getBody(), {isRoot: true, type: 'page'})];
