@@ -34,9 +34,11 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,9 +112,17 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 
 	@Override
 	protected HttpServletRequest getJaxrsRequest( HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
-		String contentPathInfo = requestContext.getBaseURL().getPathInfo();
-		String requestContentPath = getMountPointContentPath(requestContext) + (contentPathInfo != null ? contentPathInfo : "");
-
+		String contentPathInfo = null;
+		
+		ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+		if (resolvedSiteMapItem == null) {
+		    contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+		} else {
+		    contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
+		}
+		
+		String requestContentPath = getMountPointContentPath(requestContext) + "/" + (contentPathInfo != null ? contentPathInfo : "");
+		
 		Node node = null;
 		String resourceType = "";
 		

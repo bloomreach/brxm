@@ -48,6 +48,10 @@ public class NodeRepresentation {
     public NodeRepresentation() {    	
     }
     
+    public NodeRepresentation represent(HippoBean hippoBean) throws RepositoryException {
+        return represent(hippoBean, null);
+    }
+    
 	public NodeRepresentation represent(HippoBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
 		this.name = hippoBean.getName();
 		this.localizedName = hippoBean.getLocalizedName();

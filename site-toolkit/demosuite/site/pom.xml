@@ -131,6 +131,14 @@
       <version>2.3.15</version>
     </dependency>
     
+    <!-- The New JAX-RS REST Component -->    
+    <dependency>    
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <!-- The Old JAX-RS SANDBOX Component -->
     <dependency>
       <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
       <artifactId>hst-jaxrs</artifactId>

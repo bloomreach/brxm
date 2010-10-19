@@ -87,6 +87,17 @@
                   <sv:value>true</sv:value>
               </sv:property>
             </sv:node>
+            <sv:node sv:name="restapi">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>restapi</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>JaxrsRestPipeline</sv:value>
+              </sv:property>
+            </sv:node>
             <sv:node sv:name="restservice">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
@@ -126,6 +137,17 @@
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="restapi">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:alias" sv:type="String">
+                  <sv:value>restapi_preview</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsRestPipeline</sv:value>
                 </sv:property>
               </sv:node>
               <sv:node sv:name="restservice">
@@ -231,24 +253,35 @@
           </sv:property>
           <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+              <sv:value>hst:sitemount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/demosite-live</sv:value>
             </sv:property>
             <sv:property sv:name="hst:showport" sv:type="Boolean">
-                    <sv:value>true</sv:value>
-                </sv:property>
+              <sv:value>true</sv:value>
+            </sv:property>
+            <sv:node sv:name="restapi">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>restapi</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>JaxrsRestPipeline</sv:value>
+              </sv:property>
+            </sv:node>
             <sv:node sv:name="restservice">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:sitemount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                  <sv:value>false</sv:value>
+                <sv:value>false</sv:value>
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
-                    <sv:value>true</sv:value>
-                </sv:property>
+                <sv:value>true</sv:value>
+              </sv:property>
               <sv:property sv:name="hst:namedpipeline" sv:type="String">
                 <sv:value>JaxrsPipeline</sv:value>
               </sv:property>
@@ -264,8 +297,19 @@
                 <sv:value>preview</sv:value>
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
-                    <sv:value>true</sv:value>
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:node sv:name="restapi">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:sitemount</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:alias" sv:type="String">
+                  <sv:value>restapi_preview</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                  <sv:value>JaxrsRestPipeline</sv:value>
+                </sv:property>
+              </sv:node>
               <sv:node sv:name="restservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemount</sv:value>

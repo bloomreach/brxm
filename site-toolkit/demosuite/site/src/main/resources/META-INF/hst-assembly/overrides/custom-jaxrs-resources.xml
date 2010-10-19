@@ -32,12 +32,7 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean id="textPageContentResource" class="org.hippoecm.hst.jaxrs.services.content.TextPageContentResource" />
-          </constructor-arg>
-        </bean>
-        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg>
-            <bean id="defaultContentResource" class="org.hippoecm.hst.jaxrs.services.content.DefaultContentResource"/>
+            <bean id="textPageContentResource" class="org.hippoecm.hst.demo.jaxrs.services.ProductContentResource" />
           </constructor-arg>
         </bean>
       </list>
