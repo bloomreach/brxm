@@ -16,25 +16,11 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.beans.PropertyEditor;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface Parameter {
-    
-    String name();
-    
-    boolean required() default false;
-    
-    String defaultValue() default "";
-    
-    String displayName() default ""; 
-    
-    String description() default "";
-    
-    Class<? extends PropertyEditor> customEditor() default EmptyPropertyEditor.class;
-    
+/**
+ * Marker interface for what doesn't support custom property editor
+ * @version $Id$
+ */
+public interface EmptyPropertyEditor extends PropertyEditor {
+
 }

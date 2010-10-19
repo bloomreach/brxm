@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +147,8 @@ public class TestBaseHstComponent {
                     return "10";
                 } else if ("description".equals(args[0])) {
                     return "Test description";
+                } else if ("color".equals(args[0])) {
+                    return "#ff0000";
                 }
                 return null;
             }
@@ -164,6 +167,7 @@ public class TestBaseHstComponent {
         assertNotNull(paramsInfo);
         assertEquals(10, paramsInfo.getPageSize());
         assertEquals("Test description", paramsInfo.getDescription());
+        assertEquals(Color.RED, paramsInfo.getColor());
         
         // should return same object for the same hstRequest.
         assertTrue(paramsInfo == component.getParametersInfo(hstRequest));

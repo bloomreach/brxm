@@ -15,11 +15,13 @@
  */
 package org.hippoecm.hst.utils;
 
+import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.proxy.Invoker;
+import org.hippoecm.hst.configuration.components.EmptyPropertyEditor;
 import org.hippoecm.hst.configuration.components.Parameter;
 import org.hippoecm.hst.configuration.components.ParametersInfo;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -88,11 +90,13 @@ public class ParameterUtils {
                 
                 Parameter panno = method.getAnnotation(Parameter.class);
                 String parameterName = panno.name();
+                
                 if (StringUtils.isBlank(parameterName)) {
                     throw new IllegalArgumentException("The parameter name is empty.");
                 }
                 
                 Class<?> returnType = method.getReturnType();
+                Class<? extends PropertyEditor> customEditorType = panno.customEditor();
                 
                 if (isSetter) {
                     throw new UnsupportedOperationException("Setter method is not supported.");
@@ -107,7 +111,13 @@ public class ParameterUtils {
                         return null;
                     }
                     
-                    return ConvertUtils.convert(parameterValue, returnType);
+                    if (customEditorType == null || customEditorType == EmptyPropertyEditor.class) {
+                        return ConvertUtils.convert(parameterValue, returnType);
+                    } else {
+                        PropertyEditor customEditor = customEditorType.newInstance();
+                        customEditor.setAsText(parameterValue);
+                        return customEditor.getValue();
+                    }
                 }
                 
                 return null;

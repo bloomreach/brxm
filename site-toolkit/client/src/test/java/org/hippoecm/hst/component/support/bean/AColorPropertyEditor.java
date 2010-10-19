@@ -16,18 +16,24 @@
 package org.hippoecm.hst.component.support.bean;
 
 import java.awt.Color;
+import java.beans.PropertyEditorSupport;
 
-import org.hippoecm.hst.configuration.components.Parameter;
-
-public interface ANewsArticleComponentParametersInfo {
+/**
+ * AColorPropertyEditor
+ * @version $Id$
+ */
+public class AColorPropertyEditor extends PropertyEditorSupport {
     
-    @Parameter(name="pagesize")
-    int getPageSize();
+    @Override
+    public String getAsText() {
+        Color color = (Color) getValue();
+        return "#" + Integer.toHexString(color.getRGB() & 0x00ffffff);
+    }
     
-    @Parameter(name="description")
-    String getDescription();
-    
-    @Parameter(name="color", customEditor=AColorPropertyEditor.class)
-    Color getColor();
+    @Override
+    public void setAsText(String value) {
+        Color color = new Color(Integer.parseInt(value.substring(1), 16) & 0x00ffffff);
+        setValue(color);
+    }
     
 }
