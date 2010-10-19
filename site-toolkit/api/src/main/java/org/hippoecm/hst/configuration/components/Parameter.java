@@ -30,4 +30,8 @@ public @interface Parameter {
     
     String defaultValue() default "";
     
+    String displayName() default ""; 
+    
+    String description() default "";
+    
 }
