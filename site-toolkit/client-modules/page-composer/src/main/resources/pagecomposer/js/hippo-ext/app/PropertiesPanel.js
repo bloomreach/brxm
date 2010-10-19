@@ -13,17 +13,6 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             defaults:{
                 width: 250
             },
-            buttons:[
-                {
-                    text: 'Save',
-                    handler: this.submitForm,
-                    scope : this
-                },
-                {
-                    text: 'Reset'
-                }
-
-            ],
             readonly: [1],
             path: ""
 
@@ -31,7 +20,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         Hippo.App.PropertiesPanel.superclass.initComponent.apply(this, arguments);
     },
 
-    submitForm:function (){
+    submitForm:function () {
         this.getForm().submit({
             url: 'services/PropertiesService' + this.path,
             method: 'POST'
@@ -46,17 +35,26 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         this.removeAll();
 
         var length = records.length;
-        for (var i = 0; i < length; ++i) {
-           var property = records[i];
+        if (length == 0) {
             this.add({
-                fieldLabel: property.get('label'),
-                xtype: 'textfield',
-                labelStyle: 'font-weight:bold;',
-                value: property.get('value'),
-                allowBlank: !property.get('required'),
-                name: property.get('name')
+                html: "No Properties Found for this component",
+                xtype: "panel"
             });
+        } else {
+            this.addButton({text: "Save"}, this.submitForm, this);
+            for (var i = 0; i < length; ++i) {
+                var property = records[i];
+                this.add({
+                    fieldLabel: property.get('label'),
+                    xtype: 'textfield',
+                    labelStyle: 'font-weight:bold;',
+                    value: property.get('value'),
+                    allowBlank: !property.get('required'),
+                    name: property.get('name')
+                });
+            }
         }
+
         this.doLayout(false, true);
     },
 

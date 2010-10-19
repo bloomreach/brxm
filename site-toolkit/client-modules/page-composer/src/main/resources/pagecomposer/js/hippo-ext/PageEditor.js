@@ -9,9 +9,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     init : function() {
         this.debug = false;
-        if(this.debug) {
+        if (this.debug) {
             Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res, e) {
-                if(!res.success && res.message) {
+                if (!res.success && res.message) {
                     this.addAlert(false, "Server-side error occurred while executing action=" + action);
                     console.error('Server side error: ' + res.message);
                 }
@@ -149,7 +149,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             width: 300,
             height: 250,
             layout: {
-                type:'vbox'
+                type:'fit'
             },
             initRegion: 'right',
             closable: false,
@@ -211,9 +211,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         this.models = models; //TODO: remove
 
         var containers = '';
-        Ext.iterate(this.models, function(item){
-            if(item.type == HST.CONTAINER) {
-                if(containers.length > 0) {
+        Ext.iterate(this.models, function(item) {
+            if (item.type == HST.CONTAINER) {
+                if (containers.length > 0) {
                     containers += ',';
                 }
                 containers += item.id;
@@ -232,9 +232,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         var proxy = new myProxy({
             api: {
                 read    : 'services/PageModelService/read'
-               ,create  : {url: 'services/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
-               ,update  : {url: 'services/PageModelService/update', method: 'POST'}
-               ,destroy : {url: 'services/PageModelService/destroy', method: 'GET'}
+                ,create  : {url: 'services/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
+                ,update  : {url: 'services/PageModelService/update', method: 'POST'}
+                ,destroy : {url: 'services/PageModelService/destroy', method: 'GET'}
             }
         });
 
@@ -257,9 +257,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             listeners: {
                 write : {
                     fn: function(store, action, result, res, records) {
-                        if(action == 'create') {
+                        if (action == 'create') {
                             records = Ext.isArray(records) ? records : [records];
-                            for(var i=0; i<records.length; i++) {
+                            for (var i = 0; i < records.length; i++) {
                                 var record = records[i];
                                 if (record.get('type') == HST.CONTAINERITEM) {
                                     //add element to the iframe DOM
@@ -275,7 +275,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 }
                             }
                         } else if (action == 'update') {
-                            if(!this.isReloading) {
+                            if (!this.isReloading) {
                                 store.reload();
                                 this.isReloading = true;
                             }
@@ -303,7 +303,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         } else {
                             //containerItem: unregister from parent
                             var parentRecord = store.getAt(store.findExact('id', record.get('parentId')));
-                            if(typeof parentRecord !== 'undefined') {
+                            if (typeof parentRecord !== 'undefined') {
                                 var children = parentRecord.get('children');
                                 children.remove(record.get('id'));
                                 parentRecord.set('children', children);
@@ -325,7 +325,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
         var cm = new Ext.grid.ColumnModel({
             columns: [
-//                            { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
+                //                            { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
                 { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 120}},
                 { header: "Type", dataIndex: 'type', id:'type'},
                 { header: "Template", dataIndex: 'template', id:'template'}
@@ -345,13 +345,13 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         var id = element.getAttribute('hst:id');
         var recordIndex = this.pageModelStore.findExact('id', id);
 
-        if(recordIndex < 0) {
+        if (recordIndex < 0) {
             console.warn('Handling onClick for element[@hst:id=' + id + '] with no record in component store');
             return;
         }
 
         var sm = Ext.getCmp('PageModelGrid').getSelectionModel();
-        if(sm.isSelected(recordIndex)) {
+        if (sm.isSelected(recordIndex)) {
             sm.deselectRow(recordIndex);
         } else {
             sm.selectRow(recordIndex);
@@ -359,8 +359,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     findElement: function(id) {
-        for(var i=0; i<this.models.length; i++) {
-            if(this.models[i].id === id) {
+        for (var i = 0; i < this.models.length; i++) {
+            if (this.models[i].id === id) {
                 return this.models[i].element;
             }
         }
@@ -371,8 +371,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     select : function(model, index, record) {
         this.sendFrameMessage({element: record.data.element}, 'select');
-        this.showProperties(record);
-
+        if (record.get('type') === HST.CONTAINERITEM) {
+            this.showProperties(record);
+        }
         G_canDrag = record.data.type == HST.CONTAINER;
     },
 
@@ -400,6 +401,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     showProperties : function(record) {
         Ext.getCmp('componentPropertiesPanel').reload(record.get('id'), record.get('name'), record.get('path'));
+        Ext.getCmp('propertiesWindow').setTitle("Properties: " + record.get('name'));
         Ext.getCmp('propertiesWindow').show();
     },
 
@@ -436,7 +438,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         if (btn == 'yes') {
                             var r = [children.length];
                             Ext.each(children, function(c) {
-                                r.push(store.getAt(store.findExact('id', c)));   
+                                r.push(store.getAt(store.findExact('id', c)));
                             });
                             //it seems that calling store.remove(r) will end up re-calling the destroy api call for
                             //all previous items in r.. maybe a bug, for now do a loop
@@ -507,7 +509,7 @@ Hippo.App.DragDropOne = (function() {
 
                 onInitDrag : function() {
                     Hippo.App.Main.pageModelStore.each(function(record) {
-                        if(record.get('type') === HST.CONTAINER) {
+                        if (record.get('type') === HST.CONTAINER) {
                             var box = Ext.Element.fly(record.get('element')).getBox();
                             self.boxs.push({record: record, box: box});
                         }
@@ -537,7 +539,7 @@ Hippo.App.DragDropOne = (function() {
                     var curX = dd.lastPageX + dd.deltaX;
                     var curY = dd.lastPageY + dd.deltaY;
 
-                    for(var i=0; i<self.boxs.length; i++) {
+                    for (var i = 0; i < self.boxs.length; i++) {
                         var item = self.boxs[i], box = item.box;
                         if (curX >= box.x && curX <= box.right && curY >= box.y && curY <= box.bottom) {
                             self.nodeOverRecord = item.record;
@@ -554,10 +556,10 @@ Hippo.App.DragDropOne = (function() {
                 //We can use the data set up by the DragZone's getDragData method to read
                 //any data we decided to attach in the DragZone's getDragData method.
                 onNodeDrop : function(target, dd, e, data) {
-//                    var rowIndex = this.getView().findRowIndex(target);
-//                    var r = this.getStore().getAt(rowIndex);
-//                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
-//                            ' on Record id ' + r.id);
+                    //                    var rowIndex = this.getView().findRowIndex(target);
+                    //                    var r = this.getStore().getAt(rowIndex);
+                    //                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
+                    //                            ' on Record id ' + r.id);
                     if (self.nodeOverRecord != null) {
                         var selections = containerItemsGrid.getSelectionModel().getSelections();
 
@@ -569,14 +571,14 @@ Hippo.App.DragDropOne = (function() {
                         var models = [];
                         var offset = pmRecord.data.children.length + 1;
                         var at = pmStore.indexOf(pmRecord) + offset;
-                        for(var i=0; i< selections.length; i++) {
+                        for (var i = 0; i < selections.length; i++) {
                             var record = selections[i];
                             var cfg = {
                                 parentId: parentId,
                                 name: null,
                                 type: HST.CONTAINERITEM,
                                 template: record.get('template'),
-                                componentClassName : record.get('componentClassName') 
+                                componentClassName : record.get('componentClassName')
                             };
                             var model = Hippo.App.PageModel.Factory.createModel(null, cfg);
                             models.push(model);

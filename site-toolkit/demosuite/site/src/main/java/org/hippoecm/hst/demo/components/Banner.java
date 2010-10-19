@@ -4,7 +4,9 @@ import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.pagecomposer.annotations.ParameterInfo;
 
+@ParameterInfo(className = BannerInfo.class)
 public class Banner extends BaseHstComponent {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
