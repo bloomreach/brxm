@@ -395,6 +395,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             var el = ui.item.find('.componentContentWrapper');
             ui.item.replaceWith(this.createItem(el));
             sendMessage({id: this.id, element: el[0]}, 'receiveditem');
+            Hippo.DD.Factory.sync();
         },
 
         onRemove : function(event, ui) {
