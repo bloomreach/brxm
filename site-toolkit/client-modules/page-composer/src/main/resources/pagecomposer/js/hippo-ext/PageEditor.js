@@ -8,7 +8,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     loadMessage: 'Initializing application',
 
     init : function() {
-
+        this.debug = false;
         if(this.debug) {
             Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res, e) {
                 if(!res.success && res.message) {
@@ -63,8 +63,11 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             scope: this
                         },
                         'exception' : {
-                            fn: function(e) {
-                                //console.error(e); //ignore for now..
+                            fn: function(frm, e) {
+                                console.group('error from iframe');
+                                console.dir(arguments);
+                                console.groupEnd();
+                                console.error(e); //ignore for now..
                             },
                             scope: this
                         }
@@ -184,7 +187,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             ]
         });
         var d = [
-            ['Label1', 'name1', 'org.onehippo.components.Label', 'label']
+            ['Banner', 'banner', 'org.hippoecm.hst.demo.components.Banner', 'banner']
         ];
         this.containerItemsStore.loadData(d);
     },
@@ -384,7 +387,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     onRearrangeContainer: function(id, children) {
-        console.log('rearrange with id: ' + id);
         var recordIndex = this.pageModelStore.findExact('id', id);//should probably do this through the selectionModel
         var record = this.pageModelStore.getAt(recordIndex);
         record.set('children', children);
@@ -505,13 +507,13 @@ Hippo.App.DragDropOne = (function() {
             this.dragZone = new Ext.grid.GridDragZone(this, {
                 containerScroll: true,
                 ddGroup: 'blabla',
-                CRE : new RegExp('^' + HST.CONTAINER + '$'),
 
                 onInitDrag : function() {
-                    var containerRecords = Hippo.App.Main.pageModelStore.query('type', this.CRE).each(function(item, index, length) {
-                        var box = Ext.Element.fly(item.get('element')).getBox();
-                        self.boxs.push({record: item, box: box});
-                        return true;
+                    Hippo.App.Main.pageModelStore.each(function(record) {
+                        if(record.get('type') === HST.CONTAINER) {
+                            var box = Ext.Element.fly(record.get('element')).getBox();
+                            self.boxs.push({record: record, box: box});
+                        }
                     });
                     Ext.ux.ManagedIFrame.Manager.showShims();
                 },

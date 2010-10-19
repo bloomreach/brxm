@@ -13,9 +13,9 @@ div.componentContentWrapper .hst-container .hst-dd-item .componentContentWrapper
 }
 
 .empty-container-placeholder {
-  height:30px;
+  height:20px;
   font-size: 15px;
-  padding-top: 10px;
+  padding: 6px 0 6px 4px;
 }
 
 div.hst-empty-container ul,
@@ -40,7 +40,8 @@ li.placeholdert {
 }
 
 .hst-empty-container {
-    background-color: #999;
+    /*background-color: #999;*/
+    border: 2px dashed #e3e3e3;
 }
 
 .ui-selectable .ui-selected {
@@ -56,21 +57,21 @@ li.placeholdert {
 
 .hst-menu-overlay {
     width: 30px;
-    height: 14px;
+    height: 10px;
 
     opacity: 0.25;
     position: absolute;
     background-color: #000;
-
-    -moz-border-radius-bottomleft: 10px 6px;
 }
 
 .hst-menu-overlay-hover {
     opacity: 0.6;
+    height: 15px;
+    /*-moz-border-radius-bottomleft: 10px 6px;*/
 }
 
 .hst-menu-overlay-button {
-    /*visibility: hidden;*/
+    visibility: hidden;
 
     width:12px;
     height: 11px;
@@ -89,11 +90,12 @@ li.placeholdert {
 }
 
 .hst-menu-overlay.hst-selected-containerItem {
-    opacity: 0.85;
+    opacity: 0.80;
+    height: 15px;
 }
 
 .hst-menu-overlay.hst-selected-containerItem > div.hst-menu-overlay-button,
 .hst-menu-overlay-hover > div.hst-menu-overlay-button {
     visibility: visible;
-    background-color: #e3e3e3;
+    /*background-color: #e3e3e3;*/
 }

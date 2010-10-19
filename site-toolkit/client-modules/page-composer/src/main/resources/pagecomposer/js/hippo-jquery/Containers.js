@@ -80,6 +80,14 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
         register : function(key, value) {
             this.registry[key] = value;
+        },
+
+        sync : function() {
+            $.each(this.active, function(key, value) {
+                if(value instanceof Hippo.DD.Container.Base) {
+                    value.sync();
+        }
+            });
         }
     };
 
@@ -135,7 +143,9 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
         },
 
         onMouseOut  : function(element) {
-        }
+        },
+
+        sync: function() {}
 
     });
 
@@ -164,6 +174,10 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
             this.menuOverlay.append(deleteButton);
 
+            this.sync();
+        },
+
+        sync : function() {
             this.syncOverlays();
         },
 
@@ -210,7 +224,6 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
         },
 
         destroy : function() {
-            console.log('destroy item');
             this._super();
             this.menuOverlay.remove();
         }
@@ -235,6 +248,9 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
             //is this needed?
             this.emptyItemCls = 'hst-empty-container-item';
+
+            //workaround: set to opposite to evoke this.sync() to render an initially correct UI
+            this.isEmpty = $(this.itemSelector).size() > 0;
         },
 
         render : function() {
@@ -260,7 +276,8 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
                 }
             }).disableSelection();
-            this.checkEmpty();
+
+            this.sync();
         },
 
         destroy: function() {
@@ -269,6 +286,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
         add : function(element) {
             this.destroy();
+            var xx = Hippo.DD.Factory.create(element);
             this.addItem(element);
             this.render();
         },
@@ -299,42 +317,59 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             }
             //remove item wrapper elements
             $(element).parents('.' + this.itemCls).remove();
-            this.checkEmpty();
+            this.sync();
         },
 
-        checkEmpty : function() {
-            //if container is empty, make sure it still has a size so items form a different container can be dropped
-            if ($(this.itemSelector).size() == 0) {
-                $(this.element).addClass(this.emptyCls);
+        sync : function() {
+            this.checkEmpty();
+            this.syncOverlays(true);
+        },
 
-                var tmpCls = this.itemCls;
-                this.itemCls = this.emptyItemCls;
-                this.addItem($('<div class="empty-container-placeholder">Empty container</div>')[0]);
-                this.itemCls = tmpCls;
-            } else {
-                $(this.element).removeClass(this.emptyCls);
-                $(this.hostSelector + ' .' + this.emptyItemCls).remove();
-            }
-
+        syncOverlays : function(quite) {
             this.eachItem(function() {
                 var id = this.getAttribute('hst:id');
                 if (typeof Hippo.DD.Factory.active[id] !== 'undefined') {
                     Hippo.DD.Factory.active[id].update();
                 } else {
-                    console.warn('ContainerItem with id=' + id + ' is not found in active map.');
+                    if(!quite) {
+                        console.warn('ContainerItem with id=' + id + ' is not found in active map.');
+                    }
                 }
             });
         },
 
+        checkEmpty : function() {
+            //if container is empty, make sure it still has a size so items form a different container can be dropped
+            if ($(this.itemSelector).size() == 0) {
+                if(!this.isEmpty) {
+                $(this.element).addClass(this.emptyCls);
+                var tmpCls = this.itemCls;
+                this.itemCls = this.emptyItemCls;
+                this.addItem($('<div class="empty-container-placeholder">Empty container</div>')[0]);
+                this.itemCls = tmpCls;
+                    this.isEmpty = true;
+                }
+            } else {
+                if(this.isEmpty) {
+                $(this.element).removeClass(this.emptyCls);
+                $(this.hostSelector + ' .' + this.emptyItemCls).remove();
+                    this.isEmpty = false;
+            }
+                }
+        },
+
+
         //event listeners
+
+        //called after an update in the order of a container has been invoked
         onUpdate : function(event, ui) {
-            this.checkEmpty();
             var order = [];
             this.eachItem(function() {
                 var id = this.getAttribute('hst:id');
                 order.push(id);
             });
             sendMessage({id: this.id, children: order}, 'rearrange');
+            Hippo.DD.Factory.sync();
         },
 
         onHelper : function(event, element) {
@@ -349,6 +384,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
         },
 
         onRemove : function(event, ui) {
+            Hippo.DD.Factory.sync();
         }
     });
 
