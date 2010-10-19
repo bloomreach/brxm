@@ -42,8 +42,6 @@ public class HstSiteMapService implements HstSiteMap {
     
     private String siteMapRootNodePath;
     
-    private HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration;
-    
     private Map<String, HstSiteMapItem> rootSiteMapItems = new LinkedHashMap<String, HstSiteMapItem>();
    
     private Map<String, HstSiteMapItem> siteMapDescendants = new HashMap<String, HstSiteMapItem>();
@@ -51,8 +49,7 @@ public class HstSiteMapService implements HstSiteMap {
     public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
         this.hstSite = hstSite;
         this.siteMapRootNodePath = siteMapNode.getValueProvider().getPath();
-        this.siteMapItemHandlersConfiguration = siteMapItemHandlersConfiguration;
-        
+       
         if(!HstNodeTypes.NODETYPE_HST_SITEMAP.equals(siteMapNode.getNodeTypeName())) {
             throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+HstNodeTypes.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getNodeTypeName()+"'");
         }
