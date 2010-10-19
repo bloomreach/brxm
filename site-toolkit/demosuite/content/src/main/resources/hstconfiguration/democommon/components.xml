@@ -127,9 +127,6 @@
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:containercomponent</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:componentclassname" sv:type="String">
-                    <sv:value>org.hippoecm.hst.demo.components.Banners</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:containertype" sv:type="String">
                     <sv:value>Hippo.DD.Container.Table</sv:value>
                 </sv:property>
@@ -162,9 +159,6 @@
             <sv:node sv:name="morebanners">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:containercomponent</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:componentclassname" sv:type="String">
-                    <sv:value>org.hippoecm.hst.demo.components.Banners</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:containertype" sv:type="String">
                     <sv:value>Hippo.DD.Container.Table</sv:value>
