@@ -1,37 +1,13 @@
 Ext.namespace('Hippo.App');
 
-//FIXME: use event wiring instead
-var G_canDrag = false;
-
 Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     loadMessage: 'Initializing application',
 
+    iframeDOMReadyState : 0,
+
     init : function() {
-        this.debug = false;
         if (this.debug) {
-            Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res, e) {
-                if (!res.success && res.message) {
-                    this.addAlert(false, "Server-side error occurred while executing action=" + action);
-                    console.error('Server side error: ' + res.message);
-                }
-                else {
-                    if (e && typeof console.error == 'function') {
-                        console.error(e);
-                    } else {
-                        console.group("Exception");
-                        console.dir(arguments);
-                        console.groupEnd();
-                    }
-                    this.addAlert(false, "Something bad happened while executing " + action);
-                }
-            }, this);
-
-            Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
-                this.addAlert(true, 'Action: ' + action + '<br/>Message: ' + res.message);
-            }, this);
-
-
             Ext.Ajax.timeout = 90000; // this changes the 30 second default to 90 seconds
         }
 
@@ -59,7 +35,11 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             scope:this
                         },
                         'documentloaded' : {
-                            fn: this.loadComponentsFromIframe,
+                            fn: this.iframeDOMReady,
+                            scope: this
+                        },
+                        'domready' : {
+                            fn: this.iframeDOMReady,
                             scope: this
                         },
                         'exception' : {
@@ -189,10 +169,29 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         this.containerItemsStore.loadData(d);
     },
 
-    loadComponentsFromIframe : function(frm) {
-        //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
-        frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', true);
+    /**
+     * Miframe provides two callback functions to indicate that Iframe DOM is ready, but both tend to lie, and both
+     * behave differently on different browsers.
+     * So as a last resort we wait until both have executed, before starting the init function.
+     * But, also this approach fails now and then, currently I have no other workaround than reloading the browser
+     * and trying again. 
+     *
+     * @param frm
+     */
+    iframeDOMReady : function(frm) {
+        this.iframeDOMReadyState++;
 
+        if(this.iframeDOMReadyState == 2) {
+
+            //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
+            frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', false);
+
+            this.loadComponentsFromIframe(frm);
+            this.iframeDOMReadyState = 0;
+        }
+    },
+
+    loadComponentsFromIframe : function(frm) {
         //Aggregate components from DOM
         var models = [Hippo.App.PageModel.Factory.createModel(Ext.getBody(), {isRoot: true, type: 'page'})];
         frm.select('div.componentContentWrapper', true).each(function(el, c, idx) {
@@ -414,22 +413,20 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
      * ContextMenu provider
      */
     getMenuActions : function(record, selected) {
+        var actions = [];
         var store = this.pageModelStore;
-        var actions = [
-            new Ext.Action({
+        var type = record.get('type');
+        if(type == HST.CONTAINERITEM) {
+            actions.push(new Ext.Action({
                 text: 'Delete',
                 handler: function() {
-                    Ext.Msg.confirm('Confirm delete', 'Are your sure?', function(btn, text) {
-                        if (btn == 'yes') {
-                            store.remove(record);
-                        }
-                    });
+                    this.removeByRecord(record)
                 },
                 scope: this
-            })
-        ];
+            }));
+        }
         var children = record.get('children');
-        if (record.get('type') == HST.CONTAINER && children.length > 0) {
+        if (type == HST.CONTAINER && children.length > 0) {
             actions.push(new Ext.Action({
                 text: 'Delete items',
                 handler: function() {
@@ -453,15 +450,19 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         return actions;
     },
 
-    remove : function(element) {
+    removeByRecord: function(record) {
         var store = this.pageModelStore;
-        var id = Ext.fly(element).getAttribute('hst:id');
-        Ext.Msg.confirm('Confirm delete', 'Are your sure?', function(btn, text) {
+        Ext.Msg.confirm('Confirm delete', 'Are your sure you want to delete ' + record.get('name') + '?', function(btn, text) {
             if (btn == 'yes') {
-                var index = store.findExact('id', id);
-                store.removeAt(index);
+                store.remove(record);
             }
         });
+    },
+
+    removeByElement : function(element) {
+        var store = this.pageModelStore;
+        var index = store.findExact('id', Ext.fly(element).getAttribute('hst:id'));
+        this.removeByRecord(store.getAt(index))
     },
 
     /**
@@ -478,7 +479,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             } else if (msg.tag == 'receiveditem') {
                 this.handleReceivedItem(msg.data.id, msg.data.element);
             } else if (msg.tag == 'remove') {
-                this.remove(msg.data.element);
+                this.removeByElement(msg.data.element);
             }
         } catch(e) {
             console.error(e);

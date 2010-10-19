@@ -18,6 +18,9 @@ Ext.App = function(config) {
     // array of views
     this.views = [];
 
+    //debug flag
+    this.debug = false;
+
     Ext.apply(this, config);
     if (!this.api.actions) { this.api.actions = {}; }
     this.addEvents({
@@ -72,11 +75,38 @@ Ext.extend(Ext.App, Ext.util.Observable, {
         this.msgCt.setStyle('z-index', 9999);
         this.msgCt.setWidth(300);
 
+        this.initMessageHandling();    
+
         this.init();
 
         Ext.EventManager.on(window, 'beforeunload', this.onUnload, this);
 		this.fireEvent('ready', this);
         this.isReady = true;
+    },
+
+    initMessageHandling : function() {
+        if (this.debug) {
+            Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res, e) {
+                if (!res.success && res.message) {
+                    this.addAlert(false, "Server-side error occurred while executing action=" + action);
+                    console.error('Server side error: ' + res.message);
+                }
+                else {
+                    if (e && typeof console.error == 'function') {
+                        console.error(e);
+                    } else {
+                        console.group("Exception");
+                        console.dir(arguments);
+                        console.groupEnd();
+                    }
+                    this.addAlert(false, "Something bad happened while executing " + action);
+                }
+            }, this);
+
+            Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
+                this.addAlert(true, 'Action: ' + action + '<br/>Message: ' + res.message);
+            }, this);
+        }
     },
 
     //Template method for subclass initialisation

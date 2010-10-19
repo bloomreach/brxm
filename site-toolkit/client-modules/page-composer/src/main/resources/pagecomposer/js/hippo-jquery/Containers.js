@@ -105,13 +105,15 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
             var self = this;
             $(element).hover(
-                            function() {
-                                self.onMouseOver(this);
-                            },
-                            function() {
-                                self.onMouseOut(this);
-                            }
-                    );
+                function() {
+                    self.onMouseOver(this);
+                },
+                function() {
+                    self.onMouseOut(this);
+                    }
+            );
+
+            this.rendered = false;
 
             //TODO: remove again and solve by registering with container
             Hippo.DD.Factory.active[this.id] = this;
@@ -134,9 +136,17 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
         },
 
         render      : function() {
+            if(this.rendered) {
+                console.warn('Component has already been rendered, abort.');
+                return;
+            }
+            this.onRender();
+            this.rendered = true;
         },
 
         destroy     : function() {
+            this.onDestroy();
+            this.rendered = false;
         },
 
         onMouseOver : function(element) {
@@ -144,6 +154,10 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
         onMouseOut  : function(element) {
         },
+
+        onRender  : function() {},
+
+        onDestroy : function() {},
 
         sync: function() {}
 
@@ -230,8 +244,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             this.menuOverlay.removeClass('hst-menu-overlay-hover');
         },
 
-        destroy : function() {
-            this._super();
+        onDestroy : function() {
             this.menuOverlay.remove();
         }
     });
@@ -260,7 +273,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             this.isEmpty = $(this.itemSelector).size() > 0;
         },
 
-        render : function() {
+        onRender : function() {
             this._super();
             var self = this;
 
@@ -294,7 +307,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             this.sync();
         },
 
-        destroy: function() {
+        onDestroy: function() {
             $(this.hostSelector).sortable('destroy');
         },
 
@@ -331,6 +344,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             }
             //remove item wrapper elements
             $(element).parents('.' + this.itemCls).remove();
+            console.log('syncing..')
             this.sync();
         },
 
@@ -356,20 +370,22 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             //if container is empty, make sure it still has a size so items form a different container can be dropped
             if ($(this.itemSelector).size() == 0) {
                 if(!this.isEmpty) {
-                $(this.element).addClass(this.emptyCls);
-                var tmpCls = this.itemCls;
-                this.itemCls = this.emptyItemCls;
-                this.addItem($('<div class="empty-container-placeholder">Empty container</div>')[0]);
-                this.itemCls = tmpCls;
                     this.isEmpty = true;
+
+                    $(this.element).addClass(this.emptyCls);
+                    var tmpCls = this.itemCls;
+                    this.itemCls = this.emptyItemCls;
+                    this.addItem($('<div class="empty-container-placeholder">Empty container</div>')[0]);
+                    this.itemCls = tmpCls;
                 }
             } else {
                 if(this.isEmpty) {
-                $(this.element).removeClass(this.emptyCls);
-                $(this.hostSelector + ' .' + this.emptyItemCls).remove();
                     this.isEmpty = false;
-            }
+
+                    $(this.element).removeClass(this.emptyCls);
+                    $(this.hostSelector + ' .' + this.emptyItemCls).remove();
                 }
+            }
         },
 
 
