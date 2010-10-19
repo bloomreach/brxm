@@ -31,7 +31,7 @@ public class ContainerItemModel extends BaseModel {
 
     @Override
     protected String getTypeValue() {
-        return "containerItem";
+        return "hst:containeritemcomponent";
     }
 
 }

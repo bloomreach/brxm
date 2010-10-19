@@ -33,7 +33,7 @@ public class ContainerModel extends BaseModel{
 
     @Override
     protected String getTypeValue() {
-        return "container";
+        return "hst:containercomponent";
     }
 
     public String[] getChildren() {
