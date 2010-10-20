@@ -139,7 +139,7 @@ public class BinariesCache {
         synchronized (cacheManagerLock) {
             Ehcache cache = cacheManager.getEhcache(name);
             if (cache == null) {
-                log.warn("No EhCache configuration found. Create new memory cache '{}' with {} maxObjects.", name,
+                log.info("No EhCache configuration found. Create new memory cache '{}' with {} maxObjects.", name,
                         maxObjectsInMem);
                 cache = new Cache(name, maxObjectsInMem, false, true, 0, 0);
                 cacheManager.addCache(cache);
