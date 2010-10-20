@@ -92,6 +92,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
 
         siteMount = EasyMock.createNiceMock(SiteMount.class);
         EasyMock.expect(siteMount.getMountPoint()).andReturn(SITE_MOUNT_POINT).anyTimes();
+        EasyMock.expect(siteMount.isSiteMount()).andReturn(true).anyTimes();
         
         resolvedSiteMount = EasyMock.createNiceMock(ResolvedSiteMount.class);
         EasyMock.expect(resolvedSiteMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
