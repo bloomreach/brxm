@@ -104,7 +104,8 @@ public class DummyCarDocsCreator {
             
             long mileage = r.nextInt((int)(randomCar.upperMileage-randomCar.lowerMileage)) + randomCar.lowerMileage;
             doc.setProperty("demosite:mileage", mileage);
-            
+            String[] availability = {"live", "preview"};
+            doc.setProperty("hippo:availability", availability );
             doc.setProperty("hippostd:stateSummary", "live");
             doc.setProperty("hippostd:state", "published");
             doc.setProperty("hippostdpubwf:lastModifiedBy", writableSession.getUserID());
