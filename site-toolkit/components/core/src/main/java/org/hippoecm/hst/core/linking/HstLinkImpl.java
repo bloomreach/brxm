@@ -112,7 +112,6 @@ public class HstLinkImpl implements HstLink{
         String urlString = null;
         
         if (this.containerResource) {
-            // TODO below, we need for cross-domain linking the SiteMount as well
             HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext);
             hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
