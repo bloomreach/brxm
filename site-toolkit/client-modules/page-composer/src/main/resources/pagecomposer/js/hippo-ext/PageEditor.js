@@ -51,15 +51,31 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             title: 'Configuration',
             x:5, y: 10,
             width: 300,
-            height:400,
+            height:350,
             initRegion: 'right',
-            layout: {
-                type:'vbox',
-                align: 'stretch'
-            },
+            layout: 'accordion',
             closable: false,
             constrainHeader: true,
             items: [
+                {
+                    xtype: 'h_base_grid',
+                    flex:2,
+                    title: 'Available container items',
+                    store: this.containerItemsStore,
+                    cm: new Ext.grid.ColumnModel({
+                        columns: [
+                            { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
+                            { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
+                        ],
+                        defaults: {
+                            sortable: true,
+                            menuDisabled: true
+                        }
+                    }),
+                    plugins: [
+                        Hippo.App.DragDropOne
+                    ]
+                },
                 {
                     xtype: 'h_base_grid',
                     flex: 3,
@@ -91,25 +107,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         }
                     }),
                     menuProvider: this
-                },
-                {
-                    xtype: 'h_base_grid',
-                    flex:2,
-                    title: 'Available container items',
-                    store: this.containerItemsStore,
-                    cm: new Ext.grid.ColumnModel({
-                        columns: [
-                            { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
-                            { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
-                        ],
-                        defaults: {
-                            sortable: true,
-                            menuDisabled: true
-                        }
-                    }),
-                    plugins: [
-                        Hippo.App.DragDropOne
-                    ]
                 }
             ]
         });
@@ -119,7 +116,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         var window2 = new Hippo.ux.window.FloatingWindow({
             id: 'propertiesWindow',
             title: 'Properties',
-            x:5, y: 410,
+            x:5, y: 370,
             width: 300,
             height: 250,
             layout: {
