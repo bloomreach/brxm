@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.ContainerNotFoundException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.jaxrs.JAXRSService;
@@ -130,14 +131,14 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
         	Session jcrSession = requestContext.getSession();
         	node = getContentNode(jcrSession, requestContentPath);
         	if (node == null) {
-                throw new ContainerException("Cannot find content node at '"+requestContentPath+"'",new WebApplicationException(Response.Status.NOT_FOUND));
+                throw new ContainerNotFoundException("Cannot find content node at '"+requestContentPath+"'",new WebApplicationException(Response.Status.NOT_FOUND));
         	}
         	resourceType = getObjectConverter(requestContext).getPrimaryObjectType(node);
             if (resourceType == null) {
                 throw new ContainerException("Cannot find the resourceType for node '"+node.getPath()+"' with primary type '"+node.getPrimaryNodeType().getName()+"'",new WebApplicationException(Response.Status.NOT_FOUND));
             }
         } catch (PathNotFoundException pnf) {
-            throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
+            throw new ContainerNotFoundException(new WebApplicationException(Response.Status.NOT_FOUND));
         } catch (LoginException e) {
             throw new ContainerException(e);
 		} catch (RepositoryException e) {

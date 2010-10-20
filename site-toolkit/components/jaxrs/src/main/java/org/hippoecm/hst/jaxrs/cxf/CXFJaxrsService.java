@@ -81,11 +81,11 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 		
 		try {
 			ServletController controller = getController(requestContext.getServletContext());
-			controller.invoke(getJaxrsRequest(requestContext, request), response);
+			HttpServletRequest jaxrsRequest = getJaxrsRequest(requestContext, request); 
+			controller.invoke(jaxrsRequest, response);
 		} catch (ServletException e) {
 			throw new ContainerException(e);
-		}
-		finally {
+		} finally {
 			BusFactory.setThreadDefaultBus(null);
 		}
 	}
