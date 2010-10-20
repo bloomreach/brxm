@@ -47,20 +47,9 @@ Ext.namespace('Hippo.App.PageModel');
 
     Hippo.App.PageModel.Component = function(cfg) {
         Ext.apply(this, cfg);
-
-//        if (this.parent != null) {
-//            this.parent.registerChild(this);
-//        }
     };
 
     Hippo.App.PageModel.Component.prototype = {
-//        registerChild : function(child) {
-//            this.children.push(child);
-//        },
-//
-//        unregisterChild: function(child) {
-//            this.children.remove(child);
-//        }
     };
 
     Hippo.App.PageModel.Container = Ext.extend(Hippo.App.PageModel.Component, {
@@ -101,7 +90,14 @@ Ext.namespace('Hippo.App.PageModel');
                     element.setAttribute('hst:id', record.id);
                     element.setAttribute('hst:name', record.name);
                     element.setAttribute('hst:type', record.type);
-                    element.innerHTML = record.innerHTML || 'Temporary output for element ' + element.id;
+                    if(record.innerHTML) {
+                        element.innerHTML = record.innerHTML;
+                    } else {
+                        var link = document.createElement('a');
+                        link.setAttribute('href', '');
+                        link.innerHTML = 'Click here to refresh';
+                        element.appendChild(link);
+                    }
                     element.className = 'componentContentWrapper';
                 }
                 return element;
