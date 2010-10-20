@@ -182,7 +182,8 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             });
 
             var deleteButton = $('<div/>').addClass('hst-menu-overlay-button').html('X');
-            deleteButton.click(function() {
+            deleteButton.click(function(e) {
+                e.stopPropagation();
                 sendMessage({element: element}, 'remove');
             });
 
@@ -316,6 +317,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             var xx = Hippo.DD.Factory.create(element);
             this.addItem(element);
             this.render();
+            Hippo.DD.Factory.sync();
         },
 
         eachItem : function(f) {
@@ -344,8 +346,7 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
             }
             //remove item wrapper elements
             $(element).parents('.' + this.itemCls).remove();
-            console.log('syncing..')
-            this.sync();
+            Hippo.DD.Factory.sync();
         },
 
         sync : function() {

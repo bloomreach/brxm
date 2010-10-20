@@ -176,9 +176,8 @@ public class PageModelService extends BaseHstContentService {
             Node containerNode = session.getNodeByUUID(id);
 
             String[] children = model.getChildren();
-            //first check if a move is needed
             for (String childId : children) {
-                checkIfMoveNeeded(containerNode, childId, session);
+                checkIfMoveIntended(containerNode, childId, session);
             }
 
             int index = children.length - 1;
@@ -197,7 +196,7 @@ public class PageModelService extends BaseHstContentService {
                 --index;
             }
             session.save();
-            return ok("Container item order updated.", model);
+            return ok("Item order for container[" + model.getId() + "] has been updated.", model);
 
         } catch (RepositoryException e) {
             return error(e.getMessage(), model);
@@ -210,6 +209,7 @@ public class PageModelService extends BaseHstContentService {
 
     private Response ok(String msg, Object data) {
         ExtResult result = new ExtResult(data);
+        result.setMessage(msg);
         result.setSuccess(true);
         return Response.ok().entity(result).build();
     }
@@ -221,7 +221,7 @@ public class PageModelService extends BaseHstContentService {
         return Response.serverError().entity(result).build();
     }
 
-    private void checkIfMoveNeeded(Node parent, String childId, Session session) throws RepositoryException {
+    private void checkIfMoveIntended(Node parent, String childId, Session session) throws RepositoryException {
         String parentPath = parent.getPath();
         Node childNode = session.getNodeByUUID(childId);
         String childPath = childNode.getPath();
