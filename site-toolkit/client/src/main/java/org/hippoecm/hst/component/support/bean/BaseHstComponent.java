@@ -210,7 +210,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return the jcr path relative to the root (not starting with / thus)
      */
     public String getSiteContentBasePath(HstRequest request){
-        return PathUtils.normalizePath(getHstSite(request).getContentPath());
+        return PathUtils.normalizePath(request.getRequestContext().getResolvedSiteMount().getSiteMount().getContentPath());
     }
     
     public boolean isPreview(HstRequest request) {

@@ -476,27 +476,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                     
                     nodePath = node.getPath();
-                    
-                    /*
-                     *  first of all, we test whether the current <code>mount</code> is not a sitemount : if it is not 
-                     *  a site mount, it does not have a value for getCanonicalContentPath or getContentPath: in that case, 
-                     *  we test whether the mountpoint starts with the current 
-                     */
-                    
-                    if(!siteMount.isSiteMount()) {
-                        // we do not have contentPath but only mountpoint
-                        if(nodePath.startsWith(siteMount.getMountPoint())) {
-                            nodePath = nodePath.substring(siteMount.getMountPoint().length());
-                            // never a container resource because resolved through a mount point: this can even be the case
-                            // for binary files. Typically, when needing a REST call to a binary
-                            return new HstLinkImpl(nodePath, siteMount, false);
-                        } else {
-                            log.warn("We cannot create a link for nodePath '{}' and Mount '{}'. Return page not found link. ", nodePath, siteMount.getAlias());
-                            return pageNotFoundLink(siteMount);
-                        }
-                    }
-                    
-                    
+                  
                     if(isBinaryLocation(nodePath)) {
                         log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
@@ -539,8 +519,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                              */
                             List<SiteMount> possibleSuitedMounts = new ArrayList<SiteMount>();
                             
+                            // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
+                            // cross-domain linkrewrite to mounts that are not a site mount?
                             for(SiteMount mount : siteMountsForHostGroup) {
-                               if(mount.getCanonicalContentPath() == null) {
+                               if(!mount.isSiteMount()) {
                                    // not a sitemount for a HstSite
                                    continue;
                                }
@@ -586,7 +568,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         }
                         
                         ResolvedLocationMapTreeItem resolvedLocation = null;
-                        if( preferredItem != null) {
+                        if(preferredItem != null) {
                             LocationMapResolver subResolver = getSubLocationMapResolver(preferredItem);
                             subResolver.setRepresentsDocument(representsDocument);
                             subResolver.setResolvedSiteMapItem(resolvedSiteMapItem);
@@ -598,7 +580,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                                 return pageNotFoundLink(siteMount);
                             }
                         }
-                        if(siteMount.getHstSite() != null) {
+                        if(siteMount.isSiteMount() && siteMount.getHstSite() != null) {
                             if(resolvedLocation == null) {
                                 LocationMapResolver resolver = new LocationMapResolver(siteMount.getHstSite().getLocationMapTree());
                                 resolver.setRepresentsDocument(representsDocument);

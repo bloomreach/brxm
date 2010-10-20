@@ -172,12 +172,11 @@ public class BeanUtils {
      * @return the <code>HippoFacetNavigationBean</code> accounted for this <code>query</code> and <code>null</code> if we could not find the HippoFacetNavigationBean when the <code>query</code> is applied
      * @throws HstComponentException
      */
-    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, String relPath, String query, ObjectConverter objectConverter) throws HstComponentException {
-        ResolvedSiteMapItem resolvedSiteMapItem = hstRequest.getRequestContext().getResolvedSiteMapItem();
-        String base = PathUtils.normalizePath(resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
+    public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, String relPath, String query, ObjectConverter objectConverter) throws HstComponentException {        
+        String base = PathUtils.normalizePath(hstRequest.getRequestContext().getResolvedSiteMount().getSiteMount().getContentPath());
         
         if(relPath == null) {
-            log.warn("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
+            log.warn("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getId());
             return null;
         }
         
@@ -378,11 +377,10 @@ public class BeanUtils {
     public static <T extends  HippoBean> T getFacetedNavigationResultDocument(HstRequest hstRequest, String query, String relPath,
             ObjectConverter objectConverter, Class<T> beanMappingClass)  {
         
-        ResolvedSiteMapItem resolvedSiteMapItem = hstRequest.getRequestContext().getResolvedSiteMapItem();
-        String base = PathUtils.normalizePath(resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
+        String base = PathUtils.normalizePath(hstRequest.getRequestContext().getResolvedSiteMount().getSiteMount().getContentPath());
         
         if(relPath == null) {
-            log.warn("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
+            log.warn("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getId());
             return null;
         }
         

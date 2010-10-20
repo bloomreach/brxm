@@ -46,8 +46,9 @@ import org.springframework.mock.web.MockServletContext;
  * @version $Id$
  **/
 public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTestCase {
-    
-    private static final String SITE_MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
+
+    private static final String MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
+    private static final String MOUNT_CONTENTPATH = "/hst:hst/hst:sites/testproject-preview/hst:content";
     
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
@@ -55,7 +56,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     protected MockServletContext servletContext;
     protected HstContainerConfig hstContainerConfig;
     protected ResolvedVirtualHost resolvedVirtualHost;
-    protected SiteMount siteMount;
+    protected SiteMount mount;
     protected ResolvedSiteMount resolvedSiteMount;
     protected HstMutableRequestContext requestContext;
     protected HstURLFactory urlFactory;
@@ -90,17 +91,18 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn("localhost").anyTimes();
         EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(8085).anyTimes();
 
-        siteMount = EasyMock.createNiceMock(SiteMount.class);
-        EasyMock.expect(siteMount.getMountPoint()).andReturn(SITE_MOUNT_POINT).anyTimes();
-        EasyMock.expect(siteMount.isSiteMount()).andReturn(true).anyTimes();
+        mount = EasyMock.createNiceMock(SiteMount.class);
+        EasyMock.expect(mount.getMountPoint()).andReturn(MOUNT_POINT).anyTimes();
+        EasyMock.expect(mount.getContentPath()).andReturn(MOUNT_CONTENTPATH).anyTimes();
+        EasyMock.expect(mount.isSiteMount()).andReturn(true).anyTimes();
         
         resolvedSiteMount = EasyMock.createNiceMock(ResolvedSiteMount.class);
         EasyMock.expect(resolvedSiteMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
-        EasyMock.expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount).anyTimes();
+        EasyMock.expect(resolvedSiteMount.getSiteMount()).andReturn(mount).anyTimes();
         EasyMock.expect(resolvedSiteMount.getResolvedMountPath()).andReturn("/preview/services").anyTimes();
         
         EasyMock.replay(resolvedVirtualHost);
-        EasyMock.replay(siteMount);
+        EasyMock.replay(mount);
         EasyMock.replay(resolvedSiteMount);
         
         requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);

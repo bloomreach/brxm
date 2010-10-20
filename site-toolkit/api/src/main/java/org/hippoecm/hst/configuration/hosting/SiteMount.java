@@ -138,8 +138,9 @@ public interface SiteMount {
     
     /**
      * <p>
-     * Returns the mount point for this SiteMount object. The mount point is the absolute jcr path to the root site node, for example 
-     * something like '/hst:hst/hst:sites/mysite-live'
+     * Returns the mount point for this SiteMount object. The mount point can be the absolute jcr path to the root site node, for example 
+     * something like '/hst:hst/hst:sites/mysite-live', but it can also be some jcr path to some virtual or canonical node in the repository. For example
+     * it can be '/content/gallery' , which might be the case for a Mount suited for REST gallery calls. 
      * </p>
      * 
      * @see ResolvedSiteMount#getResolvedMountPath()
@@ -150,17 +151,25 @@ public interface SiteMount {
     /**
      * <p>
      * Returns the content path for this SiteMount object. The content path is the absolute jcr path to the root site node content, for example 
-     * something like '/hst:hst/hst:sites/mysite-live/hst:content'
+     * something like '/hst:hst/hst:sites/mysite-live/hst:content'. The {@link #getContentPath()} can be the same as {@link #getMountPoint()}, but
+     * this is in general only for {@link SiteMount}'s that have {@link #isSiteMount()} returning false. When the {@link SiteMount} does have
+     * {@link #isSiteMount()} equal to true, the {@link #getContentPath()} can return a different path than {@link #getMountPoint()}. In general, it will be
+     * then {@link #getMountPoint()} + "/hst:content". 
      * </p>
      * 
-     * @return the content path for this <code>SiteMount</code> and <code>null</code> if it doesn't have one
+     * @return the content path for this <code>SiteMount</code>. It cannot be <code>null</code>
      */
     String getContentPath();
     
     /**
-     * Returns the absolute canonical content path for the content of this <code>SiteMount</code>. 
+     * Returns the absolute canonical content path for the content of this {@link SiteMount}. Note that it can return the same
+     * value as {@link #getContentPath()}, but this is in general not the case: When the {@link #getContentPath()} points
+     * to a virtual node, this method returns the location of the canonical version. When the {@link #getContentPath()} points to 
+     * a node which behaves like a <b>mirror</b>, then this method returns the location where the mirror points to. If 
+     * {@link #getContentPath()} does not point to a virtual node, nor to a mirror, this method returns the same value. 
      * 
-     * @return The absolute absolute content path for this <code>SiteMount</code> and <code>null</code> if it doesn't have one
+     * @return The absolute absolute content path for this <code>SiteMount</code>. It can be <code>null</code> in case {@link #getContentPath()} points to a virtual node
+     * that does not have a canonical version.
      */
     String getCanonicalContentPath();
     

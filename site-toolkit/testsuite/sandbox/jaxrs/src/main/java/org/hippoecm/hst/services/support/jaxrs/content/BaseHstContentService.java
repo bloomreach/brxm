@@ -197,7 +197,7 @@ public class BaseHstContentService {
     protected String getSiteContentPath(HttpServletRequest servletRequest) {
     	HstRequestContext requestContext = getHstRequestContext(servletRequest);
         ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
-        return resolvedSiteMount.getSiteMount().getMountPoint() + "/" + HstNodeTypes.NODENAME_HST_CONTENTNODE;
+        return resolvedSiteMount.getSiteMount().getContentPath();
     }
     
     protected String getRelativeItemContentPath(HttpServletRequest servletRequest, final ItemContent itemContent) {

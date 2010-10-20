@@ -121,7 +121,7 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 		    contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
 		}
 		
-		String requestContentPath = getMountPointContentPath(requestContext) + "/" + (contentPathInfo != null ? contentPathInfo : "");
+		String requestContentPath = getMountContentPath(requestContext) + "/" + (contentPathInfo != null ? contentPathInfo : "");
 		
 		Node node = null;
 		String resourceType = "";

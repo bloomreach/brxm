@@ -83,16 +83,9 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), getJaxrsPathInfo(requestContext, request));
     }
     
-    protected String getMountPointContentPath(HstRequestContext requestContext) {
+    protected String getMountContentPath(HstRequestContext requestContext) {
 	    SiteMount mount = requestContext.getResolvedSiteMount().getSiteMount();
-	    String mountPoint = mount.getMountPoint();
-	    if(mount.isSiteMount()) {
-	       // when this mount is a sitemuont, we need to append 'hst:content' for the contentpath
-            return mountPoint + "/" + HstNodeTypes.NODENAME_HST_CONTENTNODE;
-		} 
-	    // the mount is *not* a sitemuont, hence we can directly return the mountPoint
-		return mountPoint; 
-    	
+		return mount.getContentPath(); 
     }
     
     protected Node getContentNode(Session session, String path) throws RepositoryException {

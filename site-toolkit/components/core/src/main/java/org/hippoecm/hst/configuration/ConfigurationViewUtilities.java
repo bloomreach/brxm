@@ -38,7 +38,7 @@ public class ConfigurationViewUtilities {
         }
         buf.append("\n").append(indent).append("+Site: ").append(site.getName()).append(" (").append(site.hashCode()).append(")");
         indent = indent + SMALL_INDENT;
-        buf.append("\n").append(indent).append("-Content Path: ").append(site.getContentPath());
+        buf.append("\n").append(indent).append("-Content Path: ").append(site.getSiteMount().getContentPath());
        
         view(buf, indent+SMALL_INDENT, site.getSiteMap()) ;
         

@@ -360,6 +360,11 @@ public class SiteMountService implements SiteMount {
             throw new ServiceException("SiteMount at '"+siteMount.getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
         } else if(!isSiteMount()){
             log.info("SiteMount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), siteMount.getValueProvider().getPath());
+            // for non site mounts, the contentPath is just the mountpoint
+            this.contentPath = mountPoint;
+            // TODO HSTTWO- : the canonicalContentPath should be the canonical version of the contentPath in case it points to a virtual node.
+            // this should be done when the HstConfigModel is in place
+            this.canonicalContentPath = contentPath;
         } else {
              
             HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
