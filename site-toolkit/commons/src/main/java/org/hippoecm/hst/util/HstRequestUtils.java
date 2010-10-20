@@ -148,6 +148,9 @@ public class HstRequestUtils {
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
         
         if(stripMountPath) {
+            if(resSiteMount == null) {
+                throw new IllegalArgumentException("Cannot strip the mountPath when the resolved Mount is null");
+            }
             encodePathInfo = encodePathInfo.substring(resSiteMount.getResolvedMountPath().length());
         }
         
