@@ -305,7 +305,12 @@ $.namespace('Hippo.DD', 'Hippo.DD.Container', 'Hippo.DD.ContainerItem');
 
             }).disableSelection();
 
-            this.sync();
+            this.eachItem(function() {
+                $(this).click(function() {
+                   sendMessage({element: this}, 'onclick'); 
+                });
+            });
+            
         },
 
         onDestroy: function() {
