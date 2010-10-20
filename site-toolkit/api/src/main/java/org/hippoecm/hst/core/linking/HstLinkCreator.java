@@ -259,7 +259,10 @@ public interface HstLinkCreator {
 
     /**
      * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>siteMountAlias</code>. First, the {@link SiteMount} belonging to the 
-     * <code>siteMountAlias</code> is searched for. Note that the found {@link SiteMount} <b>must</b> 
+     * <code>siteMountAlias</code> is searched for. When the {@link SiteMount} belonging to the alias cannot rewrite the <code>node</code>, 
+     * there is no fallback to whether other {@link SiteMount}'s can rewrite the <code>node</code> to a {@link HstLink}
+     * 
+     * Note that the found {@link SiteMount} <b>must</b> 
      * 
      * <ol>
      *    <li>have {@link SiteMount#getAlias()} equal to <code>siteMountAlias</code></li>
@@ -280,12 +283,14 @@ public interface HstLinkCreator {
     HstLink create(Node node, HstRequestContext requestContext, String siteMountAlias);
     
     /**
-     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>siteMountAlias</code> and for <code>type</code>. 
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>siteMountAlias</code> and for <code>type</code>. When the {@link SiteMount} 
+     * belonging to the alias cannot rewrite the <code>node</code>, there is no fallback to whether other {@link SiteMount}'s can rewrite the <code>node</code> to a {@link HstLink}
      * 
      * Note that the found {@link SiteMount} <b>must</b> 
      * 
      * <ol>
      *    <li>have {@link SiteMount#getAlias()} equal to <code>siteMountAlias</code></li>
+     *    <li>contain <code>type</code> in its {@link SiteMount#getTypes()}
      *    <li>have the same {@link VirtualHost#getHostGroupName()} as the {@link SiteMount} belonging to the current <code>requestContext</code>. 
      *    </li>
      * </ol>
@@ -295,7 +300,7 @@ public interface HstLinkCreator {
      * </p>
      * <p>
      * The difference with {@link #create(Node, HstRequestContext, String))} is that this method does not look for a SiteMount with a common <code>type</code> as for the SiteMount from the current request. It does
-     * look for a SiteMount with <code>type</code> in the argument
+     * look for a SiteMount which at least has <code>type</code> as its {@link SiteMount#getTypes()} 
      * </p>
      * @param node the jcr node
      * @param requestContext the current request context
