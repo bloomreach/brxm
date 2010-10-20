@@ -236,7 +236,8 @@ public class HstFilter implements Filter {
             
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
-    		if(vHosts == null || vHosts.isExcluded(HstRequestUtils.getRequestPath(containerRequest))) {
+    		// when getPathSuffix() is not null, we have a REST url and never skip hst request processing
+    		if(vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(HstRequestUtils.getRequestPath(containerRequest)))) {
     			chain.doFilter(request, response);
     			return;
     		}
