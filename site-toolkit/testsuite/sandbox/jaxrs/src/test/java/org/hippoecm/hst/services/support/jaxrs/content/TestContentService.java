@@ -59,8 +59,10 @@ import org.w3c.dom.Element;
  * @version $Id$
  */
 public class TestContentService extends AbstractJaxrsSpringTestCase {
-    
-    private static final String SITE_MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
+
+    private static final String MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
+    private static final String MOUNT_CONTENTPATH = "/hst:hst/hst:sites/testproject-preview/hst:content";
+    private static final String MOUNT_CANONICAL_CONTENTPATH = "/documents/testproject";
     
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
@@ -98,7 +100,10 @@ public class TestContentService extends AbstractJaxrsSpringTestCase {
         EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(8085).anyTimes();
 
         siteMount = EasyMock.createNiceMock(SiteMount.class);
-        EasyMock.expect(siteMount.getMountPoint()).andReturn(SITE_MOUNT_POINT).anyTimes();
+        EasyMock.expect(siteMount.getMountPoint()).andReturn(MOUNT_POINT).anyTimes();
+        EasyMock.expect(siteMount.getContentPath()).andReturn(MOUNT_CONTENTPATH).anyTimes();
+        EasyMock.expect(siteMount.getCanonicalContentPath()).andReturn(MOUNT_CANONICAL_CONTENTPATH).anyTimes();
+        EasyMock.expect(siteMount.isSiteMount()).andReturn(true).anyTimes();
         
         resolvedSiteMount = EasyMock.createNiceMock(ResolvedSiteMount.class);
         EasyMock.expect(resolvedSiteMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
