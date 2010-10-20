@@ -130,11 +130,11 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
         	Session jcrSession = requestContext.getSession();
         	node = getContentNode(jcrSession, requestContentPath);
         	if (node == null) {
-                throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
+                throw new ContainerException("Cannot find content node at '"+requestContentPath+"'",new WebApplicationException(Response.Status.NOT_FOUND));
         	}
         	resourceType = getObjectConverter(requestContext).getPrimaryObjectType(node);
             if (resourceType == null) {
-                throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
+                throw new ContainerException("Cannot find the resourceType for node '"+node.getPath()+"' with primary type '"+node.getPrimaryNodeType().getName()+"'",new WebApplicationException(Response.Status.NOT_FOUND));
             }
         } catch (PathNotFoundException pnf) {
             throw new ContainerException(new WebApplicationException(Response.Status.NOT_FOUND));
