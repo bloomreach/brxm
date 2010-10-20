@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -83,14 +84,15 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     }
     
     protected String getMountPointContentPath(HstRequestContext requestContext) {
-    	String mountPoint;
-    	if (requestContext.getResolvedSiteMapItem() != null ) {
-    		mountPoint = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getSiteMount().getMountPoint();
-    	}
-    	else {
-    		mountPoint = requestContext.getResolvedSiteMount().getSiteMount().getMountPoint();
-    	}
-    	return mountPoint + "/" + HstNodeTypes.NODENAME_HST_CONTENTNODE;
+	    SiteMount mount = requestContext.getResolvedSiteMount().getSiteMount();
+	    String mountPoint = mount.getMountPoint();
+	    if(mount.isSiteMount()) {
+	       // when this mount is a sitemuont, we need to append 'hst:content' for the contentpath
+            return mountPoint + "/" + HstNodeTypes.NODENAME_HST_CONTENTNODE;
+		} 
+	    // the mount is *not* a sitemuont, hence we can directly return the mountPoint
+		return mountPoint; 
+    	
     }
     
     protected Node getContentNode(Session session, String path) throws RepositoryException {
