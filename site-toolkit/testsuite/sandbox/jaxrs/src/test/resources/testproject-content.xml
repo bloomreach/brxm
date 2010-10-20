@@ -149,6 +149,10 @@
                         <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                             <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
                         </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String">
+                          <sv:value>live</sv:value>
+                          <sv:value>preview</sv:value>
+                        </sv:property>
                         <sv:node sv:name="testproject:body">
                             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                 <sv:value>hippostd:html</sv:value>
@@ -229,6 +233,10 @@
                         </sv:property>
                         <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                             <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String">
+                          <sv:value>live</sv:value>
+                          <sv:value>preview</sv:value>
                         </sv:property>
                         <sv:node sv:name="testproject:body">
                             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -359,6 +367,10 @@
                         </sv:property>
                         <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                             <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String">
+                          <sv:value>live</sv:value>
+                          <sv:value>preview</sv:value>
                         </sv:property>
                         <sv:node sv:name="testproject:body">
                             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -491,6 +503,10 @@
                                     <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                                         <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
                                     </sv:property>
+                                    <sv:property sv:name="hippo:availability" sv:type="String">
+                                      <sv:value>live</sv:value>
+                                      <sv:value>preview</sv:value>
+                                    </sv:property>
                                     <sv:node sv:name="testproject:body">
                                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                             <sv:value>hippostd:html</sv:value>
@@ -546,6 +562,10 @@
                                 <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                                     <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
                                 </sv:property>
+                                <sv:property sv:name="hippo:availability" sv:type="String">
+                                  <sv:value>live</sv:value>
+                                  <sv:value>preview</sv:value>
+                                </sv:property>
                                 <sv:node sv:name="testproject:body">
                                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                         <sv:value>hippostd:html</sv:value>
@@ -599,6 +619,10 @@
                                 </sv:property>
                                 <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                                     <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippo:availability" sv:type="String">
+                                  <sv:value>live</sv:value>
+                                  <sv:value>preview</sv:value>
                                 </sv:property>
                                 <sv:node sv:name="testproject:body">
                                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -681,6 +705,10 @@
                         <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                             <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
                         </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String">
+                          <sv:value>live</sv:value>
+                          <sv:value>preview</sv:value>
+                        </sv:property>
                         <sv:node sv:name="testproject:body">
                             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                 <sv:value>hippostd:html</sv:value>
@@ -735,6 +763,10 @@
                         <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                             <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
                         </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String">
+                          <sv:value>live</sv:value>
+                          <sv:value>preview</sv:value>
+                        </sv:property>
                         <sv:node sv:name="testproject:body">
                             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                 <sv:value>hippostd:html</sv:value>
@@ -788,6 +820,10 @@
                         </sv:property>
                         <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
                             <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String">
+                          <sv:value>live</sv:value>
+                          <sv:value>preview</sv:value>
                         </sv:property>
                         <sv:node sv:name="testproject:body">
                             <sv:property sv:name="jcr:primaryType" sv:type="Name">
