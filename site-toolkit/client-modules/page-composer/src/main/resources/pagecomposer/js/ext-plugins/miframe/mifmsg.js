@@ -1,12 +1,12 @@
 /* global Ext */
-/* Messaging Driver for ux.ManagedIFrame 
+/* Messaging Driver for ux.ManagedIFrame
  *******************************************************************************
  * This file is distributed on an AS IS BASIS WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * ***********************************************************************************
  * @version 2.1.2
  *
- * License: ux.ManagedIFrame, ux.ManagedIFramePanel, ux.ManagedIFrameWindow  
+ * License: ux.ManagedIFrame, ux.ManagedIFramePanel, ux.ManagedIFrameWindow
  * are licensed under the terms of the Open Source GPL 3.0 license:
  * http://www.gnu.org/licenses/gpl.html
  *
@@ -15,11 +15,11 @@
  *
  * Donations are welcomed: http://donate.theactivegroup.com
  *
- */ 
+ */
 
- 
+
 (function(){
-      
+
      /**
      * @private, frame messaging interface (for same-domain-policy frames
      *           only)
@@ -40,6 +40,7 @@
 	        }
 	        return o;
 	    };
+
         window.sendMessage = function(message, tag, domain) {
             var MIF;
             if (MIF = arguments.callee.manager) {
@@ -116,41 +117,41 @@
             }
         };
 
-    }; 
-   
+    };
+
     var MIFEl = Ext.ux.ManagedIFrame.Element;
-    
+
     Ext.override( MIFEl ,{
-        
+
         disableMessaging :  true,
-        
+
         _renderHook : MIFEl.prototype._renderHook.createSequence(function(){
-            
+
             if(this.disableMessaging){return;}
-            
+
             //assert a default 'message' event
             var O=this._observable;
             O && (O.events.message || (O.addEvents('message')));
-            
+
             if (this.domWritable()) {
                 this.loadFunction({
                             name : 'XMessage',
                             fn : _XFrameMessaging
                         }, false, true);
-                        
+
                 var sm, w = this.getWindow();
                 w && (sm = w.sendMessage) && (sm.manager = this);
-                
+
             }
-            
+
         }),
-        
+
         /**
          * dispatch a message to the embedded frame-window context (same-origin frames only)
          * @name sendMessage
          * @memberOf Ext.ux.ManagedIFrame.Element
-         * @param {Mixed} message The message payload.  The payload can be any supported JS type. 
-         * @param {String} tag Optional reference tag 
+         * @param {Mixed} message The message payload.  The payload can be any supported JS type.
+         * @param {String} tag Optional reference tag
          * @param {String} origin Optional domain designation of the sender (defaults
          * to document.domain).
          */
@@ -176,14 +177,14 @@
             }
             return;
         },
-        
+
         /**
          * Dispatch a cross-document message (per HTML5 specification) if the browser supports it natively.
          * @name postMessage
          * @memberOf Ext.ux.ManagedIFrame.Element
          * @param {String} message Required message payload (String only)
          * @param {String} origin Optional domain designation of the sender (defaults
-         * to document.domain). 
+         * to document.domain).
          * <p>Notes:  on IE8, this action is synchronous.
          */
         postMessage : function(message, origin, target ){
@@ -194,18 +195,18 @@
 	            w.postMessage && w.postMessage(message, origin);
             }
         }
-        
+
     });
     var MIF = Ext.ux.ManagedIFrame;
-    Ext.each(['Component', 'Panel', 'Window'], 
+    Ext.each(['Component', 'Panel', 'Window'],
 	      function(K){
            MIF[K] && Ext.override(MIF[K] ,{
-        	   
+
         	   disableMessaging : true,
                 /**
                  * @memberOf Ext.ux.ManagedIFrame.ComponentAdapter
-                 * @param {Mixed} message The message payload.  The payload can be any supported JS type. 
-                 * @param {String} tag Optional reference tag 
+                 * @param {Mixed} message The message payload.  The payload can be any supported JS type.
+                 * @param {String} tag Optional reference tag
                  * @param {String} origin Optional domain designation of the sender (defaults
                  * to document.domain).
                  */
@@ -214,16 +215,16 @@
                }
 	       });
     });
-    
+
     var MM = MIF.Manager;
     MM && Ext.apply(MM,{
-    
+
         /**
          * @private
          * @memberOf Ext.ux.ManagedIFrame.ComponentAdapter
          */
         onMessage : function(e){
-            
+
             var be = e.browserEvent;
             //Copy the relevant message members to the Ext.event
             try {
@@ -240,23 +241,23 @@
                         mif && mif._observable.fireEvent('message', mif, e);
                     }
                 }
-            } catch (rhEx) {} 
+            } catch (rhEx) {}
         },
         /**
          * @private
          */
         destroy : MM.destroy.createSequence(function(){
              (window.postMessage || document.postMessage) &&
-                Ext.EventManager.un(window, 'message', this.onMessage, this);  
+                Ext.EventManager.un(window, 'message', this.onMessage, this);
         })
-        
+
     });
-    
+
      //Add support for postMessage message events if the browser supports it
     MM && (window.postMessage || document.postMessage) &&
-        Ext.EventManager.on(window, 'message', MM.onMessage, MM);       
-      
-})();   
+        Ext.EventManager.on(window, 'message', MM.onMessage, MM);
+
+})();
 
   /** @sourceURL=<mifmsg.js> */
 Ext.provide && Ext.provide('mifmsg');

@@ -4,8 +4,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     loadMessage: 'Initializing application',
 
-    iframeDOMReadyState : 0,
-
     init : function() {
         if (this.debug) {
             Ext.Ajax.timeout = 90000; // this changes the 30 second default to 90 seconds
@@ -35,10 +33,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             scope:this
                         },
                         'documentloaded' : {
-                            fn: this.iframeDOMReady,
-                            scope: this
-                        },
-                        'domready' : {
                             fn: this.iframeDOMReady,
                             scope: this
                         },
@@ -179,16 +173,10 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
      * @param frm
      */
     iframeDOMReady : function(frm) {
-        this.iframeDOMReadyState++;
+        //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
+        frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', false);
 
-        if(this.iframeDOMReadyState == 2) {
-
-            //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
-            frm.execScript('Hippo.DD.Main.init(' + this.debug + ')', false);
-
-            this.loadComponentsFromIframe(frm);
-            this.iframeDOMReadyState = 0;
-        }
+        this.loadComponentsFromIframe(frm);
     },
 
     loadComponentsFromIframe : function(frm) {
