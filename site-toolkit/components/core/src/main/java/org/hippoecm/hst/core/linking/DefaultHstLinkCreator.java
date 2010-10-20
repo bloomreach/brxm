@@ -144,6 +144,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return linkResolver.resolve();
     }
     
+    
+    private HstLink create(Node node, SiteMount siteMount, boolean tryOtherSiteMounts) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, siteMount);
+        linkResolver.tryOtherSiteMounts = tryOtherSiteMounts;
+        return linkResolver.resolve();
+    }
+    
     public HstLink create(Node node, HstRequestContext requestContext,  String siteMountAlias) {
         SiteMount currentSiteMount = requestContext.getResolvedSiteMount().getSiteMount();
         SiteMount targetSiteMount = null; 
@@ -162,12 +169,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 types.append(type);
             }
             String[] messages = {siteMountAlias , currentSiteMount.getVirtualHost().getHostGroupName(), types.toString()};
-            log.warn("Cannot create a link for siteMountAlias '{}' as it cannot be found in the host group '{}' and one of the the types '{}'", messages);
+            log.warn("Cannot create a link for siteMountAlias '{}' as it cannot be found in the host group '{}' and one of the types '{}'", messages);
             return null;
         }
         
         log.debug("Target SiteMount found for siteMountAlias '{}'. Create link for target site mount", siteMountAlias);
-        return create(node, targetSiteMount);
+        return create(node, targetSiteMount, false);
     }
 
 
@@ -179,7 +186,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return null;
         }
         log.debug("Target SiteMount found for siteMountAlias '{}'. Create link for target site mount", siteMountAlias);
-        return create(node, targetSiteMount);
+        return create(node, targetSiteMount, false);
     }
     public HstLink create(String path, SiteMount siteMount) {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount));
@@ -353,6 +360,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         
         HstSiteMapItem preferredItem;
         boolean virtual;
+        /*
+         * when allowOtherSiteMounts = true, we try other mounts if the mount from this HstLinkResolver cannot resolve the nodePath
+         */
+        boolean tryOtherSiteMounts = true;
         boolean canonicalLink;
         boolean representsDocument;
         boolean fallback;
@@ -465,7 +476,27 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                     
                     nodePath = node.getPath();
-                  
+                    
+                    /*
+                     *  first of all, we test whether the current <code>mount</code> is not a sitemount : if it is not 
+                     *  a site mount, it does not have a value for getCanonicalContentPath or getContentPath: in that case, 
+                     *  we test whether the mountpoint starts with the current 
+                     */
+                    
+                    if(!siteMount.isSiteMount()) {
+                        // we do not have contentPath but only mountpoint
+                        if(nodePath.startsWith(siteMount.getMountPoint())) {
+                            nodePath = nodePath.substring(siteMount.getMountPoint().length());
+                            // never a container resource because resolved through a mount point: this can even be the case
+                            // for binary files. Typically, when needing a REST call to a binary
+                            return new HstLinkImpl(nodePath, siteMount, false);
+                        } else {
+                            log.warn("We cannot create a link for nodePath '{}' and Mount '{}'. Return page not found link. ", nodePath, siteMount.getAlias());
+                            return pageNotFoundLink(siteMount);
+                        }
+                    }
+                    
+                    
                     if(isBinaryLocation(nodePath)) {
                         log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
@@ -478,7 +509,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
                         } else if (virtual && nodePath.startsWith(siteMount.getContentPath())) { 
                             nodePath = nodePath.substring(siteMount.getContentPath().length());
-                        } else {
+                        } else if (tryOtherSiteMounts) {
                             log.debug("We cannot create a link for '{}' for the sitemount with alias '{}' belonging to the current request. Try to create a cross-domain link.", nodePath, siteMount.getAlias());
                             
                             /*
@@ -549,6 +580,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                                 log.info("Found a nodePath '{}' belonging to a different SiteMount. Cross domain linking cannot be combined with linking to a preferred sitemap item. We'll ignore the preferred item," , nodePath);
                             }
                             
+                        } else {
+                            log.warn("We cannot create a link for nodePath '{}' and Mount '{}'. Return page not found link. ", nodePath, siteMount.getAlias());
+                            return pageNotFoundLink(siteMount);
                         }
                         
                         ResolvedLocationMapTreeItem resolvedLocation = null;
