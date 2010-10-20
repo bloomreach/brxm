@@ -20,6 +20,11 @@ import org.hippoecm.hst.content.beans.Node;
 @Node(jcrType="demosite:productdocument")
 public class ProductBean extends TextBean{
 
+    public String getTitle() {
+        // product does not have a title
+        return this.getLocalizedName();
+    }
+    
     public String getBrand(){
         return this.getProperty("demosite:brand");
     }

@@ -31,7 +31,7 @@ public class Archive extends AbstractSearchComponent {
         super.doBeforeRender(request, response);
         HippoBean currentBean = this.getContentBean(request);
         
-        doSearch(request, response, null, null, "demosite:date", DEFAULT_PAGE_SIZE, currentBean);
+        doSearch(request, response, null, null, "hippostdpubwf:creationDate", DEFAULT_PAGE_SIZE, currentBean);
     }
  
 }
