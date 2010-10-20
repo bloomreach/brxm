@@ -33,7 +33,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteRootNodeImpl.class);
 
     private String contentPath;
-    private String canonicalcontentPath;
+    private String canonicalContentPath;
     
     public HstSiteRootNodeImpl(Node siteRootNode, HstNode parent)
             throws HstNodeException {
@@ -57,7 +57,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                             Item item =  contentNode.getSession().getNodeByUUID(docbaseUuid); 
                             if(item instanceof Node) {
                                 // set the canonical content path
-                                this.canonicalcontentPath = ((Node)item).getPath();
+                                this.canonicalContentPath = ((Node)item).getPath();
                             } else {
                                 log.warn("Docbase from '{}' does contain a uuid that points to a property instead of a 'root content node'. Content mirror is broken", contentNode.getPath());
                             }
@@ -70,7 +70,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                     }
                 } else {
                     // contentNode is not a mirror. Take the canonical path to be the same
-                    this.canonicalcontentPath = this.contentPath;
+                    this.canonicalContentPath = this.contentPath;
                 }
                 
             }
@@ -81,8 +81,8 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     }
 
 
-    public String getCanonicalcontentPath() {
-        return canonicalcontentPath;
+    public String getCanonicalContentPath() {
+        return canonicalContentPath;
     }
 
     public String getConfigurationPath() {

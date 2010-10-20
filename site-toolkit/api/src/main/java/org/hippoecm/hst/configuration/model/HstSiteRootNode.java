@@ -28,7 +28,7 @@ public interface HstSiteRootNode extends HstNode{
      * it doesn't have to be: the {@link #getContentPath()} can be a virtual entry path
      */
     
-    String getCanonicalcontentPath();
+    String getCanonicalContentPath();
     
     /**
      * @return the location where the configuration for this {@link HstSiteRootNode} can be found
