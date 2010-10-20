@@ -44,7 +44,8 @@ public class BaseModel {
             Node parent = node.getParent();
             parentId = parent != null ? parent.getUUID() : null;
 
-            componentClassName = node.getProperty("hst:componentclassname").getString();
+            componentClassName = node.hasProperty("hst:componentclassname") ?
+                    node.getProperty("hst:componentclassname").getString() : "";
             name = node.getName();
             template = node.getProperty("hst:template").getString();
             type = getTypeValue();
