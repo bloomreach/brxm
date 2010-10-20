@@ -34,6 +34,14 @@
     <hst:include ref="todolist"/>
   </div>
 
+   <hr/>
+  <p>Dummy Example REST links </p>
+  <hst:link var="imageset" link="${restLink}"/>
+  <p> ImageSet : <a target="_blank" href="${imageset}./">${imageset}./</a></p>
+  <p> Thumbnail : <a target="_blank" href="${imageset}./thumbnail">${imageset}./thumbnail</a></p>
+  <p> Picture : <a target="_blank" href="${imageset}./picture">${imageset}./picture</a></p>
+  <p style="height: 30em;">  </p>
+  
   <p style="height: 30em;">  </p>
   
   
