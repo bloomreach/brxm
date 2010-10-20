@@ -15,15 +15,11 @@
  */
 package org.hippoecm.hst.demo.jaxrs.services;
 
-import java.util.Set;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -95,7 +91,6 @@ public class ProductContentResource extends AbstractContentResource {
                         node.setProperty("demosite:brand", productRepresentationInput.getBrand());
                         node.setProperty("demosite:color", productRepresentationInput.getColor());
                         node.setProperty("demosite:product", productRepresentationInput.getProduct());
-                        node.setProperty("demosite:type", productRepresentationInput.getType());
                         node.setProperty("demosite:price", productRepresentationInput.getPrice());
                         node.setProperty("hippostd:tags", productRepresentationInput.getTags());
                         return true;
@@ -119,72 +114,5 @@ public class ProductContentResource extends AbstractContentResource {
         }
         
         return productRepresentation;
-    }
-    
-    @GET
-    @Path("/tags/")
-    public String [] getProductResourceTags(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
-        try {
-            HstRequestContext requestContext = getRequestContext(servletRequest);       
-            ProductBean productBean = (ProductBean) getRequestContentBean(requestContext);
-            return productBean.getTags();
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
-            } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
-            }
-            
-            throw new WebApplicationException(e);
-        }
-    }
-    
-    @POST
-    @Path("/tags/")
-    public String [] updateProductResourceTags(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @FormParam("tag") Set<String> tags) {
-        ProductBean productBean = null;
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        
-        try {
-            productBean = (ProductBean) getRequestContentBean(requestContext);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
-            } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
-            }
-            
-            throw new WebApplicationException(e);
-        }
-        
-        try {
-            final String [] tagArray = tags.toArray(new String[tags.size()]);
-            
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            
-            wpm.update(productBean, new ContentNodeBinder() {
-                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
-                    try {
-                        node.setProperty("hippostd:tags", tagArray);
-                        return true;
-                    } catch (RepositoryException e) {
-                        throw new ContentNodeBindingException(e);
-                    }
-                }
-            });
-            wpm.save();
-            
-            productBean = (ProductBean) wpm.getObject(productBean.getPath());
-            return productBean.getTags();
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
-            } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
-            }
-            
-            throw new WebApplicationException(e);
-        }
     }
 }

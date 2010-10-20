@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 
@@ -33,12 +34,16 @@ public class ProductRepresentation extends NodeRepresentation {
     private String brand;
     private String product;
     private String color;
-    private String type;
     private double price;
     private String [] tags;
     
     public ProductRepresentation represent(ProductBean bean) throws RepositoryException {
         super.represent(bean);
+        this.brand = bean.getBrand();
+        this.product = bean.getProduct();
+        this.color = bean.getColor();
+        this.price = bean.getPrice();
+        this.tags = (String []) ArrayUtils.clone(bean.getTags());
         return this;
     }
 
@@ -64,14 +69,6 @@ public class ProductRepresentation extends NodeRepresentation {
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public double getPrice() {
