@@ -366,11 +366,11 @@ public class SiteMountService implements SiteMount {
             if(hstSiteNodeForMount == null) {
                 throw new ServiceException("mountPoint '" + mountPoint
                         + "' does not point to a hst:site node for SiteMount '" + siteMount.getValueProvider().getPath()
-                        + "'. Cannot create HstSite for SiteMount");
+                        + "'. Cannot create HstSite for SiteMount. Either fix the mountpoint or add 'hst:issitemount=false'");
             }
             
             this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
-            this.canonicalContentPath = hstSiteNodeForMount.getCanonicalcontentPath();
+            this.canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
             this.contentPath = hstSiteNodeForMount.getContentPath();
             log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
         }
