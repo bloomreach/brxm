@@ -49,6 +49,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
 
     private static final String MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
     private static final String MOUNT_CONTENTPATH = "/hst:hst/hst:sites/testproject-preview/hst:content";
+    private static final String MOUNT_CANONICAL_CONTENTPATH = "/documents/testproject";
     
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
@@ -94,6 +95,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         mount = EasyMock.createNiceMock(SiteMount.class);
         EasyMock.expect(mount.getMountPoint()).andReturn(MOUNT_POINT).anyTimes();
         EasyMock.expect(mount.getContentPath()).andReturn(MOUNT_CONTENTPATH).anyTimes();
+        EasyMock.expect(mount.getCanonicalContentPath()).andReturn(MOUNT_CANONICAL_CONTENTPATH).anyTimes();
         EasyMock.expect(mount.isSiteMount()).andReturn(true).anyTimes();
         
         resolvedSiteMount = EasyMock.createNiceMock(ResolvedSiteMount.class);
