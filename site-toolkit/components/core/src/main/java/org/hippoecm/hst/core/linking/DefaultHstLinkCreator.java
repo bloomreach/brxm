@@ -642,7 +642,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
             if(narrowedSuitedMounts.size() > 0) {
                 // possibly some suited mounts have been removed
-                possibleSuitedMounts = narrowedSuitedMounts;
+                possibleSuitedMounts = new ArrayList<SiteMount>(narrowedSuitedMounts);
             }
             
             if(possibleSuitedMounts.size() == 1) {
@@ -658,6 +658,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 for(SiteMount s : possibleSuitedMounts) {
                     int inCommon = countCommon(s.getTypes(), siteMount.getTypes());
                     if(inCommon > mostCommon) {
+                        mostCommon = inCommon;
                         narrowedSuitedMounts.clear();
                         narrowedSuitedMounts.add(s);
                     } else if (inCommon == mostCommon) {
@@ -668,7 +669,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 }
                 if(narrowedSuitedMounts.size() > 0) {
                     // possibly some suited mounts have been removed
-                    possibleSuitedMounts = narrowedSuitedMounts;
+                    possibleSuitedMounts = new ArrayList<SiteMount>(narrowedSuitedMounts);
                 }
             }
             
@@ -678,6 +679,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
             
             // Algorithm step 5:
+            System.out.println("!!wgwegwe!!!!!!!!!!!!!!!");
             if(possibleSuitedMounts.size() > 1) {
                // find the sitemount's with the most types in common
                 narrowedSuitedMounts.clear();
@@ -695,7 +697,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 }
                 if(narrowedSuitedMounts.size() > 0) {
                     // possibly some suited mounts have been removed
-                    possibleSuitedMounts = narrowedSuitedMounts;
+                    possibleSuitedMounts = new ArrayList<SiteMount>(narrowedSuitedMounts);
                 }
             }
             
