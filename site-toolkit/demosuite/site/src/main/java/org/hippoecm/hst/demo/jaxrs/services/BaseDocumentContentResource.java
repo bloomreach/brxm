@@ -52,7 +52,9 @@ public class BaseDocumentContentResource extends AbstractContentResource {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             BaseBean baseBean = (BaseBean) getRequestContentBean(requestContext);
-            return new BaseDocumentRepresentation().represent(baseBean);
+            BaseDocumentRepresentation docRep = new BaseDocumentRepresentation().represent(baseBean);
+            docRep.setPageLink(getPageLinkURL(requestContext, baseBean));
+            return docRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -102,6 +104,7 @@ public class BaseDocumentContentResource extends AbstractContentResource {
             
             baseBean = (BaseBean) wpm.getObject(baseBean.getPath());
             documentRepresentation = new BaseDocumentRepresentation().represent(baseBean);
+            documentRepresentation.setPageLink(getPageLinkURL(requestContext, baseBean));
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);

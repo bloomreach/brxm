@@ -57,7 +57,9 @@ public class HippoDocumentContentResource extends AbstractContentResource {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-            return new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
+            HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
+            docRep.setPageLink(getPageLinkURL(requestContext, documentBean));
+            return docRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -113,6 +115,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
             
             documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
             documentRepresentation = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
+            documentRepresentation.setPageLink(getPageLinkURL(requestContext, documentBean));
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);

@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -41,6 +42,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
@@ -68,6 +70,9 @@ public abstract class AbstractContentResource {
     private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;
     private HstQueryManager hstQueryManager;
+    
+    private String siteAliasForPageLinks;
+    private boolean pageLinksExternal;
     
     public String getAnnotatedClassesResourcePath() {
         return annotatedClassesResourcePath;
@@ -122,6 +127,22 @@ public abstract class AbstractContentResource {
     	this.hstQueryManager = hstQueryManager;
     }
     
+    public String getSiteAliasForPageLinks() {
+        return siteAliasForPageLinks;
+    }
+
+    public void setSiteAliasForPageLinks(String siteAliasForPageLinks) {
+        this.siteAliasForPageLinks = siteAliasForPageLinks;
+    }
+
+    public boolean isPageLinksExternal() {
+        return pageLinksExternal;
+    }
+
+    public void setPageLinksExternal(boolean pageLinksExternal) {
+        this.pageLinksExternal = pageLinksExternal;
+    }
+
     protected ObjectBeanPersistenceManager getContentPersistenceManager(HstRequestContext requestContext) throws RepositoryException {
         return new WorkflowPersistenceManagerImpl(requestContext.getSession(), getObjectConverter(requestContext));
     }
@@ -404,5 +425,31 @@ public abstract class AbstractContentResource {
         
         return htmlBean.getContent();
     }
-
+    
+    protected String getPageLinkURL(HstRequestContext requestContext, HippoBean hippoBean) {
+        try {
+            if (getSiteAliasForPageLinks() == null) {
+                SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
+                if (parentMount != null) {
+                    setSiteAliasForPageLinks(parentMount.getAlias());
+                }
+            }
+            
+            HstLink link = null;
+            
+            if (getSiteAliasForPageLinks() != null) {
+                link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext, getSiteAliasForPageLinks());
+            } else {
+                link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
+            }
+            
+            return link.toUrlForm(requestContext, isPageLinksExternal());
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to generate a page link. {}", e.toString());
+            }
+        }
+        
+        return null;
+    }    
 }

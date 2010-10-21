@@ -63,7 +63,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoFolderBean folderBean = (HippoFolderBean) getRequestContentBean(requestContext);
-            return new HippoFolderRepresentation().represent(folderBean, propertyFilters);
+            HippoFolderRepresentation folderRep = new HippoFolderRepresentation().represent(folderBean, propertyFilters);
+            folderRep.setPageLink(getPageLinkURL(requestContext, folderBean));
+            return folderRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -80,13 +82,16 @@ public class HippoFolderContentResource extends AbstractContentResource {
     @Path("/folders/")
     public HippoFolderRepresentationDataset getFolderResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
-        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
+        HstRequestContext requestContext = getRequestContext(servletRequest);       
+        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         List<HippoFolderRepresentation> folderNodes = new ArrayList<HippoFolderRepresentation>();
         HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset(folderNodes);
         
         try {
             for (HippoFolderBean childFolderBean : hippoFolderBean.getFolders(sorted)) {
-                folderNodes.add(new HippoFolderRepresentation().represent(childFolderBean, propertyFilters));
+                HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean, propertyFilters);
+                childFolderRep.setPageLink(getPageLinkURL(requestContext, childFolderBean));
+                folderNodes.add(childFolderRep);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -104,7 +109,8 @@ public class HippoFolderContentResource extends AbstractContentResource {
     @Path("/folders/{folderName}/")
     public HippoFolderRepresentation getFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("folderName") String folderName, @MatrixParam("pf") Set<String> propertyFilters) {
-        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
+        HstRequestContext requestContext = getRequestContext(servletRequest);       
+        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         HippoFolderBean childFolderBean = hippoFolderBean.getBean(folderName, HippoFolderBean.class);
         
         if (childFolderBean == null) {
@@ -115,7 +121,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
         }
         
         try {
-            return new HippoFolderRepresentation().represent(childFolderBean, propertyFilters);
+            HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean, propertyFilters);
+            childFolderRep.setPageLink(getPageLinkURL(requestContext, childFolderBean));
+            return childFolderRep;
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -162,13 +170,16 @@ public class HippoFolderContentResource extends AbstractContentResource {
     @Path("/documents/")
     public HippoDocumentRepresentationDataset getDocumentResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
-        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
+        HstRequestContext requestContext = getRequestContext(servletRequest);       
+        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         List<HippoDocumentRepresentation> documentNodes = new ArrayList<HippoDocumentRepresentation>();
         HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset(documentNodes);
         
         try {
             for (HippoDocumentBean documentBean : hippoFolderBean.getDocuments(sorted)) {
-                documentNodes.add(new HippoDocumentRepresentation().represent(documentBean, propertyFilters));
+                HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
+                docRep.setPageLink(getPageLinkURL(requestContext, documentBean));
+                documentNodes.add(docRep);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -186,7 +197,8 @@ public class HippoFolderContentResource extends AbstractContentResource {
     @Path("/documents/{documentName}/")
     public HippoDocumentRepresentation getDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("documentName") String documentName, @MatrixParam("pf") Set<String> propertyFilters) {
-        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         HippoDocumentBean childDocumentBean = hippoFolderBean.getBean(documentName, HippoDocumentBean.class);
         
         if (childDocumentBean == null) {
@@ -197,7 +209,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
         }
         
         try {
-            return new HippoDocumentRepresentation().represent(childDocumentBean, propertyFilters);
+            HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(childDocumentBean, propertyFilters);
+            docRep.setPageLink(getPageLinkURL(requestContext, childDocumentBean));
+            return docRep;
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);

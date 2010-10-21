@@ -43,6 +43,7 @@ public class NodeRepresentation {
     private String path;
     private String primaryNodeTypeName;
     private boolean leaf;
+    private String pageLink;
     private List<NodeProperty> properties;
     
     public NodeRepresentation() {    	
@@ -113,6 +114,14 @@ public class NodeRepresentation {
     
     public boolean isLeaf() {
     	return leaf;
+    }
+    
+    public String getPageLink() {
+        return pageLink;
+    }
+    
+    public void setPageLink(String pageLink) {
+        this.pageLink = pageLink;
     }
     
     @XmlElementWrapper(name="properties")
