@@ -145,9 +145,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
     
     
-    private HstLink create(Node node, SiteMount siteMount, boolean tryOtherSiteMounts) {
+    private HstLink create(Node node, SiteMount siteMount, boolean tryOtherMounts) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, siteMount);
-        linkResolver.tryOtherSiteMounts = tryOtherSiteMounts;
+        linkResolver.tryOtherMounts = tryOtherMounts;
         return linkResolver.resolve();
     }
     
@@ -363,7 +363,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         /*
          * when allowOtherSiteMounts = true, we try other mounts if the mount from this HstLinkResolver cannot resolve the nodePath
          */
-        boolean tryOtherSiteMounts = true;
+        boolean tryOtherMounts = true;
         boolean canonicalLink;
         boolean representsDocument;
         boolean fallback;
@@ -477,6 +477,90 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     
                     nodePath = node.getPath();
                   
+                    if(!virtual && nodePath.startsWith(siteMount.getCanonicalContentPath())) {
+                        nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
+                    } else if (virtual && nodePath.startsWith(siteMount.getContentPath())) { 
+                        nodePath = nodePath.substring(siteMount.getContentPath().length());
+                    } else if (!isBinaryLocation(nodePath) && tryOtherMounts) {
+                        // for a binary link we won't check other mounts
+                        log.debug("We cannot create a link for '{}' for the sitemount with alias '{}' belonging to the current request. Try to create a cross-domain link.", nodePath, siteMount.getAlias());
+                        
+                        /*
+                         * The siteMount belonging to the current request / HstLinkResolver can not be used to create a link for the nodePath because the path
+                         * is out of the scope of the (sub)site. We'll now try to find a siteMount item that is suited for it.
+                         * 
+                         * Note that we only create a cross-domain link if and only if there is a siteMount that 
+                         * 1) Has a #getCanonicalContentPath() that starts with the 'nodePath' we have here
+                         * 2) Belong to the same HostNameGroup as the siteMount for this HstLinkResolver (normally the same as for the current request)
+                         * 3) Has at least one type (preview, live, composer, etc ) in common with the siteMount for this HstLinkResolver 
+                         *
+                         * Note that if there is a preferredItem we ignore this one for cross domain linking as preferredItem only work within the same siteMount
+                         */
+                        
+                        List<SiteMount> siteMountsForHostGroup = siteMount.getVirtualHost().getVirtualHosts().getSiteMountsByHostGroup(siteMount.getVirtualHost().getHostGroupName());
+                        
+                        /*
+                         * There can be multiple suited sitemounts (for example the sitemount for preview and composermode can be the 'same' subsite). We
+                         * choose the best suited sitemount as follows:
+                         * 1) The sitemount must have canonical content path that is a prefix of the nodePath
+                         * 2) The sitemount must have at least ONE type in common as the current sitemount of this HstLinkResolver
+                         * 3) If multiple sitemount's result from (1) and (2), we pick the sitemount that has the same primary type as the current sitemount of this HstLinkResolver
+                         * 4) If multiple sitemount's result from (1), (2) and (3), we pick the sitemount that has the most 'types' in common as the current sitemount of this HstLinkResolver
+                         * 5) If multiple sitemount's result from (1), (2), (3) and (4), we pick the sitemount that has the fewest types: The less types it has, and the number of matching types is equal to the current sitemount, indicates
+                         * that it can be considered more precise
+                         * 6) If multiple sitemount's result from (1), (2), (3), (4) and (5) , we pick the first one: cannot do better
+                         */
+                        List<SiteMount> possibleSuitedMounts = new ArrayList<SiteMount>();
+                        
+                        // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
+                        // cross-domain linkrewrite to mounts that are not a site mount?
+                        for(SiteMount mount : siteMountsForHostGroup) {
+                           if(!mount.isSiteMount()) {
+                               // not a sitemount for a HstSite
+                               continue;
+                           }
+                           // (1)
+                           if(nodePath.startsWith(mount.getCanonicalContentPath())) {
+                              // check whether one of the types of this siteMount matches the types of the currentSiteMount: if so, we have a possible hit.
+                              // (2)
+                              if(!Collections.disjoint(mount.getTypes(), siteMount.getTypes())) {
+                                  log.info("Found a SiteMount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this sitemount to the list of possible suited mounts",  mount.getName(), mount.getAlias());
+                                  possibleSuitedMounts.add(mount);
+                              } else {
+                                  // The sitemount did not have a type in common with the current sitemount. Try another one.
+                                  log.debug("SiteMount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request sitemount hence cannot be used. Try next one",  mount.getName(), mount.getAlias());
+                              }
+                           }
+                        }
+                        
+                        if(possibleSuitedMounts.size() == 0) {
+                            log.warn("There is no SiteMount available that is suited to linkrewrite '{}'. Return page not found link.", nodePath);
+                            return pageNotFoundLink(siteMount);
+                        }
+                        
+                        
+                        if(possibleSuitedMounts.size() > 1) {
+                            // this returns the algorithm (3), (4), (5) and (6) applied
+                            siteMount = findBestSuitedMount(possibleSuitedMounts);
+                        } else {
+                            siteMount = possibleSuitedMounts.get(0);
+                        }
+                        
+                        // we know for sure the the nodePath starts with the canonical path now
+                        nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
+                        
+                        if(preferredItem != null) {
+                            // cannot use preferredItem and cross domain linking at same time. We set it to null
+                            preferredItem = null;
+                            log.info("Found a nodePath '{}' belonging to a different SiteMount. Cross domain linking cannot be combined with linking to a preferred sitemap item. We'll ignore the preferred item," , nodePath);
+                        }
+                        
+                    } else {
+                        log.warn("We cannot create a link for nodePath '{}' and Mount '{}'. Return page not found link. ", nodePath, siteMount.getAlias());
+                        return pageNotFoundLink(siteMount);
+                    }
+                    
+                    // now check wether the 
                     if(isBinaryLocation(nodePath)) {
                         log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
@@ -484,128 +568,47 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         containerResource = true;
                         return new HstLinkImpl(pathInfo, siteMount, containerResource);
                         
-                    } else {
-                        if(!virtual && nodePath.startsWith(siteMount.getCanonicalContentPath())) {
-                            nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
-                        } else if (virtual && nodePath.startsWith(siteMount.getContentPath())) { 
-                            nodePath = nodePath.substring(siteMount.getContentPath().length());
-                        } else if (tryOtherSiteMounts) {
-                            log.debug("We cannot create a link for '{}' for the sitemount with alias '{}' belonging to the current request. Try to create a cross-domain link.", nodePath, siteMount.getAlias());
-                            
-                            /*
-                             * The siteMount belonging to the current request / HstLinkResolver can not be used to create a link for the nodePath because the path
-                             * is out of the scope of the (sub)site. We'll now try to find a siteMount item that is suited for it.
-                             * 
-                             * Note that we only create a cross-domain link if and only if there is a siteMount that 
-                             * 1) Has a #getCanonicalContentPath() that starts with the 'nodePath' we have here
-                             * 2) Belong to the same HostNameGroup as the siteMount for this HstLinkResolver (normally the same as for the current request)
-                             * 3) Has at least one type (preview, live, composer, etc ) in common with the siteMount for this HstLinkResolver 
-                             *
-                             * Note that if there is a preferredItem we ignore this one for cross domain linking as preferredItem only work within the same siteMount
-                             */
-                            
-                            List<SiteMount> siteMountsForHostGroup = siteMount.getVirtualHost().getVirtualHosts().getSiteMountsByHostGroup(siteMount.getVirtualHost().getHostGroupName());
-                            
-                            /*
-                             * There can be multiple suited sitemounts (for example the sitemount for preview and composermode can be the 'same' subsite). We
-                             * choose the best suited sitemount as follows:
-                             * 1) The sitemount must have canonical content path that is a prefix of the nodePath
-                             * 2) The sitemount must have at least ONE type in common as the current sitemount of this HstLinkResolver
-                             * 3) If multiple sitemount's result from (1) and (2), we pick the sitemount that has the same primary type as the current sitemount of this HstLinkResolver
-                             * 4) If multiple sitemount's result from (1), (2) and (3), we pick the sitemount that has the most 'types' in common as the current sitemount of this HstLinkResolver
-                             * 5) If multiple sitemount's result from (1), (2), (3) and (4), we pick the sitemount that has the fewest types: The less types it has, and the number of matching types is equal to the current sitemount, indicates
-                             * that it can be considered more precise
-                             * 6) If multiple sitemount's result from (1), (2), (3), (4) and (5) , we pick the first one: cannot do better
-                             */
-                            List<SiteMount> possibleSuitedMounts = new ArrayList<SiteMount>();
-                            
-                            // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
-                            // cross-domain linkrewrite to mounts that are not a site mount?
-                            for(SiteMount mount : siteMountsForHostGroup) {
-                               if(!mount.isSiteMount()) {
-                                   // not a sitemount for a HstSite
-                                   continue;
-                               }
-                               // (1)
-                               if(nodePath.startsWith(mount.getCanonicalContentPath())) {
-                                  // check whether one of the types of this siteMount matches the types of the currentSiteMount: if so, we have a possible hit.
-                                  // (2)
-                                  if(!Collections.disjoint(mount.getTypes(), siteMount.getTypes())) {
-                                      log.info("Found a SiteMount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this sitemount to the list of possible suited mounts",  mount.getName(), mount.getAlias());
-                                      possibleSuitedMounts.add(mount);
-                                  } else {
-                                      // The sitemount did not have a type in common with the current sitemount. Try another one.
-                                      log.debug("SiteMount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request sitemount hence cannot be used. Try next one",  mount.getName(), mount.getAlias());
-                                  }
-                               }
-                            }
-                            
-                            if(possibleSuitedMounts.size() == 0) {
-                                log.warn("There is no SiteMount available that is suited to linkrewrite '{}'. Return page not found link.", nodePath);
-                                return pageNotFoundLink(siteMount);
-                            }
-                            
-                            
-                            if(possibleSuitedMounts.size() > 1) {
-                                // this returns the algorithm (3), (4), (5) and (6) applied
-                                siteMount = findBestSuitedMount(possibleSuitedMounts);
-                            } else {
-                                siteMount = possibleSuitedMounts.get(0);
-                            }
-                            
-                            // we know for sure the the nodePath starts with the canonical path now
-                            nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
-                            
-                            if(preferredItem != null) {
-                                // cannot use preferredItem and cross domain linking at same time. We set it to null
-                                preferredItem = null;
-                                log.info("Found a nodePath '{}' belonging to a different SiteMount. Cross domain linking cannot be combined with linking to a preferred sitemap item. We'll ignore the preferred item," , nodePath);
-                            }
-                            
-                        } else {
-                            log.warn("We cannot create a link for nodePath '{}' and Mount '{}'. Return page not found link. ", nodePath, siteMount.getAlias());
+                    } 
+                    
+                    ResolvedLocationMapTreeItem resolvedLocation = null;
+                    if(preferredItem != null) {
+                        LocationMapResolver subResolver = getSubLocationMapResolver(preferredItem);
+                        subResolver.setRepresentsDocument(representsDocument);
+                        subResolver.setResolvedSiteMapItem(resolvedSiteMapItem);
+                        subResolver.setCanonical(canonicalLink);
+                        subResolver.setSubResolver(true);
+                        resolvedLocation = subResolver.resolve(nodePath);
+                        if( (resolvedLocation == null || resolvedLocation.getPath() == null) && !fallback) {
+                            log.warn("Could not create a link for preferredItem '{}'. Fallback is false, so return a not found link.", preferredItem.getId());
                             return pageNotFoundLink(siteMount);
                         }
-                        
-                        ResolvedLocationMapTreeItem resolvedLocation = null;
-                        if(preferredItem != null) {
-                            LocationMapResolver subResolver = getSubLocationMapResolver(preferredItem);
-                            subResolver.setRepresentsDocument(representsDocument);
-                            subResolver.setResolvedSiteMapItem(resolvedSiteMapItem);
-                            subResolver.setCanonical(canonicalLink);
-                            subResolver.setSubResolver(true);
-                            resolvedLocation = subResolver.resolve(nodePath);
-                            if( (resolvedLocation == null || resolvedLocation.getPath() == null) && !fallback) {
-                                log.warn("Could not create a link for preferredItem '{}'. Fallback is false, so return a not found link.", preferredItem.getId());
+                    }
+                    if(siteMount.isSiteMount() && siteMount.getHstSite() != null) {
+                        if(resolvedLocation == null) {
+                            LocationMapResolver resolver = new LocationMapResolver(siteMount.getHstSite().getLocationMapTree());
+                            resolver.setRepresentsDocument(representsDocument);
+                            resolver.setCanonical(canonicalLink);
+                            resolver.setResolvedSiteMapItem(resolvedSiteMapItem);
+                            resolvedLocation = resolver.resolve(nodePath);
+                        }
+                        if(resolvedLocation != null && resolvedLocation.getPath() != null) {
+                            if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", nodePath);
+                            if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", nodePath, resolvedLocation.getPath());
+                            pathInfo = resolvedLocation.getPath();
+                        } else {
+                             if (log.isWarnEnabled()) {
+                                log.warn("Unable to create a link for '{}' for siteMount '{}'. Return page not found HstLink to '"+DefaultHstLinkCreator.this.pageNotFoundPath+"'", nodePath, siteMount.getName());
                                 return pageNotFoundLink(siteMount);
                             }
                         }
-                        if(siteMount.isSiteMount() && siteMount.getHstSite() != null) {
-                            if(resolvedLocation == null) {
-                                LocationMapResolver resolver = new LocationMapResolver(siteMount.getHstSite().getLocationMapTree());
-                                resolver.setRepresentsDocument(representsDocument);
-                                resolver.setCanonical(canonicalLink);
-                                resolver.setResolvedSiteMapItem(resolvedSiteMapItem);
-                                resolvedLocation = resolver.resolve(nodePath);
-                            }
-                            if(resolvedLocation != null && resolvedLocation.getPath() != null) {
-                                if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", nodePath);
-                                if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", nodePath, resolvedLocation.getPath());
-                                pathInfo = resolvedLocation.getPath();
-                            } else {
-                                 if (log.isWarnEnabled()) {
-                                    log.warn("Unable to create a link for '{}' for siteMount '{}'. Return page not found HstLink to '"+DefaultHstLinkCreator.this.pageNotFoundPath+"'", nodePath, siteMount.getName());
-                                    return pageNotFoundLink(siteMount);
-                                }
-                            }
-                        } else {
-                            // the SiteMount does not have a HstSite attached to it. Just use the 'nodePath' we have so far as
-                            // we do not have a further SiteMap mapping. We only have a site content base path mapping
-                            pathInfo = nodePath;
-                        }
-                        
+                    } else {
+                        // the SiteMount does not have a HstSite attached to it. Just use the 'nodePath' we have so far as
+                        // we do not have a further SiteMap mapping. We only have a site content base path mapping
+                        pathInfo = nodePath;
                     }
+                    
                 }
+            
             } catch(RepositoryException e){
                 log.error("Repository Exception during creating link", e);
             }
