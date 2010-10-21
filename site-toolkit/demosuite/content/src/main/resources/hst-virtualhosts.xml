@@ -196,7 +196,7 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>rest</sv:value>
+                  <sv:value>preview-rest</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>JaxrsRestPipeline</sv:value>
@@ -212,7 +212,7 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>rest</sv:value>
+                  <sv:value>preview-rest</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
@@ -235,7 +235,7 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>rest</sv:value>
+                  <sv:value>preview-rest</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
@@ -247,26 +247,6 @@
                   <sv:value>true</sv:value>
                 </sv:property>
                </sv:node>
-              </sv:node>
-              <sv:node sv:name="restservice">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:type" sv:type="String">
-                  <sv:value>preview</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                    <sv:value>false</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:showport" sv:type="Boolean">
-                    <sv:value>true</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>restservice</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>JaxrsPipeline</sv:value>
-                </sv:property>
               </sv:node>
             </sv:node>
             <sv:node sv:name="composermode">
@@ -482,7 +462,7 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>rest</sv:value>
+                  <sv:value>preview-rest</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>JaxrsRestPipeline</sv:value>
@@ -495,7 +475,7 @@
                   <sv:value>restapi-gallery</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:type" sv:type="String">
-                  <sv:value>preview</sv:value>
+                  <sv:value>preview-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
@@ -518,7 +498,7 @@
                   <sv:value>restapi-assets</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:type" sv:type="String">
-                  <sv:value>preview</sv:value>
+                  <sv:value>preview-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
@@ -533,26 +513,6 @@
                   <sv:value>true</sv:value>
                 </sv:property>
                </sv:node>
-              </sv:node>
-              <sv:node sv:name="restservice">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:type" sv:type="String">
-                  <sv:value>preview</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                    <sv:value>false</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:showport" sv:type="Boolean">
-                    <sv:value>true</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>restservice</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>JaxrsPipeline</sv:value>
-                </sv:property>
               </sv:node>
             </sv:node>
             <sv:node sv:name="composermode">
