@@ -87,7 +87,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouveau dossier d'images</sv:value>
+      <sv:value>nouveau dossier</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
