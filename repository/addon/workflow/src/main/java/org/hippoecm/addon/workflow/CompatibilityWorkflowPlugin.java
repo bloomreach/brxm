@@ -15,6 +15,7 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -69,8 +70,12 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
     private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
 
+    /** Date formatter for internalionzed dates */
+    protected final DateFormat dateFormatFull;
+
     protected CompatibilityWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, getSession().getLocale());
     }
 
     @Override

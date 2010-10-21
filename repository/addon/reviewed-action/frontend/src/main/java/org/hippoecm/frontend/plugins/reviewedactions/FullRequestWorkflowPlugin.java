@@ -58,7 +58,8 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
         add(new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("state-"+state, this, null, new Object[] { (schedule!=null ? schedule.toString() : "??") }, "unknown");
+                return new StringResourceModel("state-"+state, this, null,
+                    new Object[] { (schedule!=null ? dateFormatFull.format(schedule) : "??") }, "unknown");
             }
             @Override
             protected void invoke() {
