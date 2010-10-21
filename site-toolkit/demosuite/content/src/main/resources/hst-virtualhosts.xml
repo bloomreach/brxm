@@ -98,8 +98,17 @@
                 <sv:value>JaxrsRestPipeline</sv:value>
               </sv:property>
               <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>rest</sv:value>
-                </sv:property>
+                <sv:value>rest</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:secured" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:roles" sv:type="String">
+                <sv:value>everybody</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
               <sv:node sv:name="gallery">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
@@ -200,6 +209,15 @@
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>JaxrsRestPipeline</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:secured" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:roles" sv:type="String">
+                  <sv:value>everybody</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                  <sv:value>true</sv:value>
                 </sv:property>
                 <sv:node sv:name="gallery">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -364,8 +382,17 @@
                 <sv:value>JaxrsRestPipeline</sv:value>
               </sv:property>
               <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>rest</sv:value>
-                </sv:property>
+                <sv:value>rest</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:secured" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:roles" sv:type="String">
+                <sv:value>everybody</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
               <sv:node sv:name="gallery">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
@@ -466,6 +493,15 @@
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>JaxrsRestPipeline</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:secured" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:roles" sv:type="String">
+                  <sv:value>everybody</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                  <sv:value>true</sv:value>
                 </sv:property>
                 <sv:node sv:name="gallery">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
