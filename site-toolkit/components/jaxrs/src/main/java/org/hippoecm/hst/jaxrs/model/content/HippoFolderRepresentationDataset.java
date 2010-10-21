@@ -35,13 +35,13 @@ public class HippoFolderRepresentationDataset extends AbstractNodeRepresentation
         super();
     }
     
-    public HippoFolderRepresentationDataset(List<NodeRepresentation> nodeRepresentations) {
+    public HippoFolderRepresentationDataset(List<HippoFolderRepresentation> nodeRepresentations) {
         super(nodeRepresentations);
     }
     
     @XmlElementWrapper(name="folders")
     @XmlElements(@XmlElement(name="folder"))
-    public List<NodeRepresentation> getFolders() {
-        return getNodeRepresentations();
+    public List<HippoFolderRepresentation> getFolders() {
+        return (List<HippoFolderRepresentation>) getNodeRepresentations();
     }
 }

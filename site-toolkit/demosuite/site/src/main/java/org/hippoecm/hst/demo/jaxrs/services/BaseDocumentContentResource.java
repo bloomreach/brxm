@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -32,6 +33,7 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManage
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.jaxrs.model.BaseDocumentRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
 import org.hippoecm.hst.jaxrs.services.content.AbstractContentResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,5 +113,33 @@ public class BaseDocumentContentResource extends AbstractContentResource {
         }
         
         return documentRepresentation;
+    }
+    
+    @GET
+    @Path("/html/")
+    public HippoHtmlRepresentation getHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("path") String relPath) {
+        return super.getHippoHtmlRepresentation(servletRequest, relPath);
+    }
+    
+    @PUT
+    @Path("/html/")
+    public HippoHtmlRepresentation updateHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("path") String relPath, HippoHtmlRepresentation htmlRepresentation) {
+        return super.updateHippoHtmlRepresentation(servletRequest, relPath, htmlRepresentation);
+    }
+    
+    @GET
+    @Path("/html/content/")
+    public String getHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("path") String relPath) {
+        return super.getHippoHtmlContent(servletRequest, relPath);
+    }
+    
+    @PUT
+    @Path("/html/content/")
+    public String updateHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("path") String relPath, String htmlContent) {
+        return super.updateHippoHtmlContent(servletRequest, relPath, htmlContent);
     }
 }

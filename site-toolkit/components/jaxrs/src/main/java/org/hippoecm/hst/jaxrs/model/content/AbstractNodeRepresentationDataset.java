@@ -10,7 +10,7 @@ public abstract class AbstractNodeRepresentationDataset implements Serializable 
     
     private static final long serialVersionUID = 1L;
     
-    private List<NodeRepresentation> nodeRepresentations;
+    private List<? extends NodeRepresentation> nodeRepresentations;
     
     private long totalSize = -1;
     
@@ -20,15 +20,15 @@ public abstract class AbstractNodeRepresentationDataset implements Serializable 
         
     }
     
-    public AbstractNodeRepresentationDataset(List<NodeRepresentation> nodeRepresentations) {
+    public AbstractNodeRepresentationDataset(List<? extends NodeRepresentation> nodeRepresentations) {
         this.nodeRepresentations = nodeRepresentations;
     }
     
-    protected List<NodeRepresentation> getNodeRepresentations() {
+    protected List<? extends NodeRepresentation> getNodeRepresentations() {
         return nodeRepresentations;
     }
     
-    protected void setNodeRepresentations(List<NodeRepresentation> nodeRepresentations) {
+    protected void setNodeRepresentations(List<? extends NodeRepresentation> nodeRepresentations) {
         this.nodeRepresentations = nodeRepresentations;
     }
     

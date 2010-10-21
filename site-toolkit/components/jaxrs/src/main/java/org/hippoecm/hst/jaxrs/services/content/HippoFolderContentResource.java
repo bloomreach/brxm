@@ -45,7 +45,6 @@ import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentationDataset;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentationDataset;
-import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +81,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     public HippoFolderRepresentationDataset getFolderResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
-        List<NodeRepresentation> folderNodes = new ArrayList<NodeRepresentation>();
+        List<HippoFolderRepresentation> folderNodes = new ArrayList<HippoFolderRepresentation>();
         HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset(folderNodes);
         
         try {
@@ -164,7 +163,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     public HippoDocumentRepresentationDataset getDocumentResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
-        List<NodeRepresentation> documentNodes = new ArrayList<NodeRepresentation>();
+        List<HippoDocumentRepresentation> documentNodes = new ArrayList<HippoDocumentRepresentation>();
         HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset(documentNodes);
         
         try {

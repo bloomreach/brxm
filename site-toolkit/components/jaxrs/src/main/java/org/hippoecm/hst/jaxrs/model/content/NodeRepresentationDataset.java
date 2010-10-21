@@ -35,13 +35,13 @@ public class NodeRepresentationDataset extends AbstractNodeRepresentationDataset
         super();
     }
     
-    public NodeRepresentationDataset(List<NodeRepresentation> nodeRepresentations) {
+    public NodeRepresentationDataset(List<? extends NodeRepresentation> nodeRepresentations) {
         super(nodeRepresentations);
     }
     
     @XmlElementWrapper(name="nodes")
     @XmlElements(@XmlElement(name="node"))
-    public List<NodeRepresentation> getNodes() {
+    public List<? extends NodeRepresentation> getNodes() {
         return getNodeRepresentations();
     }
 }
