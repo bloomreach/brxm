@@ -36,16 +36,19 @@
 - hst:componentclassname (string)
 - hst:serveresourcepath (string)
 - hst:referencename (string)
-- hst:referencecomponent(string)
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:inheritsfrom (string)
 
 [hst:component] > hst:abstractcomponent orderable
+- hst:referencecomponent(string)
 + * (hst:abstractcomponent)
 
 [hst:containeritemcomponent] > hst:abstractcomponent orderable
+- hst:referencecomponent(string)
+- hst:samplecontent (string)
++ * (hst:abstractcomponent)
 
 [hst:containercomponent] > hst:abstractcomponent orderable
 - hst:containertype (string) mandatory
