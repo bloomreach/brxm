@@ -476,11 +476,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                     
                     nodePath = node.getPath();
-                  
+                    boolean matchedMount = false;
                     if(!virtual && nodePath.startsWith(siteMount.getCanonicalContentPath())) {
                         nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
+                        matchedMount = true;
                     } else if (virtual && nodePath.startsWith(siteMount.getContentPath())) { 
                         nodePath = nodePath.substring(siteMount.getContentPath().length());
+                        matchedMount = true;
                     } else if (!isBinaryLocation(nodePath) && tryOtherMounts) {
                         // for a binary link we won't check other mounts
                         log.debug("We cannot create a link for '{}' for the sitemount with alias '{}' belonging to the current request. Try to create a cross-domain link.", nodePath, siteMount.getAlias());
@@ -548,6 +550,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         
                         // we know for sure the the nodePath starts with the canonical path now
                         nodePath = nodePath.substring(siteMount.getCanonicalContentPath().length());
+                        matchedMount = true;
                         
                         if(preferredItem != null) {
                             // cannot use preferredItem and cross domain linking at same time. We set it to null
@@ -560,8 +563,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         return pageNotFoundLink(siteMount);
                     }
                     
-                    // now check wether the 
-                    if(isBinaryLocation(nodePath)) {
+                    // now check whether the nodePath is a binary location if there was not yet a matching mount
+                    if(!matchedMount && isBinaryLocation(nodePath)) {
                         log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
                         // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
                         pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
