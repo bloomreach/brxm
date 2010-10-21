@@ -98,7 +98,7 @@
 </c:forEach>
   <li>
     <a href="${hstRequest.contextPath}${hstRequest.requestContext.resolvedSiteMount.resolvedMountPath}/restapi/${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" 
-       target="_blank">Restful Representation</a>
+       target="_blank">RESTful Representation</a>
   </li>
 </ul>
 </div>

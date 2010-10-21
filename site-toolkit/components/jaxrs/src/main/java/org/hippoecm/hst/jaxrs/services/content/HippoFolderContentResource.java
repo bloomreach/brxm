@@ -57,6 +57,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     private static Logger log = LoggerFactory.getLogger(HippoFolderContentResource.class);
     
+    @GET
     @Path("/")
     public HippoFolderRepresentation getFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @MatrixParam("pf") Set<String> propertyFilters) {

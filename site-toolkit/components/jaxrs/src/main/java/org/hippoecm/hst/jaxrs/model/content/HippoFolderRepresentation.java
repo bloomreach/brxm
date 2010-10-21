@@ -29,9 +29,22 @@ import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 @XmlRootElement(name = "folder")
 public class HippoFolderRepresentation extends NodeRepresentation {
     
+    private static final long serialVersionUID = 1L;
+    
+    private String canonicalUuid;
+    
     public HippoFolderRepresentation represent(HippoFolderBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
         super.represent(hippoBean, propertyFilters);
+        this.canonicalUuid = hippoBean.getCanonicalUUID();
         return this;
+    }
+
+    public String getCanonicalUuid() {
+        return canonicalUuid;
+    }
+
+    public void setCanonicalUuid(String canonicalUuid) {
+        this.canonicalUuid = canonicalUuid;
     }
     
 }
