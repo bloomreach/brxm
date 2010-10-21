@@ -18,6 +18,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
+<hst:defineObjects/>
+
 <div class="yui-u first">
   <ul class="sitenav">
   <c:forEach var="item" items="${menu.menuItems}">
@@ -95,7 +97,8 @@
   </li>
 </c:forEach>
   <li>
-    <a href="<hst:link path="/restservice/contentservice/"/>" target="_blank">Restful Service</a>
+    <a href="${hstRequest.contextPath}${hstRequest.requestContext.resolvedSiteMount.resolvedMountPath}/restapi/${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" 
+       target="_blank">Restful Representation</a>
   </li>
 </ul>
 </div>

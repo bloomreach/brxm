@@ -100,12 +100,12 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean id="hippoDocumentContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoDocumentContentResource"/>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.HippoDocumentContentResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean id="hippoFolderContentResource" class="org.hippoecm.hst.jaxrs.services.content.HippoFolderContentResource"/>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFolderContentResource"/>
           </constructor-arg>
         </bean>
       </list>

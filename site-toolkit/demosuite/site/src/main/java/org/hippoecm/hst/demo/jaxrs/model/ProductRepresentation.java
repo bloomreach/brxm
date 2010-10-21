@@ -23,13 +23,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.demo.beans.ProductBean;
-import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 
 /**
  * @version $Id$
  */
 @XmlRootElement(name = "product")
-public class ProductRepresentation extends NodeRepresentation {
+public class ProductRepresentation extends BaseDocumentRepresentation {
     
     private String brand;
     private String product;

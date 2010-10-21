@@ -32,12 +32,27 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean id="productContentResource" class="org.hippoecm.hst.demo.jaxrs.services.ProductContentResource" />
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.NewsDocumentContentResource" />
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean id="imageSetContentResource" class="org.hippoecm.hst.demo.jaxrs.services.ImageSetContentResource" />
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.TextDocumentContentResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.BaseDocumentContentResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.ProductContentResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.ImageSetContentResource" />
           </constructor-arg>
         </bean>
       </list>
