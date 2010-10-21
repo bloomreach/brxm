@@ -15,20 +15,23 @@
  */
 package org.hippoecm.hst.pagecomposer.container;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.container.AbstractValve;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
-import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.dependencies.DependencyManager;
+import org.hippoecm.hst.pagecomposer.dependencies.DependencyWriter;
+import org.hippoecm.hst.pagecomposer.dependencies.HstLinkDependencyWriter;
+import org.hippoecm.hst.pagecomposer.dependencies.ext.ExtApp;
+import org.hippoecm.hst.pagecomposer.dependencies.ext.ExtAppBootstrap;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * InitializationValve
@@ -49,105 +52,34 @@ public class PageComposerBootstrapValve extends AbstractValve
         HstRequestContext requestContext = (HstRequestContext)context.getRequestContext();
         SiteMount siteMount = requestContext.getResolvedSiteMount().getSiteMount();
 
+        /*
+        *  get the preview URL. Note, that the 'composer' sitemount always needs a parent sitemount of type 'composermode'.
+        *  If either the parent is null, OR the parent is not of type 'composermode', we cannot instantiate the composer tool
+        */
+        SiteMount parentMount = siteMount.getParent();
+        if (parentMount == null || !parentMount.isOfType("composermode")) {
+            try {
+                context.getServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Page Composer Tool can only be started if the composer SiteMount is a descendant of the SiteMount of type 'composermode'.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         HstLinkCreator creator = requestContext.getHstLinkCreator();
         try {
             PrintWriter writer = context.getServletResponse().getWriter();
             writer.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
             writer.append("\n<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
 
-            // ext-css
-            HstLink css = creator.create("/pagecomposer/sources/js/ext/resources/css/ext-all.css", siteMount, true);
-            writer.append("\n<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" href=\""+css.toUrlForm(requestContext, false)+"\"/>");
-            
-            // Application dependencies
-            // globals
-            HstLink globals = creator.create("/pagecomposer/sources/js/globals.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\"" + globals.toUrlForm(requestContext, false) + "\"></script>");
-
-            // ext Base
-            HstLink base = creator.create("/pagecomposer/sources/js/ext/adapter/ext/ext-base.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+base.toUrlForm(requestContext, false)+"\"></script>");
-
-            // ext AllDebug
-            HstLink allDebug = creator.create("/pagecomposer/sources/js/ext/ext-all-debug-w-comments.js", siteMount, true);            
-            writer.append("\n<script type=\"text/javascript\" src=\""+allDebug.toUrlForm(requestContext, false)+"\"></script>");
-
-            // extBlankImageUrl
-            HstLink blankImageUrl = creator.create("/pagecomposer/sources/js/ext/s.gif", siteMount, true);            
-            writer.append("\n<script type=\"text/javascript\">Ext.BLANK_IMAGE_URL= '"+blankImageUrl.toUrlForm(requestContext, false)+"';</script>");
-
-            // baseApp
-            HstLink baseApp = creator.create("/pagecomposer/sources/js/hippo-ext/app/BaseApp.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+baseApp.toUrlForm(requestContext, false)+ "\"></script>");
-
-            // baseGrid
-            HstLink baseGrid = creator.create("/pagecomposer/sources/js/hippo-ext/app/BaseGrid.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+baseGrid.toUrlForm(requestContext, false)+ "\"></script>");
-          
-            // baseGrid
-            HstLink floatingWindow = creator.create("/pagecomposer/sources/js/hippo-ext/ux/FloatingWindow.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+floatingWindow.toUrlForm(requestContext, false)+ "\"></script>");
-          
-            // propsPanel
-            HstLink propsPanel = creator.create("/pagecomposer/sources/js/hippo-ext/app/PropertiesPanel.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+propsPanel.toUrlForm(requestContext, false)+ "\"></script>");
-          
-            // pageModel
-            HstLink pageModel = creator.create("/pagecomposer/sources/js/hippo-ext/app/PageModel.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+pageModel.toUrlForm(requestContext, false)+ "\"></script>");
-            
-            // miframe
-            HstLink miframe = creator.create("/pagecomposer/sources/js/ext-plugins/miframe/miframe-debug.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+miframe.toUrlForm(requestContext, false)+ "\"></script>");
-           
-            // mifmsg
-            HstLink mifmsg = creator.create("/pagecomposer/sources/js/ext-plugins/miframe/mifmsg.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+mifmsg.toUrlForm(requestContext, false)+ "\"></script>");
-            
-            // theme
-            HstLink theme = creator.create("/pagecomposer/sources/js/ext/resources/css/xtheme-slate.css", siteMount, true);
-            writer.append("\n<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" title=\"gray\" href=\""+theme.toUrlForm(requestContext, false)+"\">");
-           
-
-            // Application files 
-            HstLink pageEditorStyle = creator.create("/pagecomposer/sources/css/hippo/PageEditor.css", siteMount, true);
-            writer.append("\n<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" href=\""+pageEditorStyle.toUrlForm(requestContext, false)+"\">");
-           
-            // editor
-            HstLink editor = creator.create("/pagecomposer/sources/js/hippo-ext/PageEditor.js", siteMount, true);
-            writer.append("\n<script type=\"text/javascript\" src=\""+editor.toUrlForm(requestContext, false)+ "\"></script>");
-
-            // Application bootstrap 
-            
-            /*
-             *  get the preview URL. Note, that the 'composer' sitemount always needs a parent sitemount of type 'composermode'. 
-             *  If either the parent is null, OR the parent is not of type 'composermode', we cannot instantiate the composer tool 
-             */
-            
-            SiteMount parentMount = siteMount.getParent();
-            if(parentMount == null || !parentMount.isOfType("composermode")) {
-                context.getServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Page Composer Tool can only be started if the composer SiteMount is a descendant of the SiteMount of type 'composermode'.");
-                return;
-            }
+            DependencyManager manager = new DependencyManager();
+            manager.add(new ExtApp());
 
             String editableUrl = creator.create("/", parentMount).toUrlForm(requestContext, false);
-            
-            writer.append("\n<script type=\"text/javascript\">");
+            manager.add(new ExtAppBootstrap(editableUrl));
 
-                writer.append("\n\t Ext.onReady(function() {");
-                    writer.append("\n\t\t //clear DOM");
-                    writer.append("\n\t\t Ext.getBody().update('');");
-                    writer.append("\n\t\t var config = {");
-                        writer.append("\n\t\t debug: true,");
-                        writer.append("\n\t\t\t iframeUrl: '").append(editableUrl).append("',");
-                        writer.append("\n\t\t\t rootComponentName: 'home'");
-                    writer.append("\n\t\t };");
-                    writer.append("\n\t\t Ext.namespace('Hippo.App');");
-                    writer.append("\n\t\t Hippo.App.Main = new Hippo.App.PageEditor(config);");
-                writer.append("\n\t });");
-            writer.append("\n </script>");
-           
-            
+            manager.write(new HstLinkDependencyWriter(requestContext, writer));
+
             writer.append("</head>");
             writer.append("</html>");
             writer.flush();

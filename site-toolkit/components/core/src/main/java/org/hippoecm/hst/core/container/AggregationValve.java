@@ -15,17 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -38,6 +27,16 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Element;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * AggregationValve
@@ -342,17 +341,17 @@ public class AggregationValve extends AbstractValve {
 // TODO ////////////////////////////////////////////////////////////////////////////
     private static final String COMPOSERMODE_NAME_TYPE = "composermode";
     
-    private void addHeadElements(HstRequest request, HstResponse response, SiteMount mount ){    
-        addCssHeadElement(request, response, mount, "/pagecomposer/sources/css/hippo/PageEditor.css");        
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery-1.4.2.min.js"); 
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery-ui-1.8.5.custom.min.js");       
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery.class.js");       
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery.tablednd_0_5.js");       
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/jquery/jquery.namespace.js");
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/globals.js");
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/hippo-jquery/Containers.js");
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/hippo-jquery/Containers.js");         
-        addScriptHeadElement(request, response, mount, "/pagecomposer/sources/js/hippo-jquery/Main.js");         
+    private void addHeadElements(HstRequest request, HstResponse response, SiteMount mount ) {
+        addCssHeadElement(request, response, mount, "/hippo/pagecomposer/sources/css/PageEditor.css");
+
+        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/core/1.4.3/jquery-1.4.3.js");
+        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/ui/1.8.5/jquery-ui-1.8.5.min.js");
+        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/plugins/jquery.class.js");
+        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/plugins/jquery.namespace.js");
+
+        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/globals.js");
+        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/jquery/models.js");
+        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/jquery/main.js");
     }
     
     private void addCssHeadElement(HstRequest request, HstResponse response, SiteMount mount, String href) {

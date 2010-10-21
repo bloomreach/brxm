@@ -1,0 +1,100 @@
+.hst-container {
+}
+
+table.hst-container {
+    width: 100%;
+}
+
+div.componentContentWrapper .hst-container .hst-dd-item .componentContentWrapper * {
+    background: transparent;
+}
+
+.componentContentWrapper.hst-activated-container.hst-selected-container {
+    border: 1px dashed red;
+}
+
+.empty-container-placeholder {
+    height: 20px;
+    font-size: 15px;
+    padding: 6px 0 6px 4px;
+}
+
+div.hst-empty-container ul,
+div.hst-empty-container ol {
+    padding-left: 5px;
+}
+
+li.hst-empty-container-item {
+    list-style: none;
+}
+
+li.placeholdert {
+    list-style: none;
+}
+
+.hst-dd-helper {
+    border: 2px solid green;
+}
+
+.hst-dd-item {
+    cursor: move;
+}
+
+.hst-empty-container {
+/*background-color: #999;*/
+    border: 2px dashed #e3e3e3;
+}
+
+.ui-selectable .ui-selected {
+    background: #F39814;
+    color: white;
+}
+
+#switcher {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+.hst-menu-overlay {
+    width: 30px;
+    height: 10px;
+
+    opacity: 0.25;
+    position: absolute;
+    background-color: #000;
+}
+
+.hst-menu-overlay-hover {
+    opacity: 0.6;
+    height: 15px; /*-moz-border-radius-bottomleft: 10px 6px;*/
+}
+
+.hst-menu-overlay-button {
+    visibility: hidden;
+
+    width: 12px;
+    height: 11px;
+
+    margin-right: 2px;
+    margin-top: 1px;
+
+    -moz-border-radius: 2px;
+
+    font-weight: bold;
+    color: red;
+    font-size: 10px;
+    float: right;
+
+    cursor: pointer;
+}
+
+.hst-menu-overlay.hst-selected-containerItem {
+    opacity: 0.80;
+    height: 15px;
+}
+
+.hst-menu-overlay.hst-selected-containerItem > div.hst-menu-overlay-button,
+.hst-menu-overlay-hover > div.hst-menu-overlay-button {
+    visibility: visible; /*background-color: #e3e3e3;*/
+}
