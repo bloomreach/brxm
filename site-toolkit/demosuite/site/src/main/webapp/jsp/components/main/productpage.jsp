@@ -20,6 +20,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
+<hst:defineObjects/>
+
 <hst:head-contribution keyHint="title"><title>${document.title}</title></hst:head-contribution>
 <hst:element name="script" var="yui3Elem">
   <hst:attribute name="type" value="text/javascript" />
@@ -127,7 +129,7 @@ function(Y) {
     data["price"] = ${document.price};
     data["tags"] = tags;
     
-    var uri = "/site/preview/restapi/products/opel.html";
+    var uri = "${hstRequest.contextPath}${hstRequest.requestContext.resolvedSiteMount.resolvedMountPath}/restapi/${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}";
     var cfg = { 
           on: { complete: onSaveComplete },
           arguments: {},
@@ -161,7 +163,9 @@ function(Y) {
     e.halt();
   };
   
+  <c:if test="${isPreview}">
   tagsEditLink.setStyle("display", "");
+  </c:if>
   
   tagsEditLink.on("click", editTags);
   tagsSaveLink.on("click", saveTags);
