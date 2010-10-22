@@ -82,6 +82,16 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
 public interface HstComponentConfiguration extends HstComponentInfo {
     
     /**
+     * A {@link HstComponentConfiguration} comes in three different main types. The {@link Type} enum describes the possible
+     * values. This {@link Type} is similar to the {@link HstComponentConfiguration#getComponentType()} which is the {@link String} representation
+     */
+    enum Type {
+        COMPONENT,
+        CONTAINER_COMPONENT,
+        CONTAINER_ITEM_COMPONENT,
+    }
+    
+    /**
      * Returns the parent <code>HstComponentConfiguration</code> for this this component or null if a root component.
      */
     HstComponentConfiguration getParent();
@@ -186,6 +196,8 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     String getContainerType();
     
     /**
+     * The string representation of the type of this {@link HstComponentConfiguration}. 
+     * 
      * @return the type of this component, for example 'hst:component', 'hst:containercomponent' or 'hst:containeritemcomponent' 
      */
     String getComponentType();

@@ -59,6 +59,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String containerType;
     
     private String componentType;
+    
+    /**
+     * the type of this {@link HstComponentConfiguration}. 
+     */
+    private Type type;
 
     private String hstTemplate;
 
@@ -100,50 +105,64 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.canonicalIdentifier = node.getValueProvider().getIdentifier();
         this.componentType = node.getNodeTypeName();
         
+        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(componentType)) {
+          type = Type.COMPONENT;
+        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(componentType)) {
+          type = Type.CONTAINER_COMPONENT;
+        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(componentType)) {
+          type = Type.CONTAINER_ITEM_COMPONENT;
+        } else {
+            throw new ServiceException("Unknown componentType '"+componentType+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
+        }
+        
         this.parent = parent;
 
         this.configurationRootNodePath = hstConfigurationsNodePath;
         // id is the relative path wrt configuration components path
         this.id = node.getValueProvider().getPath().substring(hstConfigurationsNodePath.length() + 1);
 
-        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
-              ) {
-            this.name = node.getValueProvider().getName();
-            this.referenceName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
-            this.componentClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
-            if (componentClassName == null) {
-                this.componentClassName = GenericHstComponent.class.getName();
-            } else {
-                this.hasClassNameConfigured = true;
-            }
+        this.name = node.getValueProvider().getName();
+        this.referenceName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
+        this.componentClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
+        if (componentClassName == null) {
+            this.componentClassName = GenericHstComponent.class.getName();
+        } else {
+            this.hasClassNameConfigured = true;
+        }
 
-            this.referenceComponent = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
-            this.hstTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
-            this.serveResourcePath = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
-            this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
-            this.propertyMap = node.getValueProvider().getPropertyMap();
-            if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
-                this.containerType = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE);
-            } else if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE)){
-                log.warn("Ignoring property '{}' as this property is only allowed on nodes of type '{}'", HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-            }
-            String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
-            String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
-
-            if (parameterNames != null && parameterValues != null) {
-                if (parameterNames.length != parameterValues.length) {
-                    log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
-                } else {
-                    for (int i = 0; i < parameterNames.length; i++) {
-                        this.parameters.put(parameterNames[i], parameterValues[i]);
-                        this.localParameters.put(parameterNames[i], parameterValues[i]);
-                    }
-                }
+        this.referenceComponent = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
+        
+        if(referenceComponent != null) {
+            if(type == Type.CONTAINER_COMPONENT) {
+                throw new ServiceException("ContainerComponents are not allowed to have a reference. Pls fix the" +
+                		"configuration for '"+canonicalStoredLocation+"'");
             }
         }
         
+        this.hstTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
+        this.serveResourcePath = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
+        this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
+        this.propertyMap = node.getValueProvider().getPropertyMap();
+        
+        if(type == Type.CONTAINER_COMPONENT) {
+            this.containerType = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE);
+        } else if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE)){
+            log.warn("Ignoring property '{}' as this property is only allowed on nodes of type '{}'", HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+        }
+        String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+
+        if (parameterNames != null && parameterValues != null) {
+            if (parameterNames.length != parameterValues.length) {
+                log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+            } else {
+                for (int i = 0; i < parameterNames.length; i++) {
+                    this.parameters.put(parameterNames[i], parameterValues[i]);
+                    this.localParameters.put(parameterNames[i], parameterValues[i]);
+                }
+            }
+        }
+      
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
                     || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
@@ -291,6 +310,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.containerType = child.containerType;
         copy.componentType = child.componentType;
+        copy.type = child.type;
         copy.serveResourcePath = child.serveResourcePath;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
@@ -374,9 +394,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     this.containerType = referencedComp.containerType;
                 }
                 if (this.componentType == null) {
-                    this.componentType = referencedComp.componentType;
+                    // don't need to inherit
+                    throw new ServiceException("Component type cannot be null.");
                 }
-                
                 
                 if (this.parameters == null) {
                     this.parameters = new HashMap<String, String>(referencedComp.parameters);
@@ -426,6 +446,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private void combine(HstComponentConfigurationService childToMerge,
             Map<String, HstComponentConfiguration> rootComponentConfigurations,
             List<HstComponentConfiguration> populated) throws ServiceException {
+        
+        if(this.type == Type.CONTAINER_COMPONENT || childToMerge.type == Type.CONTAINER_COMPONENT) {
+            throw new ServiceException("Incorrect component configuration: *Container* Components are not allowed to be merged with other " +
+            		"components. Cannot merge '"+childToMerge.getId()+"' and '"+this.getId()+"' because at least one of them is a Container component. Fix configuration.");
+        }
+        
         if (!this.hasClassNameConfigured) {
             this.componentClassName = childToMerge.componentClassName;
         }
@@ -460,7 +486,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.containerType = childToMerge.containerType;
         }
         if (this.componentType == null) {
-            this.componentType = childToMerge.componentType;
+            // don't need to inherit
+            throw new ServiceException("Component type cannot be null.");
         }
         
         if (this.parameters == null) {
