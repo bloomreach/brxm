@@ -24,6 +24,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
@@ -42,17 +43,8 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     protected Node originalParent;
     protected String originalName;
 
-    protected PropertyDecorator(DecoratorFactory factory, SessionDecorator session, Property property) {
-        super(factory, session, property, false);
-        this.property = property;
-        try {
-            originalPath = property.getPath();
-        } catch(RepositoryException ex) {
-        }
-    }
-
-    protected PropertyDecorator(DecoratorFactory factory, SessionDecorator session, Property property, NodeDecorator parent) {
-        super(factory, session, property, false);
+    protected PropertyDecorator(DecoratorFactory factory, SessionDecorator session, Property property, Node parent) {
+        super(factory, session, property);
         this.property = property;
         try {
             originalParent = parent;
@@ -61,12 +53,13 @@ public class PropertyDecorator extends ItemDecorator implements Property {
         }
     }
 
-    protected void repair() throws RepositoryException {
+    protected void repair(Session session) throws RepositoryException {
         if(originalPath != null) {
             property = (Property) PropertyDecorator.unwrap((Property)session.getItem(originalPath));;
         } else {
             property = (Property) PropertyDecorator.unwrap(originalParent.getProperty(originalName));
         }
+        item = property;
     }
 
     /**

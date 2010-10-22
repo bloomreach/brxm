@@ -30,7 +30,7 @@ import javax.jcr.version.VersionException;
 
 /**
  */
-public class ItemDecorator extends AbstractDecorator implements Item {
+public abstract class ItemDecorator extends AbstractDecorator implements Item {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -39,31 +39,10 @@ public class ItemDecorator extends AbstractDecorator implements Item {
      * The underlying item to decorate.
      */
     protected Item item;
-    private String originalPath = null;
 
     protected ItemDecorator(DecoratorFactory factory, SessionDecorator session, Item item) {
         super(factory, session);
         this.item = item;
-        try {
-            this.originalPath = item.getPath(); // best effort
-        } catch(RepositoryException ex) {
-        }
-    }
-
-    protected ItemDecorator(DecoratorFactory factory, SessionDecorator session, Item item, boolean recoverable) {
-        super(factory, session);
-        this.item = item;
-        if (recoverable) {
-            try {
-                this.originalPath = item.getPath(); // best effort
-            } catch(RepositoryException ex) {
-            }
-        }
-    }
-
-    @Override
-    protected void repair(Session upstreamSession) throws RepositoryException {
-        this.item = upstreamSession.getItem(originalPath);
     }
 
     /**
