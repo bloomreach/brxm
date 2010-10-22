@@ -23,21 +23,30 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
+import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.HstQueryManager;
+import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -45,6 +54,8 @@ import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentationDataset;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentationDataset;
+import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.NodeRepresentationDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -252,6 +263,104 @@ public class HippoFolderContentResource extends AbstractContentResource {
             }
             throw new WebApplicationException(e);
         }
+    }
+    
+    @GET
+    @Path("/search/")
+    public NodeRepresentationDataset searchDocumentResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+            @MatrixParam("sortby") String sortBy, 
+            @MatrixParam("sortdir") String sortDirection,
+            @MatrixParam("type") Set<String> nodeTypes,
+            @MatrixParam("pf") Set<String> propertyFilters,
+            @MatrixParam("op") @DefaultValue("contains") String queryOperator,
+            @MatrixParam("scope") @DefaultValue(".") String queryScope,
+            @MatrixParam("begin") @DefaultValue("0") String beginIndex,
+            @MatrixParam("end") @DefaultValue("100") String endIndex,
+            @QueryParam("query") String queryText) {
+        
+        long begin = Math.max(0L, Long.parseLong(beginIndex));
+        long end = Long.parseLong(endIndex);
+        
+        if (end < 0) {
+            end = Long.MAX_VALUE;
+        }
+        
+        HstRequestContext requestContext = getRequestContext(servletRequest);       
+        HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
+        List<NodeRepresentation> nodeReps = new ArrayList<NodeRepresentation>();
+        NodeRepresentationDataset dataset = new NodeRepresentationDataset(nodeReps);
+        
+        try {
+            ObjectBeanPersistenceManager cpm = getContentPersistenceManager(requestContext);
+            HstQueryManager queryManager = getHstQueryManager(requestContext);
+            
+            HstQuery hstQuery = null;
+            
+            if (CollectionUtils.isEmpty(nodeTypes)) {
+                hstQuery = queryManager.createQuery(hippoFolderBean);
+            } else if (nodeTypes.size() == 1) {
+                hstQuery = queryManager.createQuery(hippoFolderBean.getNode(), nodeTypes.iterator().next(), true);
+            } else {
+                hstQuery = queryManager.createQuery(hippoFolderBean, nodeTypes.toArray(new String[nodeTypes.size()]));
+            }
+            
+            if (!StringUtils.isBlank(sortBy)) {
+                if ("descending".equals(sortDirection)) {
+                    hstQuery.addOrderByDescending(sortBy);
+                } else {
+                    hstQuery.addOrderByAscending(sortBy);
+                }
+            }
+            
+            Filter filter = hstQuery.createFilter();
+            
+            if (queryText != null) {
+                if ("contains".equals(queryOperator)) {
+                    filter.addContains(queryScope, queryText);
+                } else if ("equalto".equals(queryOperator)) {
+                    filter.addEqualTo(queryScope, queryText);
+                }
+            }
+            
+            hstQuery.setFilter(filter);
+            HstQueryResult result = hstQuery.execute();
+            long totalSize = result.getSize();
+            HippoBeanIterator iterator = result.getHippoBeans();
+            
+            // don't skip past unreachable item:
+            if (begin < totalSize) {
+                iterator.skip((int) begin);
+            }
+            
+            long maxCount = end - begin;
+            long count = 0;
+            
+            while (iterator.hasNext() && count < maxCount) {
+                HippoBean hippoBean = iterator.nextHippoBean();
+                
+                if (hippoBean != null) {
+                    NodeRepresentation nodeRep = new NodeRepresentation().represent(hippoBean);
+                    nodeRep.setPageLink(getPageLinkURL(requestContext, hippoBean));
+                    nodeReps.add(nodeRep);
+                    count++;
+                }
+            }
+            
+            dataset.setTotalSize(totalSize);
+            dataset.setBeginIndex(begin);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return dataset;
     }
     
     private HippoFolderBean getRequestContentAsHippoFolderBean(HstRequestContext requestContext) throws WebApplicationException {
