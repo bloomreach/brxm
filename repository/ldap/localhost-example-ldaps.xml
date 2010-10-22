@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2008 Hippo.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- 
+EXAMPLE SECURE LDAP CONFIG FOR LOCALHOST
+
+Import this file in /hippo:configuration/hippo:security and adjust settings.
+ -->
+<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
+    xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+    xmlns:hippoldap="http://www.hippoecm.org/hippoldap/nt/1.3"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.3"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+    xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" sv:name="ldaps-localhost">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippoldap:securityprovider</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+        <sv:value>org.hippoecm.repository.security.LdapSecurityProvider</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippoldap:authentication" sv:type="String">
+        <sv:value>simple</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippoldap:credentials" sv:type="String">
+        <sv:value>secret</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippoldap:initialfactory" sv:type="String">
+        <sv:value>com.sun.jndi.ldap.LdapCtxFactory</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippoldap:principal" sv:type="String">
+        <sv:value>cn=ldapadmin,dc=onehippo,dc=org</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippoldap:providerurl" sv:type="String">
+        <sv:value>ldaps://127.0.0.1:636</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippoldap:searchbase" sv:type="String">
+        <sv:value>dc=onehippo,dc=org</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippoldap:socketfactory" sv:type="String">
+        <sv:value>org.hippoecm.repository.security.ldap.GullibleSSLSocketFactory</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:userprovider">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippoldap:userprovider</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippoldap:search">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippoldap:search</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:basedn" sv:type="String">
+                <sv:value>ou=People,dc=onehippo,dc=org</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:filter" sv:type="String">
+                <sv:value>(cn=*)</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:nameattribute"
+                sv:type="String">
+                <sv:value>uid</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippoldap:mapping">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippoldap:mapping</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:multi" sv:type="Boolean">
+                <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:source" sv:type="String">
+                <sv:value>uid</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:target" sv:type="String">
+                <sv:value>ldapuid</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippoldap:mapping">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippoldap:mapping</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:multi" sv:type="Boolean">
+                <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:source" sv:type="String">
+                <sv:value>sn</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:target" sv:type="String">
+                <sv:value>lastname</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippoldap:mapping">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippoldap:mapping</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:multi" sv:type="Boolean">
+                <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:source" sv:type="String">
+                <sv:value>givenName</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:target" sv:type="String">
+                <sv:value>fistname</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="hippo:groupprovider">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippoldap:groupprovider</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippoldap:search">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippoldap:search</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:basedn" sv:type="String">
+                <sv:value>ou=Groups,dc=onehippo,dc=org</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:filter" sv:type="String">
+                <sv:value>(cn=*)</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:nameattribute"
+                sv:type="String">
+                <sv:value>cn</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippoldap:mapping">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippoldap:mapping</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:multi" sv:type="Boolean">
+                <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:source" sv:type="String">
+                <sv:value>description</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippoldap:target" sv:type="String">
+                <sv:value>description</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+</sv:node>

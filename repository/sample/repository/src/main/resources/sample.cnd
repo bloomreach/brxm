@@ -1,0 +1,113 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<sample='http://www.hippoecm.org/sample/nt/1.1'>
+
+// TODO:
+// - (Unique) contraints on hippo:id's?
+// - verioning rules
+
+// alttext nodetype is usde by illustration so put it _before_ illustration
+[sample:altText]
+- sample:locale (string)
+  multiple mandatory
+- sample:text (string)
+
+// link nodetype is used by newsArticle so put it _before_ newsArticle
+[sample:link]
+- sample:href (String)
+- sample:text (string)
+
+// illustration nodetype is used by newsArticle so put it _before_ newsArticle
+[sample:illustration]
+- sample:imageSetId
++ sample:altText
+
+// body nodetype is used by newsArticle so put it _before_ newsArticle
+[sample:body]
+- sample:locale (string)
+  multiple mandatory
+- sample:title (string)
+  primary
+- sample:summary (string)
+- sample:page (string)
+- sample:review (string)
+
+[sample:newsArticle] > hippo:document
+- sample:id (long)
+//  > [(0,)]
+- sample:categoryId (long)
+  multiple
+- sample:newsArticleId (long)
+  multiple
+- sample:magzineId (long)
+  multiple
+- sample:sectionId (long)
+- sample:authorId (long)
+- sample:published (boolean)
+  = false
+- sample:publicationDate (date)
+- sample:newsDate (date)
++ sample:body (sample:body) = sample:body
+  multiple
++ sample:link (sample:link) = sample:link
+  multiple
++ sample:illustration (sample:illustration) = sample:illustration
+
+[sample:author] > hippo:document
+- sample:id (long)
+- sample:name (string)
+- sample:email (string)
+
+[sample:section]
+- sample:id (long)
+- sample:name (string)
+
+[sample:category]
+- sample:id (long)
+- sample:name (string)
+
+[sample:magazine]
+- sample:id (long)
+- sample:name (string)
+
+// image nodetype is used by imageSet so put it _before_ imageset
+[sample:image] > hippo:resource
+
+[sample:imageSet]
+- sample:id (long)
+  mandatory
+- sample:description (string)
+  primary
++ sample:altText
++ * (sample:image) = sample:image
+  multiple
+
+[sample:simpledocument] > hippo:document, hippostd:publishable, mix:referenceable
+- sample:title (string) mandatory primary
+- sample:cdate (date) protected
+- sample:owner (string)
+- sample:body (string) mandatory
+- sample:subject (string) multiple mandatory
+- sample:link (reference)
++ sample:image (sample:image)
+// - sample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'
