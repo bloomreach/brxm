@@ -108,6 +108,16 @@
             <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFolderContentResource"/>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.HippoDirectoryContentResource"/>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFixedDirectoryContentResource"/>
+          </constructor-arg>
+        </bean>
       </list>
     </property>
   </bean>
