@@ -75,7 +75,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoFolderBean folderBean = (HippoFolderBean) getRequestContentBean(requestContext);
             HippoFolderRepresentation folderRep = new HippoFolderRepresentation().represent(folderBean);
-            folderRep.setPageLink(getPageLinkURL(requestContext, folderBean));
+            folderRep.addLink(getNodeLink(requestContext, folderBean));
             return folderRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -123,7 +123,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             while (iterator.hasNext() && count < maxCount) {
                 HippoFolderBean childFolderBean = iterator.next();
                 HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean);
-                childFolderRep.setPageLink(getPageLinkURL(requestContext, childFolderBean));
+                childFolderRep.addLink(getNodeLink(requestContext, childFolderBean));
                 folderNodes.add(childFolderRep);
                 count++;
             }
@@ -159,7 +159,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
         
         try {
             HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean);
-            childFolderRep.setPageLink(getPageLinkURL(requestContext, childFolderBean));
+            childFolderRep.addLink(getNodeLink(requestContext, childFolderBean));
             return childFolderRep;
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
@@ -237,7 +237,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             while (iterator.hasNext() && count < maxCount) {
                 HippoDocumentBean childDocBean = iterator.next();
                 HippoDocumentRepresentation childDocRep = new HippoDocumentRepresentation().represent(childDocBean);
-                childDocRep.setPageLink(getPageLinkURL(requestContext, childDocBean));
+                childDocRep.addLink(getNodeLink(requestContext, childDocBean));
                 documentNodes.add(childDocRep);
                 count++;
             }
@@ -273,7 +273,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
         
         try {
             HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(childDocumentBean);
-            docRep.setPageLink(getPageLinkURL(requestContext, childDocumentBean));
+            docRep.addLink(getNodeLink(requestContext, childDocumentBean));
             return docRep;
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
@@ -399,7 +399,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
                     }
                     
                     if (nodeRep != null) {
-                        nodeRep.setPageLink(getPageLinkURL(requestContext, hippoBean));
+                        nodeRep.addLink(getNodeLink(requestContext, hippoBean));
                         nodeReps.add(nodeRep);
                         count++;
                     }

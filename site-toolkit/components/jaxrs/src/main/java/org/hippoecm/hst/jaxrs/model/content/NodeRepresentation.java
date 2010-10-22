@@ -15,7 +15,13 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.RepositoryException;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
@@ -30,7 +36,7 @@ public abstract class NodeRepresentation {
     private String path;
     private String primaryNodeTypeName;
     private boolean leaf;
-    private String pageLink;
+    private List<Link> links;
     
     public NodeRepresentation() {    	
     }
@@ -80,11 +86,21 @@ public abstract class NodeRepresentation {
     	return leaf;
     }
     
-    public String getPageLink() {
-        return pageLink;
+    @XmlElementWrapper(name="links")
+    @XmlElements(@XmlElement(name="link"))
+    public List<Link> getLinks() {
+        return links;
     }
     
-    public void setPageLink(String pageLink) {
-        this.pageLink = pageLink;
+    public void setLinks(List<Link> links) {
+        this.links = links;
+    }
+    
+    public void addLink(Link link) {
+        if (links == null) {
+            links = new ArrayList<Link>();
+        }
+        
+        links.add(link);
     }
 }

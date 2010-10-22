@@ -43,6 +43,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
@@ -398,7 +399,9 @@ public abstract class AbstractContentResource {
         return htmlBean.getContent();
     }
     
-    protected String getPageLinkURL(HstRequestContext requestContext, HippoBean hippoBean) {
+    protected Link getNodeLink(HstRequestContext requestContext, HippoBean hippoBean) {
+        Link nodeLink = new Link();
+        
         try {
             if (getSiteAliasForPageLinks() == null) {
                 SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
@@ -407,21 +410,26 @@ public abstract class AbstractContentResource {
                 }
             }
             
+            String siteAliasForPageLink = getSiteAliasForPageLinks();
+            nodeLink.setRel(siteAliasForPageLink);
+            
             HstLink link = null;
             
-            if (getSiteAliasForPageLinks() != null) {
+            if (siteAliasForPageLink != null) {
                 link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext, getSiteAliasForPageLinks());
             } else {
                 link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
             }
             
-            return link.toUrlForm(requestContext, isPageLinksExternal());
+            String href = link.toUrlForm(requestContext, isPageLinksExternal());
+            nodeLink.setHref(href);
+            nodeLink.setTitle(hippoBean.getName());
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to generate a page link. {}", e.toString());
             }
         }
         
-        return null;
+        return nodeLink;
     }
 }

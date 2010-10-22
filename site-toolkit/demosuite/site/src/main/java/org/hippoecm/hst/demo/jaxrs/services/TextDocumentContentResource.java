@@ -51,7 +51,7 @@ public class TextDocumentContentResource extends BaseDocumentContentResource {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             TextBean textBean = (TextBean) getRequestContentBean(requestContext);
             TextDocumentRepresentation docRep = new TextDocumentRepresentation().represent(textBean);
-            docRep.setPageLink(getPageLinkURL(requestContext, textBean));
+            docRep.addLink(getNodeLink(requestContext, textBean));
             return docRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -102,7 +102,7 @@ public class TextDocumentContentResource extends BaseDocumentContentResource {
             
             textBean = (TextBean) wpm.getObject(textBean.getPath());
             documentRepresentation = new TextDocumentRepresentation().represent(textBean);
-            documentRepresentation.setPageLink(getPageLinkURL(requestContext, textBean));
+            documentRepresentation.addLink(getNodeLink(requestContext, textBean));
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);

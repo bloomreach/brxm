@@ -30,10 +30,12 @@ import javax.ws.rs.core.UriInfo;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.jaxrs.model.BaseDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.services.content.AbstractContentResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,7 @@ public class BaseDocumentContentResource extends AbstractContentResource {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             BaseBean baseBean = (BaseBean) getRequestContentBean(requestContext);
             BaseDocumentRepresentation docRep = new BaseDocumentRepresentation().represent(baseBean);
-            docRep.setPageLink(getPageLinkURL(requestContext, baseBean));
+            docRep.addLink(getNodeLink(requestContext, baseBean));
             return docRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -104,7 +106,7 @@ public class BaseDocumentContentResource extends AbstractContentResource {
             
             baseBean = (BaseBean) wpm.getObject(baseBean.getPath());
             documentRepresentation = new BaseDocumentRepresentation().represent(baseBean);
-            documentRepresentation.setPageLink(getPageLinkURL(requestContext, baseBean));
+            documentRepresentation.addLink(getNodeLink(requestContext, baseBean));
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -144,5 +146,16 @@ public class BaseDocumentContentResource extends AbstractContentResource {
     public String updateHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @MatrixParam("path") String relPath, String htmlContent) {
         return super.updateHippoHtmlContent(servletRequest, relPath, htmlContent);
+    }
+    
+    @Override
+    protected Link getNodeLink(HstRequestContext requestContext, HippoBean hippoBean) {
+        Link link = super.getNodeLink(requestContext, hippoBean);
+        
+        if (hippoBean instanceof BaseBean) {
+            link.setTitle(((BaseBean) hippoBean).getTitle());
+        }
+        
+        return link;
     }
 }

@@ -51,7 +51,7 @@ public class ProductContentResource extends AbstractContentResource {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             ProductBean productBean = (ProductBean) getRequestContentBean(requestContext);
             ProductRepresentation productRep = new ProductRepresentation().represent(productBean);
-            productRep.setPageLink(getPageLinkURL(requestContext, productBean));
+            productRep.addLink(getNodeLink(requestContext, productBean));
             return productRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -105,7 +105,7 @@ public class ProductContentResource extends AbstractContentResource {
             
             productBean = (ProductBean) wpm.getObject(productBean.getPath());
             productRepresentation = new ProductRepresentation().represent(productBean);
-            productRepresentation.setPageLink(getPageLinkURL(requestContext, productBean));
+            productRepresentation.addLink(getNodeLink(requestContext, productBean));
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
