@@ -16,6 +16,7 @@
 package org.hippoecm.hst.jaxrs.services.content;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -92,18 +93,45 @@ public class HippoFolderContentResource extends AbstractContentResource {
     @GET
     @Path("/folders/")
     public HippoFolderRepresentationDataset getFolderResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
+            @MatrixParam("sorted") boolean sorted, 
+            @MatrixParam("pf") Set<String> propertyFilters,
+            @MatrixParam("begin") @DefaultValue("0") String beginIndex,
+            @MatrixParam("end") @DefaultValue("100") String endIndex) {
+        
+        long begin = Math.max(0L, Long.parseLong(beginIndex));
+        long end = Long.parseLong(endIndex);
+        
+        if (end < 0) {
+            end = Long.MAX_VALUE;
+        }
+
         HstRequestContext requestContext = getRequestContext(servletRequest);       
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         List<HippoFolderRepresentation> folderNodes = new ArrayList<HippoFolderRepresentation>();
         HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset(folderNodes);
         
         try {
-            for (HippoFolderBean childFolderBean : hippoFolderBean.getFolders(sorted)) {
+            List<HippoFolderBean> hippoFolderBeans = hippoFolderBean.getFolders(sorted);
+            long totalSize = hippoFolderBeans.size();
+            long maxCount = end - begin;
+            
+            Iterator<HippoFolderBean> iterator = hippoFolderBeans.iterator();
+            for (int i = 0; i < begin && iterator.hasNext(); i++) {
+                iterator.next();
+            }
+            
+            long count = 0;
+            
+            while (iterator.hasNext() && count < maxCount) {
+                HippoFolderBean childFolderBean = iterator.next();
                 HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean, propertyFilters);
                 childFolderRep.setPageLink(getPageLinkURL(requestContext, childFolderBean));
                 folderNodes.add(childFolderRep);
+                count++;
             }
+            
+            dataset.setTotalSize(totalSize);
+            dataset.setBeginIndex(begin);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -180,18 +208,45 @@ public class HippoFolderContentResource extends AbstractContentResource {
     @GET
     @Path("/documents/")
     public HippoDocumentRepresentationDataset getDocumentResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("sorted") boolean sorted, @MatrixParam("pf") Set<String> propertyFilters) {
+            @MatrixParam("sorted") boolean sorted, 
+            @MatrixParam("pf") Set<String> propertyFilters,
+            @MatrixParam("begin") @DefaultValue("0") String beginIndex,
+            @MatrixParam("end") @DefaultValue("100") String endIndex) {
+        
+        long begin = Math.max(0L, Long.parseLong(beginIndex));
+        long end = Long.parseLong(endIndex);
+        
+        if (end < 0) {
+            end = Long.MAX_VALUE;
+        }
+
         HstRequestContext requestContext = getRequestContext(servletRequest);       
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         List<HippoDocumentRepresentation> documentNodes = new ArrayList<HippoDocumentRepresentation>();
         HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset(documentNodes);
         
         try {
-            for (HippoDocumentBean documentBean : hippoFolderBean.getDocuments(sorted)) {
-                HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
-                docRep.setPageLink(getPageLinkURL(requestContext, documentBean));
-                documentNodes.add(docRep);
+            List<HippoDocumentBean> hippoDocumentBeans = hippoFolderBean.getDocuments(sorted);
+            long totalSize = hippoDocumentBeans.size();
+            long maxCount = end - begin;
+            
+            Iterator<HippoDocumentBean> iterator = hippoDocumentBeans.iterator();
+            for (int i = 0; i < begin && iterator.hasNext(); i++) {
+                iterator.next();
             }
+            
+            long count = 0;
+            
+            while (iterator.hasNext() && count < maxCount) {
+                HippoDocumentBean childDocBean = iterator.next();
+                HippoDocumentRepresentation childDocRep = new HippoDocumentRepresentation().represent(childDocBean, propertyFilters);
+                childDocRep.setPageLink(getPageLinkURL(requestContext, childDocBean));
+                documentNodes.add(childDocRep);
+                count++;
+            }
+            
+            dataset.setTotalSize(totalSize);
+            dataset.setBeginIndex(begin);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
