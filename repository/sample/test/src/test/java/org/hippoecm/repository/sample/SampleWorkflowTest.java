@@ -31,7 +31,6 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -114,46 +113,6 @@ public class SampleWorkflowTest {
             System.err.println("SystemException: " + ex.getMessage());
             ex.printStackTrace(System.err);
             fail("SystemException: " + ex.getMessage());
-        } finally {
-            SampleWorkflowSetup.commonEnd(server);
-        }
-    }
-
-    @Test
-    public void testWorkflowGui() throws RepositoryException, IOException, ClassNotFoundException,
-            NoSuchMethodException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-            InvocationTargetException {
-        SampleWorkflowSetup.commonStart(server);
-        try {
-            Session session = server.login("admin","admin".toCharArray());
-            Node root = session.getRootNode();
-
-            Node node = root.getNode("files/myarticle");
-            WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor("mycategory", node);
-            Class rendererClass = Class.forName(descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER));
-            Object[] actualArgs = new Object[2];
-            actualArgs[0] = manager;
-            actualArgs[1] = descriptor;
-            Class[] formalArgsTypes = new Class[2];
-            formalArgsTypes[0] = Class.forName("org.hippoecm.repository.api.WorkflowManager");
-            formalArgsTypes[1] = Class.forName("org.hippoecm.repository.api.WorkflowDescriptor");
-            Constructor constructor = rendererClass.getConstructor(formalArgsTypes);
-            GenericWorkflowRenderer renderer = (GenericWorkflowRenderer) constructor.newInstance(actualArgs);
-            try {
-                renderer.invoke();
-            } catch (WorkflowException ex) {
-            }
-        } catch (ClassNotFoundException ex) {
-            throw ex;
-        } catch (NoSuchMethodException ex) {
-            throw ex;
-        } catch (InstantiationException ex) {
-            throw ex;
-        } catch (IllegalAccessException ex) {
-            throw ex;
-        } catch (InvocationTargetException ex) {
-            throw ex;
         } finally {
             SampleWorkflowSetup.commonEnd(server);
         }
