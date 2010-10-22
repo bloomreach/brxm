@@ -15,16 +15,14 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
-import java.util.Set;
-
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 
 /**
+ * HippoFolderRepresentation
  * @version $Id$
- *
  */
 @XmlRootElement(name = "folder")
 public class HippoFolderRepresentation extends NodeRepresentation {
@@ -33,8 +31,8 @@ public class HippoFolderRepresentation extends NodeRepresentation {
     
     private String canonicalUuid;
     
-    public HippoFolderRepresentation represent(HippoFolderBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
-        super.represent(hippoBean, propertyFilters);
+    public HippoFolderRepresentation represent(HippoFolderBean hippoBean) throws RepositoryException {
+        super.represent(hippoBean);
         this.canonicalUuid = hippoBean.getCanonicalUUID();
         return this;
     }

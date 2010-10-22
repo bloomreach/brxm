@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
-import java.util.Set;
-
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,8 +30,8 @@ public class TextPageRepresentation extends HippoDocumentRepresentation {
     private String summary;
     private String bodyContent;
 
-	public TextPageRepresentation represent(TextPage textPage, Set<String> propertyFilters) throws RepositoryException {
-		super.represent(textPage, propertyFilters);
+	public TextPageRepresentation represent(TextPage textPage) throws RepositoryException {
+		super.represent(textPage);
 		
 		setTitle(textPage.getTitle());
 		setSummary(textPage.getSummary());

@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -30,15 +25,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.hippoecm.hst.content.beans.ContentNodeBinder;
-import org.hippoecm.hst.content.beans.ContentNodeBindingException;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
-import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
-import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,12 +42,11 @@ public class HippoDocumentContentResource extends AbstractContentResource {
     
     @GET
     @Path("/")
-    public HippoDocumentRepresentation getDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("pf") Set<String> propertyFilters) {
+    public HippoDocumentRepresentation getDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-            HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
+            HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(documentBean);
             docRep.setPageLink(getPageLinkURL(requestContext, documentBean));
             return docRep;
         } catch (Exception e) {
@@ -69,64 +58,6 @@ public class HippoDocumentContentResource extends AbstractContentResource {
             
             throw new WebApplicationException(e);
         }
-    }
-    
-    @PUT
-    @Path("/")
-    public HippoDocumentRepresentation updateDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            HippoDocumentRepresentation documentRepresentation, @MatrixParam("pf") Set<String> propertyFilters) {
-        HippoDocumentBean documentBean = null;
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        
-        try {
-            documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
-            } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
-            }
-            
-            throw new WebApplicationException(e);
-        }
-        
-        try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            final HippoDocumentRepresentation documentRepresentationInput = documentRepresentation;
-            
-            wpm.update(documentBean, new ContentNodeBinder() {
-                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
-                    try {
-                        List<NodeProperty> nodeProps = documentRepresentationInput.getProperties();
-                        if (nodeProps != null && !nodeProps.isEmpty()) {
-                            for (NodeProperty nodeProp : nodeProps) {
-                                NodePropertyUtils.setProperty(node, nodeProp);
-                            }
-                            return true;
-                        }
-                    } catch (RepositoryException e) {
-                        throw new ContentNodeBindingException(e);
-                    }
-                    
-                    return false;
-                }
-            });
-            wpm.save();
-            
-            documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
-            documentRepresentation = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
-            documentRepresentation.setPageLink(getPageLinkURL(requestContext, documentBean));
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
-            } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
-            }
-            
-            throw new WebApplicationException(e);
-        }
-        
-        return documentRepresentation;
     }
     
     @GET

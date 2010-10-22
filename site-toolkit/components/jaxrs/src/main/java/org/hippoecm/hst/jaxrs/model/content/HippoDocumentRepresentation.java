@@ -15,24 +15,22 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
-import java.util.Set;
-
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 
 /**
+ * HippoDocumentRepresentation
  * @version $Id$
- *
  */
 @XmlRootElement(name = "document")
 public class HippoDocumentRepresentation extends NodeRepresentation {
 
     private String canonicalHandleUuid;
 
-	public HippoDocumentRepresentation represent(HippoDocumentBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
-		super.represent(hippoBean, propertyFilters);
+	public HippoDocumentRepresentation represent(HippoDocumentBean hippoBean) throws RepositoryException {
+		super.represent(hippoBean);
 		this.canonicalHandleUuid = hippoBean.getCanonicalHandleUUID();
 		return this;
 	}

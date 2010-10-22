@@ -15,28 +15,15 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 /**
+ * NodeRepresentation
  * @version $Id$
- *
  */
-@XmlRootElement(name = "node")
-public class NodeRepresentation {
-    
-    private static final String ANY_NAME = "*";
+public abstract class NodeRepresentation {
     
     private String name;
     private String localizedName;
@@ -44,16 +31,11 @@ public class NodeRepresentation {
     private String primaryNodeTypeName;
     private boolean leaf;
     private String pageLink;
-    private List<NodeProperty> properties;
     
     public NodeRepresentation() {    	
     }
     
     public NodeRepresentation represent(HippoBean hippoBean) throws RepositoryException {
-        return represent(hippoBean, null);
-    }
-    
-	public NodeRepresentation represent(HippoBean hippoBean, Set<String> propertyFilters) throws RepositoryException {
 		this.name = hippoBean.getName();
 		this.localizedName = hippoBean.getLocalizedName();
 		
@@ -62,24 +44,6 @@ public class NodeRepresentation {
 		// TODO: shouldn't primaryNodeType be added to hippoBean interface?
         primaryNodeTypeName = hippoBean.getNode().getPrimaryNodeType().getName(); 
         leaf = hippoBean.isLeaf();
-        
-        if (propertyFilters != null && !propertyFilters.isEmpty()) {
-            properties = new ArrayList<NodeProperty>();
-            
-            if (propertyFilters.size() == 1 && propertyFilters.contains(ANY_NAME)) {
-                for (PropertyIterator it = hippoBean.getNode().getProperties(); it.hasNext(); ) {
-                    Property prop = it.nextProperty();
-                    properties.add(new NodeProperty(prop));
-                }
-            } else {
-                for (PropertyIterator it = hippoBean.getNode().getProperties(); it.hasNext(); ) {
-                    Property prop = it.nextProperty();
-                    if (propertyFilters.contains(prop.getName())) {
-                        properties.add(new NodeProperty(prop));
-                    }
-                }
-            }
-        }
         
         return this;
     }
@@ -122,26 +86,5 @@ public class NodeRepresentation {
     
     public void setPageLink(String pageLink) {
         this.pageLink = pageLink;
-    }
-    
-    @XmlElementWrapper(name="properties")
-    @XmlElements(@XmlElement(name="property"))
-    public List<NodeProperty> getProperties() {
-        return properties;
-    }
-    
-    public void setProperties(List<NodeProperty> properties) {
-        this.properties = properties;
-    }
-    
-    public NodeProperty getProperty(String propertyName) {
-        if (properties != null) {
-            for (NodeProperty property : properties) {
-                if (property.getName().equals(propertyName)) {
-                    return property;
-                }
-            }
-        }
-        return null;
     }
 }

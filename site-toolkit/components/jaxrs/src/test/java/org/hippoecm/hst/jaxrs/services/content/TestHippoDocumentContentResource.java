@@ -61,56 +61,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
     }
     
     @Test
-    public void testUpdateDocumentResource() throws Exception {
-        
-        log.debug("\n****** testUpdateDocumentResource *******\n");
-        
-        String documentXml = 
-            "<document>" +
-            "<properties>" +
-            "<property>" +
-            "<multiple>false</multiple>" +
-            "<name>testproject:summary</name>" + 
-            "<typeName>String</typeName>" +
-            "<values>" +
-            "<value>TestSummaryForUnitTest</value>" + 
-            "</values>" +
-            "</property>" +
-            "</properties>" +
-            "</document>";
-        
-        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
-        request.setProtocol("HTTP/1.1");
-        request.setScheme("http");
-        request.setServerName("localhost");
-        request.setServerPort(8085);
-        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        request.setMethod("PUT");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS");
-        request.setContextPath("/testapp");
-        request.setServletPath("/preview/services");
-        request.setPathInfo("/Products/HippoCMS");
-        request.setContentType("text/xml");
-        request.setContent(documentXml.getBytes());
-        
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        
-        invokeJaxrsPipeline(request, response);
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
-        }
-        
-        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
-        
-        // TODO: Add matrix parameter such as ';pf=*' to retrieve all properties.
-//        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
-//        String summary = XPathFactory.newInstance().newXPath().compile("//property[name = 'testproject:summary']/values/value").evaluate(document);
-//        
-//        assertEquals("TestSummaryForUnitTest", summary);
-    }
-    
-    @Test
     public void testGetDocumentHtmlResource() throws Exception {
         
         log.debug("\n****** testGetDocumentHtmlResource *******\n");

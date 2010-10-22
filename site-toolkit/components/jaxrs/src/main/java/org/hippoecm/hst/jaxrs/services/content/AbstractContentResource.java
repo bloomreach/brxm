@@ -16,15 +16,12 @@
 package org.hippoecm.hst.jaxrs.services.content;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
@@ -38,7 +35,6 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManage
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -46,7 +42,6 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.JAXRSService;
-import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
@@ -58,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * AbstractContentResource
  * @version $Id$
  */
 public abstract class AbstractContentResource {
@@ -199,31 +195,12 @@ public abstract class AbstractContentResource {
         return null;
     }
     
-    public HippoDocumentRepresentation updateDocumentResource(HttpServletRequest servletRequest, HttpServletResponse servletResponse, UriInfo uriInfo, 
-            HippoDocumentRepresentation documentRepresentation, Set<String> propertyFilters) {
-        HippoDocumentBean documentBean = null;
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        
-        try {
-            documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
-            } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
-            }
-            
-            throw new WebApplicationException(e);
-        }
-        
+    protected void updateNodeProperties(HstRequestContext requestContext, HippoBean hippoBean, final List<NodeProperty> nodeProps) {
         try {
             WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            final HippoDocumentRepresentation documentRepresentationInput = documentRepresentation;
-            
-            wpm.update(documentBean, new ContentNodeBinder() {
+            wpm.update(hippoBean, new ContentNodeBinder() {
                 public boolean bind(Object content, Node node) throws ContentNodeBindingException {
                     try {
-                        List<NodeProperty> nodeProps = documentRepresentationInput.getProperties();
                         if (nodeProps != null && !nodeProps.isEmpty()) {
                             for (NodeProperty nodeProp : nodeProps) {
                                 NodePropertyUtils.setProperty(node, nodeProp);
@@ -238,20 +215,15 @@ public abstract class AbstractContentResource {
                 }
             });
             wpm.save();
-            
-            documentBean = (HippoDocumentBean) wpm.getObject(documentBean.getPath());
-            documentRepresentation = new HippoDocumentRepresentation().represent(documentBean, propertyFilters);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
+                log.warn("Failed to save content bean.", e);
             } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
+                log.warn("Failed to save content bean. {}", e.toString());
             }
             
             throw new WebApplicationException(e);
         }
-        
-        return documentRepresentation;
     }
     
     protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath) {
@@ -451,5 +423,5 @@ public abstract class AbstractContentResource {
         }
         
         return null;
-    }    
+    }
 }

@@ -15,14 +15,11 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
-import java.util.Set;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
-import javax.ws.rs.MatrixParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -48,12 +45,11 @@ public class TextPageContentResource extends AbstractContentResource {
     
     @GET
     @Path("/")
-    public TextPageRepresentation getTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            @MatrixParam("pf") Set<String> propertyFilters) {
+    public TextPageRepresentation getTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             TextPage textPage = (TextPage) getRequestContentBean(requestContext);
-            return new TextPageRepresentation().represent(textPage, propertyFilters);
+            return new TextPageRepresentation().represent(textPage);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -68,7 +64,7 @@ public class TextPageContentResource extends AbstractContentResource {
     @PUT
     @Path("/")
     public TextPageRepresentation updateTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
-            TextPageRepresentation textPageRepresentation, @MatrixParam("pf") Set<String> propertyFilters) {
+            TextPageRepresentation textPageRepresentation) {
         TextPage textPage = null;
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
@@ -104,7 +100,7 @@ public class TextPageContentResource extends AbstractContentResource {
             wpm.save();
             
             textPage = (TextPage) wpm.getObject(textPage.getPath());
-            textPageRepresentation = new TextPageRepresentation().represent(textPage, propertyFilters);
+            textPageRepresentation = new TextPageRepresentation().represent(textPage);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
