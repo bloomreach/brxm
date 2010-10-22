@@ -17,10 +17,12 @@ package org.hippoecm.repository.decorating.checked;
 
 import javax.jcr.Credentials;
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.Workspace;
@@ -70,12 +72,6 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
         return new NodeDecorator(this, session, (HippoNode) node);
     }
 
-    protected Item getBasicItemDecorator(SessionDecorator session, Item item) {
-        if(item instanceof ItemDecorator)
-            return item;
-        return new ItemDecorator(this, session, item);
-    }
-
     public Node getNodeDecorator(SessionDecorator session, Node node) {
         if (node instanceof Version) {
             return getVersionDecorator(session, (Version) node);
@@ -87,9 +83,18 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
     }
 
     public Property getPropertyDecorator(SessionDecorator session, Property property) {
-        if(property instanceof PropertyDecorator)
+        if (property instanceof PropertyDecorator)
             return property;
-        return new PropertyDecorator(this, session, property);
+        try {
+            Node parent = session.getRootNode();
+            try {
+                parent = getNodeDecorator(session, property.getParent());
+            } catch(ItemNotFoundException ex) {
+            }
+            return new PropertyDecorator(this, session, property, parent);
+        } catch (RepositoryException ex) {
+            return null;
+        }
     }
 
     public Property getPropertyDecorator(SessionDecorator session, Property property, NodeDecorator parent) {
@@ -126,7 +131,7 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
         } else if (item instanceof Property) {
             return getPropertyDecorator(session, (Property) item);
         } else {
-            return getBasicItemDecorator(session, item);
+            return null;
         }
     }
 

@@ -57,43 +57,23 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
 
     protected HippoNode node;
     protected SessionDecorator session;
-    private String originalUUID = null;
-    private String originalPath = null;
-    private Node originalParent = null;
-    private String originalName = null;
-    private int originalIndex = 1;
+    private String nodeIdentifier = null;
 
     protected NodeDecorator(DecoratorFactory factory, SessionDecorator session, HippoNode node) {
-        super(factory, session, node, false);
+        super(factory, session, node);
         this.session = session;
         this.node = node;
 
         try {
-            if(node.hasProperty("jcr:uuid")) {
-                if(node.isNodeType("mix:referenceable")) {
-                    try {
-                        originalUUID = node.getUUID();
-                    } catch(UnsupportedRepositoryOperationException ex) {
-                    }
-                }
-            }
-            if(originalUUID == null) {
-                // this is unreliable, but a best effort.
-                originalPath = node.getPath();
-            }
-        } catch(RepositoryException ex) {
+            nodeIdentifier = node.getIdentifier();
+        } catch (RepositoryException ex) {
         }
     }
 
     @Override
     protected void repair(Session upstreamSession) throws RepositoryException {
-        if(originalUUID != null) {
-            node = (HippoNode) upstreamSession.getNodeByUUID(originalUUID);
-        } else if(originalPath != null) {
-            node = (HippoNode) upstreamSession.getRootNode().getNode(originalPath.substring(1));
-        } else {
-            node = (HippoNode) NodeDecorator.unwrap(originalParent.getNode(originalName));
-        }
+        node = (HippoNode) upstreamSession.getNodeByIdentifier(nodeIdentifier);
+        item = node;
     }
 
     public Node getCanonicalNode() throws RepositoryException {
