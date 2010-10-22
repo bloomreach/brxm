@@ -52,9 +52,6 @@
   
   <root>
     <level value="WARN"/>
-    <!--
-    <appender-ref ref="console"/>
-    -->
     <appender-ref ref="console"/>
   </root>
   
