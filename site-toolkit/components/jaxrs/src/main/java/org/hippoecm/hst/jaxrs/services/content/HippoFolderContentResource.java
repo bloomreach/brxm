@@ -336,13 +336,19 @@ public class HippoFolderContentResource extends AbstractContentResource {
             @MatrixParam("scope") @DefaultValue(".") String queryScope,
             @MatrixParam("begin") @DefaultValue("0") String beginIndex,
             @MatrixParam("end") @DefaultValue("100") String endIndex,
-            @QueryParam("query") String queryText) {
+            @MatrixParam("query") String queryMatrixParam,
+            @QueryParam("query") String queryParam) {
         
         long begin = Math.max(0L, Long.parseLong(beginIndex));
         long end = Long.parseLong(endIndex);
         
         if (end < 0) {
             end = Long.MAX_VALUE;
+        }
+        
+        String queryText = queryParam;
+        if (StringUtils.isBlank(queryText)) {
+            queryText = queryMatrixParam;
         }
         
         HstRequestContext requestContext = getRequestContext(servletRequest);       
