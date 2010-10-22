@@ -23,21 +23,21 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * HippoFolderRepresentationDataset
+ * HippoDocumentLinkDataset
  * @version $Id$
  */
 @XmlRootElement(name = "dataset")
-public class HippoFolderRepresentationDataset extends AbstractNodeRepresentationDataset {
+public class HippoDocumentLinkDataset extends AbstractNodeLinkDataset {
 
     private static final long serialVersionUID = 1L;
     
-    public HippoFolderRepresentationDataset() {
+    public HippoDocumentLinkDataset() {
         super();
     }
     
-    @XmlElementWrapper(name="folders")
-    @XmlElements(@XmlElement(name="folder"))
-    public List<HippoFolderRepresentation> getFolders() {
-        return (List<HippoFolderRepresentation>) getNodeRepresentations();
+    @XmlElementWrapper(name="links")
+    @XmlElements(@XmlElement(name="link"))
+    public List<? extends Link> getDocumentLinks() {
+        return (List<? extends Link>) getNodeLinks();
     }
 }

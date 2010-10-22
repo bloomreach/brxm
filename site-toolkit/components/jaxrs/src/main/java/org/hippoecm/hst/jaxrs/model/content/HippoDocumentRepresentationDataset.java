@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * HippoFolderRepresentationDataset
+ * HippoDocumentRepresentationDataset
  * @version $Id$
  */
 @XmlRootElement(name = "dataset")
@@ -33,10 +33,6 @@ public class HippoDocumentRepresentationDataset extends AbstractNodeRepresentati
     
     public HippoDocumentRepresentationDataset() {
         super();
-    }
-    
-    public HippoDocumentRepresentationDataset(List<HippoDocumentRepresentation> nodeRepresentations) {
-        super(nodeRepresentations);
     }
     
     @XmlElementWrapper(name="documents")

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
@@ -424,6 +425,15 @@ public abstract class AbstractContentResource {
             String href = link.toUrlForm(requestContext, isPageLinksExternal());
             nodeLink.setHref(href);
             nodeLink.setTitle(hippoBean.getName());
+            
+            // tries to retrieve title property if available.
+            try {
+                String title = (String) PropertyUtils.getProperty(hippoBean, "title");
+                if (title != null) {
+                    nodeLink.setTitle(title);
+                }
+            } catch (Exception ignore) {
+            }
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to generate a page link. {}", e.toString());

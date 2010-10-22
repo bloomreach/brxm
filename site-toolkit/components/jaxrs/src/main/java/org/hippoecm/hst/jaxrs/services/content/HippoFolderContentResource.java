@@ -55,6 +55,7 @@ import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoDocumentRepresentationDataset;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoFolderRepresentationDataset;
+import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.NodeRepresentationDataset;
 import org.slf4j.Logger;
@@ -106,7 +107,8 @@ public class HippoFolderContentResource extends AbstractContentResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);       
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         List<HippoFolderRepresentation> folderNodes = new ArrayList<HippoFolderRepresentation>();
-        HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset(folderNodes);
+        HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset();
+        dataset.setNodeRepresentations(folderNodes);
         
         try {
             List<HippoFolderBean> hippoFolderBeans = hippoFolderBean.getFolders(sorted);
@@ -160,6 +162,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
         try {
             HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean);
             childFolderRep.addLink(getNodeLink(requestContext, childFolderBean));
+            Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
+            ownerLink.setRel("owner");
+            childFolderRep.addLink(ownerLink);
             return childFolderRep;
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
@@ -220,7 +225,8 @@ public class HippoFolderContentResource extends AbstractContentResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);       
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         List<HippoDocumentRepresentation> documentNodes = new ArrayList<HippoDocumentRepresentation>();
-        HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset(documentNodes);
+        HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset();
+        dataset.setNodeRepresentations(documentNodes);
         
         try {
             List<HippoDocumentBean> hippoDocumentBeans = hippoFolderBean.getDocuments(sorted);
@@ -274,6 +280,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
         try {
             HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(childDocumentBean);
             docRep.addLink(getNodeLink(requestContext, childDocumentBean));
+            Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
+            ownerLink.setRel("owner");
+            docRep.addLink(ownerLink);
             return docRep;
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
@@ -339,7 +348,8 @@ public class HippoFolderContentResource extends AbstractContentResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);       
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(requestContext);
         List<NodeRepresentation> nodeReps = new ArrayList<NodeRepresentation>();
-        NodeRepresentationDataset dataset = new NodeRepresentationDataset(nodeReps);
+        NodeRepresentationDataset dataset = new NodeRepresentationDataset();
+        dataset.setNodeRepresentations(nodeReps);
         
         try {
             ObjectBeanPersistenceManager cpm = getContentPersistenceManager(requestContext);
