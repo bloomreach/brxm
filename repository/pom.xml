@@ -93,9 +93,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk</url>
   </scm>
 
   <distributionManagement>

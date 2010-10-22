@@ -27,9 +27,9 @@
   <artifactId>hippo-ecm-repository-jca</artifactId>
   <packaging>rar</packaging>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/jca</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/jca</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/jca</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/jca</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/jca</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/jca</url>
   </scm>
   <build>
     <defaultGoal>package</defaultGoal>

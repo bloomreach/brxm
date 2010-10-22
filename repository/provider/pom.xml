@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/provider</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/provider</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/provider</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/provider</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/provider</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/provider</url>
   </scm>
 
   <dependencies>

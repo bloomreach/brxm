@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/branches/Branch-HREPTWO-v2_09_xx/repository/upgrade</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/branches/Branch-HREPTWO-v2_09_xx/repository/upgrade</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/branches/Branch-HREPTWO-v2_09_xx/repository/upgrade</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/upgrade</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/upgrade</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/upgrade</url>
   </scm>
 
   <dependencies>
