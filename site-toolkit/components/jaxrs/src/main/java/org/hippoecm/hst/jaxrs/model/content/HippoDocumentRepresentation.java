@@ -28,7 +28,11 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 public class HippoDocumentRepresentation extends NodeRepresentation {
 
     private String canonicalHandleUuid;
-
+    
+    public HippoDocumentRepresentation() {
+        super();
+    }
+    
 	public HippoDocumentRepresentation represent(HippoDocumentBean hippoBean) throws RepositoryException {
 		super.represent(hippoBean);
 		this.canonicalHandleUuid = hippoBean.getCanonicalHandleUUID();

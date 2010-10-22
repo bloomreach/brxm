@@ -52,6 +52,7 @@ public class TextDocumentContentResource extends BaseDocumentContentResource {
             TextBean textBean = (TextBean) getRequestContentBean(requestContext);
             TextDocumentRepresentation docRep = new TextDocumentRepresentation().represent(textBean);
             docRep.addLink(getNodeLink(requestContext, textBean));
+            docRep.addLink(getSiteLink(requestContext, textBean));
             return docRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -103,6 +104,7 @@ public class TextDocumentContentResource extends BaseDocumentContentResource {
             textBean = (TextBean) wpm.getObject(textBean.getPath());
             documentRepresentation = new TextDocumentRepresentation().represent(textBean);
             documentRepresentation.addLink(getNodeLink(requestContext, textBean));
+            documentRepresentation.addLink(getSiteLink(requestContext, textBean));
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);

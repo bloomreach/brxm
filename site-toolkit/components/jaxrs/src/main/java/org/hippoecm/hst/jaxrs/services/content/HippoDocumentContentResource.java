@@ -48,6 +48,7 @@ public class HippoDocumentContentResource extends AbstractContentResource {
             HippoDocumentBean documentBean = (HippoDocumentBean) getRequestContentBean(requestContext);
             HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(documentBean);
             docRep.addLink(getNodeLink(requestContext, documentBean));
+            docRep.addLink(getSiteLink(requestContext, documentBean));
             return docRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

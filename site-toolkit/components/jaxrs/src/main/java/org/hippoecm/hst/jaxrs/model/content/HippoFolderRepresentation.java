@@ -31,6 +31,10 @@ public class HippoFolderRepresentation extends NodeRepresentation {
     
     private String canonicalUuid;
     
+    public HippoFolderRepresentation() {
+        super();
+    }
+    
     public HippoFolderRepresentation represent(HippoFolderBean hippoBean) throws RepositoryException {
         super.represent(hippoBean);
         this.canonicalUuid = hippoBean.getCanonicalUUID();

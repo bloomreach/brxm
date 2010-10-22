@@ -77,6 +77,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             HippoFolderBean folderBean = (HippoFolderBean) getRequestContentBean(requestContext);
             HippoFolderRepresentation folderRep = new HippoFolderRepresentation().represent(folderBean);
             folderRep.addLink(getNodeLink(requestContext, folderBean));
+            folderRep.addLink(getSiteLink(requestContext, folderBean));
             return folderRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -110,6 +111,10 @@ public class HippoFolderContentResource extends AbstractContentResource {
         HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset();
         dataset.setNodeRepresentations(folderNodes);
         
+        Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
+        ownerLink.setRel("owner");
+        dataset.addLink(ownerLink);
+        
         try {
             List<HippoFolderBean> hippoFolderBeans = hippoFolderBean.getFolders(sorted);
             long totalSize = hippoFolderBeans.size();
@@ -124,7 +129,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             
             while (iterator.hasNext() && count < maxCount) {
                 HippoFolderBean childFolderBean = iterator.next();
-                HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean);
+                HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation();
                 childFolderRep.addLink(getNodeLink(requestContext, childFolderBean));
                 folderNodes.add(childFolderRep);
                 count++;
@@ -162,11 +167,12 @@ public class HippoFolderContentResource extends AbstractContentResource {
         try {
             HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean);
             childFolderRep.addLink(getNodeLink(requestContext, childFolderBean));
+            childFolderRep.addLink(getSiteLink(requestContext, childFolderBean));
             Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
             ownerLink.setRel("owner");
             childFolderRep.addLink(ownerLink);
             return childFolderRep;
-        } catch (RepositoryException e) {
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
             } else {
@@ -228,6 +234,10 @@ public class HippoFolderContentResource extends AbstractContentResource {
         HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset();
         dataset.setNodeRepresentations(documentNodes);
         
+        Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
+        ownerLink.setRel("owner");
+        dataset.addLink(ownerLink);
+        
         try {
             List<HippoDocumentBean> hippoDocumentBeans = hippoFolderBean.getDocuments(sorted);
             long totalSize = hippoDocumentBeans.size();
@@ -242,7 +252,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             
             while (iterator.hasNext() && count < maxCount) {
                 HippoDocumentBean childDocBean = iterator.next();
-                HippoDocumentRepresentation childDocRep = new HippoDocumentRepresentation().represent(childDocBean);
+                HippoDocumentRepresentation childDocRep = new HippoDocumentRepresentation();
                 childDocRep.addLink(getNodeLink(requestContext, childDocBean));
                 documentNodes.add(childDocRep);
                 count++;
@@ -280,11 +290,12 @@ public class HippoFolderContentResource extends AbstractContentResource {
         try {
             HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(childDocumentBean);
             docRep.addLink(getNodeLink(requestContext, childDocumentBean));
+            docRep.addLink(getSiteLink(requestContext, childDocumentBean));
             Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
             ownerLink.setRel("owner");
             docRep.addLink(ownerLink);
             return docRep;
-        } catch (RepositoryException e) {
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
             } else {
@@ -409,9 +420,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
                     NodeRepresentation nodeRep = null;
                     
                     if (hippoBean.isHippoFolderBean()) {
-                        nodeRep = new HippoFolderRepresentation().represent((HippoFolderBean) hippoBean);
+                        nodeRep = new HippoFolderRepresentation();
                     } else if (hippoBean.isHippoDocumentBean()) {
-                        nodeRep = new HippoDocumentRepresentation().represent((HippoDocumentBean) hippoBean);
+                        nodeRep = new HippoDocumentRepresentation();
                     }
                     
                     if (nodeRep != null) {

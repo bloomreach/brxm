@@ -229,11 +229,12 @@ public abstract class AbstractContentResource {
     }
     
     protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath) {
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        HippoBean hippoBean = null;
         HippoHtml htmlBean = null;
         
         try {
-            HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoBean hippoBean = getRequestContentBean(requestContext);
+            hippoBean = getRequestContentBean(requestContext);
             htmlBean = (HippoHtml) getChildBeanByRelPathOrPrimaryNodeType(hippoBean, relPath, "hippostd:html");
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -252,7 +253,21 @@ public abstract class AbstractContentResource {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        return new HippoHtmlRepresentation().represent(htmlBean);
+        try {
+            HippoHtmlRepresentation htmlRep = new HippoHtmlRepresentation().represent(htmlBean);
+            Link ownerLink = getNodeLink(requestContext, hippoBean);
+            ownerLink.setRel("owner");
+            htmlRep.addLink(ownerLink);
+            return htmlRep;
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
     }
     
     protected HippoHtmlRepresentation updateHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath, HippoHtmlRepresentation htmlRepresentation) {
@@ -401,6 +416,34 @@ public abstract class AbstractContentResource {
     }
     
     protected Link getNodeLink(HstRequestContext requestContext, HippoBean hippoBean) {
+        Link nodeLink = new Link();
+        
+        try {
+            String siteAlias = requestContext.getResolvedSiteMount().getSiteMount().getAlias();
+            nodeLink.setRel(siteAlias);
+            HstLink link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
+            String href = link.toUrlForm(requestContext, isPageLinksExternal());
+            nodeLink.setHref(href);
+            nodeLink.setTitle(hippoBean.getName());
+            
+            // tries to retrieve title property if available.
+            try {
+                String title = (String) PropertyUtils.getProperty(hippoBean, "title");
+                if (title != null) {
+                    nodeLink.setTitle(title);
+                }
+            } catch (Exception ignore) {
+            }
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to generate a page link. {}", e.toString());
+            }
+        }
+        
+        return nodeLink;
+    }
+    
+    protected Link getSiteLink(HstRequestContext requestContext, HippoBean hippoBean) {
         Link nodeLink = new Link();
         
         try {

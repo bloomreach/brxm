@@ -52,6 +52,7 @@ public class NewsDocumentContentResource extends BaseDocumentContentResource {
             NewsBean newsBean = (NewsBean) getRequestContentBean(requestContext);
             NewsDocumentRepresentation newsRep = new NewsDocumentRepresentation().represent(newsBean);
             newsRep.addLink(getNodeLink(requestContext, newsBean));
+            newsRep.addLink(getSiteLink(requestContext, newsBean));
             return newsRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -103,6 +104,7 @@ public class NewsDocumentContentResource extends BaseDocumentContentResource {
             newsBean = (NewsBean) wpm.getObject(newsBean.getPath());
             documentRepresentation = new NewsDocumentRepresentation().represent(newsBean);
             documentRepresentation.addLink(getNodeLink(requestContext, newsBean));
+            documentRepresentation.addLink(getSiteLink(requestContext, newsBean));
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
