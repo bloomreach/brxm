@@ -151,14 +151,14 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
     	requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, node);
     	
         // use JAX-RS service endpoint url-template: /{resourceType}/{suffix}
-        StringBuilder jaxrsEndpointURL = new StringBuilder("/").append(resourceType).append("/");
+        StringBuilder jaxrsEndpointRequestPath = new StringBuilder("/").append(resourceType).append("/");
     	if (requestContext.getPathSuffix() != null) {
-    		jaxrsEndpointURL.append(requestContext.getPathSuffix());
+    		jaxrsEndpointRequestPath.append(requestContext.getPathSuffix());
     	}
     	if (log.isDebugEnabled()) {
-    		log.debug("Invoking JAX-RS endpoint {}: {} for contentPath {}", new Object[]{request.getMethod(), jaxrsEndpointURL.toString(), requestContentPath});
+    		log.debug("Invoking JAX-RS endpoint {}: {} for contentPath {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), requestContentPath});
     	}
-    	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointURL.toString());
+    	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
 	}
 	
 	@Override
