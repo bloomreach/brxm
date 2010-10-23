@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -40,7 +43,7 @@ public class PropertyContent extends ItemContent {
     private int type;
     private String typeName;
     private String multiple;
-    private ValueContent [] valueContents;
+    private List<ValueContent> valueContents;
     
     public PropertyContent() {
         super();
@@ -61,14 +64,15 @@ public class PropertyContent extends ItemContent {
         this.multiple = Boolean.toString(property.getDefinition().isMultiple());
         
         try {
+            this.valueContents = new ArrayList<ValueContent>();
+            
             if (property.getDefinition().isMultiple()) {
                 Value [] valueObjects = property.getValues();
-                this.valueContents = new ValueContent[valueObjects.length];
                 for (int i = 0; i < valueObjects.length; i++) {
-                    this.valueContents[i] = new ValueContent(valueObjects[i]);
+                    this.valueContents.add(new ValueContent(valueObjects[i]));
                 }
             } else {
-                this.valueContents = new ValueContent [] { new ValueContent(property.getValue()) };
+                this.valueContents.add(new ValueContent(property.getValue()));
             }
         } catch (Exception e) {
             logger.warn("Failed to retrieve property value: {}", e.toString());
@@ -103,11 +107,11 @@ public class PropertyContent extends ItemContent {
     
     @XmlElementWrapper(name="values")
     @XmlElements(@XmlElement(name="value"))
-    public ValueContent [] getValueContents() {
+    public List<ValueContent> getValueContents() {
         return valueContents;
     }
     
-    public void setValueContents(ValueContent [] valueContents) {
+    public void setValueContents(List<ValueContent> valueContents) {
         this.valueContents = valueContents;
     }
     

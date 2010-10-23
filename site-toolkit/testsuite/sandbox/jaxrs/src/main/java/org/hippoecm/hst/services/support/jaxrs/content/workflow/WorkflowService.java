@@ -105,7 +105,7 @@ public class WorkflowService extends BaseHstContentService {
             @QueryParam("editaction") @DefaultValue("commitEditableInstance") String editAction,
             @QueryParam("wfclass") String workflowClassName,
             @QueryParam("action") String action,
-            @QueryParam("param") String [] params) {
+            @QueryParam("param") List<String> params) {
         
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
@@ -149,7 +149,14 @@ public class WorkflowService extends BaseHstContentService {
                     throw new IllegalArgumentException("Invalid workflow class name. The workflow doesn't support this.");
                 }
                 
-                MethodUtils.invokeMethod(workflow, action, params);
+                int paramCount = (params != null ? params.size(): 0);
+                String [] paramsArray = new String[paramCount];
+                
+                if (params != null) {
+                    paramsArray = params.toArray(paramsArray);
+                }
+                
+                MethodUtils.invokeMethod(workflow, action, paramsArray);
             }
             
             return Response.ok().build();

@@ -325,7 +325,7 @@ public class ContentService extends BaseHstContentService {
                 throw new WebApplicationException(new IllegalArgumentException("primary node type name not found."), Response.Status.BAD_REQUEST);
             }
             
-            cpm.create(parentPath, (String) primaryTypePropertyContent.getValueContents()[0].getValue(), documentBeanContent.getName(), true);
+            cpm.create(parentPath, (String) primaryTypePropertyContent.getValueContents().get(0).getValue(), documentBeanContent.getName(), true);
             cpm.save();
             
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
@@ -444,17 +444,17 @@ public class ContentService extends BaseHstContentService {
     private void setPropertyValue(Node canonicalNode, PropertyContent propertyContent) throws Exception {
         int type = propertyContent.getType();
         boolean isMultiple = Boolean.parseBoolean(propertyContent.getMultiple());
-        ValueContent [] valueContents = propertyContent.getValueContents();
+        List<ValueContent> valueContents = propertyContent.getValueContents();
         Object [] args = null;
         
         if (!isMultiple) {
-            args = new Object [] { propertyContent.getName(), valueContents[0].getValue(), new Integer(type) };
+            args = new Object [] { propertyContent.getName(), valueContents.get(0).getValue(), new Integer(type) };
             MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String.class, int.class });
         } else {
-            String [] values = new String[valueContents.length];
+            String [] values = new String[valueContents.size()];
             
-            for (int i = 0; i < valueContents.length; i++) {
-                values[i] = valueContents[i].getValue();
+            for (int i = 0; i < valueContents.size(); i++) {
+                values[i] = valueContents.get(i).getValue();
             }
             
             args = new Object [] { propertyContent.getName(), values, new Integer(type) };
