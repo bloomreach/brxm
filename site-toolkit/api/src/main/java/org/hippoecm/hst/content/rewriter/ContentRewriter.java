@@ -19,6 +19,7 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * ContentRewriter to rewrite document content such as links.
@@ -28,6 +29,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 public interface ContentRewriter<T> {
     
     /**
+     * @deprecated Use {@link #rewrite(Object, Node, HstRequestContext)} instead.
      * Rewrites the content of the content node.
      * @param <T>
      * @param content content object. It can be type of String or whatever, depending on the implementation and the context.
@@ -37,5 +39,24 @@ public interface ContentRewriter<T> {
      * @return
      */
     T rewrite(T content, Node contentNode, HstRequest request, HstResponse response);
+    
+    /**
+     * Rewrites the content of the content node.
+     * @param content content object. It can be type of String or whatever, depending on the implementation and the context.
+     * @param contentNode content node
+     * @param requestContext
+     * @return
+     */
+    T rewrite(T content, Node contentNode, HstRequestContext requestContext);
+    
+    /**
+     * Rewrites the content of the content node.
+     * @param content
+     * @param contentNode
+     * @param requestContext
+     * @param targetSiteMountAlias
+     * @return
+     */
+    T rewrite(T content, Node contentNode, HstRequestContext requestContext, String targetSiteMountAlias);
     
 }

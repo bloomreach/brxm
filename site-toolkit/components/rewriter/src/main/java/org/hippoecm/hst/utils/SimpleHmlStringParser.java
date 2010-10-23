@@ -21,6 +21,7 @@ import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class SimpleHmlStringParser {
     
@@ -31,7 +32,7 @@ public class SimpleHmlStringParser {
     }
     
     public static HstLink getLink(String path, Node node, HstRequest request, HstResponse response) {
-        return simpleHmlStringRewriter.getLink(path, node, request, response);
+        return simpleHmlStringRewriter.getLink(path, node, request.getRequestContext(), null);
     }
     
     public static boolean isExternal(String path) {
@@ -40,8 +41,8 @@ public class SimpleHmlStringParser {
     
     private static class SimpleHmlStringRewriter extends SimpleContentRewriter {
         @Override
-        public HstLink getLink(String path, Node node, HstRequest request, HstResponse response) {
-            return super.getLink(path, node, request, response);
+        public HstLink getLink(String path, Node node, HstRequestContext requestContext, String targetSiteMountAlias) {
+            return super.getLink(path, node, requestContext, targetSiteMountAlias);
         }
         
         @Override

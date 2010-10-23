@@ -29,6 +29,7 @@ import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -241,5 +242,13 @@ public class MockHstRequestContext implements HstRequestContext {
     
     public String getPathSuffix() {
         return pathSuffix;
+    }
+
+    public SiteMount getMount(String alias) {
+        return null;
+    }
+
+    public SiteMount getMount(String type, String alias) {
+        return null;
     }
 }

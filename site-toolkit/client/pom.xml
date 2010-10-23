@@ -102,6 +102,11 @@
       <version>${pom.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-rewriter</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
@@ -141,10 +146,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.htmlcleaner</groupId>
-      <artifactId>htmlcleaner</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.james</groupId>

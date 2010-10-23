@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple HTML Tag Extractor
  * 
- * @version $Id$
+ * @version $Id: SimpleHtmlExtractor.java 22564 2010-04-27 12:53:45Z wko $
  */
 public class SimpleHtmlExtractor {
 

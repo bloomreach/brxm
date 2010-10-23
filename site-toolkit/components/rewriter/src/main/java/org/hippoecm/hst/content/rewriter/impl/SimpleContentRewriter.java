@@ -22,6 +22,7 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * SimpleContentRewriter
  * 
- * @version $Id$
+ * @version $Id: SimpleContentRewriter.java 24267 2010-10-11 09:09:56Z aschrijvers $
  */
 public class SimpleContentRewriter implements ContentRewriter<String> {
     
@@ -54,7 +55,18 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
         
     }
     
+    /**
+     * @deprecated
+     */
     public String rewrite(String html, Node node, HstRequest request, HstResponse response) {
+        return rewrite(html, node, request.getRequestContext());
+    }
+    
+    public String rewrite(String html, Node node, HstRequestContext requestContext) {
+        return rewrite(html, node, requestContext, null);
+    }
+    
+    public String rewrite(String html, Node node, HstRequestContext requestContext, String targetSiteAlias) {
         // only create if really needed
         StringBuilder sb = null;
         
@@ -93,9 +105,9 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
                     if(isExternal(documentPath)) {
                         sb.append(documentPath);
                     } else {
-                        HstLink href = getDocumentLink(documentPath,node, request, response);
+                        HstLink href = getDocumentLink(documentPath,node, requestContext, targetSiteAlias);
                         if(href != null && href.getPath() != null) {
-                            sb.append(href.toUrlForm(request.getRequestContext(),false));
+                            sb.append(href.toUrlForm(requestContext, false));
                         } else {
                            log.warn("Skip href because url is null"); 
                         }
@@ -144,9 +156,9 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
                     if(isExternal(srcPath)) {
                         sb.append(srcPath);
                     } else {
-                        HstLink binaryLink = getBinaryLink(srcPath, node, request, response);
+                        HstLink binaryLink = getBinaryLink(srcPath, node, requestContext, targetSiteAlias);
                         if(binaryLink != null && binaryLink.getPath() != null) {
-                             sb.append(binaryLink.toUrlForm(request.getRequestContext(),false));
+                             sb.append(binaryLink.toUrlForm(requestContext,false));
                         } else {
                             log.warn("Could not translate image src. Skip src");
                         }
@@ -170,19 +182,53 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
         }
     }
     
+    /**
+     * @deprecated
+     * @param path
+     * @param node
+     * @param request
+     * @param response
+     * @return
+     */
     protected HstLink getDocumentLink(String path, Node node, HstRequest request, HstResponse response) {
-        return getLink(path, node, request, response);
+        return getDocumentLink(path, node, request.getRequestContext(), null);
     }
     
+    protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, String targetSiteAlias) {
+        return getLink(path, node, requestContext, targetSiteAlias);
+    }
+    
+    /**
+     * @deprecated
+     * @param path
+     * @param node
+     * @param request
+     * @param response
+     * @return
+     */
     protected HstLink getBinaryLink(String path, Node node, HstRequest request, HstResponse response) {
-        return getLink(path, node, request, response);
+        return getBinaryLink(path, node, request.getRequestContext(), null);
     }
     
+    protected HstLink getBinaryLink(String path, Node node, HstRequestContext requestContext, String targetSiteAlias) {
+        return getLink(path, node, requestContext, targetSiteAlias);
+    }
+    
+    /**
+     * @deprecated
+     * @param path
+     * @param node
+     * @param request
+     * @param response
+     * @return
+     */
     protected HstLink getLink(String path, Node node, HstRequest request, HstResponse response) {
-        HstRequestContext reqContext = request.getRequestContext();
-        
+        return getLink(path, node, request.getRequestContext(), null);
+    }
+    
+    protected HstLink getLink(String path, Node node, HstRequestContext reqContext, String targetSiteMountAlias) {
         try {
-            path = URLDecoder.decode(path, "utf-8");
+            path = URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e1) {
             log.warn("UnsupportedEncodingException for documentPath");
         }
@@ -190,7 +236,12 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
         // translate the documentPath to a URL in combination with the Node and the mapping object
         if (path.startsWith("/")) {
             // this is an absolute path, which is not an internal content link. We just try to create a link for it directly
-            return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedSiteMount().getSiteMount());
+            if (targetSiteMountAlias == null) {
+                return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedSiteMount().getSiteMount());
+            } else {
+                SiteMount targetSiteMount = reqContext.getMount(targetSiteMountAlias);
+                return reqContext.getHstLinkCreator().create(path, targetSiteMount);
+            }
         } else {
             // relative node, most likely a mirror node:
             try {
@@ -205,7 +256,11 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
                  */
                 Node mirrorNode = ((HippoWorkspace)((HippoSession)node.getSession()).getWorkspace()).getHierarchyResolver().getNode(node, path);    
                 if (mirrorNode != null) {
-                    return reqContext.getHstLinkCreator().create(mirrorNode, reqContext);
+                    if (targetSiteMountAlias == null) {
+                        return reqContext.getHstLinkCreator().create(mirrorNode, reqContext);
+                    } else {
+                        return reqContext.getHstLinkCreator().create(mirrorNode, reqContext, targetSiteMountAlias);
+                    }
                 } else {
                     log.warn("Cannot find node '{}' for internal link for document '{}'. Cannot create link", path, node.getPath());
                 }

@@ -29,7 +29,9 @@ import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -341,4 +343,33 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return pathSuffix;
     }
     
+    public SiteMount getMount(String alias) {
+        SiteMount curMount = getResolvedSiteMount().getSiteMount();
+        VirtualHost curVhost = curMount.getVirtualHost();
+        String hostGroupName = curVhost.getHostGroupName();
+        
+        VirtualHost vhost = getVirtualHost();
+        VirtualHosts vhosts = vhost.getVirtualHosts();
+        
+        for (String type : curMount.getTypes()) {
+            SiteMount targetMount = vhosts.getSiteMountByGroupAliasAndType(hostGroupName, alias, type);
+            
+            if (targetMount != null) {
+                return targetMount;
+            }
+        }
+        
+        return null;
+    }
+    
+    public SiteMount getMount(String type, String alias) {
+        SiteMount curMount = getResolvedSiteMount().getSiteMount();
+        VirtualHost curVhost = curMount.getVirtualHost();
+        String hostGroupName = curVhost.getHostGroupName();
+        
+        VirtualHost vhost = getVirtualHost();
+        VirtualHosts vhosts = vhost.getVirtualHosts();
+        
+        return vhosts.getSiteMountByGroupAliasAndType(hostGroupName, alias, type);
+    }
 }

@@ -37,6 +37,8 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManage
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.rewriter.ContentRewriter;
+import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -71,6 +73,8 @@ public abstract class AbstractContentResource {
     
     private String siteAliasForPageLinks;
     private boolean pageLinksExternal;
+    
+    private ContentRewriter<String> contentRewriter;
     
     public String getAnnotatedClassesResourcePath() {
         return annotatedClassesResourcePath;
@@ -140,7 +144,15 @@ public abstract class AbstractContentResource {
     public void setPageLinksExternal(boolean pageLinksExternal) {
         this.pageLinksExternal = pageLinksExternal;
     }
-
+    
+    public ContentRewriter<String> getContentRewriter() {
+        return contentRewriter;
+    }
+    
+    public void setContentRewriter(ContentRewriter<String> contentRewriter) {
+        this.contentRewriter = contentRewriter;
+    }
+    
     protected ObjectBeanPersistenceManager getContentPersistenceManager(HstRequestContext requestContext) throws RepositoryException {
         return new WorkflowPersistenceManagerImpl(requestContext.getSession(), getObjectConverter(requestContext));
     }
@@ -228,7 +240,7 @@ public abstract class AbstractContentResource {
         }
     }
     
-    protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath) {
+    protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath, String targetSiteMountAlias) {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         HippoBean hippoBean = null;
         HippoHtml htmlBean = null;
@@ -258,6 +270,19 @@ public abstract class AbstractContentResource {
             Link ownerLink = getNodeLink(requestContext, hippoBean);
             ownerLink.setRel("owner");
             htmlRep.addLink(ownerLink);
+            
+            ContentRewriter<String> rewriter = getContentRewriter();
+            if (rewriter == null) {
+                rewriter = new SimpleContentRewriter();
+            }
+            
+            if (targetSiteMountAlias == null) {
+                targetSiteMountAlias = requestContext.getResolvedSiteMount().getSiteMount().getAlias();
+            }
+            
+            String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetSiteMountAlias);
+            htmlRep.setContent(rewrittenHtml);
+            
             return htmlRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -329,12 +354,12 @@ public abstract class AbstractContentResource {
         return htmlRepresentation;
     }
     
-    protected String getHippoHtmlContent(HttpServletRequest servletRequest, String relPath) {
+    protected String getHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String targetSiteMountAlias) {
         
+        HstRequestContext requestContext = getRequestContext(servletRequest);
         HippoHtml htmlBean = null;
         
         try {
-            HstRequestContext requestContext = getRequestContext(servletRequest);       
             HippoBean hippoBean = getRequestContentBean(requestContext);
             htmlBean = (HippoHtml) getChildBeanByRelPathOrPrimaryNodeType(hippoBean, relPath, "hippostd:html");
         } catch (Exception e) {
@@ -354,7 +379,17 @@ public abstract class AbstractContentResource {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        return htmlBean.getContent();
+        ContentRewriter<String> rewriter = getContentRewriter();
+        if (rewriter == null) {
+            rewriter = new SimpleContentRewriter();
+        }
+        
+        if (targetSiteMountAlias == null) {
+            targetSiteMountAlias = requestContext.getResolvedSiteMount().getSiteMount().getAlias();
+        }
+        
+        String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetSiteMountAlias);
+        return rewrittenHtml;
     }
     
     protected String updateHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String htmlContent) {

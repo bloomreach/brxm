@@ -123,8 +123,9 @@ public class BaseDocumentContentResource extends AbstractContentResource {
     @GET
     @Path("/html/")
     public HippoHtmlRepresentation getHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @MatrixParam("path") String relPath) {
-        return super.getHippoHtmlRepresentation(servletRequest, relPath);
+            @MatrixParam("path") String relPath,
+            @MatrixParam("target") String targetSiteMountAlias) {
+        return super.getHippoHtmlRepresentation(servletRequest, relPath, targetSiteMountAlias);
     }
     
     @PUT
@@ -137,8 +138,9 @@ public class BaseDocumentContentResource extends AbstractContentResource {
     @GET
     @Path("/html/content/")
     public String getHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @MatrixParam("path") String relPath) {
-        return super.getHippoHtmlContent(servletRequest, relPath);
+            @MatrixParam("path") String relPath,
+            @MatrixParam("target") String targetSiteMountAlias) {
+        return super.getHippoHtmlContent(servletRequest, relPath, targetSiteMountAlias);
     }
     
     @PUT

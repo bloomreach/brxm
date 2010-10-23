@@ -107,7 +107,7 @@ public class HstHtmlTag extends TagSupport {
                 contentRewriter = new SimpleContentRewriter();
             }
             
-            html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest, hstResponse);
+            html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest.getRequestContext());
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
         }

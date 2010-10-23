@@ -239,4 +239,8 @@ public interface HstRequestContext {
      */
     String getPathSuffix();
     
+    SiteMount getMount(String alias);
+    
+    SiteMount getMount(String type, String alias);
+    
 }
