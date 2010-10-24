@@ -1,0 +1,157 @@
+$.namespace('Hippo.PageComposer.UI');
+
+Hippo.PageComposer.UI.Manager = function() {
+    this.current = null;
+    this.containers = {};
+
+    this.init();
+};
+
+Hippo.PageComposer.UI.Manager.prototype = {
+    init: function() {
+
+        //do try/catch because else errors will disappear
+        try {
+            //attach mouseover/mouseclick for components
+            var self = this;
+            $('div.componentContentWrapper').each(function(index) {
+                if(Hippo.PageComposer.UI.Factory.isContainer(this)) {
+                    self._createContainer(this);
+                }
+            });
+
+            //register to listen to iframe-messages
+            onhostmessage(function(msg) {
+                this.select(msg.data.element);
+                return false;
+            }, this, false, 'select');
+
+            onhostmessage(function(msg) {
+                this.deselect(msg.data.element);
+                return false;
+            }, this, false, 'deselect');
+
+            onhostmessage(function(msg) {
+                this.add(msg.data.element, msg.data.parentId);
+                return false;
+            }, this, false, 'add');
+
+            onhostmessage(function(msg) {
+                this.remove(msg.data.element);
+                return false;
+            }, this, false, 'remove');
+
+        } catch(e) {
+            console.error(e);
+        }
+    },
+
+    _createContainer : function(element) {
+        var container = Hippo.PageComposer.UI.Factory.create(element);
+        this.containers[container.id] = container;
+        var self = this;
+        container.syncAll = function() {
+            self.syncAll();
+        };
+        container.render();
+        container.activate();
+    },
+
+    _retrieve : function(element) {
+        var factory = Hippo.PageComposer.UI.Factory;
+        var data = factory.verify(element);
+        var o = factory.getById(data.id);
+        if(o == null) {
+            Hippo.PageComposer.Main.die('Object with id ' + data.id + ' not found in registry');
+        }
+        return o;
+    },
+
+    //Deprecated
+    _createOrRetrieve : function(element) {
+        console.log('Deprecated');
+        console.trace();
+        var die = Hippo.PageComposer.Main.die;
+
+        if (typeof element === 'undefined' || element === null) {
+            die("element is undefined or null");
+        }
+
+        var el = $(element);
+        var id = el.attr('hst:id');
+        if (typeof id === 'undefined') {
+            die('Attribute hst:id not found');
+        }
+
+        if(Hippo.PageComposer.UI.Factory.isContainer(element)) {
+            if (typeof this.containers[id] === 'undefined') {
+                this._createContainer(element);
+            }
+            return this.containers[id];
+        } else {
+            var parentId = $(element).parents('.componentContentWrapper').attr('hst:id');
+            var parent = this.containers[parentId];
+            if (typeof parent === 'undefined') {
+                die('No existing parent container found for item ' + id);
+            }
+            if(!parent.hasItem(id)) {
+                parent.createItem(element);
+            }
+            return parent.getItem(id);
+        }
+    },
+
+    select: function(element) {
+        if (this.current != null && this.current.element == element) {
+            return;
+        }
+
+        this.current = this._retrieve(element);
+        this.current.select();
+    },
+
+    deselect : function(element) {
+        if (this.current != null) {
+            this.current.deselect();
+            this.current = null;
+        }
+    },
+
+    add: function(element, parentId) {
+        if (typeof this.containers[parentId] !== 'undefined') {
+            this.containers[parentId].add(element);
+        }
+    },
+
+    remove : function(element) {
+        if (!element.hasAttribute('hst:id')) {
+            element = $(element).parents('.componentContentWrapper')[0];
+        }
+
+        var d = Hippo.PageComposer.UI.Factory.verify(element);
+        if (d.type == HST.CONTAINERITEM) {
+            var containerId = $(element).parents('.componentContentWrapper').attr('hst:id');
+            var container = this.containers[containerId];
+            if (typeof container !== 'undefined' && container.removeItem(element)) {
+                Hippo.PageComposer.UI.Factory.deleteObjectRef(containerId);
+            }
+        } else if (d.type == HST.CONTAINER) {
+            var container = this.containers[d.id];
+            if (typeof container !== 'undefined') {
+                container.remove();
+                delete this.containers[id];
+            }
+        }
+    },
+
+    syncAll : function() {
+        $.each(this.containers, function(key, value) {
+            value.sync();
+        });
+    }
+
+};
+
+
+
+
