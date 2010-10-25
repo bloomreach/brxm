@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.rest;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +25,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hippoecm.hst.pagecomposer.annotations.Parameter;
-import org.hippoecm.hst.pagecomposer.annotations.ParameterInfo;
-import org.hippoecm.hst.pagecomposer.annotations.ParameterType;
+import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.configuration.components.ParameterType;
+import org.hippoecm.hst.configuration.components.ParametersInfo;
 
 
 /**
@@ -71,22 +71,22 @@ public class ComponentWrapper {
 
         if (componentClassName != null) {
             Class componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
-            if (componentClass.isAnnotationPresent(ParameterInfo.class)) {
-                ParameterInfo parameterInfo = (ParameterInfo) componentClass.getAnnotation(ParameterInfo.class);
-                Field[] fields = parameterInfo.className().getDeclaredFields();
-                for (Field field : fields) {
-                    if (field.isAnnotationPresent(Parameter.class)) {
-                        Parameter propAnnotation = field.getAnnotation(Parameter.class);
+            if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
+                ParametersInfo parameterInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
+                Method[] methods = parameterInfo.type().getDeclaredMethods();
+                for (Method method : methods) {
+                    if (method.isAnnotationPresent(Parameter.class)) {
+                        Parameter propAnnotation = method.getAnnotation(Parameter.class);
                         Property prop = new Property();
                         prop.setName(propAnnotation.name());
                         prop.setDefaultValue(propAnnotation.defaultValue());
                         prop.setDescription(propAnnotation.description());
                         prop.setType(propAnnotation.type());
                         prop.setRequired(propAnnotation.required());
-                        if (propAnnotation.label().equals("")) {
+                        if (propAnnotation.displayName().equals("")) {
                             prop.setLabel(propAnnotation.name());
                         } else {
-                            prop.setLabel(propAnnotation.label());
+                            prop.setLabel(propAnnotation.displayName());
                         }
                         if (hstParameters != null && hstParameters.get(propAnnotation.name()) != null) {
                             prop.setValue(hstParameters.get(propAnnotation.name()));
@@ -120,7 +120,7 @@ public class ComponentWrapper {
     class Property {
         private String name;
         private String value;
-        private ParameterType type;
+        private String type;
         private String label;
         private String defaultValue;
         private String description;
@@ -136,7 +136,7 @@ public class ComponentWrapper {
             required = false;
         }
 
-        Property(String name, String value, ParameterType type, String label, String defaultValue, String description) {
+        Property(String name, String value, String type, String label, String defaultValue, String description) {
             this.name = name;
             this.value = value;
             this.type = type;
@@ -160,12 +160,22 @@ public class ComponentWrapper {
             this.value = value;
         }
 
-        public ParameterType getType() {
+        public String getType() {
             return type;
         }
 
-        public void setType(ParameterType type) {
-            this.type = type;
+        public void setType(String type) {
+            if (type.equals(ParameterType.DATE)) {
+                this.type = "datefield";
+            } else if (type.equals(ParameterType.BOOLEAN)) {
+                this.type = "checkbox";
+            } else if (type.equals(ParameterType.NUMBER)) {
+                this.type = "numberfield";
+            } else if (type.equals(ParameterType.COLOR)) {
+                this.type = "colorfield";
+            } else {
+                this.type = "textfield";
+            }
         }
 
         public String getLabel() {

@@ -6,6 +6,7 @@ import org.hippoecm.hst.pagecomposer.dependencies.JsDependency;
 import org.hippoecm.hst.pagecomposer.dependencies.PathDependency;
 import org.hippoecm.hst.pagecomposer.dependencies.ext.plugins.ExtBaseApp;
 import org.hippoecm.hst.pagecomposer.dependencies.ext.plugins.ExtBaseGrid;
+import org.hippoecm.hst.pagecomposer.dependencies.ext.plugins.ExtColorField;
 import org.hippoecm.hst.pagecomposer.dependencies.ext.plugins.ExtFloatingWindow;
 import org.hippoecm.hst.pagecomposer.dependencies.ext.plugins.ExtMiframe;
 
@@ -20,6 +21,7 @@ public class ExtApp extends PathDependency implements Dependency {
             new ExtFloatingWindow("1.0.0"),
             new ExtBaseApp("1.0.0"),
             new ExtBaseGrid("1.0.0"),
+            new ExtColorField("1.0.0"),
 
             new JsDependency("src/globals.js"),    
             new PathDependency("src/ext",

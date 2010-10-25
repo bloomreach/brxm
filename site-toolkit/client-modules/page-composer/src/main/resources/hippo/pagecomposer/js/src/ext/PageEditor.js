@@ -123,7 +123,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 type:'fit'
             },
             initRegion: 'right',
-            closable: false,
+            closable: true,
+            closeAction: 'hide',
             constrainHeader: true,
             items:[
                 {

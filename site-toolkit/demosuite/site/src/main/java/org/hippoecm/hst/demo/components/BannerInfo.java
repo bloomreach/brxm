@@ -16,10 +16,35 @@
 
 package org.hippoecm.hst.demo.components;
 
-import org.hippoecm.hst.pagecomposer.annotations.Parameter;
+import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.configuration.components.ParameterType;
+
 
 public class BannerInfo {
 
-    @Parameter(name ="bannerWidth", label="Banner Width")
-    private int bannerWidth;
+    @Parameter(name = "bannerWidth", displayName = "Banner Width", type = ParameterType.NUMBER)
+    private int getBannerWidth() {
+        return 0;
+    }
+    
+    @Parameter(name = "yesNo", displayName = "Yes or No ?", type = ParameterType.BOOLEAN)
+    private int getYesNO() {
+        return 0;
+    }
+
+    @Parameter(name = "date", displayName = "Some Date", type = ParameterType.DATE)
+    private String getDate() {
+        return "";
+    }
+
+    @Parameter(name = "borderColor", displayName = "Border Color", type = ParameterType.COLOR)
+    private String getColor() {
+        return "";
+    }
+
+    @Parameter(name = "someName", displayName = "Some String", type = ParameterType.STRING)
+    private String getSomeName() {
+        return "";
+    }
+
 }

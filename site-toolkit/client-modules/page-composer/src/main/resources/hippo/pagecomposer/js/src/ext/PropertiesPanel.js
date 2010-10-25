@@ -13,6 +13,22 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             defaults:{
                 width: 250
             },
+
+            buttons:[
+                {
+                    text: "Save",
+                    handler: this.submitForm,
+                    scope: this
+                },
+                {
+                    text: "Cancel",
+                    scope: this,
+                    handler: function () {
+                        this.getForm().reset();
+                    }
+                }
+            ],
+
             readonly: [1],
             path: ""
 
@@ -41,12 +57,12 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 xtype: "panel"
             });
         } else {
-            this.addButton({text: "Save"}, this.submitForm, this);
+
             for (var i = 0; i < length; ++i) {
                 var property = records[i];
                 this.add({
                     fieldLabel: property.get('label'),
-                    xtype: 'textfield',
+                    xtype: property.get('type'),
                     labelStyle: 'font-weight:bold;',
                     value: property.get('value'),
                     allowBlank: !property.get('required'),
