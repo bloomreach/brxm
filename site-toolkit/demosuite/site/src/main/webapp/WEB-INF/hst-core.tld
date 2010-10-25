@@ -259,6 +259,14 @@
             <description>If the link should be created in the context of the current URL, use this attr with value true. When having canonical='true', this 
             attribute is ignored.</description>
         </attribute>
+        <attribute>
+            <name>mount</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>Expert: Create a link for a mount with alias that has the value of this attribute. You can create cross-domain links
+            with this, even to mounts having a different host name. Or to a mount belonging to REST calls.</description>
+        </attribute>
         <example><![CDATA[
         <!-- In a body component: A list of document names with summaries and links to those documents: -->
 

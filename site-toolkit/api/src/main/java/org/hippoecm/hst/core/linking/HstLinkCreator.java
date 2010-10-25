@@ -248,7 +248,7 @@ public interface HstLinkCreator {
      * <code>siteMount</code> and not the current context.
      * The <code>siteMount</code> can be a different one then the one of the current request context.
      * If the <code>siteMount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
-     * to a different (sub)site, <code>null</code> is returned. </p>
+     * to a different (sub)site, a page not found link is returned. </p>
      * <p>note: if an link is returned, this is always the canonical link, also see {@link #createCanonical(Node, ResolvedSiteMapItem)}</p>
      * @param node the jcr node for that should be translated into a HstLink
      * @param siteMount the (sub)site for which the hstLink should be created for
@@ -260,7 +260,7 @@ public interface HstLinkCreator {
     /**
      * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>siteMountAlias</code>. First, the {@link SiteMount} belonging to the 
      * <code>siteMountAlias</code> is searched for. When the {@link SiteMount} belonging to the alias cannot rewrite the <code>node</code>, 
-     * there is no fallback to whether other {@link SiteMount}'s can rewrite the <code>node</code> to a {@link HstLink}
+     * there is no fallback to whether other {@link SiteMount}'s can rewrite the <code>node</code> to a {@link HstLink}. 
      * 
      * Note that the found {@link SiteMount} <b>must</b> 
      * 
@@ -277,7 +277,7 @@ public interface HstLinkCreator {
      * @param node the jcr node
      * @param requestContext the current request context
      * @param siteMountAlias the alias of the siteMount for which the link should be created for
-     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>siteMountAlias</code> or <code>null</code> when no link for the node can be made in the <code>siteMount</code> belonging to the alias or when there belongs no siteMount to the alias
+     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>siteMountAlias</code> or <code>null</code>  when there cannot be found an {@link SiteMount} for the alias
      * @see {@link #create(Node, SiteMount)} 
      */
     HstLink create(Node node, HstRequestContext requestContext, String siteMountAlias);

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -342,34 +343,77 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public String getPathSuffix() {
         return pathSuffix;
     }
-    
+
     public SiteMount getMount(String alias) {
-        SiteMount curMount = getResolvedSiteMount().getSiteMount();
-        VirtualHost curVhost = curMount.getVirtualHost();
-        String hostGroupName = curVhost.getHostGroupName();
+        SiteMount currentMount = getResolvedSiteMount().getSiteMount();
+        String hostGroupName = currentMount.getVirtualHost().getHostGroupName();
+        VirtualHosts hosts = currentMount.getVirtualHost().getVirtualHosts();
+        List<SiteMount> possibleMounts = new ArrayList<SiteMount>();
         
-        VirtualHost vhost = getVirtualHost();
-        VirtualHosts vhosts = vhost.getVirtualHosts();
+        for(String type : currentMount.getTypes()) {
+           SiteMount possibleMount =  hosts.getSiteMountByGroupAliasAndType(hostGroupName, alias, type);
+           if(possibleMount != null) {
+               possibleMounts.add(possibleMount);
+           }
+        }
         
-        for (String type : curMount.getTypes()) {
-            SiteMount targetMount = vhosts.getSiteMountByGroupAliasAndType(hostGroupName, alias, type);
-            
-            if (targetMount != null) {
-                return targetMount;
+        if(possibleMounts.size() == 0) {
+            // no match found
+            return null;
+        }
+        
+        if(possibleMounts.size() == 1) {
+            return possibleMounts.get(0);
+        }
+        
+        // there are multiple possible. Let's return the best. 
+        for(SiteMount possibleMount : possibleMounts) {
+            if(possibleMount.getType().equals(currentMount.getType())) {
+                // found a primary match
+                return possibleMount;
             }
         }
         
-        return null;
+        // we did not find a primary match for best match. We return the mount with the most types in common. 
+        
+        List<SiteMount> narrowedPossibleMounts = new ArrayList<SiteMount>();
+        if(possibleMounts.size() > 1) {
+            // find the sitemount's with the most types in common
+            int mostCommon = 0;
+            for(SiteMount s : possibleMounts) {
+                int inCommon = countCommon(s.getTypes(), currentMount.getTypes());
+                if(inCommon > mostCommon) {
+                    mostCommon = inCommon;
+                    narrowedPossibleMounts.clear();
+                    narrowedPossibleMounts.add(s);
+                } else if (inCommon == mostCommon) {
+                    narrowedPossibleMounts.add(s);
+                } else {
+                    // do nothing, there where less types in common
+                }
+            }
+        }
+        
+        // we won't continue searching for a better possible match as this most likely is never need:
+        if(narrowedPossibleMounts.size() > 0) {
+            return narrowedPossibleMounts.get(0);
+        }
+        
+        // should not get here
+        return possibleMounts.get(0);
+    }
+
+    public SiteMount getMount(String alias, String type) {
+        return getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias, type);
     }
     
-    public SiteMount getMount(String type, String alias) {
-        SiteMount curMount = getResolvedSiteMount().getSiteMount();
-        VirtualHost curVhost = curMount.getVirtualHost();
-        String hostGroupName = curVhost.getHostGroupName();
-        
-        VirtualHost vhost = getVirtualHost();
-        VirtualHosts vhosts = vhost.getVirtualHosts();
-        
-        return vhosts.getSiteMountByGroupAliasAndType(hostGroupName, alias, type);
+    private int countCommon(List<String> types, List<String> types2) {
+        int counter = 0;
+        for(String type : types) {
+            if(types2.contains(type)) {
+                counter++;
+            }
+        }
+        return counter;
     }
 }

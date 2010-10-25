@@ -30,7 +30,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.configuration.hosting.SiteMount;
@@ -79,6 +78,11 @@ public class HstLinkTag extends ParamContainerTag {
      * created wrt the current url or not. 
      */
     protected boolean navigationStateful;
+    
+    /**
+     * The alias of the mount the link is meant for
+     */
+    protected String mountAlias;
     
     protected boolean skipTag; 
 
@@ -129,12 +133,30 @@ public class HstLinkTag extends ParamContainerTag {
            return EVAL_PAGE;
        } 
        
+       if( (preferSiteMapItem != null || navigationStateful) && mountAlias != null) {
+           log.error("It is not allowed in a hst:link tag to configure a mount in combination with 'navigationStateful == true' or a hst:sitemapitem in the hst:link.");
+           throw new JspException("It is not allowed in a hst:link tag to configure a mount in combination with 'navigationStateful == true' or a hst:sitemapitem in the hst:link.");
+       }
+       
+       SiteMount mount = null;
+       if(mountAlias != null) {
+          mount = reqContext.getMount(mountAlias);
+          if(mount == null) {
+              throw new JspException("Cannot resolve mount with alias '"+mountAlias+"' for current request. Cannot create a link for '"+path+"'");
+          }
+       } else {
+           mount = reqContext.getResolvedSiteMount().getSiteMount();
+       }
+       
        if(this.hippoBean != null) {
             if(hippoBean.getNode() == null) {
                 log.warn("Cannot get a link for a detached node");
                 return EVAL_PAGE;
             }
-            if(canonical) {
+            if(mountAlias != null) {
+                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), mount);
+            }
+            else if(canonical) {
                 this.link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext, preferSiteMapItem);
             } else {
                 this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext, preferSiteMapItem, fallback, navigationStateful);
@@ -142,10 +164,9 @@ public class HstLinkTag extends ParamContainerTag {
         }
         
         if(this.link == null && this.path != null) {
-            SiteMount siteMount = reqContext.getResolvedSiteMount().getSiteMount();
             VirtualHost virtualHost = reqContext.getVirtualHost();
             boolean containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(this.path));
-            this.link = reqContext.getHstLinkCreator().create(this.path, siteMount, containerResource);
+            this.link = reqContext.getHstLinkCreator().create(this.path, mount, containerResource);
         }
         
         if(this.link == null) {
@@ -249,6 +270,7 @@ public class HstLinkTag extends ParamContainerTag {
         fallback = true;
         canonical = false;
         navigationStateful = false;
+        mountAlias = null;
         
         return EVAL_PAGE;
     }
@@ -324,6 +346,14 @@ public class HstLinkTag extends ParamContainerTag {
     
     public void setHippobean(HippoBean hippoBean) {
         this.hippoBean = hippoBean;
+    }
+    
+    public void setMount(String mount) {
+        this.mountAlias = mount;
+    }
+    
+    public String getMount(){
+        return mountAlias;
     }
     
     public void setHippobeanByBeanPath(String beanPath) {

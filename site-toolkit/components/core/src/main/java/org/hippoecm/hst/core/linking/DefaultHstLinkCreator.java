@@ -141,52 +141,42 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     
     public HstLink create(Node node, SiteMount siteMount) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, siteMount);
-        return linkResolver.resolve();
-    }
-    
-    
-    private HstLink create(Node node, SiteMount siteMount, boolean tryOtherMounts) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, siteMount);
-        linkResolver.tryOtherMounts = tryOtherMounts;
+        linkResolver.tryOtherMounts = false;
+        // when linking to a mount, we always want get a canonical link:
+        linkResolver.canonicalLink = true;
         return linkResolver.resolve();
     }
     
     public HstLink create(Node node, HstRequestContext requestContext,  String siteMountAlias) {
-        SiteMount currentSiteMount = requestContext.getResolvedSiteMount().getSiteMount();
-        SiteMount targetSiteMount = null; 
-        for(String type: currentSiteMount.getTypes()) {
-            targetSiteMount = requestContext.getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(currentSiteMount.getVirtualHost().getHostGroupName(), siteMountAlias, type);
-            if(targetSiteMount != null) {
-                break;
-            }
-        }
+        SiteMount targetSiteMount = requestContext.getMount(siteMountAlias);
         if(targetSiteMount == null) {
+            SiteMount currentMount = requestContext.getResolvedSiteMount().getSiteMount();
             StringBuffer types = new StringBuffer();
-            for(String type: currentSiteMount.getTypes()) {
+            for(String type: currentMount.getTypes()) {
                 if(types.length() > 0) {
                     types.append(",");
                 }
                 types.append(type);
             }
-            String[] messages = {siteMountAlias , currentSiteMount.getVirtualHost().getHostGroupName(), types.toString()};
+            String[] messages = {siteMountAlias , currentMount.getVirtualHost().getHostGroupName(), types.toString()};
             log.warn("Cannot create a link for siteMountAlias '{}' as it cannot be found in the host group '{}' and one of the types '{}'", messages);
             return null;
         }
         
         log.debug("Target SiteMount found for siteMountAlias '{}'. Create link for target site mount", siteMountAlias);
-        return create(node, targetSiteMount, false);
+        return create(node, targetSiteMount);
     }
 
 
     public HstLink create(Node node, HstRequestContext requestContext,  String siteMountAlias, String type) {
-        SiteMount targetSiteMount = requestContext.getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(requestContext.getVirtualHost().getHostGroupName(), siteMountAlias, type);
+        SiteMount targetSiteMount = requestContext.getMount(siteMountAlias, type);
         if(targetSiteMount == null) {
             String[] messages = {siteMountAlias , requestContext.getVirtualHost().getHostGroupName(), type};
             log.warn("Cannot create a link for siteMountAlias '{}' as it cannot be found in the host group '{}' for type '{}'", messages);
             return null;
         }
         log.debug("Target SiteMount found for siteMountAlias '{}'. Create link for target site mount", siteMountAlias);
-        return create(node, targetSiteMount, false);
+        return create(node, targetSiteMount);
     }
     public HstLink create(String path, SiteMount siteMount) {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount));

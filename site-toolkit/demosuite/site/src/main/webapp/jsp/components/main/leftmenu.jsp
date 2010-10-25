@@ -97,7 +97,8 @@
   </li>
 </c:forEach>
   <li>
-    <a href="${hstRequest.contextPath}${hstRequest.requestContext.resolvedSiteMount.resolvedMountPath}/restapi/${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" 
+    <hst:link var="restlink" path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"/>
+    <a href="${restlink}" 
        target="_blank">RESTful Representation</a>
   </li>
 </ul>

@@ -100,7 +100,7 @@ public interface VirtualHosts {
     String getLocale();
     
     /**
-     * Returns the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. . Returns <code>null</code> when no match
+     * Returns the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. Returns <code>null</code> when no match
      * 
      * @param hostGroupName
      * @param alias the alias the site mount must have

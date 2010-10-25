@@ -238,9 +238,31 @@ public interface HstRequestContext {
      * @return the matched path suffix
      */
     String getPathSuffix();
-    
+
+    /**
+     * <p>
+     * a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and at least one common type with the mount from the current request. Thus, at least 
+     * one of the types of the found {@link SiteMount#getTypes()} must be equal to one of the types of the mount of the current request. 
+     * </p>
+     * <p>
+     * If there can be found a {@link SiteMount} with the same primary type ( {@link SiteMount#getType()} ) as the one for the mount of the current request, this
+     * {@link SiteMount} has precedence. If there is no primary type match, we'll return the mount that has most types in common
+     * </p>
+     * 
+     * @param alias the alias the found {@link SiteMount} should have
+     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and at least one common type with the mount from the current request. <code>null</code> if there is no suitable mount.
+     */
     SiteMount getMount(String alias);
     
-    SiteMount getMount(String type, String alias);
+    /**
+     * <p>
+     * a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and one of its {@link SiteMount#getTypes()}  equal to <code>type</code>.
+     * </p>
+     * 
+     * @param alias the alias the found {@link SiteMount} should have
+     * @param type the type the found {@link SiteMount} should have
+     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and one of its {@link SiteMount#getTypes()} equal to <code>type</code>. <code>null</code> if there is no suitable mount.
+     */
+    SiteMount getMount(String alias, String type);
     
 }
