@@ -50,7 +50,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.reviewedactions.PublishableDocument;
 import org.junit.Test;
 
 public class EditorFactoryTest extends PluginTest {
@@ -305,36 +304,6 @@ public class EditorFactoryTest extends PluginTest {
         session.save();
         ((IRefreshable) editor).refresh();
         assertEquals(Mode.COMPARE, editor.getMode());
-    }
-
-    @Test
-    public void testSetMode() throws Exception {
-
-        String[] workflowConfig = {
-            "/publishable", "hipposys:workflow",
-                "hipposys:nodetype", "hippostd:publishable",
-                "hipposys:classname", org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl.class.getName(),
-                "hipposys:display", "publishable workflow",
-                    "/publishable/hipposys:types/" + PublishableDocument.class.getName(), "hipposys:type",
-                        "hipposys:classname", PublishableDocument.class.getName(),
-                        "hipposys:display", "publisahble document",
-                        "hipposys:nodetype", "hippostd:publishable"
-        };
-        build(session, mount("/hippo:configuration/hippo:workflows/default", workflowConfig));
-        Node category = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
-        category.orderBefore("publishable", category.getNodes().nextNode().getName());
-
-        createDocument("document");
-
-        session.save();
-
-        EditorFactory factory = new EditorFactory(context, config);
-        IEditor<Node> editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel("/test/content/document"),
-                Mode.VIEW);
-
-        editor.setMode(IEditor.Mode.EDIT);
-        assertEquals(0, getPreviews().size());
-        assertEquals(1, getEditors().size());
     }
 
     @Test

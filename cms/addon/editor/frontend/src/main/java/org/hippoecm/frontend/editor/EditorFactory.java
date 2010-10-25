@@ -64,21 +64,23 @@ public class EditorFactory implements IClusterable {
                     throw new EditorException("Document has been deleted");
                 }
                 Node doc = docs.iterator().next();
-                if (isNodeType(doc, HippoStdNodeType.NT_PUBLISHABLE)) {
-                    editor = new HippostdPublishableEditor(manager, context, config, nodeModel);
-                } else {
-                    editor = new DefaultCmsEditor(manager, context, config, nodeModel, mode);
-                }
-            } else if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                editor = new TemplateTypeEditor(manager, context, config, nodeModel, mode);
+                editor = newEditor(manager, context, nodeModel, mode, node);
             } else {
-                editor = new DefaultCmsEditor(manager, context, config, nodeModel, mode);
+                editor = newEditor(manager, context, nodeModel, mode, node);
             }
         } catch (RepositoryException e) {
             throw new EditorException("Could not determine type of editor required", e);
         }
         editor.start();
         return editor;
+    }
+
+    protected AbstractCmsEditor<Node> newEditor(IEditorContext manager, IPluginContext context, IModel<Node> nodeModel, IEditor.Mode mode, Node node) throws RepositoryException, EditorException {
+        if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+            return new TemplateTypeEditor(manager, context, config, nodeModel, mode);
+        } else {
+            return new DefaultCmsEditor(manager, context, config, nodeModel, mode);
+        }
     }
 
     static Set<Node> getDocuments(Node handle) throws RepositoryException {

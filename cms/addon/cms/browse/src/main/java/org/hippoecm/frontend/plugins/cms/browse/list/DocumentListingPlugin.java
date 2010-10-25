@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -32,12 +31,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.DocumentAttributeComparator;
-import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
-import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.DocumentAttributeAttributeModifier;
-import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.DocumentAttributeRenderer;
-import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributeModifier;
-import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
@@ -54,10 +47,6 @@ import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
-import org.hippoecm.frontend.translation.ILocaleProvider;
-import org.hippoecm.frontend.translation.list.resolvers.TranslationRenderer;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,14 +129,6 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
         column.setCssClass("doclisting-name");
         columns.add(column);
 
-        //State
-        column = new ListColumn<Node>(new StringResourceModel("doclisting-state", this, null), "state");
-        column.setComparator(new StateComparator());
-        column.setRenderer(new EmptyRenderer());
-        column.setAttributeModifier(new StateIconAttributeModifier());
-        column.setCssClass("doclisting-state");
-        columns.add(column);
-
         return columns;
     }
 
@@ -161,122 +142,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
         column.setCssClass("doclisting-type");
         columns.add(column);
 
-        //Date last modified
-        column = new ListColumn<Node>(new StringResourceModel("doclisting-lastmodified-date", this, null), "lastmodified-date");
-        column.setComparator(new DocumentAttributeComparator() {
-            private static final long serialVersionUID = -4617312936280189361L;
-
-            @Override
-            protected int compare(StateIconAttributes s1, StateIconAttributes s2) {
-                return compareDates(s1.getLastModifiedDate(), s2.getLastModifiedDate());
-            }
-        });
-        column.setCssClass("doclisting-date");
-        column.setRenderer(new DocumentAttributeRenderer() {
-            private static final long serialVersionUID = -1485899011687542362L;
-
-            @Override
-            protected String getObject(StateIconAttributes atts) {
-                return simpleFormattedCalendar(atts.getLastModifiedDate());
-            }
-        });
-        column.setAttributeModifier(new DocumentAttributeAttributeModifier("title") {
-            private static final long serialVersionUID = 1036099861027058091L;
-
-            @Override
-            protected String getObject(StateIconAttributes atts) {
-                return advancedFormattedCalendar(atts.getLastModifiedDate());
-            }
-        });
-
-        columns.add(column);
-
-        //Last modified by
-        column = new ListColumn<Node>(new StringResourceModel("doclisting-lastmodified-by", this, null), "lastmodified-by");
-        column.setComparator(new DocumentAttributeComparator() {
-
-            @Override
-            protected int compare(StateIconAttributes s1, StateIconAttributes s2) {
-                return s1.getLastModifiedBy().compareTo(s2.getLastModifiedBy());
-            }
-        });
-        column.setRenderer(new DocumentAttributeRenderer() {
-            private static final long serialVersionUID = -1485899011687542362L;
-
-            @Override
-            protected String getObject(StateIconAttributes atts) {
-                return atts.getLastModifiedBy();
-            }
-        });
-        column.setCssClass("doclisting-lastmodified-by");
-        columns.add(column);
-
-        //publication date
-        column = new ListColumn<Node>(new StringResourceModel("doclisting-publication-date", this, null), "publication-date");
-        column.setComparator(new DocumentAttributeComparator() {
-
-            @Override
-            protected int compare(StateIconAttributes s1, StateIconAttributes s2) {
-                return compareDates(s1.getPublicationDate(), s2.getPublicationDate());
-            }
-        });
-        column.setRenderer(new DocumentAttributeRenderer() {
-            private static final long serialVersionUID = -1485899011687542362L;
-
-            @Override
-            protected String getObject(StateIconAttributes atts) {
-                return simpleFormattedCalendar(atts.getPublicationDate());
-            }
-        });
-        column.setAttributeModifier(new DocumentAttributeAttributeModifier("title") {
-            private static final long serialVersionUID = 1036099861027058091L;
-
-            @Override
-            protected String getObject(StateIconAttributes atts) {
-                return advancedFormattedCalendar(atts.getPublicationDate());
-            }
-        });
-        column.setCssClass("doclisting-date");
-        columns.add(column);
-
-        //publication date
-        column = new ListColumn<Node>(new StringResourceModel("doclisting-translations", this, null), "translations");
-        column.setRenderer(new TranslationRenderer(getLocaleProvider()));
-        column.setCssClass("doclisting-translations");
-        columns.add(column);
-
         return columns;
-    }
-
-    private int compareDates(Calendar o1, Calendar o2) {
-        if (o1 == null) {
-            if (o2 == null) {
-                return 0;
-            }
-            return 1;
-        } else if (o2 == null) {
-            return -1;
-        }
-        return o1.compareTo(o2);
-    }
-
-    private String simpleFormattedCalendar(Calendar cal) {
-        if (cal != null) {
-            return DateTimeFormat.forPattern("d-MMM-yyyy").withLocale(getLocale()).print(new DateTime(cal));
-        }
-        return "";
-    }
-
-    private String advancedFormattedCalendar(Calendar cal) {
-        if (cal != null) {
-            return DateTimeFormat.forPattern(DateTimeFormat.patternForStyle("LS", getLocale())).print(new DateTime(cal));
-        }
-        return "";
-    }
-
-    protected ILocaleProvider getLocaleProvider() {
-        return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
-                ILocaleProvider.class);
     }
 
     @Override

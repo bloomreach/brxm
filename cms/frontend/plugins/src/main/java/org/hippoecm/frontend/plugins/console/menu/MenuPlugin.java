@@ -43,7 +43,6 @@ import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.tools.projectexport.ExportDialog;
 
 public class MenuPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
@@ -207,16 +206,6 @@ public class MenuPlugin extends RenderPlugin<Node> {
             }
         };
         add(new DialogLink("references-dialog", new Model("View References"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Void> createDialog() {
-                return new ExportDialog();
-            }
-        };
-        add(new DialogLink("project-export-dialog", new Model("Project Export"), dialogFactory, dialogService));
-
     }
 
     @Deprecated

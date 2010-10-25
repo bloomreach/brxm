@@ -17,14 +17,5 @@
 .hippo-list-details tr td.doclisting-icon,
 .hippo-list-details tr th.doclisting-icon { width:16px; }
 
-.hippo-list-details tr th.doclisting-state,
-.hippo-list-details tr td.doclisting-state { width: 51px; }
-
 .hippo-list-details tr th.doclisting-type,
 .hippo-list-details tr td.doclisting-type { width: 90px; }
-
-.hippo-list-details tr th.doclisting-date,
-.hippo-list-details tr td.doclisting-date { width: 140px; }
-
-.hippo-list-details tr th.doclisting-lastmodified-by,
-.hippo-list-details tr td.doclisting-lastmodified-by { width: 120px; }

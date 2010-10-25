@@ -31,13 +31,12 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
-import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.SearchDocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
+import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
@@ -163,12 +162,6 @@ public class SearchDocumentListingPlugin extends RenderPlugin<BrowserSearchResul
         column = new ListColumn<Node>(new StringResourceModel("doclisting-name", this, null), "name");
         column.setComparator(new NameComparator());
         column.setAttributeModifier(new DocumentAttributeModifier());
-        columns.add(column);
-
-        column = new ListColumn<Node>(new StringResourceModel("doclisting-state", this, null), "state");
-        column.setComparator(new StateComparator());
-        column.setRenderer(new EmptyRenderer());
-        column.setAttributeModifier(new StateIconAttributeModifier());
         columns.add(column);
 
         return new TableDefinition<Node>(columns);

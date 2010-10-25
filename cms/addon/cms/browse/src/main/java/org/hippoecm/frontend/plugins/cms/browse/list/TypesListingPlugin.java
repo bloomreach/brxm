@@ -37,7 +37,6 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
@@ -104,13 +103,6 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         column = new ListColumn<Node>(new StringResourceModel("typeslisting-type", this, null), null);
         column.setRenderer(new TemplateTypeRenderer(typeLocator));
         column.setCssClass("typeslisting-type");
-        columns.add(column);
-
-        column = new ListColumn<Node>(new StringResourceModel("typeslisting-state", this, null), "state");
-        column.setComparator(new StateComparator());
-        column.setRenderer(new EmptyRenderer<Node>());
-        column.setAttributeModifier(new TemplateTypeIconAttributeModifier());
-        column.setCssClass("typeslisting-state");
         columns.add(column);
 
         return new TableDefinition<Node>(columns);

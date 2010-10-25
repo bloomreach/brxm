@@ -17,7 +17,7 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm</artifactId>
+    <artifactId>hippo-ecm-cms</artifactId>
     <version>2.17.00-SNAPSHOT</version>
   </parent>
 
@@ -38,21 +38,15 @@
     <module>standards</module>
     <module>editor</module>
     <module>reporting</module>
-    <module>reviewed-action</module>
     <module>xinha</module>
     <module>xinha-frontend</module>
     <module>xinha-test</module>
     <module>yui</module>
     <module>cms</module>
     <module>gallery</module>
-    <module>translation</module>
     <module>gotolink</module>
-    <module>sample</module>
     <module>search</module>
-    <module>defaultcontent</module>
     <module>versioning</module>
-    <module>ldap</module>
-    <module>faceteddate</module>
     <module>workflow</module>
   </modules>
 </project>
