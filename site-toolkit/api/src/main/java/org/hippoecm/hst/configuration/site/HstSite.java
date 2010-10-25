@@ -58,6 +58,13 @@ public interface HstSite {
     String getCanonicalContentPath();
     
     /**
+     * Returns the identifier of the backing canonical configuration node of the  HstSite.
+     * 
+     * @return the identifier of the backing HstSite
+     */
+    String getCanonicalIdentifier();
+    
+    /**
      * @return the siteMapItemHandlersConfiguration for this <code>HstSite</code>
      */
     HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration();

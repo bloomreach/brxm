@@ -50,6 +50,7 @@ public class HstSiteService implements HstSite {
     private String name;
     private String contentPath;
     private String canonicalContentPath;
+    private String canonicalIdentifier;
     private String configurationPath;
     private LocationMapTree locationMapTree;
     
@@ -63,6 +64,7 @@ public class HstSiteService implements HstSite {
         this.siteMount = siteMount;
         contentPath = site.getContentPath();
         canonicalContentPath = site.getCanonicalContentPath();
+        canonicalIdentifier = site.getValueProvider().getIdentifier();
         configurationPath = site.getConfigurationPath();
         
         HstNode configurationNode = hstManager.getConfigurationRootNodes().get(configurationPath);
@@ -191,6 +193,10 @@ public class HstSiteService implements HstSite {
     public String getCanonicalContentPath() {
         return canonicalContentPath;
     }
+
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
+    }
     
     public String getConfigurationPath() {
         return this.configurationPath;
@@ -207,7 +213,5 @@ public class HstSiteService implements HstSite {
     public HstSiteMenusConfiguration getSiteMenusConfiguration() {
         return this.siteMenusConfigurations;
     }
-
-
 
 }

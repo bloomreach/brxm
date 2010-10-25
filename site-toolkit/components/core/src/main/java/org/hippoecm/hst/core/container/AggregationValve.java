@@ -15,6 +15,17 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -27,16 +38,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Element;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import org.w3c.dom.Text;
 
 /**
  * AggregationValve
@@ -319,7 +321,21 @@ public class AggregationValve extends AbstractValve {
                     // the root window does *not* have a wrapper element but sets some needed javascript files as head elements
                     
                     addHeadElements(request, response, mount);
+                    HstComponentConfiguration rootCompConfig = ((HstComponentConfiguration)window.getComponentInfo());
+                  
+                    Element el = response.createElement("script");
+                    el.setAttribute("type", "text/javascript");
+                    el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer");
                     
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("rootComponentIdentifier  = '").append(rootCompConfig.getCanonicalIdentifier()).append("';");
+                    builder.append("\n");
+                    // TODO make below the UUID of the mount or HstSite
+                    builder.append("siteIdentifier = '").append(mount.getHstSite().getCanonicalIdentifier()).append("';");
+                    Text scriptValue = el.getOwnerDocument().createTextNode(builder.toString()); 
+                   // Text scriptValue = el.getOwnerDocument().createTextNode("rootComponentUuid = '"+uuid+"';");
+                    el.appendChild(scriptValue);
+                    response.addHeadElement(el, rootCompConfig.getCanonicalIdentifier());
                 } else {
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
                     Element el = response.createElement("div");
