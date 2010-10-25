@@ -1,0 +1,28 @@
+/* Defaults */
+* { margin : 0; padding : 0;}
+
+html, body { border: none; }
+body {padding: 4px;}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin-top: 0.7em;
+    margin-bottom: 0.3em; 
+}
+
+/* default font settings */
+body, table tr td, table tr th{
+font-family: arial, sans-serif, helvetica, serif;
+font-size: 12px;
+line-height: 20px;
+vertical-align: top;
+background: white;
+padding-top: 5px;
+}
+
+ol, ul{list-style-position: inside}
+
+/* default margin for lists, quotes, blockquotes and def lists */
+ol, ul, dl {margin-left: 2.5em;} 
+blockquote {margin: 0 2.5em 0 2.5em;}
+
+img { -ms-interpolation-mode: bicubic; }
