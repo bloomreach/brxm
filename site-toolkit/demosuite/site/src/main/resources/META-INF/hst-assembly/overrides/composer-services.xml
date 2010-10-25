@@ -25,11 +25,19 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
   
+  <bean id="jacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper">
+  </bean>
+  
+  <bean id="jaxrsJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+    <property name="mapper" ref="jacksonObjectMapper" />
+  </bean>
+  
   <bean id="composerService1" class="org.hippoecm.hst.services.support.jaxrs.cxf.CXFJaxrsService">
     <constructor-arg value="composerService1"/>
     <property name="servletPath" value=""/>
     <property name="jaxrsServerFactoryBean" ref="composerCxfJaxrsServerFactoryBean"/>
   </bean>
+  
   
   <bean id="composerCxfJaxrsServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/" />
