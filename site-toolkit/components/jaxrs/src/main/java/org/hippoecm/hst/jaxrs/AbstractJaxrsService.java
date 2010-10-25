@@ -28,7 +28,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
