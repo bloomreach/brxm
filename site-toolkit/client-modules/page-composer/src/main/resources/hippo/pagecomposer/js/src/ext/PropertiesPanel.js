@@ -73,6 +73,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         }
 
         this.doLayout(false, true);
+        this.getForm().clearInvalid();
     },
 
     loadException:function(proxy, type, actions, options, response) {
@@ -122,7 +123,6 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         });
         store.on('load', this.loadProperties, this);
         store.on('exception', this.loadException, this);
-        this.getForm().clearInvalid();
     }
 
 });
