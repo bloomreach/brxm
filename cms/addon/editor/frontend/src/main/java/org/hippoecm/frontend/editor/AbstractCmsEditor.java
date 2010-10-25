@@ -41,7 +41,7 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
+public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")

@@ -56,7 +56,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        editorFactory = new EditorFactory(context, config);
+        editorFactory = createEditorFactory(context, config);
         browser = new BrowserObserver(this, context, config);
 
         editors = new LinkedList<IEditor<Node>>();
@@ -64,6 +64,10 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
 
         // register editor
         context.registerService(this, config.getString("editor.id"));
+    }
+
+    protected EditorFactory createEditorFactory(IPluginContext context, IPluginConfig config) {
+        return new EditorFactory(context, config);
     }
 
     public void detach() {

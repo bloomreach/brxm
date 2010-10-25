@@ -31,7 +31,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
 /**
@@ -64,9 +63,9 @@ public class EditorFactory implements IClusterable {
                     throw new EditorException("Document has been deleted");
                 }
                 Node doc = docs.iterator().next();
-                editor = newEditor(manager, context, nodeModel, mode, node);
+                editor = newEditor(manager, context, config, nodeModel, mode, node);
             } else {
-                editor = newEditor(manager, context, nodeModel, mode, node);
+                editor = newEditor(manager, context, config, nodeModel, mode, node);
             }
         } catch (RepositoryException e) {
             throw new EditorException("Could not determine type of editor required", e);
@@ -75,7 +74,7 @@ public class EditorFactory implements IClusterable {
         return editor;
     }
 
-    protected AbstractCmsEditor<Node> newEditor(IEditorContext manager, IPluginContext context, IModel<Node> nodeModel, IEditor.Mode mode, Node node) throws RepositoryException, EditorException {
+    protected AbstractCmsEditor<Node> newEditor(IEditorContext manager, IPluginContext context, IPluginConfig config, IModel<Node> nodeModel, IEditor.Mode mode, Node node) throws RepositoryException, EditorException {
         if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
             return new TemplateTypeEditor(manager, context, config, nodeModel, mode);
         } else {
@@ -123,7 +122,7 @@ public class EditorFactory implements IClusterable {
         return variants;
     }
 
-    static boolean isNodeType(Node node, String type) throws RepositoryException {
+    public static boolean isNodeType(Node node, String type) throws RepositoryException {
         if (node.isNodeType("nt:version")) {
             Node frozen = node.getNode("jcr:frozenNode");
             String primary = frozen.getProperty("jcr:frozenPrimaryType").getString();
