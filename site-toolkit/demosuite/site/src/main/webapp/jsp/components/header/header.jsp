@@ -18,11 +18,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
+<hst:link path="/css/yui-2.8.1-reset-fonts-grids.css" var="yuiResetFontsGridCssHref"/>
 <hst:element var="yuiResetFontsGridCss" name="link">
   <hst:attribute name="id" value="yuiResetFontsGridCss" />
   <hst:attribute name="rel" value="stylesheet" />
   <hst:attribute name="type" value="text/css" />
-  <hst:attribute name="href" value="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" />
+  <hst:attribute name="href" value="${yuiResetFontsGridCssHref}" />
 </hst:element>
 <hst:link path="/css/style.css" var="demoSiteCssHref"/>
 <hst:element var="demoSiteCss" name="link">
