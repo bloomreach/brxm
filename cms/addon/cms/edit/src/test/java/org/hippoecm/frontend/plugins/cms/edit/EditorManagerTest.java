@@ -41,7 +41,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,10 +89,6 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
             "/test", "nt:unstructured",
                 "/test/content", "nt:unstructured",
                     "jcr:mixinTypes", "mix:referenceable",
-                "/test/facetsearch", "hippo:facetsearch",
-                    "hippo:docbase", "/test/content",
-                    "hippo:queryname", "state",
-                    "hippo:facets", HippoStdNodeType.HIPPOSTD_STATE,
                 "/test/mirror", "hippo:mirror",
                     "hippo:docbase", "/test/content",
                 "/test/plugin", "frontend:pluginconfig",
@@ -123,14 +118,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
             "/${name}", "hippo:handle",
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/${name}/${name}", "cmstest:document",
-                    "jcr:mixinTypes", "hippo:harddocument",
-                    HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
-                    HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
-                    "hippostdpubwf:createdBy", "admin",
-                    "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
-                    "hippostdpubwf:lastModifiedBy", "admin",
-                    "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00"
-            
+                    "jcr:mixinTypes", "hippo:harddocument"
     };
 
     ModelReference modelReference;
@@ -204,42 +192,6 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         // close editor
         editor.close();
         assertEquals(new JcrNodeModel((Node) null), modelReference.getModel());
-    }
-
-    @Test
-    public void previewPhysicalNode() throws Exception {
-        createDocument("document");
-        session.save();
-
-        IPluginContext pluginContext = start(config);
-
-        // open editor
-        modelReference.setModel(new JcrNodeModel("/test/facetsearch/unpublished/hippo:resultset/document"));
-        assertEquals(1, getPreviews().size());
-        Preview preview = (Preview) getPreviews().get(0);
-        assertEquals(new JcrNodeModel("/test/content/document/document"), preview.getModel());
-    }
-
-    @Test
-    public void browseToResultset() throws Exception {
-        createDocument("doc1");
-        createDocument("doc2");
-        session.save();
-
-        IPluginContext pluginContext = start(config);
-
-        // open editor for virtual node
-        modelReference.setModel(new JcrNodeModel("/test/facetsearch/unpublished/hippo:resultset/doc1"));
-        assertEquals(1, getPreviews().size());
-
-        // open editor for physical node
-        modelReference.setModel(new JcrNodeModel("/test/content/doc2/doc2"));
-        assertEquals(2, getPreviews().size());
-
-        // switch back to first editor
-        List<IRenderService> previews = getPreviews();
-        previews.get(0).focus(null);
-        assertEquals(new JcrNodeModel("/test/facetsearch/unpublished/hippo:resultset/doc1"), modelReference.getModel());
     }
 
     @Test

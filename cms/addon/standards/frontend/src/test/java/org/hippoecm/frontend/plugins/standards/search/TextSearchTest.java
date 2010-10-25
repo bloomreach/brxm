@@ -44,7 +44,6 @@ public class TextSearchTest extends PluginTest {
                     "jcr:mixinTypes", "hippo:hardhandle",
                     "/test/content/a/a", "frontendtest:document",
                         "jcr:mixinTypes", "hippo:harddocument",
-                        "hippostd:state", "published",
                         "title", "title",
                         "introduction", "introduction",
                         "ab", "ab",
@@ -56,7 +55,6 @@ public class TextSearchTest extends PluginTest {
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/test/alternative/a/a", "frontendtest:document",
                     "jcr:mixinTypes", "hippo:harddocument",
-                    "hippostd:state", "published",
                     "title", "title",
                     "ab", "ab",
     };
@@ -66,7 +64,6 @@ public class TextSearchTest extends PluginTest {
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/test/alternative/a/a", "frontendtest:document",
                     "jcr:mixinTypes", "hippo:harddocument",
-                    "hippostd:state", "published",
                     "title", "title",
                     "ab", "ab",
     };
