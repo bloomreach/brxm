@@ -10,6 +10,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             autoScroll:true,
             labelWidth: 250,
             labelAlign: 'top',
+            labelSeparator: '',
             defaults:{
                 width: 250
             },
@@ -121,7 +122,20 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         });
         store.on('load', this.loadProperties, this);
         store.on('exception', this.loadException, this);
+        this.getForm().clearInvalid();
     }
 
 });
 Ext.reg('h_properties_panel', Hippo.App.PropertiesPanel);
+
+//Add * to the required fields 
+
+Ext.apply(Ext.layout.FormLayout.prototype, {
+    originalRenderItem:Ext.layout.FormLayout.prototype.renderItem,
+    renderItem:function(c, position, target) {
+        if (c && !c.rendered && c.isFormField && c.fieldLabel && c.allowBlank === false) {
+            c.fieldLabel = c.fieldLabel + " <span class=\"req\">*</span>";
+        }
+        this.originalRenderItem.apply(this, arguments);
+    }
+});

@@ -22,7 +22,7 @@ import org.hippoecm.hst.configuration.components.ParameterType;
 
 public class BannerInfo {
 
-    @Parameter(name = "bannerWidth", displayName = "Banner Width", type = ParameterType.NUMBER)
+    @Parameter(name = "bannerWidth", displayName = "Banner Width", type = ParameterType.NUMBER, required = true)
     private int getBannerWidth() {
         return 0;
     }
