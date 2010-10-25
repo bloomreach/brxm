@@ -74,8 +74,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     init : function(id, element) {
         this._super(id, element);
 
-        this._items = {};
-        this._numOfItems = 0;
+        this.items = new Hippo.Util.OrderedMap();
 
         this.itemSelector = this.selector + ' div.componentContentWrapper';
 
@@ -98,14 +97,17 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
         var self = this;
         $(this.itemSelector).each(function() {
-            self.createItem(this);
+            self.insertNewItem(this);
         });
     },
 
     onRender : function() {
         this._super();
-        var self = this;
+        this.enableSortable();
+        this.sync();
+    },
 
+    enableSortable : function() {
         //instantiate jquery.UI sortable
         $(this.hostSelector).sortable({
             items: this.dragSelector,
@@ -130,41 +132,45 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             },
             stop: function() {
                 $('div.hst-menu-overlay').show();
+            },
+            sort: function() {
+            },
+            change: function() {
             }
 
         }).disableSelection();
-
-        this.sync();
     },
 
     onDestroy: function() {
+        this.disableSortable();
+    },
+
+    disableSortable : function() {
         //destroy jquery.UI sortable
         $(this.hostSelector).sortable('destroy');
     },
 
-    add : function(element) {
-        this.destroy();
-        var item = this.createItem(element);
-        var wrapped = this.createItemElement(element);
-        this.appendItem(wrapped);
-        this.render();
+    add : function(element, index) {
+        this.insertNewItem(element, index);
+        $(this.hostSelector).sortable('refresh');
         this.syncAll();
     },
 
-    eachItem : function(f) {
-        $.each(this._items, f);
-    },
-
     remove: function() {
-        console.log('So this is used!');
+        console.warn('Illegal access, can remove container');
         console.trace();
-        $(this.element).remove();
+        //$(this.element).remove();
     },
 
-    createItem : function(element) {
+    eachItem : function(f, scope) {
+        this.items.each(f, scope);
+    },
+
+    insertNewItem : function(element, index) {
         var item = Hippo.PageComposer.UI.Factory.create(element);
-        this._items[item.id] = item;
-        this._numOfItems++;
+        this.items.put(item.id, item, index);
+        var itemElement = this.createItemElement(item.element);
+        this.appendItem(itemElement, index);
         item.render();
     },
 
@@ -185,7 +191,8 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             var v = Hippo.PageComposer.UI.Factory.verify(element);
             //remove item wrapper elements
             $(element).parents('.' + this.itemCls).remove();
-            this._numOfItems--;
+            var item = this.items.remove(v.id);
+            item.destroy();
             this.syncAll();
             return true;
         } catch(e) {
@@ -197,14 +204,15 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     sync : function() {
-        console.log('syncing container');
+        if ($(this.itemSelector).size() != this.items.size()) {
+            return; //DOM and contianerState are out of sync, wait for update/receive/remove to finish, it will trigger sync again
+        }
         this.checkEmpty();
         this.syncOverlays(true);
     },
 
     syncOverlays : function(quite) {
-        var self = this;
-        $.each(this._items, function(index, item) {
+        this.eachItem(function(key, item) {
             if (typeof item !== 'undefined') {
                 item.update();
             } else if(!quite && Hippo.PageComposer.Main.isDebug()) {
@@ -213,8 +221,8 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         });
     },
 
+    //if container is empty, make sure it still has a size so items form a different container can be dropped
     checkEmpty : function() {
-        //if container is empty, make sure it still has a size so items form a different container can be dropped
         if ($(this.itemSelector).size() == 0) {
             if (!this.isEmpty) {
                 this.isEmpty = true;
@@ -240,15 +248,13 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     //called after an update in the order of container items has been invoked
     onUpdate : function(event, ui) {
         var order = [];
-        var children = {};
         $(this.itemSelector).each(function() {
             order.push(this.id);
-            children[this.id] = Hippo.PageComposer.UI.Factory.getById(this.id);
         });
-        this._items = children;
-        this._numOfItems = order.length;
-        sendMessage({id: this.id, children: order}, 'rearrange');
-        this.syncAll();
+        if(this._updateOrder(order)) {
+            sendMessage({id: this.id, children: order}, 'rearrange');
+            this.syncAll();
+        }
     },
 
     onHelper : function(event, element) {
@@ -257,7 +263,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     onReceive : function(event, ui) {
-        console.log('onreceive')
+        console.log('onreceive');
         var el = ui.item.find('.componentContentWrapper');
         ui.item.replaceWith(this.createItemElement(el));
         sendMessage({id: this.id, element: el[0]}, 'receiveditem');
@@ -265,7 +271,25 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     onRemove : function(event, ui) {
+        console.log('remove');
         this.syncAll();
+    },
+
+    //private methods
+    _updateOrder : function(order) {
+        //can add test if order has actually changed to give performance a small boost
+        this.items.clear();
+        if(order.length > 0) {
+            var len = order.length, f = Hippo.PageComposer.UI.Factory;
+            for(var i=0; i<len; ++i) {
+                var id = order[i];
+                var value = f.getById(id);
+                if(value != null) {
+                    this.items.put(id, value);
+                }
+            }
+        }
+        return true;
     }
 });
 
@@ -326,8 +350,10 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.selCls = this.selCls + '-containerItem';
         this.actCls = this.actCls + '-containerItem';
+    },
 
-        var self = this;
+    onRender : function() {
+        var self = this, element = this.element;
         this.menuOverlay = $('<div/>').addClass('hst-menu-overlay').appendTo(document.body);
         this.menuOverlay.hover(function() {
             self.onMouseOverMenuOverlay(this);
@@ -406,6 +432,7 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     onDestroy : function() {
+        console.log('item.onDestroy');
         this.menuOverlay.remove();
     },
 
@@ -415,3 +442,70 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
 
 });
 Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.ContainerItem.Base', Hippo.PageComposer.UI.ContainerItem.Base);
+
+
+$.namespace('Hippo.Util');
+
+Hippo.Util.Map = Class.extend({
+    init : function() {
+        this.keys = [];
+        this.values = {};
+    },
+
+    put : function(key, value) {
+        this.keys.push(key);
+        this.values[key] = value;
+    },
+
+    get : function(key) {
+        if (this.containsKey(key)) {
+            return this.values[key];
+        }
+        return null;
+    },
+
+    containsKey : function(key) {
+        return $.inArray(key, this.keys);
+    },
+
+    remove : function(key) {
+        if (this.containsKey(key)) {
+            var idx = this.keys.indexOf(key);
+            this.keys.removeByIndex(idx);
+            var v = this.values[key];
+            delete this.values[key];
+            return v;
+        } else {
+            throw new Error('Remove failed: No entry found for key ' + key)
+    }
+},
+
+    each: function(f, scope) {
+        scope = scope || this;
+        var len = this.keys.length;
+        for (var i = 0; i < len; ++i) {
+            var key = this.keys[i];
+            f.apply(scope, [key, this.values[key]]);
+        }
+    },
+
+    size : function() {
+        return this.keys.length;
+    },
+
+    clear : function() {
+        this.keys = [];
+        this.values = {};
+    }
+
+});
+
+Hippo.Util.OrderedMap = Hippo.Util.Map.extend({
+    put : function(key, value, index) {
+        if(typeof index === 'undefined') {
+            this._super(key, value);
+        } else {
+            console.log('put ordered value: implement!!');
+        }
+    }
+});
