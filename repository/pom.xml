@@ -449,6 +449,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.5</version>
+        <configuration>
+          <workingDirectory>target</workingDirectory>
+        </configuration>
       </plugin>
       <plugin>
         <inherited>true</inherited>
@@ -535,7 +538,7 @@
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
             <groupId>org.hippoecm</groupId>
-            <artifactId>hreptwo-tools-documentation</artifactId>
+            <artifactId>hippo-ecm-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
         </configuration>
@@ -866,7 +869,7 @@
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
             <groupId>org.hippoecm</groupId>
-            <artifactId>hreptwo-tools-documentation</artifactId>
+            <artifactId>hippo-ecm-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
         </configuration>
