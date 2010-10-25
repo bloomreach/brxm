@@ -83,8 +83,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     }
     
     protected String getMountContentPath(HstRequestContext requestContext) {
-	    SiteMount mount = requestContext.getResolvedSiteMount().getSiteMount();
-		return mount.getContentPath(); 
+        return requestContext.getResolvedSiteMount().getSiteMount().getContentPath();
     }
     
     protected Node getContentNode(Session session, String path) throws RepositoryException {
