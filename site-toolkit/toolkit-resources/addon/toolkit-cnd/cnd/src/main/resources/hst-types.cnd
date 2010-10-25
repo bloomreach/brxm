@@ -191,6 +191,8 @@
 // the types this SiteMount also belongs to, for example 'composer'.
 - hst:types (string) multiple
 - hst:sessionstateful (boolean)
+// to hold all the 'free defined properties'
+- * (string)
 
 [hst:portmount] > nt:base, mix:referenceable
 + hst:root (hst:sitemount)
