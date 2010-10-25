@@ -9,19 +9,12 @@ Hippo.PageComposer.UI.Widget = Class.extend({
 
         this.selCls = 'hst-selected';
         this.actCls = 'hst-activated';
-
-        var self = this;
-        $(element).hover(
-            function() {
-                self.onMouseOver(this);
-            },
-            function() {
-                self.onMouseOut(this);
-            }
-        );
+        this.overlayCls = 'hst-overlay';
+        this.overlayHoverCls = 'hst-overlay-hover';
+        this.overlayCustomCls = null;
 
         this.rendered = false;
-
+        this.positioned = 'abs';
     },
 
     select : function() {
@@ -40,13 +33,36 @@ Hippo.PageComposer.UI.Widget = Class.extend({
         $(this.element).addClass(this.actCls);
     },
 
-    render : function() {
+    render : function(_parent) {
         if (this.rendered) {
-            console.warn('Component has already been rendered, abort.');
             return;
         }
+        this.parent = _parent;
+
+        var self = this;
+        var parent = _parent || document.body;
+        var overlay = $('<div/>').addClass(this.overlayCls).appendTo(parent);
+        if(this.overlayCustomCls != null) {
+            overlay.addClass(this.overlayCustomCls);
+        }
+        overlay.css('position', 'absolute');
+        overlay.hover(function() {
+            self.onMouseOver(this);
+        }, function() {
+            self.onMouseOut(this);
+        });
+        overlay.click(function() {
+            self.onClick();
+        });
+        this.overlay = overlay;
+        this._syncOverlay();
+
         this.onRender();
         this.rendered = true;
+    },
+
+    sync: function() {
+        this._syncOverlay();
     },
 
     destroy : function() {
@@ -54,10 +70,19 @@ Hippo.PageComposer.UI.Widget = Class.extend({
         this.rendered = false;
     },
 
-    onMouseOver : function(element) {
+    getOverlay : function() {
+        return this.overlay;
     },
 
-    onMouseOut  : function(element) {
+    onClick : function() {
+    },
+
+    onMouseOver : function(element) {
+        this.getOverlay().addClass(this.overlayHoverCls);
+    },
+
+    onMouseOut : function(element) {
+        this.getOverlay().removeClass(this.overlayHoverCls);
     },
 
     onRender  : function() {
@@ -66,7 +91,34 @@ Hippo.PageComposer.UI.Widget = Class.extend({
     onDestroy : function() {
     },
 
-    sync: function() {
+    _syncOverlay : function() {
+//Webkit does not work with the 'new' position function
+//Webkit also doesn't work with setting position through .offset so we are back to css.left/top
+//        this.menuOverlay.position({
+//            my: 'right top',
+//            at: 'right top',
+//            of: el
+//        });
+
+        var overlay = this.overlay;
+        var el = $(this.element);
+        var elOffset = $(el).offset();
+        var left = (elOffset.left + $(el).outerWidth()) - overlay.width();
+        var top = elOffset.top;
+        var width = el.outerWidth();
+        var height = el.outerHeight();
+
+        if(this.parent) {
+            var pOffset = this.parent.offset();
+            left = left - pOffset.left;
+            top = top- pOffset.top;
+            overlay.css('position', 'inherit');
+        }
+
+        overlay.css('left', left);
+        overlay.css('top', top);
+        overlay.width(width);
+        overlay.height(height);
     }
 });
 
@@ -86,6 +138,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.selCls = this.selCls + '-container';
         this.actCls = this.actCls + '-container';
+        this.overlayCustomCls = 'hst-overlay-container';
 
         this.emptyCls = 'hst-empty-container';
 
@@ -103,6 +156,9 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
     onRender : function() {
         this._super();
+        this.eachItem(function(key, item) {
+            item.render(this.getOverlay());
+        });
         this.enableSortable();
         this.sync();
     },
@@ -162,8 +218,9 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         //$(this.element).remove();
     },
 
+    //Param f is a function with signature function(key, value)
     eachItem : function(f, scope) {
-        this.items.each(f, scope);
+        this.items.each(f, scope || this);
     },
 
     insertNewItem : function(element, index) {
@@ -171,7 +228,6 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this.items.put(item.id, item, index);
         var itemElement = this.createItemElement(item.element);
         this.appendItem(itemElement, index);
-        item.render();
     },
 
     /**
@@ -212,6 +268,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     syncOverlays : function(quite) {
+        this._syncOverlay();
         this.eachItem(function(key, item) {
             if (typeof item !== 'undefined') {
                 item.update();
@@ -350,94 +407,42 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.selCls = this.selCls + '-containerItem';
         this.actCls = this.actCls + '-containerItem';
+        this.overlayCustomCls = 'hst-overlay-containeritem';
     },
 
     onRender : function() {
-        var self = this, element = this.element;
-        this.menuOverlay = $('<div/>').addClass('hst-menu-overlay').appendTo(document.body);
-        this.menuOverlay.hover(function() {
-            self.onMouseOverMenuOverlay(this);
-        }, function() {
-            self.onMouseOutMenuOverlay(this);
-        });
-        this.menuOverlay.click(function() {
-            sendMessage({element: element}, 'onclick');
-        });
-        $(element).click(function() {
-            self.onClick();
-        });
-
-        var deleteButton = $('<div/>').addClass('hst-menu-overlay-button').html('X');
+        var element = this.element;
+        var deleteButton = $('<div/>').addClass('hst-overlay-menu-button').html('X');
         deleteButton.click(function(e) {
             e.stopPropagation();
             sendMessage({element: element}, 'remove');
         });
 
-        this.menuOverlay.append(deleteButton);
-
+        this.getOverlay().append(deleteButton);
         this.sync();
-    },
-
-    sync : function() {
-        this.syncOverlays();
-    },
-
-    //Webkit does not work with the 'new' position function
-    //Webkit also doesn't work with setting position through .offset so we are back to css.left/top
-    syncOverlays : function() {
-        var el = $(this.element);
-
-        var elOffset = $(el).offset();
-        var left = (elOffset.left + $(el).outerWidth()) - this.menuOverlay.width();
-        var top = elOffset.top;
-
-        this.menuOverlay.css('left', left);
-        this.menuOverlay.css('top', top);
-
-//            this.menuOverlay.position({
-//                my: 'right top',
-//                at: 'right top',
-//                of: el
-//            });
     },
 
     select : function() {
         this._super();
-        $(this.menuOverlay).addClass(this.selCls);
+        $(this.getOverlay()).addClass(this.selCls);
     },
 
     deselect : function() {
         this._super();
-        $(this.menuOverlay).removeClass(this.selCls);
+        $(this.getOverlay()).removeClass(this.selCls);
     },
 
     update : function() {
-        this.syncOverlays();
-    },
-
-    onMouseOver : function(element) {
-        this.menuOverlay.addClass('hst-menu-overlay-hover');
-    },
-
-    onMouseOut : function(element) {
-        this.menuOverlay.removeClass('hst-menu-overlay-hover');
-    },
-
-    onMouseOverMenuOverlay : function(element) {
-        this.menuOverlay.addClass('hst-menu-overlay-hover');
-    },
-
-    onMouseOutMenuOverlay : function(element) {
-        this.menuOverlay.removeClass('hst-menu-overlay-hover');
-    },
-
-    onDestroy : function() {
-        console.log('item.onDestroy');
-        this.menuOverlay.remove();
+        this.sync();
     },
 
     onClick : function() {
         sendMessage({element: this.element}, 'onclick');
+    },
+
+    onDestroy : function() {
+        console.log('item.onDestroy');
+        this.getOverlay().remove();
     }
 
 });

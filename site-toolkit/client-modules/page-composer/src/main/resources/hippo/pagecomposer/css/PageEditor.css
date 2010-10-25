@@ -56,45 +56,53 @@ li.placeholdert {
     top: 10px;
 }
 
-.hst-menu-overlay {
-    width: 30px;
-    height: 10px;
-
-    opacity: 0.25;
+.hst-overlay {
     position: absolute;
-    background-color: #000;
+    z-index: 99999;
 }
 
-.hst-menu-overlay-hover {
+.hst-overlay-hover {
     opacity: 0.6;
-    height: 15px; /*-moz-border-radius-bottomleft: 10px 6px;*/
+    background-color: #999;
 }
 
-.hst-menu-overlay-button {
-    visibility: hidden;
+.hst-overlay-container {
+    background-color: #e3e3e3;
+    opacity: 0.6;
+}
 
+.hst-overlay-containeritem {
+    opacity: 0.6;
+}
+
+.hst-overlay-menu-button {
     width: 12px;
     height: 11px;
 
     margin-right: 2px;
-    margin-top: 1px;
+    margin-top: 2px;
 
     -moz-border-radius: 2px;
 
     font-weight: bold;
-    color: red;
+    opacity: 0.4;
     font-size: 10px;
     float: right;
 
     cursor: pointer;
 }
 
-.hst-menu-overlay.hst-selected-containerItem {
-    opacity: 0.80;
-    height: 15px;
+.hst-overlay-containeritem.hst-overlay-hover .hst-overlay-menu-button {
+    opacity: 1;    
+    color: black;
+    background-color: white;
 }
 
-.hst-menu-overlay.hst-selected-containerItem > div.hst-menu-overlay-button,
-.hst-menu-overlay-hover > div.hst-menu-overlay-button {
+.hst-overlay.hst-selected-containerItem {
+    background-color: red;
+}
+
+.hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button,
+.hst-overlay-hover > div.hst-overlay-menu-button {
     visibility: visible; /*background-color: #e3e3e3;*/
 }
