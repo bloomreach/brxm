@@ -79,7 +79,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/newsarchive</sv:value>
+                <sv:value>democommon/hst:pages/newsarchive</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
