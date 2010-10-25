@@ -23,7 +23,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.hosting.SiteMount;
-import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -39,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @version $Id: SimpleContentRewriter.java 24267 2010-10-11 09:09:56Z aschrijvers $
  */
-public class SimpleContentRewriter implements ContentRewriter<String> {
+public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     
     private final static Logger log = LoggerFactory.getLogger(SimpleContentRewriter.class);
     
@@ -58,14 +57,17 @@ public class SimpleContentRewriter implements ContentRewriter<String> {
     /**
      * @deprecated
      */
+    @Override
     public String rewrite(String html, Node node, HstRequest request, HstResponse response) {
         return rewrite(html, node, request.getRequestContext());
     }
     
+    @Override
     public String rewrite(String html, Node node, HstRequestContext requestContext) {
         return rewrite(html, node, requestContext, null);
     }
     
+    @Override
     public String rewrite(String html, Node node, HstRequestContext requestContext, String targetSiteAlias) {
         // only create if really needed
         StringBuilder sb = null;
