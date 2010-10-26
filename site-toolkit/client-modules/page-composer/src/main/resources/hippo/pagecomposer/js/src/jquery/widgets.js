@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2010 Hippo.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 $.namespace('Hippo.PageComposer.UI', 'Hippo.PageComposer.UI.Container', 'Hippo.PageComposer.UI.ContainerItem');
 
 Hippo.PageComposer.UI.Widget = Class.extend({
@@ -357,6 +373,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         return true;
     }
 });
+Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.Base', Hippo.PageComposer.UI.Container.Base);
 
 //Container implementations
 Hippo.PageComposer.UI.Container.Table = Hippo.PageComposer.UI.Container.Base.extend({
@@ -375,7 +392,7 @@ Hippo.PageComposer.UI.Container.Table = Hippo.PageComposer.UI.Container.Base.ext
     }
 
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.DD.Container.Table', Hippo.PageComposer.UI.Container.Table);
+Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.Table', Hippo.PageComposer.UI.Container.Table);
 
 Hippo.PageComposer.UI.Container.UnorderedList = Hippo.PageComposer.UI.Container.Base.extend({
 
@@ -391,7 +408,7 @@ Hippo.PageComposer.UI.Container.UnorderedList = Hippo.PageComposer.UI.Container.
         }
     }
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.DD.Container.UnorderedList', Hippo.PageComposer.UI.Container.UnorderedList);
+Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.UnorderedList', Hippo.PageComposer.UI.Container.UnorderedList);
 
 Hippo.PageComposer.UI.Container.OrderedList = Hippo.PageComposer.UI.Container.Base.extend({
 
@@ -407,7 +424,7 @@ Hippo.PageComposer.UI.Container.OrderedList = Hippo.PageComposer.UI.Container.Ba
         }
     }
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.DD.Container.OrderedList', Hippo.PageComposer.UI.Container.OrderedList);
+Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.OrderedList', Hippo.PageComposer.UI.Container.OrderedList);
 
 Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
     init : function(id, element) {
@@ -465,70 +482,3 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
 });
 Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.ContainerItem.Base', Hippo.PageComposer.UI.ContainerItem.Base);
 
-
-$.namespace('Hippo.Util');
-
-Hippo.Util.Map = Class.extend({
-    init : function() {
-        this.keys = [];
-        this.values = {};
-    },
-
-    put : function(key, value) {
-        this.keys.push(key);
-        this.values[key] = value;
-    },
-
-    get : function(key) {
-        if (this.containsKey(key)) {
-            return this.values[key];
-        }
-        return null;
-    },
-
-    containsKey : function(key) {
-        return $.inArray(key, this.keys) > -1;
-    },
-
-    remove : function(key) {
-        var idx = $.inArray(key, this.keys);
-        if (idx > -1) {
-            this.keys.removeByIndex(idx);
-            var v = this.values[key];
-            delete this.values[key];
-            return v;
-        } else {
-            throw new Error('Remove failed: No entry found for key ' + key)
-        }
-    },
-
-    each: function(f, scope) {
-        scope = scope || this;
-        var len = this.keys.length;
-        for (var i = 0; i < len; ++i) {
-            var key = this.keys[i];
-            f.apply(scope, [key, this.values[key]]);
-        }
-    },
-
-    size : function() {
-        return this.keys.length;
-    },
-
-    clear : function() {
-        this.keys = [];
-        this.values = {};
-    }
-
-});
-
-Hippo.Util.OrderedMap = Hippo.Util.Map.extend({
-    put : function(key, value, index) {
-        if(typeof index === 'undefined') {
-            this._super(key, value);
-        } else {
-            this.keys.splice(index, 0, key);
-            this.values[key] = value;
-        }
-    }
-});

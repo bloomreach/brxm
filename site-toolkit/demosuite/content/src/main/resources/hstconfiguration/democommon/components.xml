@@ -128,7 +128,7 @@
                     <sv:value>hst:containercomponent</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:containertype" sv:type="String">
-                    <sv:value>Hippo.DD.Container.Table</sv:value>
+                    <sv:value>Hippo.PageComposer.UI.Container.Table</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:template" sv:type="String">
                     <sv:value>table</sv:value>
@@ -161,7 +161,7 @@
                     <sv:value>hst:containercomponent</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:containertype" sv:type="String">
-                    <sv:value>Hippo.DD.Container.Table</sv:value>
+                    <sv:value>Hippo.PageComposer.UI.Container.Table</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:template" sv:type="String">
                     <sv:value>table</sv:value>

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.rest;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+
 import javax.jcr.Node;
 import javax.servlet.http.HttpSession;
 
@@ -30,8 +32,12 @@ public class ContainerItemModel extends BaseModel {
     }
 
     @Override
-    protected String getTypeValue() {
-        return "hst:containeritemcomponent";
+    protected HstComponentConfiguration.Type initType() {
+        return HstComponentConfiguration.Type.CONTAINER_COMPONENT;
     }
 
+    @Override
+    protected String initXtype() {
+        return "BaseContainerItem";
+    }
 }

@@ -36,6 +36,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.services.support.jaxrs.content.BaseHstContentService;
 
 import com.google.gson.Gson;
@@ -130,9 +131,9 @@ public class PageModelService extends BaseHstContentService {
             Node parent = session.getNodeByUUID(model.getParentId());
             String name = findNewName(model.getName(), parent);
 
-            Node newNode = parent.addNode(name, model.getType());
-            newNode.setProperty("hst:componentclassname", model.getComponentClassName());
-            newNode.setProperty("hst:template", model.getTemplate());
+            Node newNode = parent.addNode(name, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+            newNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, model.getComponentClassName());
+            newNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_, model.getTemplate());
 
             session.save();
             session.refresh(true);

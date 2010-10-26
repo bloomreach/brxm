@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2010 Hippo.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 $.namespace('Hippo.PageComposer.UI');
 
 (function() {
@@ -9,31 +25,19 @@ $.namespace('Hippo.PageComposer.UI');
 
         Factory.prototype = {
             create : function(element) {
-                var die = Hippo.PageComposer.Main.die;
-
-                var v = this.verify(element);
-                if (v.type === HST.CONTAINER) {
-                    var cId = $(element).attr('hst:containertype');
-                    if (typeof cId === 'undefined') {
-                        die('Attribute hst:containertype not found');
-                    }
-                    return this._create(cId, v.id, element, Hippo.PageComposer.UI.Container.Base);
-                } else if (v.type === HST.CONTAINERITEM) {
-                    //for now use a generic component for containerItems
-                    var cId = 'Hippo.PageComposer.UI.ContainerItem.Base';
-                    return this._create(cId, v.id, element, Hippo.PageComposer.UI.ContainerItem.Base);
-                }
+                var verified = this.verify(element);
+                return this._create(verified, true);
             },
 
-            _create : function(classId, id, element, verify) {
+            _create : function(data, verify) {
                 var die = Hippo.PageComposer.Main.die;
-                if (typeof this.registry[classId] === 'undefined') {
-                    die('No implementation found for classId=' + classId);
+                if (typeof this.registry[data.xtype] === 'undefined') {
+                    die('No implementation found for xtype=' + data.xtype);
                 }
-                var c = new this.registry[classId](id, element);
-                if(typeof verify !== 'undefined') {
-                    if (!c instanceof verify) {
-                        die('Instance with id ' + id + ' should be a subclass of ' + verify);
+                var c = new this.registry[data.xtype](data.id, data.element);
+                if(verify) {
+                    if (!c instanceof data.base) {
+                        Hippo.PageComposer.Main.die('Instance with id ' + data.id + ' should be a subclass of ' + data.base);
                     }
                 }
                 this.objects[c.id] = c;
@@ -64,9 +68,30 @@ $.namespace('Hippo.PageComposer.UI');
                 if (typeof type === 'undefined') {
                     die('Attribute hst:type not found');
                 }
+
+                var base = Hippo.PageComposer.UI.Widget;
+                if (type === HST.CONTAINER) {
+                    base = Hippo.PageComposer.UI.Container.Base;
+                } else if (type === HST.CONTAINERITEM) {
+                    base = Hippo.PageComposer.UI.ContainerItem.Base;
+                }
+
+                //Not very sexy this..
+                var xtype = el.attr('hst:xtype');
+                if (typeof xtype === 'undefined' || xtype == null || xtype == '') {
+                    if (type === HST.CONTAINER) {
+                        xtype = 'Hippo.PageComposer.UI.Container.Base';
+                    } else if (type === HST.CONTAINERITEM) {
+                        xtype = 'Hippo.PageComposer.UI.ContainerItem.Base';
+                    }
+                }
+
                 return {
                     id: id,
-                    type: type
+                    type: type,
+                    xtype : xtype,
+                    element: element,
+                    base: base
                 };
             },
 

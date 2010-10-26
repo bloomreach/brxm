@@ -8,7 +8,7 @@
  * Ext.App
  * @extends Ext.util.Observable
  * @author Chris Scott
- * @abogaart added
+ * @abogaart added events
  */
 Ext.App = function(config) {
 

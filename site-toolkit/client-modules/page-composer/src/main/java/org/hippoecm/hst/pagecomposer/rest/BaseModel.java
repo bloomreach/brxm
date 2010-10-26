@@ -15,12 +15,18 @@
  */
 package org.hippoecm.hst.pagecomposer.rest;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpSession;
 
 public class BaseModel {
     final static String SVN_ID = "$Id$";
+
+    private static Logger log = LoggerFactory.getLogger(BaseModel.class);
 
     private String id;
     private String name;
@@ -31,31 +37,36 @@ public class BaseModel {
     private String template;
 
     private String type;
+    private String xtype;
 
     public BaseModel() {
     }
 
     public BaseModel(Node node) {
-
         try {
-            path = node.getPath();
             id = node.getUUID();
+            path = node.getPath();
+            type = initType().name();
+            xtype = initXtype();
 
             Node parent = node.getParent();
             parentId = parent != null ? parent.getUUID() : null;
 
-            componentClassName = node.hasProperty("hst:componentclassname") ?
-                    node.getProperty("hst:componentclassname").getString() : "";
+            componentClassName = node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME) ?
+                    node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString() : "";
             name = node.getName();
-            template = node.getProperty("hst:template").getString();
-            type = getTypeValue();
+            template = node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_).getString();
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Error setting up BaseModel", e);
         }
     }
 
-    protected String getTypeValue() {
-        return "base";
+    protected Type initType() {
+        return Type.COMPONENT;
+    }
+
+    protected String initXtype() {
+        return null;
     }
 
     public String getComponentClassName() {
@@ -114,4 +125,11 @@ public class BaseModel {
         this.parentId = parentId;
     }
 
+    public String getXtype() {
+        return xtype;
+    }
+
+    public void setXtype(String xtype) {
+        this.xtype = xtype;
+    }
 }
