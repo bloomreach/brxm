@@ -96,8 +96,8 @@ public class ScaleImageOperation extends AbstractImageOperation {
             final int originalWidth = reader.getWidth(0);
             final int originalHeight = reader.getHeight(0);
             final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
-            final int targetWidth = (int) (originalWidth * resizeRatio);
-            final int targetHeight = (int) (originalHeight * resizeRatio);
+            final int targetWidth = (int)Math.max(originalWidth * resizeRatio, 1);
+            final int targetHeight = (int)Math.max(originalHeight * resizeRatio, 1);
 
             if (log.isDebugEnabled()) {
                 log.debug("Resizing from " + originalWidth + "x" + originalHeight + " to " + targetWidth + "x"
