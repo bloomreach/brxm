@@ -57,8 +57,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String renderPath;
     
     private String containerType;
-    
-    private String componentType;
+
+    /**
+     * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have sample content
+     */
+    private String sampleContent;
     
     /**
      * the type of this {@link HstComponentConfiguration}. 
@@ -103,16 +106,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.canonicalStoredLocation = node.getValueProvider().getCanonicalPath();
         this.canonicalIdentifier = node.getValueProvider().getIdentifier();
-        this.componentType = node.getNodeTypeName();
-        
-        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(componentType)) {
+       
+        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
           type = Type.COMPONENT;
-        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(componentType)) {
+        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
           type = Type.CONTAINER_COMPONENT;
-        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(componentType)) {
+          sampleContent = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT);
+        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
           type = Type.CONTAINER_ITEM_COMPONENT;
         } else {
-            throw new ServiceException("Unknown componentType '"+componentType+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
+            throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
         }
         
         this.parent = parent;
@@ -211,8 +214,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return this.containerType;
     }
 
-    public String getComponentType() {
-        return this.componentType;
+    public Type getComponentType() {
+        return this.type;
     }
 
 
@@ -266,6 +269,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return pageErrorHandlerClassName;
     }
 
+    public String getSampleContent(){
+        return sampleContent;
+    }
     
     public Map<String, HstComponentConfiguration> getChildren() {
         return Collections.unmodifiableMap(this.componentConfigurations);
@@ -309,7 +315,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.containerType = child.containerType;
-        copy.componentType = child.componentType;
         copy.type = child.type;
         copy.serveResourcePath = child.serveResourcePath;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
@@ -393,11 +398,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.containerType == null) {
                     this.containerType = referencedComp.containerType;
                 }
-                if (this.componentType == null) {
-                    // don't need to inherit
-                    throw new ServiceException("Component type cannot be null.");
-                }
-                
+               
                 if (this.parameters == null) {
                     this.parameters = new HashMap<String, String>(referencedComp.parameters);
                 } else if (referencedComp.parameters != null) {
@@ -485,11 +486,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.containerType == null) {
             this.containerType = childToMerge.containerType;
         }
-        if (this.componentType == null) {
-            // don't need to inherit
-            throw new ServiceException("Component type cannot be null.");
-        }
-        
         if (this.parameters == null) {
             this.parameters = new HashMap<String, String>(childToMerge.parameters);
         } else if (childToMerge.parameters != null) {

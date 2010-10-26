@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.request;
 
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+
 /**
  * A <code>ComponentConfiguration</code> provides some configuration information to a component.
  * 
@@ -101,8 +103,8 @@ public interface ComponentConfiguration {
     
     /**
      * 
-     * @return the type of this component, for example 'hst:component', 'hst:containercomponent' or 'hst:containeritemcomponent' 
+     * @return the {@link Type} of this {@link ComponentConfiguration}
      */
-    String getComponentType();
+    Type getComponentType();
     
 }

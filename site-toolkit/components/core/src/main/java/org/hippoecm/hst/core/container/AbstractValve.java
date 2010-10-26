@@ -206,7 +206,7 @@ public abstract class AbstractValve implements Valve {
                     public String getPageErrorHandlerClassName() {return null;}
                     public String getContainerType() {return null;}
                     public String getCanonicalIdentifier() {return null;}
-                    public String getComponentType() {return null;}
+                    public Type getComponentType() {return null;}
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);

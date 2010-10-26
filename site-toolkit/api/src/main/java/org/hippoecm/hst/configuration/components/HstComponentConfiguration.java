@@ -85,7 +85,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * A {@link HstComponentConfiguration} comes in three different main types. The {@link Type} enum describes the possible
      * values. This {@link Type} is similar to the {@link HstComponentConfiguration#getComponentType()} which is the {@link String} representation
      */
-    enum Type {
+     enum Type {
         COMPONENT,
         CONTAINER_COMPONENT,
         CONTAINER_ITEM_COMPONENT,
@@ -196,10 +196,9 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     String getContainerType();
     
     /**
-     * The string representation of the type of this {@link HstComponentConfiguration}. 
      * 
-     * @return the type of this component, for example 'hst:component', 'hst:containercomponent' or 'hst:containeritemcomponent' 
+     * @return the {@link Type} of this component
      */
-    String getComponentType();
+    Type getComponentType();
     
 }

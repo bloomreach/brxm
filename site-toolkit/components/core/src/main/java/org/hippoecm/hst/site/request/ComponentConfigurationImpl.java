@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -106,7 +107,7 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
         return componentConfiguration.getContainerType();
     }
 
-    public String getComponentType() {
+    public Type getComponentType() {
         return componentConfiguration.getComponentType();
     }
 
