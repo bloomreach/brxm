@@ -54,6 +54,8 @@ public class PageComposerBootstrapValve extends AbstractValve
         
         HttpSession session = context.getServletRequest().getSession();
         session.setAttribute(ContainerConstants.COMPOSERMODE_ATTR_NAME, "true");
+        session.setAttribute(ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME, "true");
+        
         HstRequestContext requestContext = (HstRequestContext)context.getRequestContext();
         SiteMount siteMount = requestContext.getResolvedSiteMount().getSiteMount();
 
