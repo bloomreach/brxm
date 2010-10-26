@@ -119,6 +119,11 @@ Hippo.PageComposer.UI.Widget = Class.extend({
         overlay.css('top', top);
         overlay.width(width);
         overlay.height(height);
+
+        this.onSyncOverlay();
+    },
+
+    onSyncOverlay : function() {
     }
 });
 
@@ -207,7 +212,8 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     add : function(element, index) {
-        this.insertNewItem(element, index);
+        var item = this.insertNewItem(element, index);
+        item.render();
         $(this.hostSelector).sortable('refresh');
         this.syncAll();
     },
@@ -228,6 +234,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this.items.put(item.id, item, index);
         var itemElement = this.createItemElement(item.element);
         this.appendItem(itemElement, index);
+        return item;
     },
 
     /**
@@ -252,6 +259,9 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             this.syncAll();
             return true;
         } catch(e) {
+            if(Hippo.PageComposer.Main.isDebug()) {
+                throw e;
+            }
         }
         return false;
     },
@@ -320,7 +330,6 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     onReceive : function(event, ui) {
-        console.log('onreceive');
         var el = ui.item.find('.componentContentWrapper');
         ui.item.replaceWith(this.createItemElement(el));
         sendMessage({id: this.id, element: el[0]}, 'receiveditem');
@@ -328,7 +337,6 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     onRemove : function(event, ui) {
-        console.log('remove');
         this.syncAll();
     },
 
@@ -408,14 +416,20 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         this.selCls = this.selCls + '-containerItem';
         this.actCls = this.actCls + '-containerItem';
         this.overlayCustomCls = 'hst-overlay-containeritem';
+
+        var tmp = $(element).attr("hst:temporary");
+        this.isTemporary = typeof tmp !== 'undefined';
+        if(this.isTemporary) {
+            $(element).html('Click to refresh');
+        }
     },
 
     onRender : function() {
-        var element = this.element;
+        var data = {element: this.element};
         var deleteButton = $('<div/>').addClass('hst-overlay-menu-button').html('X');
         deleteButton.click(function(e) {
             e.stopPropagation();
-            sendMessage({element: element}, 'remove');
+            sendMessage(data, 'remove');
         });
 
         this.getOverlay().append(deleteButton);
@@ -437,11 +451,14 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     onClick : function() {
-        sendMessage({element: this.element}, 'onclick');
+        if(this.isTemporary) {
+            document.location.href = '';
+        } else {
+            sendMessage({element: this.element}, 'onclick');
+        }
     },
 
     onDestroy : function() {
-        console.log('item.onDestroy');
         this.getOverlay().remove();
     }
 
@@ -470,20 +487,20 @@ Hippo.Util.Map = Class.extend({
     },
 
     containsKey : function(key) {
-        return $.inArray(key, this.keys);
+        return $.inArray(key, this.keys) > -1;
     },
 
     remove : function(key) {
-        if (this.containsKey(key)) {
-            var idx = this.keys.indexOf(key);
+        var idx = $.inArray(key, this.keys);
+        if (idx > -1) {
             this.keys.removeByIndex(idx);
             var v = this.values[key];
             delete this.values[key];
             return v;
         } else {
             throw new Error('Remove failed: No entry found for key ' + key)
-    }
-},
+        }
+    },
 
     each: function(f, scope) {
         scope = scope || this;
@@ -510,7 +527,8 @@ Hippo.Util.OrderedMap = Hippo.Util.Map.extend({
         if(typeof index === 'undefined') {
             this._super(key, value);
         } else {
-            console.log('put ordered value: implement!!');
+            this.keys.splice(index, 0, key);
+            this.values[key] = value;
         }
     }
 });
