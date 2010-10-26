@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +52,26 @@ public class StatefulSessionValve extends AbstractValve {
                 HttpSession httpSession = context.getServletRequest().getSession(false);
                 Session session = (httpSession != null ? (Session) httpSession.getAttribute(SESSION_ATTR_NAME) : (Session) null);
                 
+                if (session != null) {
+                    boolean isLive = false;
+                    
+                    try {
+                        isLive = session.isLive();
+                    } catch (Exception ignore) {
+                        ;
+                    }
+                    
+                    if (!isLive) {
+                        try {
+                            session.logout();
+                        } catch (Exception ignore) {
+                            ;
+                        } finally {
+                            session = null;
+                        }
+                    }
+                }
+                
                 if (session == null) {
                     try {
                         session = subjectBasedStatefulRepository.login();
@@ -62,13 +81,7 @@ public class StatefulSessionValve extends AbstractValve {
                     }
                 }
                 
-                try {
-                    // TODO improve this: only refresh when needed see HSTTWO-1279
-                    session.refresh(false);
-                } catch (RepositoryException e) {                    
-                   throw new ContainerException(e);
-                }
-                
+                // Note: Be aware of that the session here is a LazySession which creates jcr session on-demand.
                 ((HstMutableRequestContext) requestContext).setSession(session);
             } else {
                 try {

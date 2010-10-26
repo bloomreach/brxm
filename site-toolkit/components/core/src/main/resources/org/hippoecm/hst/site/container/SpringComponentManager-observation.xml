@@ -161,6 +161,35 @@
           </property>
         </bean>
         
+        <!-- lazy delegating repository sessions refreshing event listener -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <!-- only nodes below '/content' in the repository triggers sessions to be refreshed. Sessions needed to load configuration
+          outside the /content scope must be refreshed within the java code building configuration -->
+          <property name="absolutePath" value="/content"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.LazySessionDelegatingRepositorySessionsRefreshEventListener">
+              <property name="lazySessionDelegatingRepositories">
+                <list>
+                  <ref bean="javax.jcr.Repository.subjectBasedStateful" />
+                </list>
+              </property>
+            </bean>
+          </property>
+        </bean>
+        
       </list>
     </property>
   </bean>

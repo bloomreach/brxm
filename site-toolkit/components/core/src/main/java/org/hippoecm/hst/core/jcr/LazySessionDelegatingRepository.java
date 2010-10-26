@@ -41,6 +41,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
     private static Logger log = LoggerFactory.getLogger(LazySessionDelegatingRepository.class);
     
     private boolean logoutOnSessionUnbound;
+    private SessionsRefreshCounter sessionsRefreshCounter = new SessionsRefreshCounter();
     
     public LazySessionDelegatingRepository(Repository delegatee) {
         super(delegatee);
@@ -67,11 +68,28 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         return createLazySession(credentials, workspaceName);
     }
     
+    public void setKeepChangesOnRefresh(boolean keepChangesOnRefresh) {
+        sessionsRefreshCounter.setKeepChangesOnRefresh(keepChangesOnRefresh);
+    }
+    
+    public boolean getKeepChangesOnRefresh() {
+        return sessionsRefreshCounter.getKeepChangesOnRefresh();
+    }
+    
+    public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingAfter) {
+        sessionsRefreshCounter.setSessionsRefreshPendingAfter(sessionsRefreshPendingAfter);
+    }
+    
+    public long getSessionsRefreshPendingAfter() {
+        return sessionsRefreshCounter.getSessionsRefreshPendingAfter();
+    }
+    
     protected Session createLazySession(Credentials credentials, String workspaceName) {
         Session lazySession = null;
         
         ProxyFactory factory = new ProxyFactory();
         LazySessionInvoker invoker = new LazySessionInvoker(getDelegatee(), credentials, workspaceName, logoutOnSessionUnbound);
+        invoker.setSessionsRefreshCounter(sessionsRefreshCounter);
         
         ClassLoader sessionClassloader = getDelegatee().getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
@@ -90,7 +108,29 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
 
         return lazySession;
     }
-
+    
+    protected static class SessionsRefreshCounter {
+        
+        private long sessionsRefreshPendingTimeMillis;
+        private boolean keepChangesOnRefresh;
+        
+        public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis) {
+            this.sessionsRefreshPendingTimeMillis = sessionsRefreshPendingTimeMillis;
+        }
+        
+        public long getSessionsRefreshPendingAfter() {
+            return sessionsRefreshPendingTimeMillis;
+        }
+        
+        public void setKeepChangesOnRefresh(boolean keepChangesOnRefresh) {
+            this.keepChangesOnRefresh = keepChangesOnRefresh;
+        }
+        
+        public boolean getKeepChangesOnRefresh() {
+            return keepChangesOnRefresh;
+        }
+    }
+    
     protected static class LazySessionInvoker implements Invoker, Serializable {
         
         private static final long serialVersionUID = 1L;
@@ -102,6 +142,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         private boolean logoutOnSessionUnbound;
         private long lastLoggedIn;
         private long lastRefreshed;
+        private SessionsRefreshCounter sessionsRefreshCounter;
         
         public LazySessionInvoker() {
         }
@@ -115,6 +156,14 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             this.credentials = credentials;
             this.workspaceName = workspaceName;
             this.logoutOnSessionUnbound = logoutOnSessionUnbound;
+        }
+        
+        public void setSessionsRefreshCounter(SessionsRefreshCounter sessionsRefreshCounter) {
+            this.sessionsRefreshCounter = sessionsRefreshCounter;
+        }
+        
+        public SessionsRefreshCounter getSessionsRefreshCounter() {
+            return sessionsRefreshCounter;
         }
         
         public Object invoke(Object proxy, Method method, Object [] args) throws Throwable {
@@ -135,6 +184,8 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             
             if (Session.class.isAssignableFrom(declaringClass)) {
                 Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
+                
+                boolean sessionJustCreated = false;
                 
                 if (session == null) {
                     if ("logout".equals(methodName) || "refresh".equals(methodName)) {
@@ -157,9 +208,19 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                         session = repository.login(credentials, workspaceName);
                     }
                     
+                    sessionJustCreated = true;
                     lastLoggedIn = System.currentTimeMillis();
                     lastRefreshed = 0L;
                     sessionWeakRef = new WeakReference<Session>(session);
+                }
+                
+                if (!sessionJustCreated &&
+                        sessionsRefreshCounter != null &&
+                        !"refresh".equals(methodName) && 
+                        sessionsRefreshCounter.getSessionsRefreshPendingAfter() > 0L && 
+                        lastRefreshed < sessionsRefreshCounter.getSessionsRefreshPendingAfter()) {
+                    session.refresh(sessionsRefreshCounter.getKeepChangesOnRefresh());
+                    lastRefreshed = System.currentTimeMillis();
                 }
                 
                 Object ret = method.invoke(session, args);
