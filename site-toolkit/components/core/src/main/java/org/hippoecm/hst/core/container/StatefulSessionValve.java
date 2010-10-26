@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +60,13 @@ public class StatefulSessionValve extends AbstractValve {
                     } catch (Exception e) {
                         throw new ContainerException("Failed to create session based on subject.", e);
                     }
+                }
+                
+                try {
+                    // TODO improve this: only refresh when needed see HSTTWO-1279
+                    session.refresh(false);
+                } catch (RepositoryException e) {                    
+                   throw new ContainerException(e);
                 }
                 
                 ((HstMutableRequestContext) requestContext).setSession(session);
