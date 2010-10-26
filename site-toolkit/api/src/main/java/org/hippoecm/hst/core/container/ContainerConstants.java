@@ -87,5 +87,20 @@ public interface ContainerConstants {
      * Preferred local request or session attribute name
      */
     String PREFERRED_LOCALE_ATTR_NAME = "org.hippoecm.hst.container.preferred.locale";
+
+    /**
+     * 'composermode' type name
+     */
+    String COMPOSERMODE = "composermode";
+    
+    /**
+     * 'composermode' attr type name
+     */
+    String COMPOSERMODE_ATTR_NAME = "org.hippoecm.hst.composermode";
+    
+    /**
+     * 'composermode template view' attr type name
+     */
+    String COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME = "org.hippoecm.hst.composermode-template-view";
     
 }

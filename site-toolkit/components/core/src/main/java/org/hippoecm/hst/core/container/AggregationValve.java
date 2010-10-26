@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
@@ -315,7 +316,8 @@ public class AggregationValve extends AbstractValve {
             // TODO Should we move this post processing to an injectable piece of code of 'generic' post processors
             // TODO ////////////////////////////////////////////////////////////////////////////
             SiteMount mount = request.getRequestContext().getResolvedSiteMount().getSiteMount();
-            if(mount.isOfType(COMPOSERMODE_NAME_TYPE)) {
+            HttpSession session = request.getSession(false);
+            if(session != null && "true".equals(session.getAttribute(ContainerConstants.COMPOSERMODE_ATTR_NAME)) && mount.isOfType(ContainerConstants.COMPOSERMODE)) {
              // we are in composer mode. Add the wrapper elements that are needed for the composer around all components
                 if(window == rootWindow) {
                     // the root window does *not* have a wrapper element but sets some needed javascript files as head elements
@@ -355,7 +357,6 @@ public class AggregationValve extends AbstractValve {
 
 // TODO Should we move this post processing to an injectable piece of code of 'generic' post processors
 // TODO ////////////////////////////////////////////////////////////////////////////
-    private static final String COMPOSERMODE_NAME_TYPE = "composermode";
     
     private void addHeadElements(HstRequest request, HstResponse response, SiteMount mount ) {
         addCssHeadElement(request, response, mount, "/hippo/pagecomposer/sources/css/PageEditor.css");

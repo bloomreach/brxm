@@ -15,23 +15,25 @@
  */
 package org.hippoecm.hst.pagecomposer.container;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.container.AbstractValve;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.dependencies.DependencyManager;
-import org.hippoecm.hst.pagecomposer.dependencies.DependencyWriter;
 import org.hippoecm.hst.pagecomposer.dependencies.HstLinkDependencyWriter;
 import org.hippoecm.hst.pagecomposer.dependencies.ext.ExtApp;
 import org.hippoecm.hst.pagecomposer.dependencies.ext.ExtAppBootstrap;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * InitializationValve
@@ -49,6 +51,9 @@ public class PageComposerBootstrapValve extends AbstractValve
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
+        
+        HttpSession session = context.getServletRequest().getSession();
+        session.setAttribute(ContainerConstants.COMPOSERMODE_ATTR_NAME, "true");
         HstRequestContext requestContext = (HstRequestContext)context.getRequestContext();
         SiteMount siteMount = requestContext.getResolvedSiteMount().getSiteMount();
 

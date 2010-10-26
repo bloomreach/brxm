@@ -18,7 +18,12 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -163,7 +168,36 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
-            invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+            
+            // TODO : move the 'composer' logic to a better place
+            /*
+             * Below we check whether we need to output 'sample' content for the component instead of rendering the actual template. 
+             * We only show sample content if and only if:
+             * 1) There is already an HttpSession
+             * 2) On this HttpSession there is a attribute called ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW with value "true"
+             * 3) The component is of type CONTAINER_ITEM_COMPONENT
+             * 4) compInfo instanceof HstComponentConfigurationService
+             * 5) mount is of type ContainerConstants.COMPOSERMODE && of type ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW
+             * 6) the container item component has sample content configured
+             */
+            
+            HstComponentConfiguration compInfo = ((HstComponentConfiguration)window.getComponentInfo());
+            SiteMount mount = hstRequest.getRequestContext().getResolvedSiteMount().getSiteMount();
+            // do not create a http session!!
+            HttpSession session = hstRequest.getSession(false);
+            if (session != null 
+                    && "true".equals(session.getAttribute(ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME))
+                    && compInfo instanceof HstComponentConfigurationService
+                    && compInfo.getComponentType() == Type.CONTAINER_ITEM_COMPONENT
+                    && mount.isOfType(ContainerConstants.COMPOSERMODE)
+                    && ((HstComponentConfigurationService) compInfo).getSampleContent() != null) {
+               // We are in composermode && composer-template-view && the current component is a container item, and has sample content: hence, we do not render the actual template, but show sample content
+               hstResponse.getWriter().append(((HstComponentConfigurationService)compInfo).getSampleContent());
+               hstResponse.flushBuffer();
+             /////// TODO END ////////////////////////////
+            } else {
+                invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+            }
         } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
                 throw e;
@@ -262,7 +296,12 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+            
+            
+            
             invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+            
+            
         } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
                 throw e;
