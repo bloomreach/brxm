@@ -140,9 +140,11 @@ public class HstRequestUtils {
      * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
      */
     public static String getPathInfo(ResolvedSiteMount resSiteMount, HttpServletRequest request, String characterEncoding) {
+        // TODO Make sure, the ./suffix gets removed from getPathInfo
         return getDecodedPath(resSiteMount, request, characterEncoding, true);
     }
     
+    // TODO Should we remove the ./suffix info here as well? IMO yes
     private static String getDecodedPath(ResolvedSiteMount resSiteMount, HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
         String requestURI = getRequestURI(request, true);
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
