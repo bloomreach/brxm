@@ -56,7 +56,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String renderPath;
     
-    private String containerType;
+    private String xtype;
 
     /**
      * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have sample content
@@ -147,11 +147,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
         this.propertyMap = node.getValueProvider().getPropertyMap();
         
-        if(type == Type.CONTAINER_COMPONENT) {
-            this.containerType = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE);
-        } else if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE)){
-            log.warn("Ignoring property '{}' as this property is only allowed on nodes of type '{}'", HstNodeTypes.COMPONENT_PROPERTY_CONTAINERTYPE, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-        }
+        if(type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
+            this.xtype = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE);
+        } 
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
 
@@ -210,8 +208,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return this.renderPath;
     }
     
-    public String getContainerType() {
-        return this.containerType;
+    public String getXType() {
+        return this.xtype;
     }
 
     public Type getComponentType() {
@@ -314,7 +312,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.renderPath = child.renderPath;
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
-        copy.containerType = child.containerType;
+        copy.xtype = child.xtype;
         copy.type = child.type;
         copy.serveResourcePath = child.serveResourcePath;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
@@ -395,8 +393,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.pageErrorHandlerClassName == null) {
                     this.pageErrorHandlerClassName = referencedComp.pageErrorHandlerClassName;
                 }
-                if (this.containerType == null) {
-                    this.containerType = referencedComp.containerType;
+                if (this.xtype == null) {
+                    this.xtype = referencedComp.xtype;
                 }
                 if (this.sampleContent == null) {
                     this.sampleContent = referencedComp.sampleContent;
@@ -486,8 +484,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.pageErrorHandlerClassName == null) {
             this.pageErrorHandlerClassName = childToMerge.pageErrorHandlerClassName;
         }
-        if (this.containerType == null) {
-            this.containerType = childToMerge.containerType;
+        if (this.xtype == null) {
+            this.xtype = childToMerge.xtype;
         }
         if (this.sampleContent == null) {
             this.sampleContent = childToMerge.sampleContent;

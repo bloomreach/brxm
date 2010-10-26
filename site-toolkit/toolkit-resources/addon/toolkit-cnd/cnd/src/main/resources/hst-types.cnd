@@ -47,11 +47,12 @@
 
 [hst:containeritemcomponent] > hst:abstractcomponent orderable
 - hst:referencecomponent(string)
+- hst:xtype (string) mandatory
 - hst:samplecontent (string)
 + * (hst:abstractcomponent)
 
 [hst:containercomponent] > hst:abstractcomponent orderable
-- hst:containertype (string) mandatory
+- hst:xtype (string) mandatory
 + * (hst:containeritemcomponent)
 
 [hst:components] > nt:base, mix:referenceable orderable

@@ -97,9 +97,9 @@ public interface ComponentConfiguration {
     
     /**
      * 
-     * @return the container type of this ComponentConfiguration and <code>null</code> if the component is not a container component
+     * @return the xtype of this ComponentConfiguration and <code>null</code> if the component does not have one
      */
-    String getContainerType();
+    String getXType();
     
     /**
      * 

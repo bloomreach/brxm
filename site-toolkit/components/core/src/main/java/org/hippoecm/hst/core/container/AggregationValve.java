@@ -343,9 +343,7 @@ public class AggregationValve extends AbstractValve {
                     Element el = response.createElement("div");
                     el.setAttribute("class", "componentContentWrapper");
                     el.setAttribute("hst:id", compConfig.getCanonicalIdentifier());
-                    if(compConfig.getContainerType() != null) {
-                        el.setAttribute("hst:containerType", compConfig.getContainerType());
-                    }
+                    el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
                     el.setAttribute("hst:type", compConfig.getComponentType().toString());
                     response.setWrapperElement(el);
                 }

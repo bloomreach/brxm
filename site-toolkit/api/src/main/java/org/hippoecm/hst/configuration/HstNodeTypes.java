@@ -55,7 +55,7 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
     public final static String COMPONENT_PROPERTY_TEMPLATE_ = "hst:template";
     public final static String COMPONENT_PROPERTY_SERVE_RESOURCE_PATH = "hst:serveresourcepath";
-    public final static String COMPONENT_PROPERTY_CONTAINERTYPE = "hst:containertype";
+    public final static String COMPONENT_PROPERTY_XTYPE = "hst:xtype";
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";

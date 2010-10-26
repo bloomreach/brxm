@@ -191,9 +191,9 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     String getCanonicalIdentifier();
     
     /**
-     * @return the container type of this ComponentConfiguration and <code>null</code> if the component is not a container component
+     * @return the xtype of this ComponentConfiguration and <code>null</code> if the component does not have an xtype
      */
-    String getContainerType();
+    String getXType();
     
     /**
      * 

@@ -103,8 +103,8 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
         return componentConfiguration.getCanonicalIdentifier();
     }
     
-    public String getContainerType() {
-        return componentConfiguration.getContainerType();
+    public String getXType() {
+        return componentConfiguration.getXType();
     }
 
     public Type getComponentType() {

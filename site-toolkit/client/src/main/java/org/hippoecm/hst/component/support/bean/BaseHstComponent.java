@@ -460,13 +460,6 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
-     * @return the String value of the container type or <code>null</code> in case that the component is not a container
-     */
-    public String getContainerType() {
-       return getComponentConfiguration().getContainerType();
-    }
-    
-    /**
      * If you want other fallbacktypes, override {@link #getObjectConverter()} method instead.
      * This method just returns the default fallback primary node types by using {@link ObjectConverterUtils#getDefaultFallbackNodeTypes()}.
      * @return String array containing the fallback types
