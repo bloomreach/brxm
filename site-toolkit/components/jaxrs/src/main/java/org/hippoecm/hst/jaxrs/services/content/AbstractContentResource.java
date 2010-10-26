@@ -66,12 +66,21 @@ public abstract class AbstractContentResource {
     
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     
+    public static final String MOUNT_ALIAS_REST = "rest";
+    public static final String MOUNT_ALIAS_SITE = "site";
+    public static final String MOUNT_ALIAS_GALLERY = "gallery";
+    public static final String MOUNT_ALIAS_ASSETS = "assets";
+    
+    public static final String MOUNT_ALIAS_REST_PROP_NAME = "hst:restMountAlias";
+    public static final String MOUNT_ALIAS_SITE_PROP_NAME = "hst:siteMountAlias";
+    public static final String MOUNT_ALIAS_GALLERY_PROP_NAME = "hst:galleryMountAlias";
+    public static final String MOUNT_ALIAS_ASSETS_PROP_NAME = "hst:assetsMountAlias";
+    
     private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;
     private HstQueryManager hstQueryManager;
     
-    private String siteAliasForPageLinks;
     private boolean pageLinksExternal;
     
     private ContentRewriter<String> contentRewriter;
@@ -129,14 +138,6 @@ public abstract class AbstractContentResource {
     	this.hstQueryManager = hstQueryManager;
     }
     
-    public String getSiteAliasForPageLinks() {
-        return siteAliasForPageLinks;
-    }
-
-    public void setSiteAliasForPageLinks(String siteAliasForPageLinks) {
-        this.siteAliasForPageLinks = siteAliasForPageLinks;
-    }
-
     public boolean isPageLinksExternal() {
         return pageLinksExternal;
     }
@@ -276,11 +277,13 @@ public abstract class AbstractContentResource {
                 rewriter = new SimpleContentRewriter();
             }
             
-            if (targetSiteMountAlias == null) {
-                targetSiteMountAlias = requestContext.getResolvedSiteMount().getSiteMount().getAlias();
+            if (StringUtils.isEmpty(targetSiteMountAlias)) {
+                targetSiteMountAlias = MOUNT_ALIAS_SITE;
             }
             
-            String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetSiteMountAlias);
+            String mappedTargetMountAlias = getMappedMountAliasName(requestContext, targetSiteMountAlias);
+            
+            String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, mappedTargetMountAlias);
             htmlRep.setContent(rewrittenHtml);
             
             return htmlRep;
@@ -384,11 +387,13 @@ public abstract class AbstractContentResource {
             rewriter = new SimpleContentRewriter();
         }
         
-        if (targetSiteMountAlias == null) {
-            targetSiteMountAlias = requestContext.getResolvedSiteMount().getSiteMount().getAlias();
+        if (StringUtils.isEmpty(targetSiteMountAlias)) {
+            targetSiteMountAlias = MOUNT_ALIAS_SITE;
         }
         
-        String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetSiteMountAlias);
+        String mappedTargetMountAlias = getMappedMountAliasName(requestContext, targetSiteMountAlias);
+        
+        String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, mappedTargetMountAlias);
         return rewrittenHtml;
     }
     
@@ -454,8 +459,7 @@ public abstract class AbstractContentResource {
         Link nodeLink = new Link();
         
         try {
-            String siteAlias = requestContext.getResolvedSiteMount().getSiteMount().getAlias();
-            nodeLink.setRel(siteAlias);
+            nodeLink.setRel(MOUNT_ALIAS_REST);
             HstLink link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
             String href = link.toUrlForm(requestContext, isPageLinksExternal());
             nodeLink.setHref(href);
@@ -482,20 +486,13 @@ public abstract class AbstractContentResource {
         Link nodeLink = new Link();
         
         try {
-            if (getSiteAliasForPageLinks() == null) {
-                SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
-                if (parentMount != null) {
-                    setSiteAliasForPageLinks(parentMount.getAlias());
-                }
-            }
-            
-            String siteAliasForPageLink = getSiteAliasForPageLinks();
-            nodeLink.setRel(siteAliasForPageLink);
+            String mappedMountAliasForSite = getMappedMountAliasName(requestContext, MOUNT_ALIAS_SITE);
+            nodeLink.setRel(MOUNT_ALIAS_SITE);
             
             HstLink link = null;
             
-            if (siteAliasForPageLink != null) {
-                link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext, getSiteAliasForPageLinks());
+            if (mappedMountAliasForSite != null) {
+                link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext, mappedMountAliasForSite);
             } else {
                 link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
             }
@@ -519,5 +516,38 @@ public abstract class AbstractContentResource {
         }
         
         return nodeLink;
+    }
+    
+    protected String getMappedMountAliasName(HstRequestContext requestContext, String mountAlias) {
+        SiteMount curMount = requestContext.getResolvedSiteMount().getSiteMount();
+        String mappedAlias = curMount.getAlias();
+        
+        if (MOUNT_ALIAS_SITE.equals(mountAlias)) {
+            String propValue = curMount.getProperty(MOUNT_ALIAS_SITE_PROP_NAME);
+            
+            if (!StringUtils.isEmpty(propValue)) {
+                return propValue;
+            } else {
+                SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
+                
+                if (parentMount != null) {
+                    return parentMount.getAlias();
+                }
+            }
+        } else if (MOUNT_ALIAS_GALLERY.equals(mountAlias)) {
+            String propValue = curMount.getProperty(MOUNT_ALIAS_GALLERY_PROP_NAME);
+            
+            if (!StringUtils.isEmpty(propValue)) {
+                return propValue;
+            }
+        } else if (MOUNT_ALIAS_ASSETS.equals(mountAlias)) {
+            String propValue = curMount.getProperty(MOUNT_ALIAS_ASSETS_PROP_NAME);
+            
+            if (!StringUtils.isEmpty(propValue)) {
+                return propValue;
+            }
+        }
+        
+        return mappedAlias;
     }
 }
