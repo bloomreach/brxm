@@ -56,6 +56,8 @@ public class SiteMountService implements SiteMount {
      * the alias of this SiteMount. If there is no specific property defined, the nodename is used as alias. 
      */
     private String alias;
+    
+    private Map<String, Object> allProperties;
 
     /**
      * The primary type of this SiteMount. If not specified, we use {@link #DEFAULT_TYPE} as a value
@@ -166,6 +168,8 @@ public class SiteMountService implements SiteMount {
         this.name = siteMount.getValueProvider().getName();
 
         // default for when there is no alias property
+        
+        this.allProperties = siteMount.getValueProvider().getProperties();
         
         this.alias = name;
         
@@ -542,8 +546,11 @@ public class SiteMountService implements SiteMount {
         return sessionStateful;
     }
 
-
-
-
-    
+    public String getProperty(String name) {
+        Object o = allProperties.get(name);
+        if(o != null) {
+            return o.toString();
+        }
+        return null;
+    } 
 }

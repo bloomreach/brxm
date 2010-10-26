@@ -340,4 +340,12 @@ public interface SiteMount {
      */
     boolean isSessionStateful();
     
+    /**
+     * the string value of the property or <code>null</code> when the property is not present. When the property value is not of
+     * type {@link String}, we'll return the {@link Object#toString()} value
+     * @param name the name of the property
+     * @return the value of the property or <code>null</code> when the property is not present
+     */
+    String getProperty(String name);
+    
 }
