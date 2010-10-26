@@ -20,31 +20,21 @@ import org.hippoecm.hst.configuration.components.Parameter;
 import org.hippoecm.hst.configuration.components.ParameterType;
 
 
-public class BannerInfo {
+public interface BannerInfo {
 
     @Parameter(name = "bannerWidth", displayName = "Banner Width", type = ParameterType.NUMBER, required = true)
-    private int getBannerWidth() {
-        return 0;
-    }
-    
+    int getBannerWidth();
+
     @Parameter(name = "yesNo", displayName = "Yes or No ?", type = ParameterType.BOOLEAN)
-    private int getYesNO() {
-        return 0;
-    }
+    int getYesNO();
 
     @Parameter(name = "date", displayName = "Some Date", type = ParameterType.DATE)
-    private String getDate() {
-        return "";
-    }
+    String getDate();
 
     @Parameter(name = "borderColor", displayName = "Border Color", type = ParameterType.COLOR)
-    private String getColor() {
-        return "";
-    }
+    String getColor();
 
     @Parameter(name = "someName", displayName = "Some String", type = ParameterType.STRING)
-    private String getSomeName() {
-        return "";
-    }
+    String getSomeName();
 
 }
