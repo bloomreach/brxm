@@ -21,6 +21,8 @@ import org.hippoecm.hst.configuration.components.ParametersInfo;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @ParametersInfo(type = BannerInfo.class)
@@ -28,10 +30,18 @@ public class Banner extends BaseHstComponent {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    public static final Logger log = LoggerFactory.getLogger(Banner.class);
+    
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
+        BannerInfo paramsInfo = getParametersInfo(request);
+        
+        int width = paramsInfo.getBannerWidth();
+        
+        log.info("The width of the banner is '{}'", String.valueOf(width));
+        
         String path = getComponentConfiguration().getCanonicalPath();
         int index = path.lastIndexOf('/');
         String parentPath = path.substring(0, index);
