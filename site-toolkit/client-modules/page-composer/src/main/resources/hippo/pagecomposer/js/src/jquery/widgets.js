@@ -19,18 +19,25 @@ $.namespace('Hippo.PageComposer.UI', 'Hippo.PageComposer.UI.Container', 'Hippo.P
 Hippo.PageComposer.UI.Widget = Class.extend({
     init : function(id, element) {
         this.id = id;
+        this.overlayId = id + '-overlay';
         this.element = element;
 
+        //jquery selector shortcuts
         this.selector = '#' + element.id;
+        this.overlaySelector = '#' + this.overlayId;
 
+        //selected classname
         this.selCls = 'hst-selected';
+        //activated classname
         this.actCls = 'hst-activated';
+        //base overlay classname
         this.overlayCls = 'hst-overlay';
+        //overlay hover classname
         this.overlayHoverCls = 'hst-overlay-hover';
+        //optional custom classname
         this.overlayCustomCls = null;
 
         this.rendered = false;
-        this.positioned = 'abs';
     },
 
     select : function() {
@@ -62,6 +69,8 @@ Hippo.PageComposer.UI.Widget = Class.extend({
             overlay.addClass(this.overlayCustomCls);
         }
         overlay.css('position', 'absolute');
+        overlay.attr('hst:id', this.id);
+        overlay.attr('id', this.overlayId);
         overlay.hover(function() {
             self.onMouseOver(this);
         }, function() {
@@ -149,13 +158,13 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.items = new Hippo.Util.OrderedMap();
 
-        this.itemSelector = this.selector + ' div.componentContentWrapper';
-
         this.itemCls = 'hst-dd-item';
         this.hostCls = 'hst-container';
 
         this.hostSelector = this.selector + ' .' + this.hostCls;
-        this.dragSelector = '.' + this.itemCls; //This selector should be relative to the DDHost
+        this.itemSelector = this.selector + ' div.componentContentWrapper';
+
+        this.dragSelector = '.hst-overlay-containeritem';
 
         this.selCls = this.selCls + '-container';
         this.actCls = this.actCls + '-container';
@@ -171,7 +180,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
         var self = this;
         $(this.itemSelector).each(function() {
-            self.insertNewItem(this);
+            self.insertNewItem(this, true);
         });
     },
 
@@ -186,36 +195,46 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
     enableSortable : function() {
         //instantiate jquery.UI sortable
-        $(this.hostSelector).sortable({
+        $(this.overlaySelector).sortable({
             items: this.dragSelector,
-            connectWith: '.' + this.hostCls,
-            update: $.proxy(this.onUpdate, this),
-            helper: $.proxy(this.onHelper, this),
-            revert: 100,
-            receive: $.proxy(this.onReceive, this),
-            remove: $.proxy(this.onRemove, this),
-            placeholder : {
-                element: function(el) {
-                    var w = $(el).width(), h = $(el).height();
-                    return $('<li class="ui-state-highlight placeholdert"></li>').height(h).width(w);
-                },
-                update: function(contEainer, p) {
-                    //TODO
-                }
-
-            },
-            start: function() {
-                $('div.hst-menu-overlay').hide();
-            },
-            stop: function() {
-                $('div.hst-menu-overlay').show();
-            },
-            sort: function() {
-            },
-            change: function() {
-            }
+            connectWith: '.' + this.overlayCustomCls,
+            start: $.proxy(this.ddOnStart, this),
+            stop: $.proxy(this.ddOnStop, this),
+            helper: $.proxy(this.ddHelper, this)
+//            update: $.proxy(this.onUpdate, this),
+//            revert: 100,
+//            receive: $.proxy(this.onReceive, this)
+//            remove: $.proxy(this.onRemove, this),
+//            placeholder : {
+//                element: function(el) {
+//                    var w = $(el).width(), h = $(el).height();
+//                    return $('<li class="ui-state-highlight placeholdert"></li>').height(h).width(w);
+//                },
+//                update: function(contEainer, p) {
+//                    //TODO
+//                }
+//
+//            },
+//            sort: function() {
+//            },
+//            change: function() {
+//            }
 
         }).disableSelection();
+    },
+
+    ddOnStart : function() {
+        console.log('start');
+    },
+
+    ddOnStop: function() {
+        console.log('stop');
+    },
+
+    ddHelper : function(event, element) {
+        var id = element.attr('hst:id');
+        var item = this.items.get(id);
+        return $('<div class="hst-dd-helper">Item: ' + id + '</div>').css('width', '120px').css('height', '40px');
     },
 
     onDestroy: function() {
@@ -228,7 +247,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     add : function(element, index) {
-        var item = this.insertNewItem(element, index);
+        var item = this.insertNewItem(element, false, index);
         item.render();
         $(this.hostSelector).sortable('refresh');
         this.syncAll();
@@ -245,11 +264,13 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this.items.each(f, scope || this);
     },
 
-    insertNewItem : function(element, index) {
+    insertNewItem : function(element, exists, index) {
         var item = Hippo.PageComposer.UI.Factory.create(element);
         this.items.put(item.id, item, index);
-        var itemElement = this.createItemElement(item.element);
-        this.appendItem(itemElement, index);
+        if(!exists) {
+            var itemElement = this.createItemElement(item.element);
+            this.appendItem(itemElement, index);
+        }
         return item;
     },
 
@@ -340,11 +361,6 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         }
     },
 
-    onHelper : function(event, element) {
-        var clone = element.find('.componentContentWrapper').clone();
-        return $('<div class="hst-dd-helper"></div>').append(clone);//.width($(clone).width()).height($(clone).height());
-    },
-
     onReceive : function(event, ui) {
         var el = ui.item.find('.componentContentWrapper');
         ui.item.replaceWith(this.createItemElement(el));
@@ -373,7 +389,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         return true;
     }
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.Base', Hippo.PageComposer.UI.Container.Base);
+Hippo.PageComposer.UI.Factory.register('HST.BaseContainer', Hippo.PageComposer.UI.Container.Base);
 
 //Container implementations
 Hippo.PageComposer.UI.Container.Table = Hippo.PageComposer.UI.Container.Base.extend({
@@ -392,7 +408,7 @@ Hippo.PageComposer.UI.Container.Table = Hippo.PageComposer.UI.Container.Base.ext
     }
 
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.Table', Hippo.PageComposer.UI.Container.Table);
+Hippo.PageComposer.UI.Factory.register('HST.Table', Hippo.PageComposer.UI.Container.Table);
 
 Hippo.PageComposer.UI.Container.UnorderedList = Hippo.PageComposer.UI.Container.Base.extend({
 
@@ -408,7 +424,7 @@ Hippo.PageComposer.UI.Container.UnorderedList = Hippo.PageComposer.UI.Container.
         }
     }
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.UnorderedList', Hippo.PageComposer.UI.Container.UnorderedList);
+Hippo.PageComposer.UI.Factory.register('HST.UnorderedList', Hippo.PageComposer.UI.Container.UnorderedList);
 
 Hippo.PageComposer.UI.Container.OrderedList = Hippo.PageComposer.UI.Container.Base.extend({
 
@@ -424,7 +440,7 @@ Hippo.PageComposer.UI.Container.OrderedList = Hippo.PageComposer.UI.Container.Ba
         }
     }
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.Container.OrderedList', Hippo.PageComposer.UI.Container.OrderedList);
+Hippo.PageComposer.UI.Factory.register('HST.OrderedList', Hippo.PageComposer.UI.Container.OrderedList);
 
 Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
     init : function(id, element) {
@@ -480,5 +496,5 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
     }
 
 });
-Hippo.PageComposer.UI.Factory.register('Hippo.PageComposer.UI.ContainerItem.Base', Hippo.PageComposer.UI.ContainerItem.Base);
+Hippo.PageComposer.UI.Factory.register('HST.Item', Hippo.PageComposer.UI.ContainerItem.Base);
 

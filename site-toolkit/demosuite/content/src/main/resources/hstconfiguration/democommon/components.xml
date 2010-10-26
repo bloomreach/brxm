@@ -127,8 +127,8 @@
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:containercomponent</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:containertype" sv:type="String">
-                    <sv:value>Hippo.PageComposer.UI.Container.Table</sv:value>
+                <sv:property sv:name="hst:xtype" sv:type="String">
+                    <sv:value>HST.Table</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:template" sv:type="String">
                     <sv:value>table</sv:value>
@@ -136,6 +136,9 @@
                 <sv:node sv:name="banner1">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hst:containeritemcomponent</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:xtype" sv:type="String">
+                      <sv:value>HST.Item</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentclassname" sv:type="String">
                         <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
@@ -153,6 +156,9 @@
                     </sv:property>
                     <sv:property sv:name="hst:template" sv:type="String">
                         <sv:value>banner</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:xtype" sv:type="String">
+                      <sv:value>HST.Item</sv:value>
                     </sv:property>
                 </sv:node>
             </sv:node>
@@ -160,11 +166,11 @@
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:containercomponent</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:containertype" sv:type="String">
-                    <sv:value>Hippo.PageComposer.UI.Container.Table</sv:value>
+                <sv:property sv:name="hst:xtype" sv:type="String">
+                    <sv:value>HST.UnorderedList</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:template" sv:type="String">
-                    <sv:value>table</sv:value>
+                    <sv:value>ul</sv:value>
                 </sv:property>
                 <sv:node sv:name="banner1">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -176,6 +182,9 @@
                     <sv:property sv:name="hst:template" sv:type="String">
                         <sv:value>banner</sv:value>
                     </sv:property>
+                    <sv:property sv:name="hst:xtype" sv:type="String">
+                      <sv:value>HST.Item</sv:value>
+                    </sv:property>
                 </sv:node>
                 <sv:node sv:name="banner2">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -186,6 +195,9 @@
                     </sv:property>
                     <sv:property sv:name="hst:template" sv:type="String">
                         <sv:value>banner</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:xtype" sv:type="String">
+                      <sv:value>HST.Item</sv:value>
                     </sv:property>
                 </sv:node>
             </sv:node>

@@ -32,14 +32,6 @@ li.placeholdert {
     list-style: none;
 }
 
-.hst-dd-helper {
-    border: 2px solid green;
-}
-
-.hst-dd-item {
-    cursor: move;
-}
-
 .hst-empty-container {
 /*background-color: #999;*/
     border: 2px dashed #e3e3e3;
@@ -99,10 +91,26 @@ li.placeholdert {
 }
 
 .hst-overlay.hst-selected-containerItem {
-    background-color: red;
+    background-color: #ffff00;
 }
 
 .hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button,
 .hst-overlay-hover > div.hst-overlay-menu-button {
     visibility: visible; /*background-color: #e3e3e3;*/
 }
+
+/* Drag&Drop elements */
+.hst-dd-helper {
+    position: relative;
+    opacity: 1;
+    background-color: black;
+    width: 120px;
+    height: 40px;
+    color: white;
+    border: 1px solid #e3e3e3;
+}
+
+.hst-dd-item {
+    cursor: move;
+}
+
