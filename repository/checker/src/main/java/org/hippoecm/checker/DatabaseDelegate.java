@@ -113,7 +113,6 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
                 return nullUUID;
             return UUID.fromString(string);
         } catch(IllegalArgumentException ex) {
-            System.err.println("BERRY \""+string+"\"");
             return null;
         }
     }
