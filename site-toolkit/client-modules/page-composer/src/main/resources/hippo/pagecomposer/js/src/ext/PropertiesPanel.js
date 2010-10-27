@@ -38,7 +38,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                     scope: this
                 },
                 {
-                    text: "Cancel",
+                    text: "Reset",
                     scope: this,
                     handler: function () {
                         this.getForm().reset();
