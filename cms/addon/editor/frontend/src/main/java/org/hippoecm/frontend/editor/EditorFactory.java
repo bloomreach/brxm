@@ -63,7 +63,7 @@ public class EditorFactory implements IClusterable {
                     throw new EditorException("Document has been deleted");
                 }
                 Node doc = docs.iterator().next();
-                editor = newEditor(manager, context, config, nodeModel, mode, node);
+                editor = newEditor(manager, context, config, nodeModel, mode, doc);
             } else {
                 editor = newEditor(manager, context, config, nodeModel, mode, node);
             }

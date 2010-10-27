@@ -39,6 +39,9 @@
     <module>frontend</module>
     <module>addon</module>
     <module>tools</module>
+    <module>layout</module>
+    <module>config</module>
+    <module>skin</module>
   </modules>
 
   <properties>
