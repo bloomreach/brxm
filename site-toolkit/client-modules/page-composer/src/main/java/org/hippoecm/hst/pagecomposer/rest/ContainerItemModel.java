@@ -33,7 +33,7 @@ public class ContainerItemModel extends BaseModel {
 
     @Override
     protected HstComponentConfiguration.Type initType() {
-        return HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+        return HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT;
     }
 
     @Override

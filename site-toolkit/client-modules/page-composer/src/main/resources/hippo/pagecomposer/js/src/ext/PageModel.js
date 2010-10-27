@@ -23,15 +23,13 @@ Ext.namespace('Hippo.App.PageModel');
     Hippo.App.PageModel.FactoryImpl.prototype = {
         createModel: function(element, cfg) {
 
-            var id, name, path, type;
-            if (typeof element === 'undefined' || element === null) {
-
-
-            } else {
+            var id, name, path, type, xtype;
+            if (typeof element !== 'undefined' && element !== null) {
                 id = element.getAttribute('hst:id');
                 name = element.getAttribute('hst:name');
                 path = element.getAttribute('hst:path');
                 type = element.getAttribute('hst:type');
+                xtype = element.getAttribute('hst:xtype');
             }
 
             var config = {
@@ -39,6 +37,7 @@ Ext.namespace('Hippo.App.PageModel');
                 name: name,
                 path: path,
                 type: type,
+                xtype: xtype,
                 element: element,
 
                 isRoot: false,
@@ -47,11 +46,7 @@ Ext.namespace('Hippo.App.PageModel');
             };
             Ext.apply(config, cfg);
 
-            if (config.type === 'hst:containercomponent') {
-                return new Hippo.App.PageModel.Container(config);
-            } else {
-                return new Hippo.App.PageModel.Component(config);
-            }
+            return new Hippo.App.PageModel.Component(config);
         },
 
         createRecord : function(model) {
@@ -68,19 +63,12 @@ Ext.namespace('Hippo.App.PageModel');
     Hippo.App.PageModel.Component.prototype = {
     };
 
-    Hippo.App.PageModel.Container = Ext.extend(Hippo.App.PageModel.Component, {
-        constructor: function(config) {
-            Hippo.App.PageModel.Container.superclass.constructor.call(this, config);
-
-            this.containerType = this.element.getAttribute('hst:containerType');
-        }
-    });
-
     //TODO: update this one for dropFromParent stuff
     Hippo.App.PageModel.ComponentRecord = Ext.data.Record.create([
         {name: 'id', mapping: 'id'},
         {name: 'name', mapping: 'name'},
         {name: 'type', mapping: 'type'},
+        {name: 'xtype', mapping: 'xtype'},
         {name: 'path', mapping: 'path'},
         {name: 'parentId', mapping: 'parentId'},
         {name: 'componentClassName', mapping: 'componentClassName'},
@@ -97,6 +85,7 @@ Ext.namespace('Hippo.App.PageModel');
         {name: 'componentClassName', mapping: 'componentClassName'},
         {name: 'template', mapping: 'template'},
         {name: 'type', mapping: 'type'},
+        {name: 'xtype', mapping: 'xtype'},
         {name: 'children', mapping: 'children'},
         {name: 'element', convert: function(v, record) {
             var element = Hippo.App.Main.findElement(record.id);
@@ -106,6 +95,7 @@ Ext.namespace('Hippo.App.PageModel');
                 element.setAttribute('hst:id', record.id);
                 element.setAttribute('hst:name', record.name);
                 element.setAttribute('hst:type', record.type);
+                element.setAttribute('hst:xtype', record.xtype);
                 element.setAttribute('hst:temporary', true);
                 element.className = 'componentContentWrapper';
             }

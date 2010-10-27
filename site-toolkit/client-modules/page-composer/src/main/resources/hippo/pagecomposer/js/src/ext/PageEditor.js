@@ -168,11 +168,12 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 {name: 'id'},
                 {name: 'path'},
                 {name: 'componentClassName'},
-                {name: 'template'}
+                {name: 'template'},
+                {name: 'xtype'}
             ]
         });
         var d = [
-            ['Banner', 'banner', 'org.hippoecm.hst.demo.components.Banner', 'banner']
+            ['Banner', 'banner', 'org.hippoecm.hst.demo.components.Banner', 'banner', 'HST.Item']
         ];
         this.containerItemsStore.loadData(d);
     },
@@ -512,7 +513,9 @@ Hippo.App.DragDropOne = (function() {
 
                 onInitDrag : function() {
                     Hippo.App.Main.pageModelStore.each(function(record) {
+                        var type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
+                            var el = record.get('element');
                             var box = Ext.Element.fly(record.get('element')).getBox();
                             self.boxs.push({record: record, box: box});
                         }
@@ -581,7 +584,8 @@ Hippo.App.DragDropOne = (function() {
                                 name: null,
                                 type: HST.CONTAINERITEM,
                                 template: record.get('template'),
-                                componentClassName : record.get('componentClassName')
+                                componentClassName : record.get('componentClassName'),
+                                xtype: record.get('xtype')
                             };
                             var model = Hippo.App.PageModel.Factory.createModel(null, cfg);
                             models.push(model);

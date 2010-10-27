@@ -101,7 +101,6 @@ li.placeholdert {
 
 /* Drag&Drop elements */
 .hst-dd-helper {
-    position: relative;
     opacity: 1;
     background-color: black;
     width: 120px;

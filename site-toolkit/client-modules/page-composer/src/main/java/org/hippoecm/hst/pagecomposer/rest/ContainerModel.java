@@ -40,7 +40,7 @@ public class ContainerModel extends BaseModel{
 
     @Override
     protected HstComponentConfiguration.Type initType() {
-        return HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT;
+        return HstComponentConfiguration.Type.CONTAINER_COMPONENT;
     }
 
     public String[] getChildren() {

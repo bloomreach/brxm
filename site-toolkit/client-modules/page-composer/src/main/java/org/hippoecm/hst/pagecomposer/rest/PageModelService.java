@@ -134,6 +134,7 @@ public class PageModelService extends BaseHstContentService {
             Node newNode = parent.addNode(name, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             newNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, model.getComponentClassName());
             newNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_, model.getTemplate());
+            newNode.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, model.getXtype());
 
             session.save();
             session.refresh(true);

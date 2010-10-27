@@ -234,7 +234,8 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     ddHelper : function(event, element) {
         var id = element.attr('hst:id');
         var item = this.items.get(id);
-        return $('<div class="hst-dd-helper">Item: ' + id + '</div>').css('width', '120px').css('height', '40px');
+        var x = $('<div class="hst-dd-helper">Item: ' + id + '</div>').css('width', '120px').css('height', '40px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
+        return x;
     },
 
     onDestroy: function() {

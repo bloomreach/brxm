@@ -90,18 +90,27 @@ Ext.extend(Ext.App, Ext.util.Observable, {
         if (this.debug) {
             Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res, e) {
                 if (!res.success && res.message) {
-                    this.addAlert(false, "Server-side error occurred while executing action=" + action);
-                    console.error('Server side error: ' + res.message);
+                    this.addAlert("Server-side error occurred while executing action '" + action + "'", res.message);
+                    console.error(res.message);
                 }
                 else {
-                    if (e && typeof console.error == 'function') {
-                        console.error(e);
+                    if (e) {
+                        if(typeof console.error == 'function') {
+                           console.error(e);
+                        } else {
+                            throw e;
+                        }
+                    } else if(res.status) {
+                        var json = Ext.util.JSON.decode(res.responseText);
+                        var msg = '<br/><b>StatusText:</b> ' + res.statusText + '<br/><b>StatusCode:</b> ' + res.status +
+                                '<br/><b>Detailed message:</b> ' + json.message;
+                        this.addAlert("Error occurred during action '" + action + "'", msg);
+                        console.error(json.message);
                     } else {
                         console.group("Exception");
                         console.dir(arguments);
                         console.groupEnd();
                     }
-                    this.addAlert(false, "Something bad happened while executing " + action);
                 }
             }, this);
 
@@ -195,7 +204,7 @@ Ext.extend(Ext.App, Ext.util.Observable, {
      * @param {Bool} status
      */
     addAlert : function(status, msg) {
-        this.addMessage(status, msg);
+        this.addMessage(status, msg, 4);
     },
 
     addNotice : function(msg) {
@@ -207,11 +216,8 @@ Ext.extend(Ext.App, Ext.util.Observable, {
      * @param {String} msg
      * @param {Bool} status
      */
-    addMessage : function(status, msg) {
-        var delay = 1.5;    // <-- default delay of msg box is 1 second.
-        if (status == false) {
-            delay = 5;    // <-- when status is error, msg box delay is 3 seconds.
-        }
+    addMessage : function(status, msg, _delay) {
+        var delay = _delay || 1.5;
 
         this.msgCt.alignTo(document, 't-t');
         Ext.DomHelper.append(this.msgCt, {html:this.buildMessageBox(status, String.format.apply(String, Array.prototype.slice.call(arguments, 1)))}, true).slideIn('t').pause(delay).ghost("t", {remove:true});

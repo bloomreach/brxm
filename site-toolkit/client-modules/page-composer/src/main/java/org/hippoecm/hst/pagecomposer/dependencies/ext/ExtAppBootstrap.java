@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.pagecomposer.dependencies.ext;
 
+import org.hippoecm.hst.pagecomposer.dependencies.Dependency;
 import org.hippoecm.hst.pagecomposer.dependencies.JsScriptDependency;
+
+import java.util.Collection;
 
 /**
  * Dependency for bootstrapping the EXT driven part of the PageComposerApp
@@ -28,13 +31,14 @@ public class ExtAppBootstrap extends JsScriptDependency {
     private boolean debug;
 
     public ExtAppBootstrap(String editableUrl) {
-        this(editableUrl, false);
-    }
-
-    public ExtAppBootstrap(String editableUrl, boolean debug) {
         super("");
         this.editableUrl = editableUrl;
-        this.debug = debug;
+    }
+
+    @Override
+    public Collection<Dependency> getDependencies(boolean devMode) {
+        this.debug = devMode;
+        return super.getDependencies(devMode);
     }
 
     @Override
