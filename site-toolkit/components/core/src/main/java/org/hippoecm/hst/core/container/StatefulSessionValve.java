@@ -18,12 +18,13 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 
 import javax.jcr.Repository;
-import javax.jcr.Session;
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -50,39 +51,48 @@ public class StatefulSessionValve extends AbstractValve {
         if (requestContext.getResolvedSiteMount().isSessionStateful()) {
             if (requestContext.getSubject() != null) {
                 HttpSession httpSession = context.getServletRequest().getSession(false);
-                Session session = (httpSession != null ? (Session) httpSession.getAttribute(SESSION_ATTR_NAME) : (Session) null);
+                LazySession lazySession = (httpSession != null ? (LazySession) httpSession.getAttribute(SESSION_ATTR_NAME) : (LazySession) null);
                 
-                if (session != null) {
+                if (lazySession != null) {
                     boolean isLive = false;
                     
                     try {
-                        isLive = session.isLive();
+                        isLive = lazySession.isLive();
                     } catch (Exception ignore) {
                         ;
                     }
                     
                     if (!isLive) {
                         try {
-                            session.logout();
+                            lazySession.logout();
                         } catch (Exception ignore) {
                             ;
                         } finally {
-                            session = null;
+                            lazySession = null;
                         }
                     }
                 }
                 
-                if (session == null) {
+                if (lazySession == null) {
                     try {
-                        session = subjectBasedStatefulRepository.login();
-                        context.getServletRequest().getSession(true).setAttribute(SESSION_ATTR_NAME, session);
+                        lazySession = (LazySession) subjectBasedStatefulRepository.login();
+                        context.getServletRequest().getSession(true).setAttribute(SESSION_ATTR_NAME, lazySession);
                     } catch (Exception e) {
                         throw new ContainerException("Failed to create session based on subject.", e);
                     }
                 }
                 
-                // Note: Be aware of that the session here is a LazySession which creates jcr session on-demand.
-                ((HstMutableRequestContext) requestContext).setSession(session);
+                long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
+                
+                if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
+                    try {
+                        lazySession.refresh(false);
+                    } catch (RepositoryException e) {
+                        throw new ContainerException("Failed to refresh session.", e);
+                    }
+                }
+                
+                ((HstMutableRequestContext) requestContext).setSession(lazySession);
             } else {
                 try {
                     servletResponse.sendError(403, "Authentication required.");

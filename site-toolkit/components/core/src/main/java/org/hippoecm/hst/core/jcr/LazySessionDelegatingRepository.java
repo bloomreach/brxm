@@ -68,14 +68,6 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         return createLazySession(credentials, workspaceName);
     }
     
-    public void setKeepChangesOnRefresh(boolean keepChangesOnRefresh) {
-        sessionsRefreshCounter.setKeepChangesOnRefresh(keepChangesOnRefresh);
-    }
-    
-    public boolean getKeepChangesOnRefresh() {
-        return sessionsRefreshCounter.getKeepChangesOnRefresh();
-    }
-    
     public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingAfter) {
         sessionsRefreshCounter.setSessionsRefreshPendingAfter(sessionsRefreshPendingAfter);
     }
@@ -112,7 +104,6 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
     protected static class SessionsRefreshCounter {
         
         private long sessionsRefreshPendingTimeMillis;
-        private boolean keepChangesOnRefresh;
         
         public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis) {
             this.sessionsRefreshPendingTimeMillis = sessionsRefreshPendingTimeMillis;
@@ -120,14 +111,6 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         
         public long getSessionsRefreshPendingAfter() {
             return sessionsRefreshPendingTimeMillis;
-        }
-        
-        public void setKeepChangesOnRefresh(boolean keepChangesOnRefresh) {
-            this.keepChangesOnRefresh = keepChangesOnRefresh;
-        }
-        
-        public boolean getKeepChangesOnRefresh() {
-            return keepChangesOnRefresh;
         }
     }
     
@@ -171,7 +154,9 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             String methodName = method.getName();
             
             if (LazySession.class.isAssignableFrom(declaringClass)) {
-                if ("logoutSession".equals(methodName)) {
+                if ("getRefreshPendingAfter".equals(methodName)) {
+                    return sessionsRefreshCounter.getSessionsRefreshPendingAfter();
+                } else if ("logoutSession".equals(methodName)) {
                     clearSession();
                 } else if ("lastLoggedIn".equals(methodName)) {
                     return lastLoggedIn;
@@ -185,10 +170,13 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             if (Session.class.isAssignableFrom(declaringClass)) {
                 Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
                 
-                boolean sessionJustCreated = false;
-                
                 if (session == null) {
-                    if ("logout".equals(methodName) || "refresh".equals(methodName)) {
+                    if ("logout".equals(methodName)) {
+                        return null;
+                    }
+                    
+                    if ("refresh".equals(methodName)) {
+                        lastRefreshed = System.currentTimeMillis();
                         return null;
                     }
                     
@@ -208,19 +196,9 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                         session = repository.login(credentials, workspaceName);
                     }
                     
-                    sessionJustCreated = true;
                     lastLoggedIn = System.currentTimeMillis();
                     lastRefreshed = 0L;
                     sessionWeakRef = new WeakReference<Session>(session);
-                }
-                
-                if (!sessionJustCreated &&
-                        sessionsRefreshCounter != null &&
-                        !"refresh".equals(methodName) && 
-                        sessionsRefreshCounter.getSessionsRefreshPendingAfter() > 0L && 
-                        lastRefreshed < sessionsRefreshCounter.getSessionsRefreshPendingAfter()) {
-                    session.refresh(sessionsRefreshCounter.getKeepChangesOnRefresh());
-                    lastRefreshed = System.currentTimeMillis();
                 }
                 
                 Object ret = method.invoke(session, args);
