@@ -32,7 +32,7 @@ public interface BannerInfo {
     String getDate();
 
     @Parameter(name = "borderColor", displayName = "Border Color", typeHint = ParameterType.COLOR)
-    String getColor();
+    String getBorderColor();
 
     @Parameter(name = "someName", displayName = "Some String", typeHint = ParameterType.STRING)
     String getSomeName();

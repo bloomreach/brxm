@@ -19,4 +19,7 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst' %>
 
 <hst:defineObjects/>
-<span>Banner: <%=hstRequest.getAttribute("myName")%></span>
+
+<div style="border: 1px solid ${borderColor};margin-top: 20px;">
+    <span>Banner: <%=hstRequest.getAttribute("myName")%></span>
+</div>
