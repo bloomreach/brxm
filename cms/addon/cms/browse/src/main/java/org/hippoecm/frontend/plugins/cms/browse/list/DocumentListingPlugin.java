@@ -31,6 +31,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.browse.BrowserStyle;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
@@ -66,6 +67,8 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        add(BrowserStyle.getStyleSheet());
 
         final ExpandCollapseLink<String> link = new ExpandCollapseLink<String>("toggleFullscreen");
         link.add(new Image("toggleFullscreenImage", TOGGLE_FULLSCREEN_IMG));

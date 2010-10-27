@@ -32,6 +32,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
+import org.hippoecm.frontend.plugins.cms.browse.BrowserStyle;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
@@ -79,6 +80,8 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     public CmsJcrTree(String id, TreeModel treeModel, ITreeNodeTranslator treeNodeTranslator) {
         super(id, treeModel);
         this.treeNodeTranslator = treeNodeTranslator;
+
+        add(BrowserStyle.getStyleSheet());
     }
 
     @Override
