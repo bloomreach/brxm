@@ -37,6 +37,6 @@ public @interface Parameter {
     
     Class<? extends PropertyEditor> customEditor() default EmptyPropertyEditor.class;
 
-    String type() default ParameterType.STRING;
+    String typeHint() default "";
     
 }

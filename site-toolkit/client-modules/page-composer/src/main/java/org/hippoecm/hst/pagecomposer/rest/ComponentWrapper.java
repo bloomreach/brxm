@@ -26,7 +26,6 @@ import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.configuration.components.Parameter;
-import org.hippoecm.hst.configuration.components.ParameterType;
 import org.hippoecm.hst.configuration.components.ParametersInfo;
 
 
@@ -81,7 +80,7 @@ public class ComponentWrapper {
                         prop.setName(propAnnotation.name());
                         prop.setDefaultValue(propAnnotation.defaultValue());
                         prop.setDescription(propAnnotation.description());
-                        prop.setType(propAnnotation.type());
+                        prop.setType(propAnnotation.typeHint());
                         prop.setRequired(propAnnotation.required());
                         if (propAnnotation.displayName().equals("")) {
                             prop.setLabel(propAnnotation.name());

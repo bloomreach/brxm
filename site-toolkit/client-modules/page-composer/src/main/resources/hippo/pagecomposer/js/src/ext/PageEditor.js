@@ -372,7 +372,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     select : function(model, index, record) {
         this.sendFrameMessage({element: record.data.element}, 'select');
-        if (record.get('type') === HST.CONTAINERITEM) {
+        if (record.get('type') === HST.CONTAINER) {
             this.showProperties(record);
         }
         G_canDrag = record.data.type == HST.CONTAINER;

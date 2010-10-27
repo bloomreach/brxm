@@ -17,11 +17,11 @@
 package org.hippoecm.hst.demo.components;
 
 import org.hippoecm.hst.configuration.components.Parameter;
-import org.hippoecm.hst.configuration.components.ParameterType;
+import org.hippoecm.hst.pagecomposer.rest.ParameterType;
 
 public class TodoListParametersInfo {
 
-    @Parameter(name ="listSize", displayName = "Article Count", type = ParameterType.NUMBER, required = true)
+    @Parameter(name ="listSize", displayName = "Article Count", typeHint = ParameterType.NUMBER, required = true)
     private int getListSize() {
         return 0;
     }

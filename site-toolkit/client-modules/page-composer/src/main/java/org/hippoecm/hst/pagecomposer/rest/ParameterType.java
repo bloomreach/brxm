@@ -1,4 +1,4 @@
-package org.hippoecm.hst.configuration.components;
+package org.hippoecm.hst.pagecomposer.rest;
 
 /**
  * ParameterType used to provide a hint to the pagecomposer about the type of the parameter.
