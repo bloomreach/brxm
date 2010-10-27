@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.LoggerFactory;
 
 /**
  * StatefulSessionValve
@@ -33,6 +34,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * @version $Id$
  */
 public class StatefulSessionValve extends AbstractValve {
+    
     
     public static final String SESSION_ATTR_NAME = StatefulSessionValve.class.getName() + ".session";
     
@@ -58,8 +60,8 @@ public class StatefulSessionValve extends AbstractValve {
                     
                     try {
                         isLive = lazySession.isLive();
-                    } catch (Exception ignore) {
-                        ;
+                    } catch (Exception e) {
+                        log.error("Error during checking lazy session", e);
                     }
                     
                     if (!isLive) {
