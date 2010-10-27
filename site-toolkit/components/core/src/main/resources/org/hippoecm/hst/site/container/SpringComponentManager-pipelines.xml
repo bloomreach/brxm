@@ -116,6 +116,8 @@
   
   <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
+    <property name="refreshLazySession" value="true"/>
+    <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}"/>
   </bean>
   
   <!-- Pipelines -->

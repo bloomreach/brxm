@@ -26,7 +26,6 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.slf4j.LoggerFactory;
 
 /**
  * StatefulSessionValve

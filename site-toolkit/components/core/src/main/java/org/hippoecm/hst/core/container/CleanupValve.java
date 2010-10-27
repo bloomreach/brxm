@@ -17,10 +17,13 @@ package org.hippoecm.hst.core.container;
 
 import java.util.List;
 
-import javax.servlet.ServletRequest;
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -31,9 +34,19 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class CleanupValve extends AbstractValve
 {
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
+    protected boolean refreshLazySession = true;
+    protected long maxRefreshIntervalOnLazySession;
     
     public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
         this.resourceLifecycleManagements = resourceLifecycleManagements;
+    }
+    
+    public void setRefreshLazySession(boolean refreshLazySession) {
+        this.refreshLazySession = refreshLazySession;
+    }
+    
+    public void setMaxRefreshIntervalOnLazySession(long maxRefreshIntervalOnLazySession) {
+        this.maxRefreshIntervalOnLazySession = maxRefreshIntervalOnLazySession;
     }
     
     @Override
@@ -45,11 +58,29 @@ public class CleanupValve extends AbstractValve
             }
         }
         
-        ServletRequest servletRequest = context.getServletRequest();
+        HttpServletRequest servletRequest = context.getServletRequest();
+        
+        HttpSession httpSession = servletRequest.getSession(false);
+        LazySession lazySession = (httpSession != null ? (LazySession) httpSession.getAttribute(StatefulSessionValve.SESSION_ATTR_NAME) : (LazySession) null);
+        
+        if (lazySession != null && refreshLazySession) {
+            try {
+                if (maxRefreshIntervalOnLazySession > 0L) {
+                    if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
+                        lazySession.refresh(false);
+                    }
+                } else {
+                    lazySession.refresh(false);
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to refresh session.", e);
+            }
+        }
+        
         HstRequestContext requestContext = context.getRequestContext();
         
         if (requestContext != null) {
-        	// ensure Session isn't tried to reuse again (its closed anyway)
+        	// ensure Session isn't tried to reuse again (it has been returned to the pool anyway)
             ((HstMutableRequestContext) requestContext).setSession(null);
             
             if (servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) == null) {
