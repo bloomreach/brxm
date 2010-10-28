@@ -95,7 +95,7 @@
                 <sv:value>restapi</sv:value>
               </sv:property>
               <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>JaxrsRestPipeline</sv:value>
+                <sv:value>JaxrsRestContentPipeline</sv:value>
               </sv:property>
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>rest</sv:value>
@@ -191,7 +191,7 @@
                   <sv:value>preview-rest</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>JaxrsRestPipeline</sv:value>
+                  <sv:value>JaxrsRestContentPipeline</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:secured" sv:type="Boolean">
                   <sv:value>true</sv:value>
@@ -362,7 +362,7 @@
                 <sv:value>restapi</sv:value>
               </sv:property>
               <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>JaxrsRestPipeline</sv:value>
+                <sv:value>JaxrsRestContentPipeline</sv:value>
               </sv:property>
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>rest</sv:value>
@@ -458,7 +458,7 @@
                   <sv:value>preview-rest</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>JaxrsRestPipeline</sv:value>
+                  <sv:value>JaxrsRestContentPipeline</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:secured" sv:type="Boolean">
                   <sv:value>true</sv:value>
