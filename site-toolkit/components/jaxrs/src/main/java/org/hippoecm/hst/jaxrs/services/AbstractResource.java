@@ -180,17 +180,20 @@ public class AbstractResource {
         try {
             nodeLink.setRel(MOUNT_ALIAS_REST);
             HstLink link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
-            String href = link.toUrlForm(requestContext, isPageLinksExternal());
-            nodeLink.setHref(href);
-            nodeLink.setTitle(hippoBean.getName());
-            
-            // tries to retrieve title property if available.
-            try {
-                String title = (String) PropertyUtils.getProperty(hippoBean, "title");
-                if (title != null) {
-                    nodeLink.setTitle(title);
+            if (link != null) {
+                String href = link.toUrlForm(requestContext, isPageLinksExternal());
+                nodeLink.setHref(href);
+                nodeLink.setTitle(hippoBean.getName());
+                
+                // tries to retrieve title property if available.
+                try {
+                    String title = (String) PropertyUtils.getProperty(hippoBean, "title");
+                    if (title != null) {
+                        nodeLink.setTitle(title);
+                    }
+                } 
+                catch (Exception ignore) {
                 }
-            } catch (Exception ignore) {
             }
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
@@ -215,17 +218,20 @@ public class AbstractResource {
                 link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
             }
             
-            String href = link.toUrlForm(requestContext, isPageLinksExternal());
-            nodeLink.setHref(href);
-            nodeLink.setTitle(hippoBean.getName());
-            
-            // tries to retrieve title property if available.
-            try {
-                String title = (String) PropertyUtils.getProperty(hippoBean, "title");
-                if (title != null) {
-                    nodeLink.setTitle(title);
+            if (link != null) {
+                String href = link.toUrlForm(requestContext, isPageLinksExternal());
+                nodeLink.setHref(href);
+                nodeLink.setTitle(hippoBean.getName());
+                
+                // tries to retrieve title property if available.
+                try {
+                    String title = (String) PropertyUtils.getProperty(hippoBean, "title");
+                    if (title != null) {
+                        nodeLink.setTitle(title);
+                    }
+                } 
+                catch (Exception ignore) {
                 }
-            } catch (Exception ignore) {
             }
         } catch (Exception e) {
             if (log.isWarnEnabled()) {

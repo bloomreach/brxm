@@ -97,10 +97,11 @@ public abstract class NodeRepresentation {
     }
     
     public void addLink(Link link) {
-        if (links == null) {
-            links = new ArrayList<Link>();
-        }
-        
-        links.add(link);
+    	if (link != null) {
+            if (links == null) {
+                links = new ArrayList<Link>();
+            }        
+            links.add(link);
+    	}
     }
 }
