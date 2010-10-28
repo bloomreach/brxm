@@ -26,7 +26,7 @@
 
   <bean id="jaxrsRestContentServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"> 
     <constructor-arg>
-      <bean id="jaxrsRestContentService" class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsContentService">
+      <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsContentService">
         <constructor-arg value="jaxrsContentService"/>
         <property name="servletPath" value=""/>
         <property name="jaxrsServerFactoryBean">
