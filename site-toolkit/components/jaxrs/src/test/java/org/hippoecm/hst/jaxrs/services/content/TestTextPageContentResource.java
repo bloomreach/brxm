@@ -74,6 +74,107 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
     }
     
     @Test
+    public void testGetSecuredTextPageResource() throws Exception {
+        
+        log.debug("\n****** testGetSecuredTextPageResource *******\n");
+        
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./secured/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./secured/");
+        request.setContent(new byte[0]);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
+        
+        request = new MockHttpServletRequest(servletContext);
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./permitall/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./permitall/");
+        request.setContent(new byte[0]);
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+        
+        request = new MockHttpServletRequest(servletContext);
+        request.addUserRole("manager");
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./secured/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./secured/");
+        request.setContent(new byte[0]);
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
+
+        request = new MockHttpServletRequest(servletContext);
+        request.addUserRole("manager");
+        request.addUserRole("admin");
+        request.setProtocol("HTTP/1.1");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./denyall/");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/Products/HippoCMS./denyall/");
+        request.setContent(new byte[0]);
+        
+        response = new MockHttpServletResponse();
+        
+        invokeJaxrsPipeline(request, response);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Response Content:\n" + response.getContentAsString() + "\n");
+        }
+        
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
+    }
+    
+    @Test
     public void testUpdateTextPageResource() throws Exception {
         
         log.debug("\n****** testUpdateTextPageResource *******\n");

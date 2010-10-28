@@ -31,6 +31,12 @@
   <dependencies>
     
     <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-annotation_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>

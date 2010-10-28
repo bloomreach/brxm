@@ -56,7 +56,8 @@
     <portlet-api.version>2.0</portlet-api.version>
     <javax.jcr.version>1.0</javax.jcr.version>
     <javax.mail.version>1.4.1</javax.mail.version>
-    <jta.version>1.1</jta.version>
+    <geronimo-jta_1.1_spec.version>1.1</geronimo-jta_1.1_spec.version>
+    <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
     <slf4j.version>1.5.6</slf4j.version>
     <log4j.version>1.2.14</log4j.version>
@@ -308,10 +309,17 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${jta.version}</version>
+        <version>${geronimo-jta_1.1_spec.version}</version>
         <scope>provided</scope>
       </dependency>
-
+      
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-annotation_1.1_spec</artifactId>
+        <version>${geronimo-annotation_1.1_spec.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      
       <!-- JCR API and Hippo ECM API dependency -->
       
       <dependency>

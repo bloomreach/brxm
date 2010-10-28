@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.jaxrs.services.content;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +62,27 @@ public class TextPageContentResource extends AbstractContentResource {
             
             throw new WebApplicationException(e);
         }
+    }
+    
+    @RolesAllowed(value={"manager"})
+    @GET
+    @Path("/secured/")
+    public TextPageRepresentation getSecuredTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        return getTextPageResource(servletRequest, servletResponse, uriInfo);
+    }
+    
+    @DenyAll
+    @GET
+    @Path("/denyall/")
+    public TextPageRepresentation getDenyAllTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        return getTextPageResource(servletRequest, servletResponse, uriInfo);
+    }
+    
+    @PermitAll
+    @GET
+    @Path("/permitall/")
+    public TextPageRepresentation getPermitAllTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        return getTextPageResource(servletRequest, servletResponse, uriInfo);
     }
     
     @PUT
