@@ -110,6 +110,8 @@ li.placeholdert {
 }
 
 .hst-dd-item {
-    cursor: move;
+    /* this is to stop collapsing margins */
+    padding-top: 1px;
+    margin-top: -1px;
 }
 

@@ -117,35 +117,45 @@ Hippo.PageComposer.UI.Widget = Class.extend({
     },
 
     _syncOverlay : function() {
-//Webkit does not work with the 'new' position function
-//Webkit also doesn't work with setting position through .offset so we are back to css.left/top
-//        this.menuOverlay.position({
-//            my: 'right top',
-//            at: 'right top',
-//            of: el
-//        });
+        var d = this.getOverlayData();
+        this.overlay.
+                css('left', d.left).
+                css('top', d.top).
+                css('position', d.position).
+                width(d.width).
+                height(d.height);
 
+        this.onSyncOverlay();
+    },
+
+    getOverlayData : function() {
         var overlay = this.overlay;
-        var el = $(this.element);
-        var elOffset = $(el).offset();
-        var left = (elOffset.left + $(el).outerWidth()) - overlay.width();
+        var el = this.getElToOverlay();
+        var elOffset = el.offset();
+        var left = (elOffset.left + el.outerWidth()) - overlay.width();
         var top = elOffset.top;
         var width = el.outerWidth();
         var height = el.outerHeight();
+        var position = 'absolute';
 
-        if(this.parent) {
+        if (this.parent) {
             var pOffset = this.parent.offset();
             left = left - pOffset.left;
-            top = top- pOffset.top;
-            overlay.css('position', 'inherit');
+            top = top - pOffset.top;
+            position = 'inherit';
         }
 
-        overlay.css('left', left);
-        overlay.css('top', top);
-        overlay.width(width);
-        overlay.height(height);
+        return {
+            left: left,
+            top: top,
+            width : width,
+            height: height,
+            position: position
+        };
+    },
 
-        this.onSyncOverlay();
+    getElToOverlay : function() {
+        return $(this.element);
     },
 
     onSyncOverlay : function() {
@@ -451,10 +461,11 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         this.actCls = this.actCls + '-containerItem';
         this.overlayCustomCls = 'hst-overlay-containeritem';
 
-        var tmp = $(element).attr("hst:temporary");
+        var el = $(element);
+        var tmp = el.attr("hst:temporary");
         this.isTemporary = typeof tmp !== 'undefined';
         if(this.isTemporary) {
-            $(element).html('Click to refresh');
+            el.html('Click to refresh');
         }
     },
 
@@ -467,7 +478,11 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         });
 
         this.getOverlay().append(deleteButton);
-        this.sync();
+        this.sync(); 
+    },
+
+    getElToOverlay : function() {
+        return $(this.element).parents('.hst-dd-item')   
     },
 
     select : function() {
