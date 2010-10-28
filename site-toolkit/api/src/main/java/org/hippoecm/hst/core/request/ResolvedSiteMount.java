@@ -91,7 +91,13 @@ public interface ResolvedSiteMount {
     Set<String> getUsers();
     
     /**
-     * Returns true if stateful jcr session should be used for this site mount 
+     * Returns true if subject based jcr session should be used for this site mount 
+     * @return
+     */
+    boolean isSubjectBasedSession();
+    
+    /**
+     * Returns true if subject based jcr session should be statefully managed. 
      * @return
      */
     boolean isSessionStateful();

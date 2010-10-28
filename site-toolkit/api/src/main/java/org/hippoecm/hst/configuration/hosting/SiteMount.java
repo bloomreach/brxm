@@ -333,9 +333,15 @@ public interface SiteMount {
      * parent items have a user defined, an empty set is returned
      */
     Set<String> getUsers();  
-
+    
     /**
-     * Returns true if stateful jcr session should be used for this site mount 
+     * Returns true if subject based jcr session should be used for this site mount 
+     * @return
+     */
+    boolean isSubjectBasedSession();
+    
+    /**
+     * Returns true if subject based jcr session should be statefully managed. 
      * @return
      */
     boolean isSessionStateful();

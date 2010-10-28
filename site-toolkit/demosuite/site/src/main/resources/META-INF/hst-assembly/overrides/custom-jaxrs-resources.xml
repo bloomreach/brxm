@@ -28,7 +28,7 @@
   <import resource="classpath:/org/hippoecm/hst/site/optionals/SpringComponentManager-rest-content-pipeline.xml" />
   
   <!-- Custom JAX-RS REST Resource Providers to be overriden. -->
-  <bean id="customRestResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="customRestContentResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">

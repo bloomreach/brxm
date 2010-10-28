@@ -191,6 +191,9 @@
 - hst:type (string)
 // the types this SiteMount also belongs to, for example 'composer'.
 - hst:types (string) multiple
+// whether jcr session should be used per subject
+- hst:subjectbasedsession (boolean)
+// whether subject based jcr session should be statefully managed
 - hst:sessionstateful (boolean)
 // to hold all the 'free defined properties'
 - * (string)

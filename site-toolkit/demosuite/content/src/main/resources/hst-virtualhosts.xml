@@ -106,7 +106,7 @@
               <sv:property sv:name="hst:roles" sv:type="String">
                 <sv:value>everybody</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+              <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
               <sv:node sv:name="gallery">
@@ -199,7 +199,7 @@
                 <sv:property sv:name="hst:roles" sv:type="String">
                   <sv:value>everybody</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
                 <sv:node sv:name="gallery">
@@ -373,7 +373,7 @@
               <sv:property sv:name="hst:roles" sv:type="String">
                 <sv:value>everybody</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+              <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
               <sv:node sv:name="gallery">
@@ -466,7 +466,7 @@
                 <sv:property sv:name="hst:roles" sv:type="String">
                   <sv:value>everybody</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
+                <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
                 <sv:node sv:name="gallery">

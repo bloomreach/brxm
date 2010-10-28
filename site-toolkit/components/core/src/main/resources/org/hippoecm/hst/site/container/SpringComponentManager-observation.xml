@@ -183,7 +183,7 @@
             <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.LazySessionDelegatingRepositorySessionsRefreshEventListener">
               <property name="lazySessionDelegatingRepositories">
                 <list>
-                  <ref bean="javax.jcr.Repository.subjectBasedStateful" />
+                  <ref bean="javax.jcr.Repository.subjectBased" />
                 </list>
               </property>
             </bean>

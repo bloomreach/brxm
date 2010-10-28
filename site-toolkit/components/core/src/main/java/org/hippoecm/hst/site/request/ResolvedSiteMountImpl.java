@@ -109,7 +109,11 @@ public class ResolvedSiteMountImpl implements ResolvedSiteMount{
     public Set<String> getUsers() {
         return siteMount.getUsers();
     }
-
+    
+    public boolean isSubjectBasedSession() {
+        return siteMount.isSubjectBasedSession();
+    }
+    
     public boolean isSessionStateful() {
         return siteMount.isSessionStateful();
     }

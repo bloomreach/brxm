@@ -96,8 +96,8 @@
   <bean id="securityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SecurityValve">
   </bean>
   
-  <bean id="statefulSessionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.StatefulSessionValve">
-    <property name="subjectBasedStatefulRepository" ref="javax.jcr.Repository.subjectBasedStateful" />
+  <bean id="subjectBasedSessionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SubjectBasedSessionValve">
+    <property name="subjectBasedRepository" ref="javax.jcr.Repository.subjectBased" />
   </bean>
   
   <bean id="siteMenusResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SiteMenusResolvingValve">
@@ -116,8 +116,9 @@
   
   <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
-    <property name="refreshLazySession" value="true"/>
-    <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}"/>
+    <property name="refreshLazySession" value="true" />
+    <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}" />
+    <property name="keepChangesOnRefreshLazySession" value="false" />
   </bean>
   
   <!-- Pipelines -->
@@ -138,7 +139,7 @@
                 <ref bean="contextResolvingValve" />
                 <ref bean="localizationValve" />
                 <ref bean="securityValve" />
-                <ref bean="statefulSessionValve" />
+                <ref bean="subjectBasedSessionValve" />
                 <ref bean="siteMenusResolvingValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />

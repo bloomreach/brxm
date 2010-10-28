@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  *
  */
-public class AbstractResource {
+public abstract class AbstractResource {
 
     private static Logger log = LoggerFactory.getLogger(AbstractResource.class);
 	

@@ -28,12 +28,12 @@ import javax.security.auth.Subject;
 import org.hippoecm.hst.security.HstSubject;
 
 /**
- * SubjectBasedStatefulRepository
+ * SubjectBasedRepository
  * @version $Id$
  */
-public class SubjectBasedStatefulRepository extends LazySessionDelegatingRepository {
+public class SubjectBasedRepository extends LazySessionDelegatingRepository {
     
-    public SubjectBasedStatefulRepository(Repository delegatee) {
+    public SubjectBasedRepository(Repository delegatee) {
         super(delegatee);
     }
     

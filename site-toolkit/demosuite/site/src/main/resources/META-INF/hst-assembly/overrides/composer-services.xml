@@ -90,7 +90,7 @@
     <property name="invokingValves">
       <list>
         <ref bean="securityValve" />
-        <ref bean="statefulSessionValve" />
+        <ref bean="subjectBasedSessionValve" />
         <ref bean="noCacheResponseHeadersValve" />
         <ref bean="composerValve" />
       </list>
@@ -111,7 +111,7 @@
     <property name="invokingValves">
       <list>
         <ref bean="securityValve" />
-        <ref bean="statefulSessionValve" />
+        <ref bean="subjectBasedSessionValve" />
         <ref bean="noCacheResponseHeadersValve" />
         <ref bean="composerBootstrap" />
       </list>

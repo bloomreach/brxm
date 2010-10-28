@@ -159,6 +159,8 @@ public class SiteMountService implements SiteMount {
      */
     private String embeddedSiteMountPath;
     
+    private boolean subjectBasedSession;
+    
     private boolean sessionStateful;
      
     public SiteMountService(HstNode siteMount, SiteMount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
@@ -348,6 +350,12 @@ public class SiteMountService implements SiteMount {
             this.users = new HashSet<String>(parent.getUsers());
         } else {
             this.users = new HashSet<String>();
+        }
+        
+        if (siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SUBJECTBASEDSESSION)) {
+            this.subjectBasedSession = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SUBJECTBASEDSESSION);
+        } else if (parent != null){
+            this.subjectBasedSession = parent.isSubjectBasedSession();
         }
         
         if (siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SESSIONSTATEFUL)) {
@@ -541,7 +549,11 @@ public class SiteMountService implements SiteMount {
     public Set<String> getUsers() {
         return Collections.unmodifiableSet(this.users);
     }
-
+    
+    public boolean isSubjectBasedSession() {
+        return subjectBasedSession;
+    }
+    
     public boolean isSessionStateful() {
         return sessionStateful;
     }
