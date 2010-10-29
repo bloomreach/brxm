@@ -39,7 +39,7 @@
             </property>
             <property name="resourceProviders" ref="jaxrsRestContentResourceProviders" />
             <property name="invoker">
-              <bean class="org.hippoecm.hst.jaxrs.cxf.CustomJAXRSInvoker">
+              <bean class="org.hippoecm.hst.jaxrs.cxf.SecuredJAXRSInvoker">
               </bean>
             </property>
           </bean>

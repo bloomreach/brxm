@@ -37,11 +37,11 @@ import org.slf4j.LoggerFactory;
  * 
  * @version $Id$
  */
-public class CustomJAXRSInvoker extends JAXRSInvoker {
+public class SecuredJAXRSInvoker extends JAXRSInvoker {
     
-    private static Logger log = LoggerFactory.getLogger(CustomJAXRSInvoker.class);
+    private static Logger log = LoggerFactory.getLogger(SecuredJAXRSInvoker.class);
     
-    public CustomJAXRSInvoker() {
+    public SecuredJAXRSInvoker() {
         super();
     }
     
