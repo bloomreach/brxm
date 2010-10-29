@@ -21,7 +21,7 @@
 <hst:defineObjects/>
 <ol class="hst-container">
     <c:forEach var="childContentName" items="${hstResponse.childContentNames}" varStatus="status">
-        <li class="hst-dd-item">
+        <li class="hst-container-item">
             <hst:include ref="${childContentName}"/>
         </li>
     </c:forEach>

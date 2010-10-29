@@ -63,7 +63,7 @@ Hippo.PageComposer.UI.Manager.prototype = {
     },
 
     _createContainer : function(element) {
-        var container = Hippo.PageComposer.UI.Factory.create(element);
+        var container = Hippo.PageComposer.UI.Factory.createOrRetrieve(element);
         this.containers[container.id] = container;
         var self = this;
         container.syncAll = function() {

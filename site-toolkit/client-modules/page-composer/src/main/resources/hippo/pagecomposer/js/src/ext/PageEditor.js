@@ -188,10 +188,10 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
      * @param frm
      */
     iframeDOMReady : function(frm) {
+        this.loadComponentsFromIframe(frm);
+
         //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
         frm.execScript('Hippo.PageComposer.Main.init(' + this.debug + ')', false);
-
-        this.loadComponentsFromIframe(frm);
     },
 
     loadComponentsFromIframe : function(frm) {
@@ -233,7 +233,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
         var proxy = new myProxy({
             api: {
-                read    : 'services/PageModelService/read'
+                read     : 'services/PageModelService/read'
                 ,create  : {url: 'services/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
                 ,update  : {url: 'services/PageModelService/update', method: 'POST'}
                 ,destroy : {url: 'services/PageModelService/destroy', method: 'GET'}

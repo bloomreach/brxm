@@ -40,7 +40,11 @@
     HST = {
         COMPONENT       : 'COMPONENT',
         CONTAINER       : 'CONTAINER_COMPONENT',
-        CONTAINERITEM   : 'CONTAINER_ITEM_COMPONENT'
+        CONTAINERITEM   : 'CONTAINER_ITEM_COMPONENT',
+
+        ATTR : {
+            ID : 'hst:id'
+        }
     };
 
 })();

@@ -62,5 +62,11 @@ Hippo.Util.OrderedMap = Hippo.Util.Map.extend({
             this.keys.splice(index, 0, key);
             this.values[key] = value;
         }
+    },
+
+    updateOrder : function (order) {
+        var old = this.keys;
+        this.keys = order;
+        return order != old;
     }
 });

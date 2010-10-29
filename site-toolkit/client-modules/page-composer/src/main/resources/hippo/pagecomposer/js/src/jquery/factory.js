@@ -24,9 +24,9 @@ $.namespace('Hippo.PageComposer.UI');
         };
 
         Factory.prototype = {
-            create : function(element) {
+            createOrRetrieve : function(element) {
                 var verified = this.verify(element);
-                return this._create(verified, true);
+                return this.objects[verified.id] || this._create(verified, true);
             },
 
             _create : function(data, verify) {

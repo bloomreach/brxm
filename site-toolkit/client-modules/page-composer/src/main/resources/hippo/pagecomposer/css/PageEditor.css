@@ -63,7 +63,7 @@ li.placeholdert {
     opacity: 0.6;
 }
 
-.hst-overlay-containeritem {
+.hst-overlay-container-item {
     opacity: 0.6;
 }
 
@@ -84,7 +84,7 @@ li.placeholdert {
     cursor: pointer;
 }
 
-.hst-overlay-containeritem.hst-overlay-hover .hst-overlay-menu-button {
+.hst-overlay-container-item.hst-overlay-hover .hst-overlay-menu-button {
     opacity: 1;    
     color: black;
     background-color: white;
@@ -109,9 +109,13 @@ li.placeholdert {
     border: 1px solid #e3e3e3;
 }
 
-.hst-dd-item {
+.hst-container-item {
     /* this is to stop collapsing margins */
     padding-top: 1px;
     margin-top: -1px;
+}
+
+.hst-item-ondrag {
+    opacity: 0.6;
 }
 

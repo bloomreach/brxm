@@ -22,7 +22,7 @@
 <table class="hst-container">
     <tbody>
     <c:forEach var="childContentName" items="${hstResponse.childContentNames}" varStatus="status">
-        <tr class="hst-dd-item">
+        <tr class="hst-container-item">
             <td>
                 <hst:include ref="${childContentName}"/>
             </td>
