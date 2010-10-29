@@ -48,6 +48,10 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             fn: this.handleFrameMessages,
                             scope:this
                         },
+                        'documentloaded' : {
+                            fn: this.iframeDocumentLoaded,
+                            scope: this
+                        },
                         'domready' : {
                             fn: this.iframeDOMReady,
                             scope: this
@@ -178,23 +182,23 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         this.containerItemsStore.loadData(d);
     },
 
-    /**
-     * Miframe provides two callback functions to indicate that Iframe DOM is ready, but both tend to lie, and both
-     * behave differently on different browsers.
-     * So as a last resort we wait until both have executed, before starting the init function.
-     * But, also this approach fails now and then, currently I have no other workaround than reloading the browser
-     * and trying again.
-     *
-     * @param frm
-     */
     iframeDOMReady : function(frm) {
-        this.loadComponentsFromIframe(frm);
-
-        //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this)
-        frm.execScript('Hippo.PageComposer.Main.init(' + this.debug + ')', false);
+        if(Ext.isGecko) {
+            this.initIframeAndLoadStore(frm);
+        }
     },
 
-    loadComponentsFromIframe : function(frm) {
+    iframeDocumentLoaded : function(frm) {
+        if(Ext.isChrome) {
+            this.initIframeAndLoadStore(frm);
+        }
+    },
+
+    initIframeAndLoadStore : function(frm) {
+        //Tell the Iframe to subscribe itself for attach/detach messages from the parent (this) and render
+        //overlay items
+        frm.execScript('Hippo.PageComposer.Main.init(' + this.debug + ')', true);
+
         //Aggregate components from DOM
         var models = [Hippo.App.PageModel.Factory.createModel(Ext.getBody(), {isRoot: true, type: 'page'})];
         frm.select('div.componentContentWrapper', true).each(function(el, c, idx) {
