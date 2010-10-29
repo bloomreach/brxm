@@ -165,8 +165,8 @@ $.widget("ui.sortable", $.ui.mouse, {
 			relative: this._getRelativeOffset() //This is a relative to absolute position minus the actual position calculation - only used for relative positioned helper
 		});
 
-        this.offset.click.left = -10;
-        this.offset.click.top = -10;
+        this.offset.click.left = this.helperProportions.width / 2;
+        this.offset.click.top = this.helperProportions.height / 2;
 
 		//Generate the original position
 		this.originalPosition = this._generatePosition(event);
