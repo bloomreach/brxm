@@ -20,6 +20,8 @@ Hippo.PageComposer.UI.Manager = function() {
     this.current = null;
     this.containers = {};
 
+    this.syncRequested = false;
+
     this.init();
 };
 
@@ -35,28 +37,6 @@ Hippo.PageComposer.UI.Manager.prototype = {
                     self._createContainer(this);
                 }
             });
-
-            //register to listen to iframe-messages
-            onhostmessage(function(msg) {
-                this.select(msg.data.element);
-                return false;
-            }, this, false, 'select');
-
-            onhostmessage(function(msg) {
-                this.deselect(msg.data.element);
-                return false;
-            }, this, false, 'deselect');
-
-            onhostmessage(function(msg) {
-                this.add(msg.data.element, msg.data.parentId);
-                return false;
-            }, this, false, 'add');
-
-            onhostmessage(function(msg) {
-                this.remove(msg.data.element);
-                return false;
-            }, this, false, 'remove');
-
         } catch(e) {
             console.error(e);
         }
@@ -69,7 +49,7 @@ Hippo.PageComposer.UI.Manager.prototype = {
         container.syncAll = function() {
             self.syncAll();
         };
-        container.render();
+        container.render(this);
         container.activate();
     },
 
@@ -135,7 +115,9 @@ Hippo.PageComposer.UI.Manager.prototype = {
 
     add: function(element, parentId) {
         if (typeof this.containers[parentId] !== 'undefined') {
-            this.containers[parentId].add(element);
+            var container = this.containers[parentId];
+            container.addAndRefresh(element);
+            this.sync();
         }
     },
 
@@ -148,7 +130,7 @@ Hippo.PageComposer.UI.Manager.prototype = {
         if (d.type == HST.CONTAINERITEM) {
             var containerId = $(element).parents('.componentContentWrapper').attr('hst:id');
             var container = this.containers[containerId];
-            if (typeof container !== 'undefined' && container.removeItem(element)) {
+            if (typeof container !== 'undefined' && container.removeItemAndRefresh(d.id)) {
                 Hippo.PageComposer.UI.Factory.deleteObjectRef(containerId);
             }
         } else if (d.type == HST.CONTAINER) {
@@ -159,11 +141,17 @@ Hippo.PageComposer.UI.Manager.prototype = {
             }
         }
     },
+    requestSync : function() {
+        this.syncRequested = true;
+    },
 
-    syncAll : function() {
-        $.each(this.containers, function(key, value) {
-            value.sync();
-        });
+    sync : function() {
+        if(this.syncRequested) {
+            $.each(this.containers, function(key, value) {
+                value.sync();
+            });
+        }
+        this.syncRequested = false;
     }
 
 };

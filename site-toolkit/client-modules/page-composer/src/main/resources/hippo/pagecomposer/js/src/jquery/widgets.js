@@ -18,10 +18,12 @@ $.namespace('Hippo.PageComposer.UI', 'Hippo.PageComposer.UI.Container', 'Hippo.P
 
 Hippo.PageComposer.UI.Widget = Class.extend({
     init : function(id, element) {
-
         this.id = id;
         this.overlayId = id + '-overlay';
         this.element = element;
+        this.el = $(element);
+
+        this.parent = null;
 
         //selector shortcuts
         this.sel = {
@@ -36,6 +38,7 @@ Hippo.PageComposer.UI.Widget = Class.extend({
             overlay : {
                 base: 'hst-overlay',
                 hover : 'hst-overlay-hover',
+                mark : null,
                 custom : null
             }
         };
@@ -59,21 +62,25 @@ Hippo.PageComposer.UI.Widget = Class.extend({
         $(this.element).addClass(this.cls.activated);
     },
 
-    render : function(_parent) {
+    render : function(parent) {
         if (this.rendered) {
             return;
         }
-        this.parent = _parent;
+        this.parent = parent;
 
-        var self = this;
-        var parent = _parent || document.body;
-        var overlay = $('<div/>').addClass(this.cls.overlay.base).appendTo(parent);
+        var parentOverlay = $.isFunction(parent.getOverlay) ? parent.getOverlay() : document.body;
+        var overlay = $('<div/>').addClass(this.cls.overlay.base).appendTo(parentOverlay);
+        if(this.cls.overlay.mark != null) {
+            overlay.addClass(this.cls.overlay.mark);
+        }
         if(this.cls.overlay.custom != null) {
             overlay.addClass(this.cls.overlay.custom);
         }
         overlay.css('position', 'absolute');
         overlay.attr('hst:id', this.id);
         overlay.attr('id', this.overlayId);
+
+        var self = this;
         overlay.hover(function() {
             self.onMouseOver(this);
         }, function() {
@@ -135,14 +142,16 @@ Hippo.PageComposer.UI.Widget = Class.extend({
         var overlay = this.overlay;
         var el = this.getOverlaySource();
         var elOffset = el.offset();
-        var left = (elOffset.left + el.outerWidth()) - overlay.width();
+        var left = elOffset.left;
         var top = elOffset.top;
+
         var width = el.outerWidth();
         var height = el.outerHeight();
         var position = 'absolute';
 
-        if (this.parent) {
-            var pOffset = this.parent.offset();
+        var p = this.parent;
+        if (p != null && $.isFunction(p.getOverlay)) {
+            var pOffset = p.getOverlay().offset();
             left = left - pOffset.left;
             top = top - pOffset.top;
             position = 'inherit';
@@ -180,12 +189,15 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this.cls.item           = 'hst-container-item';
         this.cls.emptyContainer = 'hst-empty-container';
         this.cls.emptyItem      = 'hst-empty-container-item';
+        this.cls.overlay.item   = 'hst-overlay-container-item';
 
         this.sel.container      = this.sel.self + ' .' + this.cls.container;
         this.sel.item           = this.sel.self + ' div.componentContentWrapper';
+        this.sel.itemWrapper    = this.sel.self + ' .' + this.cls.item;
 
         this.sel.sortable       = this.sel.overlay;
-        this.sel.sortableItems  = '.hst-overlay-container-item';
+        this.sel.sortableItems  = this.sel.sortable + ' .' + this.cls.overlay.item; //should be relative to this.sel.sortable
+        this.sel.sortableItemsRel = '.' + this.cls.overlay.item; //should be relative to this.sel.sortable
 
         //workaround: set to opposite to evoke this.sync() to render an initially correct UI
         this.isEmpty = $(this.sel.item).size() > 0;
@@ -200,6 +212,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this._super();
         this._renderItems();
         this._createSortable();
+        this._checkEmpty();
         this.sync();
     },
 
@@ -214,7 +227,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     _renderItem : function(item) {
-        item.render(this.getOverlay());
+        item.render(this);
     },
 
     _insertNewItem : function(element, exists, index) {
@@ -228,40 +241,67 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     _checkState : function() {
+        if(this.state.checkEmpty) {
+            this._checkEmpty();
+        }
         if(this.state.orderChanged) {
             this._updateOrder();
+            this.parent.requestSync();
         }
     },
 
     _updateOrder : function() {
         var order = [], lookup = {}, count = 0;
-        var sel = this.sel.overlay + ' ' + this.sel.sortableItems;
-        $(sel).each(function() {
+        $(this.sel.sortableItems).each(function() {
             var id = $(this).attr(HST.ATTR.ID);
             order.push(id);
             lookup[id] = count++;
         });
         this.items.updateOrder(order);
         var container = $(this.sel.container);
-        var items = container.children('.'+this.cls.item).get();
+        var items = $(this.sel.itemWrapper).get();
         items.sort(function(a, b) {
-            var aId = $('div.componentContentWrapper', a).attr(HST.ATTR.ID);
-            var aIndex = lookup[aId];
-            var bId = $('div.componentContentWrapper', b).attr(HST.ATTR.ID);
-            var bIndex = lookup[bId];
-            return (aIndex < bIndex) ? -1 : (aIndex > bIndex) ? 1 : 0;
+            a = lookup[$('div.componentContentWrapper', a).attr(HST.ATTR.ID)];
+            b = lookup[$('div.componentContentWrapper', b).attr(HST.ATTR.ID)];
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
         });
         $.each(items, function(idx, itm) {
             container.append(itm);
         });
         sendMessage({id: this.id, children: order}, 'rearrange');
-        this.syncAll();
+    },
+
+    //if container is empty, make sure it still has a size so items form a different container can be dropped
+    _checkEmpty : function() {
+        if(this.items.size() == 0) {
+            if(!this.el.hasClass(this.cls.emptyContainer)) {
+                this.el.addClass(this.cls.emptyContainer);
+                var tmpCls = this.cls.item;
+                this.cls.item = this.cls.emptyItem;
+                var item = this.createItemElement($('<div class="empty-container-placeholder">Empty container</div>')[0]);
+                this.appendItem(item);
+                this.cls.item = tmpCls;
+            }
+        } else if(this.el.hasClass(this.cls.emptyContainer)) {
+            this.el.removeClass(this.cls.emptyContainer);
+            $(this.sel.container + ' .' + this.cls.emptyItem).remove();
+        }
+    },
+
+    _syncItems : function(quite) {
+        this.eachItem(function(key, item) {
+            if (typeof item !== 'undefined') {
+                item.sync();
+            } else if(!quite && Hippo.PageComposer.Main.isDebug()) {
+                console.warn('ContainerItem with id=' + id + ' is not found in active map.');
+            }
+        });
     },
 
     _createSortable : function() {
         //instantiate jquery.UI sortable
         $(this.sel.sortable).sortable({
-            items: this.sel.sortableItems,
+            items: this.sel.sortableItemsRel,
             connectWith: '.' + this.cls.overlay.base,
             start   : $.proxy(this.ddOnStart, this),
             stop    : $.proxy(this.ddOnStop, this),
@@ -295,37 +335,49 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     ddOnStop: function(event, ui) {
-        console.log('stop' + this.id);
+        console.log('stop ' + this.id);
         var id = $(ui.item).attr(HST.ATTR.ID);
         if(this.items.containsKey(id)) {
             var item = this.items.get(id);
             item.onDragStop(event, ui);
         }
         this._checkState();
+        this.parent.sync();
     },
 
     ddOnUpdate : function(event, ui) {
-        console.log('update ' + this.id);
         this.state.orderChanged = true;
+        var its = [];
+        $(this.sel.sortableItems).each(function(index) {
+            its.push($(this).attr(HST.ATTR.ID));
+        });
+        console.log('update ' + this.id + ' - ' + its);
     },
 
+    /**
+     * ddOnReceive is not called in the onStart-onStop lifecycle, but independently, so it can not depend on this.state
+     * but calls stateChecking itself
+     */
     ddOnReceive : function(event, ui) {
-        console.log('receive ' + this.id);
-        this.add(ui.item);
-//        var id = $(ui.item).attr(HST.ATTR.ID);
-//        var item = Hippo.PageComposer.UI.Factory.getById(id);
-//
-//        item.parent = this;
-//        this.items.put(item.id, item);
-        
+        var id = ui.item.attr(HST.ATTR.ID);
+        var item = Hippo.PageComposer.UI.Factory.getById(id);
+        var self = this;
+        $(this.sel.sortableItems).each(function(index) {
+            var itemId = $(this).attr(HST.ATTR.ID);
+            if(itemId == id) {
+                item.onDragStop(event, ui);
+                item.destroy();
+                self.add(item.element, index);
+                self._checkState();
+                return false;
+            }
+        });
     },
 
     ddOnRemove : function(event, ui) {
         console.log('remove ' + this.id);
-        this.removeItem(ui.item);
-//        var id = $(ui.item).attr(HST.ATTR.ID);
-//        var item = this.items.remove(id);
-//        item.destroy();
+        var id = $(ui.item).attr(HST.ATTR.ID);
+        this.removeItem(id, true);
     },
 
     ddHelper : function(event, element) {
@@ -335,17 +387,44 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         return x;
     },
 
+    addAndRefresh : function(element, index) {
+        this.add(element, index);
+        this._checkState();
+        this.parent.sync();
+    },
+
     add : function(element, index) {
         var item = this._insertNewItem(element, false, index);
         this._renderItem(item);
         $(this.sel.sortable).sortable('refresh');
-        this.syncAll();
+
+        this.state.checkEmpty = true;
+        this.state.orderChanged = true;
     },
 
-    remove: function() {
-        console.warn('Illegal access, can remove container');
-        console.trace();
-        //$(this.element).remove();
+    remove: function(id) {
+    },
+
+    removeItemAndRefresh : function(id) {
+        var result = this.removeItem(id);
+        this._checkState();
+        this.parent.sync();
+        return result;
+    },
+
+    removeItem : function(id, quite) {
+        if(this.items.containsKey(id)) {
+            var item = this.items.remove(id);
+            //remove item wrapper elements
+            $(item.element).parents('.' + this.cls.item).remove();
+            if(!quite) {
+                item.destroy();
+            }
+            this.state.checkEmpty = true;
+            this.state.orderChanged = true;
+            return true;
+        }
+        return false;
     },
 
     hasItem : function(id) {
@@ -369,77 +448,11 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     appendItem : function(data) {
     },
 
-    removeItem : function(element) {
-        try {
-            var v = Hippo.PageComposer.UI.Factory.verify(element);
-            //remove item wrapper elements
-            $(element).parents('.' + this.cls.item).remove();
-            var item = this.items.remove(v.id);
-            item.destroy();
-            this.syncAll();
-            return true;
-        } catch(e) {
-            if(Hippo.PageComposer.Main.isDebug()) {
-                throw e;
-            }
-        }
-        return false;
-    },
-
-    syncAll : function() {
-    },
-
     sync : function() {
-        if ($(this.sel.item).size() != this.items.size()) {
-            return; //DOM and contianerState are out of sync, wait for update/receive/remove to finish, it will trigger sync again
-        }
-        this.checkEmpty();
-        this.syncOverlays(true);
-    },
-
-    syncOverlays : function(quite) {
         this._syncOverlay();
-        this.eachItem(function(key, item) {
-            if (typeof item !== 'undefined') {
-                item.update();
-            } else if(!quite && Hippo.PageComposer.Main.isDebug()) {
-                console.warn('ContainerItem with id=' + id + ' is not found in active map.');
-            }
-        });
-    },
-
-    //if container is empty, make sure it still has a size so items form a different container can be dropped
-    checkEmpty : function() {
-        if ($(this.sel.item).size() == 0) {
-            if (!this.isEmpty) {
-                this.isEmpty = true;
-
-                $(this.element).addClass(this.cls.emptyContainer);
-                var tmpCls = this.cls.item;
-                this.cls.item = this.cls.emptyItem;
-                var item = this.createItemElement($('<div class="empty-container-placeholder">Empty container</div>')[0]);
-                this.appendItem(item);
-                this.cls.item = tmpCls;
-            }
-        } else {
-            if(this.isEmpty) {
-                this.isEmpty = false;
-                $(this.element).removeClass(this.cls.emptyContainer);
-                $(this.sel.container + ' .' + this.cls.emptyItem).remove();
-            }
-        }
+        this._syncItems(true);
     }
 
-//    onReceive : function(event, ui) {
-//        var el = ui.item.find('.componentContentWrapper');
-//        ui.item.replaceWith(this.createItemElement(el));
-//        sendMessage({id: this.id, element: el[0]}, 'receiveditem');
-//        //this.syncAll();
-//    },
-//
-//    onRemove : function(event, ui) {
-//        this.syncAll();
-//    }
 });
 Hippo.PageComposer.UI.Factory.register('HST.BaseContainer', Hippo.PageComposer.UI.Container.Base);
 
@@ -500,7 +513,7 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.cls.selected = this.cls.selected + '-containerItem';
         this.cls.activated = this.cls.activated + '-containerItem';
-        this.cls.overlay.custom = 'hst-overlay-container-item';
+        this.cls.overlay.mark = 'hst-overlay-container-item';
 
         var el = $(element);
         var tmp = el.attr("hst:temporary");
@@ -519,7 +532,7 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         });
 
         this.getOverlay().append(deleteButton);
-        this.sync(); 
+        //this.sync(); 
     },
 
     getOverlaySource : function() {
@@ -534,10 +547,6 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
     deselect : function() {
         this._super();
         $(this.getOverlay()).removeClass(this.cls.selected);
-    },
-
-    update : function() {
-        this.sync();
     },
 
     onClick : function() {
@@ -570,10 +579,12 @@ Hippo.PageComposer.UI.Factory.register('HST.Item', Hippo.PageComposer.UI.Contain
 
 Hippo.PageComposer.UI.DDState = function() {
     this.orderChanged = false;
+    this.checkEmpty = false;
 };
 
 Hippo.PageComposer.UI.DDState.prototype = {
     reset : function() {
         this.orderChanged = false;
+        this.checkEmpty = false;
     }
 };

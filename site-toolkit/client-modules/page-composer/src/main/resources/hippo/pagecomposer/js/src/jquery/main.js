@@ -27,7 +27,30 @@ $.namespace('Hippo.PageComposer');
         init: function(debug) {
             this.debug = debug;
 
-            this.manager = new Hippo.PageComposer.UI.Manager();
+            var manager = new Hippo.PageComposer.UI.Manager();
+
+            //register to listen to iframe-messages
+            onhostmessage(function(msg) {
+                manager.select(msg.data.element);
+                return false;
+            }, this, false, 'select');
+
+            onhostmessage(function(msg) {
+                manager.deselect(msg.data.element);
+                return false;
+            }, this, false, 'deselect');
+
+            onhostmessage(function(msg) {
+                manager.add(msg.data.element, msg.data.parentId);
+                return false;
+            }, this, false, 'add');
+
+            onhostmessage(function(msg) {
+                manager.remove(msg.data.element);
+                return false;
+            }, this, false, 'remove');
+
+            this.manager = manager;
         },
 
         add: function(element, parentId) {
