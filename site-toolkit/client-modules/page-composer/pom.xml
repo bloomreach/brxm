@@ -57,6 +57,19 @@
     </dependency>
     
     <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${pom.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>    
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
       <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
       <artifactId>hst-jaxrs</artifactId>
       <version>${project.version}</version>
