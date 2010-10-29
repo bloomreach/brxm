@@ -196,8 +196,16 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this.sel.itemWrapper    = this.sel.self + ' .' + this.cls.item;
 
         this.sel.sortable       = this.sel.overlay;
-        this.sel.sortableItems  = this.sel.sortable + ' .' + this.cls.overlay.item; //should be relative to this.sel.sortable
-        this.sel.sortableItemsRel = '.' + this.cls.overlay.item; //should be relative to this.sel.sortable
+        this.sel.sort = {
+            items : this.sel.sortable + ' .' + this.cls.overlay.item,
+            itemsRel : '.' + this.cls.overlay.item
+        };
+
+        this.sel.append = {
+            item    : '',
+            container : '',
+            insertAt : ''
+        }
 
         //workaround: set to opposite to evoke this.sync() to render an initially correct UI
         this.isEmpty = $(this.sel.item).size() > 0;
@@ -240,34 +248,35 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         return item;
     },
 
-    _checkState : function() {
-        if(this.state.checkEmpty) {
-            this._checkEmpty();
-        }
-        if(this.state.orderChanged) {
-            this._updateOrder();
-            this.parent.requestSync();
-        }
+    _syncAll : function() {
+        this.parent.checkStateChanges();
     },
 
-    _updateOrder : function() {
+    _updateOrder : function(itemsUpToDate) {
         var order = [], lookup = {}, count = 0;
-        $(this.sel.sortableItems).each(function() {
-            var id = $(this).attr(HST.ATTR.ID);
-            order.push(id);
-            lookup[id] = count++;
-        });
-        this.items.updateOrder(order);
-        var container = $(this.sel.container);
-        var items = $(this.sel.itemWrapper).get();
-        items.sort(function(a, b) {
-            a = lookup[$('div.componentContentWrapper', a).attr(HST.ATTR.ID)];
-            b = lookup[$('div.componentContentWrapper', b).attr(HST.ATTR.ID)];
-            return (a < b) ? -1 : (a > b) ? 1 : 0;
-        });
-        $.each(items, function(idx, itm) {
-            container.append(itm);
-        });
+        if(itemsUpToDate) {
+            //items in container are up to date, no re-order needed
+            order = this.items.keySet();            
+        } else {
+            //replicate order from layout-items
+            //then sort container-item elements according to new order
+            $(this.sel.sort.items).each(function() {
+                var id = $(this).attr(HST.ATTR.ID);
+                order.push(id);
+                lookup[id] = count++;
+            });
+            this.items.updateOrder(order);
+            var container = $(this.sel.container);
+            var items = $(this.sel.itemWrapper).get();
+            items.sort(function(a, b) {
+                a = lookup[$('div.componentContentWrapper', a).attr(HST.ATTR.ID)];
+                b = lookup[$('div.componentContentWrapper', b).attr(HST.ATTR.ID)];
+                return (a < b) ? -1 : (a > b) ? 1 : 0;
+            });
+            $.each(items, function(idx, itm) {
+                container.append(itm);
+            });
+        }
         sendMessage({id: this.id, children: order}, 'rearrange');
     },
 
@@ -301,7 +310,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     _createSortable : function() {
         //instantiate jquery.UI sortable
         $(this.sel.sortable).sortable({
-            items: this.sel.sortableItemsRel,
+            items: this.sel.sort.itemsRel,
             connectWith: '.' + this.cls.overlay.base,
             start   : $.proxy(this.ddOnStart, this),
             stop    : $.proxy(this.ddOnStop, this),
@@ -328,30 +337,22 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     ddOnStart : function(event, ui) {
-        this.state.reset();
         var id = $(ui.item).attr(HST.ATTR.ID);
         var item = this.items.get(id);
         item.onDragStart(event, ui);
     },
 
     ddOnStop: function(event, ui) {
-        console.log('stop ' + this.id);
         var id = $(ui.item).attr(HST.ATTR.ID);
         if(this.items.containsKey(id)) {
             var item = this.items.get(id);
             item.onDragStop(event, ui);
         }
-        this._checkState();
-        this.parent.sync();
+        this._syncAll();
     },
 
     ddOnUpdate : function(event, ui) {
         this.state.orderChanged = true;
-        var its = [];
-        $(this.sel.sortableItems).each(function(index) {
-            its.push($(this).attr(HST.ATTR.ID));
-        });
-        console.log('update ' + this.id + ' - ' + its);
     },
 
     /**
@@ -362,35 +363,42 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         var id = ui.item.attr(HST.ATTR.ID);
         var item = Hippo.PageComposer.UI.Factory.getById(id);
         var self = this;
-        $(this.sel.sortableItems).each(function(index) {
+        $(this.sel.sort.items).each(function(index) {
             var itemId = $(this).attr(HST.ATTR.ID);
             if(itemId == id) {
                 item.onDragStop(event, ui);
                 item.destroy();
                 self.add(item.element, index);
-                self._checkState();
+                self.state.itemsUpToDate = true;
                 return false;
             }
         });
     },
 
     ddOnRemove : function(event, ui) {
-        console.log('remove ' + this.id);
         var id = $(ui.item).attr(HST.ATTR.ID);
         this.removeItem(id, true);
     },
 
     ddHelper : function(event, element) {
         var id = element.attr(HST.ATTR.ID);
-        var item = this.items.get(id);
-        var x = $('<div class="hst-dd-helper">Item: ' + id + '</div>').css('width', '120px').css('height', '40px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
-        return x;
+        return $('<div class="hst-dd-helper">Item: ' + id + '</div>').css('width', '120px').css('height', '40px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
     },
 
-    addAndRefresh : function(element, index) {
-        this.add(element, index);
-        this._checkState();
-        this.parent.sync();
+    checkState : function() {
+        if(this.state.checkEmpty) {
+            this._checkEmpty();
+        }
+        if(this.state.orderChanged) {
+            this._updateOrder(this.state.itemsUpToDate);
+            this.parent.requestSync();
+        }
+        this.state.reset();
+    },
+
+    sync : function() {
+        this._syncOverlay();
+        this._syncItems(true);
     },
 
     add : function(element, index) {
@@ -400,16 +408,10 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.state.checkEmpty = true;
         this.state.orderChanged = true;
+        this.state.itemsUpToDate = true;
     },
 
     remove: function(id) {
-    },
-
-    removeItemAndRefresh : function(id) {
-        var result = this.removeItem(id);
-        this._checkState();
-        this.parent.sync();
-        return result;
     },
 
     removeItem : function(id, quite) {
@@ -420,6 +422,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             if(!quite) {
                 item.destroy();
             }
+
             this.state.checkEmpty = true;
             this.state.orderChanged = true;
             return true;
@@ -436,21 +439,27 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this.items.each(f, scope || this);
     },
 
+    appendItem : function(item, index) {
+        if ($(this.sel.append.item).size() == 0) {
+            $(this.sel.append.container).append(item);
+        } else {
+            if(index > -1) {
+                if(index == 0) {
+                    item.insertBefore(this.sel.append.insertAt + ':eq(0)');
+                } else {
+                    item.insertAfter(this.sel.append.insertAt + ':eq(' + (index-1) + ')');
+                }
+            } else {
+                item.insertAfter(this.sel.append.insertAt + ':last');
+            }
+        }
+
+    },
+
     /**
      * Template method for wrapping a containerItem element in a new item element
      */
     createItemElement : function(element) {
-    },
-
-    /**
-     * Template method for adding an item to the container
-     */
-    appendItem : function(data) {
-    },
-
-    sync : function() {
-        this._syncOverlay();
-        this._syncItems(true);
     }
 
 });
@@ -459,17 +468,17 @@ Hippo.PageComposer.UI.Factory.register('HST.BaseContainer', Hippo.PageComposer.U
 //Container implementations
 Hippo.PageComposer.UI.Container.Table = Hippo.PageComposer.UI.Container.Base.extend({
 
+    init : function(id, element) {
+        this._super(id, element);
+
+        this.sel.append.item = this.sel.container + ' > tbody > tr.' + this.cls.item;
+        this.sel.append.container = this.sel.container + ' > tbody';
+        this.sel.append.insertAt = this.sel.container + ' > tbody > tr';
+    },
+
     createItemElement : function(element) {
         var td = $('<td></td>').append(element);
         return $('<tr class="' + this.cls.item + '"></tr>').append(td);
-    },
-
-    appendItem : function(item) {
-        if ($(this.sel.container + " > tbody > tr").size() == 0) {
-            $(this.sel.container + " > tbody").append(item);
-        } else {
-            item.insertAfter(this.sel.container + " > tbody > tr:last");
-        }
     }
 
 });
@@ -477,33 +486,35 @@ Hippo.PageComposer.UI.Factory.register('HST.Table', Hippo.PageComposer.UI.Contai
 
 Hippo.PageComposer.UI.Container.UnorderedList = Hippo.PageComposer.UI.Container.Base.extend({
 
-    createItemElement : function(element) {
-        return $('<li class="' + this.cls.item + '"></li>').append(element);
+    init : function(id, element) {
+        this._super(id, element);
+
+        this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
+        this.sel.append.container = this.sel.container;
+        this.sel.append.insertAt = this.sel.container + ' > li';
     },
 
-    appendItem : function(item) {
-        if ($(this.sel.container + " > li").size() == 0) {
-            $(this.sel.container).append(item);
-        } else {
-            item.insertAfter(this.sel.container + " > li:last");
-        }
+    createItemElement : function(element) {
+        return $('<li class="' + this.cls.item + '"></li>').append(element);
     }
+
 });
 Hippo.PageComposer.UI.Factory.register('HST.UnorderedList', Hippo.PageComposer.UI.Container.UnorderedList);
 
 Hippo.PageComposer.UI.Container.OrderedList = Hippo.PageComposer.UI.Container.Base.extend({
 
-    createItemElement : function(element) {
-        return $('<li class="' + this.cls.item + '"></li>').append(element);
+    init : function(id, element) {
+        this._super(id, element);
+
+        this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
+        this.sel.append.container = this.sel.container;
+        this.sel.append.insertAt = this.sel.container + ' > li';
     },
 
-    appendItem : function(item) {
-        if ($(this.sel.container + " > li").size() == 0) {
-            $(this.sel.container).append(item);
-        } else {
-            item.insertAfter(this.sel.container + " > li:last");
-        }
+    createItemElement : function(element) {
+        return $('<li class="' + this.cls.item + '"></li>').append(element);
     }
+
 });
 Hippo.PageComposer.UI.Factory.register('HST.OrderedList', Hippo.PageComposer.UI.Container.OrderedList);
 
@@ -580,11 +591,13 @@ Hippo.PageComposer.UI.Factory.register('HST.Item', Hippo.PageComposer.UI.Contain
 Hippo.PageComposer.UI.DDState = function() {
     this.orderChanged = false;
     this.checkEmpty = false;
+    this.itemsUpToDate = false;
 };
 
 Hippo.PageComposer.UI.DDState.prototype = {
     reset : function() {
         this.orderChanged = false;
         this.checkEmpty = false;
+        this.itemsUpToDate = false;
     }
 };

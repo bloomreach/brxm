@@ -116,8 +116,8 @@ Hippo.PageComposer.UI.Manager.prototype = {
     add: function(element, parentId) {
         if (typeof this.containers[parentId] !== 'undefined') {
             var container = this.containers[parentId];
-            container.addAndRefresh(element);
-            this.sync();
+            container.add(element);
+            this.checkStateChanges();
         }
     },
 
@@ -130,7 +130,7 @@ Hippo.PageComposer.UI.Manager.prototype = {
         if (d.type == HST.CONTAINERITEM) {
             var containerId = $(element).parents('.componentContentWrapper').attr('hst:id');
             var container = this.containers[containerId];
-            if (typeof container !== 'undefined' && container.removeItemAndRefresh(d.id)) {
+            if (typeof container !== 'undefined' && container.removeItem(d.id)) {
                 Hippo.PageComposer.UI.Factory.deleteObjectRef(containerId);
             }
         } else if (d.type == HST.CONTAINER) {
@@ -140,7 +140,16 @@ Hippo.PageComposer.UI.Manager.prototype = {
                 delete this.containers[id];
             }
         }
+        this.checkStateChanges();
     },
+
+    checkStateChanges : function() {
+        $.each(this.containers, function(key, value) {
+            value.checkState();
+        });
+        this.sync();
+    },
+
     requestSync : function() {
         this.syncRequested = true;
     },

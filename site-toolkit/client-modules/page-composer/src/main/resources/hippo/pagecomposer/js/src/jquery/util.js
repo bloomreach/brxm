@@ -43,6 +43,14 @@ Hippo.Util.Map = Class.extend({
         }
     },
 
+    keySet : function() {
+        var keys = [this.keys.length], len = this.keys.length;
+        for(var i=0; i<len; ++i) {
+            keys[i] = this.keys[i];
+        }
+        return keys;
+    },
+
     size : function() {
         return this.keys.length;
     },
