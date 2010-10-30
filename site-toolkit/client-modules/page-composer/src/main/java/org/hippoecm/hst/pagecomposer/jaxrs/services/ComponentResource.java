@@ -15,6 +15,14 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -24,52 +32,72 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
-import org.hippoecm.hst.pagecomposer.rest.ExtResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+/**
+ * @version $Id$
+ */
 
 @Path("/hst:component/")
 public class ComponentResource extends AbstractConfigResource {
-private static Logger log = LoggerFactory.getLogger(ComponentResource.class);
-    
+    private static Logger log = LoggerFactory.getLogger(ComponentResource.class);
 
-@GET
-@Path("/pagemodel/")
-@Produces(MediaType.APPLICATION_JSON)
-public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse) {
-    try {
-        HstRequestContext requestContext = getRequestContext(servletRequest);  
-        SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
-        if(parentMount == null) {
-            log.warn("Page Composer only work when there is a parent site mount");
-            ExtResult result = new ExtResult();
-            result.setMessage("Page Composer only work when there is a parent site mount");
-            result.setSuccess(false);
-            return Response.serverError().entity(result).build();
+    @GET
+    @Path("/pagemodel/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest,
+                                               @Context HttpServletResponse servletResponse) {
+        try {
+            HstRequestContext requestContext = getRequestContext(servletRequest);
+            SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
+            if (parentMount == null) {
+                log.warn("Page Composer only work when there is a parent site mount");
+                return error("Page Composer only work when there is a parent site mount");
+            }
+            PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(parentMount,
+                    getRequestConfigIdentifier(requestContext));
+            return ok("PageModel loaded successfully", pageModelRepresentation.getComponents().toArray());
+
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve page model.", e);
+            } else {
+                log.warn("Failed to retrieve page model. {}", e.toString());
+            }
+            return error(e.toString());
         }
-        PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(parentMount, getRequestConfigIdentifier(requestContext));
-        ExtResult result = new ExtResult(pageModelRepresentation);
-        result.setSuccess(true);
-        return Response.ok().entity(result).build();
-        
-    } catch (Exception e) {
-        if (log.isDebugEnabled()) {
-            log.warn("Failed to retrieve page model.", e);
-        } 
-        else {
-            log.warn("Failed to retrieve page model. {}", e.toString());
-        }
-        ExtResult result = new ExtResult();
-        result.setMessage(e.toString());
-        result.setSuccess(false);
-        return Response.serverError().entity(result).build();
     }
-}
 
-    
-    
+    @GET
+    @Path("/toolkit/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getToolkitRepresentation(@Context HttpServletRequest servletRequest,
+                                             @Context HttpServletResponse servletResponse) {
+        try {
+            HstRequestContext requestContext = getRequestContext(servletRequest);
+            SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
+            if (parentMount == null) {
+                log.warn("Page Composer only work when there is a parent site mount");
+                return error("Page Composer only work when there is a parent site mount");
+            }
+
+            Session session = requestContext.getSession();
+            String toolkitId = getRequestConfigIdentifier(requestContext);
+            //normally the root will be retrieved by toolkitUUID, once it is available, for now path is hardcoded
+            String toolkitPath = "hst:hst/hst:configurations/democommon/hst:components/toolkit";
+            if (session.getRootNode().hasNode(toolkitPath)) {
+                toolkitId = session.getRootNode().getNode(toolkitPath).getUUID();
+                ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(parentMount,
+                        toolkitId);
+                return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve toolkit items.", e);
+            } else {
+                log.warn("Failed to retrieve toolkit items. {}", e.toString());
+            }
+            return error(e.toString());
+        }
+        return ok("No toolkit items found");
+    }
+
 }

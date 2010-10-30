@@ -53,18 +53,12 @@
     <property name="sourceList">
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg ref="jaxrsPageModelService"/>
-        </bean>
-        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg ref="jaxrsPropertiesService"/>
         </bean>
       </list>
     </property>
   </bean>
   
-  <bean id="jaxrsPageModelService" class="org.hippoecm.hst.pagecomposer.rest.PageModelService">
-  </bean>
-
   <bean id="jaxrsPropertiesService" class="org.hippoecm.hst.pagecomposer.rest.PropertiesService">
   </bean>
 

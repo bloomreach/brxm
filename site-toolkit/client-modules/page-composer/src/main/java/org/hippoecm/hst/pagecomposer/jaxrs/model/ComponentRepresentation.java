@@ -15,10 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ * @version $Id$
+ */
 @XmlRootElement(name = "component")
 public class ComponentRepresentation {
 
@@ -32,9 +35,9 @@ public class ComponentRepresentation {
 
     private String type;
     private String xtype;
-    
+
     public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration) {
-        
+
         id = componentConfiguration.getCanonicalIdentifier();
         name = componentConfiguration.getName();
         path = componentConfiguration.getCanonicalStoredLocation();
@@ -45,7 +48,7 @@ public class ComponentRepresentation {
         xtype = componentConfiguration.getXType();
         return this;
     }
-    
+
     protected String getTypeValue() {
         return type;
     }
@@ -81,7 +84,7 @@ public class ComponentRepresentation {
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public String getXtype() {
         return xtype;
     }
@@ -113,4 +116,5 @@ public class ComponentRepresentation {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
+
 }

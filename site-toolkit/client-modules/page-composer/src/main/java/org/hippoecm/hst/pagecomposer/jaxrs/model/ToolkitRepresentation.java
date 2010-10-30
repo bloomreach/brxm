@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,40 +16,42 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Representation of an entire in-memory pageModel for a given pageUUID
+ * The Toolkit is a special node of type hst:containercomponent that hosts the prototype hst:containeritems that
+ * can be added to a page running in composermode.
  *
  * @version $Id$
  */
-
-@XmlRootElement(name = "data")
-public class PageModelRepresentation {
+public class ToolkitRepresentation {
 
     List<ComponentRepresentation> components = new ArrayList<ComponentRepresentation>();
 
-    public PageModelRepresentation represent(SiteMount mount, String rootComponentId) {
+    public ToolkitRepresentation represent(SiteMount mount, String toolkitId) {
         HstSite site = mount.getHstSite();
-        HstComponentConfiguration rootComponentConfig = null;
+        HstComponentConfiguration root = null;
         for (HstComponentConfiguration config : site.getComponentsConfiguration().getComponentConfigurations().values()) {
-            if (config.getCanonicalIdentifier().equals(rootComponentId)) {
-                rootComponentConfig = config;
+            if (config.getCanonicalIdentifier().equals(toolkitId)) {
+                root = config;
                 break;
             }
         }
 
-        if (rootComponentConfig == null) {
-            throw new RuntimeException("Cannot find component configuration for root id '" + rootComponentId + "'");
+        if (root == null) {
+            throw new RuntimeException("Cannot find component configuration for root id '" + toolkitId + "'");
         }
 
-        populateContainersAndItems(rootComponentConfig);
+        for (HstComponentConfiguration child : root.getChildren().values()) {
+            if (child.getComponentType() == HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT) {
+                components.add(new ComponentRepresentation().represent(child));
+            }
+        }
+
         return this;
     }
 
@@ -60,17 +62,5 @@ public class PageModelRepresentation {
     public void setComponents(List<ComponentRepresentation> components) {
         this.components = components;
     }
-
-    private void populateContainersAndItems(HstComponentConfiguration component) {
-        for (HstComponentConfiguration child : component.getChildren().values()) {
-            if (child.getComponentType() == Type.CONTAINER_COMPONENT) {
-                components.add(new ContainerRepresentation().represent(child));
-            } else if (child.getComponentType() == Type.CONTAINER_ITEM_COMPONENT) {
-                components.add(new ContainerItemRepresentation().represent(child));
-            }
-            populateContainersAndItems(child);
-        }
-    }
-
 
 }

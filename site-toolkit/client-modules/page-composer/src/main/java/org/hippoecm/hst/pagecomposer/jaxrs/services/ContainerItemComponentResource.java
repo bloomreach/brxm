@@ -15,15 +15,17 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import javax.ws.rs.Path;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.Path;
+
+/**
+ * @version $Id$
+ */
 
 @Path("/hst:containeritemcomponent/")
 public class ContainerItemComponentResource extends AbstractConfigResource {
-private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
-    
-   
+    private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
+
 }

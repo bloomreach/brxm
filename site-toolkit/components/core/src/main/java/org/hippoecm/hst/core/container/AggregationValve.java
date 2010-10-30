@@ -328,12 +328,13 @@ public class AggregationValve extends AbstractValve {
                     Element el = response.createElement("script");
                     el.setAttribute("type", "text/javascript");
                     el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer");
-                    
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("rootComponentIdentifier  = '").append(rootCompConfig.getCanonicalIdentifier()).append("';");
-                    builder.append("\n");
+
                     // TODO make below the UUID of the mount or HstSite
-                    builder.append("siteIdentifier = '").append(mount.getHstSite().getCanonicalIdentifier()).append("';");
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("\nHippoInitVars = {\n");
+                    builder.append("  rootComponentIdentifier : '").append(rootCompConfig.getCanonicalIdentifier()).append("',\n");
+                    builder.append("  siteIdentifier : '").append(mount.getHstSite().getCanonicalIdentifier()).append("'\n");
+                    builder.append("};\n");
                     Text scriptValue = el.getOwnerDocument().createTextNode(builder.toString()); 
                    // Text scriptValue = el.getOwnerDocument().createTextNode("rootComponentUuid = '"+uuid+"';");
                     el.appendChild(scriptValue);
