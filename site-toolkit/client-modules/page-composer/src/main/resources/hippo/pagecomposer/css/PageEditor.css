@@ -61,6 +61,7 @@
 
 .hst-overlay.hst-selected-containerItem {
     background-color: #ffff00;
+    opacity: 0.4;
 }
 
 .hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button,
