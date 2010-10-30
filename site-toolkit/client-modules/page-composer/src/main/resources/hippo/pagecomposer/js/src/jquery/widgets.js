@@ -48,10 +48,12 @@ Hippo.PageComposer.UI.Widget = Class.extend({
 
     select : function() {
         $(this.element).addClass(this.cls.selected);
+        $(this.overlay).addClass(this.cls.selected);
     },
 
     deselect : function() {
         $(this.element).removeClass(this.cls.selected);
+        $(this.overlay).removeClass(this.cls.selected);
     },
 
     activate : function() {
@@ -151,10 +153,26 @@ Hippo.PageComposer.UI.Widget = Class.extend({
 
         var p = this.parent;
         if (p != null && $.isFunction(p.getOverlay)) {
-            var pOffset = p.getOverlay().offset();
+            var pOverlay = p.getOverlay();
+            var pOffset = pOverlay.offset();
+
             left = left - pOffset.left;
             top = top - pOffset.top;
             position = 'inherit';
+
+            var pWidth = pOverlay.width();
+            var pWidth2 = pOverlay.outerWidth();
+            var pDiffW = pWidth2 - pWidth;
+            if(pDiffW > 0 ) {
+                width -= pDiffW;
+            }
+            var pHeight = pOverlay.height();
+            var pHeight2= pOverlay.outerHeight();
+            var pDiffH = pHeight2 - pHeight;
+            if(pDiffH > 0 ) {
+                height -= pDiffH;
+                //top += (pDiffH/2);
+            }
         }
 
         return {
@@ -205,7 +223,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             item    : '',
             container : '',
             insertAt : ''
-        }
+        };
 
         //workaround: set to opposite to evoke this.sync() to render an initially correct UI
         this.isEmpty = $(this.sel.item).size() > 0;
@@ -285,6 +303,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         if(this.items.size() == 0) {
             if(!this.el.hasClass(this.cls.emptyContainer)) {
                 this.el.addClass(this.cls.emptyContainer);
+                this.overlay.addClass(this.cls.emptyContainer);
                 var tmpCls = this.cls.item;
                 this.cls.item = this.cls.emptyItem;
                 var item = this.createItemElement($('<div class="empty-container-placeholder">Empty container</div>')[0]);
@@ -293,6 +312,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             }
         } else if(this.el.hasClass(this.cls.emptyContainer)) {
             this.el.removeClass(this.cls.emptyContainer);
+            this.overlay.removeClass(this.cls.emptyContainer);
             $(this.sel.container + ' .' + this.cls.emptyItem).remove();
         }
     },
@@ -547,17 +567,8 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     getOverlaySource : function() {
-        return $(this.element).parents('.hst-container-item')
-    },
-
-    select : function() {
-        this._super();
-        $(this.getOverlay()).addClass(this.cls.selected);
-    },
-
-    deselect : function() {
-        this._super();
-        $(this.getOverlay()).removeClass(this.cls.selected);
+        return $(this.element);
+        //return $(this.element).parents('.hst-container-item')
     },
 
     onClick : function() {

@@ -1,70 +1,37 @@
 .hst-container {
 }
 
-table.hst-container {
-    width: 100%;
-}
-
-div.componentContentWrapper .hst-container .hst-dd-item .componentContentWrapper * {
-    background: transparent;
-}
-
-.componentContentWrapper.hst-activated-container.hst-selected-container {
-    border: 1px dashed red;
-}
-
-.empty-container-placeholder {
-    height: 20px;
-    font-size: 15px;
-    padding: 6px 0 6px 4px;
-}
-
-div.hst-empty-container ul,
-div.hst-empty-container ol {
-    padding-left: 5px;
-}
-
-li.hst-empty-container-item {
-    list-style: none;
-}
-
-li.placeholdert {
-    list-style: none;
-}
-
-.hst-empty-container {
-/*background-color: #999;*/
-    border: 2px dashed #e3e3e3;
-}
-
-.ui-selectable .ui-selected {
-    background: #F39814;
-    color: white;
-}
-
-#switcher {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-}
-
 .hst-overlay {
     position: absolute;
     z-index: 99999;
 }
-
-.hst-overlay-hover {
-    opacity: 0.6;
-    background-color: #999;
+.hst-overlay-container {
 }
 
-.hst-overlay-container {
+.hst-overlay-container.hst-overlay-hover {
+}
+
+.hst-overlay-container.hst-selected-container {
     background-color: #e3e3e3;
     opacity: 0.6;
 }
 
+.hst-empty-container {
+    border: 2px dashed #e3e3e3;
+}
+
+.hst-overlay-container.hst-empty-container {
+    border: 0;
+}
+
 .hst-overlay-container-item {
+    background-color: #e3e3e3;
     opacity: 0.6;
+    z-index: 100000;
+}
+
+.hst-overlay-container-item.hst-overlay-hover {
+    background-color: #666;
 }
 
 .hst-overlay-menu-button {
@@ -99,6 +66,14 @@ li.placeholdert {
     visibility: visible; /*background-color: #e3e3e3;*/
 }
 
+.empty-container-placeholder {
+    height: 20px;
+    font-size: 15px;
+    padding: 6px 0 6px 4px;
+}
+
+
+
 /* Drag&Drop elements */
 .hst-dd-helper {
     opacity: 1;
@@ -109,7 +84,7 @@ li.placeholdert {
     border: 1px solid #e3e3e3;
 }
 
-.hst-container-item {
+.hst-container-item-blabla {
     /* this is to stop collapsing margins */
     padding-top: 1px;
     margin-top: -1px;
@@ -117,5 +92,22 @@ li.placeholdert {
 
 .hst-item-ondrag {
     opacity: 0.6;
+}
+
+/* Container specific rules */
+table.hst-container {
+    width: 100%;
+}
+
+div.hst-empty-container ul,
+div.hst-empty-container ol {
+    padding-left: 5px;
+}
+li.hst-empty-container-item {
+    list-style: none;
+}
+
+li.placeholdert {
+    list-style: none;
 }
 
