@@ -6,9 +6,11 @@
     z-index: 99999;
 }
 .hst-overlay-container {
+    border: 2px solid transparent;
 }
 
 .hst-overlay-container.hst-overlay-hover {
+    border: 2px dashed #999;
 }
 
 .hst-overlay-container.hst-selected-container {
