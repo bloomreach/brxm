@@ -117,7 +117,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     onIframeAppLoaded : function(data) {
         var siteId = data.siteIdentifier;
-        var toolkitId = data.rootComponentIdentifier;
+        var toolkitId = data.toolkitIdentifier;
         var pageId = data.rootComponentIdentifier;
 
         if(toolkitId != this.ids.toolkit) {
@@ -315,11 +315,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     findElement: function(id) {
-//        for (var i = 0; i < this.models.length; i++) {
-//            if (this.models[i].id === id) {
-//                return this.models[i].element;
-//            }
-//        }
         var frameDoc = Ext.getCmp('Iframe').getFrameDocument();
         var el = frameDoc.getElementById(id);
         return el;
