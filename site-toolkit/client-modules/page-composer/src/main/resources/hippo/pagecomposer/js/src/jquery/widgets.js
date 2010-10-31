@@ -25,6 +25,8 @@ Hippo.PageComposer.UI.Widget = Class.extend({
 
         this.parent = null;
 
+        this.noHover = false;
+
         //selector shortcuts
         this.sel = {
             self : '#' + element.id,
@@ -98,6 +100,10 @@ Hippo.PageComposer.UI.Widget = Class.extend({
         this.rendered = true;
     },
 
+    toggleNoHover : function() {
+        this.noHover = !this.noHover;
+    },
+
     sync: function() {
         this._syncOverlay();
     },
@@ -115,11 +121,15 @@ Hippo.PageComposer.UI.Widget = Class.extend({
     },
 
     onMouseOver : function(element) {
-        this.getOverlay().addClass(this.cls.overlay.hover);
+        if (!this.noHover) {
+            this.getOverlay().addClass(this.cls.overlay.hover);
+        }
     },
 
     onMouseOut : function(element) {
-        this.getOverlay().removeClass(this.cls.overlay.hover);
+        if (!this.noHover) {
+            this.getOverlay().removeClass(this.cls.overlay.hover);
+        }
     },
 
     onRender  : function() {
@@ -137,47 +147,52 @@ Hippo.PageComposer.UI.Widget = Class.extend({
                 width(d.width).
                 height(d.height);
 
+        this._cachedOverlayData = d;
         this.onSyncOverlay();
     },
 
     getOverlayData : function() {
-        var overlay = this.overlay;
+        var p = this.parent;
+        var pIsContainer = p != null && $.isFunction(p.getOverlay);
+
         var el = this.getOverlaySource();
         var elOffset = el.offset();
         var left = elOffset.left;
         var top = elOffset.top;
+        var absLeft = left;
+        var absTop = top;
 
         var width = el.outerWidth();
         var height = el.outerHeight();
         var position = 'absolute';
 
-        var p = this.parent;
-        if (p != null && $.isFunction(p.getOverlay)) {
-            var pOverlay = p.getOverlay();
-            var pOffset = pOverlay.offset();
+        //test for single border and assume it all around.
+        //TODO: test all borders
+        var overlay = this.overlay;
+        var border = overlay.css('border-left-width');
+        var borderWidth = parseFloat(border.substring(0, border.length - 2));
 
-            left = left - pOffset.left;
-            top = top - pOffset.top;
+        if (pIsContainer) {
             position = 'inherit';
+            var parentOffset = p.getOverlay().offset();
+            left -= (parentOffset.left + this.parent.parentMargin);
+            top -= (parentOffset.top + this.parent.parentMargin);
+        } else {
+            if(borderWidth > 0) {
+                left -= borderWidth * 2;
+                top -= borderWidth * 2;
+                width += (borderWidth * 2);
+                height += (borderWidth * 2);
 
-            var pWidth = pOverlay.width();
-            var pWidth2 = pOverlay.outerWidth();
-            var pDiffW = pWidth2 - pWidth;
-            if(pDiffW > 0 ) {
-                width -= pDiffW;
-            }
-            var pHeight = pOverlay.height();
-            var pHeight2= pOverlay.outerHeight();
-            var pDiffH = pHeight2 - pHeight;
-            if(pDiffH > 0 ) {
-                height -= pDiffH;
-                //top += (pDiffH/2);
+                this.parentMargin = borderWidth;
             }
         }
 
         return {
             left: left,
             top: top,
+            absLeft: absLeft,
+            absTop: absTop,
             width : width,
             height: height,
             position: position
@@ -198,6 +213,8 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.state = new Hippo.PageComposer.UI.DDState();
         this.items = new Hippo.Util.OrderedMap();
+        this.dropIndicator = null;
+        this.draw = new Hippo.Util.Draw();
 
         this.cls.selected       = this.cls.selected + '-container';
         this.cls.activated      = this.cls.activated + '-container';
@@ -239,7 +256,6 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this._renderItems();
         this._createSortable();
         this._checkEmpty();
-        this.sync();
     },
 
     onDestroy: function() {
@@ -330,6 +346,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     _createSortable : function() {
         //instantiate jquery.UI sortable
         $(this.sel.sortable).sortable({
+            //revert: 100,
             items: this.sel.sort.itemsRel,
             connectWith: '.' + this.cls.overlay.base,
             start   : $.proxy(this.ddOnStart, this),
@@ -337,18 +354,9 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             helper  : $.proxy(this.ddHelper, this),
             update  : $.proxy(this.ddOnUpdate, this),
             receive : $.proxy(this.ddOnReceive, this),
-            remove  : $.proxy(this.ddOnRemove, this)
-//            revert: 100,
-//            placeholder : {
-//                element: function(el) {
-//                    var w = $(el).width(), h = $(el).height();
-//                    return $('<li class="ui-state-highlight placeholdert"></li>').height(h).width(w);
-//                },
-//                update: function(contEainer, p) {
-//                    //TODO
-//                }
-//
-//            }
+            remove  : $.proxy(this.ddOnRemove, this),
+            placeholder : 'hst-placeholder',
+            change : $.proxy(this.ddOnChange, this)
         }).disableSelection();
     },
 
@@ -356,9 +364,18 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         $(this.sel.sortable).sortable('destroy');
     },
 
+    beforeDrag : function() {
+        this.toggleNoHover();
+    },
+
+    afterDrag : function() {
+        this.toggleNoHover();
+    },
+
     ddOnStart : function(event, ui) {
         var id = $(ui.item).attr(HST.ATTR.ID);
         var item = this.items.get(id);
+        this.parent.onDragStart(ui, this);
         item.onDragStart(event, ui);
     },
 
@@ -368,6 +385,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             var item = this.items.get(id);
             item.onDragStop(event, ui);
         }
+        this.parent.onDragStop(ui);
         this._syncAll();
     },
 
@@ -405,6 +423,51 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         return $('<div class="hst-dd-helper">Item: ' + id + '</div>').css('width', '120px').css('height', '40px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
     },
 
+    ddOnChange : function(event, ui) {
+        this.parent.onDrag(ui, this);
+    },
+
+    drawDropIndicator : function(ui, el) {
+        if(this.items.size() == 0) {
+            //draw indicator inside empty container
+            this.draw.inside(this.el, el);
+        } else {
+            var ph = ui.placeholder;
+            var prev = ph.prev();
+            var next = ph.next();
+            var f = Hippo.PageComposer.UI.Factory;
+
+            if(next.length == 0 && prev.length > 0) {
+               //draw beneath previous item
+                var prev2 = prev.prev();
+                if(prev2.length > 0) {
+                    var id = prev.attr('hst:id');
+                    var item = f.getById(id);
+                    var id2 = prev2.attr('hst:id');
+                    var item2 = f.getById(id2);
+                    this.draw.between(item2.el, item.el, el);
+                } else {
+                    var id = prev.attr('hst:id');
+                    var item = f.getById(id);
+                    this.draw.beneath(item.el, el);
+                }
+            } else if(prev.length == 0 && next.length > 0) {
+                var id = next.attr('hst:id');
+                var item = f.getById(id);
+                this.draw.above(item.el, el);
+            } else if(prev.length > 0 && next.length > 0) {
+                var prevId= prev.attr('hst:id');
+                var prevItem = f.getById(prevId);
+                var nextId = next.attr('hst:id');
+                var nextItem = f.getById(nextId);
+                this.draw.between(prevItem.el, nextItem.el, el);
+            } else {
+                this.draw.inside(this.el, el);
+            }
+        }
+    },
+
+
     checkState : function() {
         if(this.state.checkEmpty) {
             this._checkEmpty();
@@ -415,6 +478,14 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         }
         this.state.reset();
     },
+
+    toggleNoHover : function() {
+        this._super();
+        this.eachItem(function(k, item) {
+            item.toggleNoHover();
+        });
+    },
+
 
     sync : function() {
         this._syncOverlay();

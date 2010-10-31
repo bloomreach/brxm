@@ -78,3 +78,138 @@ Hippo.Util.OrderedMap = Hippo.Util.Map.extend({
         return order != old;
     }
 });
+
+Hippo.Util.Draw = Class.extend({
+    init: function() {
+    },
+
+    inside : function (source, el, thresHigh, thresLow, min){
+        thresHigh = thresHigh || 0.5;
+        thresLow = thresLow || 0.2;
+        min = min || 4;
+
+        var srcOffset = source.offset();
+        var srcWidth  = source.width();
+        var srcHeight = source.height();
+
+        var elWidth = srcWidth;
+        var elHeight = srcHeight;
+
+        if(elWidth > elHeight) {
+            elWidth -= (srcWidth * thresLow);
+            elHeight -= (srcHeight * thresHigh);
+            elHeight = elHeight > min ? min : elHeight;
+        } else if(elHeight > elWidth) {
+            elWidth -= (srcWidth * thresHigh);
+            elHeight -= (srcHeight * thresLow);
+            elWidth = elWidth > min ? min : elWidth;
+        } else {
+            elWidth -= (srcWidth * thresHigh);
+            elHeight -= (srcHeight * thresHigh);
+        }
+
+        el.width(elWidth);
+        el.height(elHeight);
+        var elLeft = srcOffset.left + ((srcWidth-elWidth)/2);
+        var elTop = srcOffset.top + ((srcHeight-elHeight)/2);
+        el.offset({
+            left: elLeft,
+            top : elTop
+        });
+    },
+
+    beneath : function(source, el, thresHigh, thresLow, min) {
+        thresHigh = thresHigh || 0.5;
+        thresLow = thresLow || 0.15;
+        min = min || 4;
+
+        var srcWidth  = source.outerWidth();
+        var srcHeight = source.outerHeight();
+
+        var elWidth = srcWidth - (srcWidth * thresLow);
+        var elHeight = srcHeight - (srcHeight * thresHigh);
+        elHeight = elHeight > min ? min : elHeight;
+
+        el.width(elWidth);
+        el.height(elHeight);
+
+        var elLeft = 0, elTop = 0;
+        var srcPosition = source.position();
+        //TODO: add better test for relative
+        if(srcPosition.left == 0) {
+            var parent = source.parent();
+            var pPos = parent.position();
+            var x = 0, y = 0;
+            var prev = source.prev();
+            while(prev.length > 0) {
+                y += prev.height();
+                prev = prev.prev();
+            }
+            elLeft = pPos.left;
+            elTop = pPos.top + y + elHeight;
+        } else {
+            elLeft = srcPosition.left + ((srcWidth-elWidth)/2);
+            elTop = srcPosition.top + srcHeight + 1;
+        }
+
+        el.offset({
+            left: elLeft,
+            top : elTop
+        });
+    },
+
+    above: function(source, el, thresHigh, thresLow, min) {
+        thresHigh = thresHigh || 0.5;
+        thresLow = thresLow || 0.15;
+        min = min || 4;
+
+        var srcWidth  = source.outerWidth();
+        var srcHeight = source.outerHeight();
+
+        var elWidth = srcWidth - (srcWidth * thresLow);
+        var elHeight = srcHeight - (srcHeight * thresHigh);
+        elHeight = elHeight > min ? min : elHeight;
+
+        el.width(elWidth);
+        el.height(elHeight);
+
+        var elLeft = 0, elTop = 0;
+        var srcPosition = source.position();
+        elLeft = srcPosition.left + ((srcWidth-elWidth)/2);
+        elTop = srcPosition.top - 1;
+
+        el.offset({
+            left: elLeft,
+            top : elTop
+        });
+    },
+
+    between : function(prev, next, el, thresHigh, thresLow, min) {
+        thresHigh = thresHigh || 0.5;
+        thresLow = thresLow || 0.15;
+        min = min || 4;
+
+        var srcWidth  = prev.outerWidth();
+        var srcHeight = prev.outerHeight();
+
+        var elWidth = srcWidth - (srcWidth * thresLow);
+        var elHeight = srcHeight - (srcHeight * thresHigh);
+        elHeight = elHeight > min ? min : elHeight;
+
+        el.width(elWidth);
+        el.height(elHeight);
+
+        var elLeft = 0, elTop = 0;
+        var prevPosition = prev.position();
+        var nextPosition = next.position();
+        elLeft = prevPosition.left + ((srcWidth-elWidth)/2);
+        
+        var half = (nextPosition.top - (prevPosition.top + srcHeight))/2; 
+        elTop = nextPosition.top  - half;
+
+        el.offset({
+            left: elLeft,
+            top : elTop
+        });
+    }
+});

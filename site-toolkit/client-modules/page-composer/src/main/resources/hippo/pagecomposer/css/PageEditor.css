@@ -6,7 +6,7 @@
     z-index: 99999;
 }
 .hst-overlay-container {
-    border: 2px solid transparent;
+    border: 2px dashed #e3e3e3;
 }
 
 .hst-overlay-container.hst-overlay-hover {
@@ -33,40 +33,37 @@
 }
 
 .hst-overlay-container-item.hst-overlay-hover {
-    background-color: #666;
+    background-color: #0099cc;
+    opacity: 0.3;
 }
 
 .hst-overlay-menu-button {
-    width: 12px;
-    height: 11px;
+    float: right;
+    width: 14px;
+    height: 14px;
 
-    margin-right: 2px;
+    margin-right: 4px;
     margin-top: 2px;
 
-    -moz-border-radius: 2px;
-
-    font-weight: bold;
-    opacity: 0.4;
-    font-size: 10px;
-    float: right;
+    font-size: 11px;
+    font-weight: normal;
 
     cursor: pointer;
+
+    -moz-border-radius: 3px;
+    /*opacity: 0.4;*/
 }
 
-.hst-overlay-container-item.hst-overlay-hover .hst-overlay-menu-button {
+.hst-overlay-container-item.hst-overlay-hover > div.hst-overlay-menu-button,
+.hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button{
     opacity: 1;    
-    color: black;
-    background-color: white;
+    color: white;
+    background-color: red;
 }
 
 .hst-overlay.hst-selected-containerItem {
     background-color: #ffff00;
     opacity: 0.4;
-}
-
-.hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button,
-.hst-overlay-hover > div.hst-overlay-menu-button {
-    visibility: visible; /*background-color: #e3e3e3;*/
 }
 
 .empty-container-placeholder {
@@ -75,16 +72,33 @@
     padding: 6px 0 6px 4px;
 }
 
-
-
 /* Drag&Drop elements */
+
 .hst-dd-helper {
-    opacity: 1;
-    background-color: black;
-    width: 120px;
+    z-index: 110000;
+    opacity: 0.9;
+    background-color: #e3e3e3;
+    width: 160px;
     height: 40px;
-    color: white;
-    border: 1px solid #e3e3e3;
+    text-align: left;
+    color: #000;
+    font-size: 11px;
+    border: 2px solid #666;
+    padding: 5px;
+    -moz-border-radius: 6px;
+}
+
+.hst-placeholder {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    visibility: hidden;
+}
+
+#hst-drop-indicator {
+    z-index: 200000;
+    background: red;
+    opacity: 1;
 }
 
 .hst-container-item-blabla {

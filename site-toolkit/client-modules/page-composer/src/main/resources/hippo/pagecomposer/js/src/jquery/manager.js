@@ -19,7 +19,7 @@ $.namespace('Hippo.PageComposer.UI');
 Hippo.PageComposer.UI.Manager = function() {
     this.current = null;
     this.containers = {};
-
+    this.dropIndicator = null;
     this.syncRequested = false;
 
     this.init();
@@ -141,6 +141,32 @@ Hippo.PageComposer.UI.Manager.prototype = {
             }
         }
         this.checkStateChanges();
+    },
+
+    onDragStart : function(ui, container) {
+        this.onDrag(ui, container);
+        $.each(this.containers, function(key, value) {
+            value.beforeDrag();
+        });
+    },
+
+    onDrag : function(ui, container) {
+        if(this.dropIndicator == null) {
+            this.dropIndicator = $('<div id="hst-drop-indicator"/>').appendTo(document.body);
+            this.dropIndicator.css('position', 'absolute');
+        }
+        container.drawDropIndicator(ui, this.dropIndicator);
+    },
+
+    onDragStop : function() {
+        if(this.dropIndicator != null) {
+            this.dropIndicator.remove();
+            this.dropIndicator = null;
+        }
+        $.each(this.containers, function(key, value) {
+            value.afterDrag();
+        });
+
     },
 
     checkStateChanges : function() {
