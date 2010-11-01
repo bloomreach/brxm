@@ -52,16 +52,10 @@
   <bean id="composerResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg ref="jaxrsPropertiesService"/>
-        </bean>
       </list>
     </property>
   </bean>
   
-  <bean id="jaxrsPropertiesService" class="org.hippoecm.hst.pagecomposer.rest.PropertiesService">
-  </bean>
-
   <!-- ========================================================= -->
   <!-- The followings need to be moved to SpringComponentManager-pipelines.xml. -->
   <!-- ========================================================= -->
