@@ -23,8 +23,8 @@ import javax.jcr.RepositoryException;
 
 /**
  * This class can probably be removed once new items are added through the in-memory model instead of created
- * through jcr
- *
+ * through jcr.
+ * 
  * @version $Id$
  */
 
