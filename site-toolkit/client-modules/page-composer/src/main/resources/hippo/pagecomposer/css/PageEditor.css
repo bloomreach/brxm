@@ -3,7 +3,7 @@
 
 .hst-overlay {
     position: absolute;
-    z-index: 99999;
+    z-index: 99;
 }
 .hst-overlay-container {
     border: 2px dashed #e3e3e3;
@@ -29,7 +29,7 @@
 .hst-overlay-container-item {
     background-color: #e3e3e3;
     opacity: 0.6;
-    z-index: 100000;
+    z-index: 100;
 }
 
 .hst-overlay-container-item.hst-overlay-hover {
@@ -54,6 +54,23 @@
     /*opacity: 0.4;*/
 }
 
+.hst-overlay-name-label{
+    float: right;
+    width: auto;
+    /*height: 14px;*/
+    margin-right: 4px;
+    margin-top: 2px;
+    font-size: 10px;
+    text-align: right;
+    border: 1px solid black;
+    border-top: 0;
+    opacity: 1 ! important;
+    background-color: white;
+    padding-left: 2px;
+    padding-right: 2px;
+    -moz-border-radius: 3px;
+}
+
 .hst-overlay-container-item.hst-overlay-hover > div.hst-overlay-menu-button,
 .hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button{
     opacity: 1;    
@@ -75,8 +92,8 @@
 /* Drag&Drop elements */
 
 .hst-dd-helper {
-    z-index: 110000;
-    opacity: 0.9;
+    z-index: 1000;
+    opacity: 1;
     background-color: #e3e3e3;
     width: 160px;
     height: 40px;
@@ -96,7 +113,7 @@
 }
 
 #hst-drop-indicator {
-    z-index: 200000;
+    z-index: 500;
     background: red;
     opacity: 1;
 }
@@ -113,7 +130,7 @@
 
 .hst-highlight {
     opacity: 0.5;
-    z-index: 500000;
+    z-index: 1000;
     background-color: #00ff33;
 }
 .hst-highlight .hst-overlay-container-item {

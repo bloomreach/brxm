@@ -60,6 +60,12 @@ $.namespace('Hippo.PageComposer');
                 return false;
             }, this, false, 'unhighlight');
 
+            onhostmessage(function(msg) {
+                var facade = msg.data;
+                manager.updateSharedData(facade);
+                return false;
+            }, this, false, 'sharedata');
+
 
             this.manager = manager;
 
@@ -68,22 +74,6 @@ $.namespace('Hippo.PageComposer');
             } else {
                 throw new Error("HippoInitVars not found, failed to signal parent that app has loaded.");
             }
-        },
-
-        add: function(element, parentId) {
-            this.manager.add(element, parentId);
-        },
-
-        remove : function(element) {
-            this.manager.remove(element);
-        },
-
-        select: function(element) {
-            this.manager.select(element);
-        },
-
-        deselect : function(element) {
-            this.manager.deselect(element);
         },
 
         isDebug: function() {

@@ -97,7 +97,14 @@ Hippo.PageComposer.UI.Widget = Class.extend({
         this._syncOverlay();
 
         this.onRender();
+
         this.rendered = true;
+    },
+
+    updateSharedData: function(facade) {
+        this.items.each(function(key, item) {
+            item.updateSharedData(facade);
+        });
     },
 
     toggleNoHover : function() {
@@ -139,64 +146,37 @@ Hippo.PageComposer.UI.Widget = Class.extend({
     },
 
     _syncOverlay : function() {
-        var d = this.getOverlayData();
-        this.overlay.
-                css('left', d.left).
-                css('top', d.top).
-                css('position', d.position).
-                width(d.width).
-                height(d.height);
-
-        this._cachedOverlayData = d;
-        this.onSyncOverlay();
-    },
-
-    getOverlayData : function() {
-        var p = this.parent;
-        var pIsContainer = p != null && $.isFunction(p.getOverlay);
-
         var el = this.getOverlaySource();
         var elOffset = el.offset();
-        var left = elOffset.left;
-        var top = elOffset.top;
-        var absLeft = left;
-        var absTop = top;
-
-        var width = el.outerWidth();
-        var height = el.outerHeight();
-        var position = 'absolute';
+        var overlay = this.overlay;
 
         //test for single border and assume it all around.
         //TODO: test all borders
-        var overlay = this.overlay;
         var border = overlay.css('border-left-width');
-        var borderWidth = parseFloat(border.substring(0, border.length - 2));
+        var borderWidth = border ? parseFloat(border.substring(0, border.length - 2)) : 0;
 
-        if (pIsContainer) {
-            position = 'inherit';
-            var parentOffset = p.getOverlay().offset();
-            left -= (parentOffset.left + this.parent.parentMargin);
-            top -= (parentOffset.top + this.parent.parentMargin);
-        } else {
-            if(borderWidth > 0) {
-                left -= borderWidth * 2;
-                top -= borderWidth * 2;
-                width += (borderWidth * 2);
-                height += (borderWidth * 2);
-
-                this.parentMargin = borderWidth;
-            }
-        }
-
-        return {
-            left: left,
-            top: top,
-            absLeft: absLeft,
-            absTop: absTop,
-            width : width,
-            height: height,
-            position: position
+        var data = {
+            left: elOffset.left,
+            top: elOffset.top,
+            width : el.outerWidth(),
+            height: el.outerHeight(),
+            position: 'absolute',
+            overlayBorder: borderWidth
         };
+
+        data = this.getOverlayData(data);
+        this.overlay.
+                css('left', data.left).
+                css('top', data.top).
+                css('position', data.position).
+                width(data.width).
+                height(data.height);
+
+        this._cachedOverlayData = data;
+        this.onSyncOverlay();
+    },
+
+    getOverlayData : function(data) {
     },
 
     getOverlaySource : function() {
@@ -421,7 +401,9 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
     ddHelper : function(event, element) {
         var id = element.attr(HST.ATTR.ID);
-        return $('<div class="hst-dd-helper">Item: ' + id + '</div>').css('width', '120px').css('height', '40px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
+        var item = this.items.get(id);
+        var label = 'Name: ' + item.data.name;
+        return $('<div class="hst-dd-helper">' + label + '</div>').css('width', '120px').css('height', '30px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
     },
 
     ddOnChange : function(event, ui) {
@@ -466,6 +448,19 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
                 this.draw.inside(this.el, el);
             }
         }
+    },
+
+    getOverlayData : function(data) {
+        if(data.overlayBorder > 0) {
+            var total = data.overlayBorder * 2;
+            data.left -= total;
+            data.top -= total;
+            data.width += total;
+            data.height += total;
+
+            this.parentMargin = data.overlayBorder;
+        }
+        return data;
     },
 
     highlight : function() {
@@ -631,6 +626,10 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         if(this.isTemporary) {
             el.html('Click to refresh');
         }
+
+        this.data = {
+            name : ''
+        };
     },
 
     onRender : function() {
@@ -642,7 +641,31 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         });
 
         this.getOverlay().append(deleteButton);
-        //this.sync(); 
+
+        var nameLabel = $('<div/>').addClass('hst-overlay-name-label');
+        this.getOverlay().append(nameLabel);
+        this.nameLabel = nameLabel;
+
+        this.renderLabelContents();
+    },
+
+    getOverlayData : function(data) {
+        data.position = 'inherit';
+        var parentOffset = this.parent.overlay.offset();
+        data.left -= (parentOffset.left + this.parent.parentMargin);
+        data.top -= (parentOffset.top + this.parent.parentMargin);
+
+        return data;
+    },
+
+    updateSharedData : function(facade) {
+        this.data.name = facade.getName(this.id);
+
+        this.renderLabelContents();
+    },
+
+    renderLabelContents : function() {
+        this.nameLabel.html(this.data.name);
     },
 
     getOverlaySource : function() {

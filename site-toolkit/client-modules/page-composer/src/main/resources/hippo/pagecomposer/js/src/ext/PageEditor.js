@@ -36,6 +36,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             pageModel : null
         };
 
+        this.pageModelFacade = null;
+
         this.initUI();
     },
 
@@ -172,6 +174,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 load :{
                     fn : function(store, records, options) {
                         this.isReloading = false;
+                        this.shareData();
                     },
                     scope: this
                 },
@@ -288,6 +291,26 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             ]
         });
         return window1;
+    },
+
+    shareData : function() {
+        var self = this;
+        var facade = function(){};
+        facade.prototype = {
+            getName : function(id) {
+                var idx = self.stores.pageModel.findExact('id', id);
+                if(idx == -1) {
+                    return null;
+                }
+                var record = self.stores.pageModel.getAt(idx);
+                return record.get('name');
+            }
+        };
+
+        if(this.pageModelFacade == null) {
+            this.pageModelFacade = new facade();
+        }
+        this.sendFrameMessage(this.pageModelFacade, 'sharedata');
     },
 
     handleOnClick : function(element) {

@@ -30,6 +30,8 @@ Hippo.PageComposer.UI.Manager = function() {
 Hippo.PageComposer.UI.Manager.prototype = {
     init: function() {
 
+        this.overlay = $('<div/>').addClass('hst-overlay-root').appendTo(document.body);
+
         //do try/catch because else errors will disappear
         try {
             //attach mouseover/mouseclick for components
@@ -47,12 +49,7 @@ Hippo.PageComposer.UI.Manager.prototype = {
     _createContainer : function(element) {
         var container = Hippo.PageComposer.UI.Factory.createOrRetrieve(element);
         this.containers[container.id] = container;
-        var self = this;
-        container.syncAll = function() {
-            self.syncAll();
-        };
         container.render(this);
-        container.activate();
     },
 
     _retrieve : function(element) {
@@ -63,40 +60,6 @@ Hippo.PageComposer.UI.Manager.prototype = {
             Hippo.PageComposer.Main.die('Object with id ' + data.id + ' not found in registry');
         }
         return o;
-    },
-
-    //Deprecated
-    _createOrRetrieve : function(element) {
-        console.log('Deprecated');
-        console.trace();
-        var die = Hippo.PageComposer.Main.die;
-
-        if (typeof element === 'undefined' || element === null) {
-            die("element is undefined or null");
-        }
-
-        var el = $(element);
-        var id = el.attr('hst:id');
-        if (typeof id === 'undefined') {
-            die('Attribute hst:id not found');
-        }
-
-        if(Hippo.PageComposer.UI.Factory.isContainer(element)) {
-            if (typeof this.containers[id] === 'undefined') {
-                this._createContainer(element);
-            }
-            return this.containers[id];
-        } else {
-            var parentId = $(element).parents('.componentContentWrapper').attr('hst:id');
-            var parent = this.containers[parentId];
-            if (typeof parent === 'undefined') {
-                die('No existing parent container found for item ' + id);
-            }
-            if(!parent.hasItem(id)) {
-                parent.createItem(element);
-            }
-            return parent.getItem(id);
-        }
     },
 
     select: function(element) {
@@ -201,6 +164,16 @@ Hippo.PageComposer.UI.Manager.prototype = {
             });
         }
         this.syncRequested = false;
+    },
+
+    updateSharedData : function(facade) {
+        $.each(this.containers, function(key, value) {
+            value.updateSharedData(facade);
+        });
+    },
+
+    getOverlay : function() {
+        return this.overlay;
     }
 
 };
