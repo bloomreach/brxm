@@ -53,6 +53,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                     defaultSrc: this.iframeUrl,
                     collapsible: false,
                     disableMessaging: false,
+                    tbar: ['->', {text: 'Refresh'}, {text: 'Logout'}, '-'],
                     listeners: {
                         'message': {
                             fn: this.handleFrameMessages,
@@ -60,7 +61,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         },
                         'documentloaded' : {
                             fn: function(frm) {
-                                if(Ext.isChrome) {
+                                if (Ext.isChrome) {
                                     this.onIframeDOMReady(frm);
                                 }
                             },
@@ -68,7 +69,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         },
                         'domready' : {
                             fn: function(frm) {
-                                if(Ext.isGecko) {
+                                if (Ext.isGecko) {
                                     this.onIframeDOMReady(frm);
                                 }
                             },
@@ -85,28 +86,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             ]
         });
 
-        var propWin = new Hippo.ux.window.FloatingWindow({
-            id: 'propertiesWindow',
-            title: 'Properties',
-            x:5, y: 370,
-            width: 300,
-            height: 250,
-            layout: {
-                type:'fit'
-            },
-            initRegion: 'right',
-            closable: true,
-            closeAction: 'hide',
-            constrainHeader: true,
-            items:[
-                {
-                    id: 'componentPropertiesPanel',
-                    xtype:'h_properties_panel',
-                    width: 280
-                }
-            ]
-        });
-        this.beforeQuit(propWin.close, propWin);
     },
 
     onIframeDOMReady : function(frm) {
@@ -120,34 +99,34 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         var toolkitId = data.toolkitIdentifier;
         var pageId = data.rootComponentIdentifier;
 
-        if(toolkitId != this.ids.toolkit) {
+        if (toolkitId != this.ids.toolkit) {
             this.stores.toolkit = this.createToolkitStore(toolkitId);
             this.stores.toolkit.load();
         }
 
-        if(pageId != this.ids.page) {
+        if (pageId != this.ids.page) {
             this.stores.pageModel = this.createPageModelStore(pageId);
             this.stores.pageModel.load();
         }
 
-        if(!this.mainWindow) {
+        if (!this.mainWindow) {
             var win = this.mainWindow = this.createMainWindow();
             this.beforeQuit(win.close, win);
             win.show();
         } else {
-            if(toolkitId != this.ids.toolkit) {
+            if (toolkitId != this.ids.toolkit) {
                 var grid = Ext.getCmp('ToolkitGrid');
                 grid.reconfigure(this.stores.toolkit, grid.getColumnModel());
             }
-            if(pageId != this.ids.page) {
+            if (pageId != this.ids.page) {
                 var grid = Ext.getCmp('PageModelGrid');
                 grid.reconfigure(this.store.pageModel, grid.getColumnModel());
             }
         }
 
-        this.ids.page    = pageId;
+        this.ids.page = pageId;
         this.ids.toolkit = toolkitId;
-        this.ids.site    = siteId;
+        this.ids.site = siteId;
     },
 
     createToolkitStore : function(toolkitId) {
@@ -231,66 +210,80 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     createMainWindow : function() {
         var window1 = new Hippo.ux.window.FloatingWindow({
             title: 'Configuration',
-            x:5, y: 10,
+            x:10, y: 35,
             width: 300,
-            height:350,
+            height: 650,
             initRegion: 'right',
-            layout: 'accordion',
+            layout: 'border',
             closable: false,
             constrainHeader: true,
             items: [
                 {
-                    xtype: 'h_base_grid',
-                    flex:2,
-                    id: 'ToolkitGrid',
-                    title: 'Toolkit',
-                    store: this.stores.toolkit,
-                    cm: new Ext.grid.ColumnModel({
-                        columns: [
-                            { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 40}},
-                            { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
-                            { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
-                        ],
-                        defaults: {
-                            sortable: true,
-                            menuDisabled: true
+                    region: 'north',
+                    split:true,
+                    layout: 'accordion',
+                    height: 300,
+                    items:[
+                        {
+                            xtype: 'h_base_grid',
+                            flex:2,
+                            id: 'ToolkitGrid',
+                            title: 'Toolkit',
+                            store: this.stores.toolkit,
+                            cm: new Ext.grid.ColumnModel({
+                                columns: [
+                                    { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 40}},
+                                    { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
+                                    { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
+                                ],
+                                defaults: {
+                                    sortable: true,
+                                    menuDisabled: true
+                                }
+                            }),
+                            plugins: [
+                                Hippo.App.DragDropOne
+                            ]
+                        },
+                        {
+                            xtype: 'h_base_grid',
+                            flex: 3,
+                            id: 'PageModelGrid',
+                            title: 'Containers',
+                            store: this.stores.pageModel,
+                            sm: new Ext.grid.RowSelectionModel({
+                                singleSelect: true,
+                                listeners: {
+                                    rowselect: {
+                                        fn: this.select,
+                                        scope: this
+                                    },
+                                    rowdeselect: {
+                                        fn: this.deselect,
+                                        scope: this
+                                    }
+                                }
+                            }),
+                            cm : new Ext.grid.ColumnModel({
+                                columns: [
+                                    { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 120}},
+                                    { header: "Type", dataIndex: 'type', id:'type'},
+                                    { header: "Template", dataIndex: 'template', id:'template'}
+                                ],
+                                defaults: {
+                                    sortable: false,
+                                    menuDisabled: true
+                                }
+                            }),
+                            menuProvider: this
                         }
-                    }),
-                    plugins: [
-                        Hippo.App.DragDropOne
                     ]
                 },
                 {
-                    xtype: 'h_base_grid',
-                    flex: 3,
-                    id: 'PageModelGrid',
-                    title: 'Containers',
-                    store: this.stores.pageModel,
-                    sm: new Ext.grid.RowSelectionModel({
-                        singleSelect: true,
-                        listeners: {
-                            rowselect: {
-                                fn: this.select,
-                                scope: this
-                            },
-                            rowdeselect: {
-                                fn: this.deselect,
-                                scope: this
-                            }
-                        }
-                    }),
-                    cm : new Ext.grid.ColumnModel({
-                        columns: [
-                            { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 120}},
-                            { header: "Type", dataIndex: 'type', id:'type'},
-                            { header: "Template", dataIndex: 'template', id:'template'}
-                        ],
-                        defaults: {
-                            sortable: false,
-                            menuDisabled: true
-                        }
-                    }),
-                    menuProvider: this
+                    id: 'componentPropertiesPanel',
+                    xtype:'h_properties_panel',
+                    region: 'center',
+                    split: true
                 }
             ]
         });
@@ -349,13 +342,10 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     showProperties : function(record) {
         Ext.getCmp('componentPropertiesPanel').reload(record.get('id'), record.get('name'), record.get('path'));
-        Ext.getCmp('propertiesWindow').setTitle("Properties: " + record.get('name'));
-        Ext.getCmp('propertiesWindow').show();
     },
 
     hideProperties : function() {
         Ext.getCmp('componentPropertiesPanel').removeAll();
-        Ext.getCmp('propertiesWindow').hide();
     },
 
     /**
@@ -444,11 +434,11 @@ Hippo.App.RestStore = Ext.extend(Ext.data.Store, {
     constructor : function(config) {
 
         var reader = new Ext.data.JsonReader({
-                successProperty: 'success',
-                root: 'data',
-                messageProperty: 'message',
-                idProperty: 'id'
-            }, config.prototypeRecord);
+            successProperty: 'success',
+            root: 'data',
+            messageProperty: 'message',
+            idProperty: 'id'
+        }, config.prototypeRecord);
 
         var writer = new Ext.data.JsonWriter({
             encode: false   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
@@ -496,7 +486,7 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : 'services-new/' + config.pageId+ './pagemodel'
+                read     : 'services-new/' + config.pageId + './pagemodel'
                 ,create  : {url: 'services/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
                 ,update  : {url: 'services/PageModelService/update', method: 'POST'}
                 ,destroy : {url: 'services/PageModelService/destroy', method: 'GET'}
@@ -505,17 +495,17 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
             listeners : {
                 beforewrite : {
                     fn : function(proxy, action, rs, params) {
-                        if(action == 'create') {
+                        if (action == 'create') {
                             var prototypeId = rs.get('id');
-                            var parentId  = rs.get('parentId');
+                            var parentId = rs.get('parentId');
                             proxy.setApi(action, {url: 'services-new/' + parentId + './create/' + prototypeId , method: 'POST'});
                         } else if (action == 'update') {
                             //Ext appends the item ID automatically
-                            var id  = rs.get('id');
+                            var id = rs.get('id');
                             proxy.setApi(action, {url: 'services-new/' + id + './update' , method: 'POST'});
                         } else if (action == 'destroy') {
                             //Ext appends the item ID automatically
-                            var parentId  = rs.get('parentId');
+                            var parentId = rs.get('parentId');
                             proxy.setApi(action, {url: 'services-new/' + parentId + './delete' , method: 'GET'});
                         }
                     }
@@ -529,7 +519,7 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
         };
 
         Ext.apply(config, cfg);
-        
+
         Hippo.App.PageModelStore.superclass.constructor.call(this, config);
     }
 });
