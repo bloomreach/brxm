@@ -25,6 +25,8 @@ Hippo.PageComposer.UI.Manager = function() {
     this.init();
 };
 
+
+//TODO: looks more like a UI.Page component
 Hippo.PageComposer.UI.Manager.prototype = {
     init: function() {
 
@@ -166,7 +168,19 @@ Hippo.PageComposer.UI.Manager.prototype = {
         $.each(this.containers, function(key, value) {
             value.afterDrag();
         });
+    },
 
+    //TODO: implement group handling
+    highlight : function(groups) {
+        $.each(this.containers, function(key, value) {
+            value.highlight();
+        });
+    },
+
+    unhighlight : function(groups) {
+        $.each(this.containers, function(key, value) {
+            value.unhighlight();
+        });
     },
 
     checkStateChanges : function() {

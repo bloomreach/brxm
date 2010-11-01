@@ -101,14 +101,23 @@
     opacity: 1;
 }
 
-.hst-container-item-blabla {
-    /* this is to stop collapsing margins */
+/* this is to stop collapsing margins */
+/*.hst-container-item {
     padding-top: 1px;
     margin-top: -1px;
-}
+}*/
 
 .hst-item-ondrag {
     opacity: 0.6;
+}
+
+.hst-highlight {
+    opacity: 0.5;
+    z-index: 500000;
+    background-color: #00ff33;
+}
+.hst-highlight .hst-overlay-container-item {
+    display: none;
 }
 
 /* Container specific rules */

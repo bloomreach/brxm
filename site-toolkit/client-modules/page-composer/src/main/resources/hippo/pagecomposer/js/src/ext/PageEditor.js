@@ -546,11 +546,15 @@ Hippo.App.DragDropOne = (function() {
                 ddGroup: 'blabla',
 
                 onInitDrag : function() {
+                    var framePanel = Ext.getCmp('Iframe');
+                    var frmDoc = framePanel.getFrameDocument();
+                    framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
                     Hippo.App.Main.stores.pageModel.each(function(record) {
                         var type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
-                            var el = record.get('element');
-                            var box = Ext.Element.fly(record.get('element')).getBox();
+                            var id = record.get('id') + '-overlay';
+                            var el = frmDoc.getElementById(id);
+                            var box = Ext.Element.fly(el).getBox();
                             self.boxs.push({record: record, box: box});
                         }
                     });
@@ -560,6 +564,7 @@ Hippo.App.DragDropOne = (function() {
                 onEndDrag : function() {
                     self.boxs = [];
                     Ext.ux.ManagedIFrame.Manager.hideShims();
+                    Ext.getCmp('Iframe').getFrame().sendMessage({groups: 'dropzone'}, 'unhighlight');
                 }
             });
 
@@ -578,6 +583,8 @@ Hippo.App.DragDropOne = (function() {
                 onNodeOver : function(target, dd, e, data) {
                     var curX = dd.lastPageX + dd.deltaX;
                     var curY = dd.lastPageY + dd.deltaY;
+                    //TODO: implement dynamic fetch of toolbar height to adjust pageY
+                    curY -= 27;
 
                     for (var i = 0; i < self.boxs.length; i++) {
                         var item = self.boxs[i], box = item.box;

@@ -218,6 +218,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
         this.cls.selected       = this.cls.selected + '-container';
         this.cls.activated      = this.cls.activated + '-container';
+        this.cls.highlight      = 'hst-highlight';
         this.cls.overlay.custom = 'hst-overlay-container';
 
         this.cls.container      = 'hst-container';
@@ -467,6 +468,13 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         }
     },
 
+    highlight : function() {
+        this.overlay.addClass(this.cls.highlight);
+    },
+
+    unhighlight : function() {
+        this.overlay.removeClass(this.cls.highlight);
+    },
 
     checkState : function() {
         if(this.state.checkEmpty) {

@@ -50,6 +50,17 @@ $.namespace('Hippo.PageComposer');
                 return false;
             }, this, false, 'remove');
 
+            onhostmessage(function(msg) {
+                manager.highlight(msg.data.groups);
+                return false;
+            }, this, false, 'highlight');
+
+            onhostmessage(function(msg) {
+                manager.unhighlight(msg.data.groups);
+                return false;
+            }, this, false, 'unhighlight');
+
+
             this.manager = manager;
 
             if(HippoInitVars) {
