@@ -17,24 +17,24 @@
 package org.hippoecm.hst.demo.components;
 
 import org.hippoecm.hst.configuration.components.Parameter;
-import org.hippoecm.hst.pagecomposer.rest.ParameterType;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 
 
 public interface BannerInfo {
 
-    @Parameter(name = "bannerWidth", displayName = "Banner Width", typeHint = ParameterType.NUMBER, required = true)
+    @Parameter(name = "bannerWidth", displayName = "Banner Width", typeHint = ComponentWrapper.ParameterType.NUMBER, required = true)
     int getBannerWidth();
 
-    @Parameter(name = "yesNo", displayName = "Yes or No ?", typeHint = ParameterType.BOOLEAN)
+    @Parameter(name = "yesNo", displayName = "Yes or No ?", typeHint = ComponentWrapper.ParameterType.BOOLEAN)
     int getYesNO();
 
-    @Parameter(name = "date", displayName = "Some Date", typeHint = ParameterType.DATE)
+    @Parameter(name = "date", displayName = "Some Date", typeHint = ComponentWrapper.ParameterType.DATE)
     String getDate();
 
-    @Parameter(name = "borderColor", displayName = "Border Color", typeHint = ParameterType.COLOR)
+    @Parameter(name = "borderColor", displayName = "Border Color", typeHint = ComponentWrapper.ParameterType.COLOR)
     String getBorderColor();
 
-    @Parameter(name = "someName", displayName = "Some String", typeHint = ParameterType.STRING)
+    @Parameter(name = "someName", displayName = "Some String", typeHint = ComponentWrapper.ParameterType.STRING)
     String getSomeName();
 
 }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.rest;
+package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -116,7 +116,7 @@ public class ComponentWrapper {
         this.success = success;
     }
 
-    class Property {
+    private class Property {
         private String name;
         private String value;
         private String type;
@@ -208,5 +208,17 @@ public class ComponentWrapper {
         public void setRequired(boolean required) {
             this.required = required;
         }
+    }
+
+    /**
+     * ParameterType used to provide a hint to the pagecomposer about the type of the parameter.
+     * This is just a convenience interface that provides some constants for the field types.
+     */
+    public static interface ParameterType {
+        String STRING = "STRING";
+        String NUMBER = "NUMBER";
+        String BOOLEAN = "BOOLEAN";
+        String DATE = "DATE";
+        String COLOR = "COLOR";
     }
 }

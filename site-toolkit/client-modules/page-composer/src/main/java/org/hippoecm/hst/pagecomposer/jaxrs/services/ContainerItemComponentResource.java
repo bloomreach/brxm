@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.rest.ComponentWrapper;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

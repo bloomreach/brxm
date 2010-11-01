@@ -211,7 +211,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         var window1 = new Hippo.ux.window.FloatingWindow({
             title: 'Configuration',
             x:10, y: 35,
-            width: 300,
+            width: 310,
             height: 650,
             initRegion: 'right',
             layout: 'border',

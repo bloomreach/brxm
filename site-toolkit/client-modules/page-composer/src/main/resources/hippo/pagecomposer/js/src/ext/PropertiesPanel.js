@@ -20,15 +20,13 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     initComponent:function() {
         Ext.apply(this, {
             autoHeight: true,
-            bodyStyle: 'background-color:#fff;',
             border:false,
             padding: 10,
             autoScroll:true,
-            labelWidth: 250,
-            labelAlign: 'top',
+            labelWidth: 100,
             labelSeparator: '',
             defaults:{
-                width: 250
+                width: 170
             },
 
             buttons:[
@@ -44,11 +42,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                         this.getForm().reset();
                     }
                 }
-            ],
-
-            readonly: [1],
-            path: ""
-
+            ]
         });
         Hippo.App.PropertiesPanel.superclass.initComponent.apply(this, arguments);
     },
@@ -79,8 +73,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 var property = records[i];
                 this.add({
                     fieldLabel: property.get('label'),
-                    xtype: property.get('type'),
-                    labelStyle: 'font-weight:bold;',
+                    xtype: property.get('type'),                    
                     value: property.get('value'),
                     allowBlank: !property.get('required'),
                     name: property.get('name')
@@ -96,17 +89,6 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         console.dir(arguments);
         this.removeAll();
 
-        for (var i = 0; i < this.readonly.length; ++i) {
-            var property = this.readonly[i];
-            this.add({
-                fieldLabel: property['name'],
-                xtype: 'textfield',
-                labelStyle: 'font-weight:bold;',
-                value: property['value'],
-                readOnly: true
-            });
-        }
-
         var errorText = 'Error during ' + actions + '. ';
         if (type == 'response') {
             errorText += '\nServer returned statusText: ' + response.statusText + ', statusCode: '
@@ -116,7 +98,6 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         this.add({
             xtype: 'label',
             text: errorText,
-            labelStyle: 'font-weight:bold;',
             fieldLabel: 'Error information'
         });
 
@@ -124,13 +105,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     },
 
     reload:function(id, name, path) {
-        this.path = path;
         this.id = id;
-        this.readonly[0] = {
-            name: 'Name',
-            value: name
-        };
-
         var store = new Ext.data.JsonStore({
             autoLoad: true,
             method: 'GET',
