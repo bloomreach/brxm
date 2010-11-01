@@ -90,6 +90,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
                     containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString());
             newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE,
                     containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
+            newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT,
+                    containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT).getString());
 
             // now copy all the other child nodes from containerNode to newItem
             Workspace workspace = session.getWorkspace();
