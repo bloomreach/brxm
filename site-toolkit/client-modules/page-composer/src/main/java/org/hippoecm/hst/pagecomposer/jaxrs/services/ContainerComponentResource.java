@@ -84,15 +84,18 @@ public class ContainerComponentResource extends AbstractConfigResource {
             Node newItem = containerNode.addNode(newItemNodeName, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
 
             // now we only copy the template, xtype and component class name properties
-            newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_,
+            if(containerItem.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_)) {
+                newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_,
                     containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_).getString());
+            }
             newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME,
                     containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString());
             newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE,
                     containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
-            newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT,
-                    containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT).getString());
-
+            if(containerItem.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT)) {
+                newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT,
+                        containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT).getString());
+            }
             // now copy all the other child nodes from containerNode to newItem
             Workspace workspace = session.getWorkspace();
             NodeIterator childs = containerItem.getNodes();
