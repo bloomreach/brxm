@@ -15,9 +15,14 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstComponent;
+
+import com.sun.org.apache.bcel.internal.classfile.Code;
 
 /**
  * A <code>HstComponentConfigurations</code> contains a map of (root) <code>HstComponentConfiguration</code> objects which themselves might 
@@ -49,5 +54,20 @@ public interface HstComponentsConfiguration {
      * When there is no <code>HstComponentConfiguration</code> with this <code>id</code>, <code>null</code>  is returned.
      */
     HstComponentConfiguration getComponentConfiguration(String id);
+    
+    /**
+     * Returns all the unique {@link HstComponentConfiguration}'s belonging to the {@link HstSite} containing this {@link HstComponentsConfiguration} that 
+     * are of type {@link Type#CONTAINER_ITEM_COMPONENT}. The following criteria are taking into account for defining uniqueness:
+     * <ul>
+     *  <li>{@link HstComponentConfiguration#getComponentClassName()}</li>
+     *  <li>{@link HstComponentConfiguration#getRenderPath()}</li>
+     * </ul>
+     * 
+     * Optionally, also the above to criteria for all descendant components of the {@link HstComponentConfiguration} are checked to define the uniqueness.
+     * 
+     * Implementations should return an unmodifiable List
+     * @return the {@link List} of all unique container items
+     */
+    List<HstComponentConfiguration> getUniqueContainerItems();
 
 }

@@ -32,6 +32,26 @@ public class ToolkitRepresentation {
 
     List<ComponentRepresentation> components = new ArrayList<ComponentRepresentation>();
 
+    /**
+     * This method returns all the container items for this <code>mount</code>
+     * @param mount the current mount
+     * @return ToolkitRepresentation containing all the containeritem's for this <code>mount</code>
+     */
+    public ToolkitRepresentation represent(SiteMount mount) {
+        HstSite site = mount.getHstSite();
+        List<HstComponentConfiguration> allUniqueContainerItems = site.getComponentsConfiguration().getUniqueContainerItems();
+        for (HstComponentConfiguration child : allUniqueContainerItems) {
+            components.add(new ComponentRepresentation().represent(child));
+        }
+        return this;
+    }
+    
+    /**
+     * This method returns all the container items directly below the 'toolkit' component. This is a configurable component.
+     * @param mount the current mount
+     * @param toolkitId the id of the root component containing all containeritems to be shown
+     * @return ToolkitRepresentation containing all the containeritem's for this <code>mount</code> and <code>toolkitId</code>
+     */
     public ToolkitRepresentation represent(SiteMount mount, String toolkitId) {
         HstSite site = mount.getHstSite();
         HstComponentConfiguration root = null;
@@ -41,20 +61,17 @@ public class ToolkitRepresentation {
                 break;
             }
         }
-
         if (root == null) {
             throw new RuntimeException("Cannot find component configuration for root id '" + toolkitId + "'");
         }
-
         for (HstComponentConfiguration child : root.getChildren().values()) {
             if (child.getComponentType() == HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT) {
                 components.add(new ComponentRepresentation().represent(child));
             }
         }
-
         return this;
     }
-
+    
     public List<ComponentRepresentation> getComponents() {
         return components;
     }

@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,13 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
      * id.
      */
     private List<HstComponentConfiguration> childComponents  = new ArrayList<HstComponentConfiguration>();
+    
+    /*
+     * The Map of all containter items that are unique: A container item can be used multiple times with a single HstSite. This Map contains only the unique container items.
+     * The key is composed of the component class name & template value
+     * TODO Currently, in uniqueness calculation, we do not take into account possible different child components.
+     */
+    private Map<String, HstComponentConfiguration> uniqueContainerItemsMap  = new HashMap<String, HstComponentConfiguration>();
 
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
@@ -65,6 +74,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             init(pages, hstConfigurationsRootPath);
         }
 
+        // we rather compute all the unique container items before enhancing.
+        for (HstComponentConfiguration child : childComponents) {
+            populateUniqueContainerItems(child);
+        }
+        
         for (HstComponentConfiguration child : childComponents) {
             populateRootComponentConfigurations(child);
         }
@@ -114,6 +128,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         return Collections.unmodifiableMap(this.rootComponentConfigurations);
     }
 
+
+    public List<HstComponentConfiguration> getUniqueContainerItems() {
+        return Collections.unmodifiableList(new ArrayList<HstComponentConfiguration>(uniqueContainerItemsMap.values()));
+    }
+    
     private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
         if (componentConfiguration.getReferenceName() == null || "".equals(componentConfiguration.getReferenceName())) {
             String autoRefName = "r" + (++autocreatedCounter);
@@ -134,6 +153,19 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
+    private void populateUniqueContainerItems(HstComponentConfiguration candidateConfiguration) {
+        if(candidateConfiguration.getComponentType() == Type.CONTAINER_ITEM_COMPONENT) {
+            // check whether we already have this container item. If not,  we add it
+            String key = candidateConfiguration.getComponentClassName() + '\uFFFF' + ((HstComponentConfigurationService)candidateConfiguration).getHstTemplate();
+            if(!uniqueContainerItemsMap.containsKey(key)) {
+                uniqueContainerItemsMap.put(key, candidateConfiguration);
+            }
+        }
+        for (HstComponentConfiguration child : candidateConfiguration.getChildren().values()) {
+            populateUniqueContainerItems(child);
+        }
+    }
+    
     private void init(HstNode node, String hstConfigurationsRootPath) {
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())
@@ -164,5 +196,6 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             }
         }
     }
+
 
 }

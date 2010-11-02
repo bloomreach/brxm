@@ -530,7 +530,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void setRenderPath(Map<String, String> templateRenderMap) {
-        String templateRenderPath = templateRenderMap.get(this.getHstTemplate());
+        String templateRenderPath = templateRenderMap.get(getHstTemplate());
         if (templateRenderPath == null) {
             log.debug("Cannot find renderpath for component '{}'. This component can only be used to be extended", this
                     .getId());
