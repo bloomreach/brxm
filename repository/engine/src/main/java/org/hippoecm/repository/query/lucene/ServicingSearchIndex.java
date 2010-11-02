@@ -29,6 +29,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.InvalidQueryException;
+import javax.jcr.query.QueryResult;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,10 +42,13 @@ import org.apache.jackrabbit.core.query.PropertyTypeRegistry.TypeMapping;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
+import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
+import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.QueryImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
+import org.apache.jackrabbit.core.query.lucene.SingleColumnQueryResult;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
@@ -54,9 +58,11 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SortField;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
@@ -110,7 +116,47 @@ public class ServicingSearchIndex extends SearchIndex {
                }
            };
         } else {
-            return super.createExecutableQuery(session, itemMgr, statement, language);
+            QueryImpl query = new QueryImpl(session, itemMgr, this,
+                    getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
+                long totalSize;
+                @Override
+                public QueryResult execute(long offset, long limit) throws RepositoryException {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Executing query: \n" + root.dump());
+                    }
+
+                    // build lucene query
+                    Query query = LuceneQueryBuilder.createQuery(root, session,
+                            index.getContext().getItemStateManager(),
+                            index.getNamespaceMappings(), index.getTextAnalyzer(),
+                            propReg, index.getSynonymProvider(),
+                            index.getIndexFormatVersion());
+
+                    OrderQueryNode orderNode = root.getOrderNode();
+
+                    OrderQueryNode.OrderSpec[] orderSpecs;
+                    if (orderNode != null) {
+                        orderSpecs = orderNode.getOrderSpecs();
+                    } else {
+                        orderSpecs = new OrderQueryNode.OrderSpec[0];
+                    }
+                    Path[] orderProperties = new Path[orderSpecs.length];
+                    boolean[] ascSpecs = new boolean[orderSpecs.length];
+                    for (int i = 0; i < orderSpecs.length; i++) {
+                        orderProperties[i] = orderSpecs[i].getPropertyPath();
+                        ascSpecs[i] = orderSpecs[i].isAscending();
+                    }
+
+                    return new HippoQueryResult(index, itemMgr,
+                            session, session.getAccessManager(),
+                            this, query,
+                            getColumns(), orderProperties, ascSpecs,
+                            orderProperties.length == 0 && getRespectDocumentOrder(),
+                            offset, limit);
+                }
+            };
+            query.setRespectDocumentOrder(getRespectDocumentOrder());
+            return query;
         }
     }
     

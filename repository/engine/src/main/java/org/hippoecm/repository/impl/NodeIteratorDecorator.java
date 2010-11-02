@@ -13,11 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating.checked;
+package org.hippoecm.repository.impl;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import org.hippoecm.repository.api.HippoNodeIterator;
+import org.hippoecm.repository.decorating.DecoratorFactory;
+import org.hippoecm.repository.decorating.RangeIteratorDecorator;
 
 /**
  * Node iterator that decorates all iterated nodes. This utility class is
@@ -30,6 +32,8 @@ public class NodeIteratorDecorator extends RangeIteratorDecorator implements Nod
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private long totalSize = -1;
+
     /**
      * Creates a decorating node iterator.
      *
@@ -37,12 +41,16 @@ public class NodeIteratorDecorator extends RangeIteratorDecorator implements Nod
      * @param session decorated session
      * @param iterator underlying node iterator
      */
-    protected NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator) {
+    NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator) {
         super(factory, session, iterator);
     }
 
-    protected NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator,
-            NodeDecorator parent) {
+    NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator, long totalSize) {
+        super(factory, session, iterator);
+        this.totalSize = totalSize;
+    }
+
+    NodeIteratorDecorator(DecoratorFactory factory, SessionDecorator session, NodeIterator iterator, NodeDecorator parent) {
         super(factory, session, iterator, parent);
     }
 
@@ -57,10 +65,6 @@ public class NodeIteratorDecorator extends RangeIteratorDecorator implements Nod
     }
 
     public long getTotalSize() {
-        if (iterator instanceof HippoNodeIterator) {
-            return ((HippoNodeIterator)iterator).getTotalSize();
-        } else {
-            return -1L;
-        }
+        return totalSize;
     }
 }

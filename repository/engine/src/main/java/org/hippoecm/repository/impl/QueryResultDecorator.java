@@ -13,13 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating;
+package org.hippoecm.repository.impl;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.RowIterator;
+import org.apache.jackrabbit.core.query.lucene.QueryResultImpl;
+import org.hippoecm.repository.decorating.AbstractDecorator;
+import org.hippoecm.repository.decorating.DecoratorFactory;
+import org.hippoecm.repository.query.lucene.HippoQueryResult;
 
 /**
  */
@@ -28,20 +31,20 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
     private final static String SVN_ID = "$Id$";
 
     protected final QueryResult result;
+    protected long totalSize;
 
-    protected QueryResultDecorator(DecoratorFactory factory, Session session, QueryResult result) {
+    protected QueryResultDecorator(DecoratorFactory factory, SessionDecorator session, QueryResult result) {
         super(factory, session);
         this.result = result;
-    }
-
-    public static QueryResult unwrap(QueryResult decorated) {
-        if(decorated instanceof QueryResultDecorator) {
-            return ((QueryResultDecorator)decorated).result;
+        QueryResult impl = org.hippoecm.repository.decorating.QueryResultDecorator.unwrap(result);
+        if (impl instanceof HippoQueryResult) {
+            totalSize = ((HippoQueryResult)impl).getSizeTotal();
+        } else if (impl instanceof QueryResultImpl) {
+            totalSize = ((QueryResultImpl)org.hippoecm.repository.decorating.QueryResultDecorator.unwrap(result)).getTotalSize();
         } else {
-            return decorated;
+            totalSize = -1L;
         }
     }
-
     /**
      * @inheritDoc
      */
@@ -61,7 +64,7 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
      */
     public NodeIterator getNodes() throws RepositoryException {
         NodeIterator nodes = result.getNodes();
-        return new NodeIteratorDecorator(factory, session, nodes);
+        return new NodeIteratorDecorator(factory, (SessionDecorator)session, nodes, totalSize);
     }
 
     public String[] getSelectorNames() throws RepositoryException {

@@ -22,6 +22,7 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
@@ -98,6 +99,10 @@ public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.Dec
 
     public Query getQueryDecorator(Session session, Query query) {
         return new QueryDecorator(this, session, query);
+    }
+
+    public QueryResult getQueryResultDecorator(Session session, QueryResult result) {
+        return new QueryResultDecorator(this, decoratedSession, result);
     }
 
     @Override
