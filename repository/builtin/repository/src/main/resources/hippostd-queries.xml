@@ -38,20 +38,6 @@
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
       <sv:value>$name</sv:value>
-      <sv:value>./hippostdpubwf:createdBy</sv:value>
-      <sv:value>$holder</sv:value>
-      <sv:value>./hippostdpubwf:creationDate</sv:value>
-      <sv:value>$now</sv:value>
-      <sv:value>./hippostdpubwf:lastModifiedBy</sv:value>
-      <sv:value>$holder</sv:value>
-      <sv:value>./hippostdpubwf:lastModificationDate</sv:value>
-      <sv:value>$now</sv:value>
-      <sv:value>./hippostd:holder</sv:value>
-      <sv:value>$holder</sv:value>
-      <sv:value>./hippotranslation:locale</sv:value>
-      <sv:value>$inherited</sv:value>
-      <sv:value>./hippotranslation:id</sv:value>
-      <sv:value>$uuid</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -227,10 +213,6 @@
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
       <sv:value>$name</sv:value>
-      <sv:value>./hippotranslation:id</sv:value>
-      <sv:value>$uuid</sv:value>
-      <sv:value>./hippotranslation:locale</sv:value>
-      <sv:value>$inherited</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -248,7 +230,6 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
-          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>36414d02-4f0f-475b-8443-dd6f450a6475</sv:value>
@@ -260,12 +241,6 @@
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-folder</sv:value>
           <sv:value>new-document</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>generated id</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>inherited locale</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

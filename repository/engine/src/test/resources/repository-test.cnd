@@ -75,6 +75,7 @@
 [hippo:testcompoundstructure] > nt:base
 + * (hippo:testhtml) = hippo:testhtml multiple
 + hippo:testresource (hippo:resource)
++ hippo:testpdfresource (hippo:resource)
 - *
 
 [hippo:testsearchdocument] > hippo:document
