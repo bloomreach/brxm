@@ -24,7 +24,7 @@ import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 /**
  * @version $Id$
  */
-@XmlRootElement(name = "imageSet")
+@XmlRootElement(name = "imageset")
 public class ImageSetRepresentation extends NodeRepresentation {
     
     HippoResourceRepresentation thumbnail;

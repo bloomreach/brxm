@@ -24,7 +24,7 @@ import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 /**
  * @version $Id$
  */
-@XmlRootElement(name = "hippoResource")
+@XmlRootElement(name = "resource")
 public class HippoResourceRepresentation extends NodeRepresentation {
 
     private String mimeType;
