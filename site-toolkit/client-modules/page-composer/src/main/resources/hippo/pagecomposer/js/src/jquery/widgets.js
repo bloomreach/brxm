@@ -411,41 +411,27 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
     },
 
     drawDropIndicator : function(ui, el) {
-        if(this.items.size() == 0) {
+        if(ui.placeholder.siblings().length == 0) {
             //draw indicator inside empty container
             this.draw.inside(this.el, el);
         } else {
-            var ph = ui.placeholder;
-            var prev = ph.prev();
-            var next = ph.next();
-            var f = Hippo.PageComposer.UI.Factory;
+            var prev = ui.placeholder.prev();
+            var next = ui.placeholder.next();
+            var getEl = function(_el) {
+                return Hippo.PageComposer.UI.Factory.getById(_el.attr(HST.ATTR.ID)).el;
+            };
 
-            if(next.length == 0 && prev.length > 0) {
-               //draw beneath previous item
-                var prev2 = prev.prev();
-                if(prev2.length > 0) {
-                    var id = prev.attr('hst:id');
-                    var item = f.getById(id);
-                    var id2 = prev2.attr('hst:id');
-                    var item2 = f.getById(id2);
-                    this.draw.between(item2.el, item.el, el);
-                } else {
-                    var id = prev.attr('hst:id');
-                    var item = f.getById(id);
-                    this.draw.beneath(item.el, el);
-                }
-            } else if(prev.length == 0 && next.length > 0) {
-                var id = next.attr('hst:id');
-                var item = f.getById(id);
-                this.draw.above(item.el, el);
-            } else if(prev.length > 0 && next.length > 0) {
-                var prevId= prev.attr('hst:id');
-                var prevItem = f.getById(prevId);
-                var nextId = next.attr('hst:id');
-                var nextItem = f.getById(nextId);
-                this.draw.between(prevItem.el, nextItem.el, el);
+            var original = ui.item[0];
+            if(prev[0] == original || (next.length > 0 && next[0] == original)) {
+                this.draw.inside(getEl(ui.item), el);
             } else {
-                this.draw.inside(this.el, el);
+                if(prev.length == 0) {
+                    this.draw.above(getEl(next), el);
+                } else if (next.length == 0) {
+                    this.draw.beneath(getEl(prev), el);
+                } else {
+                    this.draw.between(getEl(prev), getEl(next), el);
+                }
             }
         }
     },
@@ -670,7 +656,7 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
 
     getOverlaySource : function() {
         return $(this.element);
-        //return $(this.element).parents('.hst-container-item')
+//        return $(this.element).parents('.hst-container-item')
     },
 
     onClick : function() {

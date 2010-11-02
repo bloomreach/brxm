@@ -149,7 +149,7 @@ Hippo.Util.Draw = Class.extend({
             elTop = pPos.top + y + elHeight;
         } else {
             elLeft = srcPosition.left + ((srcWidth-elWidth)/2);
-            elTop = srcPosition.top + srcHeight + 1;
+            elTop = srcPosition.top + srcHeight + 2;
         }
 
         el.offset({
@@ -176,7 +176,7 @@ Hippo.Util.Draw = Class.extend({
         var elLeft = 0, elTop = 0;
         var srcPosition = source.position();
         elLeft = srcPosition.left + ((srcWidth-elWidth)/2);
-        elTop = srcPosition.top - 1;
+        elTop = srcPosition.top - 2;
 
         el.offset({
             left: elLeft,

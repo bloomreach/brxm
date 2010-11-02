@@ -51,6 +51,7 @@
     cursor: pointer;
 
     -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
     /*opacity: 0.4;*/
 }
 
@@ -69,6 +70,7 @@
     padding-left: 2px;
     padding-right: 2px;
     -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
 }
 
 .hst-overlay-container-item.hst-overlay-hover > div.hst-overlay-menu-button,
@@ -103,6 +105,7 @@
     border: 2px solid #666;
     padding: 5px;
     -moz-border-radius: 6px;
+    -webkit-border-radius: : 6px;
 }
 
 .hst-placeholder {
@@ -116,6 +119,10 @@
     z-index: 500;
     background: red;
     opacity: 1;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+  	-moz-box-shadow: 3px 3px 3px #666;
+    -webkit-box-shadow: 3px 3px 3px #666;
 }
 
 /* this is to stop collapsing margins */

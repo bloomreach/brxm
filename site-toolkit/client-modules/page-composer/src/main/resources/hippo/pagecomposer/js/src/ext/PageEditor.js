@@ -63,7 +63,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         },
                         'documentloaded' : {
                             fn: function(frm) {
-                                if (Ext.isChrome) {
+                                if (Ext.isSafari || Ext.isChrome) {
                                     this.onIframeDOMReady(frm);
                                 }
                             },
