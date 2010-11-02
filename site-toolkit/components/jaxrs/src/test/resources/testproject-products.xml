@@ -131,6 +131,17 @@
                         l&lt;/p&gt; &lt;/body&gt; &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
+      <sv:node sv:name="testproject:image">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippogallerypicker:imagelink</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>07464293-3c92-4ebe-8f01-89bd3e92a0bf</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String"/>
+        <sv:property sv:name="hippo:modes" sv:type="String"/>
+        <sv:property sv:name="hippo:values" sv:type="String"/>
+      </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -239,6 +250,17 @@
                         &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
                         &lt;/html&gt;</sv:value>
         </sv:property>
+      </sv:node>
+      <sv:node sv:name="testproject:image">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippogallerypicker:imagelink</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>07464293-3c92-4ebe-8f01-89bd3e92a0bf</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String"/>
+        <sv:property sv:name="hippo:modes" sv:type="String"/>
+        <sv:property sv:name="hippo:values" sv:type="String"/>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -349,6 +371,17 @@
                         &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
+      <sv:node sv:name="testproject:image">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippogallerypicker:imagelink</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>07464293-3c92-4ebe-8f01-89bd3e92a0bf</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String"/>
+        <sv:property sv:name="hippo:modes" sv:type="String"/>
+        <sv:property sv:name="hippo:values" sv:type="String"/>
+      </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -458,6 +491,17 @@
                         &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
                         &lt;/html&gt;</sv:value>
         </sv:property>
+      </sv:node>
+      <sv:node sv:name="testproject:image">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippogallerypicker:imagelink</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>07464293-3c92-4ebe-8f01-89bd3e92a0bf</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String"/>
+        <sv:property sv:name="hippo:modes" sv:type="String"/>
+        <sv:property sv:name="hippo:values" sv:type="String"/>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
