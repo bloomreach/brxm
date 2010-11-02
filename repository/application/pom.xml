@@ -21,7 +21,7 @@
     <version>2.17.00-SNAPSHOT</version>
   </parent>
 
-  <name>Minimal repository app</name>
+  <name>Repository WAR</name>
   <description>Hippo ECM minimal repository application</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository-application</artifactId>

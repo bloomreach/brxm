@@ -21,7 +21,7 @@
     <version>2.17.00-SNAPSHOT</version>
   </parent>
 
-  <name>API</name>
+  <name>Repository API</name>
   <description>Hippo ECM specific extensions to the JCR API</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-api</artifactId>
