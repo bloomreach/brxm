@@ -72,6 +72,7 @@
   <bean id="jaxrsHstConfigServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"> 
     <constructor-arg ref="jaxrsHstConfigService" />
   </bean>
+  <bean id="composerBootstrap" parent="abstractValve" class="org.hippoecm.hst.pagecomposer.container.PageComposerBootstrapValve"/>
   
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
@@ -83,7 +84,7 @@
     <property name="targetMethod" value="put" />
     <property name="arguments">
       <list>
-        <value>ComposerPipeline2</value>
+        <value>ComposerPipeline</value>
         <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
           <property name="preInvokingValves">
             <list>
@@ -101,6 +102,41 @@
           <property name="postInvokingValves">
             <list>
               <ref bean="cleanupValve" />
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject">
+      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
+        <property name="propertyPath" value="pipelines"/>
+      </bean>
+    </property>
+    <property name="targetMethod" value="put" />
+    <property name="arguments">
+      <list>
+        <value>ComposerBootstrapPipeline</value>
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="preInvokingValves">
+              <list>
+                <ref bean="initializationValve" />
+              </list>
+            </property>
+            <property name="invokingValves">
+              <list>
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="noCacheResponseHeadersValve" />
+                <ref bean="composerBootstrap" />
+              </list>
+            </property>
+            <property name="postInvokingValves">
+              <list>
+                <ref bean="cleanupValve" />
             </list>
           </property>
         </bean>

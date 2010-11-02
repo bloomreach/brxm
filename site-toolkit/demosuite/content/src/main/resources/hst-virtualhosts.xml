@@ -295,29 +295,6 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
               </sv:node>
-              <sv:node sv:name="services">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                  <sv:value>false</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>ComposerPipeline</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:showport" sv:type="Boolean">
-                  <sv:value>true</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:type" sv:type="String">
-                  <sv:value>composer</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>preview</sv:value>
-                </sv:property>
-              </sv:node>
               <sv:node sv:name="services-new">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
@@ -329,7 +306,7 @@
                   <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>ComposerPipeline2</sv:value>
+                  <sv:value>ComposerPipeline</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
