@@ -21,7 +21,6 @@
     <sv:value>hipposys:group</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:members" sv:type="String">
-    <sv:value>author</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:securityprovider" sv:type="String">
     <sv:value>internal</sv:value>
