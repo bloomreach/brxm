@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="workflow" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
-  <sv:node sv:name="hippostdpubwf-request" h:merge="insert" h:location="hippo:request">
+  <sv:node sv:name="hippostdpubwf-request" h:merge="append">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
@@ -40,7 +40,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="frontend-workflow" h:merge="insert" h:location="hipposched-trigger">
+  <sv:node sv:name="frontend-workflow" h:merge="append">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>

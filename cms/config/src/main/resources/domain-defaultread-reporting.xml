@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="defaultread" h:merge="combine">
-  <sv:node sv:name="reporting-report" h:merge="insert" h:location="hippo:authrole">
+  <sv:node sv:name="reporting-report" h:merge="append">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
