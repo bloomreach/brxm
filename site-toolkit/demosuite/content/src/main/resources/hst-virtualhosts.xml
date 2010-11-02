@@ -106,6 +106,12 @@
               <sv:property sv:name="hst:roles" sv:type="String">
                 <sv:value>everybody</sv:value>
               </sv:property>
+              <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
               <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
@@ -124,6 +130,9 @@
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
@@ -144,6 +153,9 @@
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
@@ -193,6 +205,12 @@
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>JaxrsRestContentPipeline</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
                 <sv:property sv:name="hst:secured" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
@@ -218,6 +236,12 @@
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
                 <sv:property sv:name="hst:mountpoint" sv:type="String">
                   <sv:value>/content/gallery</sv:value>
                 </sv:property>
@@ -238,6 +262,12 @@
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>preview-rest</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
@@ -254,9 +284,6 @@
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
               </sv:property>
-              <sv:property sv:name="jcr:uuid" sv:type="String">
-                <sv:value>d50b13d4-8bef-4642-9d21-c4784177b5a8</sv:value>
-              </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
               </sv:property>
@@ -272,9 +299,6 @@
               <sv:node sv:name="composer">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
-                </sv:property>
-                <sv:property sv:name="jcr:uuid" sv:type="String">
-                  <sv:value>e0aea2c2-97a6-431a-8551-0f49eaed7331</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
@@ -370,6 +394,12 @@
               <sv:property sv:name="hst:roles" sv:type="String">
                 <sv:value>everybody</sv:value>
               </sv:property>
+              <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
               <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
@@ -388,6 +418,9 @@
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
@@ -408,6 +441,9 @@
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
@@ -457,6 +493,12 @@
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>JaxrsRestContentPipeline</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
                 <sv:property sv:name="hst:secured" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
@@ -482,6 +524,12 @@
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
                 <sv:property sv:name="hst:mountpoint" sv:type="String">
                   <sv:value>/content/gallery</sv:value>
                 </sv:property>
@@ -502,6 +550,12 @@
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>preview-rest</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:showport" sv:type="Boolean">
+                  <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                   <sv:value>true</sv:value>
+                </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
@@ -517,9 +571,6 @@
             <sv:node sv:name="composermode">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
-              </sv:property>
-              <sv:property sv:name="jcr:uuid" sv:type="String">
-                <sv:value>d50b13d4-8bef-4642-9d21-c4784177b5a8</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
@@ -559,32 +610,6 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
               </sv:node>
-              <sv:node sv:name="services">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
-                </sv:property>
-                <sv:property sv:name="jcr:uuid" sv:type="String">
-                  <sv:value>f92b4195-592d-47ce-9c1a-9acec28262c9</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:issitemount" sv:type="Boolean">
-                  <sv:value>false</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>ComposerPipeline</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:showport" sv:type="Boolean">
-                  <sv:value>true</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:type" sv:type="String">
-                  <sv:value>composer</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:types" sv:type="String">
-                  <sv:value>preview</sv:value>
-                </sv:property>
-              </sv:node>
               <sv:node sv:name="services-new">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
@@ -596,7 +621,7 @@
                   <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                  <sv:value>ComposerPipeline2</sv:value>
+                  <sv:value>ComposerPipeline</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>

@@ -40,7 +40,7 @@
 
   <hr/>
   <p>Dummy Example REST links </p>
-  <@hst.link var="imageset" linkByBeanPath="restLink" subPath=""/>
+  <@hst.link var="imageset" linkByBeanPath="restLink"/>
   <@hst.link var="picture" linkByBeanPath="restLink" subPath="picture"/>
   <@hst.link var="thumbnail" linkByBeanPath="restLink" subPath="thumbnail"/>
   <p> ImageSet : <a target="_blank" href="${imageset}">${imageset}</a></p>

@@ -125,6 +125,8 @@ public class SiteMountService implements SiteMount {
      */
     private boolean contextPathInUrl;
     
+    private boolean supportsSubPath;
+    
     /**
      * whether the port number should be in the url. Default true
      */
@@ -299,7 +301,13 @@ public class SiteMountService implements SiteMount {
         } else if(parent != null) {
             this.isSiteMount = parent.isSiteMount();
         }
-
+        
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_SUPPORTS_SUB_PATH)) {
+            this.supportsSubPath = siteMount.getValueProvider().getBoolean(HstNodeTypes.SITEMOUNT_PROPERTY_SUPPORTS_SUB_PATH);
+        } else if(parent != null) {
+            this.supportsSubPath = parent.supportsSubPath();
+        }
+        
         if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_NAMEDPIPELINE);
         } else if(parent != null) {
@@ -482,6 +490,11 @@ public class SiteMountService implements SiteMount {
     public boolean isPortInUrl() {
         return showPort;
     }
+    
+    public boolean supportsSubPath() {
+        return supportsSubPath;
+    } 
+    
     public String onlyForContextPath() {
         return onlyForContextPath;
     }
@@ -564,5 +577,7 @@ public class SiteMountService implements SiteMount {
             return o.toString();
         }
         return null;
-    } 
+    }
+
+
 }

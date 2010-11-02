@@ -36,8 +36,7 @@
 
    <hr/>
   <p>Dummy Example REST links </p>
- ${restLink}
-  <hst:link var="imageset" link="${restLink}" subPath=""/>
+  <hst:link var="imageset" link="${restLink}"/>
   <hst:link var="thumbnail" link="${restLink}" subPath="thumbnail" />
   <hst:link var="picture" link="${restLink}"  subPath="picture"/>
   

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -215,6 +216,13 @@ public interface SiteMount {
      * @return <code>true</code> when the created url should have contain the port number
      */
     boolean isPortInUrl();
+    
+    /**
+     * When this method returns <code>true</code>, then {@link HstLink} will always have the {@link HstLink#PATH_SUBPATH_DELIMITER} included, even if the {@link HstLink}
+     * does have an empty or <code>null</code> {@link HstLink#getSubPath()}
+     * @return true when subPath is supported
+     */
+    boolean supportsSubPath();
     
 
     /**
