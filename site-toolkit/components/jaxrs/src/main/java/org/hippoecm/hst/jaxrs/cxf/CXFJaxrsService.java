@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -83,8 +82,8 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 			ServletController controller = getController(requestContext.getServletContext());
 			HttpServletRequest jaxrsRequest = getJaxrsRequest(requestContext, request); 
 			controller.invoke(jaxrsRequest, response);
-		} catch (ServletException e) {
-			throw new ContainerException(e);
+		} catch (Throwable th) {
+			throw new ContainerException(th);
 		} finally {
 			BusFactory.setThreadDefaultBus(null);
 		}

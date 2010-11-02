@@ -37,3 +37,12 @@
 - testproject:title (string)
 - testproject:date (date)
 
+[testproject:productdocument] > testproject:basedocument
+- testproject:constructiondate (date)
+- testproject:brand (string)
+- testproject:color (string)
+- testproject:created (date)
+- testproject:mileage (long)
+- testproject:price (double)
+- testproject:product (string)
++ testproject:body (hippostd:html)

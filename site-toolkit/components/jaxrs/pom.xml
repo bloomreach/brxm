@@ -82,6 +82,12 @@
       <artifactId>jsr311-api</artifactId>
     </dependency>
     
+    <!-- STAX API -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+    </dependency>
+    
     <!-- JAXB API -->
     <dependency>
       <groupId>javax.xml.bind</groupId>

@@ -86,6 +86,21 @@
             <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFixedDirectoryContentResource"/>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFacetNavigationContentResource"/>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFacetsAvailableNavigationContentResource"/>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFacetSubNavigationContentResource"/>
+          </constructor-arg>
+        </bean>
       </list>
     </property>
   </bean>
