@@ -138,13 +138,6 @@
       <version>${project.version}</version>
     </dependency>
     
-    <!-- The Old JAX-RS SANDBOX Component -->
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
-      <artifactId>hst-jaxrs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
     <!-- TODO  SHOULD THIS GO INTO SERVER / CLIENT DEPENDENCIES? -->
     <dependency>
       <groupId>org.onehippo.ecm.hst.client-modules</groupId>

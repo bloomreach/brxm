@@ -148,14 +148,6 @@
       <artifactId>yui-2.xx-sources</artifactId>
     </dependency>
     
-    <!-- temporarily added as long as in sandbox -->
-   
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
-      <artifactId>hst-jaxrs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <!-- Apache CXF Runtime for JAX-RS Services -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
