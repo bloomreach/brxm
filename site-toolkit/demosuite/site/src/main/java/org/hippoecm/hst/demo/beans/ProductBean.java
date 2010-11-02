@@ -16,10 +16,14 @@
 package org.hippoecm.hst.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoImage;
 
 @Node(jcrType="demosite:productdocument")
 public class ProductBean extends TextBean{
-
+    
+    private HippoImage imageBean;
+    private boolean imagesLoaded = false;
+    
     public String getTitle() {
         // product does not have a title
         return this.getLocalizedName();
@@ -28,19 +32,34 @@ public class ProductBean extends TextBean{
     public String getBrand(){
         return this.getProperty("demosite:brand");
     }
+    
     public String getProduct(){
         return this.getProperty("demosite:product");
     }
+    
     public String getColor(){
         return this.getProperty("demosite:color");
     }
+    
     public String getType(){
         return this.getProperty("demosite:type");
     }
+    
     public Double getPrice(){
         return this.getProperty("demosite:price");
     }
+    
     public String[] getTags(){
         return this.getProperty("hippostd:tags");
     }
+    
+    public HippoImage getImage() {
+        if(imagesLoaded) {
+            return this.imageBean;
+        }
+        imagesLoaded = true;
+        this.imageBean = this.getLinkedBean("demosite:image", HippoImage.class);
+        return imageBean;
+    }
+    
 }

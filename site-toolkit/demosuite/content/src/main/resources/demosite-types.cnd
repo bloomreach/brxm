@@ -31,3 +31,4 @@
 - demosite:price (double)
 - demosite:product (string)
 + demosite:body (hippostd:html)
++ demosite:image (hippogallerypicker:imagelink)

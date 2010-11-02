@@ -328,7 +328,7 @@
   </sv:node>
 
 
-  <sv:node sv:name="demosite-images">
+  <sv:node sv:name="demosite-gallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -336,10 +336,10 @@
       <sv:value>10406</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>democontent/demosite-images.xml</sv:value>
+      <sv:value>democontent/demosite-gallery.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/content/gallery</sv:value>
+      <sv:value>/content</sv:value>
     </sv:property>
   </sv:node>
   

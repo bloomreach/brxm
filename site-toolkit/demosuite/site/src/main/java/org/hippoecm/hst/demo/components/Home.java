@@ -35,7 +35,7 @@ public class Home extends BaseHstComponent {
         
         try {
             // example of REST links for a hippo:resource
-            HippoBean image = (HippoBean) this.getObjectBeanManager(request).getObject("/content/gallery/news/screenshot_cms_small.jpg");
+            HippoBean image = (HippoBean) this.getObjectBeanManager(request).getObject("/content/gallery/images/screenshot_cms_small.jpg");
             HstLink link = request.getRequestContext().getHstLinkCreator().create(image.getNode(), request.getRequestContext(), "restapi-gallery");
             request.setAttribute("restLink",link);
             

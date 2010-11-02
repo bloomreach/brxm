@@ -64,6 +64,12 @@
       &nbsp;
       <a id="<hst:namespace/>tagsCancel" href="#" style="DISPLAY: none">Cancel</a>
   </p>
+  <p>
+    Image:<br/>
+    <c:if test="${not empty document.image}">
+      <img src="<hst:link hippobean="${document.image.picture}"/>"/>
+    </c:if>
+  </p>
 </form>
 </div>
 
