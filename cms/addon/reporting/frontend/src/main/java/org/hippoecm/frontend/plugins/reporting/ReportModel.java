@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.query.QueryManager;
@@ -69,7 +70,18 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
         load();
         if (resultSet != null) {
             try {
-                return resultSet.getNodes();
+                final NodeIterator nodeIterator = resultSet.getNodes();
+                return new Iterator<IModel>() {
+                    public boolean hasNext() {
+                        return nodeIterator.hasNext();
+                    }
+                    public IModel next() {
+                        return new JcrNodeModel(nodeIterator.nextNode());
+                    }
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
             } catch (RepositoryException ex) {
                 log.error("Failed to obtain nodes from query result");
             }
@@ -78,7 +90,10 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
     }
 
     public IModel model(Object object) {
-        return new JcrNodeModel((Node) object);
+        if (object instanceof JcrNodeModel)
+            return (JcrNodeModel) object;
+        else
+            return new JcrNodeModel((Node)object);
     }
 
     public int size() {
