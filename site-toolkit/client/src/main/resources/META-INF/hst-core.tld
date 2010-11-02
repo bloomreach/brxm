@@ -209,6 +209,13 @@
             <description>A string path, typically a location relative to the webapp</description>
         </attribute>
         <attribute>
+            <name>subPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>A string subPath which gets appended to the path with a delimiter './' . This makes it useful for creating REST links</description>
+        </attribute>
+        <attribute>
             <name>hippobean</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>

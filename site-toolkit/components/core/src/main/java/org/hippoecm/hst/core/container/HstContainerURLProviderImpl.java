@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.util.HttpUtils;
@@ -192,9 +193,18 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             url.setPortNumber(siteMount.getPort());
         }
         
+        boolean includeTrailingSlash = false;
+        if(pathInfo != null && pathInfo.endsWith(HstLink.PATH_SUBPATH_DELIMITER)) {
+            // we now must not strip the trailing slash because it is part of the rest call ./
+            includeTrailingSlash = true; 
+        }
+        
         pathInfo = PathUtils.normalizePath(pathInfo);
         if (pathInfo != null) {
             pathInfo = "/" + pathInfo;
+            if(includeTrailingSlash) {
+                pathInfo = pathInfo + "/";
+            }
         }
 
         url.setHostName(siteMount.getVirtualHost().getHostName());
@@ -317,6 +327,10 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             if(!"".equals(path)) {
                 url.append("/").append(URLEncoder.encode(path, characterEncoding));
             }
+        }
+        if(containerURL.getPathInfo().endsWith(HstLink.PATH_SUBPATH_DELIMITER)) {
+            // the trailing slash is removed above, but for ./ we need to append the slash again
+            url.append("/");
         }
         
         boolean firstParamDone = (url.indexOf("?") >= 0);

@@ -36,10 +36,14 @@
 
    <hr/>
   <p>Dummy Example REST links </p>
-  <hst:link var="imageset" link="${restLink}"/>
-  <p> ImageSet : <a target="_blank" href="${imageset}./">${imageset}./</a></p>
-  <p> Thumbnail : <a target="_blank" href="${imageset}./thumbnail">${imageset}./thumbnail</a></p>
-  <p> Picture : <a target="_blank" href="${imageset}./picture">${imageset}./picture</a></p>
+ ${restLink}
+  <hst:link var="imageset" link="${restLink}" subPath=""/>
+  <hst:link var="thumbnail" link="${restLink}" subPath="thumbnail" />
+  <hst:link var="picture" link="${restLink}"  subPath="picture"/>
+  
+  <p> ImageSet : <a target="_blank" href="${imageset}">${imageset}</a></p>
+  <p> Thumbnail : <a target="_blank" href="${thumbnail}">${thumbnail}</a></p>
+  <p> Picture : <a target="_blank" href="${picture}">${picture}</a></p>
   <p style="height: 30em;">  </p>
   
   <p style="height: 30em;">  </p>

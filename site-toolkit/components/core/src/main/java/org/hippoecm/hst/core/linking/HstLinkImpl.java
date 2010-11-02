@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
 public class HstLinkImpl implements HstLink{
 
     private final static Logger log = LoggerFactory.getLogger(HstLinkImpl.class);
-    
+
     private String path;
+    private String subPath;
     private SiteMount siteMount;
     private boolean containerResource;
     private boolean notFound = false;
@@ -83,6 +84,16 @@ public class HstLinkImpl implements HstLink{
         this.path = PathUtils.normalizePath(path);
     }
     
+
+    public String getSubPath() {
+        return subPath;
+    }
+
+    public void setSubPath(String subPath) {
+        this.subPath = subPath;
+    }
+
+    
     public boolean getContainerResource() {
         return this.containerResource;
     }
@@ -104,19 +115,26 @@ public class HstLinkImpl implements HstLink{
         if (characterEncoding == null) {
             characterEncoding = "UTF-8";
         }
+       
         if(path == null) {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
             return null;
+        }
+        
+        String combinedPath = path;
+        if(subPath != null) {
+            // subPath is allowed to be empty ""
+            combinedPath += PATH_SUBPATH_DELIMITER + subPath;
         }
         
         String urlString = null;
         
         if (this.containerResource) {
             HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext);
-            hstUrl.setResourceID(path);
+            hstUrl.setResourceID(combinedPath);
             urlString = hstUrl.toString();
         } else {
-            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(siteMount, requestContext.getBaseURL() , path);
+            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(siteMount, requestContext.getBaseURL() , combinedPath);
             urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext).toString();
         }
         
@@ -151,8 +169,9 @@ public class HstLinkImpl implements HstLink{
     }
     
     /**
-     * @deprecated
+     * @deprecated use {@link #toUrlForm(HstRequestContext, boolean)} instead
      */
+    @Deprecated
     public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
         return toUrlForm(request.getRequestContext(), external);
     }

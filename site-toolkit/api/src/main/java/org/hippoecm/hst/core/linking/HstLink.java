@@ -33,6 +33,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public interface HstLink {
 
+    final static String PATH_SUBPATH_DELIMITER = "./";
+    
     /**
      * Note: This is *not* a url!
      * @return the path of this HstLink. Note: This is *not* a url!
@@ -44,6 +46,21 @@ public interface HstLink {
      * @param path
      */
     void setPath(String path);
+    
+    /**
+     * Returns the subPath of this {@link HstLink} object. This part will be appended to the {@link #getPath()} and delimited by <code>./</code>. It will be before the queryString.
+     * Note that an empty {@link String} <code>subPath</code> will result in a URL having a <code>./</code> appended: An empty
+     * <code>subPath</code> is thus something different then a <code>null</code> <code>subPath</code>.
+     * @return the subPath of this {@link HstLink} object. 
+     */
+    String getSubPath();
+    
+    /**
+     * sets the <code>subPath</code> of this {@link HstLink}. Note that setting the <code>subPath</code> to an empty {@link String} will result in a URL having a <code>./</code> appended: An empty
+     * <code>subPath</code> is thus something different then a <code>null</code> <code>subPath</code>.
+     * @param subPath
+     */
+    void setSubPath(String subPath);
     
     /**
      * @return <code>true</code> when the HstLink represents a container resource, like a repository binary

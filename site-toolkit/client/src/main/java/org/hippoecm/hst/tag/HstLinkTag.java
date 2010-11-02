@@ -57,8 +57,10 @@ public class HstLinkTag extends ParamContainerTag {
     protected HstLink link;
     
     protected HippoBean hippoBean;
-    
+
     protected String path;
+    
+    protected String subPath;
     
     protected String var;
     
@@ -174,6 +176,10 @@ public class HstLinkTag extends ParamContainerTag {
             return EVAL_PAGE;
         }
         
+        if(subPath != null) {
+            link.setSubPath(subPath);
+        }
+        
         String urlString = this.link.toUrlForm(reqContext , external);
         
         try {
@@ -263,6 +269,7 @@ public class HstLinkTag extends ParamContainerTag {
         hippoBean = null;
         scope = null;
         path = null;
+        subPath = null;
         link = null;
         external = false;
         skipTag = false;
@@ -308,6 +315,10 @@ public class HstLinkTag extends ParamContainerTag {
         return this.path;
     }
     
+    public String getSubPath(){
+        return this.subPath;
+    }
+    
     public boolean isExternal(){
         return this.external;
     }
@@ -326,6 +337,10 @@ public class HstLinkTag extends ParamContainerTag {
     
     public void setPath(String path) {
         this.path = path;
+    }
+    
+    public void setSubPath(String subPath) {
+        this.subPath = subPath;
     }
     
     public void setCanonical(boolean canonical) {
