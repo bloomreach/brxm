@@ -14,9 +14,10 @@
  *  limitations under the License.
  */
 
-$.namespace('Hippo.PageComposer');
+jQuery.noConflict();
+(function($) {
 
-( function() {
+    $.namespace('Hippo.PageComposer');
 
     var Main = function() {
         this.debug = false;
@@ -91,4 +92,4 @@ $.namespace('Hippo.PageComposer');
 
     Hippo.PageComposer.Main = new Main();
 
-})();
+})(jQuery);

@@ -14,9 +14,11 @@
  *  limitations under the License.
  */
 
-$.namespace('Hippo.PageComposer.UI');
+jQuery.noConflict();
+(function($) {
 
-(function() {
+    $.namespace('Hippo.PageComposer.UI');
+
     if (!Hippo.PageComposer.UI.Factory) {
         var Factory = function() {
             this.objects = {};
@@ -126,4 +128,4 @@ $.namespace('Hippo.PageComposer.UI');
 
         Hippo.PageComposer.UI.Factory = new Factory();
     }
-})();
+})(jQuery);
