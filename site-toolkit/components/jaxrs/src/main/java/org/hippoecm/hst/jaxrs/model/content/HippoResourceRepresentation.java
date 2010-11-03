@@ -13,13 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.demo.jaxrs.model;
+package org.hippoecm.hst.jaxrs.model.content;
 
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
-import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 
 /**
  * @version $Id$
@@ -28,10 +27,12 @@ import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 public class HippoResourceRepresentation extends NodeRepresentation {
 
     private String mimeType;
+    private long length;
     
     public HippoResourceRepresentation represent(HippoResourceBean bean) throws RepositoryException {
         super.represent(bean);
         mimeType = bean.getMimeType();
+        length = bean.getLength();
         return this;
     }
 
@@ -41,6 +42,14 @@ public class HippoResourceRepresentation extends NodeRepresentation {
  
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public long getLength() {
+        return length;
+    }
+
+    public void setLength(long length) {
+        this.length = length;
     }
     
 }

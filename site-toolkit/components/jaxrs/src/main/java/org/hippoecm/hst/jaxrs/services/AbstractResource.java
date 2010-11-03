@@ -204,11 +204,16 @@ public abstract class AbstractResource {
     }
     
     protected Link getSiteLink(HstRequestContext requestContext, HippoBean hippoBean) {
+        return getMountLink(requestContext, hippoBean, null);
+    }
+    
+    protected Link getMountLink(HstRequestContext requestContext, HippoBean hippoBean, String mountAliasName) {
         Link nodeLink = new Link();
         
         try {
-            String mappedMountAliasForSite = getMappedMountAliasName(requestContext, MOUNT_ALIAS_SITE);
-            nodeLink.setRel(MOUNT_ALIAS_SITE);
+            String usedMountAliasName = (mountAliasName == null ? MOUNT_ALIAS_SITE : mountAliasName);
+            String mappedMountAliasForSite = getMappedMountAliasName(requestContext, usedMountAliasName);
+            nodeLink.setRel(usedMountAliasName);
             
             HstLink link = null;
             

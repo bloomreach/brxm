@@ -101,6 +101,11 @@
             <bean class="org.hippoecm.hst.jaxrs.services.content.HippoFacetSubNavigationContentResource"/>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.ExampleImageSetContentResource"/>
+          </constructor-arg>
+        </bean>
       </list>
     </property>
   </bean>

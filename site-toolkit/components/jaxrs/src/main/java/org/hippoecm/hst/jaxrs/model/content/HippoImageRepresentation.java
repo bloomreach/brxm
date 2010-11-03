@@ -13,30 +13,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.demo.jaxrs.model;
+package org.hippoecm.hst.jaxrs.model.content;
 
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoImageBean;
-import org.hippoecm.hst.jaxrs.model.content.NodeRepresentation;
 
 /**
  * @version $Id$
  */
-@XmlRootElement(name = "imageset")
-public class ImageSetRepresentation extends NodeRepresentation {
+@XmlRootElement(name = "image")
+public class HippoImageRepresentation extends NodeRepresentation {
     
     HippoResourceRepresentation thumbnail;
     HippoResourceRepresentation picture;
     
-    public ImageSetRepresentation represent(HippoImageBean bean) throws RepositoryException {
+    public HippoImageRepresentation represent(HippoImageBean bean) throws RepositoryException {
         super.represent(bean);
         thumbnail = new HippoResourceRepresentation().represent(bean.getThumbnail());
         picture = new HippoResourceRepresentation().represent(bean.getPicture());
         return this;
     }
-
+    
     public HippoResourceRepresentation getThumbnail(){
         return thumbnail;
     }
