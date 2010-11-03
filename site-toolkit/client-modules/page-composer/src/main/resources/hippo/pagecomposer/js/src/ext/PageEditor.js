@@ -95,7 +95,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         frm.execScript('Hippo.PageComposer.Main.init(' + this.debug + ')', true);
     },
 
-
     onIframeAppLoaded : function(data) {
         var siteId = data.siteIdentifier;
         var toolkitId = data.toolkitIdentifier;
@@ -109,6 +108,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         if (pageId != this.ids.page) {
             this.stores.pageModel = this.createPageModelStore(pageId);
             this.stores.pageModel.load();
+        } else {
+            this.shareData();
         }
 
         if (!this.mainWindow) {
@@ -122,7 +123,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             }
             if (pageId != this.ids.page) {
                 var grid = Ext.getCmp('PageModelGrid');
-                grid.reconfigure(this.store.pageModel, grid.getColumnModel());
+                grid.reconfigure(this.stores.pageModel, grid.getColumnModel());
             }
         }
 
