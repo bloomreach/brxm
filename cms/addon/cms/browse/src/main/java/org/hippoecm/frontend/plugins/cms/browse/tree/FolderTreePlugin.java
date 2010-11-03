@@ -15,12 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -42,7 +47,9 @@ import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree.TreeNodeTranslat
 import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperBehavior;
 import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperSettings;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
-import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
+import org.hippoecm.frontend.plugins.standards.tree.FolderTreeNode;
+import org.hippoecm.frontend.plugins.standards.tree.icon.DefaultTreeNodeIconProvider;
+import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.util.MaxLengthNodeNameFormatter;
@@ -72,7 +79,7 @@ public class FolderTreePlugin extends RenderPlugin {
         this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
         treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
-        tree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config)) {
+        tree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config), newTreeNodeIconProvider()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -99,7 +106,7 @@ public class FolderTreePlugin extends RenderPlugin {
                     @Override
                     public void renderHead(IHeaderResponse response) {
                         response.renderOnLoadJavascript(treeHelperBehavior.getRenderString());
-                        if(workflowEnabled) {
+                        if (workflowEnabled) {
                             response.renderOnLoadJavascript(treeHelperBehavior.getUpdateString());
                         }
                     }
@@ -132,10 +139,10 @@ public class FolderTreePlugin extends RenderPlugin {
                     return null;
                 } else {
                     MarkupContainer container = super.newContextLink(parent, id, node, content);
-                    if(!workflowEnabled) {
+                    if (!workflowEnabled) {
                         container.setEnabled(false);
                     }
-                    return container; 
+                    return container;
                 }
             };
 
@@ -188,6 +195,34 @@ public class FolderTreePlugin extends RenderPlugin {
 
     protected ITreeNodeTranslator newTreeNodeTranslator(IPluginConfig config) {
         return new TreeNodeTranslator();
+    }
+
+    protected ITreeNodeIconProvider newTreeNodeIconProvider() {
+        IPluginContext context = getPluginContext();
+        IPluginConfig config = getPluginConfig();
+
+        final List<ITreeNodeIconProvider> providers = new LinkedList<ITreeNodeIconProvider>();
+        providers.add(new DefaultTreeNodeIconProvider());
+        providers.addAll(context.getServices(ITreeNodeIconProvider.class.getName(), ITreeNodeIconProvider.class));
+        if (config.containsKey("tree.icon.id")) {
+            providers.addAll(context.getServices(config.getString("tree.icon.id"), ITreeNodeIconProvider.class));
+        }
+        Collections.reverse(providers);
+
+        return new ITreeNodeIconProvider() {
+            private static final long serialVersionUID = 1L;
+
+            public ResourceReference getNodeIcon(TreeNode treeNode, ITreeState state) {
+                for (ITreeNodeIconProvider provider : providers) {
+                    ResourceReference icon = provider.getNodeIcon(treeNode, state);
+                    if (icon != null) {
+                        return icon;
+                    }
+                }
+                throw new RuntimeException("No icon could be found for tree node");
+            }
+
+        };
     }
 
     @Override
