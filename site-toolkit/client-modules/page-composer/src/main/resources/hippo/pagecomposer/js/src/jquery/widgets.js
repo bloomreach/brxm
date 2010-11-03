@@ -194,7 +194,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
         this.state = new Hippo.PageComposer.UI.DDState();
         this.items = new Hippo.Util.OrderedMap();
         this.dropIndicator = null;
-        this.draw = new Hippo.Util.Draw();
+        this.draw = new Hippo.Util.Draw({min: 3, tresholdLow: 0});
 
         this.cls.selected       = this.cls.selected + '-container';
         this.cls.activated      = this.cls.activated + '-container';
@@ -336,7 +336,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             update  : $.proxy(this.ddOnUpdate, this),
             receive : $.proxy(this.ddOnReceive, this),
             remove  : $.proxy(this.ddOnRemove, this),
-            placeholder : 'hst-placeholder',
+            tolerance : 'pointer',
             change : $.proxy(this.ddOnChange, this)
         }).disableSelection();
     },
@@ -351,6 +351,7 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
 
     afterDrag : function() {
         this.toggleNoHover();
+        this.draw.reset();
     },
 
     ddOnStart : function(event, ui) {
@@ -420,15 +421,14 @@ Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
             var getEl = function(_el) {
                 return Hippo.PageComposer.UI.Factory.getById(_el.attr(HST.ATTR.ID)).el;
             };
-
             var original = ui.item[0];
             if(prev[0] == original || (next.length > 0 && next[0] == original)) {
                 this.draw.inside(getEl(ui.item), el);
             } else {
                 if(prev.length == 0) {
-                    this.draw.above(getEl(next), el);
+                    this.draw.before(getEl(next), el);
                 } else if (next.length == 0) {
-                    this.draw.beneath(getEl(prev), el);
+                    this.draw.after(getEl(prev), el);
                 } else {
                     this.draw.between(getEl(prev), getEl(next), el);
                 }
@@ -614,7 +614,7 @@ Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         }
 
         this.data = {
-            name : ''
+            name : 'loading..'
         };
     },
 

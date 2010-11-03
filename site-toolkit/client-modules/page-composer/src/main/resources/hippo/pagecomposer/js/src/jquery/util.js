@@ -80,136 +80,109 @@ Hippo.Util.OrderedMap = Hippo.Util.Map.extend({
 });
 
 Hippo.Util.Draw = Class.extend({
-    init: function() {
+    VERTICAL : 'v',
+    HORIZONTAL : 'h',
+
+    init: function(cfg) {
+        this.thresHigh = cfg.tresholdHigh || 0.8;
+        this.thresLow = cfg.tresholdLow || 0.2;
+        this.min = cfg.min || 0;
+        this.beforeOffset = cfg.beforeOffset || 2;
+        this.afterOffset = cfg.afterOffset || 2;
+
+        this.cache = {};
     },
 
-    inside : function (source, el, thresHigh, thresLow, min){
-        thresHigh = thresHigh || 0.5;
-        thresLow = thresLow || 0.2;
-        min = min || 4;
+    _draw : function(type, source, el, pos, thresHigh, thresLow, min, orientation) {
+        var key = type + source[0].id;
+        var o = this.cache[key];
+        if(typeof o === 'undefined') {
+            thresHigh = thresHigh || this.thresHigh;
+            thresLow = thresLow || this.thresLow;
+            min = min || this.min;
 
-        var srcOffset = source.offset();
-        var srcWidth  = source.width();
-        var srcHeight = source.height();
+            var src = {
+                offset : source.offset(),
+                width  : source.outerWidth(),
+                height : source.outerHeight()
+            };
+            var ind = {
+                width  : src.width,
+                height : src.height,
+                orientation: orientation || src.height > src.width ? this.HORIZONTAL : this.VERTICAL,
+                left: src.offset.left,
+                top: src.offset.top
+            };
 
-        var elWidth = srcWidth;
-        var elHeight = srcHeight;
-
-        if(elWidth > elHeight) {
-            elWidth -= (srcWidth * thresLow);
-            elHeight -= (srcHeight * thresHigh);
-            elHeight = elHeight > min ? min : elHeight;
-        } else if(elHeight > elWidth) {
-            elWidth -= (srcWidth * thresHigh);
-            elHeight -= (srcHeight * thresLow);
-            elWidth = elWidth > min ? min : elWidth;
-        } else {
-            elWidth -= (srcWidth * thresHigh);
-            elHeight -= (srcHeight * thresHigh);
-        }
-
-        el.width(elWidth);
-        el.height(elHeight);
-        var elLeft = srcOffset.left + ((srcWidth-elWidth)/2);
-        var elTop = srcOffset.top + ((srcHeight-elHeight)/2);
-        el.offset({
-            left: elLeft,
-            top : elTop
-        });
-    },
-
-    beneath : function(source, el, thresHigh, thresLow, min) {
-        thresHigh = thresHigh || 0.5;
-        thresLow = thresLow || 0.15;
-        min = min || 4;
-
-        var srcWidth  = source.outerWidth();
-        var srcHeight = source.outerHeight();
-
-        var elWidth = srcWidth - (srcWidth * thresLow);
-        var elHeight = srcHeight - (srcHeight * thresHigh);
-        elHeight = elHeight > min ? min : elHeight;
-
-        el.width(elWidth);
-        el.height(elHeight);
-
-        var elLeft = 0, elTop = 0;
-        var srcPosition = source.position();
-        //TODO: add better test for relative
-        if(srcPosition.left == 0) {
-            var parent = source.parent();
-            var pPos = parent.position();
-            var x = 0, y = 0;
-            var prev = source.prev();
-            while(prev.length > 0) {
-                y += prev.height();
-                prev = prev.prev();
+            if(ind.orientation == this.VERTICAL) {
+                ind.width -= (ind.width  * thresLow);
+                ind.height = min > 0 ? min : ind.height - (ind.height * thresHigh);
+            } else {
+                ind.height -= (ind.height * thresLow);
+                ind.width = min > 0 ? min : ind.width - (ind.width * thresHigh);
             }
-            elLeft = pPos.left;
-            elTop = pPos.top + y + elHeight;
-        } else {
-            elLeft = srcPosition.left + ((srcWidth-elWidth)/2);
-            elTop = srcPosition.top + srcHeight + 2;
+            o = {
+                src : src,
+                ind : ind
+            };
+            pos.call(this, o);
+            this.cache[key] = o;
         }
 
+        el.width(o.ind.width);
+        el.height(o.ind.height);
         el.offset({
-            left: elLeft,
-            top : elTop
+            left: o.ind.left,
+            top : o.ind.top
         });
+
     },
 
-    above: function(source, el, thresHigh, thresLow, min) {
-        thresHigh = thresHigh || 0.5;
-        thresLow = thresLow || 0.15;
-        min = min || 4;
-
-        var srcWidth  = source.outerWidth();
-        var srcHeight = source.outerHeight();
-
-        var elWidth = srcWidth - (srcWidth * thresLow);
-        var elHeight = srcHeight - (srcHeight * thresHigh);
-        elHeight = elHeight > min ? min : elHeight;
-
-        el.width(elWidth);
-        el.height(elHeight);
-
-        var elLeft = 0, elTop = 0;
-        var srcPosition = source.position();
-        elLeft = srcPosition.left + ((srcWidth-elWidth)/2);
-        elTop = srcPosition.top - 2;
-
-        el.offset({
-            left: elLeft,
-            top : elTop
-        });
+    inside : function (source, el, thresHigh, thresLow, min, orientation){
+        this._draw('inside', source, el, function(data) {
+            if(data.ind.orientation == this.VERTICAL) {
+                data.ind.left += (data.src.width-data.ind.width) / 2;
+                data.ind.top  += (data.src.height-data.ind.height) / 2;
+            }
+        }, thresHigh, thresLow, min, orientation);
     },
 
-    between : function(prev, next, el, thresHigh, thresLow, min) {
-        thresHigh = thresHigh || 0.5;
-        thresLow = thresLow || 0.15;
-        min = min || 4;
+    after : function(source, el, thresHigh, thresLow, min, orientation) {
+        this._draw('after', source, el, function(data) {
+            if(data.ind.orientation == this.VERTICAL) {
+                data.ind.left += (data.src.width-data.ind.width) / 2;
+                data.ind.top += data.src.height + this.afterOffset;
+            }
+        }, thresHigh, thresLow, min, orientation);
+    },
 
-        var srcWidth  = prev.outerWidth();
-        var srcHeight = prev.outerHeight();
+    before : function(source, el, thresHigh, thresLow, min, orientation) {
+        this._draw('before', source, el, function(data) {
+            if(data.ind.orientation == this.VERTICAL) {
+                data.ind.left += (data.src.width - data.ind.width) / 2;
+                data.ind.top -= this.beforeOffset;
+            }
+        }, thresHigh, thresLow, min, orientation);
+    },
 
-        var elWidth = srcWidth - (srcWidth * thresLow);
-        var elHeight = srcHeight - (srcHeight * thresHigh);
-        elHeight = elHeight > min ? min : elHeight;
+    between : function(prev, next, el, thresHigh, thresLow, min, orientation) {
+        //take prev as source
+        this._draw('between', prev, el, function(data) {
+            //calc position
+            var prevPosition = prev.position();
+            var nextPosition = next.position();
 
-        el.width(elWidth);
-        el.height(elHeight);
+            if(data.ind.orientation == this.VERTICAL) {
+                data.ind.left = prevPosition.left + ((data.src.width - data.ind.width)/2);
+                var prevBottom = data.src.offset.top + data.src.height;
+                var diff = nextPosition.top - prevBottom;
+                data.ind.top = prevBottom + (diff/2) - (data.ind.height/2);
+            }
 
-        var elLeft = 0, elTop = 0;
-        var prevPosition = prev.position();
-        var nextPosition = next.position();
-        elLeft = prevPosition.left + ((srcWidth-elWidth)/2);
-        
-        var half = (nextPosition.top - (prevPosition.top + srcHeight))/2; 
-        elTop = nextPosition.top  - half;
+        }, thresHigh, thresLow, min, orientation);
+    },
 
-        el.offset({
-            left: elLeft,
-            top : elTop
-        });
+    reset : function() {
+        this.cache = {};
     }
 });
