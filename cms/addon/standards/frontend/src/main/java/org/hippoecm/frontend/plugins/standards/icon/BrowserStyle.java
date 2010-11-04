@@ -22,6 +22,8 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.hippoecm.frontend.service.IconSize;
 
 public final class BrowserStyle {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private BrowserStyle() {
     }

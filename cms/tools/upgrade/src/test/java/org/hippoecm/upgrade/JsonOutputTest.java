@@ -22,6 +22,8 @@ import org.hippoecm.upgrade.Value.ValueType;
 import org.junit.Test;
 
 public class JsonOutputTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     static Value[] newString(String val) {
         return new Value[] { new Value(val, ValueType.UNKNOWN) };

@@ -34,6 +34,8 @@ import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
  * Generic image manipulation utility methods.
  */
 public class ImageUtils {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Prevent instantiation

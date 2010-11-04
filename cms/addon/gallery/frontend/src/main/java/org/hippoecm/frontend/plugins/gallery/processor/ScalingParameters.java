@@ -22,6 +22,8 @@ import java.io.Serializable;
  * upscaling or not.
  */
 public class ScalingParameters implements Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

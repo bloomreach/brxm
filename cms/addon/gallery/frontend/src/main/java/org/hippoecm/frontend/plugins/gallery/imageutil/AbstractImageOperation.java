@@ -24,6 +24,8 @@ import javax.imageio.ImageWriter;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 
 public abstract class AbstractImageOperation {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public AbstractImageOperation() {
         // do nothing

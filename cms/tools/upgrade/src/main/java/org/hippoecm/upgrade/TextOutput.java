@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 class TextOutput extends AbstractOutput {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public TextOutput(PrintStream stream) {
         super(stream);

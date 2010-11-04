@@ -22,8 +22,9 @@ import java.util.Set;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-
 class JsonOutput extends AbstractOutput {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
     
     JsonOutput() {
     }

@@ -16,6 +16,8 @@
 package org.hippoecm.repository.gallery;
 
 public class HippoGalleryNodeType {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public static final String IMAGE = "hippogallery:image";
     public static final String IMAGE_WIDTH = "hippogallery:width";
@@ -26,5 +28,4 @@ public class HippoGalleryNodeType {
     public static final String IMAGE_SET_DESCRIPTION = "hippogallery:description";
     public static final String IMAGE_SET_THUMBNAIL = "hippogallery:thumbnail";
     public static final String IMAGE_SET_ORIGINAL = "hippogallery:original";
-
 }
