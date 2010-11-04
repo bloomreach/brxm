@@ -15,43 +15,31 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.Node;
-
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
-import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
-import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
+import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentListingPlugin extends AbstractListingPlugin implements IExpandableCollapsable {
+import javax.jcr.Node;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DocumentListingPlugin extends ExpandCollapseListingPlugin {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -60,58 +48,19 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
     static final Logger log = LoggerFactory.getLogger(DocumentListingPlugin.class);
 
     private static final String DOCUMENT_LISTING_CSS = "DocumentListingPlugin.css";
-    private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";
-
-    boolean isExpanded = false;
-    private DataTableBehavior datatableBehavior;
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(BrowserStyle.getStyleSheet());
 
-        final ExpandCollapseLink<String> link = new ExpandCollapseLink<String>("toggleFullscreen");
-        link.add(new Image("toggleFullscreenImage", TOGGLE_FULLSCREEN_IMG));
+        setClassName("hippo-list-documents");
 
-        WebMarkupContainer c = new WebMarkupContainer("toggleContainer") {
-
-            @Override
-            public boolean isVisible() {
-                return link.isVisible();
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return link.isEnabled();
-            }
-        };
-
-        c.add(link);
-        add(c);
-    }
-
-    public void collapse() {
-        isExpanded = false;
-        onModelChanged();
-    }
-
-    public boolean isSupported() {
-        return getPluginConfig().getAsBoolean("expand.collapse.supported", false);
-    }
-
-    public void expand() {
-        isExpanded = true;
-        onModelChanged();
     }
 
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         container.getHeaderResponse().renderCSSReference(new ResourceReference(DocumentListingPlugin.class, DOCUMENT_LISTING_CSS));
-    }
-
-    @Override
-    protected TableDefinition<Node> getTableDefinition() {
-        return new TableDefinition<Node>(isExpanded ? getExpandedColumns() : getCollapsedColumns());
     }
 
     protected List<ListColumn<Node>> getCollapsedColumns() {
@@ -149,24 +98,9 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements IExp
     }
 
     @Override
-    protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
-            ListPagingDefinition pagingDefinition) {
-
-        ListDataTable<Node> datatable = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
-                triState, pagingDefinition);
+    protected WidgetBehavior getBehavior() {
         DataTableSettings settings = new DataTableSettings();
         settings.setAutoWidthClassName("doclisting-name");
-        datatable.add(datatableBehavior = new DataTableBehavior(settings));
-        return datatable;
-    }
-
-    @Override
-    protected void onSelectionChanged(IModel<Node> model) {
-        super.onSelectionChanged(model);
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if(target != null) {
-            target.appendJavascript(datatableBehavior.getUpdateScript());
-        }
+        return new DataTableBehavior(settings);
     }
 }
