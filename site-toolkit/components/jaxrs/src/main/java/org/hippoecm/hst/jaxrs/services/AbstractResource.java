@@ -16,21 +16,17 @@
 package org.hippoecm.hst.jaxrs.services;
 
 import java.util.List;
+import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
-import org.hippoecm.hst.content.beans.ContentNodeBinder;
-import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -41,9 +37,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.model.content.Link;
-import org.hippoecm.hst.jaxrs.model.content.NodeProperty;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
-import org.hippoecm.hst.jaxrs.util.NodePropertyUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.slf4j.Logger;
@@ -63,11 +57,6 @@ public abstract class AbstractResource {
     public static final String MOUNT_ALIAS_SITE = "site";
     public static final String MOUNT_ALIAS_GALLERY = "gallery";
     public static final String MOUNT_ALIAS_ASSETS = "assets";
-    
-    public static final String MOUNT_ALIAS_REST_PROP_NAME = "hst:restMountAlias";
-    public static final String MOUNT_ALIAS_SITE_PROP_NAME = "hst:siteMountAlias";
-    public static final String MOUNT_ALIAS_GALLERY_PROP_NAME = "hst:galleryMountAlias";
-    public static final String MOUNT_ALIAS_ASSETS_PROP_NAME = "hst:assetsMountAlias";
     
     private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;
@@ -220,7 +209,7 @@ public abstract class AbstractResource {
             if (mappedMountAliasForSite != null) {
                 link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext, mappedMountAliasForSite);
             } else {
-                link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
+                link = requestContext.getHstLinkCreator().create(hippoBean, requestContext);
             }
             
             if (link != null) {
@@ -248,59 +237,23 @@ public abstract class AbstractResource {
     
     protected String getMappedMountAliasName(HstRequestContext requestContext, String mountAlias) {
         SiteMount curMount = requestContext.getResolvedSiteMount().getSiteMount();
-        String mappedAlias = curMount.getAlias();
         
-        if (MOUNT_ALIAS_SITE.equals(mountAlias)) {
-            String propValue = curMount.getProperty(MOUNT_ALIAS_SITE_PROP_NAME);
-            
-            if (!StringUtils.isEmpty(propValue)) {
-                return propValue;
-            }
-        } else if (MOUNT_ALIAS_GALLERY.equals(mountAlias)) {
-            String propValue = curMount.getProperty(MOUNT_ALIAS_GALLERY_PROP_NAME);
-            
-            if (!StringUtils.isEmpty(propValue)) {
-                return propValue;
-            }
-        } else if (MOUNT_ALIAS_ASSETS.equals(mountAlias)) {
-            String propValue = curMount.getProperty(MOUNT_ALIAS_ASSETS_PROP_NAME);
-            
-            if (!StringUtils.isEmpty(propValue)) {
-                return propValue;
-            }
+        if (curMount == null) {
+            return null;
         }
+        
+        Map<String, String> mountProps = curMount.getMountProperties();
+        
+        if (mountProps == null) {
+            return null;
+        }
+        
+        String mappedAlias = mountProps.get(mountAlias);
+        
+        if (mappedAlias == null) {
+            mappedAlias = curMount.getAlias();
+        }
+        
         return mappedAlias;
-    }
-
-    /* TODO: do we still want/need this (ate)? */
-    protected void updateNodeProperties(HstRequestContext requestContext, HippoBean hippoBean, final List<NodeProperty> nodeProps) {
-        try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            wpm.update(hippoBean, new ContentNodeBinder() {
-                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
-                    try {
-                        if (nodeProps != null && !nodeProps.isEmpty()) {
-                            for (NodeProperty nodeProp : nodeProps) {
-                                NodePropertyUtils.setProperty(node, nodeProp);
-                            }
-                            return true;
-                        }
-                    } catch (RepositoryException e) {
-                        throw new ContentNodeBindingException(e);
-                    }
-                    
-                    return false;
-                }
-            });
-            wpm.save();
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to save content bean.", e);
-            } else {
-                log.warn("Failed to save content bean. {}", e.toString());
-            }
-            
-            throw new WebApplicationException(e);
-        }
     }
 }

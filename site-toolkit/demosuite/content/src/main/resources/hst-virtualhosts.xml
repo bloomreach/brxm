@@ -115,13 +115,13 @@
               <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:siteMountAlias" sv:type="String">
+              <sv:property sv:name="hst:mountsite" sv:type="String">
                 <sv:value>hst:root</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:galleryMountAlias" sv:type="String">
+              <sv:property sv:name="hst:mountgallery" sv:type="String">
                 <sv:value>restapi-gallery</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:assetsMountAlias" sv:type="String">
+              <sv:property sv:name="hst:mountassets" sv:type="String">
                 <sv:value>restapi-assets</sv:value>
               </sv:property>
               <sv:node sv:name="gallery">
@@ -229,13 +229,13 @@
                 <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:siteMountAlias" sv:type="String">
+                <sv:property sv:name="hst:mountsite" sv:type="String">
                   <sv:value>preview</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:galleryMountAlias" sv:type="String">
+                <sv:property sv:name="hst:mountgallery" sv:type="String">
                   <sv:value>restapi-gallery</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:assetsMountAlias" sv:type="String">
+                <sv:property sv:name="hst:mountassets" sv:type="String">
                   <sv:value>restapi-assets</sv:value>
                 </sv:property>
                 <sv:node sv:name="gallery">
@@ -421,13 +421,13 @@
               <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:siteMountAlias" sv:type="String">
+              <sv:property sv:name="hst:mountsite" sv:type="String">
                 <sv:value>hst:root</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:galleryMountAlias" sv:type="String">
+              <sv:property sv:name="hst:mountgallery" sv:type="String">
                 <sv:value>restapi-gallery</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:assetsMountAlias" sv:type="String">
+              <sv:property sv:name="hst:mountassets" sv:type="String">
                 <sv:value>restapi-assets</sv:value>
               </sv:property>
               <sv:node sv:name="gallery">
@@ -535,13 +535,13 @@
                 <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:siteMountAlias" sv:type="String">
+                <sv:property sv:name="hst:mountsite" sv:type="String">
                   <sv:value>preview</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:galleryMountAlias" sv:type="String">
+                <sv:property sv:name="hst:mountgallery" sv:type="String">
                   <sv:value>restapi-gallery</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:assetsMountAlias" sv:type="String">
+                <sv:property sv:name="hst:mountassets" sv:type="String">
                   <sv:value>restapi-assets</sv:value>
                 </sv:property>
                 <sv:node sv:name="gallery">

@@ -83,9 +83,21 @@
     </dependency>
     
     <!-- STAX API -->
+    
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>stax</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <!-- JAXB API -->
