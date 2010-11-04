@@ -16,18 +16,22 @@
 package org.hippoecm.hst.jaxrs.services.content;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.MatrixParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.hippoecm.hst.jaxrs.model.content.HippoResourceRepresentation;
 
 /**
@@ -76,4 +80,12 @@ public class ExampleImageSetContentResource extends BaseImageSetContentResource 
         super.updateChildResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:picture", mimeType, pictureResourceStream);
     }
     
+    @POST
+    @Path("/picture/content/")
+    @Consumes("multipart/form-data")
+    public void updatePictureImageResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
+            List<Attachment> attachments) {
+        super.updateChildResourceContentByAttachments(servletRequest, servletResponse, uriInfo, "hippogallery:picture", mimeType, attachments);
+    }
 }

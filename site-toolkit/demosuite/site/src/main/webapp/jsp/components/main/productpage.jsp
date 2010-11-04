@@ -64,18 +64,24 @@
       &nbsp;
       <a id="<hst:namespace/>tagsCancel" href="#" style="DISPLAY: none">Cancel</a>
   </p>
+</form>
   <p>
-    Image:<br/>
+    Image:
+    <br/>
     <c:if test="${not empty document.image}">
       <img src="<hst:link hippobean="${document.image.picture}"/>"/>
     </c:if>
+    <br/>
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file"/>
+      <input type="button" id="<hst:namespace/>uploadButton" value="Upload" />
+    </form>
   </p>
-</form>
 </div>
 
 <script language="javascript"> 
  
-YUI().use('io', 'json', 'node',
+YUI().use('io-upload-iframe', 'json', 'node',
 function(Y) {
 
   var tagsLabel = Y.one("#<hst:namespace/>tagsLabel");
@@ -83,7 +89,10 @@ function(Y) {
   var tagsEditLink = Y.one("#<hst:namespace/>tagsEdit");
   var tagsSaveLink = Y.one("#<hst:namespace/>tagsSave");
   var tagsCancelLink = Y.one("#<hst:namespace/>tagsCancel");
-
+  
+  var uploadForm = Y.one("#uploadForm");
+  var uploadButton = Y.one("#<hst:namespace/>uploadButton");
+  
   var editTags = function(e) {
     tagsText.set("value", tagsLabel.get("text"));
     tagsLabel.setStyle("display", "none");
@@ -135,7 +144,7 @@ function(Y) {
     data["price"] = ${document.price};
     data["tags"] = tags;
     
-    var uri = "${hstRequest.contextPath}${hstRequest.requestContext.resolvedSiteMount.resolvedMountPath}/restapi/${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}";
+    var uri = "${hstRequest.contextPath}${hstRequest.requestContext.resolvedSiteMount.resolvedMountPath}/restapi/${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}/";
     var cfg = { 
           on: { complete: onSaveComplete },
           arguments: {},
@@ -168,6 +177,25 @@ function(Y) {
     
     e.halt();
   };
+
+  var onUploadImageComplete = function(id, o, args) {
+  };
+  
+  var uploadImageForm = function(e) {
+    var cfg = {
+          on: { complete: onUploadImageComplete },
+          method: 'POST',
+		  form: {
+		    id: uploadForm,
+		    upload: true
+          }
+    };
+    
+    var uri = '/site/preview/restapi/gallery/images/nopic.gif./picture/content/';
+    var request = Y.io(uri, cfg);
+    
+    e.halt();
+  };
   
   <c:if test="${isPreview}">
   tagsEditLink.setStyle("display", "");
@@ -176,6 +204,8 @@ function(Y) {
   tagsEditLink.on("click", editTags);
   tagsSaveLink.on("click", saveTags);
   tagsCancelLink.on("click", cancelEditingTags);
+
+  uploadButton.on("click", uploadImageForm);
   
 });
 

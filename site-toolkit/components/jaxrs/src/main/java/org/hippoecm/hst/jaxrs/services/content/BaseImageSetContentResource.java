@@ -18,14 +18,17 @@ package org.hippoecm.hst.jaxrs.services.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.MatrixParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -37,6 +40,7 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.hippoecm.hst.content.beans.standard.HippoImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -186,6 +190,42 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             }
             
             throw new WebApplicationException(e);
+        }
+    }
+    
+    @POST
+    @Path("/resource/{childResourceName}/content")
+    @Consumes("multipart/form-data")
+    public void updateChildResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("childResourceName") String childResourceName,
+            @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
+            List<Attachment> attachments) {
+        if (attachments == null || attachments.isEmpty()) {
+            return;
+        }
+        
+        Attachment attachment = attachments.get(0);
+        String attachmentMimeType = attachment.getContentType().toString();
+        
+        if (attachmentMimeType == null) {
+            attachmentMimeType = mimeType;
+        }
+        
+        InputStream attachmentStream = null;
+        
+        try {
+            attachmentStream = attachment.getDataHandler().getInputStream();
+            updateChildResourceContent(servletRequest, servletResponse, uriInfo, childResourceName, attachmentMimeType, attachmentStream);
+        } catch (IOException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content stream.", e);
+            } else {
+                log.warn("Failed to retrieve content stream. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        } finally {
+            IOUtils.closeQuietly(attachmentStream);
         }
     }
     
