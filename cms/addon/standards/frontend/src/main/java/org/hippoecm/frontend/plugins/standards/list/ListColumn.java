@@ -55,12 +55,13 @@ public class ListColumn<T> extends AbstractColumn<T> {
     private String cssClass;
 
     private IPluginContext context;
-    private List<IObserver> observers;
+    private List<IObserver<?>> observers;
 
     public ListColumn(IModel<String> displayModel, String sortProperty) {
         super(displayModel, sortProperty);
     }
 
+    @Override
     public String getCssClass() {
         return cssClass;
     }
@@ -97,6 +98,7 @@ public class ListColumn<T> extends AbstractColumn<T> {
         this.attributeModifier = attributeModifier;
     }
 
+    @SuppressWarnings("unchecked")
     @Deprecated
     public IListAttributeModifier<T> getAttributeModifier() {
         if (attributeModifier instanceof IListAttributeModifier) {
@@ -107,7 +109,7 @@ public class ListColumn<T> extends AbstractColumn<T> {
 
     void init(IPluginContext context) {
         this.context = context;
-        this.observers = new LinkedList<IObserver>();
+        this.observers = new LinkedList<IObserver<?>>();
     }
 
     void destroy() {

@@ -125,7 +125,7 @@ public abstract class ExpandCollapseListingPlugin extends AbstractListingPlugin 
         return datatable;
     }
 
-    protected final ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
+    protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
                                                          ISortableDataProvider<Node> dataProvider, ListDataTable.TableSelectionListener<Node> selectionListener, boolean triState,
                                                          ListPagingDefinition pagingDefinition) {
         return super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
