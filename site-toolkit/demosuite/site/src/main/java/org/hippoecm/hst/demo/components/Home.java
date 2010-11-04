@@ -21,7 +21,6 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.linking.HstLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +33,13 @@ public class Home extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         
         try {
-            // example of REST links for a hippo:resource
+            // example of REST links for a hippo:resource, also see home.jsp / home.ftl
+            
+            // HstLink link2 = request.getRequestContext().getHstLinkCreator().create(image.getNode(), request.getRequestContext(), request.getRequestContext().getResolvedSiteMount().getSiteMount().getAlias());
+            
+            
             HippoBean image = (HippoBean) this.getObjectBeanManager(request).getObject("/content/gallery/images/screenshot_cms_small.jpg");
-            HstLink link = request.getRequestContext().getHstLinkCreator().create(image.getNode(), request.getRequestContext(), "restapi-gallery");
-            request.setAttribute("restLink",link);
+            request.setAttribute("image",image);
             
         } catch (ObjectBeanManagerException e) {
             // TODO Auto-generated catch block

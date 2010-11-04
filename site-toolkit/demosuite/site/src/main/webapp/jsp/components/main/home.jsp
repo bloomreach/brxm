@@ -36,9 +36,10 @@
 
    <hr/>
   <p>Dummy Example REST links </p>
-  <hst:link var="imageset" link="${restLink}"/>
-  <hst:link var="thumbnail" link="${restLink}" subPath="thumbnail" />
-  <hst:link var="picture" link="${restLink}"  subPath="picture"/>
+  
+  <hst:link var="imageset" hippobean="${image}"  mount="restapi-gallery"/>
+  <hst:link var="thumbnail" hippobean="${image}" mount="restapi-gallery" subPath="thumbnail" />
+  <hst:link var="picture" hippobean="${image}"  mount="restapi-gallery"  subPath="picture"/>
   
   <p> ImageSet : <a target="_blank" href="${imageset}">${imageset}</a></p>
   <p> Thumbnail : <a target="_blank" href="${thumbnail}">${thumbnail}</a></p>
