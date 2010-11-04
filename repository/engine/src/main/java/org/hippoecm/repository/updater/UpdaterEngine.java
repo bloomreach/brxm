@@ -392,9 +392,9 @@ public class UpdaterEngine {
             for (ModuleRegistration moduleRegistration : modules) {
                 for (ItemVisitor visitor : moduleRegistration.visitors) {
                     if ("NodeTypeVisitor[hippo:derived]".equals(visitor.toString())) {
-			// in case of migrating the hippo namespace the following line is relevant:
-			((org.hippoecm.repository.impl.SessionDecorator)session).postDerivedData(false);
-	            }
+                        // in case of migrating the hippo namespace the following line is relevant:
+                        ((org.hippoecm.repository.impl.SessionDecorator)session).postDerivedData(false);
+                    }
                     if (visitor instanceof NamespaceVisitorImpl) {
                         NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
                         if ("hippo".equals(namespaceVisitor.namespace)) {

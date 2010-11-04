@@ -40,34 +40,34 @@ public class HierarchyResolverImpl implements HierarchyResolver {
     private final Logger logger = LoggerFactory.getLogger(HierarchyResolverImpl.class);
 
     private abstract static class Comparison {
-	    Comparison() {
-	    }
-	    abstract boolean compare(String value);
+        Comparison() {
+        }
+        abstract boolean compare(String value);
     }
     private static class EqualsComparison extends Comparison {
-	    String value;
-	    EqualsComparison(String value) {
-                this.value = value;
-	    }
-	    boolean compare(String value) {
-                return this.value.equals(value);
-	    }
+        String value;
+        EqualsComparison(String value) {
+            this.value = value;
+        }
+        boolean compare(String value) {
+            return this.value.equals(value);
+        }
     }
     private static class UnequalsComparison extends Comparison {
-	    String value;
-	    UnequalsComparison(String value) {
-                this.value = value;
-	    }
-	    boolean compare(String value) {
-                return ! this.value.equals(value);
-	    }
+        String value;
+        UnequalsComparison(String value) {
+            this.value = value;
+        }
+        boolean compare(String value) {
+            return ! this.value.equals(value);
+        }
     }
     private static class ExistsComparison extends Comparison {
-	    ExistsComparison() {
-	    }
-	    boolean compare(String value) {
-		return value != null;
-	    }
+        ExistsComparison() {
+        }
+        boolean compare(String value) {
+            return value != null;
+        }
     }
     public Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
       throws InvalidItemStateException, RepositoryException {
@@ -128,7 +128,7 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                 String[] conditionElts = relIndex.split(",");
                 for(int conditionIdx=0; conditionIdx<conditionElts.length; conditionIdx++) {
                     int pos;
-		    pos = conditionElts[conditionIdx].indexOf("!=");
+                    pos = conditionElts[conditionIdx].indexOf("!=");
                     if(pos >= 0) {
                         String key = conditionElts[conditionIdx].substring(0,pos);
                         if (key.startsWith("@")) {
@@ -144,9 +144,9 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         } else {
                             conditions.put(key, new UnequalsComparison(value));
                         }
-			continue;
+                        continue;
                     }
-		    pos = conditionElts[conditionIdx].indexOf("=");
+                    pos = conditionElts[conditionIdx].indexOf("=");
                     if(pos >= 0) {
                         String key = conditionElts[conditionIdx].substring(0,pos);
                         if (key.startsWith("@")) {
@@ -162,7 +162,7 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         } else {
                             conditions.put(key, new EqualsComparison(value));
                         }
-			continue;
+                        continue;
                     }
                     if(conditionElts[conditionIdx].equals("{_similar}")) {
                         Node parent = ancestor.getParent();
@@ -217,19 +217,19 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         logger.debug("considering for conditional path "+relPath+" item "+child.getPath());
                     }
                     for(Map.Entry<String,Comparison> condition: conditions.entrySet()) {
-			String childValue = null;
-		        try {
+                        String childValue = null;
+                        try {
                             if(child.hasProperty(condition.getKey())) {
-		                childValue = child.getProperty(condition.getKey()).getString();
-			    }
-			} catch(ValueFormatException ex) {
-			    child = null;
-			    break;
-			}
-			if(!condition.getValue().compare(childValue)) {
-		            child = null;
-			    break;
-			}
+                                childValue = child.getProperty(condition.getKey()).getString();
+                            }
+                        } catch(ValueFormatException ex) {
+                            child = null;
+                            break;
+                        }
+                        if(!condition.getValue().compare(childValue)) {
+                            child = null;
+                            break;
+                        }
                     }
                     if(child != null)
                         break;

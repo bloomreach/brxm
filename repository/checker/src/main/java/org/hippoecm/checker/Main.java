@@ -38,7 +38,7 @@ public class Main {
     public static void main(String[] args) {
         String location = args[0];
         String driver = "org.gjt.mm.mysql.Driver"; // alternative: com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource
-	String indices = args[1];
+        String indices = args[1];
         try {
             Traverse traverse = new Traverse();
             Connection connection = getConnection(driver, location, null, null);

@@ -132,14 +132,14 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                     iter.remove();
                 }
             }
-	    /*
+            /*
             for(UUID child : children) {
                 NodeId childNodeId = NodeId.valueOf(child.toString());
                 if(!bundle.getChildNodeEntries().contains(childNodeId)) {
                     bundle.addChildNodeEntry("lost", nodeId);
                 }
             }
-	    */
+            */
             ByteArrayOutputStream ostream = new ByteArrayOutputStream();
             bundleBinding.writeBundle(new DataOutputStream(ostream), bundle);
             String bundleUpdateSQL = "update " + schemaObjectPrefix + "BUNDLE SET BUNDLE_DATA = ? WHERE NODE_ID = ?";
@@ -186,7 +186,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                     for (PropertyEntry entry : (Collection<PropertyEntry>)bundle.getPropertyEntries()) {
                         if (entry.getType() == PropertyType.REFERENCE) {
                             for (InternalValue value : entry.getValues()) {
-				references.add(create(value.getNodeId()));
+                                references.add(create(value.getNodeId()));
                             }
                         }
                     }
