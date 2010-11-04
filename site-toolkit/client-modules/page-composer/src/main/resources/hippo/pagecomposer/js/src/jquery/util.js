@@ -187,15 +187,13 @@ jQuery.noConflict();
         between : function(prev, next, el, thresHigh, thresLow, min, orientation) {
             //take prev as source
             this._draw('between', prev, el, function(data) {
-                //calc position
-                var prevPosition = prev.position();
+                //TODO: maybe use offset instead
                 var nextPosition = next.position();
 
                 if(data.ind.orientation == this.VERTICAL) {
-                    data.ind.left = prevPosition.left + ((data.src.width - data.ind.width)/2);
-                    var prevBottom = data.src.offset.top + data.src.height;
-                    var diff = nextPosition.top - prevBottom;
-                    data.ind.top = prevBottom + (diff/2) - (data.ind.height/2);
+                    data.ind.left += (data.src.width - data.ind.width) / 2;
+                    var bottom = data.ind.top + data.src.height;
+                    data.ind.top = bottom + ((nextPosition.top - bottom) / 2) - (data.ind.height/2);
                 }
 
             }, thresHigh, thresLow, min, orientation);
