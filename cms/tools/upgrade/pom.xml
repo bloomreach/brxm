@@ -58,7 +58,7 @@
       <artifactId>jcl-over-slf4j</artifactId>
       <scope>compile</scope>
     </dependency>
-	
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

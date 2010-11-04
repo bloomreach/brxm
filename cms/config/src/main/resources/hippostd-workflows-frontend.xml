@@ -16,7 +16,7 @@
 -->
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-	 xmlns:h="http://www.onehippo.org/jcr/xmlimport"
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport"
          sv:name="internal" h:merge="combine">
   <sv:node sv:name="folder" h:merge="combine">
     <sv:node sv:name="hipposys:config" h:merge="combine">
