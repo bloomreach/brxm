@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -113,6 +114,11 @@ import org.hippoecm.hst.core.request.ResolvedSiteMount;
  */
 public interface SiteMount {
 
+    /**
+     * the predefined property name prefix to indicates mount aliases
+     */
+    static final String PROPERTY_NAME_MOUNT_PREFIX = "hst:mount";
+    
     /**
      * @return The name of this SiteMount item
      */
@@ -362,4 +368,10 @@ public interface SiteMount {
      */
     String getProperty(String name);
     
+    /**
+     * Returns all the properties that start with {@value #PROPERTY_NAME_MOUNT_PREFIX} and have value of type String. This map has as key the 
+     * propertyname after {@value #PROPERTY_NAME_MOUNT_PREFIX}
+     * @return all the mount properties
+     */
+    Map<String, String> getMountProperties();
 }

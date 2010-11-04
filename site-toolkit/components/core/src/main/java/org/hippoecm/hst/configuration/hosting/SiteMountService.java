@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -25,6 +26,7 @@ public class SiteMountService implements SiteMount {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SiteMountService.class);
+    
     
     private static final String DEFAULT_TYPE = "live";
     /**
@@ -577,6 +579,18 @@ public class SiteMountService implements SiteMount {
             return o.toString();
         }
         return null;
+    }
+    
+    public Map<String, String> getMountProperties() {
+        Map<String, String> mountProperties = new HashMap<String, String>();
+        for(Entry<String, Object> entry : allProperties.entrySet()) {
+            if(entry.getValue() instanceof String) {
+                if(entry.getKey().startsWith(PROPERTY_NAME_MOUNT_PREFIX)) {
+                    mountProperties.put(entry.getKey().substring(PROPERTY_NAME_MOUNT_PREFIX.length()), (String)entry.getValue());
+                }
+            }
+        }
+        return mountProperties;
     }
 
 
