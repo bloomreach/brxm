@@ -255,12 +255,6 @@ public abstract class AbstractResource {
             
             if (!StringUtils.isEmpty(propValue)) {
                 return propValue;
-            } else {
-                SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
-                
-                if (parentMount != null) {
-                    return parentMount.getAlias();
-                }
             }
         } else if (MOUNT_ALIAS_GALLERY.equals(mountAlias)) {
             String propValue = curMount.getProperty(MOUNT_ALIAS_GALLERY_PROP_NAME);

@@ -79,6 +79,8 @@
   </p>
 </div>
 
+test: <hst:link path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"/>
+
 <script language="javascript"> 
  
 YUI().use('io-upload-iframe', 'json', 'node',
@@ -143,8 +145,8 @@ function(Y) {
     data["product"] = "${document.product}";
     data["price"] = ${document.price};
     data["tags"] = tags;
-    
-    var uri = "${hstRequest.contextPath}${hstRequest.requestContext.resolvedSiteMount.resolvedMountPath}/restapi/${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}/";
+
+    var uri = '<hst:link path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"/>';
     var cfg = { 
           on: { complete: onSaveComplete },
           arguments: {},
@@ -190,8 +192,9 @@ function(Y) {
 		    upload: true
           }
     };
-    
+
     var uri = '/site/preview/restapi/gallery/images/nopic.gif./picture/content/';
+    //var uri = '<hst:link hippobean="${document.image}" mount="restapi" subPath="picture/content" />';
     var request = Y.io(uri, cfg);
     
     e.halt();
