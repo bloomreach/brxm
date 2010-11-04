@@ -664,7 +664,7 @@ jQuery.noConflict();
 
         onClick : function() {
             if(this.isTemporary) {
-                document.location.href = '';
+                sendMessage({}, 'refresh');
             } else {
                 sendMessage({element: this.element}, 'onclick');
             }

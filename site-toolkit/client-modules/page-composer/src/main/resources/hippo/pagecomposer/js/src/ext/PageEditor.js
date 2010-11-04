@@ -51,11 +51,24 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 {
                     id: 'Iframe',
                     xtype: 'iframepanel',
-                    loadMask: true,
+//                    loadMask: true,
                     defaultSrc: this.iframeUrl,
                     collapsible: false,
                     disableMessaging: false,
-                    tbar: ['->', {text: 'Refresh'}, {text: 'Logout'}, '-'],
+                    tbar: [
+                        '->',
+                        {
+                            text: 'Refresh',
+                            listeners: {
+                                'click' : {
+                                    fn: this.refreshIframe,
+                                    scope: this
+                                }
+                            }
+                        },
+                        {text: 'Logout'},
+                        '-'
+                    ],
                     listeners: {
                         'message': {
                             fn: this.handleFrameMessages,
@@ -63,6 +76,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         },
                         'documentloaded' : {
                             fn: function(frm) {
+                                //Only called after the first load. Every refresh within a running iframe result in
+                                //a domready event only
                                 if (Ext.isSafari || Ext.isChrome) {
                                     this.onIframeDOMReady(frm);
                                 }
@@ -71,6 +86,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         },
                         'domready' : {
                             fn: function(frm) {
+                                //Safari && Chrome report a DOM ready event, but js is not yet fully loaded, resulting
+                                //in 'undefined' errors.
                                 if (Ext.isGecko) {
                                     this.onIframeDOMReady(frm);
                                 }
@@ -88,6 +105,11 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             ]
         });
 
+    },
+
+    refreshIframe : function() {
+        var iframe = Ext.getCmp('Iframe');
+        iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
 
     onIframeDOMReady : function(frm) {
@@ -445,6 +467,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                 this.removeByElement(msg.data.element);
             } else if (msg.tag == 'onappload') {
                 this.onIframeAppLoaded(msg.data);
+            } else if (msg.tag == 'refresh') {
+                this.refreshIframe();
             }
         } catch(e) {
             console.error(e);
