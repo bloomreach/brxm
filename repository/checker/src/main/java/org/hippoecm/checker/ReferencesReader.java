@@ -32,12 +32,12 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
     private final static String SVN_ID = "$Id$";
 
     ReferencesReader(Connection connection) {
-        super(connection, "default_");
+        super(connection, "DEFAULT_");
     }
 
     public void accept(Visitor<NodeReference> visitor) {
         try {
-            accept(visitor, "default_");
+            accept(visitor, "DEFAULT_");
         } catch (SQLException ex) {
             System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
             ex.printStackTrace(System.err);
@@ -78,7 +78,7 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
 
     public int getSize() {
         try {
-            return getSize("default_");
+            return getSize("DEFAULT_");
         } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;

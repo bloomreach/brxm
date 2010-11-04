@@ -43,14 +43,14 @@ public class Main {
             Traverse traverse = new Traverse();
             Connection connection = getConnection(driver, location, null, null);
             {
-                BundleReader bundleReader = new BundleReader(connection, "version_", true);
+                BundleReader bundleReader = new BundleReader(connection, "VERSION_", true);
                 int size = bundleReader.getSize();
                 System.err.println("Traversing through "+size+" bundles");
                 Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
                 traverse.checkVersionBundles(iterable);
             }
             {
-                BundleReader bundleReader = new BundleReader(connection, "default_", false);
+                BundleReader bundleReader = new BundleReader(connection, "DEFAULT_", false);
                 int size = bundleReader.getSize();
                 System.err.println("Traversing through "+size+" bundles");
                 Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
