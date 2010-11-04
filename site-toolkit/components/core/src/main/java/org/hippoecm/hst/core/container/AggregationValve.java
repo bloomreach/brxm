@@ -334,7 +334,7 @@ public class AggregationValve extends AbstractValve {
                     builder.append("\nHippoInitVars = {\n");
                     builder.append("  rootComponentIdentifier : '").append(rootCompConfig.getCanonicalIdentifier()).append("',\n");
                     //TODO: implement real toolkitIdentifier
-                    builder.append("  toolkitIdentifier : '").append(rootCompConfig.getCanonicalIdentifier()).append("',\n");
+                    builder.append("  toolkitIdentifier : '").append(mount.getHstSite().getCanonicalIdentifier()).append("',\n");
                     builder.append("  siteIdentifier : '").append(mount.getHstSite().getCanonicalIdentifier()).append("'\n");
                     builder.append("};\n");
                     Text scriptValue = el.getOwnerDocument().createTextNode(builder.toString()); 
