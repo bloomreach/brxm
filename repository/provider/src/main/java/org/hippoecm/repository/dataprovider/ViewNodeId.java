@@ -30,6 +30,9 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     /* The following fields MUST be immutable

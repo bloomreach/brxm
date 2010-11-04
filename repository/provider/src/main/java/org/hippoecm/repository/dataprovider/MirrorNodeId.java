@@ -19,6 +19,8 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
 
 public abstract class MirrorNodeId extends HippoNodeId {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -43,6 +43,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 public class EnhancedImportTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     @Before
     @Override
     public void setUp() throws Exception {
