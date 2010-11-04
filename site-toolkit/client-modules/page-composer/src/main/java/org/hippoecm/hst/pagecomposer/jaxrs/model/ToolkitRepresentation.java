@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Toolkit is a special node of type hst:containercomponent that hosts the prototype hst:containeritems that
- * can be added to a page running in composermode.
+ * The Toolkit represents all unique container items found in the provided {@link org.hippoecm.hst.configuration.hosting.SiteMount}
  *
  * @version $Id$
  */
@@ -42,32 +41,6 @@ public class ToolkitRepresentation {
         List<HstComponentConfiguration> allUniqueContainerItems = site.getComponentsConfiguration().getUniqueContainerItems();
         for (HstComponentConfiguration child : allUniqueContainerItems) {
             components.add(new ComponentRepresentation().represent(child));
-        }
-        return this;
-    }
-    
-    /**
-     * This method returns all the container items directly below the 'toolkit' component. This is a configurable component.
-     * @param mount the current mount
-     * @param toolkitId the id of the root component containing all containeritems to be shown
-     * @return ToolkitRepresentation containing all the containeritem's for this <code>mount</code> and <code>toolkitId</code>
-     */
-    public ToolkitRepresentation represent(SiteMount mount, String toolkitId) {
-        HstSite site = mount.getHstSite();
-        HstComponentConfiguration root = null;
-        for (HstComponentConfiguration config : site.getComponentsConfiguration().getComponentConfigurations().values()) {
-            if (config.getCanonicalIdentifier().equals(toolkitId)) {
-                root = config;
-                break;
-            }
-        }
-        if (root == null) {
-            throw new RuntimeException("Cannot find component configuration for root id '" + toolkitId + "'");
-        }
-        for (HstComponentConfiguration child : root.getChildren().values()) {
-            if (child.getComponentType() == HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT) {
-                components.add(new ComponentRepresentation().represent(child));
-            }
         }
         return this;
     }

@@ -23,7 +23,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
  * @version $Id$
  */
 public class PostRepresentation<T extends ComponentRepresentation> {
-    final static String SVN_ID = "$Id$";
 
     private T data;
 

@@ -66,38 +66,4 @@ public class ComponentResource extends AbstractConfigResource {
         }
     }
 
-    @GET
-    @Path("/toolkit/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getToolkitRepresentation(@Context HttpServletRequest servletRequest,
-                                             @Context HttpServletResponse servletResponse) {
-        try {
-            HstRequestContext requestContext = getRequestContext(servletRequest);
-            SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
-            if (parentMount == null) {
-                log.warn("Page Composer only work when there is a parent site mount");
-                return error("Page Composer only work when there is a parent site mount");
-            }
-
-            Session session = requestContext.getSession();
-            String toolkitId = getRequestConfigIdentifier(requestContext);
-            //normally the root will be retrieved by toolkitUUID, once it is available, for now path is hardcoded
-            String toolkitPath = "hst:hst/hst:configurations/democommon/hst:components/toolkit";
-            if (session.getRootNode().hasNode(toolkitPath)) {
-                toolkitId = session.getRootNode().getNode(toolkitPath).getUUID();
-                ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(parentMount,
-                        toolkitId);
-                return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve toolkit items.", e);
-            } else {
-                log.warn("Failed to retrieve toolkit items. {}", e.toString());
-            }
-            return error(e.toString());
-        }
-        return ok("No toolkit items found");
-    }
-
 }
