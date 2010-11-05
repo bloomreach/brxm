@@ -142,7 +142,6 @@ def removeProjectDependency(fromName, toName) {
 
 def convertResourcesToAny(fromName, source) {
     def from = workspace.root.getProject(fromName)
-                System.out.println("hello")
     if (from.isOpen()) {   
         def fromProject = from.getNature('org.eclipse.jdt.core.javanature')
         def classpath = fromProject.getRawClasspath()
