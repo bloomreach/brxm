@@ -104,6 +104,21 @@
     </property>
   </bean>
   
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
+    <property name="targetMethod" value="registerMBeans" />
+    <property name="arguments">
+      <list>
+        <ref bean="ehCacheManager" />
+        <ref bean="hstMBeanServer" />
+        <value>true</value>
+        <value>true</value>
+        <value>true</value>
+        <value>true</value>
+      </list>
+    </property>
+  </bean>
+  
   <bean id="hstRmiRegistry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="config.containsKey('management.rmi.registry.port')" /> 
