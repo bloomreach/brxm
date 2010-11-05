@@ -105,6 +105,12 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         column.setCssClass("typeslisting-type");
         columns.add(column);
 
+        column = new ListColumn<Node>(new StringResourceModel("typeslisting-state", this, null), "state");
+        column.setRenderer(new EmptyRenderer<Node>());
+        column.setAttributeModifier(new TemplateTypeIconAttributeModifier());
+        column.setCssClass("typeslisting-state");
+        columns.add(column);
+
         return new TableDefinition<Node>(columns);
     }
 
