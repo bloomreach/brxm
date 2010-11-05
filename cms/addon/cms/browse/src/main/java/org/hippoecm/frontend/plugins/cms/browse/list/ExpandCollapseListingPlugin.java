@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -35,13 +39,11 @@ import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 
-import javax.jcr.Node;
-import java.util.List;
-
-public abstract class ExpandCollapseListingPlugin extends AbstractListingPlugin implements IExpandableCollapsable {
+public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlugin<T> implements IExpandableCollapsable {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
-
+    private static final long serialVersionUID = 1L;
+    
     private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";
 
     private WebMarkupContainer buttons;
@@ -54,6 +56,7 @@ public abstract class ExpandCollapseListingPlugin extends AbstractListingPlugin 
         super(context, config);
 
         add(buttons = new WebMarkupContainer("buttons") {
+            private static final long serialVersionUID = 1L;
 
             @Override
             public boolean isVisible() {

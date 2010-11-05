@@ -32,7 +32,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeM
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 
-public class DefaultListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
+public final class DefaultListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
 
     public DefaultListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {

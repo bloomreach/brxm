@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.standards.list;
 import java.util.Iterator;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -30,7 +29,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
@@ -38,7 +37,12 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractListingPlugin extends RenderPlugin<Node> implements TableSelectionListener<Node> {
+/**
+ * Base class for displaying a list of nodes.   This class will take care of observing the
+ * provider, instantiating the datatable.  Subclasses must provide a table definition and a
+ * data provider.  
+ */
+public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implements TableSelectionListener<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -50,6 +54,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
     private ISortableDataProvider<Node> provider;
     private IObserver<?> providerObserver;
 
+    @SuppressWarnings("unchecked")
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -61,6 +66,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         }
 
         add(new EmptyPanel("table"));
+        
+        add(BrowserStyle.getStyleSheet());
     }
 
     protected IModel<Node> getSelectedModel() {
@@ -74,15 +81,6 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         if(documentReference != null) {
             documentReference.setModel(model);
         }
-    }
-
-    @Override
-    protected void onBeforeRender() {
-        if (dataTable == null) {
-            init();
-        }
-
-        super.onBeforeRender();
     }
 
     private void init() {
@@ -108,10 +106,6 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
                 }
 
             }, IObserver.class.getName());
-        }
-
-        if (!isOrderable()) {
-            updateSelection(getModel());
         }
     }
     
@@ -153,11 +147,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected ISortableDataProvider<Node> newDataProvider() {
-        return new DocumentsProvider((IModel<Node>) getDefaultModel(), new DocumentListFilter(getPluginConfig()),
-                getTableDefinition().getComparators());
-    }
+    protected abstract ISortableDataProvider<Node> newDataProvider();
 
     protected abstract TableDefinition<Node> getTableDefinition();
 
@@ -219,20 +209,13 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (dataTable != null) {
-            dataTable.render(target);
+        if (dataTable == null) {
+            init();
         }
+        dataTable.render(target);
     }
 
-    @SuppressWarnings("unchecked")
-    private boolean isOrderable() {
-        IModel<Node> model = (IModel<Node>) getDefaultModel();
-        try {
-            Node node = (Node) model.getObject();
-            return node == null ? false : node.getPrimaryNodeType().hasOrderableChildNodes();
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
+    protected boolean isOrderable() {
         return false;
     }
 

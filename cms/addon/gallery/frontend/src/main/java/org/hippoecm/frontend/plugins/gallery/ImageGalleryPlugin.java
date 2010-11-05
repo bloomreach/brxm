@@ -48,7 +48,9 @@ import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -66,7 +68,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeaderContributor {
+public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements IHeaderContributor {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -87,8 +89,6 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
 
     public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
         super(context, config);
-
-        dataTable.setOutputMarkupId(true);
 
         add(galleryList = new WebMarkupContainer("gallery-list"));
         galleryList.setOutputMarkupId(true);
@@ -172,6 +172,12 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
         if (target != null && viewMode.equals("THUMBNAILS")) {
             //target.addComponent(galleryList);
         }
+    }
+
+    @Override
+    protected ISortableDataProvider<Node> newDataProvider() {
+        return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
+                getTableDefinition().getComparators());
     }
 
     private class GalleryItemView extends RefreshingView<Node> {
@@ -313,4 +319,5 @@ public class ImageGalleryPlugin extends AbstractListingPlugin implements IHeader
             previousSelected = listItem;
         }
     }
+
 }

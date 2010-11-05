@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,25 +16,38 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 
-public final class FacetSearchListingPlugin extends DocumentListingPlugin<Node> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
-
+public final class FolderViewPlugin extends DocumentListingPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
-    public FacetSearchListingPlugin(IPluginContext context, IPluginConfig config) {
+    public FolderViewPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
     @Override
     protected ISortableDataProvider<Node> newDataProvider() {
-        return new FacetSearchProvider((JcrNodeModel) getDefaultModel(), getTableDefinition().getComparators());
+        return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
+                getTableDefinition().getComparators());
+    }
+
+    @Override
+    protected boolean isOrderable() {
+        IModel<Node> model = getModel();
+        try {
+            Node node = model.getObject();
+            return node == null ? false : node.getPrimaryNodeType().hasOrderableChildNodes();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return false;
     }
 
 }

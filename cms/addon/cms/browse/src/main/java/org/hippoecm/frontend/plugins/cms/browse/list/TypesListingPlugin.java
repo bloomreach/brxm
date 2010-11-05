@@ -37,7 +37,9 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -55,7 +57,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TypesListingPlugin extends AbstractListingPlugin {
+public final class TypesListingPlugin extends AbstractListingPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -85,10 +87,16 @@ public class TypesListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
+    protected ISortableDataProvider<Node> newDataProvider() {
+        return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
+                getTableDefinition().getComparators());
+    }
+
+    @Override
     protected TableDefinition<Node> getTableDefinition() {
         List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
 
-        ListColumn<Node> column = new ListColumn<Node>(new Model(""), "icon");
+        ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), "icon");
         column.setComparator(new TypeComparator());
         column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new IconAttributeModifier());
@@ -144,7 +152,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         }
         
         @Override
-        protected IObserver newObserver(final Item<Node> item, IModel<Node> model) {
+        protected IObserver<?> newObserver(final Item<Node> item, IModel<Node> model) {
             if (model instanceof JcrNodeModel) {
                 Node node = ((JcrNodeModel) model).getNode();
                 try {

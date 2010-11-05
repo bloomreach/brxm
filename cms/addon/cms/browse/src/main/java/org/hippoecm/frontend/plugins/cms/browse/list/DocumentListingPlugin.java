@@ -44,12 +44,10 @@ import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentListingPlugin extends ExpandCollapseListingPlugin implements IExpandableCollapsable {
-
-    private static final long serialVersionUID = 1L;
-
+public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlugin<T> implements IExpandableCollapsable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DocumentListingPlugin.class);
 
@@ -58,10 +56,7 @@ public class DocumentListingPlugin extends ExpandCollapseListingPlugin implement
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(BrowserStyle.getStyleSheet());
-
         setClassName("hippo-list-documents");
-
     }
 
     @Override

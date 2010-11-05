@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * Provider of JcrNodeModels for nodes in a facet(sub)search resultset.
  * Multiple variants of the same document are collapsed to a single entry.  
  */
-public class FacetSearchProvider extends SortableDataProvider<Node> implements IObservable {
+public final class FacetSearchProvider extends SortableDataProvider<Node> implements IObservable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")

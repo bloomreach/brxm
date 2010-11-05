@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.repeater.Item;
@@ -26,7 +28,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -40,7 +44,7 @@ import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 
-public class AssetGalleryPlugin extends AbstractListingPlugin {
+public class AssetGalleryPlugin extends AbstractListingPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -83,6 +87,12 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
             ListPagingDefinition pagingDefinition) {
         return new DraggableListDataTable(id, tableDefinition, dataProvider, selectionListener, triState,
                 pagingDefinition);
+    }
+
+    @Override
+    protected ISortableDataProvider<Node> newDataProvider() {
+        return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
+                getTableDefinition().getComparators());
     }
 
     class DraggableListDataTable extends ListDataTable {
