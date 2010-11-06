@@ -47,7 +47,7 @@
         <sv:value>${browser.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.translation.TranslationWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.translation.workflow.TranslationWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

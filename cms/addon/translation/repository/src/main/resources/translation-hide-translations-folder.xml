@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hideTranslationsType" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:pluginconfig</sv:value>
+  </sv:property>
+  <sv:property sv:name="child" sv:type="String">
+    <sv:value>hippotranslation:translations</sv:value>
+  </sv:property>
+  <sv:property sv:name="display" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+</sv:node>

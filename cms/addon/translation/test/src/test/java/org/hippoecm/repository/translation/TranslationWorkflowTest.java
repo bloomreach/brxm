@@ -27,7 +27,6 @@ import java.util.UUID;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
-import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -55,19 +54,13 @@ public class TranslationWorkflowTest extends TestCase {
         "/test/folder/document", "hippo:handle",
             "jcr:mixinTypes", "hippo:hardhandle",
         "/test/folder/document/document", "hippo:testdocument",
-            "jcr:mixinTypes", "hippostdpubwf:document",
             "hippostd:state", "unpublished",
             "hippostd:holder", "admin",
-            "hippostdpubwf:createdBy", "admin",
-            "hippostdpubwf:lastModifiedBy", "admin",
         "/test/folder_nl", "hippostd:folder",
             "jcr:mixinTypes", "hippo:harddocument",
         "/test/hipposysedit:prototype", "hippo:testdocument",
-            "jcr:mixinTypes", "hippostdpubwf:document",
             "hippostd:state", "draft",
             "hippostd:holder", "admin",
-            "hippostdpubwf:createdBy", "admin",
-            "hippostdpubwf:lastModifiedBy", "admin",
     };
 
     @Override
@@ -82,7 +75,7 @@ public class TranslationWorkflowTest extends TestCase {
 
         build(session, content);
 
-        for (String category : new String[] { "translation", "default", "embedded", "translation-copy", "translation-internal" }) {
+        for (String category : new String[] { "translation", "embedded", "translation-copy", "translation-internal" }) {
             Node workflowsNode = session.getRootNode().getNode("hippo:configuration/hippo:workflows/" + category);
             for (NodeIterator handlers = workflowsNode.getNodes(); handlers.hasNext();) {
                 Node wfNode = handlers.nextNode();
@@ -94,16 +87,12 @@ public class TranslationWorkflowTest extends TestCase {
         Node newDocTemplateQuery = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates/new-document");
         newDocTemplateQuery.setProperty("jcr:statement", "/jcr:root/test/hipposysedit:prototype");
         Node prototype = session.getNode("/test/hipposysedit:prototype");
-        prototype.setProperty("hippostdpubwf:lastModificationDate", ISO8601.parse("2010-02-04T16:32:28.068+02:00"));
-        prototype.setProperty("hippostdpubwf:creationDate", ISO8601.parse("2010-02-04T16:32:28.068+02:00"));
         prototype.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         prototype.setProperty(HippoTranslationNodeType.LOCALE, "en");
         prototype.setProperty(HippoTranslationNodeType.ID, INVALID_ID);
 
         Node document = session.getRootNode().getNode("test/folder/document/document");
         document.addMixin("hippo:harddocument");
-        document.setProperty("hippostdpubwf:lastModificationDate", ISO8601.parse("2010-02-04T16:32:28.068+02:00"));
-        document.setProperty("hippostdpubwf:creationDate", ISO8601.parse("2010-02-04T16:32:28.068+02:00"));
 
         Node folder = session.getRootNode().getNode("test/folder");
         folder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
@@ -214,5 +203,4 @@ public class TranslationWorkflowTest extends TestCase {
         assertEquals("en", docNode.getProperty(HippoTranslationNodeType.LOCALE).getString());
         assertFalse(INVALID_ID.equals(docNode.getProperty(HippoTranslationNodeType.ID).getString()));
     }
-
 }

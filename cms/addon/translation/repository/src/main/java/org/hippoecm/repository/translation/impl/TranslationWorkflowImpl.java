@@ -38,13 +38,15 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
 
 public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWorkflow {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private final Session userSession;
@@ -93,10 +95,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         if (userSubject.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("translation-copy",
                     new Document(rootSubject.getUUID()));
-            if (defaultWorkflow instanceof DefaultWorkflow) {
-                ((DefaultWorkflow) defaultWorkflow).copy(targetFolder, name);
-            } else if (defaultWorkflow instanceof FullReviewedActionsWorkflow) {
-                ((FullReviewedActionsWorkflow) defaultWorkflow).copy(targetFolder, name);
+            if (defaultWorkflow instanceof CopyWorkflow) {
+                ((CopyWorkflow) defaultWorkflow).copy(targetFolder, name);
             } else {
                 throw new WorkflowException("Unknown default workflow; cannot copy document");
             }
@@ -209,7 +209,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
                 }
             }
         }
-        
+
         Set<String> translations = new TreeSet<String>();
         for (NodeIterator children = rootSubject.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes(); children
                 .hasNext();) {
@@ -218,16 +218,19 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         }
         hints.put("locales", (Serializable) translations);
 
-        Node containingFolder = getContainingFolder();
-        if (containingFolder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-            Set<String> available = new TreeSet<String>();
-            for (NodeIterator iter = containingFolder.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes(); iter
-                    .hasNext();) {
-                Node translation = iter.nextNode();
-                available.add(translation.getName());
+        Set<String> available = new TreeSet<String>();
+        for (Node container = getContainingFolder(); !container.isSame(rootSession.getRootNode()); container = container
+                .getParent()) {
+            if (container.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                for (NodeIterator iter = container.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes(); iter
+                        .hasNext();) {
+                    Node translation = iter.nextNode();
+                    available.add(translation.getName());
+                }
             }
-            hints.put("available", (Serializable) available);
         }
+        hints.put("available", (Serializable) available);
+
         hints.put("locale", getLocale(userSubject));
         return hints;
     }

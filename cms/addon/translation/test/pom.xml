@@ -25,7 +25,7 @@
   <description>Hippo ECM Translation Test Addon</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-translation-test</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
 
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/translation/test</connection>
@@ -38,6 +38,7 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>2.17.00-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -46,16 +47,42 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-translation-repository</artifactId>
+      <artifactId>hippo-ecm-addon-translation-frontend</artifactId>
       <version>2.17.00-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.wicketstuff</groupId>
+      <artifactId>wicket-extjs</artifactId>
+      <version>0.3</version>
     </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>compile</scope>
+    </dependency>
 
     <!-- test  -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-translation-repository</artifactId>
+      <version>2.17.00-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-provider</artifactId>
@@ -88,29 +115,12 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.17.00-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -142,7 +152,42 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.js</include>
+          <include>**/*.json</include>
+          <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.25</version>
+        <configuration>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+            </connector>
+          </connectors>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

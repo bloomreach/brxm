@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.translation.list.resolvers;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -31,8 +33,11 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.translation.ILocaleProvider;
@@ -76,16 +81,79 @@ public class TranslationRenderer extends AbstractNodeRenderer {
             }
         }
         if (document != null) {
-
             return new TranslationList(id, document);
         }
         return new EmptyPanel(id);
     }
 
+    private final class DocumentTranslationProvider implements IDataProvider<HippoLocale> {
+        private static final long serialVersionUID = 1L;
+
+        private transient Map<String, HippoLocale> locales;
+        private JcrNodeModel model;
+
+        private DocumentTranslationProvider(JcrNodeModel docModel) {
+            this.model = docModel;
+            model = docModel;
+        }
+
+        private void load() {
+            if (locales == null) {
+                locales = new TreeMap<String, HippoLocale>();
+
+                Node document = model.getObject();
+                if (document != null) {
+                    try {
+                        NodeIterator translationNodes = document.getNode(HippoTranslationNodeType.TRANSLATIONS)
+                                .getNodes();
+                        while (translationNodes.hasNext()) {
+                            Node translation = translationNodes.nextNode();
+                            HippoLocale locale = provider.getLocale(translation.getName());
+                            if (locale != null) {
+                                locales.put(locale.getName(), locale);
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.error("Error retrieving translations of document " + model.getItemModel().getPath());
+                    }
+                }
+            }
+        }
+
+        public Iterator<? extends HippoLocale> iterator(int first, int count) {
+            load();
+
+            List<HippoLocale> values = new ArrayList<HippoLocale>(locales.values());
+            return values.subList(first, first + count).iterator();
+        }
+
+        public IModel<HippoLocale> model(HippoLocale object) {
+            final String name = object.getName();
+            return new LoadableDetachableModel<HippoLocale>() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected HippoLocale load() {
+                    return provider.getLocale(name);
+                }
+            };
+        }
+
+        public int size() {
+            load();
+            return locales.size();
+        }
+
+        public void detach() {
+            locales = null;
+            model.detach();
+        }
+    }
+
     private class TranslationList extends Panel {
+
         private static final long serialVersionUID = 1L;
         private String locale;
-        private Set<String> localeNames;
 
         public TranslationList(String id, Node document) throws RepositoryException {
             super(id);
@@ -94,15 +162,8 @@ public class TranslationRenderer extends AbstractNodeRenderer {
 
             locale = document.getProperty(HippoTranslationNodeType.LOCALE).getString();
 
-            localeNames = new TreeSet<String>();
-            NodeIterator translationNodes = document.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes();
-            while (translationNodes.hasNext()) {
-                Node translation = translationNodes.nextNode();
-                localeNames.add(translation.getName());
-            }
-
-            add(new DataView<HippoLocale>("flags", new ListDataProvider<HippoLocale>((List<HippoLocale>) provider
-                    .getLocales())) {
+            final JcrNodeModel docModel = new JcrNodeModel(document);
+            add(new DataView<HippoLocale>("flags", new DocumentTranslationProvider(docModel)) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -112,15 +173,12 @@ public class TranslationRenderer extends AbstractNodeRenderer {
                         Image img = new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS));
                         img.add(new AttributeAppender("class", new Model<String>("hippo-translation-current"), " "));
                         item.add(img);
-                    } else if (localeNames.contains(itemLocale.getName())) {
-                        item.add(new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS)));
                     } else {
-                        item.add(new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.DISABLED)));
+                        item.add(new Image("img", itemLocale.getIcon(IconSize.TINY, LocaleState.EXISTS)));
                     }
                 }
 
             });
         }
-
     }
 }

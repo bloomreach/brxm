@@ -38,7 +38,7 @@ import org.hippoecm.frontend.service.IconSize;
 public interface ILocaleProvider extends IClusterable {
 
     enum LocaleState {
-        DISABLED, AVAILABLE, EXISTS 
+        AVAILABLE, EXISTS, FOLDER, FOLDER_OPEN 
     }
 
     /**
@@ -70,5 +70,7 @@ public interface ILocaleProvider extends IClusterable {
     }
 
     List<? extends HippoLocale> getLocales();
+
+    HippoLocale getLocale(String name);
 
 }

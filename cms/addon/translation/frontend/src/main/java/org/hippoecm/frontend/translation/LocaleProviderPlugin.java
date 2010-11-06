@@ -15,41 +15,98 @@
  */
 package org.hippoecm.frontend.translation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
+import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
+import org.hippoecm.frontend.translation.components.folder.FolderTranslationView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
  * Provider of {@link HippoLocale}s, based on plugin configuration.  Icons should
  * be made available in it's package and should follow the wicket locale pattern
  * for their names.
  */
-public final class LocaleProviderPlugin extends Plugin implements ILocaleProvider {
+public final class LocaleProviderPlugin extends Plugin implements ILocaleProvider, IDetachable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
+
+    private transient Map<String, HippoLocale> locales;
 
     public LocaleProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         context.registerService(this, config.getString("locale.id", ILocaleProvider.class.getName()));
+
+        // debugging pleasure - enable setting breakpoints on the client
+        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+            Home page = context.getService(Home.class.getName(), Home.class);
+            page.add(new ExtResourcesBehaviour());
+
+            page.add(TranslationResources.getTranslationsHeaderContributor());
+            page.add(JavascriptPackageResource
+                    .getHeaderContribution(DocumentTranslationView.class, "translate-document.js"));
+
+            addFolderViewHeader(page, "treegrid/TreeGridSorter.js");
+            addFolderViewHeader(page, "treegrid/TreeGridColumnResizer.js");
+            addFolderViewHeader(page, "treegrid/TreeGridNodeUI.js");
+            addFolderViewHeader(page, "treegrid/TreeGridLoader.js");
+            addFolderViewHeader(page, "treegrid/TreeGridColumns.js");
+            addFolderViewHeader(page, "treegrid/TreeGrid.js");
+            addFolderViewHeader(page, "folder-translations.js");
+
+            page.add(JavascriptPackageResource
+                    .getHeaderContribution(FolderTranslationView.class, "folder-translations.js"));
+        }
+    }
+
+    private static void addFolderViewHeader(Page page,  String js) {
+        page.add(JavascriptPackageResource.getHeaderContribution(FolderTranslationView.class, js));
     }
 
     public List<HippoLocale> getLocales() {
+        if (locales == null) {
+            locales = loadLocales();
+        }
+        return new ArrayList<HippoLocale>(locales.values());
+    }
+
+    public HippoLocale getLocale(String name) {
+        if (locales == null) {
+            locales = loadLocales();
+        }
+        return locales.get(name);
+    }
+
+    public void detach() {
+        locales = null;
+    }
+
+    private Map<String, HippoLocale> loadLocales() {
         IPluginConfig pluginConfig = getPluginConfig();
-        List<HippoLocale> locales = new LinkedList<HippoLocale>();
+        Map<String, HippoLocale> locales = new LinkedHashMap<String, HippoLocale>();
         for (IPluginConfig config : pluginConfig.getPluginConfigSet()) {
             if (!config.containsKey("language")) {
                 log.warn("Locale " + config.getName() + " does not declare a language");
@@ -74,7 +131,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
                 translations.put(translationConfig.getString("hippo:language"), translationConfig
                         .getString("hippo:message"));
             }
-            locales.add(new HippoLocale(locale, name) {
+            locales.put(name, new HippoLocale(locale, name) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -88,19 +145,30 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
 
                 @Override
                 public ResourceReference getIcon(IconSize size, LocaleState state) {
+                    Locale locale = getLocale();
+                    String country = locale.getCountry();
+                    if (country != null) {
+                        country = "_" + country.toLowerCase();
+                    } else {
+                        country = "";
+                    }
+
                     String resourceName;
                     switch (state) {
                     case AVAILABLE:
-                        resourceName = "flag-new-" + size.getSize() + ".png";
+                        resourceName = "flag-new-" + size.getSize() + country + ".png";
                         break;
-                    case DISABLED:
-                        resourceName = "flag-disabled-" + size.getSize() + ".png";
+                    case FOLDER:
+                        resourceName = "folder-closed-" + size.getSize() + country + ".png";
+                        break;
+                    case FOLDER_OPEN:
+                        resourceName = "folder-open-" + size.getSize() + country + ".png";
                         break;
                     default:
-                        resourceName = "flag-" + size.getSize() + ".png";
+                        resourceName = "flag-" + size.getSize() + country + ".png";
                         break;
                     }
-                    return new ResourceReference(LocaleProviderPlugin.class, resourceName, getLocale(), getName());
+                    return new ResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, locale, getName());
                 }
             });
         }

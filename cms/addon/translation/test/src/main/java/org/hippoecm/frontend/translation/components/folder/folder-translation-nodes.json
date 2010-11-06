@@ -1,0 +1,116 @@
+[{
+  "id": "gogreen-en",
+  "t9id": "gogreen",
+  "lang": "en",
+  "text": "Hippo Go Green",
+  "disabled": true,
+  "children": [{
+    "id": "common-en",
+    "text": "Common",
+    "disabled": true,
+    "children": []
+  }, {
+    "id": "events-en",
+    "t9id": "events",
+    "lang": "en",
+    "text": "events",
+    "children": [{
+      "id": "2008-en",
+      "t9id": "2008",
+      "lang": "en",
+      "text": "2008",
+      "children": []
+    }, {
+      "id": "2007-en",
+      "text": "2007",
+      "t9id": "2007",
+      "lang": "en",
+      "children": []
+    }]
+  }, {
+    "id": "news-en",
+    "t9id": "news",
+    "lang": "en",
+    "text": "news",
+    "children": []
+  }, {
+    "id": "jobs-en",
+    "t9id": "jobs",
+    "lang": "en",
+    "text": "Jobs",
+    "disabled": true,
+    "children": []
+  }, {
+    "id": "products-en",
+    "text": "products",
+    "disabled": true,
+    "children": []
+  }, {
+    "id": "faqs-en",
+    "text": "FAQs",
+    "disabled": true,
+    "children": []
+  }, {
+    "id": "tags-en",
+    "text": "tagclouds",
+    "disabled": true,
+    "children": []
+  }, {
+    "id": "reviews-en",
+    "text": "Product Reviews",
+    "disabled": true,
+    "children": []
+  }]
+}, {
+  "id": "gogreen-fr",
+  "t9id": "gogreen",
+  "lang": "fr",
+  "text": "Hippo Va Verte",
+  "disabled": true,
+  "children": [{
+    "id": "evenements",
+    "t9id": "evenements",
+    "lang": "fr",
+    "text": "Événements",
+    "disabled": true,
+    "children": [{
+      "id": "2008-fr",
+      "text": "2008",
+      "disabled": true,
+      "children": []
+    }]
+  }, {
+    "id": "jobs-fr",
+    "t9id": "jobs",
+    "lang": "fr",
+    "text": "Emplois",
+    "disabled": true,
+    "children": []
+  }]
+}, {
+  "id": "gogreen-nl",
+  "t9id": "gogreen",
+  "lang": "nl",
+  "text": "Hippo Ga Groen",
+  "disabled": true,
+  "children": [{
+    "id": "events-nl",
+    "t9id": "events",
+    "lang": "nl",
+    "text": "Evenementen",
+    "children": [{
+      "id": "2008-nl",
+      "t9id": "2008",
+      "lang": "nl",
+      "text": "2008",
+      "children": []
+    }]
+  }, {
+    "id": "jobs-nl",
+    "t9id": "jobs",
+    "lang": "nl",
+    "text": "Banen",
+    "disabled": true,
+    "children": []
+  }]
+}]
