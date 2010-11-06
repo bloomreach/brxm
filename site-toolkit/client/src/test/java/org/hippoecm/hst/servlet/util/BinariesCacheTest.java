@@ -15,10 +15,17 @@
  */
 package org.hippoecm.hst.servlet.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+
+import org.hippoecm.hst.cache.HstCache;
+import org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl;
 import org.hippoecm.hst.servlet.utils.BinariesCache;
 import org.hippoecm.hst.servlet.utils.BinaryPage;
 import org.junit.After;
@@ -26,60 +33,27 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class BinariesCacheTest {
-
+    
+    HstCache hstBinariesCache;
+    CacheManager cacheManager;
     BinaryPage page;
     BinariesCache bc;
     
     @Before
     public void setup() throws UnsupportedEncodingException {
         page = new BinaryPage("/content/binaries/my:pdffile");
-        bc = new BinariesCache();
-        bc.init();
+        cacheManager = CacheManager.create();
+        cacheManager.addCache("binariesCache");
+        Ehcache ehBinariesCache = cacheManager.getCache("binariesCache");
+        hstBinariesCache = new HstCacheEhCacheImpl(ehBinariesCache);
+        bc = new BinariesCache(hstBinariesCache);
     }
     
     @After
     public void tearDown() {
-        bc.destroy();
+        cacheManager.shutdown();
     }
 
-    /**
-     * Repeatedly setup and destroy cache.
-     */
-    @Test
-    public void testSetupDestroyCache() {
-        BinariesCache bc1 = new BinariesCache("test");
-        bc1.init();
-        bc1.destroy();
-        bc1.init();
-        bc1.destroy();
-        bc1.init();
-        bc1.destroy();
-    }
-
-    /**
-     * Make sure caches are independent.
-     */
-    @Test
-    public void testSetupDestroyTwoCaches() {
-        BinariesCache bc1 = new BinariesCache("one");
-        BinariesCache bc2 = new BinariesCache("two");
-        bc1.init();
-        bc2.init();
-        bc2.destroy();
-        bc1.destroy();
-
-        bc1.init();
-        bc2.init();
-        bc1.destroy();
-        bc2.destroy();
-
-        bc1.init();
-        bc1.destroy();
-        bc2.init();
-        bc2.destroy();
-    }
-    
-    @Test
     public void testPutGet() {
         bc.putPage(page);
         assertNotNull(bc.getPageFromBlockingCache(page.getResourcePath()));

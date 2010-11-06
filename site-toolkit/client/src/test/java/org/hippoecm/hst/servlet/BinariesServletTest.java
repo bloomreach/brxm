@@ -60,15 +60,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn("user-agent-specific");
 
         expect(servletConfig.getInitParameter("set-expires-headers")).andReturn("false");
-
-        expect(servletConfig.getInitParameter("cache-lock-timeout-millis")).andReturn("15000");
-        expect(servletConfig.getInitParameter("cache-ttl-millis")).andReturn("36000");
-        expect(servletConfig.getInitParameter("cache-max-object-size-bytes")).andReturn("250000");
-        expect(servletConfig.getInitParameter("cache-max-objects-mem")).andReturn("350");
-        expect(servletConfig.getInitParameter("cache-config-file")).andReturn("/no/such/file.xml");
-        expect(servletConfig.getInitParameter("cache-name")).andReturn("testCache");
-        expect(servletConfig.getInitParameter("cache-enable")).andReturn("true");
-
+        
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);
@@ -91,16 +83,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
         expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn(null);
 
-
         expect(servletConfig.getInitParameter("set-expires-headers")).andReturn(null);
-
-        expect(servletConfig.getInitParameter("cache-lock-timeout-millis")).andReturn(null);
-        expect(servletConfig.getInitParameter("cache-ttl-millis")).andReturn(null);
-        expect(servletConfig.getInitParameter("cache-max-object-size-bytes")).andReturn(null);
-        expect(servletConfig.getInitParameter("cache-max-objects-mem")).andReturn(null);
-        expect(servletConfig.getInitParameter("cache-config-file")).andReturn(null);
-        expect(servletConfig.getInitParameter("cache-name")).andReturn(null);
-        expect(servletConfig.getInitParameter("cache-enable")).andReturn(null);
 
         replay(servletConfig);
         binariesServlet.init(servletConfig);

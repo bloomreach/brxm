@@ -79,8 +79,6 @@
   </p>
 </div>
 
-test: <hst:link path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"/>
-
 <script language="javascript"> 
  
 YUI().use('io-upload-iframe', 'json', 'node',

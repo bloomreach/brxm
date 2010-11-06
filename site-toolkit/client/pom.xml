@@ -31,11 +31,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-core</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
@@ -200,6 +195,11 @@
       <groupId>org.onehippo.ecm.hst.components</groupId>
       <artifactId>hst-core</artifactId>
       <version>${pom.version}</version>
+      <scope>test</scope>      
+    </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
       <scope>test</scope>      
     </dependency>
   </dependencies>

@@ -41,8 +41,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.content.beans.standard.HippoImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.content.HippoImageRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoResourceRepresentation;
@@ -58,6 +60,16 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     
     private static Logger log = LoggerFactory.getLogger(BaseImageSetContentResource.class);
     
+    private HstCache binariesCache;
+    
+    public HstCache getBinariesCache() {
+        return binariesCache;
+    }
+
+    public void setBinariesCache(HstCache binariesCache) {
+        this.binariesCache = binariesCache;
+    }
+
     @GET
     @Path("/")
     public HippoImageRepresentation getImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
@@ -179,6 +191,12 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 dataProp.setValue(childResourceContentStream);
                 dataProp.save();
                 childResourceNode.save();
+                
+                if (binariesCache != null) {
+                    HstLink hstLink = requestContext.getHstLinkCreator().create(imageBean, requestContext);
+                    String contentPath = hstLink.getSiteMount().getMountPoint() + "/" + hstLink.getPath();
+                    binariesCache.remove(contentPath);
+                }
             } finally {
                 IOUtils.closeQuietly(childResourceContentStream);
             }

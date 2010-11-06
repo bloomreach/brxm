@@ -103,7 +103,9 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.jaxrs.services.content.ExampleImageSetContentResource"/>
+            <bean class="org.hippoecm.hst.jaxrs.services.content.ExampleImageSetContentResource">
+              <property name="binariesCache" ref="binariesCache" />
+            </bean>
           </constructor-arg>
         </bean>
       </list>
