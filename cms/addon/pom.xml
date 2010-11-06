@@ -48,6 +48,7 @@
     <module>search</module>
     <module>versioning</module>
     <module>workflow</module>
+    <module>translation</module>
   </modules>
 </project>
 
