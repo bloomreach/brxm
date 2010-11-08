@@ -1078,6 +1078,34 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         return null;
     }
 
+    public boolean canRead(Path absPath, ItemId itemId) throws RepositoryException {
+        if(itemId == null && absPath == null) {
+            return false;
+        } else if(itemId == null) {
+            return canRead(absPath);
+        } else if(absPath == null) {
+            if(itemId.denotesNode()) {
+                try {
+                    return canRead((NodeId)itemId);
+                } catch (NoSuchItemStateException ex) {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            if(itemId.denotesNode()) {
+                try {
+                    return canRead((NodeId) itemId);
+                } catch (NoSuchItemStateException ex) {
+                    return true;
+                }
+            } else {
+                return canRead(absPath);
+            }
+        }
+    }
+
     /**
      * Simple Cache for <String, <String,Boolean>> key-value pairs
      */

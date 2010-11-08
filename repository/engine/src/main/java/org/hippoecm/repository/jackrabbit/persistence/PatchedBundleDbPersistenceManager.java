@@ -137,7 +137,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         try {
             // skip root nodes (that point to itself)
             if (parentId != null && !id.toString().endsWith("babecafebabe")) {
-                if (!existsBundle(parentId)) {
+                if (loadBundle(parentId) == null) {
                     log.error("NodeState '" + id + "' references inexistent parent uuid '" + parentId + "'");
                     if (fix) {
                         orphans.add(bundle);
