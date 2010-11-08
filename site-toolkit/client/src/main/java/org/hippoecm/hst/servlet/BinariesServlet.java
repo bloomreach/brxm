@@ -469,7 +469,7 @@ public class BinariesServlet extends HttpServlet {
     private void initBinariesCache() {
         HstCache cache = null;
         
-        String binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "binariesCache");
+        String binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "defaultBinariesCache");
         ComponentManager clientComponentManager = (ComponentManager) getServletContext().getAttribute(HstFilter.CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM);
         
         if (clientComponentManager != null) {

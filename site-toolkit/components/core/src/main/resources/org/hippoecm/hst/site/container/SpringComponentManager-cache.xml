@@ -43,7 +43,7 @@
   <bean id="abstractBlockingEhCache" abstract="true" parent="abstractEhCacheBase" class="org.hippoecm.hst.site.container.BlockingEhCacheFactoryBean">
   </bean>
   
-  <bean id="binariesCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
+  <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="binariesCache" />
