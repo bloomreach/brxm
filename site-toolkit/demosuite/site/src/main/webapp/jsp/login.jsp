@@ -26,6 +26,10 @@ String password = (String) session.getAttribute("org.hippoecm.hst.security.servl
 if (password == null) password = "";
 String destination = request.getParameter("destination");
 if (destination == null) destination = "";
+
+if ("true".equals(request.getParameter("invalidate"))) {
+    session.invalidate();
+}
 %>
 
 <html>

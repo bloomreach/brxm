@@ -110,11 +110,11 @@
                 <sv:value>everybody</sv:value>
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
-                  <sv:value>true</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
-                   <sv:value>true</sv:value>
-                </sv:property>
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:supportsSubPath" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
               <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
@@ -327,6 +327,9 @@
                 <sv:value>everybody</sv:value>
               </sv:property>
               <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
               <sv:node sv:name="composer">
@@ -648,6 +651,9 @@
                 <sv:value>everybody</sv:value>
               </sv:property>
               <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:sessionstateful" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
               <sv:node sv:name="composer">

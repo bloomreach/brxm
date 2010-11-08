@@ -70,8 +70,15 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 }
                             }
                         },
-                        {text: 'Logout'}
-
+                        {
+                            text: 'Logout',
+                            listeners: {
+                                'click' : {
+                                    fn: this.doLogout,
+                                    scope: this
+                                }
+                            }
+                        }
                     ],
                     listeners: {
                         'message': {
@@ -114,6 +121,15 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     refreshIframe : function() {
         var iframe = Ext.getCmp('Iframe');
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
+    },
+
+    doLogout : function() {
+        var loc = "" + location.href;
+        var relurl = loc.replace(/^https?:\/\/[^\/]+/, "");
+    	// TODO: Make the following configurable.
+    	var loginPagePath = "/jsp/login.jsp";
+    	var loginPage = loginPagePath + "?invalidate=true&destination=" + relurl; 
+        location.href = loc.replace(/\/composermode\/.*$/, loginPage); 
     },
 
     onIframeDOMReady : function(frm) {
