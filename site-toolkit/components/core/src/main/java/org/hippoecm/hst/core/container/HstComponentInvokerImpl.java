@@ -47,12 +47,18 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     
     protected String errorRenderPath;
     
+    protected String webResourcesLocation;
+    
     public void setExceptionThrowable(boolean exceptionThrowable) {
         this.exceptionThrowable = exceptionThrowable;
     }
     
     public void setErrorRenderPath(String errorRenderPath) {
         this.errorRenderPath = errorRenderPath;
+    }
+    
+    public void setWebResourcesLocation(String webResourcesLocation) {
+        this.webResourcesLocation = webResourcesLocation;
     }
     
     public void invokeAction(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
@@ -342,8 +348,23 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (log.isDebugEnabled()) {
                 log.debug("Invoking dispatcher of url: {}", dispatchUrl);
             }
+            for(String specialPrefix : HstComponentWindow.SPECIAL_DISPATCH_PREFIXES) {
+                if(dispatchUrl.startsWith(specialPrefix)) {
+                    servletRequest.setAttribute(ContainerConstants.SPECIAL_DISPATCH_INFO, specialPrefix);
+                    dispatchUrl = dispatchUrl.substring(specialPrefix.length());
+                    if(!dispatchUrl.startsWith("/") && specialPrefix.equals("classpath:")) {
+                        // the dispatch url is relative to the current HstComponent. Let's account for this.
+                       String currentComponentPackage = "/" + window.getComponent().getClass().getPackage().getName().replace(".", "/");
+                       String absoluteUrl = currentComponentPackage + "/" + dispatchUrl;
+                       log.debug("Relative dispatch URL '{}' rewritten to '{}'", dispatchUrl, absoluteUrl);
+                       dispatchUrl = absoluteUrl;
+                    } 
+                    break;
+                }
+            }
             
             if (dispatchUrl.startsWith("/")) {
+                // dispatchUrl =  webResourceLocation + dispatchUrl;
                 disp = requestContainerConfig.getServletContext().getRequestDispatcher(dispatchUrl);
             } else {
                 disp = requestContainerConfig.getServletContext().getNamedDispatcher(dispatchUrl);

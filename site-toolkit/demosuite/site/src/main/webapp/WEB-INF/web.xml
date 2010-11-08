@@ -175,10 +175,7 @@
 
   <servlet>
     <servlet-name>freemarker</servlet-name>
-    <servlet-class>freemarker.ext.servlet.FreemarkerServlet</servlet-class>
-    <!--
-      <servlet-class>org.hippoecm.hst.servlet.HstFreemarkerServlet</servlet-class>
-    -->
+    <servlet-class>org.hippoecm.hst.servlet.HstFreemarkerServlet</servlet-class>
     <!-- FreemarkerServlet settings: -->
     <init-param>
       <param-name>TemplatePath</param-name>

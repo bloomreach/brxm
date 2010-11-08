@@ -95,13 +95,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public String getRenderPath() {
         if (renderPath == null) {
-            String temp = hstComponentConfiguration.getRenderPath();
-            
-            if (temp != null && !temp.startsWith("/")) {
-                temp = new StringBuilder(temp.length() + 1).append('/').append(temp).toString();
-            }
-            
-            renderPath = temp;
+            renderPath = getDispatchPath(hstComponentConfiguration.getRenderPath());
         }
         
         return renderPath;
@@ -109,16 +103,25 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public String getServeResourcePath() {
         if (serveResourcePath == null) {
-            String temp = hstComponentConfiguration.getServeResourcePath();
-            
-            if (temp != null && !temp.startsWith("/")) {
+            serveResourcePath = getDispatchPath(hstComponentConfiguration.getServeResourcePath());
+        }
+        return serveResourcePath;
+    }
+    
+    private String getDispatchPath(String temp) {
+        if (temp != null && !temp.startsWith("/")) {
+            boolean prependSlash = true;
+            for(String specialPrefix : HstComponentWindow.SPECIAL_DISPATCH_PREFIXES) {
+                if(temp.startsWith(specialPrefix)) {
+                    prependSlash = false;
+                    break;
+                }
+            }
+            if(prependSlash) {
                 temp = new StringBuilder(temp.length() + 1).append('/').append(temp).toString();
             }
-            
-            serveResourcePath = temp;
         }
-        
-        return serveResourcePath;
+        return temp;
     }
     
     public String getParameter(String paramName) {

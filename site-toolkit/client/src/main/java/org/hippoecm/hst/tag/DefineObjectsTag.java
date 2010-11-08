@@ -66,6 +66,9 @@ public class DefineObjectsTag extends TagSupport {
         // set attribute hstResponse
         setAttribute(hstResponse, "hstResponse");
         
+        // needed to loop through child content nodes in freemarker templates
+        setAttribute(hstResponse.getChildContentNames(), "hstResponseChildContentNames");
+        
         return SKIP_BODY;
     }
     

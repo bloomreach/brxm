@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import org.hippoecm.hst.site.HstServices;
 
 import freemarker.cache.TemplateLoader;
 
-public class RepositoryTemplateLoader implements TemplateLoader{
+public class RepositoryTemplateLoader implements TemplateLoader {
 
 
     private Repository repository;
@@ -56,7 +56,7 @@ public class RepositoryTemplateLoader implements TemplateLoader{
 
     public Object findTemplateSource(String templateSource) throws IOException {
         
-        if(templateSource != null && templateSource.startsWith("/repository://")) {
+        if(templateSource != null && templateSource.startsWith("jcr:")) {
            if (repository == null) {
               synchronized (this) {
                   doInit();
@@ -65,7 +65,7 @@ public class RepositoryTemplateLoader implements TemplateLoader{
            if(repository == null) {
                return null;
            }
-           String absPath = "/" + ((String)templateSource).substring("/repository://".length());
+           String absPath = ((String)templateSource).substring("jcr:".length());
            RepositorySource source = cache.get(absPath);
            if(source != null) {
                return source;

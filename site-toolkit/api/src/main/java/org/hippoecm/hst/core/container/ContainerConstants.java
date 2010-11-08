@@ -87,6 +87,11 @@ public interface ContainerConstants {
      * Preferred local request or session attribute name
      */
     String PREFERRED_LOCALE_ATTR_NAME = "org.hippoecm.hst.container.preferred.locale";
+    
+    /**
+     * The special dispatch prefix attribute name
+     */
+    String SPECIAL_DISPATCH_INFO = "org.hippoecm.hst.core.container.HstComponentWindow.dispatchInfo";
 
     /**
      * 'composermode' type name

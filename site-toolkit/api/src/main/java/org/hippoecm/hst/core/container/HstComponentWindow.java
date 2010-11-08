@@ -33,6 +33,11 @@ import org.hippoecm.hst.core.component.HstResponseState;
 public interface HstComponentWindow {
 
     /**
+     * hard-coded special prefixes for dispatching
+     */
+    static final String[] SPECIAL_DISPATCH_PREFIXES = {"jcr:", "classpath:"};
+    
+    /**
      * The name of the component window.
      * 
      * @return the name of the component window

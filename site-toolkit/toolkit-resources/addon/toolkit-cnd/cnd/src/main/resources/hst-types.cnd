@@ -83,7 +83,7 @@
 
 [hst:script] > nt:base, mix:referenceable
 - hst:template (string) mandatory
-- hst:language (string) mandatory
+- hst:language (string)
 - * (string)
 
 [hst:scripts] > nt:base, mix:referenceable orderable

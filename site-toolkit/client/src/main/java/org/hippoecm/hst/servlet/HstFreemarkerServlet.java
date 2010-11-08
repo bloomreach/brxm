@@ -16,7 +16,10 @@
 package org.hippoecm.hst.servlet;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
 import org.hippoecm.hst.freemarker.RepositoryTemplateLoader;
 
 import freemarker.cache.MultiTemplateLoader;
@@ -41,16 +44,29 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         
         Configuration conf = super.getConfiguration();
         
+        TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
         TemplateLoader defaultLoader = conf.getTemplateLoader();
-        
         // repository template loader
         TemplateLoader repositoryLoader = new RepositoryTemplateLoader();
-        
-        TemplateLoader[] loaders = new TemplateLoader[] { defaultLoader, repositoryLoader };
+        TemplateLoader[] loaders = new TemplateLoader[] { defaultLoader, classTemplateLoader, repositoryLoader };
         TemplateLoader multiLoader = new MultiTemplateLoader(loaders);
         conf.setTemplateLoader(multiLoader);
         conf.setLocalizedLookup(false);
         
+    }
+    
+    /**
+     * Special dispatch info is included when the request contains the attribute {@link ContainerConstants#SPECIAL_DISPATCH_INFO}. For example
+     * this value is classpath: or jcr: to load a template from a classpath or repository
+     */
+    @Override 
+    protected String requestUrlToTemplatePath(HttpServletRequest request)
+    {
+        String path = super.requestUrlToTemplatePath(request);
+        if(request.getAttribute(ContainerConstants.SPECIAL_DISPATCH_INFO) != null){            
+            path = request.getAttribute(ContainerConstants.SPECIAL_DISPATCH_INFO) +  path;   
+        }
+        return path;
     }
 
 }

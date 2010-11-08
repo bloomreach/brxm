@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hst:scripts" xmlns:hst="http://www.hippoecm.org/hst/nt/2.0"
+  xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:scripts</sv:value>
+  </sv:property>
+  <sv:node sv:name="home.ftl">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:script</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:language" sv:type="String">
+      <sv:value>ftl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>&lt;#assign
+        hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
+        &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
+        &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html
+        hippohtmlByBeanPath="document.html"/&gt; &lt;p&gt; &lt;/p&gt;
+        &lt;@hst.link var="resource"
+        hippobeanByBeanPath="document.resource" /&gt; &lt;#if
+        "${resource!}" != ""&gt; &lt;a
+        href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
+        &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
+        &lt;/div&gt; &lt;div class="bannersHome"&gt; &lt;@hst.include
+        ref="banners"/&gt; &lt;/div&gt; &lt;div class="bannersHome"&gt;
+        &lt;@hst.include ref="morebanners"/&gt; &lt;/div&gt; &lt;hr/&gt;
+        &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
+        var="imageset" hippobeanByBeanPath="image"
+        mount="restapi-gallery" /&gt; &lt;@hst.link var="picture"
+        hippobeanByBeanPath="image" subPath="picture"
+        mount="restapi-gallery"/&gt; &lt;@hst.link var="thumbnail"
+        hippobeanByBeanPath="image" subPath="thumbnail"
+        mount="restapi-gallery"/&gt; &lt;p&gt; ImageSet : &lt;a
+        target="_blank"
+        href="${imageset}"&gt;${imageset}&lt;/a&gt;&lt;/p&gt; &lt;p&gt;
+        Thumbnail : &lt;a target="_blank"
+        href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&lt;/p&gt;
+        &lt;p&gt; Picture : &lt;a target="_blank"
+        href="${picture}"&gt;${picture}&lt;/a&gt;&lt;/p&gt;
+        &lt;br/&gt;
+        &lt;br/&gt;
+        &lt;div style="color:red"&gt;Note: this page is loaded by a repository freemarker template, see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &lt;/div&gt;
+        &lt;p
+        style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;
+        
+        </sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
