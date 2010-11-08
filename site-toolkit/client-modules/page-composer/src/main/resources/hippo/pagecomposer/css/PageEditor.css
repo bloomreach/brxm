@@ -161,3 +161,6 @@ li.placeholdert {
     list-style: none;
 }
 
+.title-button {
+    background-image: url(hippologo.png) !important;
+}

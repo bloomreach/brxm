@@ -56,6 +56,10 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                     collapsible: false,
                     disableMessaging: false,
                     tbar: [
+                        {
+                            text: 'Page Composer',
+                            iconCls: 'title-button'
+                        },
                         '->',
                         {
                             text: 'Refresh',
@@ -66,8 +70,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 }
                             }
                         },
-                        {text: 'Logout'},
-                        '-'
+                        {text: 'Logout'}
+
                     ],
                     listeners: {
                         'message': {
