@@ -76,6 +76,9 @@
             <sv:property sv:name="hst:showport" sv:type="Boolean">
                 <sv:value>true</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:mountrest" sv:type="String">
+              <sv:value>restapi</sv:value>
+            </sv:property>
             <sv:node sv:name="demosubsite">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
@@ -183,6 +186,9 @@
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountrest" sv:type="String">
+                <sv:value>restapi</sv:value>
               </sv:property>
               <sv:node sv:name="demosubsite">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -382,6 +388,9 @@
             <sv:property sv:name="hst:showport" sv:type="Boolean">
                 <sv:value>true</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:mountrest" sv:type="String">
+              <sv:value>restapi</sv:value>
+            </sv:property>
             <sv:node sv:name="demosubsite">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemount</sv:value>
@@ -489,6 +498,9 @@
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountrest" sv:type="String">
+                <sv:value>restapi</sv:value>
               </sv:property>
               <sv:node sv:name="demosubsite">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
