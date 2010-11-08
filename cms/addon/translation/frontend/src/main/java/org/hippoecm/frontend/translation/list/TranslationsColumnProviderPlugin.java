@@ -57,7 +57,8 @@ public class TranslationsColumnProviderPlugin extends AbstractListColumnProvider
     }
 
     protected ILocaleProvider getLocaleProvider() {
-        return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
+        return getPluginContext().getService(
+                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
                 ILocaleProvider.class);
     }
 

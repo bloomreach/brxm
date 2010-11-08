@@ -220,6 +220,9 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
+      <sv:property sv:name="workflow.translated" sv:type="String">
+        <sv:value>new-translated-folder</sv:value>
+      </sv:property>
       <sv:property sv:name="workflow.enabled" sv:type="String">
         <sv:value>${workflow.enabled}</sv:value>
       </sv:property>

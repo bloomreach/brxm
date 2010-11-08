@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugins.standards.tree.icon.AbstractJcrTreeNodeIcon
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
@@ -111,11 +112,15 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
     }
 
     private ResourceReference getIcon(TreeNode treeNode, ITreeState state, String locale) {
-        if (state.isNodeExpanded(treeNode)) {
-            return locales.getLocale(locale).getIcon(IconSize.TINY, LocaleState.FOLDER_OPEN);
-        } else {
-            return locales.getLocale(locale).getIcon(IconSize.TINY, LocaleState.FOLDER);
+        HippoLocale hippoLocale = locales.getLocale(locale);
+        if (hippoLocale != null) {
+            if (state.isNodeExpanded(treeNode)) {
+                return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER_OPEN);
+            } else {
+                return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER);
+            }
         }
+        return null;
     }
 
 }

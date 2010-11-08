@@ -77,8 +77,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
         @Override
         protected String load() {
-            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this
-                    .getDefaultModel();
+            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
             if (wdm != null) {
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) wdm.getObject();
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
@@ -167,8 +166,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                         if (node != null) {
                             Node translations = node.getNode(HippoTranslationNodeType.TRANSLATIONS);
                             HippoNode translation = (HippoNode) translations.getNode(language);
-                            browser
-                                    .browse(new JcrNodeModel(translation.getCanonicalNode().getParent()));
+                            browser.browse(new JcrNodeModel(translation.getCanonicalNode().getParent()));
                         } else {
                             log.error("No node found for document");
                         }
@@ -204,8 +202,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         @Override
         protected Dialog createRequestDialog() {
             try {
-                Node docNode = ((WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel())
-                        .getNode();
+                Node docNode = ((WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel()).getNode();
                 url = docNode.getName();
                 name = url;
                 if (docNode instanceof HippoNode) {
@@ -213,8 +210,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 }
                 folders = new LinkedList<FolderTranslation>();
                 Node handle = docNode.getParent();
-                FolderTranslation docTranslation = JcrFolderTranslationFactory
-                        .createFolderTranslation(handle);
+                FolderTranslation docTranslation = JcrFolderTranslationFactory.createFolderTranslation(handle);
                 folders.add(docTranslation);
 
                 Node folder = handle;
@@ -227,8 +223,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                         if (links.hasNode(language)) {
                             mutable = false;
                             HippoNode translation = (HippoNode) links.getNode(language);
-                            ft = JcrFolderTranslationFactory.createFolderTranslation(folder,
-                                    translation.getCanonicalNode());
+                            ft = JcrFolderTranslationFactory.createFolderTranslation(folder, translation
+                                    .getCanonicalNode());
                         } else {
                             ft = JcrFolderTranslationFactory.createFolderTranslation(folder);
                         }
@@ -239,13 +235,10 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 }
                 Collections.reverse(folders);
 
-                return new DocumentTranslationDialog(
-                        TranslationWorkflowPlugin.this,
-                        getPluginContext().getService(ISettingsService.SERVICE_ID,
-                                ISettingsService.class),
-                        this,
-                        new StringResourceModel("translate-title", TranslationWorkflowPlugin.this, null),
-                        folders, languageModel.getObject(), language, getLocaleProvider());
+                return new DocumentTranslationDialog(TranslationWorkflowPlugin.this, getPluginContext().getService(
+                        ISettingsService.SERVICE_ID, ISettingsService.class), this, new StringResourceModel(
+                        "translate-title", TranslationWorkflowPlugin.this, null), folders, languageModel.getObject(),
+                        language, getLocaleProvider());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 error(e.getMessage());
@@ -260,27 +253,23 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             String id = ft.getId();
             try {
                 Node node = session.getNodeByIdentifier(id);
-                WorkflowManager manager = ((HippoWorkspace) node.getSession().getWorkspace())
-                        .getWorkflowManager();
+                WorkflowManager manager = ((HippoWorkspace) node.getSession().getWorkspace()).getWorkflowManager();
                 TranslationWorkflow tw = (TranslationWorkflow) manager.getWorkflow("translation", node);
                 String namefr = ft.getNamefr();
                 String urlfr = ft.getUrlfr();
                 Document translationDoc = tw.addTranslation(language, urlfr);
                 if (namefr != null && !urlfr.equals(namefr)) {
-                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core",
-                            translationDoc);
+                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translationDoc);
                     defaultWorkflow.localizeName(namefr);
                 }
                 return true;
             } catch (RepositoryException e) {
-                log.error("Could not persist folder translation for " + id + " due to "
-                        + e.getMessage());
+                log.error("Could not persist folder translation for " + id + " due to " + e.getMessage());
             } catch (RemoteException e) {
-                log.error("Could not contact repository when storing folder translation for " + id
-                        + " due to " + e.getMessage());
-            } catch (WorkflowException e) {
-                log.error("Workflow prevented storing translation for " + id + " due to "
+                log.error("Could not contact repository when storing folder translation for " + id + " due to "
                         + e.getMessage());
+            } catch (WorkflowException e) {
+                log.error("Workflow prevented storing translation for " + id + " due to " + e.getMessage());
             }
             return false;
         }
@@ -306,8 +295,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             TranslationWorkflow workflow = (TranslationWorkflow) wf;
             Document translation = workflow.addTranslation(language, url);
             WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager
-                    .getWorkflow("core", translation);
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translation);
             if (name != null && !url.equals(name)) {
                 String localized = getLocalizeCodec().encode(name);
                 defaultWorkflow.localizeName(localized);
@@ -406,8 +394,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                     item.add(new AddTranslationAction("language", locale.getDisplayName(getLocale()), locale.getIcon(
                             IconSize.TINY, LocaleState.AVAILABLE), language, languageModel));
                 } else {
-                    item.add(new DisplayTranslationAction("language", locale.getDisplayName(getLocale()), locale.getIcon(
-                            IconSize.TINY, LocaleState.EXISTS), language));
+                    item.add(new DisplayTranslationAction("language", locale.getDisplayName(getLocale()), locale
+                            .getIcon(IconSize.TINY, LocaleState.EXISTS), language));
                 }
             }
 
@@ -449,7 +437,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
     }
 
     protected ILocaleProvider getLocaleProvider() {
-        return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
+        return getPluginContext().getService(
+                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
                 ILocaleProvider.class);
     }
 

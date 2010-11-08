@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public final class FolderTranslationsWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     final static String COULD_NOT_CREATE_FOLDERS = "could-not-create-folders";
@@ -43,8 +43,8 @@ public final class FolderTranslationsWorkflowPlugin extends CompatibilityWorkflo
     public FolderTranslationsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("folder-translations", new StringResourceModel("folder-translations", this, null).getObject(),
-                new ResourceReference(FolderTranslationsWorkflowPlugin.class, "translations-16.png")) {
+        add(new WorkflowAction("folder-translations", new StringResourceModel("folder-translations", this, null)
+                .getObject(), new ResourceReference(FolderTranslationsWorkflowPlugin.class, "translations-16.png")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -62,7 +62,8 @@ public final class FolderTranslationsWorkflowPlugin extends CompatibilityWorkflo
     }
 
     protected ILocaleProvider getLocaleProvider() {
-        return getPluginContext().getService(getPluginConfig().getString("locale.id", ILocaleProvider.class.getName()),
+        return getPluginContext().getService(
+                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
                 ILocaleProvider.class);
     }
 

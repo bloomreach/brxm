@@ -46,8 +46,8 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -59,6 +59,7 @@ import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -262,7 +263,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     String categoryLabel = new StringResourceModel("add-category", this, null,
-                            new Object[] { new StringResourceModel(category, this, null, category) }).getString();
+                            new Object[] { new ClassResourceModel(category, FolderCategories.class) }).getString();
                     ResourceReference iconResource = new ResourceReference(getClass(), category + "-16.png");
                     iconResource.bind(getApplication());
                     if (iconResource.getResource() == null ||
@@ -277,8 +278,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
                         @Override
                         protected Dialog createRequestDialog() {
-                            return new AddDocumentDialog(this, new StringResourceModel(category,
-                                    FolderWorkflowPlugin.this, null, category), category, prototypes.get(category));
+                            return new AddDocumentDialog(this, new ClassResourceModel(category, FolderCategories.class),
+                                    category, prototypes.get(category));
                         }
 
                         @Override

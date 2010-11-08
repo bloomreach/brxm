@@ -37,8 +37,10 @@ import org.hippoecm.frontend.service.IconSize;
  */
 public interface ILocaleProvider extends IClusterable {
 
+    String SERVICE_ID = "locale.id";
+
     enum LocaleState {
-        AVAILABLE, EXISTS, FOLDER, FOLDER_OPEN 
+        AVAILABLE, EXISTS, FOLDER, FOLDER_OPEN
     }
 
     /**
@@ -63,7 +65,7 @@ public interface ILocaleProvider extends IClusterable {
         public String getName() {
             return name;
         }
-        
+
         abstract public ResourceReference getIcon(IconSize size, LocaleState type);
 
         abstract public String getDisplayName(Locale locale);

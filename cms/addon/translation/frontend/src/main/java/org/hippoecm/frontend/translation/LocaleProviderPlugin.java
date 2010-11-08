@@ -58,7 +58,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     public LocaleProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        context.registerService(this, config.getString("locale.id", ILocaleProvider.class.getName()));
+        context.registerService(this, config.getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()));
 
         // debugging pleasure - enable setting breakpoints on the client
         if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
