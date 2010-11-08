@@ -69,7 +69,7 @@
     Image:
     <br/>
     <c:if test="${not empty document.image}">
-      <img src="<hst:link hippobean="${document.image.picture}"/>"/>
+      <img id="productImg" src="<hst:link hippobean="${document.image.picture}"/>"/>
     </c:if>
     <br/>
     <form id="uploadForm" method="POST" enctype="multipart/form-data">
@@ -81,7 +81,7 @@
 
 <script language="javascript"> 
  
-YUI().use('io-upload-iframe', 'json', 'node',
+YUI().use('io-upload-iframe', 'json', 'node', 'async-queue',
 function(Y) {
 
   var tagsLabel = Y.one("#<hst:namespace/>tagsLabel");
@@ -102,6 +102,8 @@ function(Y) {
     tagsCancelLink.setStyle("display", "");
     e.halt();
   };
+
+  var asyncQueue = new Y.AsyncQueue();
   
   var onSaveComplete = function(id, o, args) { 
     var id = id;
@@ -178,22 +180,41 @@ function(Y) {
     e.halt();
   };
 
+  var refreshProductImage = function() {
+    var productImg = Y.one("#productImg");
+	if (productImg) {
+	  var src = "" + productImg.get("src");
+      if (src.indexOf('?') != -1) {
+        src = src.substring(0, src.indexOf('?'));
+      }
+      src += "?t=" + new Date().getTime();
+      productImg.set("src", src);
+	}
+  };
+  
   var onUploadImageComplete = function(id, o, args) {
+    refreshProductImage();
   };
   
   var uploadImageForm = function(e) {
     var cfg = {
           on: { complete: onUploadImageComplete },
+          arguments: {},
           method: 'POST',
 		  form: {
 		    id: uploadForm,
 		    upload: true
           }
     };
-
+    
     var uri = '/site/preview/restapi/gallery/images/nopic.gif./picture/content/';
     //var uri = '<hst:link hippobean="${document.image}" mount="restapi" subPath="picture/content" />';
     var request = Y.io(uri, cfg);
+
+    // Because YUI3 doesn't fire io:complete event handler properly with io-upload-iframe,
+    // refresh image after 3 seconds as a temporary solution.
+    asyncQueue.add({fn: function() {}, timeout: 3000}, refreshProductImage);
+    asyncQueue.run();
     
     e.halt();
   };
