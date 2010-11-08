@@ -29,33 +29,40 @@ if (destination == null) destination = "";
 %>
 
 <html>
-<head>
-<title>Login page</title>
-</head>
-<body>
-
-<div>
-<h2>Login page</h2>
-<form method="post" action="<c:url value="/login/proxy"/>">
-<table>
-  <tr>
-    <td>Login</td>
-    <td><input type="text" name="username" value="<%=username%>" /></td>
-  </tr>
-  <tr>
-    <td>Password</td>
-    <td><input type="password" name="password" value="<%=password%>" /></td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <input type="hidden" name="destination" value="<%=destination%>" />
-      <input type="submit" value="Submit" />
-      <input type="button" value="Cancel" onclick="if ('<%=destination%>') location.href = '<%=destination%>'; return;" />
-    </td>
-  </tr>
-</table>
-</form>
-</div>
-
-</body>
+  <head>
+    <title>Hippo CMS 7</title>
+    <link rel="stylesheet" type="text/css" href="../skin/screen.css" />
+  </head>
+  <body class="hippo-root">
+    <div>
+      <div class="hippo-login-panel">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="<c:url value="/login/proxy"/>">
+          <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
+          <div class="hippo-login-form-container">
+            <table>
+              <tr>
+                <td width="50%"><label>Username&nbsp;</label></td>
+                <td><input class="hippo-form-text" type="text" value="" name="username" id="username"/></td>
+              </tr>
+              <tr>
+                <td><label>Password&nbsp;</label></td>
+                <td><input class="hippo-form-password" type="password" value="" name="password" id="password"/></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="hippo-global-alignright">
+                  <input type="hidden" name="destination" value="<%=destination%>" />
+                  <input class="hippo-form-submit" type="submit" value="Login"/>
+                  <input class="hippo-form-submit" type="button" value="Cancel" onclick="if ('<%=destination%>') location.href = '<%=destination%>'; return false;" />
+                </td>
+              </tr>
+            </table>
+          </div>
+        </form>
+        <div class="hippo-login-panel-copyright">
+          &copy; 1999-2010 Hippo B.V.
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
