@@ -473,8 +473,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     } else if (virtual && nodePath.startsWith(siteMount.getContentPath())) { 
                         nodePath = nodePath.substring(siteMount.getContentPath().length());
                         matchedMount = true;
-                    } else if (!isBinaryLocation(nodePath) && tryOtherMounts) {
+                    } else if (isBinaryLocation(nodePath)) {
                         // for a binary link we won't check other mounts
+                        // do nothing
+                    } else if (tryOtherMounts) {    
                         log.debug("We cannot create a link for '{}' for the sitemount with alias '{}' belonging to the current request. Try to create a cross-domain link.", nodePath, siteMount.getAlias());
                         
                         /*
