@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
@@ -45,6 +46,8 @@ import org.hippoecm.hst.security.User;
  */
 public class SecurityValve extends AbstractValve {
     
+    public static final String INTENDED_DESTINATION_ATTR_NAME = "org.hippoecm.hst.security.intended.destination";
+    
     protected AuthenticationProvider authProvider;
     
     public void setAuthenticationProvider(AuthenticationProvider authProvider) {
@@ -55,10 +58,29 @@ public class SecurityValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
+        HstRequestContext requestContext = context.getRequestContext();
         
         try {
             checkAuthorized(servletRequest);
         } catch (ContainerSecurityException e) {
+            HstLink destedLink = null;
+            
+            try {
+                String pathInfo = (requestContext.getResolvedSiteMapItem() == null ? "" : requestContext.getResolvedSiteMapItem().getPathInfo());
+                destedLink = requestContext.getHstLinkCreator().create(pathInfo, requestContext.getResolvedSiteMount().getSiteMount());
+                HttpSession httpSession = servletRequest.getSession(false);
+                
+                if (httpSession != null) {
+                    httpSession.setAttribute(INTENDED_DESTINATION_ATTR_NAME, destedLink.toUrlForm(requestContext, false));
+                }
+            } catch (Exception linkEx) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to create destination link.", linkEx);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to create destination link. {}", linkEx.toString());
+                }
+            }
+            
             try {
                 servletResponse.sendError(403, e.getMessage());
                 return;

@@ -33,7 +33,7 @@ if (destination == null) destination = "";
     <title>Hippo CMS 7</title>
     <link rel="stylesheet" type="text/css" href="../skin/screen.css" />
   </head>
-  <body class="hippo-root">
+  <body class="hippo-root" onload="return document.signInForm.username.focus();">
     <div>
       <div class="hippo-login-panel">
         <form class="hippo-login-panel-form" name="signInForm" method="post" action="<c:url value="/login/proxy"/>">
@@ -42,11 +42,11 @@ if (destination == null) destination = "";
             <table>
               <tr>
                 <td width="50%"><label>Username&nbsp;</label></td>
-                <td><input class="hippo-form-text" type="text" value="" name="username" id="username"/></td>
+                <td><input class="hippo-form-text" type="text" value="<%=username%>" name="username" id="username"/></td>
               </tr>
               <tr>
                 <td><label>Password&nbsp;</label></td>
-                <td><input class="hippo-form-password" type="password" value="" name="password" id="password"/></td>
+                <td><input class="hippo-form-password" type="password" value="<%=password%>" name="password" id="password"/></td>
               </tr>
               <tr>
                 <td>&nbsp;</td>
