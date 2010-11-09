@@ -253,68 +253,70 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(descriptor);
-                FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
-                Map<String, Serializable> hints = folderWorkflow.hints();
+                if(workflow instanceof FolderWorkflow) {
+                    FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
+                    Map<String, Serializable> hints = folderWorkflow.hints();
 
-                if (hints.containsKey("reorder") && hints.get("reorder") instanceof Boolean) {
-                    reorderAction.setVisible(((Boolean) hints.get("reorder")).booleanValue());
-                }
-
-                final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
-                for (final String category : prototypes.keySet()) {
-                    String categoryLabel = new StringResourceModel("add-category", this, null,
-                            new Object[] { new ClassResourceModel(category, FolderCategories.class) }).getString();
-                    ResourceReference iconResource = new ResourceReference(getClass(), category + "-16.png");
-                    iconResource.bind(getApplication());
-                    if (iconResource.getResource() == null ||
-                        (iconResource.getResource() instanceof PackageResource && ((PackageResource)iconResource.getResource()).getResourceStream(false) == null)) {
-                        iconResource = new ResourceReference(getClass(), "new-document-16.png");
-                        iconResource.bind(getApplication());
+                    if (hints.containsKey("reorder") && hints.get("reorder") instanceof Boolean) {
+                        reorderAction.setVisible(((Boolean) hints.get("reorder")).booleanValue());
                     }
-                    list.add(new WorkflowAction("id", categoryLabel, iconResource) {
-                        public String prototype;
-                        public String targetName;
-                        public String uriName;
 
-                        @Override
-                        protected Dialog createRequestDialog() {
-                            return new AddDocumentDialog(this, new ClassResourceModel(category, FolderCategories.class),
-                                    category, prototypes.get(category));
+                    final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
+                    for (final String category : prototypes.keySet()) {
+                        String categoryLabel = new StringResourceModel("add-category", this, null,
+                                new Object[] { new ClassResourceModel(category, FolderCategories.class) }).getString();
+                        ResourceReference iconResource = new ResourceReference(getClass(), category + "-16.png");
+                        iconResource.bind(getApplication());
+                        if (iconResource.getResource() == null ||
+                            (iconResource.getResource() instanceof PackageResource && ((PackageResource)iconResource.getResource()).getResourceStream(false) == null)) {
+                            iconResource = new ResourceReference(getClass(), "new-document-16.png");
+                            iconResource.bind(getApplication());
                         }
+                        list.add(new WorkflowAction("id", categoryLabel, iconResource) {
+                            public String prototype;
+                            public String targetName;
+                            public String uriName;
 
-                        @Override
-                        protected String execute(FolderWorkflow workflow) throws Exception {
-                            if (prototype == null) {
-                                throw new IllegalArgumentException("You need to select a type");
+                            @Override
+                            protected Dialog createRequestDialog() {
+                                return new AddDocumentDialog(this, new ClassResourceModel(category, FolderCategories.class),
+                                        category, prototypes.get(category));
                             }
-                            if (targetName == null || "".equals(targetName)) {
-                                throw new IllegalArgumentException("You need to enter a name");
-                            }
-                            if (workflow != null) {
-                                if (!prototypes.get(category).contains(prototype)) {
-                                    log.error("unknown folder type " + prototype);
-                                    return "Unknown folder type " + prototype;
+
+                            @Override
+                            protected String execute(FolderWorkflow workflow) throws Exception {
+                                if (prototype == null) {
+                                    throw new IllegalArgumentException("You need to select a type");
                                 }
-                                String nodeName = getNodeNameCodec().encode(uriName);
-                                String localName = getLocalizeCodec().encode(targetName);
-                                if ("".equals(nodeName)) {
+                                if (targetName == null || "".equals(targetName)) {
                                     throw new IllegalArgumentException("You need to enter a name");
                                 }
-                                String path = workflow.add(category, prototype, nodeName);
-                                ((UserSession) Session.get()).getJcrSession().refresh(true);
-                                JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
-                                select(nodeModel);
-                                if(!nodeName.equals(localName)) {
-                                    WorkflowManager workflowMgr = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
-                                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
-                                    defaultWorkflow.localizeName(localName);
+                                if (workflow != null) {
+                                    if (!prototypes.get(category).contains(prototype)) {
+                                        log.error("unknown folder type " + prototype);
+                                        return "Unknown folder type " + prototype;
+                                    }
+                                    String nodeName = getNodeNameCodec().encode(uriName);
+                                    String localName = getLocalizeCodec().encode(targetName);
+                                    if ("".equals(nodeName)) {
+                                        throw new IllegalArgumentException("You need to enter a name");
+                                    }
+                                    String path = workflow.add(category, prototype, nodeName);
+                                    ((UserSession) Session.get()).getJcrSession().refresh(true);
+                                    JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
+                                    select(nodeModel);
+                                    if(!nodeName.equals(localName)) {
+                                        WorkflowManager workflowMgr = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+                                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
+                                        defaultWorkflow.localizeName(localName);
+                                    }
+                                } else {
+                                    log.error("no workflow defined on model for selected node");
                                 }
-                            } else {
-                                log.error("no workflow defined on model for selected node");
+                                return null;
                             }
-                            return null;
-                        }
-                    });
+                        });
+                    }
                 }
 
                 AbstractView add;
