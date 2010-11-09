@@ -671,7 +671,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
             
             // Algorithm step 5:
-            System.out.println("!!wgwegwe!!!!!!!!!!!!!!!");
             if(possibleSuitedMounts.size() > 1) {
                // find the sitemount's with the most types in common
                 narrowedSuitedMounts.clear();
