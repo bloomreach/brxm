@@ -101,6 +101,13 @@
       <artifactId>commons-proxy</artifactId>
     </dependency>
     
+    <!-- Exclude commons-logging explicitly by a provided dependency. -->
+    <dependency> 
+      <groupId>commons-logging</groupId> 
+      <artifactId>commons-logging</artifactId> 
+      <scope>provided</scope> 
+    </dependency>
+    
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-core</artifactId>

@@ -73,7 +73,14 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-proxy</artifactId>
     </dependency>
-        
+    
+    <!-- Exclude commons-logging explicitly by a provided dependency. -->
+    <dependency> 
+      <groupId>commons-logging</groupId> 
+      <artifactId>commons-logging</artifactId> 
+      <scope>provided</scope> 
+    </dependency>
+    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>

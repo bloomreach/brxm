@@ -80,6 +80,7 @@
     <commons-jexl.version>1.1</commons-jexl.version>
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
+    <commons-logging.version>1.1.1</commons-logging.version>
     <ehcache-core.version>2.2.0</ehcache-core.version>
     <ehcache-web.version>2.0.2</ehcache-web.version>
 
@@ -518,15 +519,15 @@
         <artifactId>jcl-over-slf4j</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
-
-<!--
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-parent</artifactId>
-        <version>${slf4j.version}</version>
+      
+      <!-- Exclude commons-logging explicitly by a provided dependency. -->
+      <dependency> 
+        <groupId>commons-logging</groupId> 
+        <artifactId>commons-logging</artifactId> 
+        <version>${commons-logging.version}</version> 
+        <scope>provided</scope> 
       </dependency>
--->
-
+      
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
