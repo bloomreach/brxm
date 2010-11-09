@@ -465,6 +465,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      * @throws RepositoryException
      */
     private boolean canRead(NodeId id) throws NoSuchItemStateException, RepositoryException {
+        if (isSystem) {
+            return true;
+        }
+
         // check cache
         Boolean allowRead = readAccessCache.get(id);
         if (allowRead != null) {
