@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -247,8 +246,6 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
         switch (propertyType) {
         case PropertyType.BOOLEAN:
             return factory.createValue(false);
-        case PropertyType.DATE:
-            return factory.createValue(Calendar.getInstance());
         case PropertyType.DOUBLE:
             return factory.createValue(0.0);
         case PropertyType.LONG:

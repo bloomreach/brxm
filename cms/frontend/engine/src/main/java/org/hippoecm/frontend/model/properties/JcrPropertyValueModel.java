@@ -57,7 +57,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     public static final int NO_INDEX = -1;
 
-    private static final int NO_TYPE = -1;
+    public static final int NO_TYPE = -1;
 
     // dynamically reload value
     private transient boolean loaded = false;
@@ -106,6 +106,10 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         }
     }
 
+    /**
+     * Returns the {@link javax.jcr.nodetype.PropertyDefinition} for the current property.
+     * @return the property definition.
+     */
     private PropertyDefinition getPropertyDefinition() {
         if (propertyDefinition == null) {
             if (propertyModel.getItemModel().exists()) {
@@ -125,18 +129,23 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         return propertyDefinition;
     }
 
+    /**
+     * Determines the type of the property. If the type is not yet defined, the type will be resolved based on the value.
+     * If the value is <code>null</code> the type of property is determined based on the {@link javax.jcr.nodetype.PropertyDefinition}.
+     * @see {@link javax.jcr.PropertyType} for the resulting values.
+     * @return an integer representing the type of property.
+     */
     public int getType() {
         if (type == NO_TYPE) {
+            PropertyDefinition def = getPropertyDefinition();
             // try to determine real value
-            if (value != null) {
+            if (def != null) {
+                type = def.getRequiredType();
+            } else if (value != null) {
                 type = value.getType();
-            } else {
-                PropertyDefinition def = getPropertyDefinition();
-                if (def != null) {
-                    type = def.getRequiredType();
-                } else {
-                    type = PropertyType.UNDEFINED;
-                }
+            }
+            else {
+                type = PropertyType.UNDEFINED;
             }
         }
         return type;
@@ -205,7 +214,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
                     }
                 }
             } catch (RepositoryException e) {
-                log.error(e.getMessage());
+                log.error("An exception occured while trying to set value: {}", e.getMessage());
             }
         } else {
             log.error("unable to set property, no definition found");

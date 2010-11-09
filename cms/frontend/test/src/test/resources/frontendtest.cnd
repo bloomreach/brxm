@@ -36,6 +36,7 @@
 - frontendtest:string (string)
 - frontendtest:strings (string) multiple
 - frontendtest:mandatory (string) = 'test' mandatory
+- frontendtest:date (date)
 
 [frontendtest:ordered] orderable
 - frontendtest:property (string) multiple

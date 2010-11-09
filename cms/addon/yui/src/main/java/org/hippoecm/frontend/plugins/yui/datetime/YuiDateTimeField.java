@@ -148,24 +148,26 @@ public class YuiDateTimeField extends DateTimeField {
     }
 
     private void updateDateTime(Date date, Integer hours, Integer minutes) {
-        MutableDateTime datetime = new MutableDateTime(date);
-        try {
-            TimeZone zone = getClientTimeZone();
-            if (zone != null) {
-                datetime.setZone(DateTimeZone.forTimeZone(zone));
-            }
+        if(date!=null) {
+            MutableDateTime datetime = new MutableDateTime(date);
+            try {
+                TimeZone zone = getClientTimeZone();
+                if (zone != null) {
+                    datetime.setZone(DateTimeZone.forTimeZone(zone));
+                }
 
-            if (hours != null) {
-                datetime.set(DateTimeFieldType.hourOfDay(), hours % 24);
-                datetime.setMinuteOfHour(minutes != null ? minutes : 0);
-            }
+                if (hours != null) {
+                    datetime.set(DateTimeFieldType.hourOfDay(), hours % 24);
+                    datetime.setMinuteOfHour(minutes != null ? minutes : 0);
+                }
 
-            // the date will be in the server's timezone
-            setDate(datetime.toDate());
-            //setModelObject(datetime.toDate());
-        } catch (RuntimeException e) {
-            error(e.getMessage());
-            invalid();
+                // the date will be in the server's timezone
+                setDate(datetime.toDate());
+                //setModelObject(datetime.toDate());
+            } catch (RuntimeException e) {
+                error(e.getMessage());
+                invalid();
+            }
         }
     }
 

@@ -37,9 +37,13 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.junit.Test;
 
+/**
+ * Tests for {@link org.hippoecm.frontend.model.PropertyValueProvider}
+ */
 public class PropertyValueProviderTest extends PluginTest {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
+    private static final String TEST_NODE_NAME = "test";
 
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {
         return session.getValueFactory().createValue(value);
@@ -48,7 +52,7 @@ public class PropertyValueProviderTest extends PluginTest {
     @Test
     public void testAddNewAddsDummyForRequiredField() throws ItemExistsException, PathNotFoundException,
             NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
-        Node test = this.root.addNode("test", "frontendtest:model");
+        Node test = this.root.addNode(TEST_NODE_NAME, "frontendtest:model");
         JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:value");
         IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:value", new JavaTypeDescriptor("string",
                 "String", null));
@@ -59,6 +63,27 @@ public class PropertyValueProviderTest extends PluginTest {
         provider.addNew();
 
         assertFalse(session.itemExists(test.getPath() + "/frontendtest:value"));
+        assertEquals(1, provider.size());
+        JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
+        assertEquals(null, pvm.getObject());
+
+        provider.detach();
+        assertEquals(1, provider.size());
+        pvm = provider.iterator(0, 1).next();
+        assertEquals(null, pvm.getObject());
+    }
+
+    @Test
+    public void testAddNewAddsNoDefaultPropertyForDateField() throws RepositoryException {
+        Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:model");
+        JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:date");
+        IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:date", new JavaTypeDescriptor("date",
+                "Date", null));
+        PropertyValueProvider provider = new PropertyValueProvider(field, field.getTypeDescriptor(), propertyModel
+                .getItemModel());
+        provider.addNew();
+
+        assertFalse("No date property expected, but a date property was found.",session.itemExists(testNode.getPath() + "/frontendtest:date"));
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
         assertEquals(null, pvm.getObject());
