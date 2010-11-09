@@ -107,6 +107,7 @@
 - hst:users (string) multiple
 - hst:locale (string)
 - hst:inheritsfrom (string)
+- hst:scheme (string)
 + * (hst:sitemapitem)
 
 [hst:sitemap] > nt:base, mix:referenceable orderable
