@@ -149,8 +149,9 @@ public class HstLinkImpl implements HstLink{
          * 3) The portnumber is in the url, and the current request sitemount has a different portnumber than the sitemount for this link
          */
         if (external || requestSiteMount.getVirtualHost() != siteMount.getVirtualHost()
-                     || (siteMount.isPortInUrl() && requestSiteMount.getPort() != siteMount.getPort())) {
-           String host = siteMount.getVirtualHost().getScheme() + "://" + siteMount.getVirtualHost().getHostName();
+                     || (siteMount.isPortInUrl() && requestSiteMount.getPort() != siteMount.getPort())
+                     || (siteMount.getScheme() != null && !siteMount.getScheme().equals(requestSiteMount.getScheme())) ) {
+           String host = siteMount.getScheme() + "://" + siteMount.getVirtualHost().getHostName();
            if(siteMount.isPortInUrl()) {
                int port = siteMount.getPort();
                if(port == 0) {
