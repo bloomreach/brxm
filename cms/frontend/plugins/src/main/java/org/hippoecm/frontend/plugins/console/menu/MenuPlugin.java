@@ -151,7 +151,6 @@ public class MenuPlugin extends RenderPlugin<Node> {
                     return null;
                 }
             };
-            System.err.println("BERRY \""+itemLabel+"\"");
             menuItems.add(new DialogLink(menuItems.newChildId(), new Model(itemLabel), dialogFactory, dialogService));
         }
         add(menuItems);
