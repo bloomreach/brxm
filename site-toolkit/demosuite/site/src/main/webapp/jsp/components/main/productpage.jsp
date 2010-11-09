@@ -207,8 +207,7 @@ function(Y) {
           }
     };
     
-    var uri = '/site/preview/restapi/gallery/images/nopic.gif./picture/content/';
-    //var uri = '<hst:link hippobean="${document.image}" mount="restapi" subPath="picture/content" />';
+    var uri = '<hst:link hippobean="${document.image}" mount="restapi-gallery" subPath="picture/content" />';
     var request = Y.io(uri, cfg);
 
     // Because YUI3 doesn't fire io:complete event handler properly with io-upload-iframe,
