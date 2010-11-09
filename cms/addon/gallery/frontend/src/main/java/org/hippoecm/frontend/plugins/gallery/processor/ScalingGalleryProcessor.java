@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
@@ -83,8 +82,8 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
     @Override
     public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
             throws RepositoryException {
-        node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-        node.setProperty(JcrConstants.JCR_LASTMODIFIED, lastModified);
+        node.setProperty("jcr:mimeType", mimeType);
+        node.setProperty("jcr:lastModified", lastModified);
 
         InputStream stored = data;
         int width = 0;
@@ -110,7 +109,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             log.debug("Unknown image MIME type: {}, using raw data", mimeType);
         }
 
-        node.setProperty(JcrConstants.JCR_DATA, stored);
+        node.setProperty("jcr:data", stored);
         node.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, width);
         node.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, height);
     }

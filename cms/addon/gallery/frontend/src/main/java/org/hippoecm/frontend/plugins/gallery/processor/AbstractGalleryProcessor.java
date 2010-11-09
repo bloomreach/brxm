@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
@@ -57,16 +56,16 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         Node primaryChild = getPrimaryChild(node);
         if (primaryChild.isNodeType(HippoNodeType.NT_RESOURCE)) {
             log.debug("Setting JCR data of primary resource");
-            primaryChild.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-            primaryChild.setProperty(JcrConstants.JCR_DATA, stream);
+            primaryChild.setProperty("jcr:mimeType", mimeType);
+            primaryChild.setProperty("jcr:data", stream);
         }
         validateResource(primaryChild, fileName);
 
-        String primaryMimeType = primaryChild.getProperty(JcrConstants.JCR_MIMETYPE).getString();
+        String primaryMimeType = primaryChild.getProperty("jcr:mimeType").getString();
         initGalleryNode(node, stream, primaryMimeType, fileName);
 
         // create all child resource nodes, reusing the stream of the primary child
-        Calendar lastModified = primaryChild.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate();
+        Calendar lastModified = primaryChild.getProperty("jcr:lastModified").getDate();
         for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
             NodeType childNodeType = childDef.getDefaultPrimaryType();
             if (childNodeType != null && childNodeType.isNodeType(HippoNodeType.NT_RESOURCE)) {
@@ -74,7 +73,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
                 if (!node.hasNode(childName)) {
                     log.debug("Adding resource {}", childName);
                     Node child = node.addNode(childName);
-                    InputStream primaryData = primaryChild.getProperty(JcrConstants.JCR_DATA).getStream();
+                    InputStream primaryData = primaryChild.getProperty("jcr:data").getStream();
                     initGalleryResource(child, primaryData, primaryMimeType, fileName, lastModified);
                 }
             }
@@ -82,7 +81,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
 
         // finally, create the primary resource node
         log.debug("Initializing primary resource");
-        InputStream primaryData = primaryChild.getProperty(JcrConstants.JCR_DATA).getStream();
+        InputStream primaryData = primaryChild.getProperty("jcr:data").getStream();
         initGalleryResource(primaryChild, primaryData, primaryMimeType, fileName, lastModified);
     }
 

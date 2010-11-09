@@ -37,7 +37,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.slf4j.Logger;
@@ -319,9 +318,8 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
 
     public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
             throws GalleryException, RepositoryException {
-        node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-        node.setProperty(JcrConstants.JCR_DATA, data);
-        node.setProperty(JcrConstants.JCR_LASTMODIFIED, lastModified);
+        node.setProperty("jcr:mimeType", mimeType);
+        node.setProperty("jcr:data", data);
+        node.setProperty("jcr:lastModified", lastModified);
     }
-
 }
