@@ -90,7 +90,7 @@
             <!--
 			<sv:value>jsp/components/main/detailpage.jsp</sv:value>
             -->
-            <sv:value>jsp/components/main/detailpage.ftl</sv:value>
+            <sv:value>ftl/components/main/detailpage.ftl</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="rss">
