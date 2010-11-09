@@ -40,7 +40,7 @@ if ("true".equals(request.getParameter("invalidate"))) {
   <body class="hippo-root" onload="return document.signInForm.username.focus();">
     <div>
       <div class="hippo-login-panel">
-        <form class="hippo-login-panel-form" name="signInForm" method="post" action="<c:url value="/login/proxy"/>">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="../login/proxy">
           <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
