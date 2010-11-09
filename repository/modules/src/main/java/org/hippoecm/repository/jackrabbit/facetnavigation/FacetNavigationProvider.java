@@ -126,6 +126,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                 facetedFiltersString = facetedFilters.toString();
             } catch (IllegalArgumentException e) {
                 log.warn("Invalid filter found. Return state : {}", e.getMessage());
+                // we always need to populate the count
+                populateCount(state, 0);
                 return state;
             }
         }
@@ -138,6 +140,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             orderByList = new ArrayList<OrderBy>();
             if(sortorders != null && sortorders.length != sortbys.length) {
                 log.warn("When using multivalued '{}', and '{}', then both should have equal number of values (or delete property "+FacNavNodeType.HIPPOFACNAV_FACETSORTORDER+" at all)", FacNavNodeType.HIPPOFACNAV_FACETSORTBY, FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
+             // we always need to populate the count
+                populateCount(state, 0);
                 return state;
             }
             for(int i = 0; i < sortbys.length; i++) {
@@ -176,6 +180,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     } catch (Exception e) {
                         log.warn("Malformed facet range configuration '"+facetNodeView.facet+"'. Valid format is "+VALID_RANGE_EXAMPLE,
                                         e);
+                        // we always need to populate the count
+                        populateCount(state, 0);
                         return state;
                     }
                     
@@ -202,6 +208,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             }
         } catch (IllegalArgumentException e) {
             log.warn("Incorrect faceted navigation configuration: '{}'. Return state", e.getMessage());
+           // we always need to populate the count
+            populateCount(state, 0);
             return state;
         }
         
@@ -218,6 +226,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             initialQuery = (docbase != null ? facetedEngine.parse(initialQueryString.toString()) : null);
         } catch (IllegalArgumentException e) {
             log.warn("Return state. Error parsing initial query:  '{}'", e.getMessage());
+            // we always need to populate the count
+            populateCount(state, 0);
             return state;
         }
 
@@ -245,16 +255,14 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
          
         } catch (IllegalArgumentException e) {
             log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
+           // we always need to populate the count
+            populateCount(state, 0);
             return state;
         }
         
         int count = facetedResult.length();
         
-        PropertyState propState = createNew(countName, state.getNodeId());
-        propState.setType(PropertyType.LONG);
-        propState.setValues(new InternalValue[] { InternalValue.create(count) });
-        propState.setMultiValued(false);
-        state.addPropertyName(countName);
+        populateCount(state, count);
         
         // Add resultset
         FacetResultSetProvider.FacetResultSetNodeId childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
@@ -268,6 +276,15 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         return state;
     }
 
+    private void  populateCount(NodeState state, int count){
+        PropertyState propState = createNew(countName, state.getNodeId());
+        propState.setType(PropertyType.LONG);
+        propState.setValues(new InternalValue[] { InternalValue.create(count) });
+        propState.setMultiValued(false);
+        state.addPropertyName(countName);   
+        return;
+    }
+    
     protected final int getPropertyAsInt(NodeId nodeId, Name propName) throws NumberFormatException, RepositoryException {
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
         if(propState == null) {
