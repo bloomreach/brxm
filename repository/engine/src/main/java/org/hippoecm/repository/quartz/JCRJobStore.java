@@ -57,8 +57,10 @@ public class JCRJobStore implements JobStore {
 
     static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
 
+    private boolean clustered = false;
+
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
-        signaler.signalSchedulingChange();
+        signaler.signalSchedulingChange(1000);
     }
 
     public void setUseProperties(boolean flag) {
@@ -68,7 +70,7 @@ public class JCRJobStore implements JobStore {
         // FIXME
     }
     public void setIsClustered(boolean flag) {
-        // FIXME
+        this.clustered = flag;
     }
     public void setMisfireThreshold(long threshold) {
         // FIXME
@@ -82,6 +84,14 @@ public class JCRJobStore implements JobStore {
 
     public boolean supportsPersistence() {
         return true;
+    }
+
+    public long getEstimatedTimeToReleaseAndAcquireTrigger() {
+        return 0;  // FIXME
+    }
+
+    public boolean isClustered() {
+        return this.clustered;
     }
 
     /**
@@ -506,6 +516,14 @@ public class JCRJobStore implements JobStore {
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("error while marking job completed", ex);
         }
+    }
+
+    public void setInstanceId(String s) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setInstanceName(String s) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private Session getSession(SchedulingContext ctxt) throws RepositoryException {

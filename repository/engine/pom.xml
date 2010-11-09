@@ -93,9 +93,9 @@
     </dependency>
 
     <dependency>
-      <groupId>opensymphony</groupId>
+      <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
-      <version>[1.5.1,1.6.0)</version>
+      <version>1.8.4</version>
     </dependency>
 
     <dependency>
