@@ -149,8 +149,17 @@
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
                 </sv:property>
-               </sv:node>
-               <sv:node sv:name="assets">
+                <sv:property sv:name="hst:mountsite" sv:type="String">
+                  <sv:value>hst:root</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountrest" sv:type="String">
+                  <sv:value>restapi</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountassets" sv:type="String">
+                  <sv:value>restapi-assets</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="assets">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
                 </sv:property>
@@ -271,6 +280,15 @@
                     </sv:property>
                     <sv:property sv:name="hst:showport" sv:type="Boolean">
                       <sv:value>true</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:mountsite" sv:type="String">
+                      <sv:value>preview</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:mountrest" sv:type="String">
+                      <sv:value>restapi</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:mountassets" sv:type="String">
+                      <sv:value>restapi-assets</sv:value>
                     </sv:property>
                  </sv:node>
                  <sv:node sv:name="assets">
@@ -473,8 +491,17 @@
                 <sv:property sv:name="hst:types" sv:type="String">
                   <sv:value>rest</sv:value>
                 </sv:property>
-               </sv:node>
-               <sv:node sv:name="assets">
+                <sv:property sv:name="hst:mountsite" sv:type="String">
+                  <sv:value>hst:root</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountrest" sv:type="String">
+                  <sv:value>restapi</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountassets" sv:type="String">
+                  <sv:value>restapi-assets</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="assets">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:sitemount</sv:value>
                 </sv:property>
@@ -595,6 +622,15 @@
                   </sv:property>
                   <sv:property sv:name="hst:showport" sv:type="Boolean">
                     <sv:value>true</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:mountsite" sv:type="String">
+                    <sv:value>preview</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:mountrest" sv:type="String">
+                    <sv:value>restapi</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:mountassets" sv:type="String">
+                    <sv:value>restapi-assets</sv:value>
                   </sv:property>
                 </sv:node>
                 <sv:node sv:name="assets">

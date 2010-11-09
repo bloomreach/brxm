@@ -163,39 +163,18 @@ public abstract class AbstractResource {
     }
     
     protected Link getNodeLink(HstRequestContext requestContext, HippoBean hippoBean) {
-        Link nodeLink = new Link();
-        
-        try {
-            nodeLink.setRel(MOUNT_ALIAS_REST);
-            HstLink link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
-            if (link != null) {
-                String href = link.toUrlForm(requestContext, isPageLinksExternal());
-                nodeLink.setHref(href);
-                nodeLink.setTitle(hippoBean.getName());
-                
-                // tries to retrieve title property if available.
-                try {
-                    String title = (String) PropertyUtils.getProperty(hippoBean, "title");
-                    if (title != null) {
-                        nodeLink.setTitle(title);
-                    }
-                } 
-                catch (Exception ignore) {
-                }
-            }
-        } catch (Exception e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to generate a page link. {}", e.toString());
-            }
-        }
-        return nodeLink;
+        return getRestLink(requestContext, hippoBean, null);
+    }
+    
+    protected Link getRestLink(HstRequestContext requestContext, HippoBean hippoBean, String subPath) {
+        return getMountLink(requestContext, hippoBean, MOUNT_ALIAS_REST, subPath);
     }
     
     protected Link getSiteLink(HstRequestContext requestContext, HippoBean hippoBean) {
-        return getMountLink(requestContext, hippoBean, null);
+        return getMountLink(requestContext, hippoBean, null, null);
     }
     
-    protected Link getMountLink(HstRequestContext requestContext, HippoBean hippoBean, String mountAliasName) {
+    protected Link getMountLink(HstRequestContext requestContext, HippoBean hippoBean, String mountAliasName, String subPath) {
         Link nodeLink = new Link();
         
         try {
@@ -212,6 +191,10 @@ public abstract class AbstractResource {
             }
             
             if (link != null) {
+                if (subPath != null) {
+                    link.setSubPath(subPath);
+                }
+                
                 String href = link.toUrlForm(requestContext, isPageLinksExternal());
                 nodeLink.setHref(href);
                 nodeLink.setTitle(hippoBean.getName());

@@ -43,7 +43,7 @@ public class ExampleImageSetContentResource extends BaseImageSetContentResource 
     @GET
     @Path("/thumbnail/")
     public HippoResourceRepresentation getThumbnailImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
-        return super.getChildResource(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail");
+        return super.getChildResource(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail", "thumbnail/");
     }
     
     @GET
@@ -63,7 +63,7 @@ public class ExampleImageSetContentResource extends BaseImageSetContentResource 
     @GET
     @Path("/picture/")
     public HippoResourceRepresentation getPictureImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
-        return super.getChildResource(servletRequest, servletResponse, uriInfo, "hippogallery:picture");
+        return super.getChildResource(servletRequest, servletResponse, uriInfo, "hippogallery:picture", "picture/");
     }
     
     @GET
