@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.rewriter;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -58,5 +59,15 @@ public interface ContentRewriter<T> {
      * @return
      */
     T rewrite(T content, Node contentNode, HstRequestContext requestContext, String targetSiteMountAlias);
+    
+    /**
+     * Rewrites the content of the content node.
+     * @param content
+     * @param contentNode
+     * @param requestContext
+     * @param targetMount
+     * @return
+     */
+    T rewrite(T content, Node contentNode, HstRequestContext requestContext, SiteMount targetMount);
     
 }

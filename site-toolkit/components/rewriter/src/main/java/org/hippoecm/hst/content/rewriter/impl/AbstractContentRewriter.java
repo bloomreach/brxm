@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.rewriter.impl;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -49,6 +50,10 @@ public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     }
 
     public T rewrite(T content, Node contentNode, HstRequestContext requestContext, String targetSiteMountAlias) {
+        return null;
+    }
+    
+    public T rewrite(T content, Node contentNode, HstRequestContext requestContext, SiteMount targetMount) {
         return null;
     }
     

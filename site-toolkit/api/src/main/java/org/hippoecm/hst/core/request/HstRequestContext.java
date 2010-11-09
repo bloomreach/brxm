@@ -248,9 +248,13 @@ public interface HstRequestContext {
      * If there can be found a {@link SiteMount} with the same primary type ( {@link SiteMount#getType()} ) as the one for the mount of the current request, this
      * {@link SiteMount} has precedence. If there is no primary type match, we'll return the mount that has most types in common
      * </p>
-     * 
-     * @param alias the alias the found {@link SiteMount} should have
-     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and at least one common type with the mount from the current request. <code>null</code> if there is no suitable mount.
+     * <p>
+     * If there cannot be found a correct {@link SiteMount} for <code>alias</code>, there will be looked if the {@link SiteMount} of the current {@link HstRequestContext}
+     * has a property that is called <code>hst:mountXXX</code> where <code>XXX</code> is equal to  <code>alias</code>. If so, there will be tried
+     * to return a {@link SiteMount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
+     * </p>
+     * @param alias the alias the found {@link SiteMount} or XXX in hst:mountXXX property
+     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> or mappedAlias and at least one common type with the mount from the current request. <code>null</code> if there is no suitable mount.
      */
     SiteMount getMount(String alias);
     
@@ -258,10 +262,15 @@ public interface HstRequestContext {
      * <p>
      * a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and one of its {@link SiteMount#getTypes()}  equal to <code>type</code>.
      * </p>
+     * <p>
+     * If there cannot be found a correct {@link SiteMount} for <code>alias</code>, there will be looked if the {@link SiteMount} of the current {@link HstRequestContext}
+     * has a property that is called <code>hst:mountXXX</code> where <code>XXX</code> is equal to  <code>alias</code>. If so, there will be tried
+     * to return a {@link SiteMount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
+     * </p>
      * 
-     * @param alias the alias the found {@link SiteMount} should have
+     * @param alias the alias the found {@link SiteMount}  or or XXX in hst:mountXXX property
      * @param type the type the found {@link SiteMount} should have
-     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and one of its {@link SiteMount#getTypes()} equal to <code>type</code>. <code>null</code> if there is no suitable mount.
+     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> or mappedAlias and one of its {@link SiteMount#getTypes()} equal to <code>type</code>. <code>null</code> if there is no suitable mount.
      */
     SiteMount getMount(String alias, String type);
     

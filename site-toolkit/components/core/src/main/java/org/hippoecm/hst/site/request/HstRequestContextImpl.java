@@ -46,6 +46,8 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMount;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HstRequestContextImpl
@@ -54,6 +56,8 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  */
 public class HstRequestContextImpl implements HstMutableRequestContext {
 
+    private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
+    
 	protected ServletContext servletContext;
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
@@ -345,6 +349,10 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     public SiteMount getMount(String alias) {
+        return getMount(alias, false);
+    }
+    
+    private SiteMount getMount(String alias, boolean alreadyMapped) {
         SiteMount currentMount = getResolvedSiteMount().getSiteMount();
         String hostGroupName = currentMount.getVirtualHost().getHostGroupName();
         VirtualHosts hosts = currentMount.getVirtualHost().getVirtualHosts();
@@ -358,8 +366,20 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         
         if(possibleMounts.size() == 0) {
-            // no match found
-            return null;
+            // no exact mount alias found. Now check whether there is a mapped mount on the current mount as follows:
+            // if the current mount as a property: 
+            // "hst:mount"+alias we take the value of this property, and see whether we can find a mount with alias equal to the value of this property 
+            if(alreadyMapped) {
+                log.debug("Did not find a mount for mapped alias '{}'. Return null", alias);
+                return null;
+            }
+            String mappedAlias = currentMount.getMountProperties().get(alias);
+            if(mappedAlias == null) {
+                log.debug("Did not find a mount or mappedAlias  for alias '{}'", alias);
+                return null;
+            }
+            log.debug("We did not find a direct mount for alias '{}' but found mappedAlias '{}'. Try to find a mount for mapped alias now.", alias, mappedAlias);
+            return getMount(mappedAlias, true);
         }
         
         if(possibleMounts.size() == 1) {
@@ -404,7 +424,24 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     public SiteMount getMount(String alias, String type) {
-        return getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias, type);
+        SiteMount mount =  getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias, type);
+        if(mount == null) {
+            log.debug("Cannot find a mount for alias '{}'. Try to find mapped alias now. ", alias);
+            String mappedAlias = getResolvedSiteMount().getSiteMount().getMountProperties().get(alias);
+            if(mappedAlias == null) {
+                log.debug("Did not find a mount or mappedAlias for alias '{}'. Return null", alias);
+                return null;
+            }
+            log.debug("We did not find a direct mount for alias '{}' but found a mappedAlias '{}'. Try to find a mount for mapped alias now.", alias, mappedAlias);
+            mount =  getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), mappedAlias, type);
+            if(log.isDebugEnabled()) {
+                if(mount != null) {
+                    log.debug("We did not find a direct mount for alias '{}' but found a Mount for mappedAlias '{}'. Return this mount.", alias, mappedAlias);
+                }
+            }
+        }
+        
+        return mount;
     }
     
     private int countCommon(List<String> types, List<String> types2) {

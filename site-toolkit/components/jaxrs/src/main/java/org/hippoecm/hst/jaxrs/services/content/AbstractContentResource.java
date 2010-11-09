@@ -22,6 +22,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -116,9 +117,9 @@ public abstract class AbstractContentResource extends AbstractResource {
                 targetSiteMountAlias = MOUNT_ALIAS_SITE;
             }
             
-            String mappedTargetMountAlias = getMappedMountAliasName(requestContext, targetSiteMountAlias);
+            SiteMount targetMount = requestContext.getMount(targetSiteMountAlias);
             
-            String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, mappedTargetMountAlias);
+            String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetMount);
             htmlRep.setContent(rewrittenHtml);
             
             return htmlRep;
@@ -226,9 +227,9 @@ public abstract class AbstractContentResource extends AbstractResource {
             targetSiteMountAlias = MOUNT_ALIAS_SITE;
         }
         
-        String mappedTargetMountAlias = getMappedMountAliasName(requestContext, targetSiteMountAlias);
+        SiteMount targetMount = requestContext.getMount(targetSiteMountAlias);
         
-        String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, mappedTargetMountAlias);
+        String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetMount);
         return rewrittenHtml;
     }
     

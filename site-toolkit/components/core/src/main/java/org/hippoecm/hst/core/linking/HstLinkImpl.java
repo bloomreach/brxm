@@ -125,7 +125,7 @@ public class HstLinkImpl implements HstLink{
         if(subPath != null) {
             // subPath is allowed to be empty ""
             combinedPath += PATH_SUBPATH_DELIMITER + subPath;
-        } else if (siteMount.supportsSubPath()) {
+        } else if (siteMount != null && siteMount.supportsSubPath()) {
             // mount is configured to support subPath: Always include the PATH_SUBPATH_DELIMITER
             combinedPath += PATH_SUBPATH_DELIMITER;
         }
@@ -143,30 +143,32 @@ public class HstLinkImpl implements HstLink{
         
         SiteMount requestSiteMount = requestContext.getResolvedSiteMount().getSiteMount();
         /*
-         * we create a url including http when one of the lines below is true
+         * we create a url including http when the sitemount is not null and one of the lines below is true
          * 1) external = true
          * 2) The virtualhost from current request sitemount is different than the sitemount for this link
          * 3) The portnumber is in the url, and the current request sitemount has a different portnumber than the sitemount for this link
          */
-        if (external || requestSiteMount.getVirtualHost() != siteMount.getVirtualHost()
-                     || (siteMount.isPortInUrl() && requestSiteMount.getPort() != siteMount.getPort())
-                     || (siteMount.getScheme() != null && !siteMount.getScheme().equals(requestSiteMount.getScheme())) ) {
-           String host = siteMount.getScheme() + "://" + siteMount.getVirtualHost().getHostName();
-           if(siteMount.isPortInUrl()) {
-               int port = siteMount.getPort();
-               if(port == 0) {
-                   // the siteMount is port agnostic. Take port from current container url
-                  port = requestContext.getBaseURL().getPortNumber();
+        if(siteMount != null) {
+            if (external || requestSiteMount.getVirtualHost() != siteMount.getVirtualHost()
+                         || (siteMount.isPortInUrl() && requestSiteMount.getPort() != siteMount.getPort())
+                         || (siteMount.getScheme() != null && !siteMount.getScheme().equals(requestSiteMount.getScheme())) ) {
+               String host = siteMount.getScheme() + "://" + siteMount.getVirtualHost().getHostName();
+               if(siteMount.isPortInUrl()) {
+                   int port = siteMount.getPort();
+                   if(port == 0) {
+                       // the siteMount is port agnostic. Take port from current container url
+                      port = requestContext.getBaseURL().getPortNumber();
+                   }
+                   if(port == 80 || port == 443) {
+                       // do not include default ports
+                   } else {
+                       host += ":"+port;
+                   }
                }
-               if(port == 80 || port == 443) {
-                   // do not include default ports
-               } else {
-                   host += ":"+port;
-               }
-           }
-           
-           
-           urlString =  host + urlString;
+               
+               
+               urlString =  host + urlString;
+            }
         }
        
         return urlString;

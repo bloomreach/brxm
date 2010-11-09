@@ -369,9 +369,14 @@ public interface SiteMount {
     String getProperty(String name);
     
     /**
-     * Returns all the properties that start with {@value #PROPERTY_NAME_MOUNT_PREFIX} and have value of type String. This map has as key the 
-     * propertyname after {@value #PROPERTY_NAME_MOUNT_PREFIX}
-     * @return all the mount properties
+     * <p>
+     * Returns all the properties that start with {@value #PROPERTY_NAME_MOUNT_PREFIX} and have value of type {@link String}. This map has as key the 
+     * propertyname after {@value #PROPERTY_NAME_MOUNT_PREFIX}.
+     * </p>
+     * <p> 
+     * <b>Note</b> The property called <code>hst:mountpoint</code> is excluded from this map, as it has a complete different purpose
+     * </p>
+     * @return all the mount properties and an empty map if there where no mount properties
      */
     Map<String, String> getMountProperties();
 }

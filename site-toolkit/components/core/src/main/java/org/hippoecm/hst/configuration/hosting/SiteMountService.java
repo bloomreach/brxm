@@ -323,8 +323,8 @@ public class SiteMountService implements SiteMount {
             this.embeddedSiteMountPath = parent.getEmbeddedSiteMountPath();
         }
         
-        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH)) {
-            this.mountPoint = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPATH);
+        if(siteMount.getValueProvider().hasProperty(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPOINT)) {
+            this.mountPoint = siteMount.getValueProvider().getString(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPOINT);
             // now, we need to create the HstSite object
             if(mountPoint == null || "".equals(mountPoint)){
                 mountPoint = null;
@@ -586,6 +586,10 @@ public class SiteMountService implements SiteMount {
         for(Entry<String, Object> entry : allProperties.entrySet()) {
             if(entry.getValue() instanceof String) {
                 if(entry.getKey().startsWith(PROPERTY_NAME_MOUNT_PREFIX)) {
+                    if(entry.getKey().equals(HstNodeTypes.SITEMOUNT_PROPERTY_MOUNTPOINT)) {
+                        // skip the hst:mountpoint property as this is a reserved property with a different meaning
+                        continue;
+                    }
                     mountProperties.put(entry.getKey().substring(PROPERTY_NAME_MOUNT_PREFIX.length()), (String)entry.getValue());
                 }
             }

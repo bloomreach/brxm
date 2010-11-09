@@ -16,7 +16,6 @@
 package org.hippoecm.hst.jaxrs.services;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -201,13 +200,13 @@ public abstract class AbstractResource {
         
         try {
             String usedMountAliasName = (mountAliasName == null ? MOUNT_ALIAS_SITE : mountAliasName);
-            String mappedMountAliasForSite = getMappedMountAliasName(requestContext, usedMountAliasName);
+            SiteMount mappedMount = requestContext.getMount(usedMountAliasName);
             nodeLink.setRel(usedMountAliasName);
             
             HstLink link = null;
             
-            if (mappedMountAliasForSite != null) {
-                link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext, mappedMountAliasForSite);
+            if (mappedMount != null) {
+                link = requestContext.getHstLinkCreator().create(hippoBean.getNode(), mappedMount);
             } else {
                 link = requestContext.getHstLinkCreator().create(hippoBean, requestContext);
             }
@@ -235,25 +234,4 @@ public abstract class AbstractResource {
         return nodeLink;
     }
     
-    protected String getMappedMountAliasName(HstRequestContext requestContext, String mountAlias) {
-        SiteMount curMount = requestContext.getResolvedSiteMount().getSiteMount();
-        
-        if (curMount == null) {
-            return null;
-        }
-        
-        Map<String, String> mountProps = curMount.getMountProperties();
-        
-        if (mountProps == null) {
-            return null;
-        }
-        
-        String mappedAlias = mountProps.get(mountAlias);
-        
-        if (mappedAlias == null) {
-            mappedAlias = curMount.getAlias();
-        }
-        
-        return mappedAlias;
-    }
 }

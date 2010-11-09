@@ -101,7 +101,7 @@ public interface HstNodeTypes {
     public final static String SITEMOUNT_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
     public final static String SITEMOUNT_PROPERTY_SHOWPORT = "hst:showport";
     public final static String SITEMOUNT_PROPERTY_SCHEME = "hst:scheme";
-    public final static String SITEMOUNT_PROPERTY_MOUNTPATH = "hst:mountpoint";
+    public final static String SITEMOUNT_PROPERTY_MOUNTPOINT = "hst:mountpoint";
     public final static String SITEMOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
     public final static String SITEMOUNT_PROPERTY_SUPPORTS_SUB_PATH = "hst:supportsSubPath";
     

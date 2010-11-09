@@ -17,6 +17,7 @@ package org.hippoecm.hst.utils;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.configuration.hosting.SiteMount;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -41,8 +42,8 @@ public class SimpleHmlStringParser {
     
     private static class SimpleHmlStringRewriter extends SimpleContentRewriter {
         @Override
-        public HstLink getLink(String path, Node node, HstRequestContext requestContext, String targetSiteMountAlias) {
-            return super.getLink(path, node, requestContext, targetSiteMountAlias);
+        public HstLink getLink(String path, Node node, HstRequestContext requestContext, SiteMount targetMount) {
+            return super.getLink(path, node, requestContext, targetMount);
         }
         
         @Override
