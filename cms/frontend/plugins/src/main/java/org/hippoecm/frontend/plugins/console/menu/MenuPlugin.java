@@ -15,9 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.console.menu;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.jcr.Node;
 
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -25,29 +31,23 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.console.menu.check.CheckInOutDialog;
-import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
-import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
-import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
-import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
-import org.hippoecm.frontend.plugins.console.menu.namespace.NamespaceDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
-import org.hippoecm.frontend.plugins.console.menu.permissions.PermissionsDialog;
 import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
-import org.hippoecm.frontend.plugins.console.menu.refs.ReferencesDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
-import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class MenuPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(MenuPlugin.class);
 
     public MenuPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -94,24 +94,6 @@ public class MenuPlugin extends RenderPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new ContentExportDialog(MenuPlugin.this);
-            }
-        };
-        add(new DialogLink("content-export-dialog", new Model("XML Export"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Node> createDialog() {
-                return new ContentImportDialog(MenuPlugin.this);
-            }
-        };
-        add(new DialogLink("content-import-dialog", new Model("XML Import"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Node> createDialog() {
                 return new PropertyDialog(MenuPlugin.this);
             }
         };
@@ -144,72 +126,38 @@ public class MenuPlugin extends RenderPlugin<Node> {
         };
         add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
 
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Void> createDialog() {
-                return new CndImportDialog();
-            }
-        };
-        add(new DialogLink("cnd-import-dialog", new Model("CND Import"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Void> createDialog() {
-                return new CndExportDialog();
-            }
-        };
-        add(new DialogLink("cnd-export-dialog", new Model("CND Export"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Node> createDialog() {
-                return new NamespaceDialog(MenuPlugin.this);
-            }
-        };
-        add(new DialogLink("namespace-dialog", new Model("Add Namespace"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Node> createDialog() {
-                return new CheckInOutDialog(MenuPlugin.this);
-            }
-        };
-        add(new DialogLink("check-inout-dialog", new Model("Check In/Out"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Node> createDialog() {
-                return new WorkflowDialog(MenuPlugin.this);
-            }
-        };
-        add(new DialogLink("workflow-dialog", new Model("View Workflow"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Node> createDialog() {
-                return new PermissionsDialog(MenuPlugin.this);
-            }
-        };
-        add(new DialogLink("permissions-dialog", new Model("View Permissions"), dialogFactory, dialogService));
-
-        dialogFactory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog<Node> createDialog() {
-                return new ReferencesDialog(MenuPlugin.this);
-            }
-        };
-        add(new DialogLink("references-dialog", new Model("View References"), dialogFactory, dialogService));
+        RepeatingView menuItems = new RepeatingView("items");
+        for (IPluginConfig item : config.getPluginConfig("items").getPluginConfigSet()) {
+            String itemLabel = item.getString("label");
+            final String itemClass = item.getString("class");
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public AbstractDialog<Void> createDialog() {
+                    try {
+                        return (AbstractDialog)Class.forName(itemClass).getConstructor(new Class[] {MenuPlugin.class}).newInstance(MenuPlugin.this);
+                    } catch (ClassNotFoundException ex) {
+                        log.error(ex.getMessage(), ex);
+                    } catch (NoSuchMethodException ex) {
+                        log.error(ex.getMessage(), ex);
+                    } catch (InstantiationException ex) {
+                        log.error(ex.getMessage(), ex);
+                    } catch (IllegalAccessException ex) {
+                        log.error(ex.getMessage(), ex);
+                    } catch (IllegalArgumentException ex) {
+                        log.error(ex.getMessage(), ex);
+                    } catch (InvocationTargetException ex) {
+                        log.error(ex.getMessage(), ex);
+                    }
+                    return null;
+                }
+            };
+            System.err.println("BERRY \""+itemLabel+"\"");
+            menuItems.add(new DialogLink(menuItems.newChildId(), new Model(itemLabel), dialogFactory, dialogService));
+        }
+        add(menuItems);
     }
 
     @Deprecated
     public void flushNodeModel(JcrNodeModel nodeModel) {
     }
-
 }

@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class CndImportDialog extends AbstractDialog<Void> {
     Component message;
     Model msgText;
 
-    public CndImportDialog() {
+    public CndImportDialog(MenuPlugin menuPlugin) {
         setMultiPart(true);
         setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));
