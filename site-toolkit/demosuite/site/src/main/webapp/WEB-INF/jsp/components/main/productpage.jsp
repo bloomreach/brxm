@@ -63,6 +63,10 @@
       <a id="<hst:namespace/>tagsSave" href="#" style="DISPLAY: none">Save</a>
       &nbsp;
       <a id="<hst:namespace/>tagsCancel" href="#" style="DISPLAY: none">Cancel</a>
+      &nbsp;
+      <c:if test="${isPreview and empty(hstRequest.userPrincipal)}">
+        <span><em>(Authentication required to edit tags.)</em></span>
+      </c:if>
   </p>
 </form>
   <p>
@@ -72,9 +76,12 @@
       <img id="productImg" src="<hst:link hippobean="${document.image.picture}"/>"/>
     </c:if>
     <br/>
+    <c:if test="${isPreview and empty(hstRequest.userPrincipal)}">
+      <span><em>(Authentication required to upload image.)</em></span>
+    </c:if>
     <form id="uploadForm" method="POST" enctype="multipart/form-data">
-      <input type="file" name="file"/>
-      <input type="button" id="<hst:namespace/>uploadButton" value="Upload" />
+      <input type="file" id="<hst:namespace/>uploadFile" name="file" style="DISPLAY: none" />
+      <input type="button" id="<hst:namespace/>uploadButton" value="Upload" style="DISPLAY: none" />
     </form>
   </p>
 </div>
@@ -91,6 +98,7 @@ function(Y) {
   var tagsCancelLink = Y.one("#<hst:namespace/>tagsCancel");
   
   var uploadForm = Y.one("#uploadForm");
+  var uploadFile = Y.one("#<hst:namespace/>uploadFile");
   var uploadButton = Y.one("#<hst:namespace/>uploadButton");
   
   var editTags = function(e) {
@@ -218,16 +226,17 @@ function(Y) {
     e.halt();
   };
   
-  <c:if test="${isPreview}">
+<c:if test="${isPreview and not(empty(hstRequest.userPrincipal))}">
   tagsEditLink.setStyle("display", "");
-  </c:if>
+  uploadFile.setStyle("display", "");
+  uploadButton.setStyle("display", "");
+</c:if>
   
   tagsEditLink.on("click", editTags);
   tagsSaveLink.on("click", saveTags);
   tagsCancelLink.on("click", cancelEditingTags);
 
   uploadButton.on("click", uploadImageForm);
-  
 });
 
 </script>
