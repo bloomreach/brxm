@@ -58,7 +58,7 @@ public class JcrPropertiesProvider extends NodeModelWrapper<Void> implements IDa
                 PropertyIterator it = nodeModel.getObject().getProperties();
                 if (it.getSize() > 0) {
                     it.skip(first);
-                    for (int i = 0; i < count; i++) {
+                    for (int i = 0; i < count && it.hasNext(); i++) {
                         Property prop = it.nextProperty();
 //                        boolean isPrimaryType = prop.getName().equals("jcr:primaryType");
 //                        boolean isMixinTypes = prop.getName().equals("jcr:mixinTypes");
