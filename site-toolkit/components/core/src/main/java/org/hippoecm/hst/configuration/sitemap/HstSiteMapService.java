@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.sitemap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
-import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
@@ -52,9 +52,9 @@ public class HstSiteMapService implements HstSiteMap {
     
     /*
      * The map of HstSiteMapItem where the key is HstSiteMapItem#getRefId(). Only HstSiteMapItem that have a refId are added to this 
-     * map. When duplicate key's are tried to be put, an exception will be thrown as this is not allowed
+     * map. When duplicate key's are tried to be put, an error is logged
      */
-    private Map<String, HstSiteMapItem> siteMapDescendantsByRefId = new DuplicateKeyNotAllowedHashMap<String, HstSiteMapItem>();
+    private Map<String, HstSiteMapItem> siteMapDescendantsByRefId = new HashMap<String, HstSiteMapItem>();
     
     public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
         this.hstSite = hstSite;
@@ -96,10 +96,9 @@ public class HstSiteMapService implements HstSiteMap {
            throw new ServiceException("HstSiteMapItem with already existing id encountered. Not allowed to have duplicate id's within one HstSiteMap. Duplicate id = '"+hstSiteMapItem.getId()+"'" , e);
         }
         if(hstSiteMapItem.getRefId() != null) {
-            try {
-                siteMapDescendantsByRefId.put(hstSiteMapItem.getRefId(), hstSiteMapItem);
-            } catch (IllegalArgumentException e) {
-               throw new ServiceException("HstSiteMapItem with already existing refId encountered. Not allowed to have duplicate refId's within one HstSiteMap. Duplicate refId = '"+hstSiteMapItem.getRefId()+"' for HstSiteMapItem with id='"+hstSiteMapItem.getId()+"'" , e);
+            HstSiteMapItem prevValue =  siteMapDescendantsByRefId.put(hstSiteMapItem.getRefId(), hstSiteMapItem);
+            if(prevValue != null) {
+                log.error("HstSiteMapItem with already existing refId encountered. Not allowed to have duplicate refId's within one HstSiteMap. Duplicate refId = '{}' for HstSiteMapItem with id='{}'. Previous HstSiteMapItem with same refId is replaced.",hstSiteMapItem.getRefId(), hstSiteMapItem.getId());
             }
         }
         for(HstSiteMapItem child : hstSiteMapItem.getChildren()) {
