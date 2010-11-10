@@ -80,8 +80,8 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
         
-        // need to set the resolved sitemount on the requestContext
-        setResolvedSiteMount(requestContext);
+        // need to set the resolved mount on the requestContext
+        setResolvedMount(requestContext);
         
         // request.getServletPath() = ""
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
@@ -103,7 +103,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
-        setResolvedSiteMount(requestContext);
+        setResolvedMount(requestContext);
         
         // request.getServletPath() = ""
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
@@ -150,7 +150,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
         ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
         
-        setResolvedSiteMount(requestContext);
+        setResolvedMount(requestContext);
         
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);
@@ -204,7 +204,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
         
-        setResolvedSiteMount(requestContext);
+        setResolvedMount(requestContext);
         
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);
@@ -238,7 +238,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
-        setResolvedSiteMount(requestContext);
+        setResolvedMount(requestContext);
 
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);

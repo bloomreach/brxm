@@ -64,7 +64,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest does not have a context path
-         * The backing SiteMount should be live
+         * The backing Mount should be live
          */
         @Test
         public void testMatchNoContextPath(){
@@ -84,9 +84,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("The relative content path must be '/News/2009' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getRelativeContentPath()+ "'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                // the requestURI did not match the preview SiteMount, so our siteMount must be live:
+                // the requestURI did not match the preview Mount, so our Mount must be live:
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The live SiteMount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+                assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
@@ -96,7 +96,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest does not have a context path
-         * The backing SiteMount should be preview
+         * The backing Mount should be preview
          */
         @Test
         public void testMatchPreviewNoContextPath(){
@@ -116,9 +116,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                // the Mount from the requestURI should match the preview SiteMount, so our siteMount must be preview:
+                // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The preview SiteMount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+                assertTrue("The preview Mount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
@@ -127,7 +127,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         
         /*
          * Default, when there is no hst:versioninpreviewheader configured, or, since we configure hst:versioninpreviewheader = true on the 
-         * base hstvirtualhosts configuration, all sitemount's by default should return true: 
+         * base hstvirtualhosts configuration, all Mount's by default should return true: 
          */
         @Test
         public void testVersionInPreviewHeaderDefaultTrue(){
@@ -153,7 +153,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest *does* have a context path
-         * The backing SiteMount should be live
+         * The backing Mount should be live
          */
         @Test
         public void testMatchWithContextPath(){
@@ -175,7 +175,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The live SiteMount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+                assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
@@ -185,7 +185,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest does not have a context path
-         * The backing SiteMount should be preview
+         * The backing Mount should be preview
          */
         @Test
         public void testMatchPreviewWithContextPath(){
@@ -206,9 +206,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                // the Mount from the requestURI should match the preview SiteMount, so our siteMount must be preview:
+                // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The preview SiteMount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+                assertTrue("The preview Mount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
@@ -218,9 +218,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest does not have a context path
-         * The backing SiteMount should be 'preview/custompipeline'
-         * This SiteMount is configured with a namedPipeline = 'CustomPipeline', hence, the resolvedSiteMapItem.getNamedPipeline should return 'CustomPipeline'
-         * The SiteMount 'preview/custompipeline' should inherit the mountPoint from its parent, which is 'preview', so the same HstSite config is there, with same sitemap tree
+         * The backing Mount should be 'preview/custompipeline'
+         * This Mount is configured with a namedPipeline = 'CustomPipeline', hence, the resolvedSiteMapItem.getNamedPipeline should return 'CustomPipeline'
+         * The Mount 'preview/custompipeline' should inherit the mountPoint from its parent, which is 'preview', so the same HstSite config is there, with same sitemap tree
          */
         @Test
         public void testMatchPreviewServices(){
@@ -241,11 +241,11 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                // the Mount from the requestURI should match the preview SiteMount, so our siteMount must be preview:
+                // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The preview SiteMount must have '/preview/custompipeline' as mountPath", "/preview/custompipeline".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+                assertTrue("The preview Mount must have '/preview/custompipeline' as mountPath", "/preview/custompipeline".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
                 
-                // because the /preview/services SiteMount has configured a different pipeline, the resolvedSiteMapItem should reflect this:
+                // because the /preview/services Mount has configured a different pipeline, the resolvedSiteMapItem should reflect this:
                 assertTrue("Expected pipeline name is 'CustomPipeline' ", "CustomPipeline".equals(resolvedSiteMapItem.getNamedPipeline()));
                 
             } catch (RepositoryNotAvailableException e) {
@@ -258,7 +258,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          * We now make a request uri to 
          * /preview/custompipeline/pipelines/custom   and
          * /preview/custompipeline/pipelines/general  where the custom has a specific pipeline configured on the matching sitemap item and
-         * general should fallback to the pipeline configured on the sitemount '/preview/custompipeline'
+         * general should fallback to the pipeline configured on the Mount '/preview/custompipeline'
          */
         @Test
         public void testSiteMapItemNamedPipeline(){
@@ -297,7 +297,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 ResolvedSiteMapItem generalResolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL2);
                 
                 // because the /preview/services/pipelines/general matches a sitemap item NOT containing a custom named pipeline, this having the one
-                // from the SiteMount /preview/services
+                // from the Mount /preview/services
                 assertTrue("Expected pipeline name is 'CustomPipeline' but was '"+generalResolvedSiteMapItem.getNamedPipeline()+"'", "CustomPipeline".equals(generalResolvedSiteMapItem.getNamedPipeline()));
                 
                 
@@ -309,7 +309,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         
         
         /*
-         * On the general virtualhosts, we have set a property hst:homepage = 'home'. All virtual hosts and sitemount's which do not specify a homepage
+         * On the general virtualhosts, we have set a property hst:homepage = 'home'. All virtual hosts and Mount's which do not specify a homepage
          * theirselves must inherit this value. 
          */
         @Test 
@@ -365,11 +365,11 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         }
 
         /*
-         * Tests for the not mounted sitemounts (issitemount = false), which for example can be used in case of rest interface, which have their own custom
+         * Tests for the not mounted Mounts (issitemount = false), which for example can be used in case of rest interface, which have their own custom
          * namedPipeline, and only use the mountpoint as a location for content, not for a HstSite
          */
         @Test 
-        public void testSiteMountThatIsNotMounted(){
+        public void testMountThatIsNotMounted(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
@@ -385,7 +385,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
 
                 assertTrue("The mount for /preview/services should return that it is not mounted ", !mount.getMount().isSiteMount());
-                assertNull("An not mounted sitemount should have a HstSite that is null", mount.getMount().getHstSite());
+                assertNull("An not mounted Mount should have a HstSite that is null", mount.getMount().getHstSite());
                 assertTrue("The mountpath for /preview/services mount must be '/preview/services' but was '"+mount.getMount().getMountPath()+"'", "/preview/services".equals(mount.getMount().getMountPath()));
                 assertTrue("The mountpoint for /preview/services mount must be '/hst:hst/hst:unittestsites/unittestproject-preview' but was '"+mount.getMount().getMountPoint()+"'", "/hst:hst/hst:unittestsites/unittestproject-preview".equals(mount.getMount().getMountPoint()));
             } catch (RepositoryNotAvailableException e) {
@@ -434,7 +434,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         /*
          * We now test with port 8081: this one *is explicitly* defined in the unittest config: this means, it should be used.
          * 
-         * For port 8081 we configured that it is a preview. We should thus get a SiteMount that has isPreview = true
+         * For port 8081 we configured that it is a preview. We should thus get a Mount that has isPreview = true
          */
         @Test 
         public void testSiteWithConfiguredPort(){
@@ -468,19 +468,19 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         }
         
         /*
-         * We now test a match on a sitemount at 127.0.0.1/hst:root/examplecontextpathonly  that has configured: 
+         * We now test a match on a Mount at 127.0.0.1/hst:root/examplecontextpathonly  that has configured: 
          * 
          * hst:onlyforcontextpath = /mycontextpath
          *  
          * This means, that for a request uri like '127.0.0.1/hst:root/examplecontextpathonly/home' that in case:
          * 
-         * 1) The contextPath is '/mycontextpath' it should match this sitemount
-         * 2) the contextPath is different than  '/mycontextpath': it should default back to the hst:root sitemount
+         * 1) The contextPath is '/mycontextpath' it should match this Mount
+         * 2) the contextPath is different than  '/mycontextpath': it should default back to the hst:root Mount
          * 
          * 
          */
         @Test 
-        public void testSiteMountOnlyForContextPath(){
+        public void testMountOnlyForContextPath(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
@@ -498,15 +498,15 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 
-                assertTrue("As the contextPath '/mycontextpath' matches the configured one of sitemount 'examplecontextpathonly', we expect the sitemount to have the name 'examplecontextpathonly'",mount.getMount().getName().equals("examplecontextpathonly"));
+                assertTrue("As the contextPath '/mycontextpath' matches the configured one of Mount 'examplecontextpathonly', we expect the Mount to have the name 'examplecontextpathonly'",mount.getMount().getName().equals("examplecontextpathonly"));
                 
-                // now change the contextPath to be unequal to the 'hst:onlyforcontextpath = /mycontextpath'. The sitemount should be the hst:root sitemount now
+                // now change the contextPath to be unequal to the 'hst:onlyforcontextpath = /mycontextpath'. The Mount should be the hst:root Mount now
                 request.setRequestURI("/mywrongpath/examplecontextpathonly/home");
                 request.setContextPath("/mywrongpath");
                 
                 mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                
-                assertTrue("As the contextPath '/mywrongpath' does not match the configured one of sitemount 'examplecontextpathonly', we expect a fallback to the sitemount hst:root ",mount.getMount().getName().equals("hst:root"));
+                assertTrue("As the contextPath '/mywrongpath' does not match the configured one of Mount 'examplecontextpathonly', we expect a fallback to the Mount hst:root ",mount.getMount().getName().equals("hst:root"));
                 
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
@@ -520,13 +520,13 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          * test  (host)
          *    `onehippo (host, homepage = myhometest1)
          *        |-www  (host, homepage = myhometest2) 
-         *        |   `hst:root (sitemount)
-         *        |        |- custompipeline (sitemount, homepage = myhometest3)
-         *        |        `- services (sitemount, isSiteMount = false)
+         *        |   `hst:root (mount)
+         *        |        |- custompipeline (mount, homepage = myhometest3)
+         *        |        `- services (mount, isSiteMount = false)
          *        `preview (homepage = myhometestpreview)
-         *        |    `hst:root  (sitemount)
-         *        |        |- custompipeline (sitemount, homepage = mycustomhometestpreview, hst:versioninpreviewheader = false)
-         *        |        `- services (sitemount, isSiteMount = false)
+         *        |    `hst:root  (mount)
+         *        |        |- custompipeline (mount, homepage = mycustomhometestpreview, hst:versioninpreviewheader = false)
+         *        |        `- services (mount, isSiteMount = false)
          *                  
          */
         @Test 
@@ -587,7 +587,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 previewRequest.setRequestURI("/site/custompipeline");
                 
                 mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
-                // The custompipeline sitemount also has hst:versioninpreviewheader = false
+                // The custompipeline Mount also has hst:versioninpreviewheader = false
                 assertFalse("The mount for custompipeline should return false for version in preview header but returned true",mount.getMount().isVersionInPreviewHeader());
                 
                 hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response, mount);

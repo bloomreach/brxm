@@ -354,7 +354,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                     
                     assertTrue("We should have a redirected new sitemap item and not the same one we already had.", resolvedSiteMapItem != redirectedResolvedSiteMapItem);
                     
-                    assertTrue("the new redirected resolved sitemapitem should have the exact same sitemount instance ", resolvedSiteMapItem.getResolvedMount() == redirectedResolvedSiteMapItem.getResolvedMount());
+                    assertTrue("the new redirected resolved sitemapitem should have the exact same mount instance ", resolvedSiteMapItem.getResolvedMount() == redirectedResolvedSiteMapItem.getResolvedMount());
                     
                     assertTrue("We expect the redirected resolved sitemapitem to have pathInfo 'home' but it was '"+redirectedResolvedSiteMapItem.getPathInfo()+"'", "home".equals(redirectedResolvedSiteMapItem.getPathInfo()));
                     

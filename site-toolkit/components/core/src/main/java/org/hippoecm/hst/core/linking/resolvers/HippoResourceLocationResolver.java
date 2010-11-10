@@ -65,7 +65,7 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
         return NODE_TYPE;
     }
 
-    public HstLink resolve(Node node, Mount siteMount) {
+    public HstLink resolve(Node node, Mount mount) {
         try {
             Node canonicalNode = null;
             if(node instanceof HippoNode) {
@@ -83,16 +83,16 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
             Node resourceContainerNode = node.getParent();
             for(ResourceContainer container : resourceContainers) {
                 if(resourceContainerNode.isNodeType(container.getNodeType())) {
-                    String pathInfo = container.resolveToPathInfo(resourceContainerNode, node, siteMount);
+                    String pathInfo = container.resolveToPathInfo(resourceContainerNode, node, mount);
                     if(pathInfo != null) {
-                        return new HstLinkImpl(getBinariesPrefix() + pathInfo, siteMount, true);
+                        return new HstLinkImpl(getBinariesPrefix() + pathInfo, mount, true);
                     }
                     log.debug("resourceContainer for '{}' unable to create a HstLink for path '{}'. Try next", container.getNodeType(), node.getPath());
                 }
             }
             log.debug("No resource container found for '{}'. Fallback to default link for binary which is '{}'/_nodepath_", resourceContainerNode.getPrimaryNodeType().getName(), getBinariesPrefix());
             // fallback
-            return defaultResourceLink(node, siteMount);
+            return defaultResourceLink(node, mount);
             
         } catch (RepositoryException e) {
             log.warn("RepositoryException during creating HstLink for resource. Return null");
@@ -101,10 +101,10 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     }
 
     
-    private HstLink defaultResourceLink(Node node, Mount siteMount) throws RepositoryException {
+    private HstLink defaultResourceLink(Node node, Mount mount) throws RepositoryException {
         String pathInfo = getBinariesPrefix()+node.getPath();
         boolean containerResource = true;
-        return new HstLinkImpl(pathInfo, siteMount, containerResource);
+        return new HstLinkImpl(pathInfo, mount, containerResource);
     }
 
     public boolean isBinaryLocation(String path) {

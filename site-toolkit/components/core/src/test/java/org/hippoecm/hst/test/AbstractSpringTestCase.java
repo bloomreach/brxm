@@ -101,23 +101,23 @@ public abstract class AbstractSpringTestCase
         return propConf;
     }
     
-    protected void setResolvedSiteMount(HstMutableRequestContext requestContext) {
+    protected void setResolvedMount(HstMutableRequestContext requestContext) {
         
-        ResolvedMount resolvedSiteMount = createNiceMock(ResolvedMount.class);
-        Mount siteMount = createNiceMock(Mount.class);
+        ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
+        Mount mount = createNiceMock(Mount.class);
         VirtualHost virtualHost = createNiceMock(VirtualHost.class);
         
-        expect(resolvedSiteMount.getResolvedMountPath()).andReturn("").anyTimes();
-        expect(resolvedSiteMount.getMount()).andReturn(siteMount).anyTimes();
-        expect(siteMount.getVirtualHost()).andReturn(virtualHost).anyTimes();
+        expect(resolvedMount.getResolvedMountPath()).andReturn("").anyTimes();
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
         expect(virtualHost.isContextPathInUrl()).andReturn(true).anyTimes();
 
-        replay(resolvedSiteMount);
-        replay(siteMount);
+        replay(resolvedMount);
+        replay(mount);
         replay(virtualHost);
         
-        // to parse a url, there must be a ResolvedSiteMount on the HstRequestContext
-        requestContext.setResolvedMount(resolvedSiteMount);
+        // to parse a url, there must be a ResolvedMount on the HstRequestContext
+        requestContext.setResolvedMount(resolvedMount);
     }
     
 
@@ -128,7 +128,7 @@ public abstract class AbstractSpringTestCase
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ResolvedMount mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     
         requestContext.setResolvedMount(mount);
-        // now we can parse the url *with* a RESOLVED_SITEMOUNT which is needed!        
+        // now we can parse the url *with* a RESOLVED_MOUNT which is needed!        
         HstURLFactory factory = (HstURLFactory)HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(request, response, mount);
         ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());

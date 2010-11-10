@@ -148,7 +148,7 @@ public class TestSecurityValve {
     }
 
     @Test
-    public void testCheckAuthorizedByRolesOnSiteMount() throws Exception {
+    public void testCheckAuthorizedByRolesOnMount() throws Exception {
         Set<String> roles = new HashSet<String>();
         CollectionUtils.addAll(roles, StringUtils.split("engineering sales"));
         
@@ -157,18 +157,18 @@ public class TestSecurityValve {
         ResolvedSiteMapItem resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
         expect(resolvedSiteMapItem.isSecured()).andReturn(false).anyTimes();
         
-        ResolvedMount resolvedSiteMount = createNiceMock(ResolvedMount.class);
-        expect(resolvedSiteMount.isSecured()).andReturn(true).anyTimes();
+        ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
+        expect(resolvedMount.isSecured()).andReturn(true).anyTimes();
         
-        expect(resolvedSiteMount.getRoles()).andReturn(roles).anyTimes();
-        expect(resolvedSiteMount.getUsers()).andReturn(users).anyTimes();
+        expect(resolvedMount.getRoles()).andReturn(roles).anyTimes();
+        expect(resolvedMount.getUsers()).andReturn(users).anyTimes();
         
         HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
-        expect(requestContext.getResolvedMount()).andReturn(resolvedSiteMount).anyTimes();
+        expect(requestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
         
         replay(resolvedSiteMapItem);
-        replay(resolvedSiteMount);
+        replay(resolvedMount);
         replay(requestContext);
         
         MockHttpServletRequest servletRequest = new MockHttpServletRequest();

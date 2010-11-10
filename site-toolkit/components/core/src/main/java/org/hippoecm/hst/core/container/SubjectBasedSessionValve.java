@@ -44,9 +44,9 @@ public class SubjectBasedSessionValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
-        boolean subjectBasedSession = resolvedSiteMount.isSubjectBasedSession();
-        boolean sessionStateful = resolvedSiteMount.isSessionStateful();
+        ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        boolean subjectBasedSession = resolvedMount.isSubjectBasedSession();
+        boolean sessionStateful = resolvedMount.isSessionStateful();
         
         if (subjectBasedSession) {
             if (requestContext.getSubject() == null) {

@@ -70,7 +70,7 @@ public class VirtualHostsService implements VirtualHosts {
     private String locale;
     
     /**
-     * Whether the {@link Mount}'s below this VirtualHostsService should show the hst version as a response header when they are a preview SiteMount
+     * Whether the {@link Mount}'s below this VirtualHostsService should show the hst version as a response header when they are a preview {@link Mount}
      */
     private boolean versionInPreviewHeader = true;
     
@@ -148,7 +148,7 @@ public class VirtualHostsService implements VirtualHosts {
     }
     
     /**
-     * Add this mount for lookup through {@link #getSiteMountByAliasAndType(String, String)}
+     * Add this mount for lookup through {@link #getMountByGroupAliasAndType(String, String, String)}
      * @param mount
      */
     public void addMount(Mount mount) throws ServiceException {
@@ -168,7 +168,7 @@ public class VirtualHostsService implements VirtualHosts {
             aliasTypeMap = new DuplicateKeyNotAllowedHashMap<String, Mount>();
             mountByGroupAliasAndType.put(hostGroup, aliasTypeMap);
         }
-        // add the sitemount for all alias-type combinations:
+        // add the mount for all alias-type combinations:
         for (String type : mount.getTypes()) {
             try {
                 aliasTypeMap.put(getAliasTypeKey(mount.getAlias(), type), mount);
@@ -199,11 +199,11 @@ public class VirtualHostsService implements VirtualHosts {
     
     public ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException {
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
-        ResolvedMount resolvedSiteMount = null;
+        ResolvedMount resolvedMount = null;
         if(resolvedVirtualHost != null) {
-            resolvedSiteMount  = resolvedVirtualHost.matchMount(contextPath, requestPath);
+            resolvedMount  = resolvedVirtualHost.matchMount(contextPath, requestPath);
         }
-        return resolvedSiteMount;
+        return resolvedMount;
     }
     
     public ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException {
@@ -319,10 +319,6 @@ public class VirtualHostsService implements VirtualHosts {
         return versionInPreviewHeader;
     }
     
-    public Mount getSiteMountByAliasAndType(String alias, String type) {
-        return null;
-    }
-
     public Mount getMountByGroupAliasAndType(String hostGroupName, String alias, String type) {
         Map<String, Mount> aliasTypeMap = mountByGroupAliasAndType.get(hostGroupName);
         if(aliasTypeMap == null) {

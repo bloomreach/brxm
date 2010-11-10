@@ -54,13 +54,13 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             log.debug("Could not match the request to port '{}'. If there is a default port '0', we'll try this one");
             portMount = virtualHost.getPortMount(0);
             if(portMount == null) {
-                log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber));
+                log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber));
                 return null;
             }
         }
         
         if(portMount.getRootMount() == null) {
-            log.warn("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
+            log.warn("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
             return null;
         }
         
@@ -68,11 +68,11 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         String path = PathUtils.normalizePath(requestPath);
         String[] requestPathSegments = path.split("/");
         int position = 0;
-        Mount siteMount = portMount.getRootMount();
+        Mount mount = portMount.getRootMount();
         
         while(position < requestPathSegments.length) {
-            if(siteMount.getChildMount(requestPathSegments[position]) != null) {
-                siteMount = siteMount.getChildMount(requestPathSegments[position]);
+            if(mount.getChildMount(requestPathSegments[position]) != null) {
+                mount = mount.getChildMount(requestPathSegments[position]);
             } else {
                 // we're done: we have the deepest site mount
                 break;
@@ -85,14 +85,14 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         	contextPath = "/";
         }
         
-        // let's find a siteMount that has a valid 'onlyForContextPath' : if onlyForContextPath is not null && not equal to the contextPath, we need to try the parent sitemount until we have a valid one or have a sitemount that is null
-        while(siteMount != null && contextPath != null && (siteMount.onlyForContextPath() != null && !siteMount.onlyForContextPath().equals(contextPath) )) {
-            log.debug("SiteMount '{}' cannot be used because the contextPath '{}' is not valid for this siteMount, because it is only for context path. Let's try parent siteMounts if present.'"+siteMount.onlyForContextPath()+"' ", siteMount.getName(), contextPath);
-            siteMount = siteMount.getParent();
+        // let's find a Mount that has a valid 'onlyForContextPath' : if onlyForContextPath is not null && not equal to the contextPath, we need to try the parent Mount until we have a valid one or have a Mount that is null
+        while(mount != null && contextPath != null && (mount.onlyForContextPath() != null && !mount.onlyForContextPath().equals(contextPath) )) {
+            log.debug("Mount '{}' cannot be used because the contextPath '{}' is not valid for this Mount, because it is only for context path. Let's try parent Mount's if present.'"+mount.onlyForContextPath()+"' ", mount.getName(), contextPath);
+            mount = mount.getParent();
         }
         
-        if(siteMount == null) {
-            log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()));
+        if(mount == null) {
+            log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()));
             return null;
         }
         
@@ -106,10 +106,10 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         }
         String resolvedMountPath = builder.toString();
         
-        ResolvedMount resolvedSiteMount = new ResolvedMountImpl(siteMount, this , resolvedMountPath);
-        log.debug("Found ResolvedSiteMount is '{}' and the mount prefix for it is :", resolvedSiteMount.getResolvedMountPath());
+        ResolvedMount resolvedMount = new ResolvedMountImpl(mount, this , resolvedMountPath);
+        log.debug("Found ResolvedMount is '{}' and the mount prefix for it is :", resolvedMount.getResolvedMountPath());
         
-        return resolvedSiteMount;
+        return resolvedMount;
     }
 
     public String getResolvedHostName() {

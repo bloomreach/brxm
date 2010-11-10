@@ -32,18 +32,18 @@ public class ResolvedMountImpl implements ResolvedMount{
 
     private final static Logger log = LoggerFactory.getLogger(ResolvedMountImpl.class);
     
-    private Mount siteMount;
+    private Mount mount;
     private ResolvedVirtualHost resolvedVirtualHost;
     private String resolvedMountPath;
     
-    public ResolvedMountImpl(Mount siteMount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath){
-        this.siteMount = siteMount;
+    public ResolvedMountImpl(Mount mount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath){
+        this.mount = mount;
         this.resolvedVirtualHost = resolvedVirtualHost;
         this.resolvedMountPath = resolvedMountPath;
     }
     
     public Mount getMount() {
-        return siteMount;
+        return mount;
     }
 
     public ResolvedVirtualHost getResolvedVirtualHost() {
@@ -55,13 +55,13 @@ public class ResolvedMountImpl implements ResolvedMount{
     }
     
     public String getNamedPipeline() {
-       return siteMount.getNamedPipeline();
+       return mount.getNamedPipeline();
     }
 
     public ResolvedSiteMapItem matchSiteMapItem(String siteMapPathInfo) throws MatchException {
-        // test whether this SiteMount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
+        // test whether this Mount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
         if(getMount().getHstSite() == null) {
-            throw new MatchException("No HstSite attached to SiteMount '"+ getMount().getName()+"'. The path '"+siteMapPathInfo+"' thus not be matched to a sitemap item");
+            throw new MatchException("No HstSite attached to Mount '"+ getMount().getName()+"'. The path '"+siteMapPathInfo+"' thus not be matched to a sitemap item");
         }
         
         if(siteMapPathInfo == null) {
@@ -70,12 +70,12 @@ public class ResolvedMountImpl implements ResolvedMount{
         
         if("".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
            log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
-           siteMapPathInfo = siteMount.getHomePage();
+           siteMapPathInfo = mount.getHomePage();
            if(siteMapPathInfo == null || "".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
-               log.warn("SiteMount '{}' for host '{}' does not have a homepage configured and the path info is empty. Cannot map to sitemap item. Return null", getMount().getName(), getResolvedVirtualHost().getResolvedHostName());
-               throw new MatchException("No homepage configured and empty path after sitemount");
+               log.warn("Mount '{}' for host '{}' does not have a homepage configured and the path info is empty. Cannot map to sitemap item. Return null", getMount().getName(), getResolvedVirtualHost().getResolvedHostName());
+               throw new MatchException("No homepage configured and empty path after Mount");
            } else {
-               log.debug("Trying to map homepage '{}' to the sitemap for SiteMount '{}'", siteMapPathInfo, getMount().getName());
+               log.debug("Trying to map homepage '{}' to the sitemap for Mount '{}'", siteMapPathInfo, getMount().getName());
            }
         }
         
@@ -88,9 +88,9 @@ public class ResolvedMountImpl implements ResolvedMount{
             item = matcher.match(siteMapPathInfo, this);
         } catch(NotFoundException e){
             log.debug("Cannot match '{}'. Try getting the pagenotfound", siteMapPathInfo);
-            String pageNotFound = siteMount.getPageNotFound();
+            String pageNotFound = mount.getPageNotFound();
             if(pageNotFound == null) {
-                throw new MatchException("There is no pagenotfound configured for '"+siteMount.getName()+"'");
+                throw new MatchException("There is no pagenotfound configured for '"+mount.getName()+"'");
             }
             // if pageNotFound cannot be matched, again a NotFoundException is thrown which extends MatchException so is allowed
             item = matcher.match(pageNotFound, this);
@@ -99,23 +99,23 @@ public class ResolvedMountImpl implements ResolvedMount{
     }
     
     public boolean isSecured() {
-        return siteMount.isSecured();
+        return mount.isSecured();
     }
     
     public Set<String> getRoles() {
-        return siteMount.getRoles();
+        return mount.getRoles();
     }
     
     public Set<String> getUsers() {
-        return siteMount.getUsers();
+        return mount.getUsers();
     }
     
     public boolean isSubjectBasedSession() {
-        return siteMount.isSubjectBasedSession();
+        return mount.isSubjectBasedSession();
     }
     
     public boolean isSessionStateful() {
-        return siteMount.isSessionStateful();
+        return mount.isSessionStateful();
     }
 
 }

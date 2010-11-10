@@ -93,12 +93,12 @@ public class LocalizationValve extends AbstractValve {
                 return locale;
             }
         }
-        // if we did not yet find a locale, test the sitemount
+        // if we did not yet find a locale, test the Mount
         if(requestContext.getResolvedMount() != null) {
-            Mount siteMount = requestContext.getResolvedMount().getMount();
-            if(siteMount.getLocale() != null) {
-                Locale locale = parseLocale(siteMount.getLocale());
-                log.debug("Preferred locale for request is set to '{}' by siteMount '{}'", siteMount.getLocale(), siteMount.getName());
+            Mount mount = requestContext.getResolvedMount().getMount();
+            if(mount.getLocale() != null) {
+                Locale locale = parseLocale(mount.getLocale());
+                log.debug("Preferred locale for request is set to '{}' by Mount '{}'", mount.getLocale(), mount.getName());
                 return locale;
             }
         }

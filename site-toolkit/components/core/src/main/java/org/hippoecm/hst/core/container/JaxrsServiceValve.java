@@ -47,10 +47,10 @@ public class JaxrsServiceValve extends AbstractValve {
         try {
         	HstRequestContext requestContext = context.getRequestContext();
             HttpServletRequest request = context.getServletRequest();
-            ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
-            String servletPath = new StringBuilder(resolvedSiteMount.getResolvedMountPath()).append(service.getBasePath()).toString();
+            ResolvedMount resolvedMount = requestContext.getResolvedMount();
+            String servletPath = new StringBuilder(resolvedMount.getResolvedMountPath()).append(service.getBasePath()).toString();
             
-            String pathInfo = HstRequestUtils.getPathInfo(resolvedSiteMount, request);
+            String pathInfo = HstRequestUtils.getPathInfo(resolvedMount, request);
             
             service.invoke(requestContext, new PathsAdjustedHttpServletRequestWrapper(requestContext, request, servletPath, pathInfo), 
             		context.getServletResponse());

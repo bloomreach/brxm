@@ -66,10 +66,10 @@ public class SecurityValve extends AbstractValve {
             HstLink destedLink = null;
             
             try {
-                ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
+                ResolvedMount resolvedMount = requestContext.getResolvedMount();
                 String pathInfo = (requestContext.getResolvedSiteMapItem() == null ? "" : requestContext.getResolvedSiteMapItem().getPathInfo());
-                destedLink = requestContext.getHstLinkCreator().create(pathInfo, resolvedSiteMount.getMount());
-                HttpSession httpSession = servletRequest.getSession(resolvedSiteMount.isSessionStateful());
+                destedLink = requestContext.getHstLinkCreator().create(pathInfo, resolvedMount.getMount());
+                HttpSession httpSession = servletRequest.getSession(resolvedMount.isSessionStateful());
                 
                 if (httpSession != null) {
                     httpSession.setAttribute(INTENDED_DESTINATION_ATTR_NAME, destedLink.toUrlForm(requestContext, false));

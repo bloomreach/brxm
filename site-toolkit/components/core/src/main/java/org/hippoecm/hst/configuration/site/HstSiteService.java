@@ -54,14 +54,14 @@ public class HstSiteService implements HstSite {
     private String configurationPath;
     private LocationMapTree locationMapTree;
     
-    private Mount siteMount;
+    private Mount mount;
     
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     
     
-    public HstSiteService(HstSiteRootNode site, Mount siteMount, HstManagerImpl hstManager) throws ServiceException{
+    public HstSiteService(HstSiteRootNode site, Mount mount, HstManagerImpl hstManager) throws ServiceException{
         this.name = site.getValueProvider().getName();
-        this.siteMount = siteMount;
+        this.mount = mount;
         contentPath = site.getContentPath();
         canonicalContentPath = site.getCanonicalContentPath();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
@@ -139,7 +139,7 @@ public class HstSiteService implements HstSite {
     }
    
     public Mount getMount(){
-        return this.siteMount;
+        return this.mount;
     }
 
     /*

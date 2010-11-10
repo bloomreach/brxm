@@ -18,9 +18,9 @@ public class PortMountService implements PortMount {
     private int portNumber;
     
     /**
-     * The root sitemount for this PortMount
+     * The root {@link Mount} for this PortMount
      */
-    private Mount rootSiteMount;
+    private Mount rootMount;
     
     public PortMountService(HstNode portMount, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
         String nodeName = portMount.getValueProvider().getName();
@@ -33,19 +33,19 @@ public class PortMountService implements PortMount {
             throw new ServiceException("Not allowed PortMount name '"+nodeName+"' : PortMount must be a positive integer larger than 0");
         }
         
-        HstNode siteMount = portMount.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
-        if(siteMount != null && HstNodeTypes.NODETYPE_HST_MOUNT.equals(siteMount.getNodeTypeName())) {
+        HstNode mount = portMount.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
+        if(mount != null && HstNodeTypes.NODETYPE_HST_MOUNT.equals(mount.getNodeTypeName())) {
             try {
-                rootSiteMount = new MountService(siteMount, null, virtualHost, hstManager, portNumber);
+                rootMount = new MountService(mount, null, virtualHost, hstManager, portNumber);
             } catch (ServiceException e) {
-                log.warn("The host '{}' for port '"+portNumber+"' contains an incorrect configured SiteMount. The host with port cannot be used for hst request processing: {}", virtualHost.getHostName(), e.getMessage());
+                log.warn("The host '{}' for port '"+portNumber+"' contains an incorrect configured Mount. The host with port cannot be used for hst request processing: {}", virtualHost.getHostName(), e.getMessage());
             } 
         }
         
     }
     
-    public PortMountService(Mount rootSiteMount, VirtualHost virtualHost) throws ServiceException {
-        this.rootSiteMount = rootSiteMount;
+    public PortMountService(Mount rootMount, VirtualHost virtualHost) throws ServiceException {
+        this.rootMount = rootMount;
         // the default portnumber is 0 by definition, which means port agnostic
         this.portNumber = 0;
     }
@@ -55,7 +55,7 @@ public class PortMountService implements PortMount {
     }
 
     public Mount getRootMount() {
-        return rootSiteMount;
+        return rootMount;
     }
 
 }

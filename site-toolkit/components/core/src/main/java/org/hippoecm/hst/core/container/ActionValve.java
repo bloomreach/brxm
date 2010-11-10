@@ -180,7 +180,7 @@ public class ActionValve extends AbstractValve {
                                 	String targetContextPath = requestContext.isEmbeddedRequest() ? requestContext.getEmbeddingContextPath() : baseURL.getContextPath();
                                 	ResolvedMount mount = rvh.matchMount(targetContextPath, location);
                                     if (mount != null && mount.getMount().isSiteMount()) {
-                                    	// redirectLocation is (at least) matched on a siteMount: the portlet should try to render it 
+                                    	// redirectLocation is (at least) matched on a Mount: the portlet should try to render it 
                                     	((HstPortletResponseState)responseState).setRenderRedirect(true);
                                     }
                                 }

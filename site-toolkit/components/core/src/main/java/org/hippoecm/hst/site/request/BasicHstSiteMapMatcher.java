@@ -55,15 +55,15 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
 
     
-    public ResolvedSiteMapItem match(String pathInfo, ResolvedMount resolvedSiteMount) throws NotFoundException {
-        HstSite hstSite = resolvedSiteMount.getMount().getHstSite();
+    public ResolvedSiteMapItem match(String pathInfo, ResolvedMount resolvedMount) throws NotFoundException {
+        HstSite hstSite = resolvedMount.getMount().getHstSite();
        
         Properties params = new Properties();
         
         pathInfo = PathUtils.normalizePath(pathInfo);
         
         if(linkProcessor != null) {
-            HstLink link = new HstLinkImpl(pathInfo, resolvedSiteMount.getMount());
+            HstLink link = new HstLinkImpl(pathInfo, resolvedMount.getMount());
             link = linkProcessor.preProcess(link);
             pathInfo = link.getPath();
         }
@@ -128,8 +128,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             // check for a wildcard (**) matcher :
             HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
-                log.warn("Did not find a matching sitemap item for path '{}', SiteMount '{}' and Host '"+resolvedSiteMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
-                        ". Return null", pathInfo, resolvedSiteMount.getMount().getParent() == null ? "hst:root" : resolvedSiteMount.getMount().getMountPath() );
+                log.warn("Did not find a matching sitemap item for path '{}', Mount '{}' and Host '"+resolvedMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
+                        ". Return null", pathInfo, resolvedMount.getMount().getParent() == null ? "hst:root" : resolvedMount.getMount().getMountPath() );
                 throw new NotFoundException("PathInfo '"+pathInfo+"' could not be matched");
             } else {
                 // The ** has the value of the entire pathInfo
@@ -147,7 +147,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             log.debug("Params for resolved sitemap item: '{}'", params);
         }
         
-        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo, resolvedSiteMount);
+        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo, resolvedMount);
         return r;
     
     }

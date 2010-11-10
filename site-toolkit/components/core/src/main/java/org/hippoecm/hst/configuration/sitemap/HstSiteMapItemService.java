@@ -277,7 +277,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else if(this.parentItem != null) {
             this.namedPipeline = parentItem.getNamedPipeline();
         } else {
-            // inherit the namedPipeline from the sitemount (can be null)
+            // inherit the namedPipeline from the mount (can be null)
             this.namedPipeline = this.getHstSiteMap().getSite().getMount().getNamedPipeline();
         }
         

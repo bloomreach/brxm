@@ -398,7 +398,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         
         List<Mount> narrowedPossibleMounts = new ArrayList<Mount>();
         if(possibleMounts.size() > 1) {
-            // find the sitemount's with the most types in common
+            // find the Mount's with the most types in common
             int mostCommon = 0;
             for(Mount s : possibleMounts) {
                 int inCommon = countCommon(s.getTypes(), currentMount.getTypes());

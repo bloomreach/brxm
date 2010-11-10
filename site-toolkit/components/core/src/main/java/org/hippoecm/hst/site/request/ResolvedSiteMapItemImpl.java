@@ -40,17 +40,17 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private HstSiteMapItem hstSiteMapItem;
     private Properties resolvedParameters;
     private Properties localResolvedParameters;
-    private ResolvedMount resolvedSiteMount;
+    private ResolvedMount resolvedMount;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
     
-    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedMount resolvedSiteMount) {
+    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedMount resolvedMount) {
       
        this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
-       this.resolvedSiteMount = resolvedSiteMount;
+       this.resolvedMount = resolvedMount;
        
        HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
        if (hstSiteMapItem.getComponentConfigurationId() == null && hstSiteMapItem.getPortletComponentConfigurationId() == null) {
@@ -146,7 +146,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     }
     
     public ResolvedMount getResolvedMount() {
-       return resolvedSiteMount;
+       return resolvedMount;
     }
 
     public String getNamedPipeline() {

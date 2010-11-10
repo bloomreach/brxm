@@ -134,7 +134,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url;
     }
     
-    public HstContainerURL parseURL(HttpServletRequest request, HttpServletResponse response, ResolvedMount resolvedSiteMount) {
+    public HstContainerURL parseURL(HttpServletRequest request, HttpServletResponse response, ResolvedMount resolvedMount) {
 
         HstContainerURLImpl url = new HstContainerURLImpl();
         
@@ -154,9 +154,9 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         Map<String, String []> paramMap = HttpUtils.parseQueryString(request);
         url.setParameters(paramMap);
         
-        url.setResolvedMountPath(resolvedSiteMount.getResolvedMountPath());
+        url.setResolvedMountPath(resolvedMount.getResolvedMountPath());
 
-        String [] namespacedPartAndPathInfo = splitPathInfo(resolvedSiteMount, request, characterEncoding);
+        String [] namespacedPartAndPathInfo = splitPathInfo(resolvedMount, request, characterEncoding);
         url.setPathInfo(namespacedPartAndPathInfo[1]);
         parseRequestInfo(url,namespacedPartAndPathInfo[0]);
         
@@ -180,17 +180,17 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url;
     }
     
-    public HstContainerURL createURL(Mount siteMount ,HstContainerURL baseContainerURL, String pathInfo) {
+    public HstContainerURL createURL(Mount mount ,HstContainerURL baseContainerURL, String pathInfo) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         
         url.setContextPath(baseContainerURL.getContextPath());
         url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
         
-        // if the SiteMount is port agnostic, in other words, has port = 0, we take the port from the baseContainerURL
-        if(siteMount.getPort() == 0) {
+        // if the Mount is port agnostic, in other words, has port = 0, we take the port from the baseContainerURL
+        if(mount.getPort() == 0) {
             url.setPortNumber(baseContainerURL.getPortNumber());
         } else {
-            url.setPortNumber(siteMount.getPort());
+            url.setPortNumber(mount.getPort());
         }
         
         boolean includeTrailingSlash = false;
@@ -207,9 +207,9 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             }
         }
 
-        url.setHostName(siteMount.getVirtualHost().getHostName());
-        url.setRequestPath(siteMount.getMountPath() + pathInfo);
-        url.setResolvedMountPath(siteMount.getMountPath());
+        url.setHostName(mount.getVirtualHost().getHostName());
+        url.setRequestPath(mount.getMountPath() + pathInfo);
+        url.setResolvedMountPath(mount.getMountPath());
         url.setPathInfo(pathInfo);
         
         return url;
@@ -437,9 +437,9 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     /*
      * Splits path info to an array of namespaced path part and remainder. 
      */
-    protected String [] splitPathInfo(ResolvedMount resSiteMount, HttpServletRequest request, String characterEncoding) {
+    protected String [] splitPathInfo(ResolvedMount resolvedMount, HttpServletRequest request, String characterEncoding) {
        
-        String pathInfo = HstRequestUtils.getPathInfo(resSiteMount, request, characterEncoding);
+        String pathInfo = HstRequestUtils.getPathInfo(resolvedMount, request, characterEncoding);
         
         if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
             return new String [] { null, pathInfo };

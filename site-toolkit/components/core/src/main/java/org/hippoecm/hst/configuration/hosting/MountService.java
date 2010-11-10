@@ -107,7 +107,7 @@ public class MountService implements Mount {
     /**
      * <code>true</code> (default) when this {@link Mount} is used as a site. False when used only as content mount point and possibly a namedPipeline
      */
-    private boolean isSiteMount = true;
+    private boolean isMount = true;
     
     /**
      * The homepage for this {@link Mount}. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHost} is 
@@ -299,9 +299,9 @@ public class MountService implements Mount {
         } 
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISSITEMOUNT)) {
-            this.isSiteMount = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_ISSITEMOUNT);
+            this.isMount = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_ISSITEMOUNT);
         } else if(parent != null) {
-            this.isSiteMount = parent.isSiteMount();
+            this.isMount = parent.isSiteMount();
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SUPPORTS_SUB_PATH)) {
@@ -452,7 +452,7 @@ public class MountService implements Mount {
     }
 
     public boolean isSiteMount() {
-        return isSiteMount;
+        return isMount;
     }
 
     

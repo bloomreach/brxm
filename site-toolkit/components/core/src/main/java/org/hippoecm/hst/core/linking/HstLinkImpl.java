@@ -33,24 +33,24 @@ public class HstLinkImpl implements HstLink{
 
     private String path;
     private String subPath;
-    private Mount siteMount;
+    private Mount mount;
     private boolean containerResource;
     private boolean notFound = false;
     
     
-    public HstLinkImpl(String path, Mount siteMount) {
-        this(path, siteMount,false);
+    public HstLinkImpl(String path, Mount mount) {
+        this(path, mount,false);
     }
     
-    public HstLinkImpl(String path, Mount siteMount, boolean containerResource) {
+    public HstLinkImpl(String path, Mount mount, boolean containerResource) {
         this.path = PathUtils.normalizePath(path);
-        this.siteMount = siteMount;
+        this.mount = mount;
         this.containerResource = containerResource;
     }
     
     
     /**
-     * @deprecated use {@link HstLinkImpl(String, SiteMount)} instead
+     * @deprecated use {@link HstLinkImpl(String, Mount)} instead
      */
     @Deprecated
     public HstLinkImpl(String path, HstSite hstSite){
@@ -58,22 +58,22 @@ public class HstLinkImpl implements HstLink{
     }
     
     /**
-     * @deprecated use {@link HstLinkImpl(String, SiteMount, boolean)} instead
+     * @deprecated use {@link HstLinkImpl(String, Mount, boolean)} instead
      */
     @Deprecated
     public HstLinkImpl(String path, HstSite hstSite, boolean containerResource) {
         this.path = PathUtils.normalizePath(path);
-        this.siteMount = hstSite.getMount();
+        this.mount = hstSite.getMount();
         this.containerResource = containerResource;
     }
     
     public Mount getMount() {
-        return siteMount;
+        return mount;
     }
     
     @Deprecated
     public HstSite getHstSite() {
-        return siteMount.getHstSite();
+        return mount.getHstSite();
     }
 
     public String getPath() {
@@ -125,7 +125,7 @@ public class HstLinkImpl implements HstLink{
         if(subPath != null) {
             // subPath is allowed to be empty ""
             combinedPath += PATH_SUBPATH_DELIMITER + subPath;
-        } else if (siteMount != null && siteMount.supportsSubPath()) {
+        } else if (mount != null && mount.supportsSubPath()) {
             // mount is configured to support subPath: Always include the PATH_SUBPATH_DELIMITER
             combinedPath += PATH_SUBPATH_DELIMITER;
         }
@@ -137,26 +137,26 @@ public class HstLinkImpl implements HstLink{
             hstUrl.setResourceID(combinedPath);
             urlString = hstUrl.toString();
         } else {
-            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(siteMount, requestContext.getBaseURL() , combinedPath);
+            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(mount, requestContext.getBaseURL() , combinedPath);
             urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext).toString();
         }
         
-        Mount requestSiteMount = requestContext.getResolvedMount().getMount();
+        Mount requestMount = requestContext.getResolvedMount().getMount();
         /*
-         * we create a url including http when the sitemount is not null and one of the lines below is true
+         * we create a url including http when the Mount is not null and one of the lines below is true
          * 1) external = true
-         * 2) The virtualhost from current request sitemount is different than the sitemount for this link
-         * 3) The portnumber is in the url, and the current request sitemount has a different portnumber than the sitemount for this link
+         * 2) The virtualhost from current request Mount is different than the Mount for this link
+         * 3) The portnumber is in the url, and the current request Mount has a different portnumber than the Mount for this link
          */
-        if(siteMount != null) {
-            if (external || requestSiteMount.getVirtualHost() != siteMount.getVirtualHost()
-                         || (siteMount.isPortInUrl() && requestSiteMount.getPort() != siteMount.getPort())
-                         || (siteMount.getScheme() != null && !siteMount.getScheme().equals(requestSiteMount.getScheme())) ) {
-               String host = siteMount.getScheme() + "://" + siteMount.getVirtualHost().getHostName();
-               if(siteMount.isPortInUrl()) {
-                   int port = siteMount.getPort();
+        if(mount != null) {
+            if (external || requestMount.getVirtualHost() != mount.getVirtualHost()
+                         || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
+                         || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme())) ) {
+               String host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
+               if(mount.isPortInUrl()) {
+                   int port = mount.getPort();
                    if(port == 0) {
-                       // the siteMount is port agnostic. Take port from current container url
+                       // the Mount is port agnostic. Take port from current container url
                       port = requestContext.getBaseURL().getPortNumber();
                    }
                    if(port == 80 || port == 443) {
