@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,24 +29,18 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -58,8 +51,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
+import org.hippoecm.frontend.plugins.standardworkflow.components.NameUriField;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -68,7 +61,6 @@ import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.translation.ILocaleProvider;
-import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -237,29 +229,22 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
         private String templateCategory = null;
         private String prototype = null;
-        private String name;
-        private String url;
-        private String language;
-        private boolean urlModified = false;
+        private String language = null;
 
         private final IServiceReference<IBrowseService> browseServiceRef;
         private final IServiceReference<IEditorManager> editServiceRef;
         private Map<String, Set<String>> templates;
 
-        private final Component urlComponent;
         private final DropDownChoice prototypeChoice;
         private final DropDownChoice templateChoice;
-        private final DropDownChoice languageChoice;
 
         private String optionSelectOnly = null;
         private boolean optionSelectFirst = false;
 
-        private PropertyModel<String> urlModel;
-        private PropertyModel<String> nameModel;
-
+        private NameUriField nameUriContainer;
         private WebMarkupContainer prototypeContainer;
         private WebMarkupContainer templateContainer;
-        private WebMarkupContainer languageContainer;
+        private LanguageField languageContainer;
 
         public Dialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
 
@@ -329,16 +314,15 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
             add(new Label("message", new Model("")));
 
-            nameModel = new PropertyModel<String>(this, "name");
-            urlModel = new PropertyModel<String>(this, "url");
+            add(nameUriContainer = new NameUriField("name-url", new LoadableDetachableModel<StringCodec>() {
+                private static final long serialVersionUID = 1L;
 
-            Component nameComponent = createNameComponent(nameModel);
-            setFocus(nameComponent);
-            add(nameComponent);
-
-            add(urlComponent = createUriComponent(nameModel, urlModel));
-            add(createUrlAction());
-
+                @Override
+                protected StringCodec load() {
+                    return getNodeNameCodec();
+                }
+            }));
+            
             List<String> emptyList = new LinkedList<String>();
             emptyList.add("");
 
@@ -364,7 +348,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
 
                 public Object getDisplayValue(String object) {
-                    return new ClassResourceModel(object, FolderCategories.class).getObject();
+                    return new StringResourceModel(object, Dialog.this, null).getObject();
                 }
 
                 public String getIdValue(String object, int index) {
@@ -386,33 +370,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             templateContainer.add(new Label("typelabel", new StringResourceModel("document-type", this, null)));
             add(templateContainer);
 
-            List<String> languages = emptyList;
-            final ILocaleProvider provider = getLocaleProvider();
-            if (provider != null) {
-                List<? extends HippoLocale> locales = provider.getLocales();
-                languages = new ArrayList<String>(locales.size());
-                for (HippoLocale locale : locales) {
-                    languages.add(locale.getName());
-                }
-            }
-            languageContainer = new WebMarkupContainer("language");
-            languageContainer.add(languageChoice = new DropDownChoice<String>("select", new PropertyModel<String>(this, "language"),
-                    languages, new IChoiceRenderer<String>() {
-                        private static final long serialVersionUID = 1L;
-
-                        @SuppressWarnings("null")
-                        public Object getDisplayValue(String object) {
-                            return provider.getLocale(object).getDisplayName(getLocale());
-                        }
-
-                        public String getIdValue(String object, int index) {
-                            return object;
-                        }
-
-                    }));
-            languageChoice.setNullValid(true);
-            languageChoice.setRequired(false);
-            languageContainer.setOutputMarkupPlaceholderTag(true);
+            languageContainer = new LanguageField("language", new PropertyModel<String>(this, "language"), getLocaleProvider());
             add(languageContainer);
 
             setOkEnabled(false);
@@ -434,80 +392,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
             evaluateChoices();
         }
 
-        private Component createNameComponent(final PropertyModel<String> nameModel) {
-            FormComponent nameComponent = new TextField<String>("name", new IModel<String>() {
-                private static final long serialVersionUID = 1L;
-
-                public String getObject() {
-                    return nameModel.getObject();
-                }
-
-                public void setObject(String object) {
-                    nameModel.setObject(object);
-                    if (!urlModified) {
-                        urlModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
-                    }
-                }
-
-                public void detach() {
-                    nameModel.detach();
-                }
-
-            });
-            nameComponent.setRequired(true);
-            AjaxEventBehavior behavior;
-            nameComponent.add(behavior = new OnChangeAjaxBehavior() {
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    if (!urlModified) {
-                        target.addComponent(urlComponent);
-                    }
-                }
-            });
-            behavior.setThrottleDelay(Duration.milliseconds(500));
-            nameComponent.setOutputMarkupId(true);
-            return nameComponent;
-        }
-
-        private Component createUriComponent(final PropertyModel<String> nameModel, final PropertyModel<String> urlModel) {
-            FormComponent urlComponent = new TextField<String>("url", urlModel) {
-                @Override
-                public boolean isEnabled() {
-                    return urlModified;
-                }
-            };
-
-            urlComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return urlModified ? "grayedin" : "grayedout";
-                }
-            }));
-            urlComponent.setOutputMarkupId(true);
-            return urlComponent;
-        }
-
-        private Component createUrlAction() {
-            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    urlModified = !urlModified;
-                    if (!urlModified) {
-                        urlModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
-                                nameModel.getObject()));
-                    }
-                    target.addComponent(FolderShortcutPlugin.Dialog.this);
-                }
-            };
-            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return urlModified ? getString("url-reset") : getString("url-edit");
-                }
-            }));
-            return uriAction;
-        }
-
         private void evaluateChoices() {
             if (templates.keySet().size() == 1) {
                 templateChoice.setChoices(new LinkedList<String>(templates.keySet()));
@@ -518,7 +402,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             } else {
                 templateContainer.setVisible(false);
             }
-            languageContainer.setVisible(false);
+            boolean languageVisible = false;
             if (templateCategory != null) {
                 final List<String> prototypesList = new LinkedList<String>(templates.get(templateCategory));
                 prototypeChoice.setChoices(prototypesList);
@@ -541,7 +425,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     String[] translated = getPluginConfig().getStringArray("workflow.translated");
                     for (String translatedPrototype : translated) {
                         if (translatedPrototype.equals(templateCategory)) {
-                            languageContainer.setVisible(true);
+                            languageVisible = true;
                             break;
                         }
                     }
@@ -556,7 +440,13 @@ public class FolderShortcutPlugin extends RenderPlugin {
             if (target != null) {
                 target.addComponent(prototypeContainer);
                 target.addComponent(templateContainer);
-                target.addComponent(languageContainer);
+            }
+
+            if (languageVisible != languageContainer.isVisible()) {
+                languageContainer.setVisible(languageVisible);
+                if (target != null) {
+                    target.addComponent(this);
+                }
             }
         }
 
@@ -566,6 +456,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
         @Override
         protected void onOk() {
+            String name = nameUriContainer.getName();
+            String url = nameUriContainer.getUrl();
             if (name == null || "".equals(name)) {
                 error("You need to enter a name");
             }
@@ -592,7 +484,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
                         TreeMap<String, String> arguments = new TreeMap<String, String>();
                         arguments.put("name", nodeName);
-                        arguments.put("hippotranslation:locale", language);
+                        if (language != null) {
+                            arguments.put("hippotranslation:locale", language);
+                        }
 
                         String path = workflow.add(templateCategory, prototype, arguments);
                         Node node = jcrSession.getNode(path);

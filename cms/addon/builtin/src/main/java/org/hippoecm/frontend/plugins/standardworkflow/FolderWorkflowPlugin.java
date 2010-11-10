@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -59,14 +61,15 @@ import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -81,6 +84,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -256,15 +260,22 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 if(workflow instanceof FolderWorkflow) {
                     FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
                     Map<String, Serializable> hints = folderWorkflow.hints();
-
+    
                     if (hints.containsKey("reorder") && hints.get("reorder") instanceof Boolean) {
                         reorderAction.setVisible(((Boolean) hints.get("reorder")).booleanValue());
                     }
-
+    
+                    final Set<String> translated = new TreeSet<String>();
+                    if (getPluginConfig().containsKey("workflow.translated")) {
+                        for (String translatedPrototype : getPluginConfig().getStringArray("workflow.translated")) {
+                            translated.add(translatedPrototype);
+                        }
+                    }
+    
                     final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                     for (final String category : prototypes.keySet()) {
                         String categoryLabel = new StringResourceModel("add-category", this, null,
-                                new Object[] { new ClassResourceModel(category, FolderCategories.class) }).getString();
+                                new Object[] { new StringResourceModel(category, this, null) }).getString();
                         ResourceReference iconResource = new ResourceReference(getClass(), category + "-16.png");
                         iconResource.bind(getApplication());
                         if (iconResource.getResource() == null ||
@@ -276,13 +287,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                             public String prototype;
                             public String targetName;
                             public String uriName;
-
+                            public String language;
+    
                             @Override
                             protected Dialog createRequestDialog() {
-                                return new AddDocumentDialog(this, new ClassResourceModel(category, FolderCategories.class),
-                                        category, prototypes.get(category));
+                                return new AddDocumentDialog(this, new StringResourceModel(category, FolderWorkflowPlugin.this, null),
+                                        category, prototypes.get(category), translated.contains(category));
                             }
-
+    
                             @Override
                             protected String execute(FolderWorkflow workflow) throws Exception {
                                 if (prototype == null) {
@@ -301,7 +313,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                     if ("".equals(nodeName)) {
                                         throw new IllegalArgumentException("You need to enter a name");
                                     }
-                                    String path = workflow.add(category, prototype, nodeName);
+    
+                                    TreeMap<String, String> arguments = new TreeMap<String, String>();
+                                    arguments.put("name", nodeName);
+                                    if (language != null) {
+                                        arguments.put("hippotranslation:locale", language);
+                                    }
+
+                                    String path = workflow.add(category, prototype, arguments);
                                     ((UserSession) Session.get()).getJcrSession().refresh(true);
                                     JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
                                     select(nodeModel);
@@ -414,6 +433,12 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         return stringCodecFactory.getStringCodec("encoding.node");
     }
 
+    protected ILocaleProvider getLocaleProvider() {
+        return getPluginContext().getService(
+                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
+                ILocaleProvider.class);
+    }
+
     public class AddDocumentDialog extends WorkflowAction.WorkflowDialog {
         private String category;
         private Set<String> prototypes;
@@ -422,8 +447,9 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         private TextField nameComponent;
         private TextField uriComponent;
         private boolean uriModified = false;
+        private LanguageField languageField;
 
-        public AddDocumentDialog(WorkflowAction action, IModel title, String category, Set<String> prototypes) {
+        public AddDocumentDialog(WorkflowAction action, IModel title, String category, Set<String> prototypes, boolean translated) {
             action.super();
             this.title = title;
             this.category = category;
@@ -546,6 +572,28 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 }
             }));
             add(uriAction);
+
+            languageField = new LanguageField("language", new PropertyModel<String>(action, "language"), getLocaleProvider());
+            if (!translated) {
+                languageField.setVisible(false);
+            } else {
+                WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getDefaultModel();
+                try {
+                    Node node = descriptorModel.getNode();
+                    if (node != null) {
+                        while (node.getDepth() > 0) {
+                            if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                                languageField.setVisible(false);
+                                break;
+                            }
+                            node = node.getParent();
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Could not determine visibility of language field");
+                }
+            }
+            add(languageField);
         }
 
         @Override
@@ -557,6 +605,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         public IValueMap getProperties() {
             return MEDIUM;
         }
+
     }
 
     public class RenameDocumentDialog extends WorkflowAction.WorkflowDialog {
