@@ -33,10 +33,6 @@ public class Home extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         
         try {
-            // example of REST links for a hippo:resource, also see home.jsp / home.ftl
-            
-            // HstLink link2 = request.getRequestContext().getHstLinkCreator().create(image.getNode(), request.getRequestContext(), request.getRequestContext().getResolvedSiteMount().getSiteMount().getAlias());
-            
             
             HippoBean image = (HippoBean) this.getObjectBeanManager(request).getObject("/content/gallery/images/screenshot_cms_small.jpg");
             request.setAttribute("image",image);

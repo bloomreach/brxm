@@ -69,8 +69,8 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     }
     
     protected String getJaxrsServletPath(HstRequestContext requestContext) throws ContainerException {
-        ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
-        return new StringBuilder(resolvedSiteMount.getResolvedMountPath()).append(getBasePath()).toString();
+        ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        return new StringBuilder(resolvedMount.getResolvedMountPath()).append(getBasePath()).toString();
     }
     
     protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {

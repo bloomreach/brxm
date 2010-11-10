@@ -49,7 +49,7 @@ public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
         return null;
     }
 
-    public T rewrite(T content, Node contentNode, HstRequestContext requestContext, String targetSiteMountAlias) {
+    public T rewrite(T content, Node contentNode, HstRequestContext requestContext, String targetMountAlias) {
         return null;
     }
     

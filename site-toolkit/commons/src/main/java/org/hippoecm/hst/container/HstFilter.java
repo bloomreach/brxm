@@ -262,7 +262,7 @@ public class HstFilter implements Filter {
     					requestContext.setResolvedMount(mount);
     				} 
     				else {
-    					throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"'");
+    					throw new MatchException("No matching Mount for '"+HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"'");
     				}
     			} 
     			catch (MatchException e) {
@@ -301,7 +301,7 @@ public class HstFilter implements Filter {
     		}
     		else {
 				if(mount.getNamedPipeline() == null) {
-					logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for SiteMount");
+					logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
 					res.sendError(HttpServletResponse.SC_NOT_FOUND);
 				}
 				else {

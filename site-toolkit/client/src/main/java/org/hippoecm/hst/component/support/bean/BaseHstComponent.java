@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
@@ -355,7 +356,7 @@ public class BaseHstComponent extends GenericHstComponent {
     
     /**
      * <p>
-     * Facility method for sending a redirect to a sitemap path. You do not have to take into account the context path or SiteMount path
+     * Facility method for sending a redirect to a sitemap path. You do not have to take into account the context path or {@link Mount} path
      * </p>
      * 
      * @see HstResponse#sendRedirect(String)
@@ -369,7 +370,7 @@ public class BaseHstComponent extends GenericHstComponent {
     
     /**
      * <p>
-     * Facility method for sending a redirect to a sitemap path including query params. You do not have to take into account the context path or SiteMount path
+     * Facility method for sending a redirect to a sitemap path including query params. You do not have to take into account the context path or {@link Mount} path
      * </p>
      * @see HstResponse#sendRedirect(String)
      * @param path the sitemap path you want to redirect to 
@@ -383,7 +384,7 @@ public class BaseHstComponent extends GenericHstComponent {
     
     /**
     * <p>
-     * Facility method for sending a redirect to a sitemap path including query params and characterEncoding. You do not have to take into account the context path or SiteMount path
+     * Facility method for sending a redirect to a sitemap path including query params and characterEncoding. You do not have to take into account the context path or {@link Mount} path
      * </p>
      * 
      * @see HstResponse#sendRedirect(String)

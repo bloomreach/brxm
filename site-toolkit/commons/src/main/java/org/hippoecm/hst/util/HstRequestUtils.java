@@ -119,12 +119,12 @@ public class HstRequestUtils {
      * The  extra path information that comes after the context path and after the (resolved) mountpath but before the query string in the request URL
      * This method extracts and decodes the path information from the request URI returned from
      * <CODE>HttpServletRequest#getRequestURI()</CODE>.
-     * @param resSiteMount
+     * @param mount
      * @param request
      * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
      */
-    public static String getPathInfo(ResolvedMount resSiteMount, HttpServletRequest request) {
-        return getDecodedPath(resSiteMount, request, null, true);
+    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request) {
+        return getDecodedPath(mount, request, null, true);
     }
     
     /**
@@ -134,26 +134,26 @@ public class HstRequestUtils {
      * This method extracts and decodes the path information by the specified character encoding parameter
      * from the request URI.
      * </p>
-     * @param resSiteMount
+     * @param mount
      * @param request
      * @param characterEncoding
-     * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
+     * @return the decoded getRequestURI after the context path and after the {@link ResolvedMount} but before the query string in the request URL
      */
-    public static String getPathInfo(ResolvedMount resSiteMount, HttpServletRequest request, String characterEncoding) {
+    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request, String characterEncoding) {
         // TODO Make sure, the ./suffix gets removed from getPathInfo
-        return getDecodedPath(resSiteMount, request, characterEncoding, true);
+        return getDecodedPath(mount, request, characterEncoding, true);
     }
     
-    // TODO Should we remove the ./suffix info here as well? IMO yes
-    private static String getDecodedPath(ResolvedMount resSiteMount, HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
+    
+    private static String getDecodedPath(ResolvedMount mount, HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
         String requestURI = getRequestURI(request, true);
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
         
         if(stripMountPath) {
-            if(resSiteMount == null) {
+            if(mount == null) {
                 throw new IllegalArgumentException("Cannot strip the mountPath when the resolved Mount is null");
             }
-            encodePathInfo = encodePathInfo.substring(resSiteMount.getResolvedMountPath().length());
+            encodePathInfo = encodePathInfo.substring(mount.getResolvedMountPath().length());
         }
         
         if (characterEncoding == null) {

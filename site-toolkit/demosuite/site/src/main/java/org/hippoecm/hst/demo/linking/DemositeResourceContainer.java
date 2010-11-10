@@ -40,19 +40,19 @@ public class DemositeResourceContainer extends AbstractResourceContainer {
     }
 
     @Override
-    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount siteMount) {
+    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount mount) {
         try {
             if(resourceNode.getDefinition().allowsSameNameSiblings()) {
                 // there can be multiple ones
-                return super.resolveToPathInfo(resourceContainerNode, resourceNode, siteMount) + "/["+resourceNode.getIndex()+"]";
+                return super.resolveToPathInfo(resourceContainerNode, resourceNode, mount) + "/["+resourceNode.getIndex()+"]";
             } else {
                 // there can be only one 
-                return super.resolveToPathInfo(resourceContainerNode, resourceNode, siteMount);
+                return super.resolveToPathInfo(resourceContainerNode, resourceNode, mount);
             }
         } catch (RepositoryException e) {
            
         }
-        return super.resolveToPathInfo(resourceContainerNode, resourceNode, siteMount);
+        return super.resolveToPathInfo(resourceContainerNode, resourceNode, mount);
     }
 
     public Node resolveToResourceNode(Session session, String pathInfo) {

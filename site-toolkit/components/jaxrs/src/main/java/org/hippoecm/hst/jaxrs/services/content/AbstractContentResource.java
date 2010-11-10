@@ -77,7 +77,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         deleteHippoBean(servletRequest, child);
     }
     
-    protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath, String targetSiteMountAlias) {
+    protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath, String targetMountAlias) {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         HippoBean hippoBean = null;
         HippoHtml htmlBean = null;
@@ -113,11 +113,11 @@ public abstract class AbstractContentResource extends AbstractResource {
                 rewriter = new SimpleContentRewriter();
             }
             
-            if (StringUtils.isEmpty(targetSiteMountAlias)) {
-                targetSiteMountAlias = MOUNT_ALIAS_SITE;
+            if (StringUtils.isEmpty(targetMountAlias)) {
+                targetMountAlias = MOUNT_ALIAS_SITE;
             }
             
-            Mount targetMount = requestContext.getMount(targetSiteMountAlias);
+            Mount targetMount = requestContext.getMount(targetMountAlias);
             
             String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetMount);
             htmlRep.setContent(rewrittenHtml);
@@ -193,7 +193,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         return htmlRepresentation;
     }
     
-    protected String getHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String targetSiteMountAlias) {
+    protected String getHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String targetMountAlias) {
         
         HstRequestContext requestContext = getRequestContext(servletRequest);
         HippoHtml htmlBean = null;
@@ -223,11 +223,11 @@ public abstract class AbstractContentResource extends AbstractResource {
             rewriter = new SimpleContentRewriter();
         }
         
-        if (StringUtils.isEmpty(targetSiteMountAlias)) {
-            targetSiteMountAlias = MOUNT_ALIAS_SITE;
+        if (StringUtils.isEmpty(targetMountAlias)) {
+            targetMountAlias = MOUNT_ALIAS_SITE;
         }
         
-        Mount targetMount = requestContext.getMount(targetSiteMountAlias);
+        Mount targetMount = requestContext.getMount(targetMountAlias);
         
         String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetMount);
         return rewrittenHtml;

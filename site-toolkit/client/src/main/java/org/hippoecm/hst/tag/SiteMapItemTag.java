@@ -80,14 +80,14 @@ public class SiteMapItemTag extends TagSupport {
             return SKIP_BODY;
         }
         
-        ResolvedMount resolvedSiteMount = hstRequest.getRequestContext().getResolvedSiteMapItem().getResolvedMount();
+        ResolvedMount resolvedMount = hstRequest.getRequestContext().getResolvedSiteMapItem().getResolvedMount();
         if(preferItemId != null) {
             if(siteMapItem != null) {
                 log.warn("preferItemId attr is added, but also 'preferItemByPath' or 'siteMapItem'. This is double. Skipping preferItemId attr");
             } else {
                 siteMapItem =  hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItemById(preferItemId);
                 if(siteMapItem == null) {
-                    log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedSiteMount.getMount().getName());
+                    log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedMount.getMount().getName());
                 }
             }
         }
@@ -97,10 +97,10 @@ public class SiteMapItemTag extends TagSupport {
                 log.warn("preferPath attr is added, but also 'preferItemByPath', 'siteMapItem' or 'preferItemId'. This is double. Skipping preferItemId attr");
             } else {
                 try {
-                    ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedSiteMount);
+                    ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedMount);
                     siteMapItem = resolvedItem.getHstSiteMapItem();  
                 } catch (NotFoundException e) {
-                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedSiteMount.getMount().getName());
+                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedMount.getMount().getName());
                 }
             }
         }

@@ -33,14 +33,14 @@ public class HstLinkDependencyWriter extends StringWriter {
     private HstRequestContext context;
     private Writer writer;
     private HstLinkCreator creator;
-    private Mount siteMount;
+    private Mount mount;
 
     public HstLinkDependencyWriter(HstRequestContext context, Writer writer) {
         super();
         this.context = context;
         this.writer = writer;
         creator = context.getHstLinkCreator();
-        siteMount = context.getResolvedMount().getMount();
+        mount = context.getResolvedMount().getMount();
     }
 
     @Override
@@ -53,6 +53,6 @@ public class HstLinkDependencyWriter extends StringWriter {
     }
 
     public String parse(String path) {
-        return creator.create(path, siteMount, true).toUrlForm(context, false);
+        return creator.create(path, mount, true).toUrlForm(context, false);
     }
 }

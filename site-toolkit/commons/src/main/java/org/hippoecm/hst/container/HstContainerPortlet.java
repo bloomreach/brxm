@@ -34,6 +34,7 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstPortletResponseState;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -53,9 +54,9 @@ public class HstContainerPortlet extends GenericPortlet {
     public static final String PARAM_ALLOW_PREFERENCES = "AllowPreferences";
     
     /**
-     * Name of portlet preference for the siteMount path of HST URL
+     * Name of portlet preference for the {@link Mount} path of HST URL
      */
-    public static final String HST_SITEMOUNT_PATH_PARAM = "hstSiteMountPath";
+    public static final String HST_MOUNT_PATH_PARAM = "hstMountPath";
     
     /**
      * Name of portlet preference for the path info of HST URL
@@ -99,7 +100,7 @@ public class HstContainerPortlet extends GenericPortlet {
     
     protected PortletContext portletContext;
     
-    protected String defaultHstSiteMountPath = "/preview";
+    protected String defaultHstMountPath = "/preview";
     protected String defaultHstPathInfo;
     protected String defaultFallbackHstPathInfo;
     protected String defaultHstPathInfoEditMode;
@@ -121,7 +122,7 @@ public class HstContainerPortlet extends GenericPortlet {
 
         allowPreferences = Boolean.parseBoolean(PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PARAM_ALLOW_PREFERENCES, "false"));
         
-        defaultHstSiteMountPath = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_SITEMOUNT_PATH_PARAM, defaultHstSiteMountPath);
+        defaultHstMountPath = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_MOUNT_PATH_PARAM, defaultHstMountPath);
         
         defaultHstPathInfo = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PATH_INFO_PARAM, defaultHstPathInfo);
         
@@ -228,7 +229,7 @@ public class HstContainerPortlet extends GenericPortlet {
             boolean isEditMode = PortletMode.EDIT.equals(request.getPortletMode());
             String portletTitle = defaultPortletTitle;
             String hstPathInfo = this.defaultHstPathInfo;
-            String hstSiteMountPath = null;
+            String hstMountPath = null;
             String targetComponentPath = null;
             boolean portalContentPathBased = defaultPortalContentPathBased;
             
@@ -246,11 +247,11 @@ public class HstContainerPortlet extends GenericPortlet {
                         portletTitle = prefValue;
                     }
                     
-                    if (hstSiteMountPath == null) {
-                        prefValue = prefs.getValue(HST_SITEMOUNT_PATH_PARAM, null);
+                    if (hstMountPath == null) {
+                        prefValue = prefs.getValue(HST_MOUNT_PATH_PARAM, null);
                         
                         if (prefValue != null) {
-                            hstSiteMountPath = prefValue;
+                            hstMountPath = prefValue;
                         }
                     }
                     
@@ -286,8 +287,8 @@ public class HstContainerPortlet extends GenericPortlet {
                 }
             }
 
-            if (hstSiteMountPath == null) {
-                hstSiteMountPath = this.defaultHstSiteMountPath;
+            if (hstMountPath == null) {
+                hstMountPath = this.defaultHstMountPath;
             }
             
             if (portalContentPathBased) {
@@ -306,7 +307,7 @@ public class HstContainerPortlet extends GenericPortlet {
             	prc.setTargetComponentPath(targetComponentPath);
             }
             
-            String hstDispUrl = getHstDispatchUrl(request, response, hstSiteMountPath, hstPathInfo, !portalContentPathBased);
+            String hstDispUrl = getHstDispatchUrl(request, response, hstMountPath, hstPathInfo, !portalContentPathBased);
             
             HstPortletResponseState portletResponseState = new HstPortletResponseState(request, response);
             request.setAttribute(HstResponseState.class.getName(), portletResponseState);
@@ -376,7 +377,7 @@ public class HstContainerPortlet extends GenericPortlet {
     	return prc;
     }
     
-    protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstSiteMountPath, String hstPathInfo, boolean readDispPathParam) {
+    protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstMountPath, String hstPathInfo, boolean readDispPathParam) {
         StringBuilder hstDispUrl = new StringBuilder(100);
         
         String hstDispPathParam = null;
@@ -396,7 +397,7 @@ public class HstContainerPortlet extends GenericPortlet {
         if (hstDispPathParam != null) {
             hstDispUrl.append(hstDispPathParam);
         } else {
-            hstDispUrl.append(hstSiteMountPath);
+            hstDispUrl.append(hstMountPath);
             hstDispUrl.append(hstPathInfo);
         }
         

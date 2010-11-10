@@ -60,7 +60,7 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
         return this.primaryItem;
     }
     
-    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount siteMount) {
+    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount mount) {
         Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
         try {
             if(primaryItem == null && (this.mappings == null || this.mappings.isEmpty() )) {

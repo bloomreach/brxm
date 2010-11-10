@@ -65,7 +65,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     protected VirtualHost virtualHost;
     protected VirtualHosts virtualHosts;
     protected Mount mount;
-    protected ResolvedMount resolvedSiteMount;
+    protected ResolvedMount resolvedMount;
     protected HstMutableRequestContext requestContext;
     protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;
@@ -115,20 +115,20 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         EasyMock.expect(mount.getTypes()).andReturn(new ArrayList<String>()).anyTimes();
         EasyMock.expect(mount.getMountProperties()).andReturn(new HashMap<String,String>()).anyTimes();
         
-        resolvedSiteMount = EasyMock.createNiceMock(ResolvedMount.class);
-        EasyMock.expect(resolvedSiteMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
-        EasyMock.expect(resolvedSiteMount.getMount()).andReturn(mount).anyTimes();
-        EasyMock.expect(resolvedSiteMount.getResolvedMountPath()).andReturn("/preview/services").anyTimes();
+        resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
+        EasyMock.expect(resolvedMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
+        EasyMock.expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        EasyMock.expect(resolvedMount.getResolvedMountPath()).andReturn("/preview/services").anyTimes();
 
         EasyMock.replay(resolvedVirtualHost);
         EasyMock.replay(virtualHosts);
         EasyMock.replay(virtualHost);
         EasyMock.replay(mount);
-        EasyMock.replay(resolvedSiteMount);
+        EasyMock.replay(resolvedMount);
         
         requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
         requestContext.setServletContext(servletContext);
-        requestContext.setResolvedMount(resolvedSiteMount);
+        requestContext.setResolvedMount(resolvedMount);
         
         urlFactory = getComponent(HstURLFactory.class.getName());
         urlProvider = this.urlFactory.getContainerURLProvider();        

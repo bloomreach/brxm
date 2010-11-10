@@ -52,7 +52,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected HstContainerURL baseURL;
     protected String contextNamespace;
     protected HstURLFactory urlFactory;
-    protected ResolvedMount resolvedSiteMount;
+    protected ResolvedMount resolvedMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstLinkCreator linkCreator;
     protected HstSiteMapMatcher siteMapMatcher;
@@ -67,7 +67,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected String pathSuffix;
 
     public boolean isPreview() {
-    	return this.resolvedSiteMount.getMount().isPreview();
+    	return this.resolvedMount.getMount().isPreview();
     }
     
     public ServletContext getServletContext() {
@@ -135,11 +135,11 @@ public class MockHstRequestContext implements HstRequestContext {
     }
     
     public ResolvedMount getResolvedMount() {
-        return this.resolvedSiteMount;
+        return this.resolvedMount;
     }
     
-    public void setResolvedSiteMount(ResolvedMount resolvedSiteMount) {
-        this.resolvedSiteMount = resolvedSiteMount;
+    public void setResolvedMount(ResolvedMount resolvedMount) {
+        this.resolvedMount = resolvedMount;
     }
     
     public ResolvedSiteMapItem getResolvedSiteMapItem() {

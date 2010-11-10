@@ -57,16 +57,16 @@ public class PageComposerBootstrapValve extends AbstractValve
         session.setAttribute(ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME, "true");
         
         HstRequestContext requestContext = (HstRequestContext)context.getRequestContext();
-        Mount siteMount = requestContext.getResolvedMount().getMount();
+        Mount mount = requestContext.getResolvedMount().getMount();
 
         /*
-        *  get the preview URL. Note, that the 'composer' sitemount always needs a parent sitemount of type 'composermode'.
+        *  get the preview URL. Note, that the 'composer' mount always needs a parent mount of type 'composermode'.
         *  If either the parent is null, OR the parent is not of type 'composermode', we cannot instantiate the composer tool
         */
-        Mount parentMount = siteMount.getParent();
+        Mount parentMount = mount.getParent();
         if (parentMount == null || !parentMount.isOfType("composermode")) {
             try {
-                context.getServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Page Composer Tool can only be started if the composer SiteMount is a descendant of the SiteMount of type 'composermode'.");
+                context.getServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Page Composer Tool can only be started if the composer Mount is a descendant of the Mount of type 'composermode'.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
