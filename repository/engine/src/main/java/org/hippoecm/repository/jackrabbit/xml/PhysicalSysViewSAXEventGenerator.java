@@ -65,6 +65,9 @@ public class PhysicalSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             // this is a virtual hippo:count property
             return;
         }
+        if (prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
+            return;
+        }
         super.process(prop, level);
     }
 

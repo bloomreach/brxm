@@ -433,8 +433,8 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            transformer.setOutputProperty(OutputKeys.INDENT, "no");
-
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
             handler.setResult(new StreamResult(stream));
             return handler;
         } catch (TransformerFactoryConfigurationError e) {
