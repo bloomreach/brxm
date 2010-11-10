@@ -12,7 +12,7 @@
 			<sv:value>body</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/templates/webpage.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/templates/webpage.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="header">
@@ -20,7 +20,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/header/header.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/header/header.jsp</sv:value>
 		</sv:property>
 	</sv:node>
     <sv:node sv:name="footer">
@@ -28,7 +28,7 @@
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/footer/footer.jsp</sv:value>
+            <sv:value>WEB-INF/jsp/components/footer/footer.jsp</sv:value>
         </sv:property>
     </sv:node>
 	<sv:node sv:name="threecolumnlayout">
@@ -39,7 +39,7 @@
 			<sv:value>content</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/layout/threecolumnlayout.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/layout/threecolumnlayout.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="leftmenu">
@@ -47,7 +47,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/leftmenu.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/leftmenu.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="right">
@@ -55,7 +55,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/right.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/right.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="homepage">
@@ -71,7 +71,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/layout/homelayout.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/layout/homelayout.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="archive">
@@ -79,7 +79,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/archive.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/archive.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="detailpage">
@@ -88,9 +88,9 @@
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
             <!--
-			<sv:value>jsp/components/main/detailpage.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/detailpage.jsp</sv:value>
             -->
-            <sv:value>ftl/components/main/detailpage.ftl</sv:value>
+            <sv:value>WEB-INF/ftl/components/main/detailpage.ftl</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="rss">
@@ -99,7 +99,7 @@
 		</sv:property>
 		<sv:property sv:name="hst:containers" sv:type="String"/>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/templates/rss.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/templates/rss.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="searchresults">
@@ -108,7 +108,7 @@
 		</sv:property>
 		<sv:property sv:name="hst:containers" sv:type="String"/>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/search.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/search.jsp</sv:value>
 		</sv:property>
 	</sv:node>
     <sv:node sv:name="todolist">
@@ -117,7 +117,7 @@
         </sv:property>
         <sv:property sv:name="hst:containers" sv:type="String"/>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/todolist.jsp</sv:value>
+            <sv:value>WEB-INF/jsp/components/main/todolist.jsp</sv:value>
         </sv:property>
     </sv:node>
 	<sv:node sv:name="bodyerror">
@@ -126,7 +126,7 @@
 		</sv:property>
 		<sv:property sv:name="hst:containers" sv:type="String"/>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/error.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/error.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="facetedaddproduct">
@@ -134,7 +134,7 @@
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/facetedaddproduct.jsp</sv:value>
+            <sv:value>WEB-INF/jsp/components/main/facetedaddproduct.jsp</sv:value>
         </sv:property>
     </sv:node>
 	<sv:node sv:name="faceted">
@@ -142,7 +142,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/faceted.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/faceted.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="facetedright">
@@ -150,7 +150,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/facetedright.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/facetedright.jsp</sv:value>
 		</sv:property>
 	</sv:node>
     <sv:node sv:name="facetedproductpage">
@@ -158,7 +158,7 @@
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/facetedproductpage.jsp</sv:value>
+            <sv:value>WEB-INF/jsp/components/main/facetedproductpage.jsp</sv:value>
         </sv:property>
     </sv:node>
 	<sv:node sv:name="productpage">
@@ -166,7 +166,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/productpage.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/productpage.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="table">
@@ -174,7 +174,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/composer/templates/table.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/composer/templates/table.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="ul">
@@ -182,7 +182,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/composer/templates/ul.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/composer/templates/ul.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="ol">
@@ -190,7 +190,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/composer/templates/ol.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/composer/templates/ol.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 	<sv:node sv:name="banner">
@@ -198,7 +198,7 @@
 			<sv:value>hst:template</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/banner.jsp</sv:value>
+			<sv:value>WEB-INF/jsp/components/main/banner.jsp</sv:value>
 		</sv:property>
 	</sv:node>
 </sv:node>

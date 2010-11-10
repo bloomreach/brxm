@@ -11,7 +11,7 @@
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/header/subsite_header.jsp</sv:value>
+            <sv:value>WEB-INF/jsp/components/header/subsite_header.jsp</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>
