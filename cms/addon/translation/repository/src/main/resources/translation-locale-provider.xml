@@ -122,6 +122,9 @@
     <sv:property sv:name="language" sv:type="String">
       <sv:value>nl</sv:value>
     </sv:property>
+    <sv:property sv:name="country" sv:type="String">
+      <sv:value>nl</sv:value>
+    </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
     </sv:property>
