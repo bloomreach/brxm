@@ -59,9 +59,18 @@ public interface HstSiteMap {
      * Return the child <code>HstSiteMapItem</code> that has the corresponding <code>id</code> ({@link HstSiteMapItem#getId()} ) 
      * and <code>null</code> otherwise
      * @param id the id of the child <code>HstSiteMapItem</code> as it would be return by {@link HstSiteMapItem#getId()} 
-     * @return Returns the HstSiteMapItem object corresponding to the unique <code>value</code> and <code>null</code> if no <code>HstSiteMapItem</code>
-     * exists with this <code>value</code> in this <code>HstSiteMapItem</code> object. 
+     * @return Returns the HstSiteMapItem object corresponding to the unique <code>id</code> and <code>null</code> if no <code>HstSiteMapItem</code>
+     * exists with this <code>refId</code> in this <code>HstSiteMapItem</code> object. 
      */
     HstSiteMapItem getSiteMapItemById(String id);
+    
+    /**
+     * Return the child <code>HstSiteMapItem</code> that has the corresponding <code>refId</code> ({@link HstSiteMapItem#getRefId()} ) 
+     * and <code>null</code> otherwise
+     * @param refId the refId of the child <code>HstSiteMapItem</code> as it would be return by {@link HstSiteMapItem#getRefId()} 
+     * @return Returns the HstSiteMapItem object corresponding to the unique <code>refId</code> and <code>null</code> if no <code>HstSiteMapItem</code>
+     * exists with this <code>refId</code> in this <code>HstSiteMapItem</code> object. 
+     */
+    HstSiteMapItem getSiteMapItemByRefId(String refId);
     
   }

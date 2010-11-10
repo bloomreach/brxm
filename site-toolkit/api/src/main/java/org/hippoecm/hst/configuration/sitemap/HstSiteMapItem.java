@@ -40,10 +40,18 @@ public interface HstSiteMapItem {
 
     /**
      * The id of a <code>HstSiteMapItem</code> is mandatory and must be unique within its containing <code>{@link HstSiteMap}</code> because
-     * <code>{@link HstSiteMap#getSiteMapItemById(String)}</code> must uniquely return a <code>HstSiteMapItem</code>
+     * <code>{@link HstSiteMap#getSiteMapItemById(String)}</code> must uniquely return a <code>HstSiteMapItem</code>. 
      * @return the id of this HstSiteMapItem
      */
     String getId(); 
+    
+    /**
+    * The refId of a <code>HstSiteMapItem</code> is <b>non</b>-mandatory and must be unique within its containing <code>{@link HstSiteMap}</code> because
+    * <code>{@link HstSiteMap#getSiteMapItemByRefId(String)}</code> must uniquely return a <code>HstSiteMapItem</code>. The difference with {@link #getId()} is that
+    * that <code>id</code> is in general an auto-generated id, where this {@link #getRefId()} is an optional id to get hold of this {@link HstSiteMapItem}.
+    * @return the refId of this HstSiteMapItem or <code>null</code> when no refId is defined on the {@link HstSiteMapItem}
+    */
+   String getRefId(); 
     
     /**
      * The qualified id, which might contain more info then just {@link #getId()} as the getId might return an id which is meaningfull only within it's current {@link HstSiteMap}

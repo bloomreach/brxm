@@ -65,6 +65,7 @@ public interface HstNodeTypes {
     public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
     public final static String SCRIPT_PROPERTY_TEMPLATE =  "hst:template";
     
+    public final static String SITEMAPITEM_PROPERTY_REF_ID = "hst:refId";
     public final static String SITEMAPITEM_PROPERTY_VALUE =  "hst:value";
     public final static String SITEMAPITEM_PROPERTY_SECURED =  "hst:secured";
     public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";

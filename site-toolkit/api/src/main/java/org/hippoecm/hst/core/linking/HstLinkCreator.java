@@ -324,10 +324,20 @@ public interface HstLinkCreator {
      * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
      * @param toHstSiteMapItem the {@link HstSiteMapItem} to link to
      * @return an <code>HstLink</code> instance or <code>null<code> 
-     * @deprecated Use {@link #create(String, SiteMount)} instead
      */
-    @Deprecated
     HstLink create(HstSiteMapItem toHstSiteMapItem);
+    
+    /**
+     * Regardless the current context, create a HstLink to the {@link HstSiteMapItem} for {@link SiteMount} <code>mount</code>  that has {@link HstSiteMapItem#getRefId()} equal to <code>siteMapItemRefId</code>. 
+     * If there cannot be found a {@link HstSiteMapItem} for <code>siteMapItemRefId</code> in the {@link SiteMount} <code>mount</code>, then <code>null</code> is returned.
+     * If the {@link HstSiteMapItem} is found for <code>siteMapItemRefId</code>, then it can be only used when it does not
+     * contain any ancestor including itself with a wildcard, because the link is ambiguous in that case. 
+     * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
+     * @param siteMapItemRefId the {@link HstSiteMapItem#getRefId()} of the {@link HstSiteMapItem} to link to
+     * @param mount the {@link SiteMount} the <code>siteMapItemRefId</code> should be in
+     * @return an <code>HstLink</code> instance or <code>null<code> 
+     */
+    HstLink createByRefId(String siteMapItemRefId, SiteMount mount);
 
     /**
      * Regardless the current context, create a HstLink for the <code>path</code> and <code>hstSite</code>

@@ -186,6 +186,25 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount, containerResource));
     }
 
+
+    public HstLink create(HstSiteMapItem toHstSiteMapItem) {
+        return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getSiteMount()));
+    }
+
+    public HstLink createByRefId(String siteMapItemRefId, SiteMount mount) {
+        if(mount.getHstSite() == null) {
+            log.warn("Cannot create a link to a siteMapItemRefId '{}' for a mount '{}' that does not have a HstSiteMap. Return null", siteMapItemRefId, mount.getName());
+            return null;
+        }
+        HstSiteMapItem siteMapItem = mount.getHstSite().getSiteMap().getSiteMapItemByRefId(siteMapItemRefId);
+        if(siteMapItem == null) {
+            log.warn("Could not find HstSiteMapItem for siteMapItemRefId '{}' and mount '{}'. Return null", siteMapItemRefId, mount.getName());
+            return null;
+        }
+        return create(siteMapItem);
+    }
+
+    
     /**
      * If the uuid points to a node that is of type hippo:document and it is below a hippo:handle, we will
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document.
@@ -239,11 +258,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getSiteMount(), containerResource));
     }
     
-    @Deprecated
-    public HstLink create(HstSiteMapItem toHstSiteMapItem) {
-        return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getSiteMount()));
-    }
-
     @Deprecated
     public HstLink create(HstSite hstSite, String toSiteMapItemId) {
         HstSiteMapItem siteMapItem = hstSite.getSiteMap().getSiteMapItemById(toSiteMapItemId);
@@ -713,6 +727,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
 
     }
+
 
 
 }

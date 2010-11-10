@@ -17,7 +17,6 @@ package org.hippoecm.hst.configuration.sitemap;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,10 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
+import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.LoggerFactory;
 
 public class HstSiteMapService implements HstSiteMap {
@@ -44,7 +45,16 @@ public class HstSiteMapService implements HstSiteMap {
     
     private Map<String, HstSiteMapItem> rootSiteMapItems = new LinkedHashMap<String, HstSiteMapItem>();
    
-    private Map<String, HstSiteMapItem> siteMapDescendants = new HashMap<String, HstSiteMapItem>();
+    /*
+     * The map of HstSiteMapItem where the key is HstSiteMapItem#getId()
+     */
+    private Map<String, HstSiteMapItem> siteMapDescendants = new DuplicateKeyNotAllowedHashMap<String, HstSiteMapItem>();
+    
+    /*
+     * The map of HstSiteMapItem where the key is HstSiteMapItem#getRefId(). Only HstSiteMapItem that have a refId are added to this 
+     * map. When duplicate key's are tried to be put, an exception will be thrown as this is not allowed
+     */
+    private Map<String, HstSiteMapItem> siteMapDescendantsByRefId = new DuplicateKeyNotAllowedHashMap<String, HstSiteMapItem>();
     
     public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
         this.hstSite = hstSite;
@@ -79,8 +89,19 @@ public class HstSiteMapService implements HstSiteMap {
         
     }
     
-    private void populateDescendants(HstSiteMapItem hstSiteMapItem) {
-        siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
+    private void populateDescendants(HstSiteMapItem hstSiteMapItem)  throws ServiceException {
+        try {
+            siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
+        } catch (IllegalArgumentException e) {
+           throw new ServiceException("HstSiteMapItem with already existing id encountered. Not allowed to have duplicate id's within one HstSiteMap. Duplicate id = '"+hstSiteMapItem.getId()+"'" , e);
+        }
+        if(hstSiteMapItem.getRefId() != null) {
+            try {
+                siteMapDescendantsByRefId.put(hstSiteMapItem.getRefId(), hstSiteMapItem);
+            } catch (IllegalArgumentException e) {
+               throw new ServiceException("HstSiteMapItem with already existing refId encountered. Not allowed to have duplicate refId's within one HstSiteMap. Duplicate refId = '"+hstSiteMapItem.getRefId()+"' for HstSiteMapItem with id='"+hstSiteMapItem.getId()+"'" , e);
+            }
+        }
         for(HstSiteMapItem child : hstSiteMapItem.getChildren()) {
             populateDescendants(child);
         }
@@ -97,6 +118,10 @@ public class HstSiteMapService implements HstSiteMap {
 
     public HstSiteMapItem getSiteMapItemById(String id) {
         return siteMapDescendants.get(id);
+    }
+
+    public HstSiteMapItem getSiteMapItemByRefId(String refId) {
+        return siteMapDescendantsByRefId.get(refId);
     }
 
 

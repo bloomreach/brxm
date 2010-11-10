@@ -104,6 +104,8 @@
 - hst:excludedforlinkrewriting (boolean)
 - hst:secured (boolean)
 - hst:roles (string) multiple
+// refId must be unique within a single sitemap item tree. The property is optional
+- hst:refId (string)
 - hst:users (string) multiple
 - hst:locale (string)
 - hst:inheritsfrom (string)

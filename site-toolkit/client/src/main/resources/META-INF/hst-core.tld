@@ -235,6 +235,17 @@
             </description>
         </attribute>
         <attribute>
+            <name>siteMapItemRefId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>A string id, which is the refId of a sitemap item you want to link to. Note that the sitemapitem belonging
+            to the refId should not be a wildcard matcher, and non of its ancestors should be a wildcard. Using this to create a link
+            to a sitemap item can be handy when you know to which sitemap item you want to link, but not the path. For example, a single 
+            jsp is used for 2 languages which have their own sitemap. You want a link to 'contact' for English, and to 'kontakt' for Dutch.
+            Using this attribute, you can link to a refId on the sitemap item. Both 'contact' and 'kontakt' should have the same refId then</description>
+        </attribute>
+        <attribute>
             <name>external</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>

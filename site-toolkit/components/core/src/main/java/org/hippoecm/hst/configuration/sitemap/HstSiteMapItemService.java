@@ -28,8 +28,6 @@ import java.util.Map.Entry;
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.SiteMount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
@@ -50,6 +48,9 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new HashMap<String, HstSiteMapItemHandlerConfiguration>();
 
     private String id;
+
+    // note refId is frequently just null. Only when it is configured, it is not null. The id is however never null!
+    private String refId;
     
     private String qualifiedId;
     
@@ -131,6 +132,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.id = nodePath.substring(siteMapRootNodePath.length()+1);
         // currently, the value is always the nodename
         this.value = node.getValueProvider().getName();
+        
+        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID)) {
+            this.refId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID);
+        }
 
         this.statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
         this.errorCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
@@ -312,6 +317,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     
     public String getId() {
         return this.id;
+    }
+
+    public String getRefId() {
+        return refId;
     }
 
     public String getRelativeContentPath() {
@@ -522,6 +531,5 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public boolean isExcludedForLinkRewriting() {
         return isExcludedForLinkRewriting;
     }
-
 
 }

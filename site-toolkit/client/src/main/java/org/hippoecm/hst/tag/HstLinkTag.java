@@ -59,6 +59,8 @@ public class HstLinkTag extends ParamContainerTag {
     protected HippoBean hippoBean;
 
     protected String path;
+
+    protected String siteMapItemRefId;
     
     protected String subPath;
     
@@ -122,8 +124,8 @@ public class HstLinkTag extends ParamContainerTag {
         if(skipTag) {
             return EVAL_PAGE;
         }
-        if(this.link == null && this.path == null && this.hippoBean == null) {
-            log.warn("Cannot get a link because no link , path or node is set");
+        if(this.link == null && this.path == null && this.hippoBean == null && siteMapItemRefId == null) {
+            log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set");
             return EVAL_PAGE;
         }
         
@@ -170,7 +172,11 @@ public class HstLinkTag extends ParamContainerTag {
             boolean containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(this.path));
             this.link = reqContext.getHstLinkCreator().create(this.path, mount, containerResource);
         }
-        
+
+        if(this.link == null && this.siteMapItemRefId != null) {
+            this.link = reqContext.getHstLinkCreator().createByRefId(siteMapItemRefId, reqContext.getResolvedSiteMount().getSiteMount());
+        }
+
         if(this.link == null) {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
             return EVAL_PAGE;
@@ -269,6 +275,7 @@ public class HstLinkTag extends ParamContainerTag {
         hippoBean = null;
         scope = null;
         path = null;
+        siteMapItemRefId = null;
         subPath = null;
         link = null;
         external = false;
@@ -334,9 +341,13 @@ public class HstLinkTag extends ParamContainerTag {
     public void setExternal(boolean external) {
         this.external = external;
     }
-    
+
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public void setSiteMapItemRefId(String siteMapItemRefId) {
+        this.siteMapItemRefId = siteMapItemRefId;
     }
     
     public void setSubPath(String subPath) {
