@@ -165,11 +165,15 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             }
             for (int i=0; i<childrenArray.length && (i==0 || !(singledView && isHandle)); i++) {
                 if (!childrenArray[i].getKey().equals(requestName) && !childrenArray[i].getKey().equals(translationName)) {
+                    if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null)
+                        continue;
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
                 }
             }
             for (int i=0; i<childrenArray.length; i++) {
                 if (childrenArray[i].getKey().equals(requestName) || childrenArray[i].getKey().equals(translationName)) {
+                    if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null)
+                        continue;
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
                 }
             }
@@ -211,6 +215,8 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
         for (Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext();) {
             ChildNodeEntry entry = (ChildNodeEntry)iter.next();
+            if(getCanonicalNodeState(entry.getId()) == null)
+                continue;
             if (!isHandle || viewId.view == null || match(viewId.view, entry.getId())) {
                 /*
                  * below we check on the entry's nodestate wether the node type is hippo:request,
@@ -240,6 +246,8 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             Arrays.sort(childrenArray);
         }
         for (int i = 0; i < childrenArray.length && (i == 0 || !(viewId.singledView && isHandle)); i++) {
+            if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null)
+                continue;
             state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
         }
     }
