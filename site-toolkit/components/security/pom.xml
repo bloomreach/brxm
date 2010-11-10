@@ -85,6 +85,11 @@
       <scope>provided</scope>
     </dependency>
     
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    
     <!-- Exclude commons-logging explicitly by a provided dependency. -->
     <dependency> 
       <groupId>commons-logging</groupId> 

@@ -16,7 +16,10 @@
 package org.hippoecm.hst.security.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.security.Principal;
+import java.text.MessageFormat;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
@@ -27,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.security.PolicyContextWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -121,7 +125,6 @@ public class LoginServlet extends HttpServlet {
     public static final String PASSWORD_ATTR_NAME = LoginServlet.class.getPackage().getName() + "." + PASSWORD;
     
     public static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
-    public static final String DEFAULT_LOGIN_FORM_PAGE_PATH = "/WEB-INF/jsp/login_security_check.jsp";
     
     public static final String MODE_LOGIN_PROXY = "proxy";
     public static final String MODE_LOGIN_LOGIN = "login";
@@ -134,11 +137,13 @@ public class LoginServlet extends HttpServlet {
     protected String loginResourcePath;
     protected String loginFormPagePath;
     
+    private String loginSecurityCheckPageTemplateContent;
+    
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         requestCharacterEncoding = ServletConfigUtils.getInitParameter(servletConfig, null, "requestCharacterEncoding", null);
         loginResourcePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
-        loginFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginFormPage", DEFAULT_LOGIN_FORM_PAGE_PATH);
+        loginFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginFormPage", null);
     }
 
     @Override
@@ -211,7 +216,12 @@ public class LoginServlet extends HttpServlet {
         Principal userPrincipal = request.getUserPrincipal();
         
         if (userPrincipal == null) {
-            request.getRequestDispatcher(loginFormPagePath).forward(request, response);
+            if (loginFormPagePath != null) {
+                request.getRequestDispatcher(loginFormPagePath).forward(request, response);
+            } else {
+                renderAutoLoginPage(request, response);
+            }
+            
             return;
         }
         
@@ -301,5 +311,40 @@ public class LoginServlet extends HttpServlet {
         
         return null;
     }
+    
+    protected void renderAutoLoginPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (loginSecurityCheckPageTemplateContent == null) {
+            InputStream input = null;
+            
+            try {
+                input = getClass().getResourceAsStream("login_security_check.html");
+                loginSecurityCheckPageTemplateContent = IOUtils.toString(input, "UTF-8");
+            } finally {
+                IOUtils.closeQuietly(input);
+            }
+        }
+        
+        String jSecurityCheck = response.encodeURL("j_security_check");
+        String username = "";
+        String password = "";
+        
+        HttpSession httpSession = request.getSession(false);
+        
+        if (httpSession != null) {
+            username = (String) httpSession.getAttribute(USERNAME_ATTR_NAME);
+            if (username == null) username = "";
+            password = (String) httpSession.getAttribute(PASSWORD_ATTR_NAME);
+            if (password == null) password = "";
+        }
+        
+        String html = MessageFormat.format(loginSecurityCheckPageTemplateContent, new Object [] { jSecurityCheck, username, password });
+        
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print(html);
+        out.flush();
+        out.close();
+    }
+    
 }
 

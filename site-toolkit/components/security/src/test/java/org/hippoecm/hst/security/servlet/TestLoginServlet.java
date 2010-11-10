@@ -18,6 +18,7 @@ package org.hippoecm.hst.security.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -116,7 +117,19 @@ public class TestLoginServlet {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         loginServlet.doLoginLogin(request, response);
-        assertEquals(LoginServlet.DEFAULT_LOGIN_FORM_PAGE_PATH, response.getForwardedUrl());
+        assertTrue(response.getContentAsString().contains("onload"));
+        assertTrue(response.getContentAsString().contains(".submit"));
+        assertTrue(response.getContentAsString().contains("j_security_check"));
+        assertTrue(response.getContentAsString().contains("j_username"));
+        assertTrue(response.getContentAsString().contains("j_password"));
+        
+        servletConfig.addInitParameter("loginFormPage", "/WEB-INF/jsp/login_security_check.jsp");
+        loginServlet.init(servletConfig);
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        
+        loginServlet.doLoginLogin(request, response);
+        assertEquals("/WEB-INF/jsp/login_security_check.jsp", response.getForwardedUrl());
     }
     
     @Test
