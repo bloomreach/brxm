@@ -64,6 +64,23 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Customizable implementation of the FolderWorkflow.  Uses foldertypes from the
+ * /hippo:configuration/hippo:queries/hippo:templates folder to populate properties
+ * in prototypes.  Prototypes are found with configurable queries.  For documents, these
+ * usually reside under the hippo:namespaces folder.
+ * <p>
+ * Folder types contain a set of 'renames', in the form of the multi-valued property
+ * hippostd:modify.  This is a set of (path, value) values, with the value being subject to
+ * variable expansion.  The expansion takes the following form:
+ * <ul>
+ *   <li>$now: the current time
+ *   <li>$holder: the user of the session that invoked the workflow
+ *   <li>$inherit: the value under the same path in the parent document.
+ *     Can be overridden by providing the property name as an argument. 
+ *   <li>$&lt;other&gt;: value specified as an argument
+ * </ul>
+ */
 public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -201,12 +218,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 newValue = currentTime;
             } else if (newValue.startsWith("$inherit")) {
                 String relpath = values[i];
-                HierarchyResolver hr = ((HippoWorkspace) userSession.getWorkspace()).getHierarchyResolver();
-                Property parentProperty = hr.getProperty(target, relpath);
-                if (parentProperty == null) {
-                    continue;
+                String propPath = relpath.substring(relpath.lastIndexOf('/') + 1);
+                if (arguments.containsKey(propPath)) {
+                    newValue = arguments.get(propPath);
                 } else {
-                    newValue = parentProperty.getValue().getString();
+                    HierarchyResolver hr = ((HippoWorkspace) userSession.getWorkspace()).getHierarchyResolver();
+                    Property parentProperty = hr.getProperty(target, relpath);
+                    if (parentProperty == null) {
+                        continue;
+                    } else {
+                        newValue = parentProperty.getValue().getString();
+                    }
                 }
             } else if (newValue.startsWith("$")) {
                 String key = newValue.substring(1);
