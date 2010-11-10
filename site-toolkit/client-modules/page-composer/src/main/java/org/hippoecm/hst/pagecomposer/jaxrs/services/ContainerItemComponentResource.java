@@ -62,7 +62,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             HstRequestContext requestContext = getRequestContext(servletRequest);
             Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
             if (parentMount == null) {
-                log.warn("Page Composer only work when there is a parent site mount");
+                log.warn("Page Composer only work when there is a parent Mount");
             }
             return new ComponentWrapper(getRequestConfigNode(requestContext));
 

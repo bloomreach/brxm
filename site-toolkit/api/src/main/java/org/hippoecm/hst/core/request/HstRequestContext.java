@@ -185,7 +185,7 @@ public interface HstRequestContext {
     
     /**
      * Returns true if this request is embedded and link rewriting needs to use the {@link #getResolvedEmbeddingMount()}
-     * for the target site mount path and context path (if to be included).
+     * for the target Mount path and context path (if to be included).
      */
     boolean isEmbeddedRequest();
     
@@ -234,7 +234,7 @@ public interface HstRequestContext {
     
     /**
      * Returns the path suffix from the resolved site map item.
-     * If it is null, then returns the path suffix from the resolved site mount.
+     * If it is null, then returns the path suffix from the resolved Mount.
      * @return the matched path suffix
      */
     String getPathSuffix();

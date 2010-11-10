@@ -48,7 +48,7 @@ public class LocalizationValve extends AbstractValve {
         
         Locale preferredLocale = findPreferredLocale(servletRequest, requestContext);
         
-        // when site mount or site map item doesn't force a preferred locale,
+        // when Mount or site map item doesn't force a preferred locale,
         // allow to override preferred locale from the request or session attribute.
         // In some environment, they can just implement a filter to set request attirbute or
         // they can simply store a session attribute for a transient session sepecific locale setting.

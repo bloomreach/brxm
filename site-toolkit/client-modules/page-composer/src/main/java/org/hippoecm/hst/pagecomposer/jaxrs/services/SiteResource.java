@@ -48,8 +48,8 @@ public class SiteResource extends AbstractConfigResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
         if (parentMount == null) {
-            log.warn("Page Composer only work when there is a parent site mount");
-            return error("Page Composer only work when there is a parent site mount");
+            log.warn("Page Composer only work when there is a parent Mount");
+            return error("Page Composer only work when there is a parent Mount");
         }
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(parentMount);
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());

@@ -74,7 +74,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             if(mount.getChildMount(requestPathSegments[position]) != null) {
                 mount = mount.getChildMount(requestPathSegments[position]);
             } else {
-                // we're done: we have the deepest site mount
+                // we're done: we have the deepest Mount
                 break;
             }
             position++;
@@ -97,7 +97,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         }
         
         
-        // reconstruct the prefix that needs to be stripped of from the request because it belongs to the site mount
+        // reconstruct the prefix that needs to be stripped of from the request because it belongs to the Mount
         // we thus create the resolvedPathInfoPrefix
         StringBuilder builder = new StringBuilder();
         while(position > 0) {

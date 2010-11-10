@@ -163,7 +163,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return null;
         }
         
-        log.debug("Target Mount found for mountAlias '{}'. Create link for target site mount", mountAlias);
+        log.debug("Target Mount found for mountAlias '{}'. Create link for target Mount", mountAlias);
         return create(node, targetMount);
     }
 
@@ -175,7 +175,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             log.warn("Cannot create a link for mountAlias '{}' as it cannot be found in the host group '{}' for type '{}'", messages);
             return null;
         }
-        log.debug("Target Mount found for mountAlias '{}'. Create link for target site mount", mountAlias);
+        log.debug("Target Mount found for mountAlias '{}'. Create link for target Mount", mountAlias);
         return create(node, targetMount);
     }
     public HstLink create(String path, Mount mount) {
@@ -521,7 +521,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         List<Mount> possibleSuitedMounts = new ArrayList<Mount>();
                         
                         // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
-                        // cross-domain linkrewrite to mounts that are not a site mount?
+                        // cross-domain linkrewrite to mounts that are not a Mount?
                         for(Mount mount : mountsForHostGroup) {
                            if(!mount.isSiteMount()) {
                                // not a mount for a HstSite

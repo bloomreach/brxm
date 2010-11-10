@@ -382,7 +382,7 @@ public class MountService implements Mount {
             throw new ServiceException("Mount at '"+mount.getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
         } else if(!isSiteMount()){
             log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), mount.getValueProvider().getPath());
-            // for non site mounts, the contentPath is just the mountpoint
+            // for non Mounts, the contentPath is just the mountpoint
             this.contentPath = mountPoint;
             // TODO HSTTWO- : the canonicalContentPath should be the canonical version of the contentPath in case it points to a virtual node.
             // this should be done when the HstConfigModel is in place
@@ -399,7 +399,7 @@ public class MountService implements Mount {
             this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
             this.canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
             this.contentPath = hstSiteNodeForMount.getContentPath();
-            log.info("Succesfull initialized hstSite '{}' for site mount '{}'", hstSite.getName(), getName());
+            log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
         }
         
         // check whether there are child Mounts now for this Mount
@@ -414,7 +414,7 @@ public class MountService implements Mount {
             }
         }
         
-        // add this site mount to the maps in the VirtualHostsService
+        // add this Mount to the maps in the VirtualHostsService
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
     }
     
