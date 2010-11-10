@@ -204,6 +204,9 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
       </sv:property>
+      <sv:property sv:name="workflow.translated" sv:type="String">
+        <sv:value>new-translated-folder</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="hipposys:config" h:merge="combine">
       <sv:property sv:name="modify-on-copy" sv:type="String">
@@ -231,6 +234,9 @@
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
+      </sv:property>
+      <sv:property sv:name="workflow.translated" sv:type="String">
+        <sv:value>new-translated-folder</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hipposys:config" h:merge="combine">
@@ -260,6 +266,9 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
       </sv:property>
+      <sv:property sv:name="workflow.translated" sv:type="String">
+        <sv:value>new-translated-folder</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="hipposys:config" h:merge="combine">
       <sv:property sv:name="modify-on-copy" sv:type="String">
@@ -287,6 +296,9 @@
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
+      </sv:property>
+      <sv:property sv:name="workflow.translated" sv:type="String">
+        <sv:value>new-translated-folder</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hipposys:config" h:merge="combine">
