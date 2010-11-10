@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.linking;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -97,18 +97,18 @@ public interface HstLink {
      * @return the HstSite that can represent this link. This might be an HstSite which is a different one then the
      * HstSite the link was created in. This could result in a cross-domain (different hostname) link being created, depending
      * on the backing {@link org.hippoecm.hst.configuration.hosting.VirtualHost}. If no HstSite is set, <code>null</code> can be returned
-     * @deprecated use {@link #getSiteMount} instead
+     * @deprecated use {@link #getMount} instead
      */
     @Deprecated
     HstSite getHstSite();
     
     /**
-     * @return the {@link SiteMount} that can represent this link. This might be an  {@link SiteMount} which is a different one then the
-     *  {@link SiteMount} the link was created in. This could result in a cross-domain (different hostname) link being created, depending
-     * on the backing {@link SiteMount#getVirtualHost()}. If no SiteMount is set, <code>null</code> can be returned
+     * @return the {@link Mount} that can represent this link. This might be an  {@link Mount} which is a different one then the
+     *  {@link Mount} the link was created in. This could result in a cross-domain (different hostname) link being created, depending
+     * on the backing {@link Mount#getVirtualHost()}. If no {@link Mount} is set, <code>null</code> can be returned
      * 
      */
-    SiteMount getSiteMount();
+    Mount getMount();
     
     /**
      * When for example for some bean the (real) link cannot be created through the HstLinkCreator, a HstLink can be returned

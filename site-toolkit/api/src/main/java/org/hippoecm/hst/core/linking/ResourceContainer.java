@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
@@ -35,10 +35,10 @@ public interface ResourceContainer {
     * is created
     * @param resourceContainerNode The parent node of the resource node
     * @param resourceNode The resource node itself containing the binary
-    * @param SiteMount The site the link is meant for
+    * @param mount the {@link Mount} the link is meant for
     * @return the resolved pathInfo for the node, or <code>null</code> when not able to create one
     */
-   String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, SiteMount siteMount);
+   String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount mount);
     
     /**
      * This is the reverse of {@link #resolvePathInfo(Node, Node, HstSite)}. If this ResourceContainer can resolve

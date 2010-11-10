@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
 
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            SiteMount parentMount = requestContext.getResolvedSiteMount().getSiteMount().getParent();
+            Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
             if (parentMount == null) {
                 log.warn("Page Composer only work when there is a parent site mount");
             }

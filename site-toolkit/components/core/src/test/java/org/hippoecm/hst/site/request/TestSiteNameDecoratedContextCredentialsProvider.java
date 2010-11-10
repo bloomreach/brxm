@@ -26,12 +26,12 @@ import static org.junit.Assert.assertTrue;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,8 +44,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     private ContextCredentialsProvider ccp;
     private HstRequestContext requestContext;
     private ResolvedSiteMapItem resolvedSiteMapItem;
-    private ResolvedSiteMount resolvedSiteMount;
-    private SiteMount siteMount;
+    private ResolvedMount resolvedSiteMount;
+    private Mount siteMount;
     private HstSite hstSite;
     
     @Before
@@ -56,8 +56,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         ccp = new SiteNameDecoratedContextCredentialsProvider(defaultCredentials, defaultCredentialsForPreviewMode, writableCredentials);
         requestContext = createMock(HstRequestContext.class);
         resolvedSiteMapItem = createMock(ResolvedSiteMapItem.class);
-        resolvedSiteMount = createMock(ResolvedSiteMount.class);
-        siteMount = createMock(SiteMount.class);
+        resolvedSiteMount = createMock(ResolvedMount.class);
+        siteMount = createMock(Mount.class);
         hstSite = createMock(HstSite.class);
     }
     
@@ -66,8 +66,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
 
         expect(requestContext.isPreview()).andReturn(Boolean.FALSE).anyTimes();
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site1");
         
@@ -91,8 +91,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     
         expect(requestContext.isPreview()).andReturn(Boolean.FALSE).anyTimes();
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site1");
         
@@ -114,8 +114,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     
         expect(requestContext.isPreview()).andReturn(Boolean.FALSE).anyTimes();
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site2");
         
@@ -137,8 +137,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         
         expect(requestContext.isPreview()).andReturn(Boolean.TRUE).anyTimes();
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site1");
         
@@ -162,8 +162,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     
         expect(requestContext.isPreview()).andReturn(Boolean.TRUE).anyTimes();
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site1");
         
@@ -185,8 +185,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     
         expect(requestContext.isPreview()).andReturn(Boolean.TRUE).anyTimes();
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site2");
         
@@ -207,8 +207,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
     public void testWritableCredentials() throws Exception {
        
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site1");
         
@@ -231,8 +231,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         reset(hstSite);
       
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site1");
         
@@ -253,8 +253,8 @@ public class TestSiteNameDecoratedContextCredentialsProvider {
         reset(hstSite);
       
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getResolvedSiteMount()).andReturn(resolvedSiteMount);
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount);
+        expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedSiteMount);
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount);
         expect(siteMount.getHstSite()).andReturn(hstSite);
         expect(hstSite.getName()).andReturn("site2");
         

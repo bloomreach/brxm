@@ -30,7 +30,7 @@ import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -43,7 +43,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
-    protected ResolvedSiteMount resolvedSiteMount;
+    protected ResolvedMount resolvedMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected String targetComponentPath;
     protected HstURLFactory urlFactory;
@@ -75,7 +75,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     protected String embeddingContextPath;
-    protected ResolvedSiteMount resolvedEmbeddingSiteMount;  
+    protected ResolvedMount resolvedEmbeddingMount;  
     protected Subject subject;
     protected Locale preferredLocale;
     protected List<Locale> locales;
@@ -93,7 +93,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
     
     public boolean isPreview() {
-    	return this.resolvedSiteMount.getSiteMount().isPreview();
+    	return this.resolvedMount.getMount().isPreview();
     }    
     
     public ServletContext getServletContext() {
@@ -130,12 +130,12 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.session = session;
     }
  
-    public void setResolvedSiteMount(ResolvedSiteMount resolvedSiteMount) {
-        this.resolvedSiteMount = resolvedSiteMount;
+    public void setResolvedMount(ResolvedMount resolvedMount) {
+        this.resolvedMount = resolvedMount;
     }
 
-    public ResolvedSiteMount getResolvedSiteMount() {
-        return this.resolvedSiteMount;
+    public ResolvedMount getResolvedMount() {
+        return this.resolvedMount;
     }
     
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
@@ -281,11 +281,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     public VirtualHost getVirtualHost() {
-       return resolvedSiteMount.getSiteMount().getVirtualHost();
+       return resolvedMount.getMount().getVirtualHost();
     }
     
     public boolean isEmbeddedRequest() {
-        return resolvedEmbeddingSiteMount != null;
+        return resolvedEmbeddingMount != null;
     }
     
     public void setEmbeddingContextPath(String embeddingContextPath) {
@@ -296,12 +296,12 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     	return this.embeddingContextPath;
     }
     
-    public void setResolvedEmbeddingSiteMount(ResolvedSiteMount resolvedEmbeddingSiteMount) {
-    	this.resolvedEmbeddingSiteMount = resolvedEmbeddingSiteMount;
+    public void setResolvedEmbeddingMount(ResolvedMount resolvedEmbeddingMount) {
+    	this.resolvedEmbeddingMount = resolvedEmbeddingMount;
     }
     
-    public ResolvedSiteMount getResolvedEmbeddingSiteMount() {
-    	return this.resolvedEmbeddingSiteMount;
+    public ResolvedMount getResolvedEmbeddingMount() {
+    	return this.resolvedEmbeddingMount;
     }
 
     public boolean isPortletContext() {
@@ -348,18 +348,18 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return pathSuffix;
     }
 
-    public SiteMount getMount(String alias) {
+    public Mount getMount(String alias) {
         return getMount(alias, false);
     }
     
-    private SiteMount getMount(String alias, boolean alreadyMapped) {
-        SiteMount currentMount = getResolvedSiteMount().getSiteMount();
+    private Mount getMount(String alias, boolean alreadyMapped) {
+        Mount currentMount = getResolvedMount().getMount();
         String hostGroupName = currentMount.getVirtualHost().getHostGroupName();
         VirtualHosts hosts = currentMount.getVirtualHost().getVirtualHosts();
-        List<SiteMount> possibleMounts = new ArrayList<SiteMount>();
+        List<Mount> possibleMounts = new ArrayList<Mount>();
         
         for(String type : currentMount.getTypes()) {
-           SiteMount possibleMount =  hosts.getSiteMountByGroupAliasAndType(hostGroupName, alias, type);
+           Mount possibleMount =  hosts.getMountByGroupAliasAndType(hostGroupName, alias, type);
            if(possibleMount != null) {
                possibleMounts.add(possibleMount);
            }
@@ -387,7 +387,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         
         // there are multiple possible. Let's return the best. 
-        for(SiteMount possibleMount : possibleMounts) {
+        for(Mount possibleMount : possibleMounts) {
             if(possibleMount.getType().equals(currentMount.getType())) {
                 // found a primary match
                 return possibleMount;
@@ -396,11 +396,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         
         // we did not find a primary match for best match. We return the mount with the most types in common. 
         
-        List<SiteMount> narrowedPossibleMounts = new ArrayList<SiteMount>();
+        List<Mount> narrowedPossibleMounts = new ArrayList<Mount>();
         if(possibleMounts.size() > 1) {
             // find the sitemount's with the most types in common
             int mostCommon = 0;
-            for(SiteMount s : possibleMounts) {
+            for(Mount s : possibleMounts) {
                 int inCommon = countCommon(s.getTypes(), currentMount.getTypes());
                 if(inCommon > mostCommon) {
                     mostCommon = inCommon;
@@ -423,17 +423,17 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return possibleMounts.get(0);
     }
 
-    public SiteMount getMount(String alias, String type) {
-        SiteMount mount =  getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias, type);
+    public Mount getMount(String alias, String type) {
+        Mount mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias, type);
         if(mount == null) {
             log.debug("Cannot find a mount for alias '{}'. Try to find mapped alias now. ", alias);
-            String mappedAlias = getResolvedSiteMount().getSiteMount().getMountProperties().get(alias);
+            String mappedAlias = getResolvedMount().getMount().getMountProperties().get(alias);
             if(mappedAlias == null) {
                 log.debug("Did not find a mount or mappedAlias for alias '{}'. Return null", alias);
                 return null;
             }
             log.debug("We did not find a direct mount for alias '{}' but found a mappedAlias '{}'. Try to find a mount for mapped alias now.", alias, mappedAlias);
-            mount =  getVirtualHost().getVirtualHosts().getSiteMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), mappedAlias, type);
+            mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), mappedAlias, type);
             if(log.isDebugEnabled()) {
                 if(mount != null) {
                     log.debug("We did not find a direct mount for alias '{}' but found a Mount for mappedAlias '{}'. Return this mount.", alias, mappedAlias);

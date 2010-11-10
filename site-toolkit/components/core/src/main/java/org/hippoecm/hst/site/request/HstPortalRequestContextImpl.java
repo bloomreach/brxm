@@ -17,7 +17,7 @@ package org.hippoecm.hst.site.request;
 
 import org.hippoecm.hst.core.request.HstPortalRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
  * @version $Id$
@@ -26,12 +26,12 @@ import org.hippoecm.hst.core.request.ResolvedSiteMount;
 public class HstPortalRequestContextImpl implements HstPortalRequestContext
 {
     private ResolvedSiteMapItem resolvedSiteMapItem;
-    private ResolvedSiteMount resolvedEmbeddingSiteMount;
+    private ResolvedMount resolvedEmbeddingSiteMount;
     private String embeddingContextPath;
     private String pathInfo;
     
     
-	public HstPortalRequestContextImpl(ResolvedSiteMapItem resolvedSiteMapItem, String embeddingContextPath, ResolvedSiteMount resolvedEmbeddingSiteMount, String pathInfo) {
+	public HstPortalRequestContextImpl(ResolvedSiteMapItem resolvedSiteMapItem, String embeddingContextPath, ResolvedMount resolvedEmbeddingSiteMount, String pathInfo) {
 		this.resolvedSiteMapItem = resolvedSiteMapItem;
 		this.embeddingContextPath = embeddingContextPath;
 		this.resolvedEmbeddingSiteMount = resolvedEmbeddingSiteMount;
@@ -47,7 +47,7 @@ public class HstPortalRequestContextImpl implements HstPortalRequestContext
 	}
 	
 	public void setResolvedEmbeddingSiteMount(
-			ResolvedSiteMount resolvedEmbeddingSiteMount) {
+			ResolvedMount resolvedEmbeddingSiteMount) {
 		this.resolvedEmbeddingSiteMount = resolvedEmbeddingSiteMount;
 	}
 
@@ -63,7 +63,7 @@ public class HstPortalRequestContextImpl implements HstPortalRequestContext
 		return embeddingContextPath;
 	}
 
-	public ResolvedSiteMount getResolvedEmbeddingSiteMount() {
+	public ResolvedMount getResolvedEmbeddingMount() {
 		return resolvedEmbeddingSiteMount;
 	}
 	

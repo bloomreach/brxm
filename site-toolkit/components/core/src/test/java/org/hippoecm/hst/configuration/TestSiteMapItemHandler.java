@@ -36,7 +36,7 @@ import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
@@ -77,7 +77,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
@@ -169,7 +169,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setContextPath("");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
@@ -209,7 +209,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setContextPath("");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
@@ -279,7 +279,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
@@ -333,7 +333,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             request.setContextPath("");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedSiteMount mount = vhosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
@@ -354,7 +354,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                     
                     assertTrue("We should have a redirected new sitemap item and not the same one we already had.", resolvedSiteMapItem != redirectedResolvedSiteMapItem);
                     
-                    assertTrue("the new redirected resolved sitemapitem should have the exact same sitemount instance ", resolvedSiteMapItem.getResolvedSiteMount() == redirectedResolvedSiteMapItem.getResolvedSiteMount());
+                    assertTrue("the new redirected resolved sitemapitem should have the exact same sitemount instance ", resolvedSiteMapItem.getResolvedMount() == redirectedResolvedSiteMapItem.getResolvedMount());
                     
                     assertTrue("We expect the redirected resolved sitemapitem to have pathInfo 'home' but it was '"+redirectedResolvedSiteMapItem.getPathInfo()+"'", "home".equals(redirectedResolvedSiteMapItem.getPathInfo()));
                     

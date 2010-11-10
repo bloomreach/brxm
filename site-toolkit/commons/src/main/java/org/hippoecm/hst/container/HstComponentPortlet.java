@@ -158,10 +158,10 @@ public class HstComponentPortlet extends GenericPortlet {
             HstMutablePortletRequestContext hrc = createHstRequestContext(request, response);            
             hrc.setTargetComponentPath(request.getPreferences().getValue(HST_COMPONENT_PATH, defaultHstComponentPath));
             hrc.setEmbeddingContextPath(prc.getEmbeddingContextPath());
-            hrc.setResolvedEmbeddingSiteMount(prc.getResolvedEmbeddingSiteMount());
-            hrc.setResolvedSiteMount(rsmi.getResolvedSiteMount());
+            hrc.setResolvedEmbeddingMount(prc.getResolvedEmbeddingMount());
+            hrc.setResolvedMount(rsmi.getResolvedMount());
             hrc.setResolvedSiteMapItem(rsmi);
-            return new StringBuilder(rsmi.getResolvedSiteMount().getResolvedMountPath()).append("/").append(rsmi.getPathInfo()).toString();
+            return new StringBuilder(rsmi.getResolvedMount().getResolvedMountPath()).append("/").append(rsmi.getPathInfo()).toString();
     	}
         return null;
     }

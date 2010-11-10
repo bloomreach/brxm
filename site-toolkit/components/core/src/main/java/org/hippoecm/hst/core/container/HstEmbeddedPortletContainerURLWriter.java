@@ -102,7 +102,7 @@ public class HstEmbeddedPortletContainerURLWriter {
                 } else {
                     // Embedded render URL
                 	path.append(prc.getEmbeddingContextPath());
-                	path.append(prc.getResolvedEmbeddingSiteMount().getResolvedMountPath());
+                	path.append(prc.getResolvedEmbeddingMount().getResolvedMountPath());
                 	path.append(pathInfo);
                     urlString = path.toString();
                 }

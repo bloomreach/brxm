@@ -27,7 +27,7 @@ import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
@@ -48,8 +48,8 @@ public class VirtualHostsService implements VirtualHosts {
     private HstManagerImpl hstManager;
     private Map<String, VirtualHostService> rootVirtualHosts = virtualHostHashMap();
 
-    private Map<String, List<SiteMount>> siteMountByHostGroup = new HashMap<String, List<SiteMount>>();
-    private Map<String, Map<String, SiteMount>> siteMountByGroupAliasAndType = new HashMap<String, Map<String, SiteMount>>();
+    private Map<String, List<Mount>> mountByHostGroup = new HashMap<String, List<Mount>>();
+    private Map<String, Map<String, Mount>> mountByGroupAliasAndType = new HashMap<String, Map<String, Mount>>();
     
   
     private String defaultHostName;
@@ -70,7 +70,7 @@ public class VirtualHostsService implements VirtualHosts {
     private String locale;
     
     /**
-     * Whether the {@link SiteMount}'s below this VirtualHostsService should show the hst version as a response header when they are a preview SiteMount
+     * Whether the {@link Mount}'s below this VirtualHostsService should show the hst version as a response header when they are a preview SiteMount
      */
     private boolean versionInPreviewHeader = true;
     
@@ -148,33 +148,33 @@ public class VirtualHostsService implements VirtualHosts {
     }
     
     /**
-     * Add this site mount for lookup through {@link #getSiteMountByAliasAndType(String, String)}
-     * @param siteMount
+     * Add this mount for lookup through {@link #getSiteMountByAliasAndType(String, String)}
+     * @param mount
      */
-    public void addSiteMount(SiteMount siteMount) throws ServiceException {
+    public void addMount(Mount mount) throws ServiceException {
 
-        String hostGroup = siteMount.getVirtualHost().getHostGroupName();
+        String hostGroup = mount.getVirtualHost().getHostGroupName();
 
-        List<SiteMount> siteMountsForGroup = siteMountByHostGroup.get(hostGroup);
-        if (siteMountsForGroup == null) {
-            siteMountsForGroup = new ArrayList<SiteMount>();
-            siteMountByHostGroup.put(hostGroup, siteMountsForGroup);
+        List<Mount> mountsForGroup = mountByHostGroup.get(hostGroup);
+        if (mountsForGroup == null) {
+            mountsForGroup = new ArrayList<Mount>();
+            mountByHostGroup.put(hostGroup, mountsForGroup);
         }
-        siteMountsForGroup.add(siteMount);
+        mountsForGroup.add(mount);
 
-        Map<String, SiteMount> aliasTypeMap = siteMountByGroupAliasAndType.get(hostGroup);
+        Map<String, Mount> aliasTypeMap = mountByGroupAliasAndType.get(hostGroup);
         if (aliasTypeMap == null) {
             // when a duplicate key is tried to be put, an IllegalArgumentException must be thrown, hence the DuplicateKeyNotAllowedHashMap
-            aliasTypeMap = new DuplicateKeyNotAllowedHashMap<String, SiteMount>();
-            siteMountByGroupAliasAndType.put(hostGroup, aliasTypeMap);
+            aliasTypeMap = new DuplicateKeyNotAllowedHashMap<String, Mount>();
+            mountByGroupAliasAndType.put(hostGroup, aliasTypeMap);
         }
         // add the sitemount for all alias-type combinations:
-        for (String type : siteMount.getTypes()) {
+        for (String type : mount.getTypes()) {
             try {
-                aliasTypeMap.put(getAliasTypeKey(siteMount.getAlias(), type), siteMount);
+                aliasTypeMap.put(getAliasTypeKey(mount.getAlias(), type), mount);
             } catch (IllegalArgumentException e) {
-                throw new ServiceException("Incorrect hst:hosts configuration. Not allowed to have multiple sitemount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
-                		". Failed for sitemount '"+siteMount.getName()+"'. Make sure that you add a unique 'alias' in combination with the 'types' on the sitemount within a single hostgroup.");
+                throw new ServiceException("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
+                		". Failed for mount '"+mount.getName()+"'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount within a single hostgroup.");
             }
         }
 
@@ -187,21 +187,21 @@ public class VirtualHostsService implements VirtualHosts {
         if(resolvedVirtualHost == null) {
             throw new MatchException("Unknown host '"+hstContainerURL.getHostName()+"'");
         }
-        ResolvedSiteMount resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(hstContainerURL.getContextPath(), hstContainerURL.getRequestPath());
-        if(resolvedSiteMount == null) {
-            if(resolvedSiteMount == null) {
-                throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a site mount");
+        ResolvedMount resolvedMount  = resolvedVirtualHost.matchMount(hstContainerURL.getContextPath(), hstContainerURL.getRequestPath());
+        if(resolvedMount == null) {
+            if(resolvedMount == null) {
+                throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a mount");
             }
         }
-        return resolvedSiteMount.matchSiteMapItem(hstContainerURL.getPathInfo());
+        return resolvedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
     }
 
     
-    public ResolvedSiteMount matchSiteMount(String hostName, String contextPath, String requestPath) throws MatchException {
+    public ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException {
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
-        ResolvedSiteMount resolvedSiteMount = null;
+        ResolvedMount resolvedSiteMount = null;
         if(resolvedVirtualHost != null) {
-            resolvedSiteMount  = resolvedVirtualHost.matchSiteMount(contextPath, requestPath);
+            resolvedSiteMount  = resolvedVirtualHost.matchMount(contextPath, requestPath);
         }
         return resolvedSiteMount;
     }
@@ -319,12 +319,12 @@ public class VirtualHostsService implements VirtualHosts {
         return versionInPreviewHeader;
     }
     
-    public SiteMount getSiteMountByAliasAndType(String alias, String type) {
+    public Mount getSiteMountByAliasAndType(String alias, String type) {
         return null;
     }
 
-    public SiteMount getSiteMountByGroupAliasAndType(String hostGroupName, String alias, String type) {
-        Map<String, SiteMount> aliasTypeMap = siteMountByGroupAliasAndType.get(hostGroupName);
+    public Mount getMountByGroupAliasAndType(String hostGroupName, String alias, String type) {
+        Map<String, Mount> aliasTypeMap = mountByGroupAliasAndType.get(hostGroupName);
         if(aliasTypeMap == null) {
             return null;
         }
@@ -332,8 +332,8 @@ public class VirtualHostsService implements VirtualHosts {
     }
 
 
-    public List<SiteMount> getSiteMountsByHostGroup(String hostGroupName) {
-        return Collections.unmodifiableList(siteMountByHostGroup.get(hostGroupName));
+    public List<Mount> getMountsByHostGroup(String hostGroupName) {
+        return Collections.unmodifiableList(mountByHostGroup.get(hostGroupName));
     }
     
     /**

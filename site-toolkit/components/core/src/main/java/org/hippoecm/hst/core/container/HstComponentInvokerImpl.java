@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -182,7 +182,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
              */
             
             HstComponentConfiguration compInfo = ((HstComponentConfiguration)window.getComponentInfo());
-            SiteMount mount = hstRequest.getRequestContext().getResolvedSiteMount().getSiteMount();
+            Mount mount = hstRequest.getRequestContext().getResolvedMount().getMount();
             // do not create a http session!!
             HttpSession session = hstRequest.getSession(false);
             if (session != null 

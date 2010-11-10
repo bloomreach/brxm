@@ -25,7 +25,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -35,7 +35,7 @@ import org.hippoecm.repository.api.HippoNodeType;
  * 
  * Method {@link #getNodeType()} is not yet implemented, but must be done by the concrete implementations. When you have
  * a resource container that has its complete custom methods for resolving from and to pathInfo of the resource, then, those classes
- * should implement their own {@link #resolveToPathInfo(Node, Node, SiteMount)} and {@link #resolveToResourceNode(Session, String)}
+ * should implement their own {@link #resolveToPathInfo(Node, Node, Mount)} and {@link #resolveToResourceNode(Session, String)}
  */
 public abstract class AbstractResourceContainer implements ResourceContainer {
     
@@ -60,7 +60,7 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
         return this.primaryItem;
     }
     
-    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, SiteMount siteMount) {
+    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount siteMount) {
         Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
         try {
             if(primaryItem == null && (this.mappings == null || this.mappings.isEmpty() )) {

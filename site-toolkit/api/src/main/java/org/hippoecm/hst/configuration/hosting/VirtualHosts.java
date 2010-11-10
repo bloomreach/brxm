@@ -20,7 +20,7 @@ import java.util.List;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 
 
@@ -50,8 +50,8 @@ public interface VirtualHosts {
     /**
      * <p>This method tries to match a hstContainerURL to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMount(HstContainerURL)}, which returns the {@link ResolvedSiteMount}. This object
-     * delegates to {@link ResolvedSiteMount#matchSiteMapItem(String)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
+     * {@link ResolvedVirtualHost#matchSiteMount(HstContainerURL)}, which returns the {@link ResolvedMount}. This object
+     * delegates to {@link ResolvedMount#matchSiteMapItem(String)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
      * in the chain a match cannot be made a MatchException exception is thrown
      * </p>
      * 
@@ -64,20 +64,20 @@ public interface VirtualHosts {
 
     
     /**
-     * <p>This method tries to match a hostName, contextPath and requestPath to a flyweight {@link ResolvedSiteMount}. It does so, by first trying to match the 
+     * <p>This method tries to match a hostName, contextPath and requestPath to a flyweight {@link ResolvedMount}. It does so, by first trying to match the 
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMount(String, String)}, which returns the {@link ResolvedSiteMount}. If somewhere
+     * {@link ResolvedVirtualHost#matchMount(String, String)}, which returns the {@link ResolvedMount}. If somewhere
      * in the chain a match cannot be made, <code>null</code> will be returned. The contextPath will only be of influence in the matching
-     * when the SiteMount has a non-empty value for {@link SiteMount#onlyForContextPath()}. If {@link SiteMount#onlyForContextPath()} is <code>null</code> or empty,
+     * when the SiteMount has a non-empty value for {@link Mount#onlyForContextPath()}. If {@link Mount#onlyForContextPath()} is <code>null</code> or empty,
      * the <code>contextPath</code> is ignored for matching.
      * </p>
      * @param String hostName
      * @param String contextPath the contextPath of the request
      * @param String requestPath
-     * @return the resolvedSiteMount for this hstContainerUrl or <code>null</code> when it can not be matched to a siteMount
+     * @return the {@link ResolvedMount} for this hstContainerUrl or <code>null</code> when it can not be matched to a {@link Mount}
      * @throws MatchException
      */
-    ResolvedSiteMount matchSiteMount(String hostName, String contextPath,  String requestPath) throws MatchException;
+    ResolvedMount matchMount(String hostName, String contextPath,  String requestPath) throws MatchException;
     
     /**
      * <p>
@@ -100,18 +100,18 @@ public interface VirtualHosts {
     String getLocale();
     
     /**
-     * Returns the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. Returns <code>null</code> when no match
+     * Returns the {@link Mount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link Mount#getType()} equal to <code>type</code>. Returns <code>null</code> when no match
      * 
      * @param hostGroupName
-     * @param alias the alias the site mount must have
+     * @param alias the alias the mount must have
      * @param type  the type (for example preview, live, composer) the siteMount must have. 
-     * @return the {@link SiteMount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link SiteMount#getType()} equal to <code>type</code>. Returns <code>null</code> when no match
+     * @return the {@link Mount} for this <code>hostGroupName</code>, <code>alias<code> and <code>type<code> having {@link Mount#getType()} equal to <code>type</code>. Returns <code>null</code> when no match
      */
-    SiteMount getSiteMountByGroupAliasAndType(String hostGroupName, String alias, String type);
+    Mount getMountByGroupAliasAndType(String hostGroupName, String alias, String type);
     
     /**
      * @param hostGroupName
-     * @return the List<{@link SiteMount}> belonging to <code>hostGroupName</code> or <code>null</code> when there are no SiteMount's for <code>hostGroupName</code>
+     * @return the List<{@link Mount}> belonging to <code>hostGroupName</code> or <code>null</code> when there are no {@link Mount} for <code>hostGroupName</code>
      */
-    List<SiteMount> getSiteMountsByHostGroup(String hostGroupName);
+    List<Mount> getMountsByHostGroup(String hostGroupName);
 }

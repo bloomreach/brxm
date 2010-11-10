@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.HttpUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
@@ -103,7 +103,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return this.navigationalStateCodec;
     }
 
-    public HstContainerURL parseURL(HttpServletRequest request, ResolvedSiteMount mount, String requestPath) {
+    public HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         url.setContextPath(request.getContextPath());
         url.setHostName(mount.getResolvedVirtualHost().getResolvedHostName());
@@ -119,7 +119,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url;
     }
     
-    public HstContainerURL parseURL(HstRequestContext requestContext, ResolvedSiteMount mount, String requestPath) {
+    public HstContainerURL parseURL(HstRequestContext requestContext, ResolvedMount mount, String requestPath) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         HstContainerURL baseURL = requestContext.getBaseURL();
         url.setContextPath(baseURL.getContextPath());
@@ -134,7 +134,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url;
     }
     
-    public HstContainerURL parseURL(HttpServletRequest request, HttpServletResponse response, ResolvedSiteMount resolvedSiteMount) {
+    public HstContainerURL parseURL(HttpServletRequest request, HttpServletResponse response, ResolvedMount resolvedSiteMount) {
 
         HstContainerURLImpl url = new HstContainerURLImpl();
         
@@ -180,7 +180,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url;
     }
     
-    public HstContainerURL createURL(SiteMount siteMount ,HstContainerURL baseContainerURL, String pathInfo) {
+    public HstContainerURL createURL(Mount siteMount ,HstContainerURL baseContainerURL, String pathInfo) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         
         url.setContextPath(baseContainerURL.getContextPath());
@@ -269,7 +269,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
     public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
-        String mountPrefix = requestContext.isEmbeddedRequest() ? requestContext.getResolvedEmbeddingSiteMount().getResolvedMountPath() : containerURL.getResolvedMountPath();
+        String mountPrefix = requestContext.isEmbeddedRequest() ? requestContext.getResolvedEmbeddingMount().getResolvedMountPath() : containerURL.getResolvedMountPath();
         if(mountPrefix != null) {
             url.append(mountPrefix);
         }
@@ -437,7 +437,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     /*
      * Splits path info to an array of namespaced path part and remainder. 
      */
-    protected String [] splitPathInfo(ResolvedSiteMount resSiteMount, HttpServletRequest request, String characterEncoding) {
+    protected String [] splitPathInfo(ResolvedMount resSiteMount, HttpServletRequest request, String characterEncoding) {
        
         String pathInfo = HstRequestUtils.getPathInfo(resSiteMount, request, characterEncoding);
         

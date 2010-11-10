@@ -17,7 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,7 +35,7 @@ public class PageModelRepresentation {
 
     List<ComponentRepresentation> components = new ArrayList<ComponentRepresentation>();
 
-    public PageModelRepresentation represent(SiteMount mount, String rootComponentId) {
+    public PageModelRepresentation represent(Mount mount, String rootComponentId) {
         HstSite site = mount.getHstSite();
         HstComponentConfiguration rootComponentConfig = null;
         for (HstComponentConfiguration config : site.getComponentsConfiguration().getComponentConfigurations().values()) {

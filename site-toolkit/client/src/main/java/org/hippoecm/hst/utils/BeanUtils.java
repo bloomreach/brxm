@@ -173,7 +173,7 @@ public class BeanUtils {
      * @throws HstComponentException
      */
     public static HippoFacetNavigationBean getFacetNavigationBean(HstRequest hstRequest, String relPath, String query, ObjectConverter objectConverter) throws HstComponentException {        
-        String base = PathUtils.normalizePath(hstRequest.getRequestContext().getResolvedSiteMount().getSiteMount().getContentPath());
+        String base = PathUtils.normalizePath(hstRequest.getRequestContext().getResolvedMount().getMount().getContentPath());
         
         if(relPath == null) {
             log.warn("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getId());
@@ -377,7 +377,7 @@ public class BeanUtils {
     public static <T extends  HippoBean> T getFacetedNavigationResultDocument(HstRequest hstRequest, String query, String relPath,
             ObjectConverter objectConverter, Class<T> beanMappingClass)  {
         
-        String base = PathUtils.normalizePath(hstRequest.getRequestContext().getResolvedSiteMount().getSiteMount().getContentPath());
+        String base = PathUtils.normalizePath(hstRequest.getRequestContext().getResolvedMount().getMount().getContentPath());
         
         if(relPath == null) {
             log.warn("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getId());

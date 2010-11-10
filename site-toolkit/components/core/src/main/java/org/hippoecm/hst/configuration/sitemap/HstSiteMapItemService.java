@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
@@ -58,7 +58,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     
     /**
      * The locale for this HstSiteMapItem. When the backing configuration does not contain a locale, it is taken from the parent {@link HstSiteMapItem} if there is
-     * a parent. If there is no parent, we inherit the locale from the {@link SiteMount#getLocale()} for this item. The locale can be <code>null</code>
+     * a parent. If there is no parent, we inherit the locale from the {@link Mount#getLocale()} for this item. The locale can be <code>null</code>
      */
     private String locale;
 
@@ -132,7 +132,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.id = nodePath.substring(siteMapRootNodePath.length()+1);
         // currently, the value is always the nodename
         this.value = node.getValueProvider().getName();
-        
+         
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID)) {
             this.refId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID);
         }
@@ -239,7 +239,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else if(this.parentItem != null){
             this.locale = parentItem.getLocale();
         } else {
-            this.locale = hstSiteMap.getSite().getSiteMount().getLocale();
+            this.locale = hstSiteMap.getSite().getMount().getLocale();
         }
         
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
@@ -278,7 +278,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.namedPipeline = parentItem.getNamedPipeline();
         } else {
             // inherit the namedPipeline from the sitemount (can be null)
-            this.namedPipeline = this.getHstSiteMap().getSite().getSiteMount().getNamedPipeline();
+            this.namedPipeline = this.getHstSiteMap().getSite().getMount().getNamedPipeline();
         }
         
         for(HstNode child : node.getNodes()) {

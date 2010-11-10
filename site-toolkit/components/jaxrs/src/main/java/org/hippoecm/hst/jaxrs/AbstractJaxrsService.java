@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -69,7 +69,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     }
     
     protected String getJaxrsServletPath(HstRequestContext requestContext) throws ContainerException {
-        ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
+        ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
         return new StringBuilder(resolvedSiteMount.getResolvedMountPath()).append(getBasePath()).toString();
     }
     
@@ -82,7 +82,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     }
     
     protected String getMountContentPath(HstRequestContext requestContext) {
-        return requestContext.getResolvedSiteMount().getSiteMount().getContentPath();
+        return requestContext.getResolvedMount().getMount().getContentPath();
     }
     
     protected Node getContentNode(Session session, String path) throws RepositoryException {
@@ -199,7 +199,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 		@Override
 		public StringBuffer getRequestURL() {
 			if (requestURL == null) {
-				ResolvedVirtualHost host = requestContext.getResolvedSiteMount().getResolvedVirtualHost();
+				ResolvedVirtualHost host = requestContext.getResolvedMount().getResolvedVirtualHost();
 				StringBuilder sbTemp = new StringBuilder(super.getScheme()).append("://").append(host.getResolvedHostName()).append(":").append(host.getPortNumber()).append(getRequestURI());
 				requestURL = sbTemp.toString();
 			}

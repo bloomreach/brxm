@@ -79,7 +79,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
         }
         HstRequestContext ctx = request.getRequestContext();
         try {
-            resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getResolvedSiteMount()));
+            resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getResolvedMount()));
         }  catch (NotFoundException e) {
             HstServices.getLogger(getClass().getName()).warn("Cannot resolve to sitemap item because '{}'. Return null.", e.getMessage()); 
             return null;

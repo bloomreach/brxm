@@ -22,7 +22,7 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -64,17 +64,17 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     
     @Override
     public String rewrite(String html, Node node, HstRequestContext requestContext) {
-        return rewrite(html, node, requestContext, (SiteMount)null);
+        return rewrite(html, node, requestContext, (Mount)null);
     }
     
     @Override
     public String rewrite(String html, Node node, HstRequestContext requestContext, String targetSiteAlias) {
-        SiteMount targetMount = requestContext.getMount(targetSiteAlias);
+        Mount targetMount = requestContext.getMount(targetSiteAlias);
         return rewrite(html, node, requestContext, targetMount);
     }
     
     @Override
-    public String rewrite(String html, Node node, HstRequestContext requestContext, SiteMount targetMount) {
+    public String rewrite(String html, Node node, HstRequestContext requestContext, Mount targetMount) {
         // only create if really needed
         StringBuilder sb = null;
         
@@ -202,7 +202,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         return getDocumentLink(path, node, request.getRequestContext(), null);
     }
     
-    protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, SiteMount targetMount) {
+    protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
         return getLink(path, node, requestContext, targetMount);
     }
     
@@ -218,7 +218,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         return getBinaryLink(path, node, request.getRequestContext(), null);
     }
     
-    protected HstLink getBinaryLink(String path, Node node, HstRequestContext requestContext, SiteMount targetMount) {
+    protected HstLink getBinaryLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
         return getLink(path, node, requestContext, targetMount);
     }
     
@@ -234,7 +234,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         return getLink(path, node, request.getRequestContext(), null);
     }
     
-    protected HstLink getLink(String path, Node node, HstRequestContext reqContext, SiteMount targetMount) {
+    protected HstLink getLink(String path, Node node, HstRequestContext reqContext, Mount targetMount) {
         try {
             path = URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e1) {
@@ -245,7 +245,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         if (path.startsWith("/")) {
             // this is an absolute path, which is not an internal content link. We just try to create a link for it directly
             if (targetMount == null) {
-                return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedSiteMount().getSiteMount());
+                return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedMount().getMount());
             } else {
                 return reqContext.getHstLinkCreator().create(path, targetMount);
             }

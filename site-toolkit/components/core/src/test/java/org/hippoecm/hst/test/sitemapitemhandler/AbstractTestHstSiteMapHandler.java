@@ -46,11 +46,11 @@ public abstract class AbstractTestHstSiteMapHandler implements HstSiteMapItemHan
     
     public ResolvedSiteMapItem resolveToNewSiteMapItem(HttpServletRequest request,
             HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo){
-        return currentResolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(pathInfo);
+        return currentResolvedSiteMapItem.getResolvedMount().matchSiteMapItem(pathInfo);
     }
     
     public HstURLFactory getURLFactory(ResolvedSiteMapItem resolvedSiteMapItem) {
-        HstURLFactory factory = resolvedSiteMapItem.getResolvedSiteMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getHstManager().getUrlFactory();
+        HstURLFactory factory = resolvedSiteMapItem.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getHstManager().getUrlFactory();
         return factory;
     }
 }

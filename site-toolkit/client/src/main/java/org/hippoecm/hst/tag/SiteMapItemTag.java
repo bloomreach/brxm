@@ -23,7 +23,7 @@ import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
@@ -80,14 +80,14 @@ public class SiteMapItemTag extends TagSupport {
             return SKIP_BODY;
         }
         
-        ResolvedSiteMount resolvedSiteMount = hstRequest.getRequestContext().getResolvedSiteMapItem().getResolvedSiteMount();
+        ResolvedMount resolvedSiteMount = hstRequest.getRequestContext().getResolvedSiteMapItem().getResolvedMount();
         if(preferItemId != null) {
             if(siteMapItem != null) {
                 log.warn("preferItemId attr is added, but also 'preferItemByPath' or 'siteMapItem'. This is double. Skipping preferItemId attr");
             } else {
                 siteMapItem =  hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItemById(preferItemId);
                 if(siteMapItem == null) {
-                    log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedSiteMount.getSiteMount().getName());
+                    log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedSiteMount.getMount().getName());
                 }
             }
         }
@@ -100,7 +100,7 @@ public class SiteMapItemTag extends TagSupport {
                     ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedSiteMount);
                     siteMapItem = resolvedItem.getHstSiteMapItem();  
                 } catch (NotFoundException e) {
-                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedSiteMount.getSiteMount().getName());
+                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedSiteMount.getMount().getName());
                 }
             }
         }

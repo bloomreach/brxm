@@ -67,14 +67,14 @@
           </sv:property>
           <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:unittestsites/unittestproject-live</sv:value>
             </sv:property>
             <sv:node sv:name="examplecontextpathonly">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                 <sv:value>hst:sitemount</sv:value>
+                 <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
                  <sv:value>/mycontextpath</sv:value>
@@ -82,7 +82,7 @@
             </sv:node>
             <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                 <sv:value>hst:sitemount</sv:value>
+                 <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:type" sv:type="String">
                 <sv:value>preview</sv:value>
@@ -92,7 +92,7 @@
               </sv:property>
               <sv:node sv:name="custompipeline">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                      <sv:value>hst:sitemount</sv:value>
+                      <sv:value>hst:mount</sv:value>
                   </sv:property>
                    
                   <sv:property sv:name="hst:type" sv:type="String">
@@ -107,7 +107,7 @@
               
               <sv:node sv:name="services">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                      <sv:value>hst:sitemount</sv:value>
+                      <sv:value>hst:mount</sv:value>
                   </sv:property>
                   
                   <sv:property sv:name="hst:type" sv:type="String">
@@ -130,7 +130,7 @@
             </sv:property>
             <sv:node sv:name="hst:root">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                 <sv:value>hst:sitemount</sv:value>
+                 <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:type" sv:type="String">
                 <sv:value>preview</sv:value>
@@ -152,14 +152,14 @@
           </sv:property>
           <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:unittestsites/unittestproject-live</sv:value>
             </sv:property>
             <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:type" sv:type="String">
                 <sv:value>preview</sv:value>
@@ -169,7 +169,7 @@
               </sv:property>
               <sv:node sv:name="custompipeline">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                      <sv:value>hst:sitemount</sv:value>
+                      <sv:value>hst:mount</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:type" sv:type="String">
                       <sv:value>preview</sv:value>
@@ -183,7 +183,7 @@
               
               <sv:node sv:name="services">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                      <sv:value>hst:sitemount</sv:value>
+                      <sv:value>hst:mount</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:type" sv:type="String">
                       <sv:value>preview</sv:value>
@@ -224,7 +224,7 @@
                   </sv:property>
                   <sv:node sv:name="hst:root">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>hst:sitemount</sv:value>
+                        <sv:value>hst:mount</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:alias" sv:type="String">
                         <sv:value>test</sv:value>
@@ -235,7 +235,7 @@
                     
                      <sv:node sv:name="custompipeline">
                       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                          <sv:value>hst:sitemount</sv:value>
+                          <sv:value>hst:mount</sv:value>
                       </sv:property>
                       <sv:property sv:name="hst:homepage" sv:type="String">
                         <sv:value>myhometest3</sv:value>
@@ -249,7 +249,7 @@
                 
                     <sv:node sv:name="services">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                            <sv:value>hst:sitemount</sv:value>
+                            <sv:value>hst:mount</sv:value>
                         </sv:property>
                         
                         <!-- we indicate the this restful service is not using a HstSite. It does however inherit the hst:mountpoint path which can be used -->
@@ -272,7 +272,7 @@
                    </sv:property>
                    <sv:node sv:name="hst:root">
                       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                          <sv:value>hst:sitemount</sv:value>
+                          <sv:value>hst:mount</sv:value>
                       </sv:property>
                       <sv:property sv:name="hst:alias" sv:type="String">
                         <sv:value>test</sv:value>
@@ -285,7 +285,7 @@
                       </sv:property>
                       <sv:node sv:name="custompipeline">
                           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                              <sv:value>hst:sitemount</sv:value>
+                              <sv:value>hst:mount</sv:value>
                           </sv:property>
                           <sv:property sv:name="hst:homepage" sv:type="String">
                              <sv:value>mycustomhometestpreview</sv:value>
@@ -305,7 +305,7 @@
                       
                       <sv:node sv:name="services">
                           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                              <sv:value>hst:sitemount</sv:value>
+                              <sv:value>hst:mount</sv:value>
                           </sv:property>
                           <sv:property sv:name="hst:type" sv:type="String">
                             <sv:value>preview</sv:value>

@@ -22,7 +22,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.AbstractResourceContainer;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -40,7 +40,7 @@ public class DemositeResourceContainer extends AbstractResourceContainer {
     }
 
     @Override
-    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, SiteMount siteMount) {
+    public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount siteMount) {
         try {
             if(resourceNode.getDefinition().allowsSameNameSiblings()) {
                 // there can be multiple ones

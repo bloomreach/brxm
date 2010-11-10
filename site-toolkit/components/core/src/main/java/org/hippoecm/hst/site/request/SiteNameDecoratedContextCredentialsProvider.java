@@ -61,7 +61,7 @@ public class SiteNameDecoratedContextCredentialsProvider extends DefaultContextC
         Credentials credentials = super.getDefaultCredentials(requestContext);
         
         if (credentials instanceof SimpleCredentials) {
-            String siteName = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getSiteMount().getHstSite().getName();
+            String siteName = requestContext.getResolvedSiteMapItem().getResolvedMount().getMount().getHstSite().getName();
             String userID = ((SimpleCredentials) credentials).getUserID();
             String userIDWithSiteName = userID + siteNameSeparator + siteName;
             char [] password = ((SimpleCredentials) credentials).getPassword();
@@ -90,7 +90,7 @@ public class SiteNameDecoratedContextCredentialsProvider extends DefaultContextC
         Credentials credentials = super.getWritableCredentials(requestContext);
         
         if (credentials instanceof SimpleCredentials) {
-            String siteName = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getSiteMount().getHstSite().getName();
+            String siteName = requestContext.getResolvedSiteMapItem().getResolvedMount().getMount().getHstSite().getName();
             String userID = ((SimpleCredentials) credentials).getUserID();
             String userIDWithSiteName = userID + siteNameSeparator + siteName;
             char [] password = ((SimpleCredentials) credentials).getPassword();

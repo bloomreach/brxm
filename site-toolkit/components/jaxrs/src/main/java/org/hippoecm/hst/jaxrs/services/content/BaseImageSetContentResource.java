@@ -200,7 +200,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 
                 if (binariesCache != null) {
                     HstLink hstLink = requestContext.getHstLinkCreator().create(imageBean, requestContext);
-                    String contentPath = hstLink.getSiteMount().getMountPoint() + "/" + hstLink.getPath();
+                    String contentPath = hstLink.getMount().getMountPoint() + "/" + hstLink.getPath();
                     binariesCache.remove(contentPath);
                 }
             } finally {

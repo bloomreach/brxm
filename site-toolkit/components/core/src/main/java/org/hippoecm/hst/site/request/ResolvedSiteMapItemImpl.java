@@ -23,7 +23,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -40,13 +40,13 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private HstSiteMapItem hstSiteMapItem;
     private Properties resolvedParameters;
     private Properties localResolvedParameters;
-    private ResolvedSiteMount resolvedSiteMount;
+    private ResolvedMount resolvedSiteMount;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
     
-    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedSiteMount resolvedSiteMount) {
+    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedMount resolvedSiteMount) {
       
        this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
@@ -145,7 +145,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         return this.pathInfo;
     }
     
-    public ResolvedSiteMount getResolvedSiteMount() {
+    public ResolvedMount getResolvedMount() {
        return resolvedSiteMount;
     }
 

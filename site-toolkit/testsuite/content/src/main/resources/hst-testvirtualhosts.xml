@@ -61,14 +61,14 @@
           </sv:property>
           <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/testlive/testproject</sv:value>
             </sv:property>
             <sv:node sv:name="restservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
+                    <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                     <sv:value>false</sv:value>
@@ -80,7 +80,7 @@
             </sv:node>
             <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:type" sv:type="String">
                 <sv:value>preview</sv:value>
@@ -90,7 +90,7 @@
               </sv:property>
               <sv:node sv:name="restservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
+                    <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:type" sv:type="String">
                   <sv:value>preview</sv:value>
@@ -117,14 +117,14 @@
           </sv:property>
           <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/testlive/testproject</sv:value>
             </sv:property>
             <sv:node sv:name="services">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
+                    <sv:value>hst:mount</sv:value>
                 </sv:property>
                 
                  <!-- mountpoint inherited here from parent  -->
@@ -135,7 +135,7 @@
             </sv:node>
             <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:type" sv:type="String">
                 <sv:value>preview</sv:value>
@@ -145,7 +145,7 @@
               </sv:property>
               <sv:node sv:name="restservice">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
+                    <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:type" sv:type="String">
                   <sv:value>preview</sv:value>

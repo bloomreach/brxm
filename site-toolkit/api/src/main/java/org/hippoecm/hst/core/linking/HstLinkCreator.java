@@ -20,7 +20,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -238,77 +238,77 @@ public interface HstLinkCreator {
      * @param node the jcr node for that should be translated into a HstLink
      * @param hstSite the (sub)site for which the hstLink should be created for
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>hstSite</code> or <code>null</code> when no link for the node can be made in the <code>hstSite</code>
-     * @deprecated Use {@link #create(Node, SiteMount))}
+     * @deprecated Use {@link #create(Node, Mount))}
      */
     @Deprecated
     HstLink create(Node node, HstSite hstSite);
     
     /**
-     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>siteMount</code>. Note that this HstLink creation does only take into account the
-     * <code>siteMount</code> and not the current context.
-     * The <code>siteMount</code> can be a different one then the one of the current request context.
-     * If the <code>siteMount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>mount</code>. Note that this HstLink creation does only take into account the
+     * <code>mount</code> and not the current context.
+     * The <code>mount</code> can be a different one then the one of the current request context.
+     * If the <code>mount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
      * to a different (sub)site, a page not found link is returned. </p>
      * <p>note: if an link is returned, this is always the canonical link, also see {@link #createCanonical(Node, ResolvedSiteMapItem)}</p>
      * @param node the jcr node for that should be translated into a HstLink
-     * @param siteMount the (sub)site for which the hstLink should be created for
-     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>siteMount</code> or <code>null</code> when no link for the node can be made in the <code>siteMount</code>
+     * @param mount the (sub)site for which the hstLink should be created for
+     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mount</code> or <code>null</code> when no link for the node can be made in the <code>mount</code>
      */
-    HstLink create(Node node, SiteMount siteMount);
+    HstLink create(Node node, Mount mount);
 
 
     /**
-     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>siteMountAlias</code>. First, the {@link SiteMount} belonging to the 
-     * <code>siteMountAlias</code> is searched for. When the {@link SiteMount} belonging to the alias cannot rewrite the <code>node</code>, 
-     * there is no fallback to whether other {@link SiteMount}'s can rewrite the <code>node</code> to a {@link HstLink}. 
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>mountAlias</code>. First, the {@link Mount} belonging to the 
+     * <code>mountAlias</code> is searched for. When the {@link Mount} belonging to the alias cannot rewrite the <code>node</code>, 
+     * there is no fallback to whether other {@link Mount}'s can rewrite the <code>node</code> to a {@link HstLink}. 
      * 
-     * Note that the found {@link SiteMount} <b>must</b> 
+     * Note that the found {@link Mount} <b>must</b> 
      * 
      * <ol>
-     *    <li>have {@link SiteMount#getAlias()} equal to <code>siteMountAlias</code></li>
-     *    <li>have at least one of its {@link SiteMount#getTypes()} the same as the {@link SiteMount} belonging to the current <code>requestContext</code>. 
+     *    <li>have {@link Mount#getAlias()} equal to <code>mountAlias</code></li>
+     *    <li>have at least one of its {@link Mount#getTypes()} the same as the {@link Mount} belonging to the current <code>requestContext</code>. 
      *    </li>
-     *    <li>have the same {@link VirtualHost#getHostGroupName()} as the {@link SiteMount} belonging to the current <code>requestContext</code>. 
+     *    <li>have the same {@link VirtualHost#getHostGroupName()} as the {@link Mount} belonging to the current <code>requestContext</code>. 
      *    </li>
      * </ol>
      * 
-     * If there is no {@link SiteMount} complying to the above rules, <code>null</code> is returned. <b>If</b> a {@link SiteMount} does comply, we return  {@link #create(Node, SiteMount)} 
+     * If there is no {@link Mount} complying to the above rules, <code>null</code> is returned. <b>If</b> a {@link Mount} does comply, we return  {@link #create(Node, Mount)} 
      * </p>
      * @param node the jcr node
      * @param requestContext the current request context
-     * @param siteMountAlias the alias of the siteMount for which the link should be created for
-     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>siteMountAlias</code> or <code>null</code>  when there cannot be found an {@link SiteMount} for the alias
-     * @see {@link #create(Node, SiteMount)} 
+     * @param mountAlias the alias of the {@link Mount} for which the link should be created for
+     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mountAlias</code> or <code>null</code>  when there cannot be found an {@link Mount} for the alias
+     * @see {@link #create(Node, Mount)} 
      */
-    HstLink create(Node node, HstRequestContext requestContext, String siteMountAlias);
+    HstLink create(Node node, HstRequestContext requestContext, String mountAlias);
     
     /**
-     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>siteMountAlias</code> and for <code>type</code>. When the {@link SiteMount} 
-     * belonging to the alias cannot rewrite the <code>node</code>, there is no fallback to whether other {@link SiteMount}'s can rewrite the <code>node</code> to a {@link HstLink}
+     * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} for the <code>mountAlias</code> and for <code>type</code>. When the {@link Mount} 
+     * belonging to the alias cannot rewrite the <code>node</code>, there is no fallback to whether other {@link Mount}'s can rewrite the <code>node</code> to a {@link HstLink}
      * 
-     * Note that the found {@link SiteMount} <b>must</b> 
+     * Note that the found {@link Mount} <b>must</b> 
      * 
      * <ol>
-     *    <li>have {@link SiteMount#getAlias()} equal to <code>siteMountAlias</code></li>
-     *    <li>contain <code>type</code> in its {@link SiteMount#getTypes()}
-     *    <li>have the same {@link VirtualHost#getHostGroupName()} as the {@link SiteMount} belonging to the current <code>requestContext</code>. 
+     *    <li>have {@link Mount#getAlias()} equal to <code>mountAlias</code></li>
+     *    <li>contain <code>type</code> in its {@link Mount#getTypes()}
+     *    <li>have the same {@link VirtualHost#getHostGroupName()} as the {@link Mount} belonging to the current <code>requestContext</code>. 
      *    </li>
      * </ol>
      * 
-     * If there is no {@link SiteMount} complying to the above rules, <code>null</code> is returned. <b>If</b> a {@link SiteMount} does comply, we return  {@link #create(Node, SiteMount)}.
+     * If there is no {@link Mount} complying to the above rules, <code>null</code> is returned. <b>If</b> a {@link Mount} does comply, we return  {@link #create(Node, Mount)}.
      * 
      * </p>
      * <p>
-     * The difference with {@link #create(Node, HstRequestContext, String))} is that this method does not look for a SiteMount with a common <code>type</code> as for the SiteMount from the current request. It does
-     * look for a SiteMount which at least has <code>type</code> as its {@link SiteMount#getTypes()} 
+     * The difference with {@link #create(Node, HstRequestContext, String))} is that this method does not look for a {@link Mount} with a common <code>type</code> as for the {@link Mount} from the current request. It does
+     * look for a {@link Mount} which at least has <code>type</code> as its {@link Mount#getTypes()} 
      * </p>
      * @param node the jcr node
      * @param requestContext the current request context
-     * @param siteMountAlias the alias of the siteMount for which the link should be created for
-     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>siteMountAlias</code> or <code>null</code> when no link for the node can be made in the <code>siteMount</code> belonging to the alias or when there belongs no siteMount to the alias
-     * @see {@link #create(Node, SiteMount)} 
+     * @param mountAlias the alias of the {@link Mount} for which the link should be created for
+     * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mountAlias</code> or <code>null</code> when no link for the node can be made in the <code>{@link Mount}</code> belonging to the alias or when there belongs no {@link Mount} to the alias
+     * @see {@link #create(Node, Mount)} 
      */
-    HstLink create(Node node, HstRequestContext requestContext, String siteMountAlias, String type);
+    HstLink create(Node node, HstRequestContext requestContext, String mountAlias, String type);
     
     /**
      * 
@@ -328,35 +328,35 @@ public interface HstLinkCreator {
     HstLink create(HstSiteMapItem toHstSiteMapItem);
     
     /**
-     * Regardless the current context, create a HstLink to the {@link HstSiteMapItem} for {@link SiteMount} <code>mount</code>  that has {@link HstSiteMapItem#getRefId()} equal to <code>siteMapItemRefId</code>. 
-     * If there cannot be found a {@link HstSiteMapItem} for <code>siteMapItemRefId</code> in the {@link SiteMount} <code>mount</code>, then <code>null</code> is returned.
+     * Regardless the current context, create a HstLink to the {@link HstSiteMapItem} for {@link Mount} <code>mount</code>  that has {@link HstSiteMapItem#getRefId()} equal to <code>siteMapItemRefId</code>. 
+     * If there cannot be found a {@link HstSiteMapItem} for <code>siteMapItemRefId</code> in the {@link Mount} <code>mount</code>, then <code>null</code> is returned.
      * If the {@link HstSiteMapItem} is found for <code>siteMapItemRefId</code>, then it can be only used when it does not
      * contain any ancestor including itself with a wildcard, because the link is ambiguous in that case. 
      * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
      * @param siteMapItemRefId the {@link HstSiteMapItem#getRefId()} of the {@link HstSiteMapItem} to link to
-     * @param mount the {@link SiteMount} the <code>siteMapItemRefId</code> should be in
+     * @param mount the {@link Mount} the <code>siteMapItemRefId</code> should be in
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
-    HstLink createByRefId(String siteMapItemRefId, SiteMount mount);
+    HstLink createByRefId(String siteMapItemRefId, Mount mount);
 
     /**
      * Regardless the current context, create a HstLink for the <code>path</code> and <code>hstSite</code>
      * @param path the path to the sitemap item
      * @param hstSite the HstSite the siteMapPath should be in
      * @return an <code>HstLink</code> instance or <code>null<code> 
-     * @deprecated Use {@link #create(String, SiteMount)} instead
+     * @deprecated Use {@link #create(String, Mount)} instead
      */
     @Deprecated
     HstLink create(String path, HstSite hstSite);
     
 
     /**
-     * Regardless the current context, create a HstLink for the <code>path</code> and <code>siteMount</code>
+     * Regardless the current context, create a HstLink for the <code>path</code> and <code>mount</code>
      * @param path the path to the sitemap item
-     * @param siteMount the SiteMount the path should be in
+     * @param mount the {@link Mount} the path should be in
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
-    HstLink create(String path, SiteMount siteMount);
+    HstLink create(String path, Mount mount);
     
     /**
      * Regardless the current context, create a HstLink to the path that you use as argument. 
@@ -364,7 +364,7 @@ public interface HstLinkCreator {
      * @param hstSite the HstSite the siteMapPath should be in
      * @param containerResource whether it is a static link, for example for css/js
      * @return an <code>HstLink</code> instance or <code>null<code> 
-     * @deprecated Use {@link #create(String, SiteMount, boolean)}
+     * @deprecated Use {@link #create(String, Mount, boolean)}
      */
     @Deprecated
     HstLink create(String path, HstSite hstSite, boolean containerResource);
@@ -372,14 +372,14 @@ public interface HstLinkCreator {
     /**
      * Regardless the current context, create a HstLink to the path that you use as argument. 
      * @param path the path to the sitemap item
-     * @param SiteMount the SiteMount for which the link should be created
+     * @param mount the {@link Mount} for which the link should be created
      * @param containerResource whether it is a static link, for example for css/js
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
-    HstLink create(String path, SiteMount siteMount, boolean containerResource);
+    HstLink create(String path, Mount mount, boolean containerResource);
     
     /**
-     * @deprecate Use {@link #create(String, SiteMount)} instead
+     * @deprecate Use {@link #create(String, Mount)} instead
      */
     @Deprecated
     HstLink create(HstSite hstSite, String toSiteMapItemId);

@@ -20,7 +20,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.LocationMapTree;
@@ -65,7 +65,7 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
         return NODE_TYPE;
     }
 
-    public HstLink resolve(Node node, SiteMount siteMount) {
+    public HstLink resolve(Node node, Mount siteMount) {
         try {
             Node canonicalNode = null;
             if(node instanceof HippoNode) {
@@ -101,7 +101,7 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     }
 
     
-    private HstLink defaultResourceLink(Node node, SiteMount siteMount) throws RepositoryException {
+    private HstLink defaultResourceLink(Node node, Mount siteMount) throws RepositoryException {
         String pathInfo = getBinariesPrefix()+node.getPath();
         boolean containerResource = true;
         return new HstLinkImpl(pathInfo, siteMount, containerResource);

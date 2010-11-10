@@ -19,7 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 /**
@@ -38,14 +38,14 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 public interface ResolvedSiteMapItem {
     
     /**
-     * @return the {@link ResolvedSiteMount} for this resolvedSiteMapItem instance
+     * @return the {@link ResolvedMount} for this resolvedSiteMapItem instance
      */
-    ResolvedSiteMount getResolvedSiteMount();
+    ResolvedMount getResolvedMount();
     
     /**
-     * This method returns a content path, relative to the {@link SiteMount#getContentPath()}. This value should 
+     * This method returns a content path, relative to the {@link Mount#getContentPath()}. This value should 
      * have resolved property placeholders, like ${1}/${2}. If a property placeholder cannot be resolved, the implementation may return <code>null</code>
-     * @return the content path relative to the {@link SiteMount#getContentPath()} or <code>null</code> if not present or has unresolvable property placeholders
+     * @return the content path relative to the {@link Mount#getContentPath()} or <code>null</code> if not present or has unresolvable property placeholders
      */
     String getRelativeContentPath();
     
@@ -92,7 +92,7 @@ public interface ResolvedSiteMapItem {
     
     /**
      * Returns the <code>namedPipeline</code> to be used for the Hst Request Processing. When the backing {@link HstSiteMapItem} does not contain one,
-     * possibly, when present, it is inherited from its backing {@link SiteMount}. If this one does not have it either, <code>null</code> is returned
+     * possibly, when present, it is inherited from its backing {@link Mount}. If this one does not have it either, <code>null</code> is returned
      * implying the default pipeline will be called
      * 
      * @return the <code>namedPipeline</code> for this ResolvedSiteMapItem or <code>null</code> implying the default should be used

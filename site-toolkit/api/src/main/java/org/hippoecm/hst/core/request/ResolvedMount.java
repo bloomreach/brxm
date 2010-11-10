@@ -1,0 +1,105 @@
+/*
+ *  Copyright 2010 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.core.request;
+
+import java.util.Set;
+
+import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+
+/**
+ * Implementations of this interface are a request flyweight instance of the {@link Mount} object, where possible wildcard property placeholders have been filled in, similar
+ * to the {@link ResolvedSiteMapItem} and {@link HstSiteMapItem}
+ */
+public interface ResolvedMount {
+
+    /**
+     * @return the {@link ResolvedVirtualHost} for this {@link ResolvedMount}
+     */
+    ResolvedVirtualHost getResolvedVirtualHost();
+    
+    /**
+     * @return the backing request independent {@link Mount} item for this {@link ResolvedMount} instance
+     */
+    Mount getMount();
+    
+    /**
+     * @return the named pipeline to be used for this {@link Mount} or <code>null</code> when the default pipeline is to be used
+     */
+    String getNamedPipeline();
+    
+    /**
+     * Returns the mountPath from the backing {@link Mount} where possible wildcard values might have been replaced. When there is no 
+     * mountPath, an empty String will be returned. When the mountPath is non-empty, it always starts with a  <code>"/"</code>.
+     * @see Mount#getMountPath()
+     * @return the resolved mountPath for this {@link ResolvedMount}
+     */
+    String getResolvedMountPath();
+    
+    /**
+     * matches a pathInfo to a {@link ResolvedSiteMapItem} item or throws a 
+     * {@link MatchException} or {@link NotFoundException} when cannot resolve to a sitemap item
+     * @param siteMapPathInfo
+     * @return the ResolvedSiteMapItem for the current hstContainerURL 
+     * @throws MatchException 
+     */
+    ResolvedSiteMapItem matchSiteMapItem(String siteMapPathInfo) throws MatchException;
+    
+    /**
+     * If this method returns true, then only if the user is explicitly allowed or <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
+     * site mount is accessible for the request. 
+     * 
+     * If a site mount does not have a configuration for isSecure, the value from the parent item is taken.
+     * 
+     * @return <code>true</code> if the site mount is secured. 
+     */
+    boolean isSecured();
+    
+    /**
+     * Returns the roles that are allowed to access this site mount when {@link isSecure()} is true. If the site mount does not have any roles defined by itself, it
+     * inherits them from the parent. If it defines roles, the roles from any ancestor are ignored. An empty set of roles
+     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * 
+     * @return The set of roles that are allowed to access this site mount. When no roles defined, the roles from the parent item are inherited. If none of the 
+     * parent items have a role defined, an empty set is returned
+     */
+    Set<String> getRoles();  
+    
+    /**
+     * Returns the users that are allowed to access this site mount when {@link isSecure()} is true. If the site mount does not have any users defined by itself, it
+     * inherits them from the parent. If it defines users, the users from any ancestor are ignored. An empty set of users
+     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * 
+     * @return The set of users that are allowed to access this site mount. When no users defined, the users from the parent item are inherited. If none of the 
+     * parent items have a user defined, an empty set is returned
+     */
+    Set<String> getUsers();
+    
+    /**
+     * Returns true if subject based jcr session should be used for this site mount 
+     * @return
+     */
+    boolean isSubjectBasedSession();
+    
+    /**
+     * Returns true if subject based jcr session should be statefully managed. 
+     * @return
+     */
+    boolean isSessionStateful();
+    
+}

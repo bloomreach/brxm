@@ -17,9 +17,9 @@ package org.hippoecm.hst.site.request;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.PortMount;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         return virtualHost;
     }
 
-    public ResolvedSiteMount matchSiteMount(String contextPath, String requestPath) throws MatchException {
+    public ResolvedMount matchMount(String contextPath, String requestPath) throws MatchException {
         PortMount portMount = virtualHost.getPortMount(portNumber);
         if(portMount == null && portNumber != 0) {
             log.debug("Could not match the request to port '{}'. If there is a default port '0', we'll try this one");
@@ -59,7 +59,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             }
         }
         
-        if(portMount.getRootSiteMount() == null) {
+        if(portMount.getRootMount() == null) {
             log.warn("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedSiteMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
             return null;
         }
@@ -68,7 +68,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         String path = PathUtils.normalizePath(requestPath);
         String[] requestPathSegments = path.split("/");
         int position = 0;
-        SiteMount siteMount = portMount.getRootSiteMount();
+        Mount siteMount = portMount.getRootMount();
         
         while(position < requestPathSegments.length) {
             if(siteMount.getChildMount(requestPathSegments[position]) != null) {
@@ -106,7 +106,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         }
         String resolvedMountPath = builder.toString();
         
-        ResolvedSiteMount resolvedSiteMount = new ResolvedSiteMountImpl(siteMount, this , resolvedMountPath);
+        ResolvedMount resolvedSiteMount = new ResolvedMountImpl(siteMount, this , resolvedMountPath);
         log.debug("Found ResolvedSiteMount is '{}' and the mount prefix for it is :", resolvedSiteMount.getResolvedMountPath());
         
         return resolvedSiteMount;

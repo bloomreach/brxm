@@ -30,7 +30,7 @@ import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 
 /**
@@ -176,10 +176,10 @@ public class ActionValve extends AbstractValve {
                                     throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
                                 }
                                 if (!getHstManager().getVirtualHosts().isExcluded(location)) {
-                                	ResolvedVirtualHost rvh = requestContext.getResolvedSiteMapItem().getResolvedSiteMount().getResolvedVirtualHost();
+                                	ResolvedVirtualHost rvh = requestContext.getResolvedSiteMapItem().getResolvedMount().getResolvedVirtualHost();
                                 	String targetContextPath = requestContext.isEmbeddedRequest() ? requestContext.getEmbeddingContextPath() : baseURL.getContextPath();
-                                	ResolvedSiteMount mount = rvh.matchSiteMount(targetContextPath, location);
-                                    if (mount != null && mount.getSiteMount().isSiteMount()) {
+                                	ResolvedMount mount = rvh.matchMount(targetContextPath, location);
+                                    if (mount != null && mount.getMount().isSiteMount()) {
                                     	// redirectLocation is (at least) matched on a siteMount: the portlet should try to render it 
                                     	((HstPortletResponseState)responseState).setRenderRedirect(true);
                                     }

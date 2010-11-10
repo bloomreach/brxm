@@ -57,7 +57,7 @@ public class VirtualHostService implements VirtualHost {
     private String locale;
     
     /**
-     * Whether the {@link SiteMount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview SiteMount
+     * Whether the {@link Mount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview SiteMount
      */
     private boolean versionInPreviewHeader;
 
@@ -178,14 +178,14 @@ public class VirtualHostService implements VirtualHost {
         
         hostName = buildHostName();
         
-        HstNode siteMountRoot = virtualHostNode.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
+        HstNode siteMountRoot = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         if(siteMountRoot != null) {
             log.info("Host '{}' does have a root SiteMount configured without PortMount. This SiteMount is port agnostic ", this.getHostName());
             // we have a configured root sitemount node without portmount. Let's populate this sitemount. This site mount will be added to 
             // a portmount service with portnumber 0, which means any port
-            HstNode siteMountNode = virtualHostNode.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
-            if(HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(siteMountNode.getNodeTypeName())) {
-                SiteMount siteMount = new SiteMountService(siteMountNode, null, attachPortMountToHost, hstManager, 0);
+            HstNode siteMountNode = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
+            if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(siteMountNode.getNodeTypeName())) {
+                Mount siteMount = new MountService(siteMountNode, null, attachPortMountToHost, hstManager, 0);
                  
                 PortMount portMount = new PortMountService(siteMount, this);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);

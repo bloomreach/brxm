@@ -29,7 +29,7 @@ import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -40,7 +40,7 @@ import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -52,7 +52,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected HstContainerURL baseURL;
     protected String contextNamespace;
     protected HstURLFactory urlFactory;
-    protected ResolvedSiteMount resolvedSiteMount;
+    protected ResolvedMount resolvedSiteMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstLinkCreator linkCreator;
     protected HstSiteMapMatcher siteMapMatcher;
@@ -67,7 +67,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected String pathSuffix;
 
     public boolean isPreview() {
-    	return this.resolvedSiteMount.getSiteMount().isPreview();
+    	return this.resolvedSiteMount.getMount().isPreview();
     }
     
     public ServletContext getServletContext() {
@@ -134,11 +134,11 @@ public class MockHstRequestContext implements HstRequestContext {
         return this.siteMenus;
     }
     
-    public ResolvedSiteMount getResolvedSiteMount() {
+    public ResolvedMount getResolvedMount() {
         return this.resolvedSiteMount;
     }
     
-    public void setResolvedSiteMount(ResolvedSiteMount resolvedSiteMount) {
+    public void setResolvedSiteMount(ResolvedMount resolvedSiteMount) {
         this.resolvedSiteMount = resolvedSiteMount;
     }
     
@@ -216,7 +216,7 @@ public class MockHstRequestContext implements HstRequestContext {
     	return null;
     }
     
-	public ResolvedSiteMount getResolvedEmbeddingSiteMount() {
+	public ResolvedMount getResolvedEmbeddingMount() {
 		return null;
 	}
 
@@ -244,11 +244,11 @@ public class MockHstRequestContext implements HstRequestContext {
         return pathSuffix;
     }
 
-    public SiteMount getMount(String alias) {
+    public Mount getMount(String alias) {
         return null;
     }
 
-    public SiteMount getMount(String type, String alias) {
+    public Mount getMount(String type, String alias) {
         return null;
     }
 }

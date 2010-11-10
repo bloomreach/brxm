@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.dependencies;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -33,14 +33,14 @@ public class HstLinkDependencyWriter extends StringWriter {
     private HstRequestContext context;
     private Writer writer;
     private HstLinkCreator creator;
-    private SiteMount siteMount;
+    private Mount siteMount;
 
     public HstLinkDependencyWriter(HstRequestContext context, Writer writer) {
         super();
         this.context = context;
         this.writer = writer;
         creator = context.getHstLinkCreator();
-        siteMount = context.getResolvedSiteMount().getSiteMount();
+        siteMount = context.getResolvedMount().getMount();
     }
 
     @Override

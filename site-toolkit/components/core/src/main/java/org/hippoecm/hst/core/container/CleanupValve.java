@@ -25,7 +25,7 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
  * CleanupValve
@@ -66,7 +66,7 @@ public class CleanupValve extends AbstractValve
         
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
+        ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
         boolean subjectBasedSession = resolvedSiteMount.isSubjectBasedSession();
         boolean sessionStateful = resolvedSiteMount.isSessionStateful();
         

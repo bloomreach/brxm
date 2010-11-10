@@ -36,7 +36,7 @@ public class ErrorSearchComponent extends AbstractSearchComponent {
         if(request.getParameter("query") != null) {
             query = request.getParameter("query");
         } else {
-            String path = PathUtils.normalizePath(HstRequestUtils.getPathInfo(HstRequestUtils.getHstRequestContext(request).getResolvedSiteMount(), request));
+            String path = PathUtils.normalizePath(HstRequestUtils.getPathInfo(HstRequestUtils.getHstRequestContext(request).getResolvedMount(), request));
             query = path.substring(path.lastIndexOf('/') + 1);
             if (query == null || "".equals(query)) {
                 return;

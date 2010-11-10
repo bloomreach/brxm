@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -179,7 +179,7 @@ public abstract class AbstractResource {
         
         try {
             String usedMountAliasName = (mountAliasName == null ? MOUNT_ALIAS_SITE : mountAliasName);
-            SiteMount mappedMount = requestContext.getMount(usedMountAliasName);
+            Mount mappedMount = requestContext.getMount(usedMountAliasName);
             nodeLink.setRel(usedMountAliasName);
             
             HstLink link = null;

@@ -60,7 +60,7 @@ public abstract class AbstractHstSiteMapHandler implements HstSiteMapItemHandler
     public ResolvedSiteMapItem matchSiteMapItem(HttpServletRequest request,
             HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo) throws MatchException {
         
-        return currentResolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(pathInfo);
+        return currentResolvedSiteMapItem.getResolvedMount().matchSiteMapItem(pathInfo);
     }
     
 /* TODO
@@ -82,7 +82,7 @@ public abstract class AbstractHstSiteMapHandler implements HstSiteMapItemHandler
      * @return the HstURLFactory 
      */
     public HstURLFactory getURLFactory(ResolvedSiteMapItem resolvedSiteMapItem) {
-        HstURLFactory factory = resolvedSiteMapItem.getResolvedSiteMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getHstManager().getUrlFactory();
+        HstURLFactory factory = resolvedSiteMapItem.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getHstManager().getUrlFactory();
         return factory;
     }
 }

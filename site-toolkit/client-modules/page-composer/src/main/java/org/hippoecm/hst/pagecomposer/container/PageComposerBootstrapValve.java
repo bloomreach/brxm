@@ -22,7 +22,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.container.AbstractValve;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -57,13 +57,13 @@ public class PageComposerBootstrapValve extends AbstractValve
         session.setAttribute(ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME, "true");
         
         HstRequestContext requestContext = (HstRequestContext)context.getRequestContext();
-        SiteMount siteMount = requestContext.getResolvedSiteMount().getSiteMount();
+        Mount siteMount = requestContext.getResolvedMount().getMount();
 
         /*
         *  get the preview URL. Note, that the 'composer' sitemount always needs a parent sitemount of type 'composermode'.
         *  If either the parent is null, OR the parent is not of type 'composermode', we cannot instantiate the composer tool
         */
-        SiteMount parentMount = siteMount.getParent();
+        Mount parentMount = siteMount.getParent();
         if (parentMount == null || !parentMount.isOfType("composermode")) {
             try {
                 context.getServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Page Composer Tool can only be started if the composer SiteMount is a descendant of the SiteMount of type 'composermode'.");

@@ -23,7 +23,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -94,8 +94,8 @@ public class LocalizationValve extends AbstractValve {
             }
         }
         // if we did not yet find a locale, test the sitemount
-        if(requestContext.getResolvedSiteMount() != null) {
-            SiteMount siteMount = requestContext.getResolvedSiteMount().getSiteMount();
+        if(requestContext.getResolvedMount() != null) {
+            Mount siteMount = requestContext.getResolvedMount().getMount();
             if(siteMount.getLocale() != null) {
                 Locale locale = parseLocale(siteMount.getLocale());
                 log.debug("Preferred locale for request is set to '{}' by siteMount '{}'", siteMount.getLocale(), siteMount.getName());

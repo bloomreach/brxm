@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
  * StatefulSessionValve
@@ -44,7 +44,7 @@ public class SubjectBasedSessionValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
+        ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
         boolean subjectBasedSession = resolvedSiteMount.isSubjectBasedSession();
         boolean sessionStateful = resolvedSiteMount.isSessionStateful();
         

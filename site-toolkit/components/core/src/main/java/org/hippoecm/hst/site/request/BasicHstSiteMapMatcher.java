@@ -28,7 +28,7 @@ import org.hippoecm.hst.core.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,15 +55,15 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
 
     
-    public ResolvedSiteMapItem match(String pathInfo, ResolvedSiteMount resolvedSiteMount) throws NotFoundException {
-        HstSite hstSite = resolvedSiteMount.getSiteMount().getHstSite();
+    public ResolvedSiteMapItem match(String pathInfo, ResolvedMount resolvedSiteMount) throws NotFoundException {
+        HstSite hstSite = resolvedSiteMount.getMount().getHstSite();
        
         Properties params = new Properties();
         
         pathInfo = PathUtils.normalizePath(pathInfo);
         
         if(linkProcessor != null) {
-            HstLink link = new HstLinkImpl(pathInfo, resolvedSiteMount.getSiteMount());
+            HstLink link = new HstLinkImpl(pathInfo, resolvedSiteMount.getMount());
             link = linkProcessor.preProcess(link);
             pathInfo = link.getPath();
         }
@@ -129,7 +129,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
                 log.warn("Did not find a matching sitemap item for path '{}', SiteMount '{}' and Host '"+resolvedSiteMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
-                        ". Return null", pathInfo, resolvedSiteMount.getSiteMount().getParent() == null ? "hst:root" : resolvedSiteMount.getSiteMount().getMountPath() );
+                        ". Return null", pathInfo, resolvedSiteMount.getMount().getParent() == null ? "hst:root" : resolvedSiteMount.getMount().getMountPath() );
                 throw new NotFoundException("PathInfo '"+pathInfo+"' could not be matched");
             } else {
                 // The ** has the value of the entire pathInfo

@@ -26,7 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -136,10 +136,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
     
     public HstLink create(Node node, HstSite hstSite) {
-        return create(node, hstSite.getSiteMount());
+        return create(node, hstSite.getMount());
     }
     
-    public HstLink create(Node node, SiteMount siteMount) {
+    public HstLink create(Node node, Mount siteMount) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, siteMount);
         linkResolver.tryOtherMounts = false;
         // when linking to a mount, we always want get a canonical link:
@@ -148,9 +148,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
     
     public HstLink create(Node node, HstRequestContext requestContext,  String siteMountAlias) {
-        SiteMount targetSiteMount = requestContext.getMount(siteMountAlias);
+        Mount targetSiteMount = requestContext.getMount(siteMountAlias);
         if(targetSiteMount == null) {
-            SiteMount currentMount = requestContext.getResolvedSiteMount().getSiteMount();
+            Mount currentMount = requestContext.getResolvedMount().getMount();
             StringBuffer types = new StringBuffer();
             for(String type: currentMount.getTypes()) {
                 if(types.length() > 0) {
@@ -169,7 +169,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
 
     public HstLink create(Node node, HstRequestContext requestContext,  String siteMountAlias, String type) {
-        SiteMount targetSiteMount = requestContext.getMount(siteMountAlias, type);
+        Mount targetSiteMount = requestContext.getMount(siteMountAlias, type);
         if(targetSiteMount == null) {
             String[] messages = {siteMountAlias , requestContext.getVirtualHost().getHostGroupName(), type};
             log.warn("Cannot create a link for siteMountAlias '{}' as it cannot be found in the host group '{}' for type '{}'", messages);
@@ -178,20 +178,20 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         log.debug("Target SiteMount found for siteMountAlias '{}'. Create link for target site mount", siteMountAlias);
         return create(node, targetSiteMount);
     }
-    public HstLink create(String path, SiteMount siteMount) {
+    public HstLink create(String path, Mount siteMount) {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount));
     }
     
-    public HstLink create(String path, SiteMount siteMount, boolean containerResource) {
+    public HstLink create(String path, Mount siteMount, boolean containerResource) {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), siteMount, containerResource));
     }
 
 
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
-        return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getSiteMount()));
+        return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getMount()));
     }
 
-    public HstLink createByRefId(String siteMapItemRefId, SiteMount mount) {
+    public HstLink createByRefId(String siteMapItemRefId, Mount mount) {
         if(mount.getHstSite() == null) {
             log.warn("Cannot create a link to a siteMapItemRefId '{}' for a mount '{}' that does not have a HstSiteMap. Return null", siteMapItemRefId, mount.getName());
             return null;
@@ -250,12 +250,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     @Deprecated
     public HstLink create(String path, HstSite hstSite) {
-        return create(path, hstSite.getSiteMount());
+        return create(path, hstSite.getMount());
     }
 
     @Deprecated
     public HstLink create(String path, HstSite hstSite, boolean containerResource) {
-        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getSiteMount(), containerResource));
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getMount(), containerResource));
     }
     
     @Deprecated
@@ -270,7 +270,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return null;
         }
         
-        return postProcess(new HstLinkImpl(getPath(siteMapItem), hstSite.getSiteMount()));
+        return postProcess(new HstLinkImpl(getPath(siteMapItem), hstSite.getMount()));
     }
 
     @Deprecated
@@ -360,7 +360,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         String nodePath;
        
         ResolvedSiteMapItem resolvedSiteMapItem;
-        SiteMount siteMount;
+        Mount siteMount;
         
         HstSiteMapItem preferredItem;
         boolean virtual;
@@ -375,7 +375,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         
         
         /**
-         * Create a HstLinkResolver instance with the current <code>requestContext</code>. The {@link SiteMount} is taken from this context. If
+         * Create a HstLinkResolver instance with the current <code>requestContext</code>. The {@link Mount} is taken from this context. If
          * we have a {@link ResolvedSiteMapItem} on the <code>requestContext</code>, we also set this also for the {@link HstLinkResolver} for context aware link rewriting
          * @param node
          * @param resolvedSiteMapItem
@@ -384,11 +384,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             this.node = node;
             // note: the resolvedSiteMapItem can be null
             this.resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-            this.siteMount = requestContext.getResolvedSiteMount().getSiteMount();
+            this.siteMount = requestContext.getResolvedMount().getMount();
         }
         
         /**
-         * Create a HstLinkResolver instance with the current context <code>resolvedSiteMapItem</code>. The {@link SiteMount} is taken from this context
+         * Create a HstLinkResolver instance with the current context <code>resolvedSiteMapItem</code>. The {@link Mount} is taken from this context
          * @param node
          * @param resolvedSiteMapItem
          * @deprecated Use {@link #HstLinkResolver(Node, HstRequestContext)} instead
@@ -396,7 +396,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         HstLinkResolver(Node node, ResolvedSiteMapItem resolvedSiteMapItem){
             this.node = node;
             this.resolvedSiteMapItem = resolvedSiteMapItem;
-            this.siteMount = resolvedSiteMapItem.getResolvedSiteMount().getSiteMount();
+            this.siteMount = resolvedSiteMapItem.getResolvedMount().getMount();
         }
         
         /**
@@ -405,7 +405,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          * @param node
          * @param hstSite
          */
-        HstLinkResolver(Node node, SiteMount siteMount){
+        HstLinkResolver(Node node, Mount siteMount){
             this.node = node;
             this.siteMount = siteMount;
         }
@@ -505,7 +505,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                          * Note that if there is a preferredItem we ignore this one for cross domain linking as preferredItem only work within the same siteMount
                          */
                         
-                        List<SiteMount> siteMountsForHostGroup = siteMount.getVirtualHost().getVirtualHosts().getSiteMountsByHostGroup(siteMount.getVirtualHost().getHostGroupName());
+                        List<Mount> siteMountsForHostGroup = siteMount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(siteMount.getVirtualHost().getHostGroupName());
                         
                         /*
                          * There can be multiple suited sitemounts (for example the sitemount for preview and composermode can be the 'same' subsite). We
@@ -518,11 +518,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                          * that it can be considered more precise
                          * 6) If multiple sitemount's result from (1), (2), (3), (4) and (5) , we pick the first one: cannot do better
                          */
-                        List<SiteMount> possibleSuitedMounts = new ArrayList<SiteMount>();
+                        List<Mount> possibleSuitedMounts = new ArrayList<Mount>();
                         
                         // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
                         // cross-domain linkrewrite to mounts that are not a site mount?
-                        for(SiteMount mount : siteMountsForHostGroup) {
+                        for(Mount mount : siteMountsForHostGroup) {
                            if(!mount.isSiteMount()) {
                                // not a sitemount for a HstSite
                                continue;
@@ -635,20 +635,20 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         }
 
         
-        private SiteMount findBestSuitedMount(List<SiteMount> possibleSuitedMounts) {
+        private Mount findBestSuitedMount(List<Mount> possibleSuitedMounts) {
             if(possibleSuitedMounts.size() == 0) {
                 throw new IllegalStateException("At this point, there should be at least found a single SiteMount. This is a bug in the  DefaultHstLinkCreator");
             }
             // Algorithm step 3: find the sitemount's with the same primary type
-            List<SiteMount> narrowedSuitedMounts = new ArrayList<SiteMount>();
-            for(SiteMount s : possibleSuitedMounts) {
+            List<Mount> narrowedSuitedMounts = new ArrayList<Mount>();
+            for(Mount s : possibleSuitedMounts) {
                 if(s.getType().equals(siteMount.getType())) {
                     narrowedSuitedMounts.add(s);
                 }
             }
             if(narrowedSuitedMounts.size() > 0) {
                 // possibly some suited mounts have been removed
-                possibleSuitedMounts = new ArrayList<SiteMount>(narrowedSuitedMounts);
+                possibleSuitedMounts = new ArrayList<Mount>(narrowedSuitedMounts);
             }
             
             if(possibleSuitedMounts.size() == 1) {
@@ -661,7 +661,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 // find the sitemount's with the most types in common
                 narrowedSuitedMounts.clear();
                 int mostCommon = 0;
-                for(SiteMount s : possibleSuitedMounts) {
+                for(Mount s : possibleSuitedMounts) {
                     int inCommon = countCommon(s.getTypes(), siteMount.getTypes());
                     if(inCommon > mostCommon) {
                         mostCommon = inCommon;
@@ -675,7 +675,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 }
                 if(narrowedSuitedMounts.size() > 0) {
                     // possibly some suited mounts have been removed
-                    possibleSuitedMounts = new ArrayList<SiteMount>(narrowedSuitedMounts);
+                    possibleSuitedMounts = new ArrayList<Mount>(narrowedSuitedMounts);
                 }
             }
             
@@ -689,7 +689,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                // find the sitemount's with the most types in common
                 narrowedSuitedMounts.clear();
                 int lowestNumberOfTypes = Integer.MAX_VALUE;
-                for(SiteMount s : possibleSuitedMounts) {
+                for(Mount s : possibleSuitedMounts) {
                    if(s.getTypes().size() < lowestNumberOfTypes) {
                        lowestNumberOfTypes = s.getTypes().size();
                        narrowedSuitedMounts.clear();
@@ -702,7 +702,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 }
                 if(narrowedSuitedMounts.size() > 0) {
                     // possibly some suited mounts have been removed
-                    possibleSuitedMounts = new ArrayList<SiteMount>(narrowedSuitedMounts);
+                    possibleSuitedMounts = new ArrayList<Mount>(narrowedSuitedMounts);
                 }
             }
             
@@ -719,7 +719,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return counter;
         }
 
-        private HstLink pageNotFoundLink(SiteMount siteMount) {
+        private HstLink pageNotFoundLink(Mount siteMount) {
             HstLink link =  new HstLinkImpl(DefaultHstLinkCreator.this.pageNotFoundPath, siteMount);
             link.setNotFound(true);
             return link;

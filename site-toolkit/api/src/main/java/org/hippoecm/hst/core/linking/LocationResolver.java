@@ -17,7 +17,7 @@ package org.hippoecm.hst.core.linking;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 
 public interface LocationResolver {
 
@@ -25,10 +25,10 @@ public interface LocationResolver {
      * Implementations should here do their logic, possibly linkrewriting. With the resolved path from this method, a {@link HstLink} object
      * is created
      * @param node
-     * @param siteMount the siteMount where the HstLink should be created for 
+     * @param mount the {@link Mount} where the HstLink should be created for 
      * @return the resolved HstLink for the node, or <code>null</code> when not able to create one
      */
-    HstLink resolve(Node node, SiteMount siteMount);
+    HstLink resolve(Node node, Mount mount);
     
     /**
      * this setter will always be called when a LocationResolver implementation class is created. The locationMapTree can be used

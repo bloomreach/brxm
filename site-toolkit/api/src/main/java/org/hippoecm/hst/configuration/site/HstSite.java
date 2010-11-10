@@ -16,7 +16,7 @@
 package org.hippoecm.hst.configuration.site;
 
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
@@ -42,7 +42,7 @@ public interface HstSite {
     /**
      * Returns the absolute content path for this <code>HstSite</code> 
      * @return The absolute content path for this <code>HstSite</code>
-     * @deprecated Use {@link SiteMount#getContentPath()}
+     * @deprecated Use {@link Mount#getContentPath()}
      */
     @Deprecated
     String getContentPath();
@@ -52,7 +52,7 @@ public interface HstSite {
      * 
      * This path differs from {@link #getContentPath()} when the {@link #getContentPath()} points to a mirror node.
      * @return The absolute absolute content path for this <code>HstSite</code>
-     * @deprecated Use {@link SiteMount#getCanonicalContentPath()}
+     * @deprecated Use {@link Mount#getCanonicalContentPath()}
      */
     @Deprecated
     String getCanonicalContentPath();
@@ -95,8 +95,8 @@ public interface HstSite {
     HstSiteMenusConfiguration getSiteMenusConfiguration();
 
     /**
-     * @return the {@link SiteMount} object through which this <code>hstSite</code> is accessible
+     * @return the {@link Mount} object through which this <code>hstSite</code> is accessible
      */
-    SiteMount getSiteMount();
+    Mount getMount();
     
 }

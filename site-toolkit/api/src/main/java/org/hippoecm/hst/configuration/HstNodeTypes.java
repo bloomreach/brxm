@@ -35,7 +35,7 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_VIRTUALHOSTGROUP = "hst:virtualhostgroup";
     public final static String NODETYPE_HST_VIRTUALHOST = "hst:virtualhost";
     public final static String NODETYPE_HST_PORTMOUNT = "hst:portmount";
-    public final static String NODETYPE_HST_SITEMOUNT = "hst:sitemount";
+    public final static String NODETYPE_HST_MOUNT = "hst:mount";
     public final static String NODETYPE_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     public final static String NODETYPE_HST_SITEMAPITEMHANDLER = "hst:sitemapitemhandler";
     public final static String NODETYPE_HST_SCRIPTS = "hst:scripts";
@@ -96,25 +96,25 @@ public interface HstNodeTypes {
     public final static String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
     public final static String VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
     
-    public final static String SITEMOUNT_HST_ROOTNAME = "hst:root";
-    public final static String SITEMOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
-    public final static String SITEMOUNT_PROPERTY_ONLYFORCONTEXTPATH = "hst:onlyforcontextpath";
-    public final static String SITEMOUNT_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
-    public final static String SITEMOUNT_PROPERTY_SHOWPORT = "hst:showport";
-    public final static String SITEMOUNT_PROPERTY_SCHEME = "hst:scheme";
-    public final static String SITEMOUNT_PROPERTY_MOUNTPOINT = "hst:mountpoint";
-    public final static String SITEMOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
-    public final static String SITEMOUNT_PROPERTY_SUPPORTS_SUB_PATH = "hst:supportsSubPath";
+    public final static String MOUNT_HST_ROOTNAME = "hst:root";
+    public final static String MOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+    public final static String MOUNT_PROPERTY_ONLYFORCONTEXTPATH = "hst:onlyforcontextpath";
+    public final static String MOUNT_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
+    public final static String MOUNT_PROPERTY_SHOWPORT = "hst:showport";
+    public final static String MOUNT_PROPERTY_SCHEME = "hst:scheme";
+    public final static String MOUNT_PROPERTY_MOUNTPOINT = "hst:mountpoint";
+    public final static String MOUNT_PROPERTY_ISSITEMOUNT = "hst:issitemount";
+    public final static String MOUNT_PROPERTY_SUPPORTS_SUB_PATH = "hst:supportsSubPath";
     
-    public final static String SITEMOUNT_PROPERTY_ALIAS = "hst:alias";
-    public final static String SITEMOUNT_PROPERTY_TYPE = "hst:type";
-    public final static String SITEMOUNT_PROPERTY_TYPES = "hst:types";
-    public final static String SITEMOUNT_PROPERTY_EMBEDDEDSITEMOUNTPATH = "hst:embeddedsitemountpath";
-    public final static String SITEMOUNT_PROPERTY_SECURED =  "hst:secured";
-    public final static String SITEMOUNT_PROPERTY_ROLES =  "hst:roles";
-    public final static String SITEMOUNT_PROPERTY_USERS =  "hst:users";
-    public final static String SITEMOUNT_PROPERTY_SUBJECTBASEDSESSION =  "hst:subjectbasedsession";
-    public final static String SITEMOUNT_PROPERTY_SESSIONSTATEFUL =  "hst:sessionstateful";
+    public final static String MOUNT_PROPERTY_ALIAS = "hst:alias";
+    public final static String MOUNT_PROPERTY_TYPE = "hst:type";
+    public final static String MOUNT_PROPERTY_TYPES = "hst:types";
+    public final static String MOUNT_PROPERTY_EMBEDDEDMOUNTPATH = "hst:embeddedmountpath";
+    public final static String MOUNT_PROPERTY_SECURED =  "hst:secured";
+    public final static String MOUNT_PROPERTY_ROLES =  "hst:roles";
+    public final static String MOUNT_PROPERTY_USERS =  "hst:users";
+    public final static String MOUNT_PROPERTY_SUBJECTBASEDSESSION =  "hst:subjectbasedsession";
+    public final static String MOUNT_PROPERTY_SESSIONSTATEFUL =  "hst:sessionstateful";
 
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     

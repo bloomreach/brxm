@@ -17,6 +17,9 @@ package org.hippoecm.hst.core.container;
 
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.request.ResolvedMount;
+
 /**
  * The HstComponent container URL.
  * This is responsible for managing the request URL states of all the HstComponents.
@@ -62,12 +65,12 @@ public interface HstContainerURL {
     
     /**
      * 
-     * @return resolved mount path or <code>null</code> when not yet resolved
+     * @return {@link ResolvedMount} path or <code>null</code> when not yet resolved
      */
     String getResolvedMountPath();
     
     /**
-     * Returns the current request's path info (part after context path and sitemount path)
+     * Returns the current request's path info (part after context path and {@link Mount} path)
      * 
      * @return path info or <code>null</code> when the resolved mount path is not yet resolved
      */

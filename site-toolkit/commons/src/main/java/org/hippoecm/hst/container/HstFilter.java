@@ -43,7 +43,7 @@ import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
@@ -254,12 +254,12 @@ public class HstFilter implements Filter {
     		requestContext.setServletContext(filterConfig.getServletContext());
     		requestContext.setPathSuffix(containerRequest.getPathSuffix());
     		
-    		ResolvedSiteMount mount = requestContext.getResolvedSiteMount();
+    		ResolvedMount mount = requestContext.getResolvedMount();
     		if (mount == null) {
     			try {
-    				mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(containerRequest), containerRequest.getContextPath() , HstRequestUtils.getRequestPath(containerRequest));
+    				mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest), containerRequest.getContextPath() , HstRequestUtils.getRequestPath(containerRequest));
     				if(mount != null) {
-    					requestContext.setResolvedSiteMount(mount);
+    					requestContext.setResolvedMount(mount);
     				} 
     				else {
     					throw new MatchException("No matching SiteMount for '"+HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"'");
@@ -280,7 +280,7 @@ public class HstFilter implements Filter {
 				requestContext.setBaseURL(hstContainerURL);
     		}
     		
-    		if (mount.getSiteMount().isSiteMount()) {
+    		if (mount.getMount().isSiteMount()) {
     			ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
     			boolean processSiteMapItemHandlers = false;
     			
@@ -370,7 +370,7 @@ public class HstFilter implements Filter {
             String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
             req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
 
-            resolvedSiteMapItem = resolvedSiteMapItem.getResolvedSiteMount().matchSiteMapItem(forwardPathInfo);
+            resolvedSiteMapItem = resolvedSiteMapItem.getResolvedMount().matchSiteMapItem(forwardPathInfo);
             if(resolvedSiteMapItem == null) {
                 // should not be possible as when it would be null, an exception should have been thrown
                 throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
@@ -385,7 +385,7 @@ public class HstFilter implements Filter {
     }
 
     /**
-     * This method is invoked for every {@link HstSiteMapItemHandler} from the resolvedSiteMapItem that was matched from {@link ResolvedSiteMount#matchSiteMapItem(HstContainerURL)}. 
+     * This method is invoked for every {@link HstSiteMapItemHandler} from the resolvedSiteMapItem that was matched from {@link ResolvedMount#matchSiteMapItem(HstContainerURL)}. 
      * If in the for loop the <code>orginalResolvedSiteMapItem</code> switches to a different newResolvedSiteMapItem, then still
      * the handlers for  <code>orginalResolvedSiteMapItem</code> are processed and not the one from <code>newResolvedSiteMapItem</code>. If some intermediate
      * {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, HttpServletRequest, HttpServletResponse)} returns <code>null</code>, the loop and processing is stooped, 

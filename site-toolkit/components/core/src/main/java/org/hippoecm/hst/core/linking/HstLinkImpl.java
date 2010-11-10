@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.linking;
 
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -33,16 +33,16 @@ public class HstLinkImpl implements HstLink{
 
     private String path;
     private String subPath;
-    private SiteMount siteMount;
+    private Mount siteMount;
     private boolean containerResource;
     private boolean notFound = false;
     
     
-    public HstLinkImpl(String path, SiteMount siteMount) {
+    public HstLinkImpl(String path, Mount siteMount) {
         this(path, siteMount,false);
     }
     
-    public HstLinkImpl(String path, SiteMount siteMount, boolean containerResource) {
+    public HstLinkImpl(String path, Mount siteMount, boolean containerResource) {
         this.path = PathUtils.normalizePath(path);
         this.siteMount = siteMount;
         this.containerResource = containerResource;
@@ -63,11 +63,11 @@ public class HstLinkImpl implements HstLink{
     @Deprecated
     public HstLinkImpl(String path, HstSite hstSite, boolean containerResource) {
         this.path = PathUtils.normalizePath(path);
-        this.siteMount = hstSite.getSiteMount();
+        this.siteMount = hstSite.getMount();
         this.containerResource = containerResource;
     }
     
-    public SiteMount getSiteMount() {
+    public Mount getMount() {
         return siteMount;
     }
     
@@ -141,7 +141,7 @@ public class HstLinkImpl implements HstLink{
             urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext).toString();
         }
         
-        SiteMount requestSiteMount = requestContext.getResolvedSiteMount().getSiteMount();
+        Mount requestSiteMount = requestContext.getResolvedMount().getMount();
         /*
          * we create a url including http when the sitemount is not null and one of the lines below is true
          * 1) external = true

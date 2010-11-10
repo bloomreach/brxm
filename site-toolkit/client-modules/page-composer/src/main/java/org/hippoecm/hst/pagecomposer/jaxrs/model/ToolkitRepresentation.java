@@ -16,14 +16,14 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Toolkit represents all unique container items found in the provided {@link org.hippoecm.hst.configuration.hosting.SiteMount}
+ * The Toolkit represents all unique container items found in the provided {@link org.hippoecm.hst.configuration.hosting.Mount}
  *
  * @version $Id$
  */
@@ -36,7 +36,7 @@ public class ToolkitRepresentation {
      * @param mount the current mount
      * @return ToolkitRepresentation containing all the containeritem's for this <code>mount</code>
      */
-    public ToolkitRepresentation represent(SiteMount mount) {
+    public ToolkitRepresentation represent(Mount mount) {
         HstSite site = mount.getHstSite();
         List<HstComponentConfiguration> allUniqueContainerItems = site.getComponentsConfiguration().getUniqueContainerItems();
         for (HstComponentConfiguration child : allUniqueContainerItems) {

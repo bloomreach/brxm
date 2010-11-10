@@ -68,7 +68,7 @@
           </sv:property>
           <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/demosite-live</sv:value>
@@ -81,7 +81,7 @@
             </sv:property>
             <sv:node sv:name="demosubsite">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosubsite-live</sv:value>
@@ -92,7 +92,7 @@
             </sv:node>
             <sv:node sv:name="restapi">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:alias" sv:type="String">
                 <sv:value>restapi</sv:value>
@@ -129,7 +129,7 @@
               </sv:property>
               <sv:node sv:name="gallery">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi-gallery</sv:value>
@@ -161,7 +161,7 @@
               </sv:node>
               <sv:node sv:name="assets">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi-assets</sv:value>
@@ -185,7 +185,7 @@
             </sv:node>
             <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
@@ -201,7 +201,7 @@
               </sv:property>
               <sv:node sv:name="demosubsite">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:mountpoint" sv:type="String">
                   <sv:value>/hst:hst/hst:sites/demosubsite-preview</sv:value>
@@ -215,7 +215,7 @@
               </sv:node>
               <sv:node sv:name="restapi">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi</sv:value>
@@ -255,7 +255,7 @@
                 </sv:property>
                 <sv:node sv:name="gallery">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                      <sv:value>hst:sitemount</sv:value>
+                      <sv:value>hst:mount</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:alias" sv:type="String">
                       <sv:value>restapi-gallery</sv:value>
@@ -293,7 +293,7 @@
                  </sv:node>
                  <sv:node sv:name="assets">
                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                     <sv:value>hst:sitemount</sv:value>
+                     <sv:value>hst:mount</sv:value>
                    </sv:property>
                    <sv:property sv:name="hst:alias" sv:type="String">
                      <sv:value>restapi-assets</sv:value>
@@ -324,7 +324,7 @@
             </sv:node>
             <sv:node sv:name="composermode">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
@@ -352,7 +352,7 @@
               </sv:property>
               <sv:node sv:name="composer">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
@@ -375,7 +375,7 @@
               </sv:node>
               <sv:node sv:name="services-new">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>
@@ -410,7 +410,7 @@
           </sv:property>
           <sv:node sv:name="hst:root">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/demosite-live</sv:value>
@@ -423,7 +423,7 @@
             </sv:property>
             <sv:node sv:name="demosubsite">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosubsite-live</sv:value>
@@ -434,7 +434,7 @@
             </sv:node>
             <sv:node sv:name="restapi">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:alias" sv:type="String">
                 <sv:value>restapi</sv:value>
@@ -471,7 +471,7 @@
               </sv:property>
               <sv:node sv:name="gallery">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi-gallery</sv:value>
@@ -503,7 +503,7 @@
               </sv:node>
               <sv:node sv:name="assets">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi-assets</sv:value>
@@ -527,7 +527,7 @@
             </sv:node>
             <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
@@ -543,7 +543,7 @@
               </sv:property>
               <sv:node sv:name="demosubsite">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:mountpoint" sv:type="String">
                   <sv:value>/hst:hst/hst:sites/demosubsite-preview</sv:value>
@@ -557,7 +557,7 @@
               </sv:node>
               <sv:node sv:name="restapi">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi</sv:value>
@@ -597,7 +597,7 @@
                 </sv:property>
                 <sv:node sv:name="gallery">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
+                    <sv:value>hst:mount</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:alias" sv:type="String">
                     <sv:value>restapi-gallery</sv:value>
@@ -635,7 +635,7 @@
                 </sv:node>
                 <sv:node sv:name="assets">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemount</sv:value>
+                    <sv:value>hst:mount</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:alias" sv:type="String">
                     <sv:value>restapi-assets</sv:value>
@@ -666,7 +666,7 @@
             </sv:node>
             <sv:node sv:name="composermode">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemount</sv:value>
+                <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
@@ -694,7 +694,7 @@
               </sv:property>
               <sv:node sv:name="composer">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:uuid" sv:type="String">
                   <sv:value>e0aea2c2-97a6-431a-8551-0f49eaed7331</sv:value>
@@ -720,7 +720,7 @@
               </sv:node>
               <sv:node sv:name="services-new">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemount</sv:value>
+                  <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:issitemount" sv:type="Boolean">
                   <sv:value>false</sv:value>

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
  
@@ -80,9 +80,9 @@ public interface HstSiteMapItem {
     boolean isAny();
     
     /**
-     * This method returns a content path, relative to the {@link SiteMount#getContentPath()}. This value can 
+     * This method returns a content path, relative to the {@link Mount#getContentPath()}. This value can 
      * contain property placeholders, like ${1}/${2}, which should be resolved in the {@link org.hippoecm.hst.core.request.ResolvedSiteMapItem#getRelativeContentPath()}  
-     * @return the content path relative to the {@link SiteMount#getContentPath()}
+     * @return the content path relative to the {@link Mount#getContentPath()}
      */
     String getRelativeContentPath();
     

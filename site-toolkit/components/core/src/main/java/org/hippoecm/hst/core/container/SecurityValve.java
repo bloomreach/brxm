@@ -31,7 +31,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.security.PolicyContextWrapper;
@@ -66,9 +66,9 @@ public class SecurityValve extends AbstractValve {
             HstLink destedLink = null;
             
             try {
-                ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
+                ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
                 String pathInfo = (requestContext.getResolvedSiteMapItem() == null ? "" : requestContext.getResolvedSiteMapItem().getPathInfo());
-                destedLink = requestContext.getHstLinkCreator().create(pathInfo, resolvedSiteMount.getSiteMount());
+                destedLink = requestContext.getHstLinkCreator().create(pathInfo, resolvedSiteMount.getMount());
                 HttpSession httpSession = servletRequest.getSession(resolvedSiteMount.isSessionStateful());
                 
                 if (httpSession != null) {
@@ -131,7 +131,7 @@ public class SecurityValve extends AbstractValve {
             roles = resolvedSiteMapItem.getRoles();
             users = resolvedSiteMapItem.getUsers();
         } else {
-            ResolvedSiteMount mount = requestContext.getResolvedSiteMount();
+            ResolvedMount mount = requestContext.getResolvedMount();
             secured = (mount != null && mount.isSecured());
             
             if (secured) {

@@ -28,7 +28,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -157,7 +157,7 @@ public class TestSecurityValve {
         ResolvedSiteMapItem resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
         expect(resolvedSiteMapItem.isSecured()).andReturn(false).anyTimes();
         
-        ResolvedSiteMount resolvedSiteMount = createNiceMock(ResolvedSiteMount.class);
+        ResolvedMount resolvedSiteMount = createNiceMock(ResolvedMount.class);
         expect(resolvedSiteMount.isSecured()).andReturn(true).anyTimes();
         
         expect(resolvedSiteMount.getRoles()).andReturn(roles).anyTimes();
@@ -165,7 +165,7 @@ public class TestSecurityValve {
         
         HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
-        expect(requestContext.getResolvedSiteMount()).andReturn(resolvedSiteMount).anyTimes();
+        expect(requestContext.getResolvedMount()).andReturn(resolvedSiteMount).anyTimes();
         
         replay(resolvedSiteMapItem);
         replay(resolvedSiteMount);

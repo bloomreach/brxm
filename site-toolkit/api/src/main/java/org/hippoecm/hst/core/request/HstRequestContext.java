@@ -26,7 +26,7 @@ import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -60,10 +60,10 @@ public interface HstRequestContext {
     Session getSession() throws LoginException, RepositoryException;
     
     /**
-     * Returns the {@link ResolvedSiteMount} for this request
-     * @return the resolvedSiteMount for this request
+     * Returns the {@link ResolvedMount} for this request
+     * @return the {@link ResolvedMount} for this request
      */
-    ResolvedSiteMount getResolvedSiteMount();
+    ResolvedMount getResolvedMount();
     
     /**
      * Returns the {@link ResolvedSiteMapItem} for this request
@@ -79,7 +79,7 @@ public interface HstRequestContext {
     
     /**
      * @return <code>true</code> when this request is matched to a preview site
-     * @see SiteMount#isPreview()
+     * @see Mount#isPreview()
      */
     boolean isPreview();
     
@@ -184,7 +184,7 @@ public interface HstRequestContext {
     ContainerConfiguration getContainerConfiguration();
     
     /**
-     * Returns true if this request is embedded and link rewriting needs to use the {@link #getResolvedEmbeddingSiteMount()}
+     * Returns true if this request is embedded and link rewriting needs to use the {@link #getResolvedEmbeddingMount()}
      * for the target site mount path and context path (if to be included).
      */
     boolean isEmbeddedRequest();
@@ -196,10 +196,10 @@ public interface HstRequestContext {
     String getEmbeddingContextPath();
     
     /**
-     * Returns the ResolvedSiteMount to be used for link rewriting when this request is embedded, otherwise null
+     * Returns the {@link ResolvedMount} to be used for link rewriting when this request is embedded, otherwise null
      * @see HstRequestContext#isEmbeddedRequest()
      */
-    ResolvedSiteMount getResolvedEmbeddingSiteMount();
+    ResolvedMount getResolvedEmbeddingMount();
     
     /**
      * Returns true if invoked from a Portlet.
@@ -241,37 +241,37 @@ public interface HstRequestContext {
 
     /**
      * <p>
-     * a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and at least one common type with the mount from the current request. Thus, at least 
-     * one of the types of the found {@link SiteMount#getTypes()} must be equal to one of the types of the mount of the current request. 
+     * a mount with {@link Mount#getAlias()} equal to <code>alias</code> and at least one common type with the mount from the current request. Thus, at least 
+     * one of the types of the found {@link Mount#getTypes()} must be equal to one of the types of the mount of the current request. 
      * </p>
      * <p>
-     * If there can be found a {@link SiteMount} with the same primary type ( {@link SiteMount#getType()} ) as the one for the mount of the current request, this
-     * {@link SiteMount} has precedence. If there is no primary type match, we'll return the mount that has most types in common
+     * If there can be found a {@link Mount} with the same primary type ( {@link Mount#getType()} ) as the one for the mount of the current request, this
+     * {@link Mount} has precedence. If there is no primary type match, we'll return the mount that has most types in common
      * </p>
      * <p>
-     * If there cannot be found a correct {@link SiteMount} for <code>alias</code>, there will be looked if the {@link SiteMount} of the current {@link HstRequestContext}
+     * If there cannot be found a correct {@link Mount} for <code>alias</code>, there will be looked if the {@link Mount} of the current {@link HstRequestContext}
      * has a property that is called <code>hst:mountXXX</code> where <code>XXX</code> is equal to  <code>alias</code>. If so, there will be tried
-     * to return a {@link SiteMount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
+     * to return a {@link Mount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
      * </p>
-     * @param alias the alias the found {@link SiteMount} or XXX in hst:mountXXX property
-     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> or mappedAlias and at least one common type with the mount from the current request. <code>null</code> if there is no suitable mount.
+     * @param alias the alias the found {@link Mount} or XXX in hst:mountXXX property
+     * @return a mount with {@link Mount#getAlias()} equal to <code>alias</code> or mappedAlias and at least one common type with the mount from the current request. <code>null</code> if there is no suitable mount.
      */
-    SiteMount getMount(String alias);
+    Mount getMount(String alias);
     
     /**
      * <p>
-     * a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> and one of its {@link SiteMount#getTypes()}  equal to <code>type</code>.
+     * a mount with {@link Mount#getAlias()} equal to <code>alias</code> and one of its {@link Mount#getTypes()}  equal to <code>type</code>.
      * </p>
      * <p>
-     * If there cannot be found a correct {@link SiteMount} for <code>alias</code>, there will be looked if the {@link SiteMount} of the current {@link HstRequestContext}
+     * If there cannot be found a correct {@link Mount} for <code>alias</code>, there will be looked if the {@link Mount} of the current {@link HstRequestContext}
      * has a property that is called <code>hst:mountXXX</code> where <code>XXX</code> is equal to  <code>alias</code>. If so, there will be tried
-     * to return a {@link SiteMount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
+     * to return a {@link Mount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
      * </p>
      * 
-     * @param alias the alias the found {@link SiteMount}  or or XXX in hst:mountXXX property
-     * @param type the type the found {@link SiteMount} should have
-     * @return a mount with {@link SiteMount#getAlias()} equal to <code>alias</code> or mappedAlias and one of its {@link SiteMount#getTypes()} equal to <code>type</code>. <code>null</code> if there is no suitable mount.
+     * @param alias the alias the found {@link Mount}  or or XXX in hst:mountXXX property
+     * @param type the type the found {@link Mount} should have
+     * @return a mount with {@link Mount#getAlias()} equal to <code>alias</code> or mappedAlias and one of its {@link Mount#getTypes()} equal to <code>type</code>. <code>null</code> if there is no suitable mount.
      */
-    SiteMount getMount(String alias, String type);
+    Mount getMount(String alias, String type);
     
 }

@@ -20,7 +20,7 @@ public class PortMountService implements PortMount {
     /**
      * The root sitemount for this PortMount
      */
-    private SiteMount rootSiteMount;
+    private Mount rootSiteMount;
     
     public PortMountService(HstNode portMount, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
         String nodeName = portMount.getValueProvider().getName();
@@ -33,10 +33,10 @@ public class PortMountService implements PortMount {
             throw new ServiceException("Not allowed PortMount name '"+nodeName+"' : PortMount must be a positive integer larger than 0");
         }
         
-        HstNode siteMount = portMount.getNode(HstNodeTypes.SITEMOUNT_HST_ROOTNAME);
-        if(siteMount != null && HstNodeTypes.NODETYPE_HST_SITEMOUNT.equals(siteMount.getNodeTypeName())) {
+        HstNode siteMount = portMount.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
+        if(siteMount != null && HstNodeTypes.NODETYPE_HST_MOUNT.equals(siteMount.getNodeTypeName())) {
             try {
-                rootSiteMount = new SiteMountService(siteMount, null, virtualHost, hstManager, portNumber);
+                rootSiteMount = new MountService(siteMount, null, virtualHost, hstManager, portNumber);
             } catch (ServiceException e) {
                 log.warn("The host '{}' for port '"+portNumber+"' contains an incorrect configured SiteMount. The host with port cannot be used for hst request processing: {}", virtualHost.getHostName(), e.getMessage());
             } 
@@ -44,7 +44,7 @@ public class PortMountService implements PortMount {
         
     }
     
-    public PortMountService(SiteMount rootSiteMount, VirtualHost virtualHost) throws ServiceException {
+    public PortMountService(Mount rootSiteMount, VirtualHost virtualHost) throws ServiceException {
         this.rootSiteMount = rootSiteMount;
         // the default portnumber is 0 by definition, which means port agnostic
         this.portNumber = 0;
@@ -54,7 +54,7 @@ public class PortMountService implements PortMount {
         return portNumber;
     }
 
-    public SiteMount getRootSiteMount() {
+    public Mount getRootMount() {
         return rootSiteMount;
     }
 

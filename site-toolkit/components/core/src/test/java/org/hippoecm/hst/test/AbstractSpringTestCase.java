@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -37,7 +37,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -103,12 +103,12 @@ public abstract class AbstractSpringTestCase
     
     protected void setResolvedSiteMount(HstMutableRequestContext requestContext) {
         
-        ResolvedSiteMount resolvedSiteMount = createNiceMock(ResolvedSiteMount.class);
-        SiteMount siteMount = createNiceMock(SiteMount.class);
+        ResolvedMount resolvedSiteMount = createNiceMock(ResolvedMount.class);
+        Mount siteMount = createNiceMock(Mount.class);
         VirtualHost virtualHost = createNiceMock(VirtualHost.class);
         
         expect(resolvedSiteMount.getResolvedMountPath()).andReturn("").anyTimes();
-        expect(resolvedSiteMount.getSiteMount()).andReturn(siteMount).anyTimes();
+        expect(resolvedSiteMount.getMount()).andReturn(siteMount).anyTimes();
         expect(siteMount.getVirtualHost()).andReturn(virtualHost).anyTimes();
         expect(virtualHost.isContextPathInUrl()).andReturn(true).anyTimes();
 
@@ -117,7 +117,7 @@ public abstract class AbstractSpringTestCase
         replay(virtualHost);
         
         // to parse a url, there must be a ResolvedSiteMount on the HstRequestContext
-        requestContext.setResolvedSiteMount(resolvedSiteMount);
+        requestContext.setResolvedMount(resolvedSiteMount);
     }
     
 
@@ -126,8 +126,8 @@ public abstract class AbstractSpringTestCase
         VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
         HstMutableRequestContext requestContext = ((HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName())).create(false);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
-        ResolvedSiteMount mount = vHosts.matchSiteMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     
-        requestContext.setResolvedSiteMount(mount);
+        ResolvedMount mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     
+        requestContext.setResolvedMount(mount);
         // now we can parse the url *with* a RESOLVED_SITEMOUNT which is needed!        
         HstURLFactory factory = (HstURLFactory)HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(request, response, mount);

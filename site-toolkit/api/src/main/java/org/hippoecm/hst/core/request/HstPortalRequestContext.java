@@ -21,7 +21,7 @@ package org.hippoecm.hst.core.request;
  */
 public interface HstPortalRequestContext {
     ResolvedSiteMapItem getResolvedSiteMapItem();
-    ResolvedSiteMount getResolvedEmbeddingSiteMount();
+    ResolvedMount getResolvedEmbeddingMount();
     String getEmbeddingContextPath();
     String getPathInfo();
 }

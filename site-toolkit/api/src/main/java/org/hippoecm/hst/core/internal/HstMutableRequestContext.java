@@ -29,7 +29,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -47,7 +47,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
 
 	public void setSession(Session session);
 
-	public void setResolvedSiteMount(ResolvedSiteMount resolvedSiteMount);
+	public void setResolvedMount(ResolvedMount resolvedMount);
 
 	public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem);
 	
@@ -69,7 +69,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	
 	public void setEmbeddingContextPath(String embeddingContextPath);
 
-	public void setResolvedEmbeddingSiteMount(ResolvedSiteMount resolvedEmbeddingSiteMount);
+	public void setResolvedEmbeddingMount(ResolvedMount resolvedEmbeddingMount);
 	
     public void setSubject(Subject subject);
     

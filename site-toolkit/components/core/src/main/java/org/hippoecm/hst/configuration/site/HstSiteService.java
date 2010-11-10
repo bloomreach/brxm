@@ -22,7 +22,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
-import org.hippoecm.hst.configuration.hosting.SiteMount;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -54,12 +54,12 @@ public class HstSiteService implements HstSite {
     private String configurationPath;
     private LocationMapTree locationMapTree;
     
-    private SiteMount siteMount;
+    private Mount siteMount;
     
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     
     
-    public HstSiteService(HstSiteRootNode site, SiteMount siteMount, HstManagerImpl hstManager) throws ServiceException{
+    public HstSiteService(HstSiteRootNode site, Mount siteMount, HstManagerImpl hstManager) throws ServiceException{
         this.name = site.getValueProvider().getName();
         this.siteMount = siteMount;
         contentPath = site.getContentPath();
@@ -138,7 +138,7 @@ public class HstSiteService implements HstSite {
        
     }
    
-    public SiteMount getSiteMount(){
+    public Mount getMount(){
         return this.siteMount;
     }
 

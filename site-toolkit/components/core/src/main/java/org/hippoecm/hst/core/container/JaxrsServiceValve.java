@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -47,7 +47,7 @@ public class JaxrsServiceValve extends AbstractValve {
         try {
         	HstRequestContext requestContext = context.getRequestContext();
             HttpServletRequest request = context.getServletRequest();
-            ResolvedSiteMount resolvedSiteMount = requestContext.getResolvedSiteMount();
+            ResolvedMount resolvedSiteMount = requestContext.getResolvedMount();
             String servletPath = new StringBuilder(resolvedSiteMount.getResolvedMountPath()).append(service.getBasePath()).toString();
             
             String pathInfo = HstRequestUtils.getPathInfo(resolvedSiteMount, request);
@@ -109,7 +109,7 @@ public class JaxrsServiceValve extends AbstractValve {
 		@Override
 		public StringBuffer getRequestURL() {
 			if (requestURL == null) {
-				ResolvedVirtualHost host = requestContext.getResolvedSiteMount().getResolvedVirtualHost();
+				ResolvedVirtualHost host = requestContext.getResolvedMount().getResolvedVirtualHost();
 				requestURL = new StringBuilder(super.getScheme()).append("://").append(host.getResolvedHostName()).append(":").append(host.getPortNumber()).append(getRequestURI()).toString();
 			}
 			return new StringBuffer(requestURL);
