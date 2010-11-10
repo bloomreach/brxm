@@ -33,7 +33,9 @@ import javax.servlet.http.Cookie;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -109,13 +111,12 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             if (rememberme) {
                 add(new AttributeModifier("autocomplete", true, new Model<String>("off")));
             }
-            add(new AjaxCheckBox("rememberme", new PropertyModel<Boolean>(this, "rememberme")) {
+            CheckBox rememberMeCheckbox = new CheckBox("rememberme", new PropertyModel<Boolean>(this, "rememberme"));
+            add(rememberMeCheckbox);
+            rememberMeCheckbox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
-
-                @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(SignInForm.this);
-                    target.addComponent(this);
+                    setResponsePage(this.getFormComponent().getPage());
                 }
             });
         }
