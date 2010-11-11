@@ -129,9 +129,11 @@ public class LoginServlet extends HttpServlet {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     
-    public static final String DESTINATION_ATTR_NAME = LoginServlet.class.getPackage().getName() + "." + DESTINATION;
-    public static final String USERNAME_ATTR_NAME = LoginServlet.class.getPackage().getName() + "." + USERNAME;
-    public static final String PASSWORD_ATTR_NAME = LoginServlet.class.getPackage().getName() + "." + PASSWORD;
+    public static final String BASE_NAME = LoginServlet.class.getPackage().getName();
+    
+    public static final String DESTINATION_ATTR_NAME = BASE_NAME + "." + DESTINATION;
+    public static final String USERNAME_ATTR_NAME = BASE_NAME + "." + USERNAME;
+    public static final String PASSWORD_ATTR_NAME = BASE_NAME + "." + PASSWORD;
     
     public static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
     
@@ -147,20 +149,20 @@ public class LoginServlet extends HttpServlet {
     private static Logger log = LoggerFactory.getLogger(LoginServlet.class);
     
     protected String requestCharacterEncoding;
-    protected String loginFormPagePath;
-    protected String loginResourcePath;
-    protected String loginSecurityCheckFormPagePath;
-    protected String loginErrorPagePath;
+    protected String defaultLoginFormPagePath;
+    protected String defaultLoginResourcePath;
+    protected String defaultLoginSecurityCheckFormPagePath;
+    protected String defaultLoginErrorPagePath;
     
     private Map<String, String> templateContentMap = Collections.synchronizedMap(new HashMap<String, String>());
     
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         requestCharacterEncoding = ServletConfigUtils.getInitParameter(servletConfig, null, "requestCharacterEncoding", null);
-        loginFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginFormPagePath", null);
-        loginResourcePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
-        loginSecurityCheckFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginSecurityCheckFormPagePath", null);
-        loginErrorPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginErrorPage", null);
+        defaultLoginFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginFormPagePath", null);
+        defaultLoginResourcePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
+        defaultLoginSecurityCheckFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginSecurityCheckFormPagePath", null);
+        defaultLoginErrorPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginErrorPage", null);
     }
 
     @Override
@@ -204,8 +206,10 @@ public class LoginServlet extends HttpServlet {
     }
     
     protected void doLoginForm(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (loginFormPagePath != null) {
-            request.getRequestDispatcher(loginFormPagePath).forward(request, response);
+        String pagePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginFormPagePath", defaultLoginFormPagePath);
+        
+        if (pagePath != null) {
+            request.getRequestDispatcher(pagePath).forward(request, response);
         } else {
             renderLoginFormPage(request, response);
         }
@@ -238,15 +242,18 @@ public class LoginServlet extends HttpServlet {
             session.removeAttribute(PASSWORD_ATTR_NAME);
         }
         
-        response.sendRedirect(response.encodeURL(request.getContextPath() + loginResourcePath));
+        String resourcePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginResourcePath", defaultLoginResourcePath);
+        response.sendRedirect(response.encodeURL(request.getContextPath() + resourcePath));
     }
     
     protected void doLoginLogin(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Principal userPrincipal = request.getUserPrincipal();
         
         if (userPrincipal == null) {
-            if (loginSecurityCheckFormPagePath != null) {
-                request.getRequestDispatcher(loginSecurityCheckFormPagePath).forward(request, response);
+            String pagePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginSecurityCheckFormPagePath", defaultLoginSecurityCheckFormPagePath);
+            
+            if (pagePath != null) {
+                request.getRequestDispatcher(pagePath).forward(request, response);
             } else {
                 renderAutoLoginPage(request, response);
             }
@@ -308,8 +315,10 @@ public class LoginServlet extends HttpServlet {
     }
     
     protected void doLoginError(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (loginErrorPagePath != null) {
-            request.getRequestDispatcher(loginErrorPagePath).forward(request, response);
+        String pagePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginErrorPagePath", defaultLoginErrorPagePath);
+        
+        if (pagePath != null) {
+            request.getRequestDispatcher(pagePath).forward(request, response);
         } else {
             renderLoginErrorPage(request, response);
         }
@@ -459,6 +468,20 @@ public class LoginServlet extends HttpServlet {
         Velocity.evaluate(context, out, templateResourcePath, templateContent);
         
         out.flush();
+    }
+    
+    private String getRequestOrSessionAttributeAsString(HttpServletRequest request, String name, String defaultValue) {
+        String value = (String) request.getAttribute(name);
+        
+        if (value == null) {
+            HttpSession session = request.getSession(false);
+            
+            if (session != null) {
+                value = (String) session.getAttribute(name);
+            }
+        }
+        
+        return (value != null ? value : defaultValue);
     }
 }
 

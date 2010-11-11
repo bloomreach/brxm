@@ -27,11 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.security.PolicyContextWrapper;
@@ -46,7 +47,7 @@ import org.hippoecm.hst.security.User;
  */
 public class SecurityValve extends AbstractValve {
     
-    public static final String INTENDED_DESTINATION_ATTR_NAME = "org.hippoecm.hst.security.intended.destination";
+    public static final String DESTINATION_ATTR_NAME = "org.hippoecm.hst.security.servlet.destination";
     
     protected AuthenticationProvider authProvider;
     
@@ -59,21 +60,28 @@ public class SecurityValve extends AbstractValve {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
+        ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        
+        boolean accessAllowed = false;
+        boolean authenticationRequired = false;
+        String securityExceptionMessage = null;
         
         try {
-            checkAuthorized(servletRequest);
+            checkAccess(servletRequest);
+            accessAllowed = true;
+        } catch (ContainerSecurityNotAuthenticatedException e) {
+            authenticationRequired = true;
+            securityExceptionMessage = e.getLocalizedMessage();
         } catch (ContainerSecurityException e) {
-            HstLink destedLink = null;
+            securityExceptionMessage = e.getLocalizedMessage();
+        }
+        
+        if (!accessAllowed) {
+            HstLink destinationLink = null;
             
             try {
-                ResolvedMount resolvedMount = requestContext.getResolvedMount();
                 String pathInfo = (requestContext.getResolvedSiteMapItem() == null ? "" : requestContext.getResolvedSiteMapItem().getPathInfo());
-                destedLink = requestContext.getHstLinkCreator().create(pathInfo, resolvedMount.getMount());
-                HttpSession httpSession = servletRequest.getSession(resolvedMount.isSessionStateful());
-                
-                if (httpSession != null) {
-                    httpSession.setAttribute(INTENDED_DESTINATION_ATTR_NAME, destedLink.toUrlForm(requestContext, false));
-                }
+                destinationLink = requestContext.getHstLinkCreator().create(pathInfo, resolvedMount.getMount());
             } catch (Exception linkEx) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to create destination link.", linkEx);
@@ -82,8 +90,33 @@ public class SecurityValve extends AbstractValve {
                 }
             }
             
+            if (authenticationRequired) {
+                String formLoginPage = requestContext.getResolvedMount().getFormLoginPage();
+                
+                if (!StringUtils.isBlank(formLoginPage)) {
+                    try {
+                        HttpSession httpSession = servletRequest.getSession(true);
+                        httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, false));
+                        servletResponse.sendRedirect(servletResponse.encodeURL(servletRequest.getContextPath() + formLoginPage));
+                        return;
+                    } catch (IOException ioe) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Failed to redirect to form login page. " + formLoginPage, ioe);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Failed to redirect to form login page. " + formLoginPage + ". {}", ioe.toString());
+                        }
+                    }
+                }
+            }
+            
             try {
-                servletResponse.sendError(403, e.getMessage());
+                HttpSession httpSession = servletRequest.getSession(resolvedMount.isSessionStateful());
+                
+                if (httpSession != null) {
+                    httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, false));
+                }
+                
+                servletResponse.sendError(403, securityExceptionMessage);
                 return;
             } catch (IOException ioe) {
                 if (log.isDebugEnabled()) {
@@ -119,7 +152,7 @@ public class SecurityValve extends AbstractValve {
         }
     }
     
-    protected void checkAuthorized(HttpServletRequest servletRequest) throws ContainerSecurityException {
+    protected void checkAccess(HttpServletRequest servletRequest) throws ContainerSecurityException {
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         Set<String> roles = null;
@@ -142,7 +175,7 @@ public class SecurityValve extends AbstractValve {
         
         if (!secured) {
             if (log.isDebugEnabled()) {
-                log.debug("The sitemap item is non-secured.");
+                log.debug("The sitemap item or site mount is non-secured.");
             }
             
             return;
@@ -155,7 +188,7 @@ public class SecurityValve extends AbstractValve {
                 log.debug("The user has not been authenticated yet.");
             }
             
-            throw new ContainerSecurityException("Not authenticated yet.");
+            throw new ContainerSecurityNotAuthenticatedException("Not authenticated yet.");
         }
         
         if (users.isEmpty() && roles.isEmpty()) {

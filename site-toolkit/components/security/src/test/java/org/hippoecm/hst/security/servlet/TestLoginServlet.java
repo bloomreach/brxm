@@ -62,8 +62,8 @@ public class TestLoginServlet {
         servletConfig.addInitParameter("loginSecurityCheckFormPagePath", "/WEB-INF/jsp/login_security_check2.jsp");
         loginServlet.init(servletConfig);
         assertEquals("UTF-8", loginServlet.requestCharacterEncoding);
-        assertEquals("/login/resource2", loginServlet.loginResourcePath);
-        assertEquals("/WEB-INF/jsp/login_security_check2.jsp", loginServlet.loginSecurityCheckFormPagePath);
+        assertEquals("/login/resource2", loginServlet.defaultLoginResourcePath);
+        assertEquals("/WEB-INF/jsp/login_security_check2.jsp", loginServlet.defaultLoginSecurityCheckFormPagePath);
     }
     
     @Test

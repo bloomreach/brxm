@@ -166,6 +166,8 @@ public class MountService implements Mount {
     private boolean subjectBasedSession;
     
     private boolean sessionStateful;
+    
+    private String formLoginPage;
      
     public MountService(HstNode mount, Mount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
         this.virtualHost = virtualHost;
@@ -372,7 +374,13 @@ public class MountService implements Mount {
             this.sessionStateful = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SESSIONSTATEFUL);
         } else if (parent != null){
             this.sessionStateful = parent.isSessionStateful();
-        } 
+        }
+        
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE)) {
+            this.formLoginPage = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE);
+        } else if (parent != null){
+            this.formLoginPage = parent.getFormLoginPage();
+        }
         
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
@@ -572,7 +580,11 @@ public class MountService implements Mount {
     public boolean isSessionStateful() {
         return sessionStateful;
     }
-
+    
+    public String getFormLoginPage() {
+        return formLoginPage;
+    }
+    
     public String getProperty(String name) {
         Object o = allProperties.get(name);
         if(o != null) {

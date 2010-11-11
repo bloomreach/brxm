@@ -68,7 +68,7 @@ public class TestSecurityValve {
         servletRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
         } catch (ContainerSecurityException securityEx) {
             fail("Security valve shouldn't do security checking.");
         }
@@ -94,7 +94,7 @@ public class TestSecurityValve {
         servletRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
             fail("Security valve shouldn't try authorization because no user principal found.");
         } catch (ContainerSecurityException securityEx) {
         }
@@ -124,7 +124,7 @@ public class TestSecurityValve {
         servletRequest.setUserPrincipal(userPrincipal);
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
             fail("Security valve doesn't work based on request principal.");
         } catch (ContainerSecurityException securityEx) {
         }
@@ -132,7 +132,7 @@ public class TestSecurityValve {
         servletRequest.addUserRole("guest");
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
             fail("Security valve doesn't work based on request principal.");
         } catch (ContainerSecurityException securityEx) {
         }
@@ -140,7 +140,7 @@ public class TestSecurityValve {
         servletRequest.addUserRole("sales");
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
         } catch (ContainerSecurityException securityEx) {
             fail("Security valve doesn't check security properly even though the user is in sales.");
         }
@@ -177,7 +177,7 @@ public class TestSecurityValve {
         servletRequest.setUserPrincipal(userPrincipal);
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
             fail("Security valve doesn't work based on request principal.");
         } catch (ContainerSecurityException securityEx) {
         }
@@ -185,7 +185,7 @@ public class TestSecurityValve {
         servletRequest.addUserRole("guest");
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
             fail("Security valve doesn't work based on request principal.");
         } catch (ContainerSecurityException securityEx) {
         }
@@ -193,7 +193,7 @@ public class TestSecurityValve {
         servletRequest.addUserRole("sales");
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
         } catch (ContainerSecurityException securityEx) {
             fail("Security valve doesn't check security properly even though the user is in sales.");
         }
@@ -224,7 +224,7 @@ public class TestSecurityValve {
         servletRequest.setUserPrincipal(userPrincipal);
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
             fail("Security valve doesn't work based on request principal.");
         } catch (ContainerSecurityException securityEx) {
         }
@@ -232,7 +232,7 @@ public class TestSecurityValve {
         users.add("delta");
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
             fail("Security valve doesn't work based on request principal.");
         } catch (ContainerSecurityException securityEx) {
         }
@@ -240,7 +240,7 @@ public class TestSecurityValve {
         users.add("charley");
         
         try {
-            securityValve.checkAuthorized(servletRequest);
+            securityValve.checkAccess(servletRequest);
         } catch (ContainerSecurityException securityEx) {
             fail("Security valve doesn't check security properly even though the user is in sales.");
         }

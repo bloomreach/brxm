@@ -117,5 +117,9 @@ public class ResolvedMountImpl implements ResolvedMount{
     public boolean isSessionStateful() {
         return mount.isSessionStateful();
     }
-
+    
+    public String getFormLoginPage() {
+        return mount.getFormLoginPage();
+    }
+    
 }

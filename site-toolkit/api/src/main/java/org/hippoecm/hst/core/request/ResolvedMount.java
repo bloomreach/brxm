@@ -102,4 +102,10 @@ public interface ResolvedMount {
      */
     boolean isSessionStateful();
     
+    /**
+     * Returns FORM Login Page
+     * @return <code>true</code> if the Mount is secured. 
+     */
+    String getFormLoginPage();
+    
 }

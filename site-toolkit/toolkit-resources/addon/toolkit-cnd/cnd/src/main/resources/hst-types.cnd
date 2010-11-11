@@ -200,6 +200,8 @@
 - hst:subjectbasedsession (boolean)
 // whether subject based jcr session should be statefully managed
 - hst:sessionstateful (boolean)
+// form login page for this site mount, to which the request can be redirected for non-authenticated user.
+- hst:formloginpage (string)
 // to hold all the 'free defined properties'
 - * (string)
 
