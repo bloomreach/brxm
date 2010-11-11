@@ -509,6 +509,9 @@ public class LoginServlet extends HttpServlet {
      * @return <code>true</code> when the global {@link VirtualHosts} is configured to have the contextPath in the URL 
      */
     protected boolean showContextPathInUrl(HttpServletRequest request) {
+        if(!HstServices.isAvailable()) {
+            return true;
+        }
         HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         if(hstManager == null) {
             return true;
