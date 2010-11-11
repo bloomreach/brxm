@@ -35,7 +35,7 @@
     }
 </style>
 <div id="<hst:namespace/>detailPane" class="yui-u">
-    <h1>Form example</h1>
+    <h1>Form Component Example</h1>
     <%--@elvariable id="form" type="org.hippoecm.hst.component.support.forms.FormMap"--%>
     <form name="hstForm" action="<hst:actionURL />" method="post">
 
