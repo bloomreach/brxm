@@ -21,24 +21,24 @@
   <body class="hippo-root" onload="return document.signInForm.username.focus();">
     <div>
       <div class="hippo-login-panel">
-        <form class="hippo-login-panel-form" name="signInForm" method="post" action="../login/proxy">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="..${request.ServletPath}/proxy">
           <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
               <tr>
-                <td width="50%"><label>$messages.getString("label.username")&nbsp;</label></td>
+                <td width="50%"><label>${messages.getString("label.username")}&nbsp;</label></td>
                 <td><input class="hippo-form-text" type="text" value="${j_username}" name="username" id="username"/></td>
               </tr>
               <tr>
-                <td><label>$messages.getString("label.password")&nbsp;</label></td>
+                <td><label>${messages.getString("label.password")}&nbsp;</label></td>
                 <td><input class="hippo-form-password" type="password" value="" name="password" id="password"/></td>
               </tr>
               <tr>
                 <td>&nbsp;</td>
                 <td class="hippo-global-alignright">
                   <input type="hidden" name="destination" value="${destination}" />
-                  <input class="hippo-form-submit" type="submit" value="$messages.getString("label.login")"/>
-                  <input class="hippo-form-submit" type="button" value="$messages.getString("label.cancel")" onclick="if ('${destination}') location.href = '${destination}'; return false;" />
+                  <input class="hippo-form-submit" type="submit" value="${messages.getString("label.login")}"/>
+                  <input class="hippo-form-submit" type="button" value="${messages.getString("label.cancel")}" onclick="if ('${destination}') location.href = '${destination}'; return false;" />
                 </td>
               </tr>
             </table>

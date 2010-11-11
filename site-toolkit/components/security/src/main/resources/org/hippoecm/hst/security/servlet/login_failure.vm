@@ -21,18 +21,18 @@
   <body class="hippo-root">
     <div>
       <div class="hippo-login-panel">
-        <form class="hippo-login-panel-form" name="signInForm" method="post" action="../login/proxy">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="..${request.ServletPath}/proxy">
           <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
               <tr>
                 <td>
-                  <p>$messages.getString("message.auth.failed") ${j_username}.</p>
+                  <p>${messages.getString("message.auth.failed")} ${j_username}.</p>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <p><a href="../login/form">$messages.getString("message.try.again")</a></p>
+                  <p><a href="..${request.ServletPath}/form">${messages.getString("message.try.again")}</a></p>
                 </td>
               </tr>
             </table>

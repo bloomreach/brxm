@@ -454,6 +454,8 @@ public class LoginServlet extends HttpServlet {
             log.warn("Cannot find resource bundle. " + RESOURCE_BUNDLE_BASE_NAME);
         }
         
+        context.put("request", request);
+        
         Velocity.evaluate(context, out, templateResourcePath, templateContent);
         
         out.flush();
