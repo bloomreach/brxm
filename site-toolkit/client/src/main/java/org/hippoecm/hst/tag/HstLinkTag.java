@@ -133,6 +133,37 @@ public class HstLinkTag extends ParamContainerTag {
        HstRequestContext reqContext = getHstRequestContext(servletRequest);
        
        if(reqContext == null) {
+           if(this.path != null) {
+               log.debug("Although there is not HstRequestContext, a link for path='{}' is created similar to how the c:url tag would do it", path);
+               if(!path.equals("") && !path.startsWith("/")) {
+                   path = "/" + path;
+               }
+               if (var == null) {
+                   try {               
+                       JspWriter writer = pageContext.getOut();
+                       writer.print(servletRequest.getContextPath() + path);
+                   } catch (IOException ioe) {
+                       throw new JspException(
+                           "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
+                   }
+               } 
+               else {
+                   int varScope = PageContext.PAGE_SCOPE;
+                   if (this.scope != null) {
+                       if ("request".equals(this.scope)) {
+                           varScope = PageContext.REQUEST_SCOPE;
+                       } else if ("session".equals(this.scope)) {
+                           varScope = PageContext.SESSION_SCOPE;
+                       } else if ("application".equals(this.scope)) {
+                           varScope = PageContext.APPLICATION_SCOPE;
+                       }
+                   }
+                   pageContext.setAttribute(var, servletRequest.getContextPath() + path, varScope);
+               }
+               path = null;
+               return EVAL_PAGE;
+           }
+           
            log.warn("There is no HstRequestContext on the request. Cannot create an HstLink outside the hst request processing. Return");
            return EVAL_PAGE;
        } 
