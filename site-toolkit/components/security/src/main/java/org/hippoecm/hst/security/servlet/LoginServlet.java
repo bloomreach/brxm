@@ -19,7 +19,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.Principal;
-import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
@@ -31,6 +35,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.context.Context;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.security.PolicyContextWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -126,24 +134,32 @@ public class LoginServlet extends HttpServlet {
     
     public static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
     
+    public static final String MODE_LOGIN_FORM = "form";
     public static final String MODE_LOGIN_PROXY = "proxy";
     public static final String MODE_LOGIN_LOGIN = "login";
     public static final String MODE_LOGIN_RESOURCE = "resource";
     public static final String MODE_LOGIN_LOGOUT = "logout";
+    public static final String MODE_LOGIN_ERROR = "error";
+    
+    private static final String RESOURCE_BUNDLE_BASE_NAME = LoginServlet.class.getName();
     
     private static Logger log = LoggerFactory.getLogger(LoginServlet.class);
     
     protected String requestCharacterEncoding;
-    protected String loginResourcePath;
     protected String loginFormPagePath;
+    protected String loginResourcePath;
+    protected String loginSecurityCheckFormPagePath;
+    protected String loginErrorPagePath;
     
-    private String loginSecurityCheckPageTemplateContent;
+    private Map<String, String> templateContentMap = Collections.synchronizedMap(new HashMap<String, String>());
     
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         requestCharacterEncoding = ServletConfigUtils.getInitParameter(servletConfig, null, "requestCharacterEncoding", null);
+        loginFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginFormPagePath", null);
         loginResourcePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
-        loginFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginFormPage", null);
+        loginSecurityCheckFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginSecurityCheckFormPagePath", null);
+        loginErrorPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginErrorPage", null);
     }
 
     @Override
@@ -154,12 +170,16 @@ public class LoginServlet extends HttpServlet {
         
         String mode = getMode(request);
         
-        if (MODE_LOGIN_PROXY.equals(mode)) {
+        if (MODE_LOGIN_FORM.equals(mode)) {
+            doLoginForm(request, response);
+        } else if (MODE_LOGIN_PROXY.equals(mode)) {
             doLoginProxy(request, response);
         } else if (MODE_LOGIN_RESOURCE.equals(mode)) {
             doLoginResource(request, response);
         } else if (MODE_LOGIN_LOGOUT.equals(mode)) {
             doLoginLogout(request, response);
+        } else if (MODE_LOGIN_ERROR.equals(mode)) {
+            doLoginError(request, response);
         } else {
             doLoginLogin(request, response);
         }
@@ -180,6 +200,14 @@ public class LoginServlet extends HttpServlet {
         }
         
         return mode;
+    }
+    
+    protected void doLoginForm(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (loginFormPagePath != null) {
+            request.getRequestDispatcher(loginFormPagePath).forward(request, response);
+        } else {
+            renderLoginFormPage(request, response);
+        }
     }
     
     protected void doLoginProxy(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -216,8 +244,8 @@ public class LoginServlet extends HttpServlet {
         Principal userPrincipal = request.getUserPrincipal();
         
         if (userPrincipal == null) {
-            if (loginFormPagePath != null) {
-                request.getRequestDispatcher(loginFormPagePath).forward(request, response);
+            if (loginSecurityCheckFormPagePath != null) {
+                request.getRequestDispatcher(loginSecurityCheckFormPagePath).forward(request, response);
             } else {
                 renderAutoLoginPage(request, response);
             }
@@ -278,6 +306,14 @@ public class LoginServlet extends HttpServlet {
         response.sendRedirect(response.encodeURL(destination));
     }
     
+    protected void doLoginError(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (loginErrorPagePath != null) {
+            request.getRequestDispatcher(loginErrorPagePath).forward(request, response);
+        } else {
+            renderLoginErrorPage(request, response);
+        }
+    }
+    
     protected String normalizeDestination(String destination, HttpServletRequest request) {
         if (destination == null || "".equals(destination.trim())) {
             destination = request.getContextPath() + "/";
@@ -312,18 +348,30 @@ public class LoginServlet extends HttpServlet {
         return null;
     }
     
-    protected void renderAutoLoginPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (loginSecurityCheckPageTemplateContent == null) {
-            InputStream input = null;
+    protected void renderLoginFormPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String username = StringUtils.defaultString(request.getParameter(USERNAME));
+        String destination = StringUtils.defaultString(request.getParameter(DESTINATION));
+        
+        HttpSession httpSession = request.getSession(false);
+        
+        if (httpSession != null) {
+            if (StringUtils.isBlank(username)) {
+                username = StringUtils.defaultString((String) httpSession.getAttribute(USERNAME_ATTR_NAME));
+            }
             
-            try {
-                input = getClass().getResourceAsStream("login_security_check.html");
-                loginSecurityCheckPageTemplateContent = IOUtils.toString(input, "UTF-8");
-            } finally {
-                IOUtils.closeQuietly(input);
+            if (StringUtils.isBlank(destination)) {
+                destination = normalizeDestination((String) httpSession.getAttribute(DESTINATION_ATTR_NAME), request);
             }
         }
         
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("j_username", username);
+        params.put("destination", response.encodeURL(destination));
+        
+        renderTemplatePage(request, response, "login_form.vm", params);
+    }
+    
+    protected void renderAutoLoginPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String jSecurityCheck = response.encodeURL("j_security_check");
         String username = "";
         String password = "";
@@ -331,20 +379,79 @@ public class LoginServlet extends HttpServlet {
         HttpSession httpSession = request.getSession(false);
         
         if (httpSession != null) {
-            username = (String) httpSession.getAttribute(USERNAME_ATTR_NAME);
-            if (username == null) username = "";
-            password = (String) httpSession.getAttribute(PASSWORD_ATTR_NAME);
-            if (password == null) password = "";
+            username = StringUtils.defaultString((String) httpSession.getAttribute(USERNAME_ATTR_NAME));
+            password = StringUtils.defaultString((String) httpSession.getAttribute(PASSWORD_ATTR_NAME));
         }
         
-        String html = MessageFormat.format(loginSecurityCheckPageTemplateContent, new Object [] { jSecurityCheck, username, password });
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("j_security_check", jSecurityCheck);
+        params.put("j_username", username);
+        params.put("j_password", password);
+        
+        renderTemplatePage(request, response, "login_security_check.vm", params);
+    }
+    
+    protected void renderLoginErrorPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String username = "";
+        String destination = "";
+        
+        HttpSession httpSession = request.getSession(false);
+        
+        if (httpSession != null) {
+            username = StringUtils.defaultString((String) httpSession.getAttribute(USERNAME_ATTR_NAME));
+            destination = normalizeDestination((String) httpSession.getAttribute(DESTINATION_ATTR_NAME), request);
+        }
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("j_username", username);
+        params.put("destination", response.encodeURL(destination));
+        
+        renderTemplatePage(request, response, "login_failure.vm", params);
+    }
+    
+    protected void renderTemplatePage(HttpServletRequest request, HttpServletResponse response, String templateResourcePath, Map<String, Object> params) throws IOException, ServletException {
+        if (!templateContentMap.containsKey(templateResourcePath)) {
+            InputStream input = null;
+            
+            try {
+                input = getClass().getResourceAsStream(templateResourcePath);
+                templateContentMap.put(templateResourcePath, IOUtils.toString(input, "UTF-8"));
+            } finally {
+                IOUtils.closeQuietly(input);
+            }
+        }
+        
+        String templateContent = templateContentMap.get(templateResourcePath);
         
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
-        out.print(html);
+        
+        Context context = new VelocityContext();
+        
+        if (params != null && !params.isEmpty()) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                context.put(entry.getKey(), entry.getValue());
+            }
+        }
+        
+        try {
+            Locale requestLocale = request.getLocale();
+            ResourceBundle bundle = null;
+            
+            if (requestLocale != null) {
+                bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASE_NAME, request.getLocale());
+            } else {
+                bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASE_NAME);
+            }
+            
+            context.put("messages", bundle);
+        } catch (Exception e) {
+            log.warn("Cannot find resource bundle. " + RESOURCE_BUNDLE_BASE_NAME);
+        }
+        
+        Velocity.evaluate(context, out, templateResourcePath, templateContent);
+        
         out.flush();
-        out.close();
     }
-    
 }
 

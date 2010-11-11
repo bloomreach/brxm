@@ -1,4 +1,4 @@
-<!--
+#*
   Copyright 2008-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
@@ -11,12 +11,13 @@
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License. -->
+  limitations under the License.
+*#
 <html>
-  <body onload="return document.getElementById(''loginForm'').submit();">
-    <form id="loginForm" method="POST" action="{0}">
-      <input type="hidden" name="j_username" value="{1}" /> 
-      <input type="hidden" name="j_password" value="{2}" />
+  <body onload="return document.getElementById('loginForm').submit();">
+    <form id="loginForm" method="POST" action="${j_security_check}">
+      <input type="hidden" name="j_username" value="${j_username}" /> 
+      <input type="hidden" name="j_password" value="${j_password}" />
       <noscript>
         <input type="submit" value="Login now" />
       </noscript>

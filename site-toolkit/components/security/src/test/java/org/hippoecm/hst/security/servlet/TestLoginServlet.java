@@ -59,11 +59,11 @@ public class TestLoginServlet {
     public void testInit() throws ServletException {
         servletConfig.addInitParameter("requestCharacterEncoding", "UTF-8");
         servletConfig.addInitParameter("loginResource", "/login/resource2");
-        servletConfig.addInitParameter("loginFormPage", "/WEB-INF/jsp/login_security_check2.jsp");
+        servletConfig.addInitParameter("loginSecurityCheckFormPagePath", "/WEB-INF/jsp/login_security_check2.jsp");
         loginServlet.init(servletConfig);
         assertEquals("UTF-8", loginServlet.requestCharacterEncoding);
         assertEquals("/login/resource2", loginServlet.loginResourcePath);
-        assertEquals("/WEB-INF/jsp/login_security_check2.jsp", loginServlet.loginFormPagePath);
+        assertEquals("/WEB-INF/jsp/login_security_check2.jsp", loginServlet.loginSecurityCheckFormPagePath);
     }
     
     @Test
@@ -123,7 +123,7 @@ public class TestLoginServlet {
         assertTrue(response.getContentAsString().contains("j_username"));
         assertTrue(response.getContentAsString().contains("j_password"));
         
-        servletConfig.addInitParameter("loginFormPage", "/WEB-INF/jsp/login_security_check.jsp");
+        servletConfig.addInitParameter("loginSecurityCheckFormPagePath", "/WEB-INF/jsp/login_security_check.jsp");
         loginServlet.init(servletConfig);
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();

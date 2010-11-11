@@ -1,4 +1,4 @@
-<%--
+#*
   Copyright 2008-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
@@ -11,43 +11,34 @@
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License. --%>
-<%@ page language="java" %>
-<%@ page import="org.hippoecm.hst.security.servlet.LoginServlet" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x"%>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
-<%
-String username = (String) session.getAttribute("org.hippoecm.hst.security.servlet.username");
-if (username == null) username = "";
-String password = (String) session.getAttribute("org.hippoecm.hst.security.servlet.password");
-if (password == null) password = "";
-String destination = request.getParameter("destination");
-if (destination == null) destination = "";
-%>
-
+  limitations under the License.
+*#
 <html>
   <head>
     <title>Hippo CMS 7</title>
     <link rel="stylesheet" type="text/css" href="../skin/screen.css" />
   </head>
-  <body class="hippo-root">
+  <body class="hippo-root" onload="return document.signInForm.username.focus();">
     <div>
       <div class="hippo-login-panel">
-        <form class="hippo-login-panel-form" name="signInForm" method="post" action="<c:url value="/login/proxy"/>">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="../login/proxy">
           <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
               <tr>
-                <td>
-                  <p>Authentication failed with user, <%=username%>.</p>
-                </td>
+                <td width="50%"><label>$messages.getString("label.username")&nbsp;</label></td>
+                <td><input class="hippo-form-text" type="text" value="${j_username}" name="username" id="username"/></td>
               </tr>
               <tr>
-                <td>
-                  <p><a href="login.jsp">Try again.</a></p>
+                <td><label>$messages.getString("label.password")&nbsp;</label></td>
+                <td><input class="hippo-form-password" type="password" value="" name="password" id="password"/></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="hippo-global-alignright">
+                  <input type="hidden" name="destination" value="${destination}" />
+                  <input class="hippo-form-submit" type="submit" value="$messages.getString("label.login")"/>
+                  <input class="hippo-form-submit" type="button" value="$messages.getString("label.cancel")" onclick="if ('${destination}') location.href = '${destination}'; return false;" />
                 </td>
               </tr>
             </table>

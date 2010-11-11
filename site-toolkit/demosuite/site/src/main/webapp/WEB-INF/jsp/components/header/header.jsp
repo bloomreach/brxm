@@ -47,7 +47,7 @@
           </li>
           <% if (request.getUserPrincipal() == null) { %>
           <li>
-            <hst:link var="login" path="/jsp/login.jsp" />
+            <hst:link var="login" path="/login/form" />
             <a title="Login" href="${login}?destination=${destination}">Log In</a>
           </li>
           <% } else { %>

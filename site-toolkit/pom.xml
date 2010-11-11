@@ -83,7 +83,8 @@
     <commons-logging.version>1.1.1</commons-logging.version>
     <ehcache-core.version>2.2.0</ehcache-core.version>
     <ehcache-web.version>2.0.2</ehcache-web.version>
-
+    <velocity.version>1.6.4</velocity.version>
+    
     <spring.version>3.0.4.RELEASE</spring.version>
     <aspectj.version>1.6.2</aspectj.version>
 
@@ -639,6 +640,13 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      
+      <!-- Velocity -->
+      <dependency>
+        <groupId>org.apache.velocity</groupId>
+        <artifactId>velocity</artifactId>
+        <version>${velocity.version}</version>
       </dependency>
       
       <!-- Hippo ECM Depedencies -->
