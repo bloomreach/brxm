@@ -40,7 +40,7 @@ public interface ILocaleProvider extends IClusterable {
     String SERVICE_ID = "locale.id";
 
     enum LocaleState {
-        AVAILABLE, EXISTS, FOLDER, FOLDER_OPEN
+        AVAILABLE, EXISTS, DOCUMENT, FOLDER, FOLDER_OPEN
     }
 
     /**
