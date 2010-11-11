@@ -19,7 +19,7 @@
   <description>Hippo ECM repository</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository</artifactId>
-  <version>2.17.00-SNAPSHOT</version>
+  <version>2.17.00</version>
   <packaging>pom</packaging>
 
   <url>http://www.onehippo.org/cms7/</url>
@@ -92,9 +92,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/tags/Tag-HREPTWO-v2_17_00</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/tags/Tag-HREPTWO-v2_17_00</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/tags/Tag-HREPTWO-v2_17_00</url>
   </scm>
 
   <distributionManagement>

@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-repository</artifactId>
-    <version>2.17.00-SNAPSHOT</version>
+    <version>2.17.00</version>
   </parent>
 
   <name>Repository JCA</name>
@@ -27,9 +27,9 @@
   <artifactId>hippo-ecm-repository-jca</artifactId>
   <packaging>rar</packaging>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/jca</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/jca</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/jca</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/tags/Tag-HREPTWO-v2_17_00/jca</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/tags/Tag-HREPTWO-v2_17_00/jca</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/tags/Tag-HREPTWO-v2_17_00/jca</url>
   </scm>
   <build>
     <defaultGoal>package</defaultGoal>
@@ -150,27 +150,27 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-ldap-repository</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
+      <version>2.17.00</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
+      <version>2.17.00</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
+      <version>2.17.00</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
+      <version>2.17.00</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-modules</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
+      <version>2.17.00</version>
     </dependency>
   </dependencies>
 </project>
