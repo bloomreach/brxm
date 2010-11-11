@@ -122,10 +122,12 @@ public class HstLinkTag extends ParamContainerTag {
     @Override
     public int doEndTag() throws JspException{
         if(skipTag) {
+            cleanup();
             return EVAL_PAGE;
         }
         if(this.link == null && this.path == null && this.hippoBean == null && siteMapItemRefId == null) {
             log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set");
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -138,8 +140,17 @@ public class HstLinkTag extends ParamContainerTag {
                if(!path.equals("") && !path.startsWith("/")) {
                    path = "/" + path;
                }
+               if (!parametersMap.isEmpty()) {
+                   try {
+                        String queryString = getQueryString(servletRequest.getCharacterEncoding());
+                        path += queryString;
+                   } catch (UnsupportedEncodingException e) {
+                        throw new JspException(e);
+                   }
+                       
+              }
                writeOrSetVar(servletRequest.getContextPath() + path);
-               path = null;
+               cleanup();
                return EVAL_PAGE;
            }
            
@@ -226,26 +237,8 @@ public class HstLinkTag extends ParamContainerTag {
                     urlString += queryString.toString();
                 }
             } else if (!parametersMap.isEmpty()) {
-                boolean firstParamDone = false;
-                StringBuilder queryString = new StringBuilder();
-                for (Entry<String, List<String>> entry : parametersMap.entrySet()) {
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        String name = entry.getKey();
-                        if(removedParametersList.contains(name)) {
-                            // set to null by hst:param tag, thus skip
-                            continue;
-                        }
-                        if (entry.getValue() != null) {
-                            for (String value : entry.getValue()) {
-                                if(value != null) {
-                                    queryString.append(firstParamDone ? "&" : "?").append(name).append("=").append(URLEncoder.encode(value, reqContext.getBaseURL().getCharacterEncoding()));
-                                    firstParamDone = true;
-                                }
-                            }
-                        }
-                    }
-                }
-                urlString += queryString.toString();
+                String queryString = getQueryString(reqContext.getBaseURL().getCharacterEncoding());
+                urlString += queryString;
             }
         } catch (UnsupportedEncodingException e) {
             throw new JspException("UnsupportedEncodingException on the base url", e);
@@ -256,24 +249,34 @@ public class HstLinkTag extends ParamContainerTag {
         
         /*cleanup*/
         
-        parametersMap.clear();
-        removedParametersList.clear();
-        var = null;
-        hippoBean = null;
-        scope = null;
-        path = null;
-        siteMapItemRefId = null;
-        subPath = null;
-        link = null;
-        external = false;
-        skipTag = false;
-        preferSiteMapItem = null;
-        fallback = true;
-        canonical = false;
-        navigationStateful = false;
-        mountAlias = null;
+        cleanup();
         
         return EVAL_PAGE;
+    }
+
+   
+
+    private String getQueryString(String characterEncoding) throws UnsupportedEncodingException {
+        boolean firstParamDone = false;
+        StringBuilder queryString = new StringBuilder();
+        for (Entry<String, List<String>> entry : parametersMap.entrySet()) {
+            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                String name = entry.getKey();
+                if(removedParametersList.contains(name)) {
+                    // set to null by hst:param tag, thus skip
+                    continue;
+                }
+                if (entry.getValue() != null) {
+                    for (String value : entry.getValue()) {
+                        if(value != null) {
+                            queryString.append(firstParamDone ? "&" : "?").append(name).append("=").append(URLEncoder.encode(value, characterEncoding));
+                            firstParamDone = true;
+                        }
+                    }
+                }
+            }
+        }
+        return queryString.toString();
     }
 
     
@@ -300,6 +303,25 @@ public class HstLinkTag extends ParamContainerTag {
                }
                pageContext.setAttribute(var, url, varScope);
            }
+    }
+    
+    private void cleanup() {
+        parametersMap.clear();
+        removedParametersList.clear();
+        var = null;
+        hippoBean = null;
+        scope = null;
+        path = null;
+        siteMapItemRefId = null;
+        subPath = null;
+        link = null;
+        external = false;
+        skipTag = false;
+        preferSiteMapItem = null;
+        fallback = true;
+        canonical = false;
+        navigationStateful = false;
+        mountAlias = null;
     }
     
     /* (non-Javadoc)

@@ -14,6 +14,8 @@
   limitations under the License. --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
 String destination = (String) session.getAttribute("org.hippoecm.hst.security.servlet.destination");
@@ -22,9 +24,9 @@ if (destination == null) destination = "";
 <html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-<c:url var="loginPageUrl" value="/login/form">
-  <c:param name="destination" value="<%=destination%>" />
-</c:url>
+<hst:link var="loginPageUrl" path="/login/form">
+   <hst:param name="destination" value="<%=destination%>" />
+</hst:link>
 <meta http-equiv='refresh' content='1;${loginPageUrl}' />
 <title>Authentication Required</title>
 </head>
