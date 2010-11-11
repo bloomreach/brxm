@@ -95,6 +95,12 @@ public interface VirtualHosts {
     String getDefaultHostName();
     
     /**
+     * This is the global setting for every {@link VirtualHost} / {@link Mount} whether contextPath should be in the URL or not
+     * @return <code>true</code> when the created url should have the contextPath in it
+     */
+    boolean isContextPathInUrl();
+    
+    /**
      * @return the locale of this VirtualHosts object or <code>null</code> if no locale is configured
      */
     String getLocale();

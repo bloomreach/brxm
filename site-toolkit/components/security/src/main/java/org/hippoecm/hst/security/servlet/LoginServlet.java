@@ -40,8 +40,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.security.PolicyContextWrapper;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
@@ -243,7 +252,11 @@ public class LoginServlet extends HttpServlet {
         }
         
         String resourcePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginResourcePath", defaultLoginResourcePath);
-        response.sendRedirect(response.encodeURL(request.getContextPath() + resourcePath));
+        if(showContextPathInUrl(request)) {
+            response.sendRedirect(response.encodeURL(request.getContextPath() + resourcePath));
+        } else {
+            response.sendRedirect(response.encodeURL(resourcePath));
+        }
     }
     
     protected void doLoginLogin(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -326,7 +339,11 @@ public class LoginServlet extends HttpServlet {
     
     protected String normalizeDestination(String destination, HttpServletRequest request) {
         if (destination == null || "".equals(destination.trim())) {
-            destination = request.getContextPath() + "/";
+            if(showContextPathInUrl(request)) {
+                destination = request.getContextPath() + "/";
+            } else {
+                destination = "/";
+            }
         }
         
         return destination;
@@ -482,6 +499,34 @@ public class LoginServlet extends HttpServlet {
         }
         
         return (value != null ? value : defaultValue);
+    }
+    
+    /**
+     * This is a hook into the HstServices component manager to look up in the {@link VirtualHosts} whether the contextPath should be in the
+     * URL. Although this can be overridden per {@link VirtualHost} or {@link Mount}, this is the best we can do at this moment as we do 
+     * not have an {@link HstRequestContext} and also no {@link ResolvedMount} thus.
+     * @param request 
+     * @return <code>true</code> when the global {@link VirtualHosts} is configured to have the contextPath in the URL 
+     */
+    protected boolean showContextPathInUrl(HttpServletRequest request) {
+        HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        if(hstManager == null) {
+            return true;
+        }
+        try {
+            // first try to match the HOST:
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
+            String hostName = HstRequestUtils.getFarthestRequestHost(request);
+            ResolvedVirtualHost resolvedVirtualHost = vhosts.matchVirtualHost(hostName);
+            if(resolvedVirtualHost != null) {
+               return resolvedVirtualHost.getVirtualHost().isContextPathInUrl();  
+            } 
+            return hstManager.getVirtualHosts().isContextPathInUrl();
+        } catch (RepositoryNotAvailableException e) {
+            log.warn("Error occured", e);
+        }
+        return false;
+        
     }
 }
 

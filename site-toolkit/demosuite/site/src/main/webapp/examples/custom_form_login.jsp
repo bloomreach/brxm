@@ -38,7 +38,7 @@ pageContext.setAttribute("destination", response.encodeURL(destination));
 
 <html>
   <head>
-    <title>Hippo CMS 7</title>
+    <title>Login</title>
     <link rel="stylesheet" type="text/css" href="../skin/screen.css" />
   </head>
   <body class="hippo-root" onload="return document.signInForm.username.focus();">
