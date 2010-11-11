@@ -246,7 +246,6 @@
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-document</sv:value>
           <sv:value>new-folder</sv:value>
-          <sv:value>new-translated-folder</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
