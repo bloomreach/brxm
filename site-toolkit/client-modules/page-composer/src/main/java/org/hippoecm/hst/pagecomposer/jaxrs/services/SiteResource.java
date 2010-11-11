@@ -58,7 +58,6 @@ public class SiteResource extends AbstractConfigResource {
        
     }
 
-    @POST
     @GET
     @Path("/logout/")
     @Produces(MediaType.APPLICATION_JSON)
