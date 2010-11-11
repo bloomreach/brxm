@@ -17,7 +17,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -56,4 +58,21 @@ public class SiteResource extends AbstractConfigResource {
        
     }
 
+    @POST
+    @GET
+    @Path("/logout/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response logout(@Context HttpServletRequest servletRequest,
+                                             @Context HttpServletResponse servletResponse) {
+        
+        HttpSession session = servletRequest.getSession(false);
+        if (session != null) {
+            // logout
+            session.invalidate();
+        }
+        
+        // TODO Vijay: return here the data object you can use to refresh the page
+        // make sure you 'redirect' to a link created with the HstLinkCreator
+        return ok("You are logged out", null);
+    }
 }
