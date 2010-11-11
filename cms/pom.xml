@@ -426,8 +426,8 @@
           <configuration>
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmCommentPrefix>HREPTWO-4397:</scmCommentPrefix>
-          <tag>Tag-HREPTWO-v2_16_00</tag>
+          <scmCommentPrefix>HREPTWO-4653:</scmCommentPrefix>
+          <tag>Tag-HREPTWO-v2_17_00</tag>
           <!-- preparationGoals>clean</preparationGoals -->
         </configuration>
       </plugin>
