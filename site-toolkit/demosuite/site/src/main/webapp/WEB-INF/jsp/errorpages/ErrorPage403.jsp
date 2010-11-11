@@ -22,7 +22,7 @@ if (intendedDestination == null) intendedDestination = "";
 <html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-<c:url var="loginPageUrl" value="/jsp/login.jsp">
+<c:url var="loginPageUrl" value="/login/form">
   <c:param name="destination" value="<%=intendedDestination%>" />
 </c:url>
 <meta http-equiv='refresh' content='1;${loginPageUrl}' />

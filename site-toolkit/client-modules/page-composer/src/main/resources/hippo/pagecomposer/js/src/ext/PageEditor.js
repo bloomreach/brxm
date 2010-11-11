@@ -126,9 +126,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     doLogout : function() {
         var loc = "" + location.href;
         var relurl = loc.replace(/^https?:\/\/[^\/]+/, "");
-    	// TODO: Make the following configurable.
-    	var loginPagePath = "/jsp/login.jsp";
-    	var loginPage = loginPagePath + "?invalidate=true&destination=" + relurl; 
+    	var loginFormPagePath = "/login/form";
+    	var loginPage = loginFormPagePath + "?invalidate=true&destination=" + relurl; 
         location.href = loc.replace(/\/composermode\/.*$/, loginPage); 
     },
 

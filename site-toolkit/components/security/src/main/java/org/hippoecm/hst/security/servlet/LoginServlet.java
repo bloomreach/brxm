@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -361,6 +362,10 @@ public class LoginServlet extends HttpServlet {
             
             if (StringUtils.isBlank(destination)) {
                 destination = normalizeDestination((String) httpSession.getAttribute(DESTINATION_ATTR_NAME), request);
+            }
+            
+            if (BooleanUtils.toBoolean(request.getParameter("invalidate"))) {
+                httpSession.invalidate();
             }
         }
         
