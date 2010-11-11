@@ -38,6 +38,9 @@ public final class FolderNode extends ExtTreeNode {
     @ExtProperty
     private final String cls = "folder";
 
+    @ExtProperty
+    private String iconCls = null;
+
     @SuppressWarnings("unused")
     @ExtProperty
     private boolean disabled;
@@ -74,6 +77,10 @@ public final class FolderNode extends ExtTreeNode {
         return cls;
     }
 
+    public String getIconCls() {
+        return iconCls;
+    }
+
     public List<String> getT9ns() {
         return Collections.unmodifiableList(t9ns);
     }
@@ -82,4 +89,9 @@ public final class FolderNode extends ExtTreeNode {
         this.t9ns = new ArrayList<String>(t9ns);
         disabled = isDisabled();
     }
+
+    public void setIconCls(String iconCls) {
+        this.iconCls = iconCls;
+    }
+
 }

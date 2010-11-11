@@ -29,7 +29,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.LocaleImageService;
+import org.hippoecm.frontend.translation.PathRenderer;
 import org.hippoecm.frontend.translation.TranslationResources;
+import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.components.folder.model.EditedT9Tree;
 import org.hippoecm.frontend.translation.components.folder.model.T9Node;
 import org.hippoecm.frontend.translation.components.folder.model.T9Tree;
@@ -47,17 +49,19 @@ import org.wicketstuff.js.ext.util.ExtPropertyConverter;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 @ExtClass("Hippo.Translation.Folder.Panel")
-public class FolderTranslationView extends ExtPanel {
+public final class FolderTranslationView extends ExtPanel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
+    private final ILocaleProvider provider;
     private final ExtTreeNode root;
     private final ExtTreeLoader loader;
     private final SiblingLocator locator;
     private final LocaleImageService imageService;
     private final SelectionListener selectionListener;
+    private final PathRenderer pathRenderer;
 
     private final IModel<T9Tree> treeModel;
     private final IModel<T9Node> model;
@@ -66,7 +70,11 @@ public class FolderTranslationView extends ExtPanel {
             ILocaleProvider provider) {
         super(id);
 
+        this.provider = provider;
+
         add(TranslationResources.getTranslationsHeaderContributor());
+        add(TranslationResources.getCountriesCss());
+
         addHeaderContribution("treegrid/TreeGridSorter.js");
         addHeaderContribution("treegrid/TreeGridColumnResizer.js");
         addHeaderContribution("treegrid/TreeGridNodeUI.js");
@@ -100,9 +108,10 @@ public class FolderTranslationView extends ExtPanel {
         add(root);
 
         T9Node node = model.getObject();
-        add(loader = new FolderTree(treeModel, node.getLang()));
+        add(loader = new FolderTree(treeModel, node.getLang(), provider));
         add(locator = new SiblingLocator(treeModel));
         add(imageService = new LocaleImageService(provider));
+        add(pathRenderer = new PathRenderer(provider));
 
         selectionListener = new SelectionListener() {
             private static final long serialVersionUID = 1L;
@@ -147,6 +156,7 @@ public class FolderTranslationView extends ExtPanel {
         root.onRenderExtHead(js);
         locator.onRenderExtHead(js);
         loader.onRenderExtHead(js);
+        pathRenderer.onRenderExtHead(js);
 
         super.preRenderExtHead(js);
     }
@@ -160,6 +170,15 @@ public class FolderTranslationView extends ExtPanel {
         properties.put("loader", new JSONIdentifier(loader.getJsObjectId()));
         properties.put("locator", new JSONIdentifier(locator.getJsObjectId()));
         properties.put("imageService", imageService.getCallbackUrl(false));
+        properties.put("pathRenderer", new JSONIdentifier(pathRenderer.getJsObjectId()));
+
+        JSONObject locales = new JSONObject();
+        for (HippoLocale locale : provider.getLocales()) {
+            JSONObject jsonLocale = new JSONObject();
+            jsonLocale.put("country", locale.getLocale().getCountry());
+            locales.put(locale.getName(), jsonLocale);
+        }
+        properties.put("locales", getEscapeModelStrings());
 
         JSONObject listeners;
         if (properties.has("listeners")) {

@@ -15,10 +15,9 @@
  */
 package org.hippoecm.frontend.translation;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.hippoecm.frontend.service.IconSize;
 
 public final class TranslationResources {
     @SuppressWarnings("unused")
@@ -31,8 +30,8 @@ public final class TranslationResources {
         return JavascriptPackageResource.getHeaderContribution(TranslationResources.class, "translations.js");
     }
 
-    public static ResourceReference getIcon(String name, IconSize size) {
-        return new ResourceReference(TranslationResources.class, "icons/" + name + "-" + size.getSize() + ".png");
+    public static HeaderContributor getCountriesCss() {
+        return CSSPackageResource.getHeaderContribution(TranslationResources.class, "countries.css");
     }
 
 }

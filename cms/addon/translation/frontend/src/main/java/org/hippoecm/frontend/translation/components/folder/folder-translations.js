@@ -22,6 +22,8 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
   autoheight: false,
   height: 311,
   layout: 'form',
+  padding: 8,
+  border: false,
 
   constructor: function(config) {
     this.folder = config.folder;
@@ -29,7 +31,8 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
     this.locator = config.locator;
     this.root = config.root;
     this.resources = config.resources;
-    
+    this.pathRenderer = config.pathRenderer;
+
 //    this.breakLinkDisabled = config.breakLinkDisabled;
     this.breakLink = config.breakLink;
 
@@ -54,13 +57,10 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
         frame: true,
         hideLabel: true,
         items: [{
-          id: 'folder-lang',
-          xtype: 'displayfield',
-          value: '<img src="' + this.images.getImage(self.folder['lang']) + '" />',
-        }, {
           id: 'folder-path',
           xtype: 'displayfield',
-          value: Hippo.Translation.renderPath(self.folder['path']),
+          height: 37,
+          value: this.pathRenderer.renderPath(self.folder['path']),
         }]
       }]
     });
@@ -68,7 +68,7 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
     config.items.push({
       xtype: 'button',
       id: 'translations-break-link',
-      width: 60,
+      height: 20,
       disabled: !hasSiblings,
       icon: (hasSiblings ? self.breakLink : self.breakLinkDisabled),
       iconCls: 'hippo-t9n-breaklink',
@@ -88,7 +88,13 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
         }
       }
     });
-    config.items.push(this.panel);
+
+    this.translationsfield = Ext.create({
+      xtype: 'fieldset',
+      title: self.resources['translation-folders'],
+    });
+    this.translationsfield.add(this.panel);
+    config.items.push(this.translationsfield);
     
     Hippo.Translation.Folder.Panel.superclass.constructor.call(this, config);
   },
@@ -127,16 +133,17 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
       xtype: 'hippo-translation-folder-container',
       images: this.images,
       resources: this.resources,
+      pathRenderer: this.pathRenderer,
       entries: siblings
     });
   },
   
   resetSelection: function() {
-    this.remove(this.panel);
+    this.translationsfield.remove(this.panel);
     this.panel.destroy();
 
     this.panel = this.createSelectPanel();
-    this.add(this.panel);
+    this.translationsfield.add(this.panel);
 
     Ext.getCmp('translations-break-link').disable();
     this.doLayout();
@@ -150,11 +157,11 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
       this.locator.getSiblings(t9Id, function(siblings) {
         Ext.getCmp('translations-break-link').enable();
 
-        this.remove(this.panel);
+        this.translationsfield.remove(this.panel);
         this.panel.destroy();
 
         this.panel = this.createSiblingPanel(siblings);
-        this.add(this.panel);
+        this.translationsfield.add(this.panel);
 
         this.doLayout();
 
@@ -239,6 +246,7 @@ Hippo.Translation.Folder.Container = Ext.extend(Ext.Container, {
     this.entries = config.entries || [];
     this.images = config.images;
     this.resources = config.resources;
+    this.pathRenderer = config.pathRenderer;
 
     Hippo.Translation.Folder.Container.superclass.constructor.call(this, config);
 
@@ -250,18 +258,11 @@ Hippo.Translation.Folder.Container = Ext.extend(Ext.Container, {
     var self = this;
     this.list = Ext.create({
       xtype: 'listview',
+      hideHeaders: true,
       height: 216,
       width: 622,
       store: store,
       columns: [{
-        header: '',
-        width: 0.1,
-        tpl: new Ext.XTemplate('{lang:this.format}', {
-          format: function(v) {
-            return '<img src="' + self.images.getImage(v) + '" />';
-          }.createDelegate(this)
-        })
-      }, {
         header: self.resources['folder-translation'],
         dataIndex: 'path'
       }]
@@ -272,7 +273,7 @@ Hippo.Translation.Folder.Container = Ext.extend(Ext.Container, {
   getData: function(entries) {
     var data = [];
     for (var language in entries) {
-      var path = Hippo.Translation.renderPath(entries[language]);
+      var path = this.pathRenderer.renderPath(entries[language]);
       var record = {
         lang: language,
         path: path

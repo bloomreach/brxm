@@ -34,13 +34,13 @@ public final class TestLocaleProvider implements ILocaleProvider {
     private Map<String, HippoLocale> locales = new TreeMap<String, HippoLocale>();
 
     public TestLocaleProvider() {
-        locales.put("en", createLocale("en", "English"));
-        locales.put("fr", createLocale("fr", "French"));
-        locales.put("nl", createLocale("nl", "Dutch"));
+        locales.put("en", createLocale("en", "UK", "English"));
+        locales.put("fr", createLocale("fr", "FR", "French"));
+        locales.put("nl", createLocale("nl", "NL", "Dutch"));
     }
 
-    private HippoLocale createLocale(final String key, final String name) {
-        return new HippoLocale(new Locale(key), key) {
+    private HippoLocale createLocale(final String key, String country, final String name) {
+        return new HippoLocale(new Locale(key, country), key) {
             private static final long serialVersionUID = 1L;
 
             @Override

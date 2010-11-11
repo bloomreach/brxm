@@ -23,16 +23,47 @@ Hippo.Translation = {};
 /*
  * render path from a list of T9Node ancestors
  */
-Hippo.Translation.renderPath = function(path) {
-  var text = '';
-  for (var i = 1; i < path.length; i++) {
-    if (i != 1) {
-      text += ' / ';
+Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
+
+  constructor: function(config) {
+    this.locales = config.locales;
+    this.resources = config.resources;
+    Hippo.Translation.PathRenderer.superclass.constructor.call(config);
+  },
+
+  renderPath: function(path) {
+    var text = '<div style="float: left;">';
+    var locale = null;
+    for (var i = 1; i < path.length; i++) {
+      if (i != 1) {
+        text += ' / ';
+      }
+
+      var countryClass = 'hippo-translation-country';
+      if (locale == null && path[i].lang != undefined) {
+        var candidate = this.locales[path[i].lang];
+        if (candidate != undefined) {
+          locale = candidate;
+          countryClass = 'hippo-translation-country-' + locale.country;
+        }
+      }
+
+      text += '<span class="x-tree-node-expanded">'
+            +   '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" '
+            +     'style="width: 16px; height: 16px; background-repeat: no-repeat;" '
+            +     'class="' + countryClass + '" />'
+            + '</span> ';
+      text += path[i].name;
     }
-    text += path[i].name;
+    text += '</div>';
+    if (locale != null) {
+      text += '<div style="float: left;" class="hippo-translation-language">'
+            +   this.resources['language'] + ': ' + locale.name
+            + '</div>';
+    }
+    return text;
   }
-  return text;
-};
+});
 
 Hippo.Translation.ImageService = function(imageServiceUrl) {
    this.service = imageServiceUrl;

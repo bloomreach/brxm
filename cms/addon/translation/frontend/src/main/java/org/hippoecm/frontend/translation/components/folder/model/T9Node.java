@@ -41,7 +41,7 @@ public final class T9Node implements Serializable {
 
     @ExtProperty
     private String lang;
-
+    
     public T9Node(String id) {
         this.parent = null;
         this.id = id;

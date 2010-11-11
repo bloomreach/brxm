@@ -98,7 +98,7 @@ public class FolderTranslationsDialog extends WorkflowAction.WorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=675,height=378").makeImmutable();
+        return new ValueMap("width=680,height=388").makeImmutable();
     }
 
     @Override

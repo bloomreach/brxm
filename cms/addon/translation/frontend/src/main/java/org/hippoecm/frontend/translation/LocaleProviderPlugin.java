@@ -76,9 +76,6 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
             addFolderViewHeader(page, "treegrid/TreeGridColumns.js");
             addFolderViewHeader(page, "treegrid/TreeGrid.js");
             addFolderViewHeader(page, "folder-translations.js");
-
-            page.add(JavascriptPackageResource
-                    .getHeaderContribution(FolderTranslationView.class, "folder-translations.js"));
         }
     }
 
@@ -138,7 +135,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
                 public String getDisplayName(Locale locale) {
                     String name = translations.get(locale.getLanguage());
                     if (name == null) {
-                        return locale.getLanguage();
+                        return getLocale().getDisplayLanguage(locale);
                     }
                     return name;
                 }
@@ -150,22 +147,25 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
                     if (country != null) {
                         country = "_" + country.toLowerCase();
                     } else {
-                        country = "";
+                        country = "_us";
                     }
 
                     String resourceName;
                     switch (state) {
                     case AVAILABLE:
-                        resourceName = "flag-new-" + size.getSize() + country + ".png";
+                        resourceName = "plus/flag-plus-" + size.getSize() + country + ".png";
+                        break;
+                    case DOCUMENT:
+                        resourceName = "document/flag-document-" + size.getSize() + country + ".png";
                         break;
                     case FOLDER:
-                        resourceName = "folder-closed-" + size.getSize() + country + ".png";
+                        resourceName = "folder_closed/folder-closed-" + size.getSize() + country + ".png";
                         break;
                     case FOLDER_OPEN:
-                        resourceName = "folder-open-" + size.getSize() + country + ".png";
+                        resourceName = "folder_open/folder-open-" + size.getSize() + country + ".png";
                         break;
                     default:
-                        resourceName = "flag-" + size.getSize() + country + ".png";
+                        resourceName = "flags/flag-" + size.getSize() + country + ".png";
                         break;
                     }
                     return new ResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, locale, getName());
