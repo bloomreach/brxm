@@ -592,21 +592,6 @@
         <version>2.1.2-h1</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.wicket</groupId>
-        <artifactId>wicket</artifactId>
-        <version>${wicket.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.wicket</groupId>
-        <artifactId>wicket-extensions</artifactId>
-        <version>${wicket.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.wicket</groupId>
-        <artifactId>wicket-datetime</artifactId>
-        <version>${wicket.version}</version>
-      </dependency>
-      <dependency>
         <groupId>javax.jdo</groupId>
         <artifactId>jdo2-api</artifactId>
         <version>${javax.jdo2-api.version}</version>
