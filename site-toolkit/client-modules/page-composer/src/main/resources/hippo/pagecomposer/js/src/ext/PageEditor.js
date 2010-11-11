@@ -124,11 +124,12 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     doLogout : function() {
-        var loc = "" + location.href;
-        var relurl = loc.replace(/^https?:\/\/[^\/]+/, "");
-    	var loginFormPagePath = "/login/form";
-    	var loginPage = loginFormPagePath + "?invalidate=true&destination=" + relurl; 
-        location.href = loc.replace(/\/composermode\/.*$/, loginPage); 
+        Ext.Ajax.request({
+            url: 'services-new/' + this.ids.site + './logout',
+            success: function () {
+                location.reload(true);
+            }
+        });
     },
 
     onIframeDOMReady : function(frm) {
@@ -337,11 +338,12 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     shareData : function() {
         var self = this;
-        var facade = function(){};
+        var facade = function() {
+        };
         facade.prototype = {
             getName : function(id) {
                 var idx = self.stores.pageModel.findExact('id', id);
-                if(idx == -1) {
+                if (idx == -1) {
                     return null;
                 }
                 var record = self.stores.pageModel.getAt(idx);
@@ -349,7 +351,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             }
         };
 
-        if(this.pageModelFacade == null) {
+        if (this.pageModelFacade == null) {
             this.pageModelFacade = new facade();
         }
         this.sendFrameMessage(this.pageModelFacade, 'sharedata');

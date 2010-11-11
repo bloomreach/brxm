@@ -15,22 +15,21 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * @version $Id$
@@ -40,13 +39,13 @@ import org.slf4j.LoggerFactory;
 public class SiteResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(SiteResource.class);
 
-   
+
     @GET
     @Path("/toolkit/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getToolkitRepresentation(@Context HttpServletRequest servletRequest,
                                              @Context HttpServletResponse servletResponse) {
-        
+
         HstRequestContext requestContext = getRequestContext(servletRequest);
         Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
         if (parentMount == null) {
@@ -55,23 +54,20 @@ public class SiteResource extends AbstractConfigResource {
         }
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(parentMount);
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
-       
+
     }
 
     @GET
     @Path("/logout/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@Context HttpServletRequest servletRequest,
-                                             @Context HttpServletResponse servletResponse) {
-        
+                           @Context HttpServletResponse servletResponse) {
+
         HttpSession session = servletRequest.getSession(false);
         if (session != null) {
             // logout
             session.invalidate();
         }
-        
-        // TODO Vijay: return here the data object you can use to refresh the page
-        // make sure you 'redirect' to a link created with the HstLinkCreator
         return ok("You are logged out", null);
     }
 }

@@ -109,9 +109,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             throw new WebApplicationException(e);
         }
 
-        ExtResponseRepresentation extSuccessResponse = new ExtResponseRepresentation(null);
-        extSuccessResponse.setSuccess(true);
-        extSuccessResponse.setMessage("Properties saved successfully, please refresh to see the changes.");
-        return Response.ok(extSuccessResponse).build();
+        return ok("Properties saved successfully, please refresh to see the changes.", null);
     }
 }
