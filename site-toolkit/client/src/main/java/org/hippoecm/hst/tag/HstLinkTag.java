@@ -138,28 +138,7 @@ public class HstLinkTag extends ParamContainerTag {
                if(!path.equals("") && !path.startsWith("/")) {
                    path = "/" + path;
                }
-               if (var == null) {
-                   try {               
-                       JspWriter writer = pageContext.getOut();
-                       writer.print(servletRequest.getContextPath() + path);
-                   } catch (IOException ioe) {
-                       throw new JspException(
-                           "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
-                   }
-               } 
-               else {
-                   int varScope = PageContext.PAGE_SCOPE;
-                   if (this.scope != null) {
-                       if ("request".equals(this.scope)) {
-                           varScope = PageContext.REQUEST_SCOPE;
-                       } else if ("session".equals(this.scope)) {
-                           varScope = PageContext.SESSION_SCOPE;
-                       } else if ("application".equals(this.scope)) {
-                           varScope = PageContext.APPLICATION_SCOPE;
-                       }
-                   }
-                   pageContext.setAttribute(var, servletRequest.getContextPath() + path, varScope);
-               }
+               writeOrSetVar(servletRequest.getContextPath() + path);
                path = null;
                return EVAL_PAGE;
            }
@@ -273,30 +252,7 @@ public class HstLinkTag extends ParamContainerTag {
         }
         
         
-        if (var == null) {
-            try {               
-                JspWriter writer = pageContext.getOut();
-                writer.print(urlString);
-            } catch (IOException ioe) {
-                throw new JspException(
-                    "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
-            }
-        } 
-        else {
-            int varScope = PageContext.PAGE_SCOPE;
-            
-            if (this.scope != null) {
-                if ("request".equals(this.scope)) {
-                    varScope = PageContext.REQUEST_SCOPE;
-                } else if ("session".equals(this.scope)) {
-                    varScope = PageContext.SESSION_SCOPE;
-                } else if ("application".equals(this.scope)) {
-                    varScope = PageContext.APPLICATION_SCOPE;
-                }
-            }
-            
-            pageContext.setAttribute(var, urlString, varScope);
-        }
+        writeOrSetVar(urlString);
         
         /*cleanup*/
         
@@ -318,6 +274,32 @@ public class HstLinkTag extends ParamContainerTag {
         mountAlias = null;
         
         return EVAL_PAGE;
+    }
+
+    
+    private void writeOrSetVar(String url) throws JspException {
+        if (var == null) {
+               try {               
+                   JspWriter writer = pageContext.getOut();
+                   writer.print(url);
+               } catch (IOException ioe) {
+                   throw new JspException(
+                       "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
+               }
+           } 
+           else {
+               int varScope = PageContext.PAGE_SCOPE;
+               if (this.scope != null) {
+                   if ("request".equals(this.scope)) {
+                       varScope = PageContext.REQUEST_SCOPE;
+                   } else if ("session".equals(this.scope)) {
+                       varScope = PageContext.SESSION_SCOPE;
+                   } else if ("application".equals(this.scope)) {
+                       varScope = PageContext.APPLICATION_SCOPE;
+                   }
+               }
+               pageContext.setAttribute(var, url, varScope);
+           }
     }
     
     /* (non-Javadoc)
