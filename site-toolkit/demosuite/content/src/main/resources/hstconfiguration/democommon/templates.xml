@@ -169,6 +169,14 @@
 			<sv:value>WEB-INF/jsp/components/main/productpage.jsp</sv:value>
 		</sv:property>
 	</sv:node>
+    <sv:node sv:name="formpage">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>WEB-INF/jsp/components/main/formpage.jsp</sv:value>
+		</sv:property>
+	</sv:node>
 	<sv:node sv:name="table">
 		<sv:property sv:name="jcr:primaryType" sv:type="Name">
 			<sv:value>hst:template</sv:value>

@@ -60,12 +60,12 @@ public class ContactSpring extends BaseFormHstComponent {
             return;
         }
         // Do a really simple validation: 
-        if(formMap.getField("email") != null && formMap.getField("email").contains("@")) {
+        if(formMap.getField("email") != null && formMap.getField("email").getValue().contains("@")) {
             // success
             // send email here.
             SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
-            msg.setFrom(formMap.getField("email"));
-            msg.setText(formMap.getField("textarea"));
+            msg.setFrom(formMap.getField("email").getValue());
+            msg.setText(formMap.getField("textarea").getValue());
             
             try {
                 this.mailSender.send(msg);

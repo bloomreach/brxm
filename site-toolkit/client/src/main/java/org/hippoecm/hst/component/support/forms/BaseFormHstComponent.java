@@ -15,19 +15,13 @@
  */
 package org.hippoecm.hst.component.support.forms;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
 
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.Value;
+import javax.jcr.*;
 
 import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
@@ -41,21 +35,24 @@ import org.slf4j.LoggerFactory;
 public class BaseFormHstComponent extends BaseHstComponent{
 
     static Logger log = LoggerFactory.getLogger(BaseFormHstComponent.class);
-    
+
     public final static String DEFAULT_UUID_NAME = "u_u_i_d";
     public final static String DEFAULT_STORED_FORMS_LOCATION = "formdata";
     public final static String DEFAULT_FORMDATA_CONTAINER = "hst:formdatacontainer";
     public final static String DEFAULT_FORMDATA_TYPE = "hst:formdata";
 
-    public final static String HST_PARAMETERNAMES = "hst:parameternames";
-    public final static String HST_PARAMETERVALUES = "hst:parametervalues";
     public final static String HST_CREATIONTIME =  "hst:creationtime";
     public final static String HST_PREDECESSOR =  "hst:predecessor";
+    public final static String HST_FORM_DATA_NODE =  "hst:formfieldvalue";
+    public static final String HST_FORM_FIELD_DATA = "hst:formfielddata";
+    public static final String HST_FORM_FIELD_MESSAGES = "hst:formfieldmessages";
+    public static final String HST_FORM_FIELD_NAME = "hst:formfieldname";
 
     public final static String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
     public final static String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
-    
-   
+    public static final String HST_SEALED = "hst:sealed";
+
+
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         super.doAction(request, response);
@@ -65,9 +62,9 @@ public class BaseFormHstComponent extends BaseHstComponent{
 
     /**
      * This method tries to repopulate an earlier posted form that was stored in the repository.
-     * 
+     *
      * Only when there is a request parameter containing the correct uuid, you can re-populate it.
-     * 
+     *
      * @param request the current hstRequest
      * @param formMap the formMap that will be populated
      */
@@ -79,31 +76,46 @@ public class BaseFormHstComponent extends BaseHstComponent{
         if(request.getParameter(DEFAULT_UUID_NAME) != null) {
             String uuid = request.getParameter(DEFAULT_UUID_NAME);
             try {
-                // check whether it is a valid uuid. Although uuidObj is not used afterwards, keep it here for parsing the uuid, if it fails
-                // an IllegalArgumentException is thrown
-                @SuppressWarnings("unused")
-                UUID uuidObj = UUID.fromString(uuid);
+                validateId(uuid);
                 Session session = request.getRequestContext().getSession();
                 Node persistedFormData = session.getNodeByUUID(uuid);
-                
+                // check if form is sealed
+                if(persistedFormData.hasProperty(HST_SEALED) && persistedFormData.getProperty(HST_SEALED).getBoolean()){
+                    log.debug("From is sealed, not allowed to read data");
+                    formMap.setSealed(true);
+                    return;
+                }
+
                 if(persistedFormData.hasProperty(HST_PREDECESSOR)) {
                     formMap.setPrevious(persistedFormData.getProperty(HST_PREDECESSOR).getString());
                 }
-                if(persistedFormData.hasProperty(HST_PARAMETERNAMES) && persistedFormData.hasProperty(HST_PARAMETERVALUES)) {
-                    Value[] names =  persistedFormData.getProperty(HST_PARAMETERNAMES).getValues();
-                    Value[] values =  persistedFormData.getProperty(HST_PARAMETERVALUES).getValues();
-                    if(names.length != values.length) {
-                        log.warn("Ambiguous stored formfields because there are unequal names & values. Return unpopulated map");
-                        return;
-                    } else {
-                        for(int i = 0 ; i < names.length ; i ++ ){
-                            formMap.addFormField(names[i].getString(), values[i].getString());
+                // fetch previously stored form field data (nodes)
+                if(persistedFormData.hasNodes()){
+                    NodeIterator fieldIterator = persistedFormData.getNodes(HST_FORM_DATA_NODE);
+                    while (fieldIterator.hasNext()) {
+                        Node fieldNode = fieldIterator.nextNode();
+                        // sanity check (property is mandatory)
+                        if(fieldNode.hasProperty(HST_FORM_FIELD_NAME)){
+                            // create field (even if we do not have values)
+                            String fieldName = fieldNode.getProperty(HST_FORM_FIELD_NAME).getString();
+                            FormField field = new FormField(fieldName);
+                            formMap.addFormField(fieldName, field);
+                            if(fieldNode.hasProperty(HST_FORM_FIELD_DATA)){
+                                Value[] values = fieldNode.getProperty(HST_FORM_FIELD_DATA).getValues();
+                                for (Value value : values) {
+                                    field.addValue(value.getString());
+                                }
+                            }
+                            if(fieldNode.hasProperty(HST_FORM_FIELD_MESSAGES)){
+                                Value[] values = fieldNode.getProperty(HST_FORM_FIELD_MESSAGES).getValues();
+                                for (Value value : values) {
+                                    field.addMessage(value.getString());
+                                }
+                            }
                         }
-                        log.debug("Succesfully repopulated formerly persisted form");
-                       
                     }
                 }
-                return;
+
             } catch(IllegalArgumentException e){
                 log.warn("Not a valid uuid. Return");
             } catch (LoginException e) {
@@ -113,13 +125,13 @@ public class BaseFormHstComponent extends BaseHstComponent{
             } catch (RepositoryException e) {
                 log.warn("RepositoryException '{}'. Return" , e.getMessage());
             }
-            return;
         } else {
             log.debug("No uuid in request parameter. No form to populate");
-            return;
         }
     }
-    
+
+
+
     /**
      * Facility to temporarily store submitted form data which needs to be accessed in the rendering phase again. This method
      * add the uuid of the newly created jcr node on the response as a render parameter
@@ -129,8 +141,8 @@ public class BaseFormHstComponent extends BaseHstComponent{
      * @param storeFormResult an object to store some result of the data persisting, for example the uuid of the created node
      * @throws HstComponentException when the storing of the formdata fails
      */
-    
-    protected void persistFormMap(HstRequest request, HstResponse response, FormMap formMap, StoreFormResult storeFormResult) throws HstComponentException { 
+
+    protected void persistFormMap(HstRequest request, HstResponse response, FormMap formMap, StoreFormResult storeFormResult) throws HstComponentException {
             Session impersonated = null;
             try {
                 Session session = request.getRequestContext().getSession();
@@ -150,43 +162,48 @@ public class BaseFormHstComponent extends BaseHstComponent{
                     log.error("Cannot impersonate a session with '{}' and '{}'", username, password);
                     return;
                 }
-                    
+
                 Node rootNode = impersonated.getRootNode();
-                Node formData = null;
+                Node formData;
                 if(!rootNode.hasNode(getFormDataNodeName())) {
                     formData = rootNode.addNode(getFormDataNodeName(), DEFAULT_FORMDATA_CONTAINER);
                     addInitialStructure(formData);
                 } else {
                     formData = rootNode.getNode(getFormDataNodeName());
                 }
-                
+
                 Node randomNode = createRandomNode(formData);
                 Node postedFormDataNode = randomNode.addNode("tick_"+System.currentTimeMillis(), getFormDataNodeType() );
                 postedFormDataNode.setProperty(HST_CREATIONTIME, Calendar.getInstance());
+                postedFormDataNode.setProperty(HST_SEALED, formMap.isSealed());
                 // if there is a previously stored node of this form, set this uuid as predecessor
-                // TODO the  colon ':' is configurable, so must not be hardcode here
+                // TODO the  colon ':' is configurable, so must not be hardcoded here
                 if(request.getParameter(request.getReferenceNamespace()+":"+DEFAULT_UUID_NAME) != null) {
                     postedFormDataNode.setProperty(HST_PREDECESSOR, request.getParameter(request.getReferenceNamespace()+":"+DEFAULT_UUID_NAME));
                 }
 
                 postedFormDataNode.addMixin("mix:referenceable");
-                List<String> names = new ArrayList<String>();
-                List<String> values = new ArrayList<String>();
-                for(Entry<String, String> entry : formMap.getFormMap().entrySet() ) {
-                    names.add(entry.getKey());
-                    String value = entry.getValue() == null ? "" : entry.getValue();
-                    values.add(value);
+
+                for(Entry<String, FormField> entry : formMap.getFormMap().entrySet() ) {
+                    FormField field = entry.getValue();
+                    Node fieldNode = postedFormDataNode.addNode(HST_FORM_DATA_NODE, HST_FORM_DATA_NODE);
+                    fieldNode.setProperty(HST_FORM_FIELD_NAME, field.getName());
+                    Map<String,String> values = field.getValues();
+                    if(values.size() > 0){
+                        fieldNode.setProperty(HST_FORM_FIELD_DATA, values.values().toArray(new String[values.size()]));
+                    }
+                    List<String> messages = field.getMessages();
+                    if(messages.size() > 0){
+                        fieldNode.setProperty(HST_FORM_FIELD_MESSAGES, messages.toArray(new String[messages.size()]));
+                    }
                 }
-                
-                postedFormDataNode.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
-                postedFormDataNode.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
                 rootNode.save();
                 response.setRenderParameter(DEFAULT_UUID_NAME, postedFormDataNode.getUUID());
                 if(storeFormResult != null) {
                     storeFormResult.populateResult(postedFormDataNode);
                 }
             } catch (LoginException e) {
-               throw new HstComponentException("LoginExceptionExeption during storing form data: ", e);
+               throw new HstComponentException("LoginException  during storing form data: ", e);
             } catch (RepositoryException e) {
                throw new HstComponentException("RepositoryException during storing form data: ", e);
             } finally {
@@ -195,7 +212,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
                 }
             }
     }
-    
+
     /**
      * If you have a different property for you writable user instead of the default {@link #DEFAULT_WRITABLE_PASSWORD_PROPERTY}, then override
      * this method
@@ -221,7 +238,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
     protected String getFormDataNodeName(){
         return DEFAULT_STORED_FORMS_LOCATION;
     }
-    
+
     /**
      * Override this method if you need a different node type
      * @return default node type to store form data
@@ -229,8 +246,8 @@ public class BaseFormHstComponent extends BaseHstComponent{
     protected String getFormDataNodeType(){
         return DEFAULT_FORMDATA_TYPE;
     }
-    
-    
+
+
     private void addInitialStructure(Node formData) throws RepositoryException {
         char a = 'a';
         for(int i = 0; i < 26 ; i ++) {
@@ -240,7 +257,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
             }
         }
     }
-    
+
     private Node createRandomNode(Node formData)throws RepositoryException {
         Node result = formData;
         char a = 'a';
@@ -257,6 +274,15 @@ public class BaseFormHstComponent extends BaseHstComponent{
         }
         return result;
     }
-    
-    
+
+    /**
+     * Validates an uuid. If invalid uuid is passed,  IllegalArgumentException exception will be thrown
+     *
+     * @param uuid uuid to validate
+     * @throws IllegalArgumentException thrown on invalid uuid
+     */
+    private void validateId(final String uuid) throws IllegalArgumentException {
+        UUID.fromString(uuid);
+    }
+
 }

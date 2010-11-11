@@ -47,7 +47,7 @@ public class Contact extends BaseFormHstComponent {
             return;
         }
         // Do a really simple validation: 
-        if(formMap.getField("email") != null && formMap.getField("email").contains("@")) {
+        if(formMap.getField("email") != null && formMap.getField("email").getValue().contains("@")) {
             // success
             
             // do your business logic

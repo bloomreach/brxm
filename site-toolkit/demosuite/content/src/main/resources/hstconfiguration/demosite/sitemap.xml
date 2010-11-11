@@ -304,8 +304,16 @@
             </sv:property>
         </sv:node>
     </sv:node>
-    
-    <!-- Example how to use sitemap item handlers -->
+  <sv:node sv:name="form">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>democommon/hst:pages/formpage</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- Example how to use sitemap item handlers -->
     <sv:node sv:name="cached">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>

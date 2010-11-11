@@ -246,11 +246,16 @@
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
 [hst:contentshare] > hippo:mirror
 
+[hst:formfieldvalue]
+- hst:formfieldname (string) mandatory
+- hst:formfielddata (string) multiple
+- hst:formfieldmessages (string) multiple
+
 [hst:formdata]
 - hst:creationtime (date) mandatory
-- hst:parameternames (string) multiple
-- hst:parametervalues (string) multiple
++ hst:formfieldvalue (hst:formfieldvalue) multiple
 - hst:predecessor (string)
+- hst:sealed (boolean)
 
 
 [hst:formdatacontainer] 
