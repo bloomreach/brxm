@@ -15,8 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -32,12 +37,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomoponent". This is specified using the @Path annotation.
@@ -81,8 +82,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse,
                             MultivaluedMap<String, String> params) {
-        Response r = null;
-
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
             Session session = requestContext.getSession();
@@ -109,6 +108,10 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             e.printStackTrace();  //TODO fix me
             throw new WebApplicationException(e);
         }
-        return r;
+
+        ExtResponseRepresentation extSuccessResponse = new ExtResponseRepresentation(null);
+        extSuccessResponse.setSuccess(true);
+        extSuccessResponse.setMessage("Properties saved successfully, please refresh to see the changes.");
+        return Response.ok(extSuccessResponse).build();
     }
 }

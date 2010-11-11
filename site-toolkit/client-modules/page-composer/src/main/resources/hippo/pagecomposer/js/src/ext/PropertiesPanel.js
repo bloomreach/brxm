@@ -50,7 +50,9 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     submitForm:function () {
         this.getForm().submit({
             url: 'services-new/' + this.id + './parameters',
-            method: 'POST'
+            method: 'POST' ,
+            waitMsg: 'Saving properties ...'
+
         });
     },
 
