@@ -68,16 +68,17 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             }
                         },
                         '->',
-                        {
-                            text: 'Refresh',
-                            id: 'refreshButton',
-                            listeners: {
-                                'click' : {
-                                    fn: this.refreshIframe,
-                                    scope: this
-                                }
-                            }
-                        },
+                            //Removing the refresh button, this doesn't serve any purpose anymore.
+//                        {
+//                            text: 'Refresh',
+//                            id: 'refreshButton',
+//                            listeners: {
+//                                'click' : {
+//                                    fn: this.refreshIframe,
+//                                    scope: this
+//                                }
+//                            }
+//                        },
                         {
                             text: 'Logout',
                             id: 'logoutButton',

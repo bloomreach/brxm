@@ -51,7 +51,11 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         this.getForm().submit({
             url: '_pcapi/' + this.id + './parameters',
             method: 'POST' ,
-            waitMsg: 'Saving properties ...'
+            waitMsg: 'Saving properties ...',
+            success: function () {
+                var iframe = Ext.getCmp('Iframe');
+                iframe.setSrc(iframe.getFrameDocument().location.href);
+            }
 
         });
     },
@@ -75,7 +79,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 var property = records[i];
                 this.add({
                     fieldLabel: property.get('label'),
-                    xtype: property.get('type'),                    
+                    xtype: property.get('type'),
                     value: property.get('value'),
                     allowBlank: !property.get('required'),
                     name: property.get('name')
