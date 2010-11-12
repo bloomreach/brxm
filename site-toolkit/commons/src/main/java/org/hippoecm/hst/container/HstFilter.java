@@ -280,7 +280,7 @@ public class HstFilter implements Filter {
 				requestContext.setBaseURL(hstContainerURL);
     		}
     		
-    		if (mount.getMount().isSiteMount()) {
+    		if (mount.getMount().isMapped()) {
     			ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
     			boolean processSiteMapItemHandlers = false;
     			

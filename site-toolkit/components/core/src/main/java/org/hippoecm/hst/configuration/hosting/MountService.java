@@ -107,7 +107,7 @@ public class MountService implements Mount {
     /**
      * <code>true</code> (default) when this {@link Mount} is used as a site. False when used only as content mount point and possibly a namedPipeline
      */
-    private boolean isMount = true;
+    private boolean isMapped = true;
     
     /**
      * The homepage for this {@link Mount}. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHost} is 
@@ -127,7 +127,8 @@ public class MountService implements Mount {
      */
     private boolean contextPathInUrl;
     
-    private boolean supportsSubPath;
+    // by default, isSite = true
+    private boolean isSite = true;
     
     /**
      * whether the port number should be in the url. Default true
@@ -300,16 +301,16 @@ public class MountService implements Mount {
             this.types = Arrays.asList(typesProperty);
         } 
         
-        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISSITEMOUNT)) {
-            this.isMount = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_ISSITEMOUNT);
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED)) {
+            this.isMapped = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED);
         } else if(parent != null) {
-            this.isMount = parent.isSiteMount();
+            this.isMapped = parent.isMapped();
         }
         
-        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SUPPORTS_SUB_PATH)) {
-            this.supportsSubPath = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SUPPORTS_SUB_PATH);
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_IS_SITE)) {
+            this.isSite = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_IS_SITE);
         } else if(parent != null) {
-            this.supportsSubPath = parent.supportsSubPath();
+            this.isSite = parent.isSite();
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
@@ -388,7 +389,7 @@ public class MountService implements Mount {
             log.info("Mount '{}' at '{}' does have an empty mountPoint. This means the Mount is not using a HstSite and does not have a content path", getName(), mount.getValueProvider().getPath());
         } else if(!mountPoint.startsWith("/")) {
             throw new ServiceException("Mount at '"+mount.getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
-        } else if(!isSiteMount()){
+        } else if(!isMapped()){
             log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), mount.getValueProvider().getPath());
             // for non Mounts, the contentPath is just the mountpoint
             this.contentPath = mountPoint;
@@ -459,8 +460,8 @@ public class MountService implements Mount {
         return mountPoint;
     }
 
-    public boolean isSiteMount() {
-        return isMount;
+    public boolean isMapped() {
+        return isMapped;
     }
 
     
@@ -501,8 +502,8 @@ public class MountService implements Mount {
         return showPort;
     }
     
-    public boolean supportsSubPath() {
-        return supportsSubPath;
+    public boolean isSite() {
+        return isSite;
     } 
     
     public String onlyForContextPath() {

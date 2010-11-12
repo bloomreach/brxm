@@ -125,7 +125,7 @@ public class HstLinkImpl implements HstLink{
         if(subPath != null) {
             // subPath is allowed to be empty ""
             combinedPath += PATH_SUBPATH_DELIMITER + subPath;
-        } else if (mount != null && mount.supportsSubPath()) {
+        } else if (mount != null && !mount.isSite()) {
             // mount is configured to support subPath: Always include the PATH_SUBPATH_DELIMITER
             combinedPath += PATH_SUBPATH_DELIMITER;
         }

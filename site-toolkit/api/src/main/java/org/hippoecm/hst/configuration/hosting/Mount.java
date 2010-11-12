@@ -29,8 +29,8 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
- * <p>A {@link Mount} object is the mount from a prefix to some (sub)site *or* content location: when the {@link Mount#isSiteMount()} property returns <code>true</code> or missing,
- * the {@link Mount} is linked to a {@link HstSite}. When {@link Mount#isSiteMount()} property returns <code>false</code>, the {@link Mount} should have it's own namedPipeline and the
+ * <p>A {@link Mount} object is the mount from a prefix to some (sub)site *or* content location: when the {@link Mount#isMapped()} property returns <code>true</code> or missing,
+ * the {@link Mount} is linked to a {@link HstSite}. When {@link Mount#isMapped()} property returns <code>false</code>, the {@link Mount} should have it's own namedPipeline and the
  * <code>hst:mountpoint</code> property is used a content path: for example a simple jcr browser unaware of HstSite at all could be easily built with this. 
  * </p>
  * <p>
@@ -45,8 +45,8 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  * 
  * <pre>
  *    127.0.0.1
- *      `- hst:root  (hst:mountpoint = /live/myproject, hst:issitemount = true)
- *            `- preview (hst:mountpoint = /preview/myproject, hst:issitemount = true)
+ *      `- hst:root  (hst:mountpoint = /live/myproject, hst:ismapped = true)
+ *            `- preview (hst:mountpoint = /preview/myproject, hst:ismapped = true)
  * </pre>
  * <p>
  * The configuration above means, that below the host 127.0.0.1 we have of course the mandatory {@link Mount} <code>hst:root</code>, and below it, we have 
@@ -136,7 +136,7 @@ public interface Mount {
      * When this {@link Mount} is not using a {@link HstSite} for the request processing, this method returns <code>true</code>. When it returns <code>true</code>, then 
      * {@link #getNamedPipeline()} should also be configured, and a pipeline should be invoked that is independent of the {@link ResolvedSiteMapItem} as their won't be one.
      */
-    boolean isSiteMount();
+    boolean isMapped();
     
     /**
      * @return the parent {@link Mount} of this {@link Mount} and <code>null</code> if we are at the root {@link Mount}
@@ -159,8 +159,8 @@ public interface Mount {
      * <p>
      * Returns the content path for this {@link Mount} object. The content path is the absolute jcr path to the root site node content, for example 
      * something like '/hst:hst/hst:sites/mysite-live/hst:content'. The {@link #getContentPath()} can be the same as {@link #getMountPoint()}, but
-     * this is in general only for {@link Mount}'s that have {@link #isSiteMount()} returning false. When the {@link Mount} does have
-     * {@link #isSiteMount()} equal to true, the {@link #getContentPath()} can return a different path than {@link #getMountPoint()}. In general, it will be
+     * this is in general only for {@link Mount}'s that have {@link #isMapped()} returning false. When the {@link Mount} does have
+     * {@link #isMapped()} equal to true, the {@link #getContentPath()} can return a different path than {@link #getMountPoint()}. In general, it will be
      * then {@link #getMountPoint()} + "/hst:content". 
      * </p>
      * 
@@ -226,9 +226,9 @@ public interface Mount {
     /**
      * When this method returns <code>true</code>, then {@link HstLink} will always have the {@link HstLink#PATH_SUBPATH_DELIMITER} included, even if the {@link HstLink}
      * does have an empty or <code>null</code> {@link HstLink#getSubPath()}
-     * @return true when subPath is supported
+     * @return true when the {@link Mount} is meant to be a site (false in case of for example being used for REST calls)
      */
-    boolean supportsSubPath();
+    boolean isSite();
     
 
     /**

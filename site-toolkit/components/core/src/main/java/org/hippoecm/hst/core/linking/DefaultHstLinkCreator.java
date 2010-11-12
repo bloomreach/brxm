@@ -523,7 +523,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
                         // cross-domain linkrewrite to mounts that are not a Mount?
                         for(Mount mount : mountsForHostGroup) {
-                           if(!mount.isSiteMount()) {
+                           if(!mount.isMapped()) {
                                // not a mount for a HstSite
                                continue;
                            }
@@ -592,7 +592,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                             return pageNotFoundLink(mount);
                         }
                     }
-                    if(mount.isSiteMount() && mount.getHstSite() != null) {
+                    if(mount.isMapped() && mount.getHstSite() != null) {
                         if(resolvedLocation == null) {
                             LocationMapResolver resolver = new LocationMapResolver(mount.getHstSite().getLocationMapTree());
                             resolver.setRepresentsDocument(representsDocument);

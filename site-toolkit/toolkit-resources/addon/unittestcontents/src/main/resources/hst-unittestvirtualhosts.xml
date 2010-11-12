@@ -114,7 +114,7 @@
                     <sv:value>preview</sv:value>
                   </sv:property>
                   <!-- we indicate the this restful service is not using a HstSite. It does however inherit the hst:mountpoint path which can be used -->
-                  <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                  <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                     <sv:value>false</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:namedpipeline" sv:type="String">
@@ -189,7 +189,7 @@
                       <sv:value>preview</sv:value>
                   </sv:property>
                   <!-- we indicate the this restful service is not using a HstSite. It does however inherit the hst:mountpoint path which can be used -->
-                  <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                  <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                     <sv:value>false</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:namedpipeline" sv:type="String">
@@ -253,7 +253,7 @@
                         </sv:property>
                         
                         <!-- we indicate the this restful service is not using a HstSite. It does however inherit the hst:mountpoint path which can be used -->
-                        <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                        <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                           <sv:value>false</sv:value>
                         </sv:property>
                         <sv:property sv:name="hst:namedpipeline" sv:type="String">
@@ -311,7 +311,7 @@
                             <sv:value>preview</sv:value>
                           </sv:property>
                           <!-- we indicate the this restful service is not using a HstSite. It does however inherit the hst:mountpoint path which can be used -->
-                          <sv:property sv:name="hst:issitemount" sv:type="Boolean">
+                          <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                             <sv:value>false</sv:value>
                           </sv:property>
                           <sv:property sv:name="hst:namedpipeline" sv:type="String">

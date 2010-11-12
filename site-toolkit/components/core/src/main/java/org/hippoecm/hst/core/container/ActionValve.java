@@ -179,7 +179,7 @@ public class ActionValve extends AbstractValve {
                                 	ResolvedVirtualHost rvh = requestContext.getResolvedSiteMapItem().getResolvedMount().getResolvedVirtualHost();
                                 	String targetContextPath = requestContext.isEmbeddedRequest() ? requestContext.getEmbeddingContextPath() : baseURL.getContextPath();
                                 	ResolvedMount mount = rvh.matchMount(targetContextPath, location);
-                                    if (mount != null && mount.getMount().isSiteMount()) {
+                                    if (mount != null && mount.getMount().isMapped()) {
                                     	// redirectLocation is (at least) matched on a Mount: the portlet should try to render it 
                                     	((HstPortletResponseState)responseState).setRenderRedirect(true);
                                     }

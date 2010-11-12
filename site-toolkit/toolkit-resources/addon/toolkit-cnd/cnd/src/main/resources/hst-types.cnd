@@ -168,7 +168,7 @@
 // the path to the (sub)site. for example /preview/myproject
 - hst:mountpoint (string)
 // whether this mount is associated with a hstSite
-- hst:issitemount (boolean)
+- hst:ismapped (boolean)
 // if you do not want to mount to run with the default hst pipeline, you can configure the pipeline to be used here
 - hst:namedpipeline (string)
 - hst:showcontextpath (boolean)
@@ -186,7 +186,7 @@
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
 // when true, links get a ./ appended automatically
-- hst:supportsSubPath (boolean)
+- hst:isSite (boolean)
 - hst:secured (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
