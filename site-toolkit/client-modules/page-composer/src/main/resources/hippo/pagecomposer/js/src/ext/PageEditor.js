@@ -58,7 +58,14 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                     tbar: [
                         {
                             text: 'Page Composer',
-                            iconCls: 'title-button'
+                            iconCls: 'title-button',
+                            id: 'pageComposerButton',
+                            listeners: {
+                                'click': {
+                                    fn: this.toggleConfigWindow,
+                                    scope: this
+                                }
+                            }
                         },
                         '->',
                         {
@@ -116,6 +123,14 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             ]
         });
 
+    },
+
+    toggleConfigWindow: function () {
+        if (!this.mainWindow.isVisible()) {
+            this.mainWindow.show('pageComposerButton');
+        } else {
+            this.mainWindow.hide('pageComposerButton');
+        }
     },
 
     refreshIframe : function() {
@@ -261,8 +276,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             height: 650,
             initRegion: 'right',
             layout: 'border',
-            closable: false,
+            closable: true,
             constrainHeader: true,
+            closeAction: 'hide',
             items: [
                 {
                     region: 'north',
