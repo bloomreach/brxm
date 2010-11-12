@@ -327,7 +327,7 @@ public class AggregationValve extends AbstractValve {
                   
                     Element el = response.createElement("script");
                     el.setAttribute("type", "text/javascript");
-                    el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer");
+                    el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "hippoPagecomposer");
 
                     // TODO make below the UUID of the mount or HstSite
                     StringBuilder builder = new StringBuilder();
