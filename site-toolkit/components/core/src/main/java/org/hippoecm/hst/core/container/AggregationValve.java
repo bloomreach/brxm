@@ -360,20 +360,20 @@ public class AggregationValve extends AbstractValve {
 // TODO ////////////////////////////////////////////////////////////////////////////
     
     private void addHeadElements(HstRequest request, HstResponse response, Mount mount ) {
-        addCssHeadElement(request, response, mount, "/hippo/pagecomposer/sources/css/PageEditor.css");
+        addCssHeadElement(request, response, mount, "/hst/pagecomposer/sources/css/PageEditor.css");
 
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/core/1.4.3/jquery-1.4.3.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/ui/1.8.5/jquery-ui-1.8.5.min.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/ui/1.8.5/custom/jquery.ui.sortable.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/plugins/jquery.class.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/lib/jquery/plugins/jquery.namespace.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/lib/jquery/core/1.4.3/jquery-1.4.3.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/lib/jquery/ui/1.8.5/jquery-ui-1.8.5.min.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/lib/jquery/ui/1.8.5/custom/jquery.ui.sortable.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/lib/jquery/plugins/jquery.class.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/lib/jquery/plugins/jquery.namespace.js");
 
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/globals.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/jquery/util.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/jquery/factory.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/jquery/manager.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/jquery/widgets.js");
-        addScriptHeadElement(request, response, mount, "/hippo/pagecomposer/sources/js/src/jquery/main.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/globals.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/util.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/factory.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/manager.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/widgets.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/main.js");
     }
     
     private void addCssHeadElement(HstRequest request, HstResponse response, Mount mount, String href) {

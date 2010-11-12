@@ -32,7 +32,7 @@ import org.hippoecm.hst.pagecomposer.dependencies.ext.plugins.ExtMiframe;
 public class ExtApp extends PathDependency {
 
     public ExtApp() {
-        super("/hippo/pagecomposer/sources");
+        super("/hst/pagecomposer/sources");
         addDependency(new PathDependency("js",
 
                 new ExtCore("3.3.0"),

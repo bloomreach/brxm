@@ -1,0 +1,166 @@
+.hst-container {
+}
+
+.hst-overlay {
+    position: absolute;
+    z-index: 99;
+}
+.hst-overlay-container {
+    border: 2px dashed #e3e3e3;
+}
+
+.hst-overlay-container.hst-overlay-hover {
+    border: 2px dashed #999;
+}
+
+.hst-overlay-container.hst-selected-container {
+    background-color: #e3e3e3;
+    opacity: 0.6;
+}
+
+.hst-empty-container {
+    border: 2px dashed #e3e3e3;
+}
+
+.hst-overlay-container.hst-empty-container {
+    border: 0;
+}
+
+.hst-overlay-container-item {
+    background-color: #e3e3e3;
+    opacity: 0.6;
+    z-index: 100;
+}
+
+.hst-overlay-container-item.hst-overlay-hover {
+    background-color: #0099cc;
+    opacity: 0.3;
+}
+
+.hst-overlay-menu-button {
+    float: right;
+    width: 14px;
+    height: 14px;
+
+    margin-right: 4px;
+    margin-top: 2px;
+
+    font-size: 11px;
+    font-weight: normal;
+
+    cursor: pointer;
+
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    /*opacity: 0.4;*/
+}
+
+.hst-overlay-name-label{
+    float: right;
+    width: auto;
+    /*height: 14px;*/
+    margin-right: 4px;
+    margin-top: 2px;
+    font-size: 10px;
+    text-align: right;
+    border: 1px solid black;
+    border-top: 0;
+    opacity: 1 ! important;
+    background-color: white;
+    padding-left: 2px;
+    padding-right: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.hst-overlay-container-item.hst-overlay-hover > div.hst-overlay-menu-button,
+.hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button{
+    opacity: 1;    
+    color: white;
+    background-color: red;
+}
+
+.hst-overlay.hst-selected-containerItem {
+    background-color: #ffff00;
+    opacity: 0.4;
+}
+
+.empty-container-placeholder {
+    height: 20px;
+    font-size: 15px;
+    padding: 6px 0 6px 4px;
+}
+
+/* Drag&Drop elements */
+
+.hst-dd-helper {
+    z-index: 1000;
+    opacity: 1;
+    background-color: #e3e3e3;
+    width: 160px;
+    height: 40px;
+    text-align: left;
+    color: #000;
+    font-size: 11px;
+    border: 2px solid #666;
+    padding: 5px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: : 6px;
+}
+
+.hst-placeholder {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    visibility: hidden;
+}
+
+#hst-drop-indicator {
+    z-index: 500;
+    background: red;
+    opacity: 0.9;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+  	-moz-box-shadow: 3px 3px 3px #666;
+    -webkit-box-shadow: 3px 3px 3px #666;
+}
+
+/* this is to stop collapsing margins */
+/*.hst-container-item {
+    padding-top: 1px;
+    margin-top: -1px;
+}*/
+
+.hst-item-ondrag {
+    opacity: 0.6;
+}
+
+.hst-highlight {
+    opacity: 1;
+    z-index: 1000;
+    border: 2px solid #00ff33;
+}
+.hst-highlight .hst-overlay-container-item {
+    display: none;
+}
+
+/* Container specific rules */
+table.hst-container {
+    width: 100%;
+}
+
+div.hst-empty-container ul,
+div.hst-empty-container ol {
+    padding-left: 5px;
+}
+li.hst-empty-container-item {
+    list-style: none;
+}
+
+li.placeholdert {
+    list-style: none;
+}
+
+.title-button {
+    background-image: url(hippologo.png) !important;
+}
