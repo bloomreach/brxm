@@ -77,7 +77,6 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             HstRequestContext requestContext = getRequestContext(servletRequest);
             HippoImageBean imageBean = (HippoImageBean) getRequestContentBean(requestContext);
             HippoImageRepresentation imageRep = new HippoImageRepresentation().represent(imageBean);
-            imageRep.addLink(getNodeLink(requestContext, imageBean));
             imageRep.addLink(getMountLink(requestContext, imageBean, MOUNT_ALIAS_GALLERY, null));
             imageRep.addLink(getSiteLink(requestContext, imageBean));
             return imageRep;
@@ -112,8 +111,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 subPath = "resource/" + childResourceName;
             }
             
-            childResourceRep.addLink(getRestLink(requestContext, childResourceBean, subPath));
-            childResourceRep.addLink(getMountLink(requestContext, childResourceBean, MOUNT_ALIAS_GALLERY, subPath));
+            childResourceRep.addLink(getMountLink(requestContext, imageBean, MOUNT_ALIAS_GALLERY, subPath));
             Link ownerLink = getNodeLink(requestContext, imageBean);
             ownerLink.setRel("owner");
             childResourceRep.addLink(ownerLink);
