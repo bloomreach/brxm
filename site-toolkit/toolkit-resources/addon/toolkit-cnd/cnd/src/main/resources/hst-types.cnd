@@ -48,7 +48,7 @@
 [hst:containeritemcomponent] > hst:abstractcomponent orderable
 - hst:referencecomponent(string)
 - hst:xtype (string) mandatory
-- hst:samplecontent (string)
+- hst:dummycontent (string)
 + * (hst:abstractcomponent)
 
 [hst:containercomponent] > hst:abstractcomponent orderable

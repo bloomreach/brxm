@@ -190,9 +190,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                     && compInfo instanceof HstComponentConfigurationService
                     && compInfo.getComponentType() == Type.CONTAINER_ITEM_COMPONENT
                     && mount.isOfType(ContainerConstants.COMPOSERMODE)
-                    && ((HstComponentConfigurationService) compInfo).getSampleContent() != null) {
+                    && ((HstComponentConfigurationService) compInfo).getDummyContent() != null) {
                // We are in composermode && composer-template-view && the current component is a container item, and has sample content: hence, we do not render the actual template, but show sample content
-               hstResponse.getWriter().append(((HstComponentConfigurationService)compInfo).getSampleContent());
+               hstResponse.getWriter().append(((HstComponentConfigurationService)compInfo).getDummyContent());
                hstResponse.flushBuffer();
              /////// TODO END ////////////////////////////
             } else {

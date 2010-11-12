@@ -61,7 +61,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     /**
      * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have sample content
      */
-    private String sampleContent;
+    private String dummyContent;
     
     /**
      * the type of this {@link HstComponentConfiguration}. 
@@ -113,7 +113,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
           type = Type.CONTAINER_COMPONENT;
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
           type = Type.CONTAINER_ITEM_COMPONENT;
-          sampleContent = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SAMPLE_CONTENT);
+          dummyContent = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT);
         } else {
             throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
         }
@@ -267,8 +267,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return pageErrorHandlerClassName;
     }
 
-    public String getSampleContent(){
-        return sampleContent;
+    public String getDummyContent(){
+        return dummyContent;
     }
     
     public Map<String, HstComponentConfiguration> getChildren() {
@@ -317,7 +317,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.serveResourcePath = child.serveResourcePath;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
-        copy.sampleContent = child.sampleContent;
+        copy.dummyContent = child.dummyContent;
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);
@@ -396,8 +396,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.xtype == null) {
                     this.xtype = referencedComp.xtype;
                 }
-                if (this.sampleContent == null) {
-                    this.sampleContent = referencedComp.sampleContent;
+                if (this.dummyContent == null) {
+                    this.dummyContent = referencedComp.dummyContent;
                 }
                 
                 if (this.parameters == null) {
@@ -487,8 +487,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.xtype == null) {
             this.xtype = childToMerge.xtype;
         }
-        if (this.sampleContent == null) {
-            this.sampleContent = childToMerge.sampleContent;
+        if (this.dummyContent == null) {
+            this.dummyContent = childToMerge.dummyContent;
         }
         
         if (this.parameters == null) {
