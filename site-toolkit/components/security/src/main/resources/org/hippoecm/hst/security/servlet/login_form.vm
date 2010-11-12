@@ -16,7 +16,7 @@
 <html>
   <head>
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="../skin/screen.css" />
+    <link rel="stylesheet" type="text/css" href="hst/security/skin/screen.css" />
   </head>
   <body class="hippo-root" onload="return document.signInForm.username.focus();">
     <div>

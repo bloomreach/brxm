@@ -169,6 +169,15 @@
   </servlet>
 
   <servlet>
+    <servlet-name>SecurityResourceServlet</servlet-name>
+    <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+    <init-param>
+    <param-name>jarPathPrefix</param-name>
+    <param-value>/hst/security</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet>
     <servlet-name>DojoResourceServlet</servlet-name>
     <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
   </servlet>
@@ -244,6 +253,11 @@
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
     <url-pattern>/login/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>SecurityResourceServlet</servlet-name>
+    <url-pattern>/login/hst/security/*</url-pattern>
   </servlet-mapping>
 
   <!-- The Usual Welcome File List -->
