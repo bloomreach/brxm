@@ -70,6 +70,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         '->',
                         {
                             text: 'Refresh',
+                            id: 'refreshButton',
                             listeners: {
                                 'click' : {
                                     fn: this.refreshIframe,
@@ -79,6 +80,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                         },
                         {
                             text: 'Logout',
+                            id: 'logoutButton',
                             listeners: {
                                 'click' : {
                                     fn: this.doLogout,

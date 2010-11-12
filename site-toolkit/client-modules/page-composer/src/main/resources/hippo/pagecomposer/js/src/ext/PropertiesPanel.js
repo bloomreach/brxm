@@ -29,7 +29,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 width: 170
             },
 
-            buttons:[
+            bbar:[
                 {
                     text: "Save",
                     handler: this.submitForm,
@@ -39,7 +39,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                     text: "Reset",
                     scope: this,
                     handler: function () {
-                        this.getForm().reset();
+                        this.reload(this.id);
                     }
                 }
             ]
