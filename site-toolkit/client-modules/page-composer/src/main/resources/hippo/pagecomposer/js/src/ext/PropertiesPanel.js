@@ -29,7 +29,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 width: 170
             },
 
-            bbar:[
+            buttons:[
                 {
                     text: "Save",
                     handler: this.submitForm,

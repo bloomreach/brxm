@@ -281,6 +281,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             closable: true,
             constrainHeader: true,
             closeAction: 'hide',
+            bodyStyle: 'background-color: #ffffff',
             items: [
                 {
                     region: 'north',
