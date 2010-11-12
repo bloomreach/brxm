@@ -104,7 +104,7 @@ public interface HstNodeTypes {
     public final static String MOUNT_PROPERTY_SCHEME = "hst:scheme";
     public final static String MOUNT_PROPERTY_MOUNTPOINT = "hst:mountpoint";
     public final static String MOUNT_PROPERTY_ISMAPPED = "hst:ismapped";
-    public final static String MOUNT_PROPERTY_IS_SITE = "hst:issite";
+    public final static String MOUNT_PROPERTY_IS_SITE = "hst:isSite";
     
     public final static String MOUNT_PROPERTY_ALIAS = "hst:alias";
     public final static String MOUNT_PROPERTY_TYPE = "hst:type";
