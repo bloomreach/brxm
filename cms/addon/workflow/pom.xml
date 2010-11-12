@@ -49,8 +49,6 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -62,8 +60,6 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>

@@ -37,8 +37,6 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -91,31 +89,26 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-provider</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-modules</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-utilities</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -222,7 +215,7 @@
         <dependency>
           <groupId>org.hippoecm</groupId>
           <artifactId>hippo-ecm-repository-engine</artifactId>
-          <version>${project.version}</version>
+          <version>${repository.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
           <scope>test</scope>
