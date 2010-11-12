@@ -42,10 +42,14 @@ import org.slf4j.LoggerFactory;
 public class HstComponentInvokerImpl implements HstComponentInvoker {
     
     private final static Logger log = LoggerFactory.getLogger(HstComponentInvokerImpl.class);
-   
+
+    public final static String DEFAULT_WEB_RESOURCES_LOCATION = "/WEB-INF";
+    
     protected boolean exceptionThrowable;
     
     protected String errorRenderPath;
+    
+    protected String webResourcesLocation;
     
     public void setExceptionThrowable(boolean exceptionThrowable) {
         this.exceptionThrowable = exceptionThrowable;
@@ -53,6 +57,23 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     
     public void setErrorRenderPath(String errorRenderPath) {
         this.errorRenderPath = errorRenderPath;
+    }
+    
+    public void setWebResourcesLocation(String webResourcesLocation) {
+        if (webResourcesLocation == null) {
+            log.info("No webResourcesLocation is configured. We take default location '{}' as webResourcesLocation",
+                    DEFAULT_WEB_RESOURCES_LOCATION);
+            this.webResourcesLocation = DEFAULT_WEB_RESOURCES_LOCATION;
+        } else if ("/".equals(webResourcesLocation)) {
+            log.info("'/' as value for the webResourcesLocation is the same as an empty String: The web resources are taken relatively to the webapp. "
+                      + "Note that you might not want this as scripts like jsp's and freemarker can directly be called");
+            this.webResourcesLocation = "";
+        } else if (!webResourcesLocation.startsWith("/")) {
+            log.info("The configured webResourcesLocation '{}' does not start with a '/'. We prepend a '/' as the location is always relative to the webapp");
+            this.webResourcesLocation = "/" + webResourcesLocation;
+        } else {
+            this.webResourcesLocation = webResourcesLocation;
+        }
     }
     
     public void invokeAction(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
@@ -339,8 +360,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (log.isDebugEnabled()) {
                 log.debug("Invoking dispatcher of url: {}", dispatchUrl);
             }
+            boolean prefixDispatchUrlWithWebResourcesLocation = true;
             for(String specialPrefix : HstComponentWindow.SPECIAL_DISPATCH_PREFIXES) {
                 if(dispatchUrl.startsWith(specialPrefix)) {
+                    // for special dispatch locations, the webResourcesLocation must not be prepended
+                    prefixDispatchUrlWithWebResourcesLocation = false;
                     servletRequest.setAttribute(ContainerConstants.SPECIAL_DISPATCH_INFO, specialPrefix);
                     dispatchUrl = dispatchUrl.substring(specialPrefix.length());
                     if(!dispatchUrl.startsWith("/") && specialPrefix.equals("classpath:")) {
@@ -355,6 +379,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
             
             if (dispatchUrl.startsWith("/")) {
+                if (prefixDispatchUrlWithWebResourcesLocation) {
+                    dispatchUrl = webResourcesLocation + dispatchUrl;
+                }
                 disp = requestContainerConfig.getServletContext().getRequestDispatcher(dispatchUrl);
             } else {
                 disp = requestContainerConfig.getServletContext().getNamedDispatcher(dispatchUrl);
