@@ -28,9 +28,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/search</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/search</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/search</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/search</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/search</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/search</url>
   </scm>
 
   <modules>

@@ -28,9 +28,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor</url>
   </scm>
 
   <modules>

@@ -28,8 +28,8 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reporting/repository</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reporting/repository</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reporting/repository</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/reporting/repository</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/reporting/repository</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/reporting/repository</url>
   </scm>
 </project>
