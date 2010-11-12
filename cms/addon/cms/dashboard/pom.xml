@@ -66,8 +66,6 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -78,20 +76,14 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-modules</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.17.00-SNAPSHOT</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -205,7 +197,7 @@
         <dependency>
           <groupId>org.hippoecm</groupId>
           <artifactId>hippo-ecm-repository-engine</artifactId>
-          <version>${project.version}</version>
+          <version>${repository.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
           <scope>test</scope>
@@ -233,7 +225,7 @@
           <dependency>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-repository-engine</artifactId>
-            <version>${project.version}</version>
+            <version>${repository.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>
             <scope>test</scope>

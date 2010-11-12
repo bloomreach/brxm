@@ -580,6 +580,12 @@
       </dependency>
       <dependency>
         <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-repository-provider</artifactId>
+        <version>${repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
@@ -598,9 +604,9 @@
       </dependency>
       <dependency>
         <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-provider</artifactId>
+        <artifactId>hippo-ecm-tools-testutils</artifactId>
         <version>${repository.version}</version>
-        <scope>provided</scope>
+        <scope>test</scope>
       </dependency>
 
       <dependency>
