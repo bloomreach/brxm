@@ -1019,7 +1019,7 @@
         <module>client</module>
         <module>client-modules</module>
         <module>dependencies</module>
-        <module>testsuite</module>
+        <module>sandbox</module>
         <module>demosuite</module>
       </modules>
     </profile>
