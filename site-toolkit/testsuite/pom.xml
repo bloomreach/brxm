@@ -28,7 +28,6 @@
     <packaging>pom</packaging>
 
     <modules>
-      <module>sandbox</module>
     </modules>
 
 </project>
