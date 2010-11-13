@@ -313,6 +313,61 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="contact-spring">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid"
+      sv:type="String">
+      <sv:value>democommon/hst:pages/contactspringpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="thankyou">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid"
+        sv:type="String">
+        <sv:value>democommon/hst:pages/thankyou</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="contact-dispatch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>democommon/hst:pages/contactdispatchpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="thankyou">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid"
+        sv:type="String">
+        <sv:value>democommon/hst:pages/thankyou</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="contact-springmvc">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>democommon/hst:pages/contactspringmvcpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="thankyou">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid"
+        sv:type="String">
+        <sv:value>democommon/hst:pages/thankyou</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
   <!-- Example how to use sitemap item handlers -->
     <sv:node sv:name="cached">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

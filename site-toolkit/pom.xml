@@ -54,6 +54,8 @@
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
     <portlet-api.version>2.0</portlet-api.version>
+    <portals-bridges-common.version>1.0.4</portals-bridges-common.version>
+    
     <javax.jcr.version>1.0</javax.jcr.version>
     <javax.mail.version>1.4.1</javax.mail.version>
     <geronimo-jta_1.1_spec.version>1.1</geronimo-jta_1.1_spec.version>
@@ -98,6 +100,7 @@
     
     <yui.sources.version>1.01.07</yui.sources.version>
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
+    <wicket.version>1.4.7</wicket.version>
     
     <jsr311.version>1.1</jsr311.version>
     <geronimo-stax-api_1.0_spec.version>1.0.1</geronimo-stax-api_1.0_spec.version>
@@ -362,6 +365,13 @@
         <scope>provided</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.apache.portals.bridges</groupId>
+        <artifactId>portals-bridges-common</artifactId>
+        <version>${portals-bridges-common.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
@@ -808,6 +818,18 @@
             <artifactId>spring-web</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket</artifactId>
+        <version>${wicket.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-extensions</artifactId>
+        <version>${wicket.version}</version>
       </dependency>
       
       <!-- Jackson JSON -->

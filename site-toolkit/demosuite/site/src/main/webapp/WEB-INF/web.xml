@@ -93,7 +93,32 @@
       </init-param>
     -->
   </filter>
-
+  
+  <filter>
+    <filter-name>WicketContentBrowser</filter-name>
+    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+    <init-param>
+      <param-name>configuration</param-name>
+      <param-value>deployment</param-value>
+    </init-param>
+    <init-param>
+      <param-name>applicationClassName</param-name>
+      <param-value>org.hippoecm.hst.demo.wicketexamples.WicketContentBrowserApplication</param-value>
+    </init-param>
+    <init-param>
+      <param-name>binary-download-servlet-path</param-name>
+      <param-value>/site/binaries</param-value>
+    </init-param>
+    <init-param>
+      <param-name>basePath</param-name>
+      <param-value>/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>itemsPerPage</param-name>
+      <param-value>10</param-value>
+    </init-param>
+  </filter>
+  
   <filter-mapping>
     <filter-name>CharacterEncodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
@@ -105,12 +130,24 @@
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
-
+  
+  <filter-mapping>
+    <filter-name>WicketContentBrowser</filter-name>
+    <url-pattern>/examples/contentbrowser/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+  </filter-mapping>
+  
   <!-- Spring Log4j Configuring Listener -->
   <listener>
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
   </listener>
-
+  
+  <!-- Bootstrap listener to start up root web application context. -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
   <servlet>
     <servlet-name>HstSiteConfigServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
@@ -149,7 +186,16 @@
       </param-value>
     </init-param>
   </servlet>
-
+  
+  <servlet>
+    <servlet-name>HstDispatcherServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </init-param>
+  </servlet>
+  
   <servlet>
     <servlet-name>YUIResourceServlet</servlet-name>
     <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
@@ -228,12 +274,16 @@
     <servlet-name>StaticResourceServlet</servlet-name>
     <url-pattern>/staticresource/*</url-pattern>
   </servlet-mapping>
-
+  
+  <servlet-mapping>
+    <servlet-name>HstDispatcherServlet</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+  
   <servlet-mapping>
     <servlet-name>YUIResourceServlet</servlet-name>
     <url-pattern>/javascript/yui/*</url-pattern>
   </servlet-mapping>
-  
   
   <servlet-mapping>
     <servlet-name>PageComposerResourceServlet</servlet-name>
