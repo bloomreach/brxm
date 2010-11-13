@@ -257,26 +257,32 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     }
 
     public void setValue(Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        property.setValue(value);
     }
 
     public void setValue(BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        property.setValue(value);
     }
 
     public Binary getBinary() throws ValueFormatException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        return property.getBinary();
     }
 
     public BigDecimal getDecimal() throws ValueFormatException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        return property.getDecimal();
     }
 
     public Property getProperty() throws ItemNotFoundException, ValueFormatException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        return property.getProperty();
     }
 
     public boolean isMultiple() throws RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        return property.isMultiple();
     }
 }

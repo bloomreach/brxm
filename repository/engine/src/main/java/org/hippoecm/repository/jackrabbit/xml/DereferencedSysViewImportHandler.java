@@ -37,6 +37,7 @@ import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -249,7 +250,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             // sv:value element
 
             // reset temp fields
-            currentPropValue = new BufferedStringValue(resolver);
+            currentPropValue = new BufferedStringValue(resolver, ValueFactoryImpl.getInstance());
         } else {
             throw new SAXException(new InvalidSerializedDataException(
                     "Unexpected element in system view xml document: " + name));
