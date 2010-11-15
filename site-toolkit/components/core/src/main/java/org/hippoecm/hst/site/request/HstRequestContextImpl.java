@@ -348,11 +348,49 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return pathSuffix;
     }
 
+    
     public Mount getMount(String alias) {
-        return getMount(alias, false);
+        if(alias == null) {
+            throw new IllegalArgumentException("Alias is not allowed to be null");
+        }
+        // we first check whether there is a mapped alias: Mapped aliases have precedence
+        Mount currentMount = getResolvedMount().getMount();
+        String mappedAlias = currentMount.getMountProperties().get(alias.toLowerCase());
+        if(mappedAlias != null) {
+            log.debug("Did find mappedAlias '{}' for alias '{}'. Try to find a mount for this mappedAlias.", mappedAlias, alias);
+            Mount mount = lookupMount(mappedAlias.toLowerCase());
+            if(mount != null) {
+                return mount;
+            }
+            log.debug("did not find a Mount for mappedAlias '{}'. Try fallback to find a Mount having alias '{}'", mappedAlias, alias);
+        }
+        return lookupMount(alias.toLowerCase());
     }
     
-    private Mount getMount(String alias, boolean alreadyMapped) {
+    public Mount getMount(String alias, String type) {
+        if(alias == null || type == null) {
+            throw new IllegalArgumentException("Alias and type are not allowed to be null");
+        }
+        String mappedAlias = getResolvedMount().getMount().getMountProperties().get(alias.toLowerCase());
+        if(mappedAlias != null) {
+            Mount mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), mappedAlias, type);
+            if(mount != null) {
+                return mount;
+            } else {
+                log.debug("We did not find a mapped mount for mappedAlias '{}'. Try to find a mount for alias '{}' directly",mappedAlias, alias);
+            }
+        } else {
+            log.debug("Did not find a mappedAlias for alias '{}'. Try alias directly", alias);
+        }
+        
+        Mount mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias.toLowerCase(), type);
+        if(mount == null) {
+            log.debug("We did not find a direct mount for alias '{}'. Return null.", alias);
+        }
+        return mount;
+    }
+    
+    private Mount lookupMount(String alias) {
         Mount currentMount = getResolvedMount().getMount();
         String hostGroupName = currentMount.getVirtualHost().getHostGroupName();
         VirtualHosts hosts = currentMount.getVirtualHost().getVirtualHosts();
@@ -366,20 +404,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         
         if(possibleMounts.size() == 0) {
-            // no exact mount alias found. Now check whether there is a mapped mount on the current mount as follows:
-            // if the current mount as a property: 
-            // "hst:mount"+alias we take the value of this property, and see whether we can find a mount with alias equal to the value of this property 
-            if(alreadyMapped) {
-                log.debug("Did not find a mount for mapped alias '{}'. Return null", alias);
-                return null;
-            }
-            String mappedAlias = currentMount.getMountProperties().get(alias);
-            if(mappedAlias == null) {
-                log.debug("Did not find a mount or mappedAlias  for alias '{}'", alias);
-                return null;
-            }
-            log.debug("We did not find a direct mount for alias '{}' but found mappedAlias '{}'. Try to find a mount for mapped alias now.", alias, mappedAlias);
-            return getMount(mappedAlias, true);
+            log.debug("Did not find a mount for alias '{}'. Return null", alias);
+            return null;
         }
         
         if(possibleMounts.size() == 1) {
@@ -423,26 +449,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return possibleMounts.get(0);
     }
 
-    public Mount getMount(String alias, String type) {
-        Mount mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias, type);
-        if(mount == null) {
-            log.debug("Cannot find a mount for alias '{}'. Try to find mapped alias now. ", alias);
-            String mappedAlias = getResolvedMount().getMount().getMountProperties().get(alias);
-            if(mappedAlias == null) {
-                log.debug("Did not find a mount or mappedAlias for alias '{}'. Return null", alias);
-                return null;
-            }
-            log.debug("We did not find a direct mount for alias '{}' but found a mappedAlias '{}'. Try to find a mount for mapped alias now.", alias, mappedAlias);
-            mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), mappedAlias, type);
-            if(log.isDebugEnabled()) {
-                if(mount != null) {
-                    log.debug("We did not find a direct mount for alias '{}' but found a Mount for mappedAlias '{}'. Return this mount.", alias, mappedAlias);
-                }
-            }
-        }
-        
-        return mount;
-    }
+    
     
     private int countCommon(List<String> types, List<String> types2) {
         int counter = 0;

@@ -180,10 +180,10 @@ public class MountService implements Mount {
         
         this.allProperties = mount.getValueProvider().getProperties();
         
-        this.alias = name;
+        this.alias = name.toLowerCase();
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
-            this.alias = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS);
+            this.alias = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase();
         }
         
         if(parent == null) {
@@ -603,7 +603,7 @@ public class MountService implements Mount {
                         // skip the hst:mountpoint property as this is a reserved property with a different meaning
                         continue;
                     }
-                    mountProperties.put(entry.getKey().substring(PROPERTY_NAME_MOUNT_PREFIX.length()), (String)entry.getValue());
+                    mountProperties.put(entry.getKey().substring(PROPERTY_NAME_MOUNT_PREFIX.length()).toLowerCase(), ((String)entry.getValue()).toLowerCase());
                 }
             }
         }

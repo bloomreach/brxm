@@ -173,8 +173,8 @@ public class VirtualHostsService implements VirtualHosts {
             try {
                 aliasTypeMap.put(getAliasTypeKey(mount.getAlias(), type), mount);
             } catch (IllegalArgumentException e) {
-                throw new ServiceException("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
-                		". Failed for mount '"+mount.getName()+"'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount within a single hostgroup.");
+                log.error("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
+                		". Failed for mount '{}'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount within a single hostgroup. The mount '{}' cannot be used for lookup. Change alias for it.", mount.getName(), mount.getName());
             }
         }
 
@@ -324,6 +324,9 @@ public class VirtualHostsService implements VirtualHosts {
         if(aliasTypeMap == null) {
             return null;
         }
+        if(alias == null || type == null) {
+            throw new IllegalArgumentException("Alias and type are not allowed to be null");
+        }
         return aliasTypeMap.get(getAliasTypeKey(alias, type));
     }
 
@@ -341,7 +344,7 @@ public class VirtualHostsService implements VirtualHosts {
     
 
     private String getAliasTypeKey(String alias, String type) {
-        return alias + '\uFFFF' + type;
+        return alias.toLowerCase() + '\uFFFF' + type;
     }
 
     

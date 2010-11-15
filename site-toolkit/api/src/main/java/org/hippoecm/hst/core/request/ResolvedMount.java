@@ -44,8 +44,7 @@ public interface ResolvedMount {
     String getNamedPipeline();
     
     /**
-     * Returns the mountPath from the backing {@link Mount} where possible wildcard values might have been replaced. When there is no 
-     * mountPath, an empty String will be returned. When the mountPath is non-empty, it always starts with a  <code>"/"</code>.
+     * Returns the mountPath from the backing {@link Mount} where possible wildcard values might have been replaced. A <code>root</code> {@link Mount} returns an empty {@link String} (""). When the mountPath is non-empty, it always starts with a  <code>"/"</code>.
      * @see Mount#getMountPath()
      * @return the resolved mountPath for this {@link ResolvedMount}
      */

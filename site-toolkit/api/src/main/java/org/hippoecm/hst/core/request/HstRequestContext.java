@@ -249,12 +249,16 @@ public interface HstRequestContext {
      * {@link Mount} has precedence. If there is no primary type match, we'll return the mount that has most types in common
      * </p>
      * <p>
-     * If there cannot be found a correct {@link Mount} for <code>alias</code>, there will be looked if the {@link Mount} of the current {@link HstRequestContext}
+     * There will be looked if the {@link Mount} of the current {@link HstRequestContext}
      * has a property that is called <code>hst:mountXXX</code> where <code>XXX</code> is equal to  <code>alias</code>. If so, there will be tried
-     * to return a {@link Mount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
+     * to return a {@link Mount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>. 
+     * If there cannot be found a {@link Mount} for via a mapped <code>hst:mountXXX</code> property, there will be looked for a {@link Mount} with
+     * which has {@link Mount#getAlias()} equal to <code>alias</code>.
+     * <b>Thus</b> a mapped alias has <b>precedence</b>!
      * </p>
      * @param alias the alias the found {@link Mount} or XXX in hst:mountXXX property
      * @return a mount with {@link Mount#getAlias()} equal to <code>alias</code> or mappedAlias and at least one common type with the mount from the current request. <code>null</code> if there is no suitable mount.
+     * @throws IllegalArgumentException when <code>alias</code> is <code>null</code>
      */
     Mount getMount(String alias);
     
@@ -263,14 +267,15 @@ public interface HstRequestContext {
      * a mount with {@link Mount#getAlias()} equal to <code>alias</code> and one of its {@link Mount#getTypes()}  equal to <code>type</code>.
      * </p>
      * <p>
-     * If there cannot be found a correct {@link Mount} for <code>alias</code>, there will be looked if the {@link Mount} of the current {@link HstRequestContext}
-     * has a property that is called <code>hst:mountXXX</code> where <code>XXX</code> is equal to  <code>alias</code>. If so, there will be tried
-     * to return a {@link Mount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>.
+     * There will be looked if the {@link Mount} of the current {@link HstRequestContext} has a property that is called <code>hst:mountXXX</code> where <code>XXX</code> is equal to  <code>alias</code>. 
+     * If so, there will be tried to return a {@link Mount} that has an alias equal to the value of this mappedAlias property <code>hst:mountXXX</code>. If there cannot be found a {@link Mount} for via a mapped <code>hst:mountXXX</code> property, 
+     * there will be looked for a {@link Mount} with which has {@link Mount#getAlias()} equal to <code>alias</code>.
      * </p>
      * 
      * @param alias the alias the found {@link Mount}  or or XXX in hst:mountXXX property
      * @param type the type the found {@link Mount} should have
      * @return a mount with {@link Mount#getAlias()} equal to <code>alias</code> or mappedAlias and one of its {@link Mount#getTypes()} equal to <code>type</code>. <code>null</code> if there is no suitable mount.
+     * @throws IllegalArgumentException when <code>alias</code> or <code>type</code> is <code>null</code>
      */
     Mount getMount(String alias, String type);
     
