@@ -97,14 +97,15 @@ jQuery.noConflict();
             if (d.type == HST.CONTAINERITEM) {
                 var containerId = $(element).parents('.componentContentWrapper').attr('hst:id');
                 var container = this.containers[containerId];
-                if (typeof container !== 'undefined' && container.removeItem(d.id)) {
-                    Hippo.PageComposer.UI.Factory.deleteObjectRef(containerId);
+                if(!!container && container.removeItem(d.id)) {
+                    Hippo.PageComposer.UI.Factory.deleteObjectRef(d.id);
                 }
             } else if (d.type == HST.CONTAINER) {
                 var container = this.containers[d.id];
-                if (typeof container !== 'undefined') {
+                if (!!container) {
                     container.remove();
                     delete this.containers[id];
+                    Hippo.PageComposer.UI.Factory.deleteObjectRef(d.id);
                 }
             }
             this.checkStateChanges();

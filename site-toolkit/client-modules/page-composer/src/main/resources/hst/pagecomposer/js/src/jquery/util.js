@@ -104,7 +104,7 @@ jQuery.noConflict();
 
         init: function(cfg) {
             this.thresHigh = cfg.tresholdHigh || 0.8;
-            this.thresLow = cfg.tresholdLow || 0.2;
+            this.thresLow = cfg.tresholdLow || 0;
             this.min = cfg.min || 0;
             this.beforeOffset = cfg.beforeOffset || 2;
             this.afterOffset = cfg.afterOffset || 2;

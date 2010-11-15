@@ -156,7 +156,7 @@ jQuery.noConflict();
             //test for single border and assume it all around.
             //TODO: test all borders
             var border = overlay.css('border-left-width');
-            var borderWidth = border ? parseFloat(border.substring(0, border.length - 2)) : 0;
+            var borderWidth = !!border ? parseFloat(border.substring(0, border.length - 2)) : 0;
 
             var data = {
                 left: elOffset.left,
@@ -199,6 +199,8 @@ jQuery.noConflict();
             this.dropIndicator = null;
             this.draw = new Hippo.Util.Draw({min: 3, tresholdLow: 0});
 
+            this.parentMargin = 0; //margin of overlay
+
             this.cls.selected       = this.cls.selected + '-container';
             this.cls.activated      = this.cls.activated + '-container';
             this.cls.highlight      = 'hst-highlight';
@@ -240,6 +242,7 @@ jQuery.noConflict();
             this._renderItems();
             this._createSortable();
             this._checkEmpty();
+            this.sync();
         },
 
         onDestroy: function() {
@@ -406,8 +409,8 @@ jQuery.noConflict();
         ddHelper : function(event, element) {
             var id = element.attr(HST.ATTR.ID);
             var item = this.items.get(id);
-            var label = 'Name: ' + item.data.name;
-            return $('<div class="hst-dd-helper">' + label + '</div>').css('width', '120px').css('height', '30px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
+            return item.menu.clone().css('width', '85px').css('height', '18px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
+//            return $('<div class="hst-dd-helper">' + item.data.name + '</div>').css('width', '85px').css('height', '18px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
         },
 
         ddOnChange : function(event, ui) {
@@ -622,20 +625,35 @@ jQuery.noConflict();
         },
 
         onRender : function() {
+            var background = $('<div/>').addClass('hst-overlay-background');
+            this.overlay.append(background);
+
+            this.menu = $('<div/>').addClass('hst-overlay-menu').appendTo(document.body);
+
             var data = {element: this.element};
             var deleteButton = $('<div/>').addClass('hst-overlay-menu-button').html('X');
             deleteButton.click(function(e) {
                 e.stopPropagation();
                 sendMessage(data, 'remove');
             });
-
-            this.getOverlay().append(deleteButton);
+            this.menu.append(deleteButton);
 
             var nameLabel = $('<div/>').addClass('hst-overlay-name-label');
-            this.getOverlay().append(nameLabel);
+            this.menu.append(nameLabel);
             this.nameLabel = nameLabel;
 
             this.renderLabelContents();
+        },
+
+        sync: function() {
+            this._super();
+            this.menu.position({
+                my : 'right top',
+                at : 'right top',
+                of : this.overlay,
+                offset : '-2 2'
+            });
+
         },
 
         getOverlayData : function(data) {
@@ -643,6 +661,8 @@ jQuery.noConflict();
             var parentOffset = this.parent.overlay.offset();
             data.left -= (parentOffset.left + this.parent.parentMargin);
             data.top -= (parentOffset.top + this.parent.parentMargin);
+            data.width  -= data.overlayBorder*2;
+            data.height -= data.overlayBorder*2;
 
             return data;
         },
@@ -672,18 +692,17 @@ jQuery.noConflict();
 
         onDragStart : function(event, ui) {
             $(this.element).addClass('hst-item-ondrag');
+            this.menu.hide();
         },
 
         onDragStop : function(event, ui) {
             $(this.element).removeClass('hst-item-ondrag');
+            this.menu.show();
         },
 
         onDestroy : function() {
-            if(this.overlay) {
-                this.overlay.remove();
-            } else {
-                console.warn('Overlay not found for remove of ' + this.id);
-            }
+            this.overlay.remove();
+            this.menu.remove();
         }
 
     });
