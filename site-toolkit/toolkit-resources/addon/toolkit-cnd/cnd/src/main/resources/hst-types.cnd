@@ -123,7 +123,7 @@
 - hst:foldersonly (boolean)
 - hst:repobased (boolean)
 - hst:depth (long)
-- hst:parameternames (string) multiplerenderpath
+- hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:inheritsfrom (string)
 + * (hst:sitemenuitem)
