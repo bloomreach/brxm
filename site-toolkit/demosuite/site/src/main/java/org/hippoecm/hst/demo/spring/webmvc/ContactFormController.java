@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.demo.spring.webmvc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.validation.BindException;
@@ -32,6 +34,8 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
  * @version $Id: ContactFormController.java 18406 2009-06-05 11:07:25Z wko $
  */
 public class ContactFormController extends SimpleFormController {
+    
+    private static Logger log = LoggerFactory.getLogger(ContactFormController.class);
 
     private MailSender mailSender;
     private SimpleMailMessage templateMessage;
@@ -53,7 +57,12 @@ public class ContactFormController extends SimpleFormController {
         SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
         msg.setFrom(messageBean.getEmail());
         msg.setText(messageBean.getMessage());
-        mailSender.send(msg);
+        
+        try {
+            mailSender.send(msg);
+        } catch (Exception e) {
+            log.warn("Cannot send message. " + e);
+        }
     }
     
     @Override

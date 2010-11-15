@@ -15,12 +15,17 @@
  */
 package org.hippoecm.hst.demo.spring;
 
+import java.io.IOException;
+
 import org.hippoecm.hst.component.support.forms.BaseFormHstComponent;
 import org.hippoecm.hst.component.support.forms.FormMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailSender;
@@ -69,22 +74,43 @@ public class ContactSpring extends BaseFormHstComponent {
             
             try {
                 this.mailSender.send(msg);
-                
-                // possible do a redirect to a thankyou page: do not use directly response.sendRedirect;
-                HstSiteMapItem item = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getChild("thankyou");
-                
-                if (item != null) {
-                    this.sendRedirect("/thankyou",request, response);
-                } else {
-                    log.warn("Cannot redirect because siteMapItem not found. ");
-                }
             } catch (Exception e) {
-                formMap.addMessage("email", "Failed to send email: " + e);
+                log.warn("Cannot send message. " + e);
+            }
+            
+            // possible do a redirect to a thankyou page: do not use directly response.sendRedirect;
+            HstSiteMapItem item = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getChild("thankyou");
+            
+            if (item != null) {
+                sendRedirect(request, response, item.getId());
+            } else {
+                log.warn("Cannot redirect because siteMapItem not found. ");
             }
         } else {
             // validation failed. Persist form map, and add possible error messages to the formMap
             formMap.addMessage("email", "Email address must contain '@'");
             super.persistFormMap(request, response, formMap, null);
+        }
+    }
+    
+    private void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
+        HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
+        HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
+        HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId));
+
+        StringBuffer url = new StringBuffer();
+        
+        for (String elem : link.getPathElements()) {
+            String enc = response.encodeURL(elem);
+            url.append("/").append(enc);
+        }
+
+        String urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
+        
+        try {
+            response.sendRedirect(urlString);
+        } catch (IOException e) {
+            throw new HstComponentException("Could not redirect. ",e);
         }
     }
     
