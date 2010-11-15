@@ -37,7 +37,9 @@ public class MockHstComponentWindow implements HstComponentWindow {
     protected String referenceNamespace;
     protected HstComponent component;
     protected String renderPath;
+    protected String namedRenderer;
     protected String serveResourcePath;
+    protected String namedResourceServer;
     protected String pageErrorHandlerClassName;
     protected Map<String, String> parameters;
     protected Map<String, String> localParameters;
@@ -124,6 +126,14 @@ public class MockHstComponentWindow implements HstComponentWindow {
     public void setRenderPath(String renderPath) {
         this.renderPath = renderPath;
     }
+    
+    public String getNamedRenderer() {
+        return namedRenderer;
+    }
+    
+    public void setNamedRenderer(String namedRenderer) {
+        this.namedRenderer = namedRenderer;
+    }
 
     public HstResponseState getResponseState() {
         return responseState;
@@ -139,6 +149,14 @@ public class MockHstComponentWindow implements HstComponentWindow {
     
     public void setServeResourcePath(String serveResourcePath) {
         this.serveResourcePath = serveResourcePath;
+    }
+    
+    public String getNamedResourceServer() {
+        return namedResourceServer;
+    }
+    
+    public void setNamedResourceServer(String namedResourceServer) {
+        this.namedResourceServer = namedResourceServer;
     }
     
     public String getPageErrorHandlerClassName() {

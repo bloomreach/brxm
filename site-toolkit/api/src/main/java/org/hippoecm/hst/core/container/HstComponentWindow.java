@@ -33,11 +33,6 @@ import org.hippoecm.hst.core.component.HstResponseState;
 public interface HstComponentWindow {
 
     /**
-     * hard-coded special prefixes for dispatching
-     */
-    static final String[] SPECIAL_DISPATCH_PREFIXES = {"jcr:", "classpath:"};
-    
-    /**
      * The name of the component window.
      * 
      * @return the name of the component window
@@ -94,7 +89,13 @@ public interface HstComponentWindow {
      * 
      * @return the dispatching path to render this component window
      */
-    String getRenderPath(); 
+    String getRenderPath();
+    
+    /**
+     * @see #getRenderPath()
+     * @return the name of the renderer, when using named servlet. Returns <code>null</code> when {@link #getRenderPath()} does not return <code>null</code>
+     */
+    String getNamedRenderer();
     
     /**
      * The dispatching path path to serve resource in this component window.
@@ -102,6 +103,12 @@ public interface HstComponentWindow {
      * @return the dispatching path to serve resource in this component window
      */
     String getServeResourcePath();
+    
+    /**
+     * @see #getServeResourcePath()
+     * @return the name of the resource server, when using named servlet. Returns <code>null</code> when {@link #getServeResourcePath()} does not return <code>null</code>
+     */
+    String getNamedResourceServer();
     
     /**
      * @see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameter(String)}

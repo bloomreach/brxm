@@ -122,6 +122,12 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     String getServeResourcePath();
     
     /**
+     * @see #getServeResourcePath()
+     * @return the name of the resource server, when using named servlet. Returns <code>null</code> when {@link #getServeResourcePath()} does not return <code>null</code>
+     */
+    String getNamedResourceServer();
+    
+    /**
      * @return the fully classified className of the class implementing {@link PageErrorHandler} or <code>null</code> when not configured
      */
     String getPageErrorHandlerClassName();

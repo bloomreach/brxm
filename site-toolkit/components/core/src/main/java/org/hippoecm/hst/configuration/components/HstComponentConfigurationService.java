@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -94,7 +95,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     
     // whether the renderPath is a resource location or a named servlet. Default false
     // TODO still need to get the isNamed boolean from the template
-    private boolean isNamed;
+    private boolean isNamedRenderer;
+    private boolean isNamedResourceServer;
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -147,7 +149,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         
         this.hstTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
-        this.serveResourcePath = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
+        this.serveResourcePath = StringUtils.trim(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH));
         this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
         this.propertyMap = node.getValueProvider().getPropertyMap();
         
@@ -209,14 +211,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public String getRenderPath() {
-        if(isNamed) {
+        if(isNamedRenderer) {
             return null;
         }
         return this.renderPath;
     }
 
     public String getNamedRenderer() {
-        if(!isNamed) {
+        if(!isNamedRenderer) {
             return null;
         }
         return this.renderPath;
@@ -236,6 +238,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public String getServeResourcePath() {
+        if (isNamedResourceServer) {
+            return null;
+        }
+        return this.serveResourcePath;
+    }
+    
+    public String getNamedResourceServer() {
+        if (!isNamedResourceServer) {
+            return null;
+        }
         return this.serveResourcePath;
     }
 
@@ -324,12 +336,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.propertyMap = child.propertyMap;
         copy.referenceName = child.referenceName;
         copy.renderPath = child.renderPath;
-        copy.isNamed = child.isNamed;
+        copy.isNamedRenderer = child.isNamedRenderer;
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.xtype = child.xtype;
         copy.type = child.type;
         copy.serveResourcePath = child.serveResourcePath;
+        copy.isNamedResourceServer = child.isNamedResourceServer;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.dummyContent = child.dummyContent;
@@ -392,13 +405,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.renderPath == null) {
                     this.renderPath = referencedComp.renderPath;
-                    this.isNamed = referencedComp.isNamed;
+                    this.isNamedRenderer = referencedComp.isNamedRenderer;
                 }
                 if (this.referenceComponent == null) {
                     this.referenceComponent = referencedComp.referenceComponent;
                 }
                 if (this.serveResourcePath == null) {
                     this.serveResourcePath = referencedComp.serveResourcePath;
+                    this.isNamedResourceServer = referencedComp.isNamedResourceServer;
                 }
                 if (this.canonicalStoredLocation == null) {
                     this.canonicalStoredLocation = referencedComp.canonicalStoredLocation;
@@ -490,13 +504,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.renderPath == null) {
             this.renderPath = childToMerge.renderPath;
-            this.isNamed = childToMerge.isNamed;
+            this.isNamedRenderer = childToMerge.isNamedRenderer;
         }
         if (this.referenceComponent == null) {
             this.referenceComponent = childToMerge.referenceComponent;
         }
         if (this.serveResourcePath == null) {
             this.serveResourcePath = childToMerge.serveResourcePath;
+            this.isNamedResourceServer = childToMerge.isNamedResourceServer;
         }
         if (this.pageErrorHandlerClassName == null) {
             this.pageErrorHandlerClassName = childToMerge.pageErrorHandlerClassName;

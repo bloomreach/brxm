@@ -198,7 +198,9 @@ public abstract class AbstractValve implements Valve {
                     public Map<String, String> getParameters() { return null; }
                     public String getReferenceName() { return traceCompName; }
                     public String getRenderPath() { return null; }
+                    public String getNamedRenderer() { return null; }
                     public String getServeResourcePath() { return null; }
+                    public String getNamedResourceServer() { return null; }
                     public HstComponentConfiguration getParent() { return null; }
 					public String getLocalParameter(String name) {return null;}
 					public Map<String, String> getLocalParameters() {return null;}
@@ -207,7 +209,6 @@ public abstract class AbstractValve implements Valve {
                     public String getXType() {return null;}
                     public String getCanonicalIdentifier() {return null;}
                     public Type getComponentType() {return null;}
-                    public String getNamedRenderer() {return null;}
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);

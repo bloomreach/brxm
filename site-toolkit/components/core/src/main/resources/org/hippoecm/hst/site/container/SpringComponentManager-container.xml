@@ -49,7 +49,7 @@
         class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
     <property name="exceptionThrowable" value="${development.mode}" />
     <property name="errorRenderPath" value="${component.error.page}" />
-    <property name="webResourcesLocation" value="${web.resources.location}" />
+    <property name="dispatchUrlPrefix" value="${dispatch.url.prefix}" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"

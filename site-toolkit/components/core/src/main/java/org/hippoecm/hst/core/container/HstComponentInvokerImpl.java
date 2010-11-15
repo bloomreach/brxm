@@ -43,13 +43,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     
     private final static Logger log = LoggerFactory.getLogger(HstComponentInvokerImpl.class);
 
-    public final static String DEFAULT_WEB_RESOURCES_LOCATION = "/WEB-INF";
-    
     protected boolean exceptionThrowable;
     
     protected String errorRenderPath;
     
-    protected String webResourcesLocation;
+    protected String dispatchUrlPrefix;
     
     public void setExceptionThrowable(boolean exceptionThrowable) {
         this.exceptionThrowable = exceptionThrowable;
@@ -59,20 +57,12 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         this.errorRenderPath = errorRenderPath;
     }
     
-    public void setWebResourcesLocation(String webResourcesLocation) {
-        if (webResourcesLocation == null) {
-            log.info("No webResourcesLocation is configured. We take default location '{}' as webResourcesLocation",
-                    DEFAULT_WEB_RESOURCES_LOCATION);
-            this.webResourcesLocation = DEFAULT_WEB_RESOURCES_LOCATION;
-        } else if ("/".equals(webResourcesLocation)) {
-            log.info("'/' as value for the webResourcesLocation is the same as an empty String: The web resources are taken relatively to the webapp. "
-                      + "Note that you might not want this as scripts like jsp's and freemarker can directly be called");
-            this.webResourcesLocation = "";
-        } else if (!webResourcesLocation.startsWith("/")) {
-            log.info("The configured webResourcesLocation '{}' does not start with a '/'. We prepend a '/' as the location is always relative to the webapp");
-            this.webResourcesLocation = "/" + webResourcesLocation;
+    public void setDispatchUrlPrefix(String dispatchUrlPrefix) {
+        if (dispatchUrlPrefix != null && !dispatchUrlPrefix.startsWith("/")) {
+            log.info("The configured dispatchUrlPrefix '{}' does not start with a '/'. We prepend a '/' as the location should be a context relative path.");
+            this.dispatchUrlPrefix = "/" + dispatchUrlPrefix;
         } else {
-            this.webResourcesLocation = webResourcesLocation;
+            this.dispatchUrlPrefix = dispatchUrlPrefix;
         }
     }
     
@@ -179,10 +169,16 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
+        boolean namedDispatching = false;
         String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath(); 
         
         if (dispatchUrl == null) {
-            dispatchUrl = ((HstRequestImpl) hstRequest).getComponentWindow().getRenderPath();
+            dispatchUrl = window.getRenderPath();
+        }
+        
+        if (dispatchUrl == null) {
+            dispatchUrl = window.getNamedRenderer();
+            namedDispatching = (dispatchUrl != null);
         }
         
         ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
@@ -217,7 +213,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                hstResponse.flushBuffer();
              /////// TODO END ////////////////////////////
             } else {
-                invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+                invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
             }
         } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
@@ -302,7 +298,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
-        
+        boolean namedDispatching = false;
         String dispatchUrl = ((HstResourceResponseImpl) hstResponse).getServeResourcePath();
         
         if (dispatchUrl == null) {
@@ -313,12 +309,17 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             dispatchUrl = window.getRenderPath();
         }
         
+        if (dispatchUrl == null) {
+            dispatchUrl = window.getNamedRenderer();
+            namedDispatching = (dispatchUrl != null);
+        }
+        
         ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
         
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
             
-            invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+            invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
             
         } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
@@ -353,38 +354,40 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         }
     }
 
-    protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws Exception {
+    protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, boolean namedDispatching, String dispatchUrl, HstComponentWindow window) throws Exception {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Invoking dispatcher of url: {}", dispatchUrl);
             }
-            boolean prefixDispatchUrlWithWebResourcesLocation = true;
-            for(String specialPrefix : HstComponentWindow.SPECIAL_DISPATCH_PREFIXES) {
-                if(dispatchUrl.startsWith(specialPrefix)) {
-                    // for special dispatch locations, the webResourcesLocation must not be prepended
-                    prefixDispatchUrlWithWebResourcesLocation = false;
-                    servletRequest.setAttribute(ContainerConstants.SPECIAL_DISPATCH_INFO, specialPrefix);
-                    dispatchUrl = dispatchUrl.substring(specialPrefix.length());
-                    if(!dispatchUrl.startsWith("/") && specialPrefix.equals("classpath:")) {
-                        // the dispatch url is relative to the current HstComponent. Let's account for this.
-                       String currentComponentPackage = "/" + window.getComponent().getClass().getPackage().getName().replace(".", "/");
-                       String absoluteUrl = currentComponentPackage + "/" + dispatchUrl;
-                       log.debug("Relative dispatch URL '{}' rewritten to '{}'", dispatchUrl, absoluteUrl);
-                       dispatchUrl = absoluteUrl;
-                    } 
-                    break;
-                }
-            }
             
-            if (dispatchUrl.startsWith("/")) {
-                if (prefixDispatchUrlWithWebResourcesLocation) {
-                    dispatchUrl = webResourcesLocation + dispatchUrl;
-                }
-                disp = requestContainerConfig.getServletContext().getRequestDispatcher(dispatchUrl);
-            } else {
+            if (namedDispatching) {
                 disp = requestContainerConfig.getServletContext().getNamedDispatcher(dispatchUrl);
+            } else {
+                if (dispatchUrl.startsWith("jcr:")) {
+                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_SCHEME, "jcr");
+                    dispatchUrl = dispatchUrl.substring(4);
+                } else if (dispatchUrl.startsWith("classpath:")) {
+                    servletRequest.setAttribute(ContainerConstants.DISPATCH_URI_SCHEME, "classpath");
+                    dispatchUrl = dispatchUrl.substring(10);
+                    
+                    if (!dispatchUrl.startsWith("/")) {
+                        String resolvedDispatchUrl = "/" + window.getComponent().getClass().getPackage().getName().replace(".", "/") + "/" + dispatchUrl;
+                        
+                        if (log.isDebugEnabled()) {
+                            log.debug("Relative classpath dispatch URL '{}' has been resolved to '{}'", dispatchUrl, resolvedDispatchUrl);
+                        }
+                        
+                        dispatchUrl = resolvedDispatchUrl;
+                    }
+                } else {
+                    if (!dispatchUrl.startsWith("/")) {
+                        dispatchUrl = dispatchUrlPrefix + dispatchUrl;
+                    }
+                }
+                
+                disp = requestContainerConfig.getServletContext().getRequestDispatcher(dispatchUrl);
             }
         }
         
@@ -414,7 +417,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (errorRenderPath != null && errorRenderPath.length() != 0) {
                 try {
                     servletRequest.setAttribute("errorComponentWindow", window);
-                    invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, errorRenderPath, window);
+                    invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, false, errorRenderPath, window);
                     servletResponse.flushBuffer();
                 } finally {
                     servletRequest.removeAttribute("errorComponentWindow");

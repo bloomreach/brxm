@@ -49,7 +49,9 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected String referenceNamespace;
     protected HstComponent component;
     protected String renderPath;
+    protected String namedRenderer;
     protected String serveResourcePath;
+    protected String namedResourceServer;
     protected HstComponentWindow parentWindow;
     
     protected List<HstComponentException> componentExceptions;
@@ -95,35 +97,34 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public String getRenderPath() {
         if (renderPath == null) {
-            renderPath = getDispatchPath(hstComponentConfiguration.getRenderPath());
+            renderPath = hstComponentConfiguration.getRenderPath();
         }
         
         return renderPath;
     }
     
+    public String getNamedRenderer() {
+        if (namedRenderer == null) {
+            namedRenderer = hstComponentConfiguration.getNamedRenderer();
+        }
+        
+        return namedRenderer;
+    }
+    
     public String getServeResourcePath() {
         if (serveResourcePath == null) {
-            serveResourcePath = getDispatchPath(hstComponentConfiguration.getServeResourcePath());
+            serveResourcePath = hstComponentConfiguration.getServeResourcePath();
         }
         return serveResourcePath;
     }
     
-    private String getDispatchPath(String temp) {
-        if (temp != null && !temp.startsWith("/")) {
-            boolean prependSlash = true;
-            for(String specialPrefix : HstComponentWindow.SPECIAL_DISPATCH_PREFIXES) {
-                if(temp.startsWith(specialPrefix)) {
-                    prependSlash = false;
-                    break;
-                }
-            }
-            if(prependSlash) {
-                temp = new StringBuilder(temp.length() + 1).append('/').append(temp).toString();
-            }
+    public String getNamedResourceServer() {
+        if (namedResourceServer == null) {
+            namedResourceServer = hstComponentConfiguration.getNamedResourceServer();
         }
-        return temp;
+        return namedResourceServer;
     }
-    
+
     public String getParameter(String paramName) {
         return hstComponentConfiguration.getParameter(paramName);
     }
