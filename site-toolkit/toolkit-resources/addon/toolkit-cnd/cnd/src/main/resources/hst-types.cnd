@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/2.0'>
@@ -25,7 +25,6 @@
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
-- hst:isNamed (boolean)
 - hst:containers (string) multiple
 
 [hst:templates] > nt:base, mix:referenceable orderable
