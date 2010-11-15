@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.Node;
-
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -31,6 +26,10 @@ import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
+
+import javax.jcr.Node;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class DefaultListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
@@ -62,10 +61,11 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
 
     @Override
     public List<ListColumn<Node>> getExpandedColumns() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+        List<ListColumn<Node>> columns = getColumns();
 
         //Type
-        ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("doclisting-type", DocumentListingPlugin.class), "type");
+        ListColumn<Node> column = new ListColumn<Node>(
+                new ClassResourceModel("doclisting-type", DocumentListingPlugin.class), "type");
         column.setComparator(new TypeComparator());
         column.setRenderer(new TypeRenderer());
         column.setCssClass("doclisting-type");
@@ -73,5 +73,5 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
 
         return columns;
     }
-    
+
 }

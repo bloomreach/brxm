@@ -13,22 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery;
-
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+package org.hippoecm.frontend.plugins.gallery.columns.render;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.ImageContainer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 public class ThumbnailRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")

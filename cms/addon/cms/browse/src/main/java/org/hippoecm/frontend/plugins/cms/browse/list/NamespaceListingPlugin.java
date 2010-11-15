@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.Node;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -29,24 +24,31 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
+import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
-public final class NamespaceListingPlugin extends AbstractListingPlugin<Node> {
+import javax.jcr.Node;
+import java.util.ArrayList;
+import java.util.List;
+
+public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public NamespaceListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        setClassName("hippo-typeslist");
+        getSettings().setAutoWidthClassName("nslisting-name");
     }
 
     @Override
-    protected TableDefinition<Node> getTableDefinition() {
+    protected TableDefinition<Node> newTableDefinition() {
         List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
 
         ListColumn<Node> column = new ListColumn<Node>(new StringResourceModel("nslisting-name", this, null), "name");

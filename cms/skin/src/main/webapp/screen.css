@@ -254,9 +254,6 @@ padding-right: 9px;
 .hippo-list-details .hippo-list-order-descending {background: url('images/icons/arrow-sort-up-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-none{}
 
-.hippo-typeslist,  .asset-gallery-plugin  {
-  margin-top: 25px;
-}
 .hippo-picker-list-details .hippo-typeslist,  .hippo-picker-list-details .asset-gallery-plugin, .hippo-picker-list-details .hippo-list-search {
   margin-top: 0px;
 }

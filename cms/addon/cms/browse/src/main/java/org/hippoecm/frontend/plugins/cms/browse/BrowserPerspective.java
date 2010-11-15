@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.cms.browse;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -42,7 +41,7 @@ public class BrowserPerspective extends Perspective {
 
     private static final long serialVersionUID = 1L;
 
-    private static final JcrNodeModel NULL_MODEL = new JcrNodeModel((Node)null);
+    private static final JcrNodeModel NULL_MODEL = new JcrNodeModel((Node) null);
 
     private TabsPlugin tabs;
     private IExpandableCollapsable listing;
@@ -65,11 +64,11 @@ public class BrowserPerspective extends Perspective {
             @Override
             protected void onServiceAdded(RenderService service, String name) {
                 super.onServiceAdded(service, name);
-                if(service instanceof IExpandableCollapsable) {
-                    listing = (IExpandableCollapsable)service;
+                if (service instanceof IExpandableCollapsable) {
+                    listing = (IExpandableCollapsable) service;
                 }
 
-                if(listing == null || !listing.isSupported()) {
+                if (listing == null || !listing.isSupported()) {
                     wireframe.collapseAll();
                 } else {
                     checkExpandDefault();
@@ -79,7 +78,7 @@ public class BrowserPerspective extends Perspective {
             @Override
             protected void onRemoveService(RenderService service, String name) {
                 super.onRemoveService(service, name);
-                
+
                 listing = null;
                 previousSelection = null;
             }
@@ -89,7 +88,7 @@ public class BrowserPerspective extends Perspective {
             @Override
             protected void onServiceAdded(RenderService service, String name) {
                 super.onServiceAdded(service, name);
-                if(service instanceof TabsPlugin) {
+                if (service instanceof TabsPlugin) {
                     tabs = (TabsPlugin) service;
                 }
             }
@@ -121,7 +120,7 @@ public class BrowserPerspective extends Perspective {
                             //the onToggle override below sets the documentModel to null to remove the selected
                             //state from the doclisting
                             if (service != null) {
-                                if(!service.getModel().equals(NULL_MODEL)) {
+                                if (!service.getModel().equals(NULL_MODEL)) {
                                     wireframe.collapseAll();
                                 } else {
                                     checkExpandDefault();
@@ -152,7 +151,7 @@ public class BrowserPerspective extends Perspective {
         add(wireframe = new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))) {
             @Override
             protected void onToggle(boolean expand, String position) {
-                if(listing != null && listing.isSupported()) {
+                if (listing != null && listing.isSupported()) {
                     if (expand) {
                         listing.expand();
                     } else {
@@ -168,7 +167,7 @@ public class BrowserPerspective extends Perspective {
                     }
                 }
 
-                if(modelReference != null) {
+                if (modelReference != null) {
                     if (expand) {
                         previousSelection = modelReference.getModel();
                         modelReference.setModel(NULL_MODEL);
@@ -197,16 +196,19 @@ public class BrowserPerspective extends Perspective {
     public ResourceReference getIcon(IconSize type) {
         return new ResourceReference(BrowserPerspective.class, "browser-perspective-" + type.getSize() + ".png");
     }
-    
-    @Override
-    public void render(PluginRequestTarget target) {
-        super.render(target);
 
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
         checkExpandDefault();
     }
 
     private void checkExpandDefault() {
-        if (!clientOverride && tabs != null && !tabs.hasOpenTabs() && listing != null && listing.isSupported() && wireframe != null) {
+        if (tabs == null || listing == null || wireframe == null) {
+            return;
+        }
+
+        if (!clientOverride && !tabs.hasOpenTabs() && listing.isSupported()) {
             wireframe.expandDefault();
         }
     }
@@ -215,7 +217,7 @@ public class BrowserPerspective extends Perspective {
     public void detachModels() {
         super.detachModels();
 
-        if(previousSelection != null) {
+        if (previousSelection != null) {
             previousSelection.detach();
         }
     }

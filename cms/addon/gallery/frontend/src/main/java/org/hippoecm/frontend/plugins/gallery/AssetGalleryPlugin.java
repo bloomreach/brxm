@@ -15,36 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.Node;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.columns.FallbackAssetGalleryListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
-import org.hippoecm.frontend.plugins.standards.list.ListColumn;
+import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
-import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
-import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
-import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 
-public class AssetGalleryPlugin extends AbstractListingPlugin<Node> {
+import javax.jcr.Node;
+
+public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -53,40 +45,10 @@ public class AssetGalleryPlugin extends AbstractListingPlugin<Node> {
     public AssetGalleryPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        setClassName("asset-gallery-plugin");
+        getSettings().setAutoWidthClassName("assetgallery-name");
+
         add(CSSPackageResource.getHeaderContribution(AssetGalleryPlugin.class, "AssetGalleryPlugin.css"));
-    }
-
-    @Override
-    public TableDefinition getTableDefinition() {
-        List<ListColumn> columns = new ArrayList<ListColumn>();
-
-        ListColumn column = new ListColumn(new StringResourceModel("assetgallery-type", this, null), "type");
-        column.setRenderer(new EmptyRenderer());
-        column.setAttributeModifier(new MimeTypeAttributeModifier());
-        column.setComparator(new MimeTypeComparator());
-        column.setCssClass("assetgallery-type");
-        columns.add(column);
-
-        column = new ListColumn(new StringResourceModel("assetgallery-name", this, null), "name");
-        column.setComparator(new NameComparator());
-        column.setCssClass("assetgallery-name");
-        columns.add(column);
-
-        column = new ListColumn(new StringResourceModel("assetgallery-size", this, null), "size");
-        column.setRenderer(new SizeRenderer());
-        column.setComparator(new SizeComparator());
-        column.setCssClass("assetgallery-size");
-        columns.add(column);
-
-        return new TableDefinition(columns);
-    }
-
-    @Override
-    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
-            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
-            ListPagingDefinition pagingDefinition) {
-        return new DraggableListDataTable(id, tableDefinition, dataProvider, selectionListener, triState,
-                pagingDefinition);
     }
 
     @Override
@@ -95,26 +57,31 @@ public class AssetGalleryPlugin extends AbstractListingPlugin<Node> {
                 getTableDefinition().getComparators());
     }
 
-    class DraggableListDataTable extends ListDataTable {
-        private static final long serialVersionUID = 1L;
+    @Override
+    protected ListDataTable<Node> newListDataTable(String id,
+                                                   TableDefinition<Node> tableDefinition,
+                                                   ISortableDataProvider<Node> dataProvider,
+                                                   ListDataTable.TableSelectionListener<Node> selectionListener,
+                                                   boolean triState,
+                                                   ListPagingDefinition pagingDefinition) {
+        return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState,
+                pagingDefinition) {
 
-        public DraggableListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-                TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
-            super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
-
-            DataTableSettings settings = new DataTableSettings();
-            settings.setAutoWidthClassName("assetgallery-name");
-            add(new DataTableBehavior(settings));
-        }
-
-        @Override
-        protected Item newRowItem(String id, int index, IModel model) {
-            Item item = super.newRowItem(id, index, model);
-            if (model instanceof JcrNodeModel) {
-                JcrNodeModel nodeModel = (JcrNodeModel) model;
-                item.add(new NodeDragBehavior(new DragSettings(YuiPluginHelper.getConfig(getPluginConfig())), nodeModel));
+            @Override
+            protected Item newRowItem(String id, int index, IModel model) {
+                Item item = super.newRowItem(id, index, model);
+                if (model instanceof JcrNodeModel) {
+                    JcrNodeModel nodeModel = (JcrNodeModel) model;
+                    item.add(new NodeDragBehavior(new DragSettings(YuiPluginHelper.getConfig(getPluginConfig())),
+                            nodeModel));
+                }
+                return item;
             }
-            return item;
-        }
+        };
+    }
+
+    @Override
+    protected IListColumnProvider getDefaultColumnProvider() {
+        return new FallbackAssetGalleryListColumnProvider();
     }
 }

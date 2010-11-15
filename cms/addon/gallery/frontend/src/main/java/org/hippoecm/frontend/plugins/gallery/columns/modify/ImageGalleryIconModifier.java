@@ -13,10 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery;
+package org.hippoecm.frontend.plugins.gallery.columns.modify;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -26,13 +24,16 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifier {
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+public class ImageGalleryIconModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(GalleryFolderAttributeModifier.class);
+    static final Logger log = LoggerFactory.getLogger(ImageGalleryIconModifier.class);
 
     static class GalleryFolderAttributeModel extends LoadableDetachableModel {
         private static final long serialVersionUID = 1L;

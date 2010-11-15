@@ -45,6 +45,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
       <sv:property sv:name="gallery.thumbnail.size" sv:type="String">
         <sv:value>60</sv:value>
       </sv:property>
@@ -65,6 +68,9 @@
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
+      </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:node sv:name="yui.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -201,6 +207,12 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
       </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
       <sv:node sv:name="yui.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
@@ -309,6 +321,9 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
       </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="hipposysedit:namespacefolder">
@@ -337,6 +352,9 @@
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
+      </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -480,9 +498,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
       <sv:property sv:name="list.page.size" sv:type="String">
         <sv:value>${list.page.size}</sv:value>
       </sv:property>
@@ -503,6 +518,9 @@
       </sv:property>
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -646,15 +664,18 @@
         <sv:value>${model.folder}</sv:value>
       </sv:property>
       <!-- sv:node sv:name="yui.config">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="groups" sv:type="String">
-          <sv:value>drop-on-xinha</sv:value>
-        </sv:property>
-      </sv:node -->
+       <sv:property sv:name="jcr:primaryType" sv:type="Name">
+         <sv:value>frontend:pluginconfig</sv:value>
+       </sv:property>
+       <sv:property sv:name="groups" sv:type="String">
+         <sv:value>drop-on-xinha</sv:value>
+       </sv:property>
+     </sv:node -->
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -797,6 +818,9 @@
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>
       </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
       <sv:node sv:name="yui.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
@@ -888,6 +912,9 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
       </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
@@ -939,15 +966,18 @@
         <sv:value>${model.folder}</sv:value>
       </sv:property>
       <!-- sv:node sv:name="yui.config">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="groups" sv:type="String">
-          <sv:value>drop-on-xinha</sv:value>
-        </sv:property>
-      </sv:node -->
+       <sv:property sv:name="jcr:primaryType" sv:type="Name">
+         <sv:value>frontend:pluginconfig</sv:value>
+       </sv:property>
+       <sv:property sv:name="groups" sv:type="String">
+         <sv:value>drop-on-xinha</sv:value>
+       </sv:property>
+     </sv:node -->
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+      <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

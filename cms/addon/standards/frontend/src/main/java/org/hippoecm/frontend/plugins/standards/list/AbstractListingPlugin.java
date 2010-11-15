@@ -15,10 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import java.util.Iterator;
-
-import javax.jcr.Node;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
@@ -31,16 +27,19 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import java.util.Iterator;
+
 /**
  * Base class for displaying a list of nodes.   This class will take care of observing the
  * provider, instantiating the datatable.  Subclasses must provide a table definition and a
- * data provider.  
+ * data provider.
  */
 public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implements TableSelectionListener<Node> {
     @SuppressWarnings("unused")
@@ -50,6 +49,7 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
 
     private final IModelReference<Node> documentReference;
     protected ListDataTable<Node> dataTable;
+    private TableDefinition<Node> tableDefinition;
     private ListPagingDefinition pagingDefinition;
     private ISortableDataProvider<Node> provider;
     private IObserver<?> providerObserver;
@@ -66,19 +66,19 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
         }
 
         add(new EmptyPanel("table"));
-        
+
         add(BrowserStyle.getStyleSheet());
     }
 
     protected IModel<Node> getSelectedModel() {
-        if(documentReference != null) {
+        if (documentReference != null) {
             return documentReference.getModel();
         }
         return null;
     }
 
-    protected void setSelectedModel(IModel<Node> model){
-        if(documentReference != null) {
+    protected void setSelectedModel(IModel<Node> model) {
+        if (documentReference != null) {
             documentReference.setModel(model);
         }
     }
@@ -108,11 +108,16 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
             }, IObserver.class.getName());
         }
     }
-    
+
     protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
                                                    ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, final boolean triState,
                                                    ListPagingDefinition pagingDefinition) {
-        return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+        return newListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+    }
+
+    protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition, ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
+        return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState,
+                pagingDefinition);
     }
 
     private ISortableDataProvider<Node> getDataProvider() {
@@ -147,9 +152,23 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
         }
     }
 
+    protected TableDefinition<Node> getTableDefinition() {
+        if (tableDefinition == null) {
+            tableDefinition = newTableDefinition();
+        }
+        return tableDefinition;
+    }
+
+    private void dumpTableDefinition() {
+        if (tableDefinition != null) {
+            tableDefinition.destroy();
+            tableDefinition = null;
+        }
+    }
+
     protected abstract ISortableDataProvider<Node> newDataProvider();
 
-    protected abstract TableDefinition<Node> getTableDefinition();
+    protected abstract TableDefinition<Node> newTableDefinition();
 
     @SuppressWarnings("unchecked")
     public void selectionChanged(IModel model) {
@@ -159,7 +178,8 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
                     IModelReference.class);
             if (documentService != null) {
                 documentService.setModel(model);
-                if (model != dataTable.getDefaultModel() && (model == null || !model.equals(dataTable.getDefaultModel()))) {
+                if (model != dataTable.getDefaultModel() && (model == null || !model.equals(
+                        dataTable.getDefaultModel()))) {
                     log.info("Did not receive model change notification for model.document ({})", config
                             .getString("model.document"));
                     updateSelection(model);
@@ -189,6 +209,7 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
 
         dataTable.destroy();
         dumpDataProvider();
+        dumpTableDefinition();
 
         dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, isOrderable(),
                 pagingDefinition);

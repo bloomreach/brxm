@@ -15,15 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 public final class FolderViewPlugin extends DocumentListingPlugin<Node> {
     private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public final class FolderViewPlugin extends DocumentListingPlugin<Node> {
         IModel<Node> model = getModel();
         try {
             Node node = model.getObject();
-            return node == null ? false : node.getPrimaryNodeType().hasOrderableChildNodes();
+            return node != null && node.getPrimaryNodeType().hasOrderableChildNodes();
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }

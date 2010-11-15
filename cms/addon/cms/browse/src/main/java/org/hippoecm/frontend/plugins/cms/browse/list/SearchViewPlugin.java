@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import javax.jcr.Node;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -25,6 +23,8 @@ import org.hippoecm.frontend.plugins.standards.list.SearchDocumentsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+
 public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchResult> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -32,9 +32,11 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(SearchViewPlugin.class);
-    
+
     public SearchViewPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        setClassName("hippo-list-search");
     }
 
     @Override

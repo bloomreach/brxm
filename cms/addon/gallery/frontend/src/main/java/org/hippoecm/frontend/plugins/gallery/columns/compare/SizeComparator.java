@@ -13,35 +13,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.comparators;
+package org.hippoecm.frontend.plugins.gallery.columns.compare;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNode;
-
-import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import java.util.Comparator;
 
-public abstract class NodeComparator implements Comparator<Node>, IClusterable {
+public class SizeComparator extends PropertyComparator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public int compare(Node o1, Node o2) {
-        return compare(new JcrNodeModel(o1), new JcrNodeModel(o2));
+    public SizeComparator(String prop) {
+        super(prop);
     }
 
-    protected Node getCanonicalNode(JcrNodeModel model) throws RepositoryException {
-        Node node = model.getNode();
-        if (node instanceof HippoNode) {
-            return ((HippoNode) node).getCanonicalNode();
-        } else {
-            return node;
+    public SizeComparator(String prop, String relPath) {
+        super(prop, relPath);
+    }
+
+    @Override
+    protected int compare(Property p1, Property p2) {
+        long size1 = 0;
+        long size2 = 0;
+        try {
+            size1 = p1.getLength();
+            size2 = p2.getLength();
+        } catch (RepositoryException e) {
         }
+
+        long diff = size1 - size2;
+        if (diff < 0) {
+            return -1;
+        } else if (diff > 0) {
+            return 1;
+        }
+        return 0;
     }
-
-    public abstract int compare(JcrNodeModel node1, JcrNodeModel node2);
-
 }

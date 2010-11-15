@@ -15,16 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,25 +32,17 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
-import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
-import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
-import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
-import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 import org.hippoecm.frontend.widgets.LabelWithTitle;
@@ -68,20 +50,36 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements IHeaderContributor {
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.LIST;
+import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.THUMBNAILS;
+
+public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> implements IHeaderContributor {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     final static Logger log = LoggerFactory.getLogger(ImageGalleryPlugin.class);
+
     private static final String IMAGE_GALLERY_CSS = "ImageGalleryPlugin.css";
     private static final String TOGGLE_LIST_IMG = "toggle_list.png";
     private static final String TOGGLE_THUMBNAIL_IMG = "toggle_thumb.png";
 
     private static final String IMAGE_FOLDER_TYPE = "hippogallery:stdImageGallery";
 
-    private String viewMode = "LIST";
+    enum Mode {
+        LIST, THUMBNAILS
+    }
+
+    private Mode mode = THUMBNAILS;
 
     private WebMarkupContainer galleryList;
     private AjaxLink<String> toggleLink;
@@ -89,6 +87,9 @@ public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements I
 
     public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
         super(context, config);
+
+        this.setClassName("hippo-gallery-images");
+        getSettings().setAutoWidthClassName("gallery-name");
 
         add(galleryList = new WebMarkupContainer("gallery-list"));
         galleryList.setOutputMarkupId(true);
@@ -100,10 +101,11 @@ public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements I
                 "function(sizes) {return {width: sizes.wrap.w, height: sizes.wrap.h-25};}"));
         galleryList.add(new WidgetBehavior(settings));
 
-        add(toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
+        addButton(toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
+
             @Override
             public void onClick(AjaxRequestTarget target) {
-                viewMode = "LIST".equals(viewMode) ? "THUMBNAILS" : "LIST";
+                mode = mode == LIST ? THUMBNAILS : LIST;
                 redraw();
 
             }
@@ -118,7 +120,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements I
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (viewMode.equals("LIST")) {
+        if (mode == LIST) {
             this.dataTable.setVisible(true);
             this.galleryList.setVisible(false);
             toggleImage = new Image("toggleimg", TOGGLE_LIST_IMG);
@@ -127,38 +129,8 @@ public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements I
             this.galleryList.setVisible(true);
             toggleImage = new Image("toggleimg", TOGGLE_THUMBNAIL_IMG);
         }
-        
+
         toggleLink.replace(toggleImage);
-    }
-
-    @Override
-    public TableDefinition<Node> getTableDefinition() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
-
-        ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), null);
-        column.setRenderer(new EmptyRenderer<Node>());
-        column.setAttributeModifier(new GalleryFolderAttributeModifier());
-        column.setCssClass("image-gallery-icon");
-        columns.add(column);
-
-        column = new ListColumn<Node>(new StringResourceModel("gallery-name", this, null), "name");
-        column.setComparator(new NameComparator());
-        column.setCssClass("gallery-name");
-        columns.add(column);
-
-        return new TableDefinition<Node>(columns);
-    }
-
-    @Override
-    protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
-            ListPagingDefinition pagingDefinition) {
-        ListDataTable<Node> ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
-                triState, pagingDefinition);
-        DataTableSettings settings = new DataTableSettings();
-        settings.setAutoWidthClassName("gallery-name");
-        ldt.add(new DataTableBehavior(settings));
-        return ldt;
     }
 
     public void renderHead(IHeaderResponse response) {
@@ -167,17 +139,14 @@ public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements I
     }
 
     @Override
-    protected void onSelectionChanged(IModel<Node> model) {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if (target != null && viewMode.equals("THUMBNAILS")) {
-            //target.addComponent(galleryList);
-        }
-    }
-
-    @Override
     protected ISortableDataProvider<Node> newDataProvider() {
         return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
+    }
+
+    @Override
+    protected IListColumnProvider getDefaultColumnProvider() {
+        return new FallbackImageGalleryListColumnProvider();
     }
 
     private class GalleryItemView extends RefreshingView<Node> {
@@ -240,7 +209,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin<Node> implements I
                 public boolean isEnabled(Component component) {
                     IModel<Node> selectedModel = getSelectedModel();
                     boolean selected = selectedModel != null && selectedModel.equals(listItem.getDefaultModel());
-                    if(selected && previousSelected == null) {
+                    if (selected && previousSelected == null) {
                         previousSelected = listItem;
                     }
                     return selected;

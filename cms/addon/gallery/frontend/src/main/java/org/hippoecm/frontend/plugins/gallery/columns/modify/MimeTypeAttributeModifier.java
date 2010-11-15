@@ -13,12 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery;
-
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+package org.hippoecm.frontend.plugins.gallery.columns.modify;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -34,13 +29,18 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(MimeTypeAttributeModifier.class);
-    
+
     static class MimeTypeAttributeModel extends LoadableDetachableModel implements IObservable {
         private static final long serialVersionUID = 1L;
 

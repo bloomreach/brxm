@@ -297,18 +297,14 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
                 return;
             }
             if (defaultSettings.isExpandCollapseEnabled()) {
-                for (UnitSettings unit : settings.getUnits()) {
-                    if (unit.isExpanded()) {
-                        return;
+                if(!settings.hasExpandedUnit()) {
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if(target != null) {
+                        String jsMethod = "YAHOO.hippo.LayoutManager.expandUnit" + "('" + this.settings.getRootId().getElementId() + "', '" + defaultSettings.getPosition() + "');";
+                        target.appendJavascript(jsMethod);
                     }
+                    defaultSettings.setExpanded(true);
                 }
-
-                AjaxRequestTarget target = AjaxRequestTarget.get();
-                if(target != null) {
-                    String jsMethod = "YAHOO.hippo.LayoutManager.expandUnit" + "('" + this.settings.getRootId().getElementId() + "', '" + defaultSettings.getPosition() + "');";
-                    target.appendJavascript(jsMethod);
-                }
-                defaultSettings.setExpanded(true);
                 onExpandDefault();
             }
         }

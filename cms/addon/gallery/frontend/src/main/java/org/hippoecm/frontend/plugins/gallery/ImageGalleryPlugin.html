@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007 Hippo
+  * Copyright 2010 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-
-    <div class="toggle-button">
-        <a wicket:id="toggle"><img wicket:id="toggleimg"/></a>
+    <div class="toggle-button" wicket:id="buttons">
+        <a wicket:id="toggle">
+            <img wicket:id="toggleimg"/>
+        </a>
+        <a wicket:id="toggleFullscreen">
+            <img wicket:id="toggleFullscreenImage"/>
+        </a>
     </div>
-
-    <table class="hippo-gallery-images hippo-list-details" cellspacing="0" wicket:id="table" width="100%">[table]
-    </table>
+    <table class="hippo-list-details" cellspacing="0" wicket:id="table" width="100%">[table]</table>
     <div class="gallery-wrapper" style="clear:both;">
         <ul wicket:id="gallery-list" class="gallery-list">
 
