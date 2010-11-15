@@ -17,6 +17,7 @@ package org.hippoecm.hst.component.support.spring;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -140,7 +141,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
     
     protected HstComponent getDelegatedBean(HstRequest request) throws HstComponentException {
         if (delegatedBean == null) {
-            String beanName = getParameter(delegatedBeanNameParamName, request);
+            String beanName = StringUtils.trim(getParameter(delegatedBeanNameParamName, request));
             
             if (beanName == null) {
                 throw new HstComponentException("The name of delegated spring bean is null.");

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -239,6 +240,8 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
         if (dispatchPath == null) {
             dispatchPath = getParameter(DISPATCH_PATH_PARAM_NAME, request, null);
         }
+        
+        dispatchPath = StringUtils.trim(dispatchPath);
         
         if (dispatchPath != null) {
             if (dispatchPath.charAt(0) != '/') {
