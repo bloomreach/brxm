@@ -244,7 +244,7 @@ public class HstFilter implements Filter {
     		
     		HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);    		
     		if (requestContext == null) {
-        		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent("org.hippoecm.hst.core.internal.HstRequestContextComponent");
+        		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create(false);
         		if (this.contextNamespace != null) {
         			requestContext.setContextNamespace(contextNamespace);
