@@ -210,7 +210,7 @@
     <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
     <init-param>
     <param-name>jarPathPrefix</param-name>
-    <param-value>/hst/pagecomposer</param-value>
+    <param-value>/META-INF/hst/pagecomposer</param-value>
     </init-param>
   </servlet>
 
@@ -219,7 +219,7 @@
     <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
     <init-param>
     <param-name>jarPathPrefix</param-name>
-    <param-value>/hst/security</param-value>
+    <param-value>/META-INF/hst/security</param-value>
     </init-param>
   </servlet>
 
