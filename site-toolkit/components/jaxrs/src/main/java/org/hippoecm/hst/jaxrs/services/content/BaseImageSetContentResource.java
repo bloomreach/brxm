@@ -112,7 +112,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             }
             
             childResourceRep.addLink(getMountLink(requestContext, imageBean, MOUNT_ALIAS_GALLERY, subPath));
-            Link ownerLink = getNodeLink(requestContext, imageBean);
+            Link ownerLink = getMountLink(requestContext, imageBean, MOUNT_ALIAS_GALLERY, null);
             ownerLink.setRel("owner");
             childResourceRep.addLink(ownerLink);
 
