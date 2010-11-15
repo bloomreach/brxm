@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.yui.upload.ajax;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
@@ -31,7 +32,6 @@ import java.io.Serializable;
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
-
 
     DynamicTextTemplate template;
 
@@ -47,6 +47,8 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
             @Override
             public Serializable getSettings() {
+                settings.addTranslation("select.files.link",
+                        new StringResourceModel("select.files.link", getComponent(), null).getString());
                 return settings;
             }
 
@@ -64,8 +66,8 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
     @Override
     protected void respond(AjaxRequestTarget ajaxRequestTarget) {
         HttpServletRequest r = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
-        if(r.getParameter("finished") != null && r.getParameter("finished").equals("true")) {
-            if(r.getParameter("scrollPosY") != null) {
+        if (r.getParameter("finished") != null && r.getParameter("finished").equals("true")) {
+            if (r.getParameter("scrollPosY") != null) {
                 ajaxRequestTarget.appendJavascript("YAHOO.hippo.Upload.restoreScrollPosition(" + r.getParameter(
                         "scrollPosY") + ");");
             }

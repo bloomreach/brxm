@@ -17,6 +17,9 @@ package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
 import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AjaxMultiFileUploadSettings extends AjaxSettings {
     final static String SVN_ID = "$Id$";
 
@@ -38,17 +41,20 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
     //Id of the ajaxIndicatorObject
     private String ajaxIndicatorId;
 
-    //Locale shortcut for i18n css
-    private String locale;
-
     //If set every file selected will be directly uploaded
     private boolean uploadAfterSelect;
 
+    //Clear dialog after all files are uploaded
     private boolean clearAfterUpload;
 
+    //Timeout after upload before clearing dialog
     private int clearTimeout;
 
+    //Hide browse button during upload
     private boolean hideBrowseDuringUpload;
+
+    //Map containing translations used on the client
+    private Map<String, String> translations = new HashMap<String, String>();
 
     public boolean isAllowMultipleFiles() {
         return allowMultipleFiles;
@@ -98,14 +104,6 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
         this.ajaxIndicatorId = ajaxIndicatorId;
     }
 
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
     public void setUploadAfterSelect(boolean uploadAfterSelect) {
         this.uploadAfterSelect = uploadAfterSelect;
     }
@@ -136,6 +134,18 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
     public void setHideBrowseDuringUpload(boolean hideBrowseDuringUpload) {
         this.hideBrowseDuringUpload = hideBrowseDuringUpload;
+    }
+
+    public Map<String, String> getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(Map<String, String> translations) {
+        this.translations = translations;
+    }
+
+    public void addTranslation(String key, String value) {
+        this.translations.put(key, value);
     }
 
 }

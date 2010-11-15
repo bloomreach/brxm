@@ -101,10 +101,11 @@ if (!YAHOO.hippo.Upload) {
             Dom.setStyle(this.elements.selectFiles, 'z-index', 1);
             this.elements.uploaderContainer.appendChild(this.elements.selectFiles);
 
-            this.elements.selectFilesLink = new YAHOO.util.Element(document.createElement('div'));
+            var link = document.createElement('div');
+            link.innerHTML = this.config.translations['select.files.link'];
+            this.elements.selectFilesLink = new YAHOO.util.Element(link);
+            Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');
             this.elements.selectFiles.appendChild(this.elements.selectFilesLink);
-            Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');    
-            Dom.addClass(this.elements.selectFilesLink, 'i18n-' + this.config.locale);
 
             Dom.setStyle(this.elements.uploaderOverlay, 'width', "244px");
             Dom.setStyle(this.elements.uploaderOverlay, 'height', "26px");
