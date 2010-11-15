@@ -207,6 +207,7 @@ public abstract class AbstractValve implements Valve {
                     public String getXType() {return null;}
                     public String getCanonicalIdentifier() {return null;}
                     public Type getComponentType() {return null;}
+                    public String getNamedRenderer() {return null;}
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);

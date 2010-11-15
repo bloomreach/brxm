@@ -25,6 +25,7 @@
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
+- hst:isNamed (boolean)
 - hst:containers (string) multiple
 
 [hst:templates] > nt:base, mix:referenceable orderable
@@ -122,7 +123,7 @@
 - hst:foldersonly (boolean)
 - hst:repobased (boolean)
 - hst:depth (long)
-- hst:parameternames (string) multiple
+- hst:parameternames (string) multiplerenderpath
 - hst:parametervalues (string) multiple
 - hst:inheritsfrom (string)
 + * (hst:sitemenuitem)

@@ -105,9 +105,16 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     String getReferenceName();
 
     /**
-     * @return the location of the view renderer
+     * @see #getNamedRenderer()
+     * @return the location of the view renderer. Returns <code>null</code> when {@link #getNamedRenderer()} does not return <code>null</code>
      */
     String getRenderPath();
+    
+    /**
+     * @see #getRenderPath()
+     * @return the name of the renderer, when using named servlet. Returns <code>null</code> when {@link #getRenderPath()} does not return <code>null</code>
+     */
+    String getNamedRenderer();
     
     /**
      * @return return the servletpath of the servlet that must serve the resources for this <code>HstComponent</code>

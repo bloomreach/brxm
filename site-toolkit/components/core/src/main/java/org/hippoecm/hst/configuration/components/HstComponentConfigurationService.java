@@ -91,6 +91,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String canonicalStoredLocation;
     
     private String canonicalIdentifier;
+    
+    // whether the renderPath is a resource location or a named servlet. Default false
+    // TODO still need to get the isNamed boolean from the template
+    private boolean isNamed;
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -205,6 +209,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public String getRenderPath() {
+        if(isNamed) {
+            return null;
+        }
+        return this.renderPath;
+    }
+
+    public String getNamedRenderer() {
+        if(!isNamed) {
+            return null;
+        }
         return this.renderPath;
     }
     
@@ -310,6 +324,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.propertyMap = child.propertyMap;
         copy.referenceName = child.referenceName;
         copy.renderPath = child.renderPath;
+        copy.isNamed = child.isNamed;
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.xtype = child.xtype;
@@ -377,6 +392,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.renderPath == null) {
                     this.renderPath = referencedComp.renderPath;
+                    this.isNamed = referencedComp.isNamed;
                 }
                 if (this.referenceComponent == null) {
                     this.referenceComponent = referencedComp.referenceComponent;
@@ -474,6 +490,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.renderPath == null) {
             this.renderPath = childToMerge.renderPath;
+            this.isNamed = childToMerge.isNamed;
         }
         if (this.referenceComponent == null) {
             this.referenceComponent = childToMerge.referenceComponent;

@@ -63,6 +63,7 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_DUMMY_CONTENT = "hst:dummycontent";
 
     public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
+    public final static String TEMPLATE_PROPERTY_IS_NAMED =  "hst:isNamed";
     public final static String SCRIPT_PROPERTY_TEMPLATE =  "hst:template";
     
     public final static String SITEMAPITEM_PROPERTY_REF_ID = "hst:refId";
