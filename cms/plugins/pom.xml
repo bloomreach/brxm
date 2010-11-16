@@ -17,20 +17,20 @@
 
   <parent>
     <groupId>org.onehippo</groupId>
-    <artifactId>hippo-cms-tools</artifactId>
+    <artifactId>hippo-cms</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
+  <name>Frontend plugins</name>
+  <description>Hippo ECM frontend plugins</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-tools-development-content</artifactId>
-  <name>Development content</name>
-  <description>Hippo ECM tool for creating development content</description>
+  <artifactId>hippo-cms-plugins</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools/development-content</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools/development-content</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools/development-content</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/frontend/plugins</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/frontend/plugins</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/frontend/plugins</url>
   </scm>
 
   <dependencies>
@@ -39,12 +39,13 @@
       <artifactId>jcr</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-api</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -53,33 +54,30 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-plugins</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-builtin</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
+      <artifactId>hippo-repository-connector</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-editor-frontend</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
+      <artifactId>hippo-repository-utilities</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-browse</artifactId>
+      <artifactId>hippo-cms-yui</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>${xerces.version}</version>
+    </dependency>
+
+    <!-- test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -100,10 +98,10 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
+          <include>**/*.js</include>
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
-          <include>**/*.js</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
@@ -116,14 +114,43 @@
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/test/java</directory>
+        <includes>
+          <include>**</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/test/resources</directory>
+        <includes>
+          <include>**</include>
+        </includes>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
-  Copyright 2007-2008 Hippo.
+  Copyright 2007-2009 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Standards frontend addon</name>
-  <description>Hippo ECM standards frontend addons</description>
+  <name>CMS dashboard addon</name>
+  <description>Hippo ECM CMS dashboard addons</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-api</artifactId>
+  <artifactId>hippo-cms-dashboard</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/dashboard</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/dashboard</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/dashboard</url>
   </scm>
 
   <dependencies>
@@ -43,9 +43,8 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>htmldiff</artifactId>
-      <version>1.01.02</version>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -53,22 +52,27 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo</groupId>
       <artifactId>hippo-cms-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-yui</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
 
-    <!-- test -->
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-tools-testutils</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-test</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-engine</artifactId>
@@ -82,16 +86,6 @@
       <artifactId>hippo-repository-config</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
       <scope>test</scope>
@@ -102,10 +96,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!--
+      Start of standard fluff that is supposed to keep maven-2.0.9 happy. 
+      Don't edit anything below without also editing it in countless other places. 
+    -->
+
+    <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
@@ -125,6 +126,11 @@
       <groupId>com.atomikos</groupId>
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

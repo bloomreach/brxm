@@ -17,30 +17,27 @@
 
   <parent>
     <groupId>org.onehippo</groupId>
-    <artifactId>hippo-cms-tools</artifactId>
+    <artifactId>hippo-cms</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
+  <name>Search frontend addon</name>
+  <description>Hippo ECM Search fronend addon</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-tools-development-content</artifactId>
-  <name>Development content</name>
-  <description>Hippo ECM tool for creating development content</description>
+  <artifactId>hippo-cms-search</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools/development-content</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools/development-content</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools/development-content</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/search/frontend</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/search/frontend</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/search/frontend</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -50,45 +47,17 @@
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-cms-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-plugins</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-builtin</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-editor-frontend</artifactId>
+      <artifactId>hippo-cms-yui</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-browse</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -100,33 +69,41 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
           <include>**/*.js</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*.cnd</include>
-          <include>**/*.xml</include>
         </includes>
       </resource>
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.hippoecm.maven.plugins</groupId>
+        <artifactId>maven-yuicompressor-plugin</artifactId>
+        <version>1.01.00</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
-    </plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+   </plugins>
   </build>
 
 </project>

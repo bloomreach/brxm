@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  Copyright 2007-2008 Hippo.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-cms</artifactId>
+    <version>2.17.02-SNAPSHOT</version>
+  </parent>
+
+  <name>Minimal frontend app</name>
+  <description>Hippo ECM minimal frontend application</description>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-cms-application</artifactId>
+  <packaging>war</packaging>
+
+  <scm>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/frontend/application</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/frontend/application</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/frontend/application</url>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-plugins</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/test/java</directory>
+        <includes>
+          <include>**</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.0-beta-4</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-beta-1</version>
+        <configuration>
+          <manifest>
+            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+          </manifest>
+          <archive>
+            <manifestEntries>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>${jetty.version}</version>
+        <configuration>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+            </connector>
+          </connectors>
+          <jettyEnvXml>jetty-config/jetty-env.xml</jettyEnvXml>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <serverClasses>
+              <!-- Copied from WebAppContext with SLF4J removed -->
+              <filter>-org.mortbay.jetty.plus.jaas.</filter>
+              <filter>org.mortbay.jetty.</filter>
+            </serverClasses>
+            <systemClasses>
+              <!-- Copied from WebAppContext with Commons Logging and Log4j removed -->
+              <filter>java.</filter>
+              <filter>javax.servlet.</filter>
+              <filter>javax.xml.</filter>
+              <filter>org.mortbay.</filter>
+              <filter>org.xml.</filter>
+              <filter>org.w3c.</filter>
+            </systemClasses>
+          </webAppConfig>
+          <systemProperties>
+            <systemProperty>
+              <name>log4j.configuration</name>
+              <value>file:jetty-config/log4j.xml</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>${javax.jcr.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

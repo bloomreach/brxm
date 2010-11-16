@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-cms</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-cms</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo ECM CMS layout</name>
   <description>Hippo ECM CMS layout</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-package-layout</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-cms-layout</artifactId>
   <packaging>war</packaging>
 
   <scm>

@@ -21,16 +21,16 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Standards frontend addon</name>
-  <description>Hippo ECM standards frontend addons</description>
+  <name>Xinha addon frontend plugin</name>
+  <description>Hippo ECM Xinha addon frontend plugin</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-api</artifactId>
+  <artifactId>hippo-cms-xinha-integration</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/xinha-frontend</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/xinha-frontend</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/xinha-frontend</url>
   </scm>
 
   <dependencies>
@@ -41,11 +41,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>htmldiff</artifactId>
-      <version>1.01.02</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -63,9 +58,46 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-workflowmenu</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-gallery-frontend</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>hippo</groupId>
+      <artifactId>htmlcleaner</artifactId>
+      <version>1.02.04</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.8.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
       <artifactId>hippo-cms-yui</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- test -->
@@ -82,16 +114,6 @@
       <artifactId>hippo-repository-config</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
       <scope>test</scope>
@@ -99,6 +121,11 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -126,6 +153,13 @@
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -135,32 +169,22 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
+          <include>**/*.js</include>
           <include>**/*.html</include>
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
     </resources>
-    <testResources>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/test/java</directory>
-        <includes>
-          <include>**</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/test/resources</directory>
-        <includes>
-          <include>**</include>
-        </includes>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

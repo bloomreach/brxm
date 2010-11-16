@@ -21,21 +21,22 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Tools</name>
-  <description>Hippo ECM tools</description>
+  <name>Translation Addon</name>
+  <description>Hippo ECM Translation Addon</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-tools</artifactId>
+  <artifactId>hippo-cms-translation</artifactId>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/translation</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/translation</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/translation</url>
   </scm>
 
   <modules>
-    <module>eclipse</module>
-    <module>development-content</module>
-    <module>upgrade</module>
+    <module>common</module>
+    <module>repository</module>
+    <module>frontend</module>
+    <module>test</module>
   </modules>
 </project>

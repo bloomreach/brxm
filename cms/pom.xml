@@ -15,8 +15,8 @@
 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-cms</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-cms</artifactId>
   <version>2.17.02-SNAPSHOT</version>
 
   <name>Hippo CMS</name>
@@ -36,8 +36,29 @@
   </organization>
 
   <modules>
-    <module>frontend</module>
-    <module>addon</module>
+    <module>engine</module>
+    <module>api</module>
+    <module>plugins</module>
+    <module>test</module>
+    <module>application</module>
+    <module>workflowmenu</module>
+    <module>builtin</module>
+    <module>versioning</module>
+    <module>admin</module>
+    <module>gotolink</module>
+    <module>search</module>
+    <module>yui</module>
+    <module>edit</module>
+    <module>browse</module>
+    <module>dashboard</module>
+    <module>rootpage</module>
+    <module>reporting</module>
+    <module>xinha-integration</module>
+    <module>xinha-test</module>
+    <module>xinha-resources</module>
+    <module>editor</module>
+    <module>translation</module>
+    <module>gallery</module>
     <module>tools</module>
     <module>layout</module>
     <module>config</module>
@@ -96,22 +117,6 @@
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk</developerConnection>
     <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk</url>
   </scm>
-
-  <!-- Where to publish the project data, especially the documentation site -->
-  <distributionManagement>
-    <site>
-      <id>repodocs.hippocms.org</id>
-      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
-    </site>
-    <repository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
-    </snapshotRepository>
-  </distributionManagement>
 
   <!-- Where issues (bugs reports and improvement requests) are handled. 
        Used in the documentation at target/site/issue-tracking.html 
@@ -278,18 +283,6 @@
 
   <repositories>
     <repository>
-      <id>hippoecm</id>
-      <name>Hippo ECM maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
       <id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
       <snapshots>
@@ -360,18 +353,6 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>hippoecm</id>
-      <name>Hippo ECM maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
     </pluginRepository>
   </pluginRepositories>
 
@@ -529,8 +510,8 @@
           </links>
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-tools-documentation</artifactId>
+            <groupId>org.onehippo</groupId>
+            <artifactId>hippo-repository-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
         </configuration>
@@ -555,56 +536,56 @@
       </dependency>
 
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-api</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-api</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-connector</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-connector</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-utilities</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-utilities</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-provider</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-provider</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-config</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-modules</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-modules</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-engine</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-engine</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-tools-testutils</artifactId>
+        <groupId>org.onehippo</groupId>
+        <artifactId>hippo-repository-tools-testutils</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>
@@ -885,8 +866,8 @@
           </links>
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-tools-documentation</artifactId>
+            <groupId>org.onehippo</groupId>
+            <artifactId>hippo-repository-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
         </configuration>

@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-cms</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-cms</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo ECM package configuration</name>
   <description>Hippo ECM package configuration</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-package-config</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-cms-config</artifactId>
   <packaging>jar</packaging>
 
   <scm>

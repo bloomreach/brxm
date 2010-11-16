@@ -21,16 +21,16 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Standards frontend addon</name>
-  <description>Hippo ECM standards frontend addons</description>
+  <name>CMS browse addon</name>
+  <description>Hippo ECM CMS browse addons</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-api</artifactId>
+  <artifactId>hippo-cms-browse</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/browse</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/browse</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/browse</url>
   </scm>
 
   <dependencies>
@@ -43,17 +43,8 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>htmldiff</artifactId>
-      <version>1.01.02</version>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -63,10 +54,25 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
       <artifactId>hippo-cms-yui</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-workflowmenu</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+
 
     <!-- test -->
     <dependency>
@@ -126,6 +132,11 @@
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>1.6</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -138,29 +149,12 @@
           <include>**/*.html</include>
           <include>**/*.css</include>
           <include>**/*.png</include>
+          <include>**/*.gif</include>
           <include>**/*.properties</include>
+          <include>**/*.js</include>
         </includes>
       </resource>
     </resources>
-    <testResources>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/test/java</directory>
-        <includes>
-          <include>**</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/test/resources</directory>
-        <includes>
-          <include>**</include>
-        </includes>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -178,7 +172,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-    </plugins>
+   </plugins>
   </build>
 
   <profiles>

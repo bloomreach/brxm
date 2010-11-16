@@ -21,16 +21,16 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Standards frontend addon</name>
-  <description>Hippo ECM standards frontend addons</description>
+  <name>CMS edit addon</name>
+  <description>Hippo ECM CMS edit addons</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-api</artifactId>
+  <artifactId>hippo-cms-edit</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/edit</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/edit</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/edit</url>
   </scm>
 
   <dependencies>
@@ -41,11 +41,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>htmldiff</artifactId>
-      <version>1.01.02</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -63,9 +58,26 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-yui</artifactId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-translation-common</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-yui</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
 
     <!-- test -->
@@ -82,16 +94,6 @@
       <artifactId>hippo-repository-config</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
       <scope>test</scope>
@@ -99,6 +101,11 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -126,6 +133,13 @@
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

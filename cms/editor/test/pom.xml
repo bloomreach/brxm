@@ -17,20 +17,20 @@
 
   <parent>
     <groupId>org.onehippo</groupId>
-    <artifactId>hippo-cms</artifactId>
+    <artifactId>hippo-cms-editor</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Standards frontend addon</name>
-  <description>Hippo ECM standards frontend addons</description>
+  <name>Hippo CMS editor test addon</name>
+  <description>Hippo CMS editor test addon</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-api</artifactId>
+  <artifactId>hippo-cms-editor-test</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/standards/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor/test</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor/test</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor/test</url>
   </scm>
 
   <dependencies>
@@ -43,32 +43,48 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>htmldiff</artifactId>
-      <version>1.01.02</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-cms-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-test</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-editor-common</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-cms-yui</artifactId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
       <version>2.17.02-SNAPSHOT</version>
-      <scope>provided</scope>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-cms-editor-repository</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
 
-    <!-- test -->
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-engine</artifactId>
@@ -81,31 +97,29 @@
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-config</artifactId>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <scope>test</scope>
-    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
@@ -126,22 +140,15 @@
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
-    <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-    </resources>
+    <defaultGoal>test</defaultGoal>
     <testResources>
       <testResource>
         <filtering>false</filtering>
@@ -165,20 +172,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <excludes>
+            <exclude>**/RedefineNodetypeTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
+   </plugins>
   </build>
 
   <profiles>
@@ -190,19 +193,21 @@
       <dependencies>
         <dependency>
           <groupId>org.onehippo</groupId>
-          <artifactId>hippo-repository-engine</artifactId>
-          <version>${repository.version}</version>
-          <type>jar</type>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo</groupId>
           <artifactId>hippo-cms-test</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
           <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo</groupId>
+          <artifactId>hippo-repository-engine</artifactId>
+          <version>${repository.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -218,8 +223,8 @@
         <dependencies>
           <dependency>
             <groupId>org.onehippo</groupId>
-            <artifactId>hippo-repository-engine</artifactId>
-            <version>${repository.version}</version>
+            <artifactId>hippo-cms-test</artifactId>
+            <version>${project.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>
             <scope>test</scope>
@@ -227,8 +232,8 @@
           </dependency>
           <dependency>
             <groupId>org.onehippo</groupId>
-            <artifactId>hippo-cms-test</artifactId>
-            <version>${project.version}</version>
+            <artifactId>hippo-repository-engine</artifactId>
+            <version>${repository.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>
             <scope>test</scope>

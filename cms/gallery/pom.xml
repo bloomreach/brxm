@@ -21,21 +21,21 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Tools</name>
-  <description>Hippo ECM tools</description>
+  <name>Gallery Addon</name>
+  <description>Hippo ECM Gallery Addon</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-cms-tools</artifactId>
+  <artifactId>hippo-cms-gallery</artifactId>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/tools</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/gallery</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/gallery</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/gallery</url>
   </scm>
 
   <modules>
-    <module>eclipse</module>
-    <module>development-content</module>
-    <module>upgrade</module>
+    <module>common</module>
+    <module>repository</module>
+    <module>frontend</module>
   </modules>
 </project>
