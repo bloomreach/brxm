@@ -1,5 +1,7 @@
 #!/bin/sh
-# This script assumes that it's located in the hippo-ecm/tools/eclipse directory. 
+# This script assumes that 
+# - it's located in the cms/tools/eclipse directory. 
+# - the quickstart project is under bundle/quickstart
 
 LINK=/bin/ln
 RM=/bin/rm
@@ -30,36 +32,36 @@ create_link() {
 
 
 echo "Creating links in package war project:"
-create_link $BASEDIR/package/skin/src/main/webapp   $BASEDIR/package/war/src/main/webapp/skin
-create_link $BASEDIR/package/layout/src/main/webapp $BASEDIR/package/war/src/main/webapp/layout
-create_link $BASEDIR/addon/xinha/src/main/webapp    $BASEDIR/package/war/src/main/webapp/xinha
+create_link $BASEDIR/skin/src/main/webapp   $BASEDIR/../bundle/package/war/src/main/webapp/skin
+create_link $BASEDIR/layout/src/main/webapp $BASEDIR/../bundle/package/war/src/main/webapp/layout
+create_link $BASEDIR/xinha-resources/src/main/webapp    $BASEDIR/../bundle/package/war/src/main/webapp/xinha
 echo
 
 echo "Creating links in quickstart war project:"
-create_link $BASEDIR/package/skin/src/main/webapp   $BASEDIR/quickstart/war/src/main/webapp/skin
-create_link $BASEDIR/package/layout/src/main/webapp $BASEDIR/quickstart/war/src/main/webapp/layout
-create_link $BASEDIR/addon/xinha/src/main/webapp    $BASEDIR/quickstart/war/src/main/webapp/xinha
+create_link $BASEDIR/skin/src/main/webapp   $BASEDIR/../bundle/quickstart/war/src/main/webapp/skin
+create_link $BASEDIR/layout/src/main/webapp $BASEDIR/../bundle/quickstart/war/src/main/webapp/layout
+create_link $BASEDIR/xinha-resources/src/main/webapp    $BASEDIR/../bundle/quickstart/war/src/main/webapp/xinha
 echo
 
 echo "Creating links for skin resources:"
-create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/AutoSave             $BASEDIR/addon/xinha/src/main/webapp/xinha/plugins/AutoSave
-create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/AutoResize           $BASEDIR/addon/xinha/src/main/webapp/xinha/plugins/AutoResize
-create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/CreateLink           $BASEDIR/addon/xinha/src/main/webapp/xinha/plugins/CreateLink
-create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/CreateExternalLink   $BASEDIR/addon/xinha/src/main/webapp/xinha/plugins/CreateExternalLink
-create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/InsertImage          $BASEDIR/addon/xinha/src/main/webapp/xinha/plugins/InsertImage
-create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/FullscreenCompatible $BASEDIR/addon/xinha/src/main/webapp/xinha/plugins/FullscreenCompatible
+create_link $BASEDIR/xinha-resources/webResources/xinha/plugins/AutoSave             $BASEDIR/xinha-resources/src/main/webapp/xinha/plugins/AutoSave
+create_link $BASEDIR/xinha-resources/webResources/xinha/plugins/AutoResize           $BASEDIR/xinha-resources/src/main/webapp/xinha/plugins/AutoResize
+create_link $BASEDIR/xinha-resources/webResources/xinha/plugins/CreateLink           $BASEDIR/xinha-resources/src/main/webapp/xinha/plugins/CreateLink
+create_link $BASEDIR/xinha-resources/webResources/xinha/plugins/CreateExternalLink   $BASEDIR/xinha-resources/src/main/webapp/xinha/plugins/CreateExternalLink
+create_link $BASEDIR/xinha-resources/webResources/xinha/plugins/InsertImage          $BASEDIR/xinha-resources/src/main/webapp/xinha/plugins/InsertImage
+create_link $BASEDIR/xinha-resources/webResources/xinha/plugins/FullscreenCompatible $BASEDIR/xinha-resources/src/main/webapp/xinha/plugins/FullscreenCompatible
 echo
 
 echo "Creating link for xinha skin 'hippo-gray':"
-create_link $BASEDIR/addon/xinha/webResources/xinha/skins/hippo-gray  $BASEDIR/addon/xinha/src/main/webapp/xinha/skins/hippo-gray
+create_link $BASEDIR/xinha-resources/webResources/xinha/skins/hippo-gray  $BASEDIR/xinha-resources/src/main/webapp/xinha/skins/hippo-gray
 echo
 
 echo "Creating link for xinha skin 'hippo-lite':"
-create_link $BASEDIR/addon/xinha/webResources/xinha/skins/hippo-lite  $BASEDIR/addon/xinha/src/main/webapp/xinha/skins/hippo-lite
+create_link $BASEDIR/xinha-resources/webResources/xinha/skins/hippo-lite  $BASEDIR/xinha-resources/src/main/webapp/xinha/skins/hippo-lite
 echo
 
 echo "Creating link for xinha iconset:"
-create_link $BASEDIR/addon/xinha/webResources/xinha/iconsets/Hippo  $BASEDIR/addon/xinha/src/main/webapp/xinha/iconsets/Hippo
+create_link $BASEDIR/xinha-resources/webResources/xinha/iconsets/Hippo  $BASEDIR/xinha-resources/src/main/webapp/xinha/iconsets/Hippo
 echo
 
 exit 0;
