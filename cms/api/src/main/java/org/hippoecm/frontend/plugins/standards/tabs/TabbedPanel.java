@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
@@ -47,6 +44,9 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TabbedPanel extends WebMarkupContainer {
     @SuppressWarnings("unused")
@@ -98,26 +98,28 @@ public class TabbedPanel extends WebMarkupContainer {
                 final WebMarkupContainer titleMarkupContainer = getTitleMarkupContainer(index);
                 item.add(titleMarkupContainer);
                 item.add(newBehavior(index));
+                TabsPlugin.Tab tab = getTabs().get(index);
+                if (tab.isEditorTab()) {
+                    final WebMarkupContainer menu = createContextMenu("contextMenu", index);
 
-                final WebMarkupContainer menu = createContextMenu("contextMenu", index);
+                    item.add(menu);
+                    item.add(new RightClickBehavior(menu, item) {
 
-                item.add(menu);
-                item.add(new RightClickBehavior(menu, item) {
-
-                    @Override
-                    protected void respond(AjaxRequestTarget target) {
-                        getContextmenu().setVisible(true);
-                        target.addComponent(getComponentToUpdate());
-                        IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class);
-                        if (menuManager != null) {
-                            menuManager.showContextMenu(this);
-                            String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
-                            String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
-                            target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
-                                    + menu.getMarkupId() + "', " + x + ", " + y + ");");
+                        @Override
+                        protected void respond(AjaxRequestTarget target) {
+                            getContextmenu().setVisible(true);
+                            target.addComponent(getComponentToUpdate());
+                            IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class);
+                            if (menuManager != null) {
+                                menuManager.showContextMenu(this);
+                                String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
+                                String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
+                                target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
+                                        + menu.getMarkupId() + "', " + x + ", " + y + ");");
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 item.setOutputMarkupId(true);
             }
 
@@ -170,7 +172,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                 plugin.closeAll(target);
+                plugin.closeAll(target);
             }
         };
 
@@ -224,7 +226,7 @@ public class TabbedPanel extends WebMarkupContainer {
         WebMarkupContainer container = new WebMarkupContainer("container", new Model<Integer>(index));
         TabsPlugin.Tab tab = getTabs().get(index);
         final IModel<TabsPlugin.Tab> tabModel = new Model<TabsPlugin.Tab>(tab);
-        if (tab.canClose()) {
+        if (tab.isEditorTab()) {
             container.add(new AjaxFallbackLink<TabsPlugin.Tab>("close", tabModel) {
                 private static final long serialVersionUID = 1L;
 

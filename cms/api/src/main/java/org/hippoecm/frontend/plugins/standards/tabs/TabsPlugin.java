@@ -489,7 +489,7 @@ public class TabsPlugin extends RenderPlugin {
 
         // package internals
 
-        boolean canClose() {
+        boolean isEditorTab() {
             IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
             IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
             return (editor != null);
