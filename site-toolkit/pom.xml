@@ -94,6 +94,7 @@
     <jackrabbit.version>2.1.2</jackrabbit.version>
 
     <hippoecm.version>2.17.01</hippoecm.version>
+    <hst-configuration-editor.version>1.04.02-SNAPSHOT</hst-configuration-editor.version>
     
     <jdo.version>2.0</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
