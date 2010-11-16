@@ -184,7 +184,7 @@ public class TabbedPanel extends WebMarkupContainer {
                 //Create a copy so we won't run into ConcurrentModificationException
                 List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
                 for (TabsPlugin.Tab currentTab : tabsCopy) {
-                    plugin.onClose(currentTab, target, true);
+                    plugin.onCloseUnmodified(currentTab, target);
                 }
             }
         };

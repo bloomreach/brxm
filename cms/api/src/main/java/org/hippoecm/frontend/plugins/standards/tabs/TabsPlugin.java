@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.jcr.Node;
-
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
@@ -57,6 +52,11 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Plugin that manages a number of {@link IRenderService}s using a tabbing interface.
@@ -267,23 +267,38 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     /**
-     * Closes the editor regardless of the mode the editor is currently in.
-     *
-     * @param tabbie tab to close
-     * @param target AjaxRequestTarget (unused)
+     * Closes the tab if it is unmodified and the editor is not in Edit mode.
+     * @param tab  The tab to close
+     * @param target AjaxRequestTarget
      */
-    void onClose(Tab tabbie, AjaxRequestTarget target) {
-        onClose(tabbie, target, false);
+    void onCloseUnmodified(Tab tab, AjaxRequestTarget target) {
+        IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
+        if (reference == null) {
+            log.error("Could not find render service for a tab");
+            return;
+        }
+        final IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+
+        try {
+            if (!editor.getMode().equals(IEditor.Mode.EDIT)) {
+                editor.close();
+            }
+
+        } catch (EditorException e) {
+            log.warn("Unable to save the document in the editor", e);
+            throw new RuntimeException("Unable to save the document in the editor", e);
+        }
+
     }
 
     /**
-     * Closes the tab only if the editor is in non-edit mode.
+     * Closes the tab if there are no changes. In case the tab contains an editor that has modified document a dialog is
+     * shown with option to Discard or Save the document.
      *
-     * @param tab        the tab to close
-     * @param target     AjaxRequestTarget (unused)
-     * @param unmodified if true, only the editors which are NOT in EDIT mode (i.e. which are unmodified) are closed.
+     * @param tab    the tab to close
+     * @param target AjaxRequestTarget (unused)
      */
-    void onClose(Tab tab, AjaxRequestTarget target, boolean unmodified) {
+    void onClose(Tab tab, AjaxRequestTarget target) {
         IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
         if (reference == null) {
             log.error("Could not find render service for a tab");
@@ -291,7 +306,10 @@ public class TabsPlugin extends RenderPlugin {
         }
         final IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
         try {
+            System.out.println(tab.getTitle().getObject() + "  tab : " + editor.isModified());
+
             if (editor.isModified()) {
+
                 OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
                     public void revert() {
                         try {
@@ -326,16 +344,8 @@ public class TabsPlugin extends RenderPlugin {
                 dialogService.show(onCloseDialog);
 
             } else {
-                if (unmodified) {
-                    if (!editor.getMode().equals(IEditor.Mode.EDIT)) {
-                        editor.close();
-                    }
-                } else {
-                    if (editor.getMode().equals(IEditor.Mode.EDIT)) {
-                        editor.done();
-                    }
-                    editor.close();
-                }
+                editor.done();
+                editor.close();
             }
         } catch (EditorException e) {
             log.warn("Unable to save the document in the editor", e);
