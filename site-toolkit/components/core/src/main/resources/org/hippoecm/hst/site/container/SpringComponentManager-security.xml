@@ -35,7 +35,8 @@
     <!-- User authentication repository against which each user will be authenticated. -->
     <constructor-arg index="2" ref="javax.jcr.Repository.delegating" />
     
-    <property name="defaultRoleName" value="everybody" />
+    <property name="roleDomainName" value="${security.authentication.role.domain}" />
+    <property name="defaultRoleName" value="${security.authentication.default.role}" />
     
   </bean>
   
