@@ -15,16 +15,19 @@
 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!--
   <parent>
     <groupId>org.onehippo</groupId>
     <artifactId>hippo-cms-editor</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
+  -->
 
   <name>Hippo CMS editor repository addon</name>
   <description>Hippo CMS editor repository addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-editor-repository</artifactId>
+  <version>2.17.02-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
@@ -37,11 +40,13 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
+      <version>2.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-api</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -51,33 +56,48 @@
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
+      <version>2.0</version>
+      <!--
       <scope>provided</scope>
+      -->
+      <exclusions>
+        <exclusion>
+          <groupId>geronimo-spec</groupId>
+          <artifactId>geronimo-spec-jta</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jpox</groupId>
+      <artifactId>jpox-core</artifactId>
+      <version>1.2.0-beta-3</version>
+      <!--
+      <scope>provided</scope>
+      -->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+      <version>1.5.8</version>
       <scope>provided</scope>
     </dependency>
-    <!-- dependency>
-      <groupId>jpox</groupId>
-      <artifactId>jpox-core</artifactId>
-      <scope>runtime</scope>
-    </dependency -->
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
     <pluginManagement>
       <plugins>
-        <plugin>
+        <!-- plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>jpox-maven-plugin</artifactId>
           <dependencies>
@@ -97,21 +117,40 @@
               </exclusions>
             </dependency>
           </dependencies>
-        </plugin>
+        </plugin -->
         <plugin>
           <groupId>jpox</groupId>
           <artifactId>jpox-maven-plugin</artifactId>
+          <version>1.2.0-beta-2</version>
           <dependencies>
             <dependency>
               <groupId>bcel</groupId>
               <artifactId>bcel</artifactId>
               <version>5.2</version>
             </dependency>
+            <dependency>
+              <groupId>javax.jcr</groupId>
+              <artifactId>jcr</artifactId>
+              <version>${javax.jcr.version}</version>
+              <scope>compile</scope>
+            </dependency>
+            <dependency>
+              <groupId>org.onehippo</groupId>
+              <artifactId>hippo-repository-builtin</artifactId>
+              <version>${repository.version}</version>
+              <scope>compile</scope>
+            </dependency>
+            <dependency>
+              <groupId>org.onehippo</groupId>
+              <artifactId>hippo-repository-api</artifactId>
+              <version>${repository.version}</version>
+              <scope>compile</scope>
+            </dependency>
          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
-    <resources>
+    <!-- resources>
       <resource>
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
@@ -121,7 +160,7 @@
           <include>**/package.jdo</include>
         </includes>
       </resource>
-    </resources>
+    </resources -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -159,7 +198,7 @@
         <version>1.2.0-beta-2</version>
         <configuration>
           <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
-          <verbose>false</verbose>
+          <verbose>true</verbose>
         </configuration>
         <executions>
           <execution>
