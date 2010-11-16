@@ -125,10 +125,10 @@ public interface Mount {
     String getName();
     
     /**
-     * Returns the alias of this {@link Mount} item. If there is no specific alias defined, then the {@link #getName()} is used. However,
-     * the alias of a {@link Mount} <b>must</b> be unique in combination with every type {@link #getTypes()} within a single host group, also 
-     * see {@link VirtualHosts#get}
-     * @return The alias of this {@link Mount} item. 
+     * Returns the alias of this {@link Mount} item. The alias of a {@link Mount} <b>must</b> be unique in combination with every type {@link #getTypes()} within a single host group, also 
+     * see ({@link VirtualHost#getHostGroupName()}). When there is no alias defined on the {@link Mount}, <code>null</code> is returned. The {@link Mount} can then not be used 
+     * to lookup by alias
+     * @return The alias of this {@link Mount} item or <code>null</code> when it does not have one
      */
     String getAlias();
     

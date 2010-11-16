@@ -170,6 +170,9 @@ public class VirtualHostsService implements VirtualHosts {
         }
         // add the mount for all alias-type combinations:
         for (String type : mount.getTypes()) {
+            if(mount.getAlias() == null) {
+                continue;
+            }
             try {
                 aliasTypeMap.put(getAliasTypeKey(mount.getAlias(), type), mount);
             } catch (IllegalArgumentException e) {

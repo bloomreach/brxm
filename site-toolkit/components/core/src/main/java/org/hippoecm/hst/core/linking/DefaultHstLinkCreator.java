@@ -491,7 +491,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         // for a binary link we won't check other mounts
                         // do nothing
                     } else if (tryOtherMounts) {    
-                        log.debug("We cannot create a link for '{}' for the mount with alias '{}' belonging to the current request. Try to create a cross-domain link.", nodePath, mount.getAlias());
+                        log.debug("We cannot create a link for '{}' for the mount '{}' belonging to the current request. Try to create a cross-domain link.", nodePath, mount.getName());
                         
                         /*
                          * The Mount belonging to the current request / HstLinkResolver can not be used to create a link for the nodePath because the path
@@ -565,7 +565,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         }
                         
                     } else {
-                        log.warn("We cannot create a link for nodePath '{}' and Mount '{}'. Return page not found link. ", nodePath, mount.getAlias());
+                        log.warn("We cannot create a link for nodePath '{}' and Mount '{}'. Return page not found link. ", nodePath, mount.getName());
                         return pageNotFoundLink(mount);
                     }
                     

@@ -55,7 +55,7 @@ public class MountService implements Mount {
     private Map<String, MountService> childMountServices = new HashMap<String, MountService>();
 
     /**
-     * the alias of this {@link Mount}. If there is no specific property defined, the nodename is used as alias. 
+     * the alias of this {@link Mount}. <code>null</code> if there is no alias property
      */
     private String alias;
     
@@ -179,9 +179,7 @@ public class MountService implements Mount {
         // default for when there is no alias property
         
         this.allProperties = mount.getValueProvider().getProperties();
-        
-        this.alias = name.toLowerCase();
-        
+      
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
             this.alias = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase();
         }
