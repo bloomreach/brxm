@@ -68,6 +68,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
+          <include>**/*.cnd</include>
         </includes>
       </resource>
     </resources>
