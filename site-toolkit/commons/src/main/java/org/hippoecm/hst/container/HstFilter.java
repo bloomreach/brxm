@@ -237,7 +237,7 @@ public class HstFilter implements Filter {
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
     		// when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-    		if(vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(HstRequestUtils.getRequestPath(containerRequest)))) {
+    		if(vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(containerRequest.getPathInfo()))) {
     			chain.doFilter(request, response);
     			return;
     		}
@@ -257,7 +257,7 @@ public class HstFilter implements Filter {
     		ResolvedMount mount = requestContext.getResolvedMount();
     		if (mount == null) {
     			try {
-    				mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest), containerRequest.getContextPath() , HstRequestUtils.getRequestPath(containerRequest));
+    				mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest), containerRequest.getContextPath() , containerRequest.getPathInfo());
     				if(mount != null) {
     					requestContext.setResolvedMount(mount);
     				} 
@@ -271,6 +271,9 @@ public class HstFilter implements Filter {
     				return;
     			} 
     		}
+    		
+    		// CRUCIAL :  now we set the HST equivalent of the servletPath, namely the Mount#getMountPath as servletPath on the containerRequest
+    		((HstContainerRequestImpl)containerRequest).setServletPath(mount.getResolvedMountPath());
     		
 			HstURLFactory factory = hstSitesManager.getUrlFactory();
 			

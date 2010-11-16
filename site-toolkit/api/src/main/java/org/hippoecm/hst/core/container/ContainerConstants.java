@@ -72,11 +72,16 @@ public interface ContainerConstants {
      * The parameter name for custom error handler class name in the root component configuration
      */ 
     String CUSTOM_ERROR_HANDLER_PARAM_NAME = "org.hippoecm.hst.core.container.custom.errorhandler";  
-    
+
     /**
      * Subject session attribute name
      */
     String SUBJECT_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject";
+   
+    /**
+     * attribute that has a value when the request URI is already decoded.
+     */
+    String IS_REQUEST_URI_DECODED = "org.hippoecm.hst.container.HstContainerRequest.requestURI.isDecoded";
     
     /**
      * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a container that doesn't support JACC.)

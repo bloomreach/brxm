@@ -19,7 +19,6 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,46 +34,76 @@ public class TestHstContainerRequest {
     @Test
     public void testContainerRequestWithBasicURIs() {
         String pathInfo = "/preview/news/2009./comments/314";
-        String pathTranslated = null;
+        String contextPath = "/site";
         String requestURI = "/site" + pathInfo;
         StringBuffer requestURL = new StringBuffer("http://localhost:8085" + requestURI);
         
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRequestURI()).andReturn(requestURI).anyTimes();
+        expect(request.getContextPath()).andReturn(contextPath).anyTimes();
         expect(request.getRequestURL()).andReturn(requestURL).anyTimes();
-        expect(request.getPathInfo()).andReturn(pathInfo).anyTimes();
-        expect(request.getPathTranslated()).andReturn(pathTranslated).anyTimes();
         
         replay(request);
         
-        HstContainerRequest containerRequest = new HstContainerRequestImpl(request, "./");
+        HstContainerRequestImpl containerRequest = new HstContainerRequestImpl(request, "./");
+        containerRequest.setServletPath("");
         assertEquals("/site/preview/news/2009", containerRequest.getRequestURI());
         assertEquals("http://localhost:8085/site/preview/news/2009", containerRequest.getRequestURL().toString());
         assertEquals("/preview/news/2009", containerRequest.getPathInfo());
-        assertNull(containerRequest.getPathTranslated());
+        assertEquals("/preview/news/2009", containerRequest.getPathTranslated());
     }
     
     @Test
     public void testContainerRequestWithMatrixURIs() {
         String matrixParams1 = ";lat=50;long=20";
         String matrixParams2 = ";orderBy=author";
+        String contextPath = "/site";
         String pathInfo = "/preview/news/2009" + matrixParams1 + "./comments/314" + matrixParams2;
-        String pathTranslated = null;
         String requestURI = "/site" + pathInfo;
         StringBuffer requestURL = new StringBuffer("http://localhost:8085" + requestURI);
         
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRequestURI()).andReturn(requestURI).anyTimes();
+        expect(request.getContextPath()).andReturn(contextPath).anyTimes();
         expect(request.getRequestURL()).andReturn(requestURL).anyTimes();
-        expect(request.getPathInfo()).andReturn(pathInfo).anyTimes();
-        expect(request.getPathTranslated()).andReturn(pathTranslated).anyTimes();
-        
         replay(request);
         
-        HstContainerRequest containerRequest = new HstContainerRequestImpl(request, "./");
+        HstContainerRequestImpl containerRequest = new HstContainerRequestImpl(request, "./");
+        containerRequest.setServletPath("");
         assertEquals("/site/preview/news/2009" + matrixParams1, containerRequest.getRequestURI());
         assertEquals("http://localhost:8085/site/preview/news/2009" + matrixParams1, containerRequest.getRequestURL().toString());
         assertEquals("/preview/news/2009", containerRequest.getPathInfo());
-        assertNull(containerRequest.getPathTranslated());
+        assertEquals("/preview/news/2009", containerRequest.getPathTranslated());
+    }
+    
+    @Test
+    public void testContainerRequestWithServletPathSet() {
+        String matrixParams1 = ";lat=50;long=20";
+        String matrixParams2 = ";orderBy=author";
+        String contextPath = "/site";
+        String pathInfo = "/preview/news/2009" + matrixParams1 + "./comments/314" + matrixParams2;
+        String requestURI = "/site" + pathInfo;
+        String servletPath = "/preview";
+        StringBuffer requestURL = new StringBuffer("http://localhost:8085" + requestURI);
+        
+        HstContainerRequest request = createNiceMock(HstContainerRequest.class);
+        expect(request.getRequestURI()).andReturn(requestURI).anyTimes();
+        expect(request.getContextPath()).andReturn(contextPath).anyTimes();
+        expect(request.getRequestURL()).andReturn(requestURL).anyTimes();
+        
+        replay(request);
+       
+        HstContainerRequestImpl containerRequest = new HstContainerRequestImpl(request, "./");
+        
+        containerRequest.setServletPath("");
+        assertEquals("/preview/news/2009", containerRequest.getPathInfo());
+        // we now set the servletPath equal to for example the mountPath of mount 'preview'
+        containerRequest.setServletPath(servletPath);
+      
+        assertEquals("/site/preview/news/2009" + matrixParams1, containerRequest.getRequestURI());
+        assertEquals("http://localhost:8085/site/preview/news/2009" + matrixParams1, containerRequest.getRequestURL().toString());
+        assertEquals("/preview", containerRequest.getServletPath());
+        assertEquals("/news/2009", containerRequest.getPathInfo());
+        assertEquals("/news/2009", containerRequest.getPathTranslated());
     }
 }
