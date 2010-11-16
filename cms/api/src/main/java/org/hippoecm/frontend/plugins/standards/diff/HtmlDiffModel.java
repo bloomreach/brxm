@@ -96,8 +96,10 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
                 String value = wrapped.getObject();
                 if (value != null) {
                     if (!value.trim().startsWith("<html>")) {
-                        return "<html><body>" + value + "</body></html>";
+                        value =  "<html><body>" + value + "</body></html>";
                     }
+                    //Replace the _blank so that the document opens in the same window
+                    value = value.trim().replaceAll("<a target=\"_blank\"", "<a ");
                 }
                 return value;
             }

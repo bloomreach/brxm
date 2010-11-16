@@ -176,7 +176,7 @@ public class RichTextProcessor {
         }
         m.appendTail(processed);
 
-        return processed.toString();
+        return processed.toString().replaceAll("<a target=\"_blank\"", "<a ");
     }
 
     private static boolean isExternalLink(String link) {
