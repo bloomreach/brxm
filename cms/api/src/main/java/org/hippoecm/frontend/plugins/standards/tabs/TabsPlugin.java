@@ -344,7 +344,6 @@ public class TabsPlugin extends RenderPlugin {
                 dialogService.show(onCloseDialog);
 
             } else {
-                editor.done();
                 editor.close();
             }
         } catch (EditorException e) {
