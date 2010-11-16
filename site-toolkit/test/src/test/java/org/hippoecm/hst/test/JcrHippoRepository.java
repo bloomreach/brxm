@@ -22,6 +22,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -162,5 +163,65 @@ public class JcrHippoRepository implements Repository {
         } else {
             return null;
         }
+    }
+
+    public Value getDescriptorValue(String key) {
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().getDescriptorValue(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().getDescriptorValues(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().isSingleValueDescriptor(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().isStandardDescriptor(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        return false;
     }
 }

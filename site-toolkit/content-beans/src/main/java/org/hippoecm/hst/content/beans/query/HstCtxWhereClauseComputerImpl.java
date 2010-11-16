@@ -20,13 +20,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.repository.api.HippoNode;

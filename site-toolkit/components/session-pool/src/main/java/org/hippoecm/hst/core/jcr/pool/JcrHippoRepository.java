@@ -22,6 +22,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 import javax.naming.InitialContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -227,5 +228,83 @@ public class JcrHippoRepository implements Repository {
         } else {
             return null;
         }
+    }
+
+    public Value getDescriptorValue(String key) {
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.getDescriptorValue(key);
+        }
+        
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().getDescriptorValue(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.getDescriptorValues(key);
+        }
+        
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().getDescriptorValues(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.isSingleValueDescriptor(key);
+        }
+        
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().isSingleValueDescriptor(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.isStandardDescriptor(key);
+        }
+        
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                return hippoRepository.getRepository().isStandardDescriptor(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
+        }
+        return false;
     }
 }

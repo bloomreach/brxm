@@ -42,6 +42,7 @@
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-folder</sv:value>
+            <sv:value>new-translated-folder</sv:value>
         </sv:property>
         <sv:node  sv:name="demosite">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -52,11 +53,24 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
+            <sv:value>hippotranslation:translated</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:locale" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:id" sv:type="String">
+            <!-- same for all 'root' language nodes: do not change -->
+            <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>new-folder</sv:value>
+            <sv:value>new-translated-folder</sv:value>
             <sv:value>new-document</sv:value>
           </sv:property>
+          <sv:node sv:name="hippotranslation:translations"> 
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotranslation:translations</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
         <sv:node  sv:name="demosubsite">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -67,11 +81,24 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
+            <sv:value>hippotranslation:translated</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:locale" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:id" sv:type="String">
+            <!-- same for all 'root' language nodes: do not change -->
+            <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>new-folder</sv:value>
+            <sv:value>new-translated-folder</sv:value>
             <sv:value>new-document</sv:value>
           </sv:property>
+          <sv:node sv:name="hippotranslation:translations"> 
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippotranslation:translations</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
     </sv:node>
     <sv:node sv:name="gallery">

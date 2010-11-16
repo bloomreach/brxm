@@ -98,11 +98,15 @@ public class HippoItem implements HippoBean {
             return null;
         }
         try {
+            javax.jcr.Node canonicalNode;
             if (this.node.hasProperty(HippoNodeType.HIPPO_UUID)) {
                 this.canonicalId = this.node.getProperty(HippoNodeType.HIPPO_UUID).getString();
             } else if (this.node.isNodeType("mix:referenceable")) {
                 this.canonicalId = this.node.getUUID();
-            }
+            } else if( (canonicalNode = ((HippoNode)node).getCanonicalNode()) != null) {
+                // TODO once HREPTWO-4680 is fixed, this else if can (should) be removed again as it is less efficient
+                canonicalId = canonicalNode.getIdentifier();
+            } 
         } catch (RepositoryException e) {
             log.warn("RepositoryException while trying to get canonical uuid for '" + this.getPath() + "'", e);
         }

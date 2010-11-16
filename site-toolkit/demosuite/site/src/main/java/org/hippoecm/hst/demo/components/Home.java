@@ -33,13 +33,10 @@ public class Home extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         
         try {
-            
             HippoBean image = (HippoBean) this.getObjectBeanManager(request).getObject("/content/gallery/images/screenshot_cms_small.jpg");
             request.setAttribute("image",image);
-            
         } catch (ObjectBeanManagerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new HstComponentException(e);
         }
          
         super.doBeforeRender(request, response);

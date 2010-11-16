@@ -25,6 +25,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.PoolUtils;
@@ -225,6 +226,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
         try {
             descriptor = getRepository().getDescriptor(key);
         } catch (RepositoryException e) {
+            log.error("RepositoryException: ",e);
         }
 
         return descriptor;
@@ -232,13 +234,49 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
 
     public String[] getDescriptorKeys() {
         String[] descriptorKeys = null;
-
         try {
             descriptorKeys = getRepository().getDescriptorKeys();
         } catch (RepositoryException e) {
+            log.error("RepositoryException: ",e);
         }
 
         return descriptorKeys;
+    }
+
+    public Value getDescriptorValue(String key) {
+        try {
+            return getRepository().getDescriptorValue(key);
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: ",e);
+        }
+        return null;
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        try {
+            return getRepository().getDescriptorValues(key);
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: ",e);
+        }
+        return null;
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        try {
+            return getRepository().isSingleValueDescriptor(key);
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: ",e);
+        }
+        return false;
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        try {
+            return getRepository().isStandardDescriptor(key);
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: ",e);
+        }
+        return false;
     }
 
     /**
@@ -1087,5 +1125,6 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
             return validated;
         }
     }
+
 
 }

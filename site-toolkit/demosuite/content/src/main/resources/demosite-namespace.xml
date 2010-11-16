@@ -223,9 +223,16 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>f0b9c5c2-87b2-4b80-a252-ffa530f6bb91</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>en</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:id" sv:type="String">
+          <sv:value>demosite-textdocument-id</sv:value>
         </sv:property>
         <sv:property sv:name="demosite:summary" sv:type="String">
           <sv:value/>
@@ -604,9 +611,16 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>32aa2ebd-fcf4-4c93-8a3c-9a4fa77cf146</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>en</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:id" sv:type="String">
+          <sv:value>demosite-newsdocument-id</sv:value>
         </sv:property>
         <sv:property sv:name="demosite:date" sv:type="Date">
           <sv:value>2010-06-18T15:46:03.643+02:00</sv:value>
@@ -1044,9 +1058,16 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>51baa2e2-34ce-4a52-bc7c-e5fc0c35510c</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>en</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:id" sv:type="String">
+          <sv:value>demosite-commentdocument-id</sv:value>
         </sv:property>
         <sv:property sv:name="demosite:date" sv:type="Date">
           <sv:value>2010-06-18T15:46:03.643+02:00</sv:value>
@@ -1534,9 +1555,16 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>7e8bd1a7-3e5c-48c8-a775-0f4ef097257a</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>en</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:id" sv:type="String">
+          <sv:value>demosite-productdocument-id</sv:value>
         </sv:property>
         <sv:property sv:name="demosite:brand" sv:type="String">
           <sv:value/>

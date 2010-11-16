@@ -29,11 +29,12 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 
 public class MultipleRepositoryImpl implements MultipleRepository {
-
+    
     private static ThreadLocal<Repository> tlCurrentRepository = new ThreadLocal<Repository>();
     
     protected Map<CredentialsWrapper, Repository> repositoryMap = Collections.synchronizedMap(new HashMap<CredentialsWrapper, Repository>());
@@ -119,6 +120,37 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         }
         
         return descriptorKeys;
+    }
+    public Value getDescriptorValue(String key) {
+        Repository curRepository = getCurrentThreadRepository();
+        if (curRepository != null) {
+            return curRepository.getDescriptorValue(key);
+        }
+        return null;
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        Repository curRepository = getCurrentThreadRepository();
+        if (curRepository != null) {
+            return curRepository.getDescriptorValues(key);
+        }
+        return null;
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        Repository curRepository = getCurrentThreadRepository();
+        if (curRepository != null) {
+            return curRepository.isSingleValueDescriptor(key);
+        }
+        return false;
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        Repository curRepository = getCurrentThreadRepository();
+        if (curRepository != null) {
+            return curRepository.isStandardDescriptor(key);
+        }
+        return false;
     }
 
     public Session login() throws LoginException, RepositoryException {

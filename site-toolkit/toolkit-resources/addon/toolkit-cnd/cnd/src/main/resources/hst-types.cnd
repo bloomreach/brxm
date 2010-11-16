@@ -17,7 +17,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/2.0'>
-<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
 
 [hst:descriptive] mixin
 - hst:description (string)
@@ -119,7 +119,10 @@
 + * (hst:sitemapitem)
 
 [hst:sitemenuitem] > nt:base, mix:referenceable orderable
+// sitemap item by path. This can be a path including wildcards
 - hst:referencesitemapitem (string)
+// sitemap item by refId. This cannot be a sitemap item including wildcards
+- hst:refidsitemapitem (string)
 - hst:externallink (string)
 - hst:foldersonly (boolean)
 - hst:repobased (boolean)

@@ -66,20 +66,6 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm</groupId>
-      <artifactId>hst-addon-configuration-editor-frontend</artifactId>
-      <version>${hst-configuration-editor.version}</version>
-      <type>jar</type>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm</groupId>
-      <artifactId>hst-addon-configuration-editor-repository</artifactId>
-      <version>${hst-configuration-editor.version}</version>
-      <type>jar</type>
-    </dependency>
-    
-    <dependency>
       <groupId>org.onehippo.ecm.hst.demosuite</groupId>
       <artifactId>hst-demosuite-content</artifactId>
       <version>${pom.version}</version>
@@ -161,7 +147,8 @@
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
             <scope>runtime</scope>
-            <version>1.0</version>
+            <version>${javax.jcr.version}</version>
+            <!--version>2.0</version-->
           </dependency>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
           <dependency>

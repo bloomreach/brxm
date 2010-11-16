@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,10 +77,14 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         }
         try {
             javax.jcr.Node handle = this.getNode().getParent();
+            javax.jcr.Node canonicalNode;
             if (handle.hasProperty(HippoNodeType.HIPPO_UUID)) {
                 canonicalHandleUUID =  handle.getProperty(HippoNodeType.HIPPO_UUID).getString();
             } else if (handle.isNodeType("mix:referenceable")) {
-                canonicalHandleUUID =  handle.getUUID();
+                canonicalHandleUUID =  handle.getIdentifier();
+            } else if( (canonicalNode = ((HippoNode)handle).getCanonicalNode()) != null) {
+                // TODO once HREPTWO-4680 is fixed, this else if can (should) be removed again as it is less efficient
+                canonicalHandleUUID = canonicalNode.getIdentifier();
             } else {
                 log.warn("Cannot get uuid of handle for '{}'", this.getPath());
             }

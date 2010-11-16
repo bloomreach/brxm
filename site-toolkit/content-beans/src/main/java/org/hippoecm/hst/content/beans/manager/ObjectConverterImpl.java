@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.jcr.ItemNotFoundException;
@@ -24,7 +25,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;

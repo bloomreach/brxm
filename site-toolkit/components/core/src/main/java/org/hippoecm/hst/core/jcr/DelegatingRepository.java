@@ -21,6 +21,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 /**
  * DelegatingRepository
@@ -42,6 +43,23 @@ public class DelegatingRepository implements Repository {
         return delegatee.getDescriptorKeys();
     }
 
+
+    public Value getDescriptorValue(String key) {
+        return delegatee.getDescriptorValue(key);
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        return delegatee.getDescriptorValues(key);
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        return delegatee.isSingleValueDescriptor(key);
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        return delegatee.isStandardDescriptor(key);
+    }
+    
     public Session login() throws LoginException, RepositoryException {
         return delegatee.login();
     }
@@ -62,4 +80,5 @@ public class DelegatingRepository implements Repository {
     protected Repository getDelegatee() {
         return delegatee;
     }
+
 }

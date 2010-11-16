@@ -131,7 +131,8 @@ public class TodoList extends BaseHstComponent {
             Query query = request.getRequestContext().getSession().getWorkspace().getQueryManager().createQuery(todoItemsQuery, Query.XPATH);
 
             if (query instanceof HippoQuery) {
-                ((HippoQuery) query).setLimit(queryLimit);
+              // TODO when RMI client is fixed, enable again
+              //  ((HippoQuery) query).setLimit(queryLimit);
             }
 
             QueryResult result = query.execute();

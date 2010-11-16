@@ -56,7 +56,7 @@
     <portlet-api.version>2.0</portlet-api.version>
     <portals-bridges-common.version>1.0.4</portals-bridges-common.version>
     
-    <javax.jcr.version>1.0</javax.jcr.version>
+    <javax.jcr.version>2.0</javax.jcr.version>
     <javax.mail.version>1.4.1</javax.mail.version>
     <geronimo-jta_1.1_spec.version>1.1</geronimo-jta_1.1_spec.version>
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
@@ -91,10 +91,9 @@
     <spring.version>3.0.4.RELEASE</spring.version>
     <aspectj.version>1.6.2</aspectj.version>
 
-    <jackrabbit.version>1.5.0</jackrabbit.version>
+    <jackrabbit.version>2.1.2</jackrabbit.version>
 
-    <hippoecm.version>2.16.02</hippoecm.version>
-    <hst-configuration-editor.version>1.04.02-SNAPSHOT</hst-configuration-editor.version>
+    <hippoecm.version>2.17.01</hippoecm.version>
     
     <jdo.version>2.0</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
@@ -726,7 +725,7 @@
         <version>${jackrabbit.version}</version>
       </dependency>
       
-      <dependency>
+      <!-- dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-ocm</artifactId>
         <version>${jackrabbit.version}</version>
@@ -736,7 +735,7 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
+      </dependency-->
       
       <!-- HTML Cleaner -->
       
@@ -1027,7 +1026,7 @@
         <module>client</module>
         <module>client-modules</module>
         <module>dependencies</module>
-        <module>sandbox</module>
+        <!-- module>sandbox</module-->
         <module>demosuite</module>
       </modules>
     </profile>

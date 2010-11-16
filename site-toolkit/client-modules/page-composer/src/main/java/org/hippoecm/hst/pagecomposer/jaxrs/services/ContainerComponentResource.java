@@ -15,17 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.jackrabbit.uuid.UUID;
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PostRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.reflect.Type;
+import java.util.UUID;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -44,7 +35,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.lang.reflect.Type;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PostRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 @Path("/hst:containercomponent/")

@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.provider.jcr;
 
+import java.util.UUID;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;

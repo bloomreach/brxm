@@ -17,13 +17,13 @@ package org.hippoecm.hst.content.beans.manager.workflow;
 
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
-import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;

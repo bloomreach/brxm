@@ -19,15 +19,26 @@
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:harddocument</sv:value>
+    <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
+  <sv:property sv:name="hippotranslation:locale" sv:type="String">
+     <sv:value>en</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippotranslation:id" sv:type="String">
+    <sv:value>demosite-common-folder-id</sv:value>
+  </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-folder</sv:value>
+    <sv:value>new-translated-folder</sv:value>
     <sv:value>new-document</sv:value>
   </sv:property>
+  <sv:node sv:name="hippotranslation:translations"> 
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippotranslation:translations</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="about-us">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
@@ -45,6 +56,13 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>demosite-common-folder-about-us-id</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
         <sv:value>Who we are. erg wer</sv:value>
@@ -55,9 +73,6 @@
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>common/about-us</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -93,6 +108,11 @@
                         website"&gt;www.onehippo.com&lt;/a&gt;!</sv:value>
         </sv:property>
       </sv:node>
+      <sv:node sv:name="hippotranslation:translations"> 
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippotranslation:translations</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -123,6 +143,13 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>demosite-common-folder-home-page-id</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
         <sv:value>This is the home page of the generated HST website.</sv:value>
@@ -187,6 +214,11 @@
           <sv:property sv:name="hippo:modes" sv:type="String"/>
           <sv:property sv:name="hippo:values" sv:type="String"/>
         </sv:node>
+      </sv:node>
+      <sv:node sv:name="hippotranslation:translations"> 
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippotranslation:translations</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">

@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
         }
         </code>
  */
-public abstract class AbstractHstTestCase extends TestCase{
+public abstract class AbstractHstTestCase extends TestCase {
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractHstTestCase.class);
     protected ComponentManager abstractTestComponentManager;

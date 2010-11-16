@@ -149,7 +149,7 @@ public class HstManagerImpl implements HstManager {
             
            // get all the root hst virtualhosts node: there is only allowed to be exactly ONE
             {
-                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS+")";
+                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS+") order by @jcr:score descending ";
                 QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
                 
                 NodeIterator virtualHostNodes = result.getNodes();
@@ -164,7 +164,7 @@ public class HstManagerImpl implements HstManager {
             
             // get all the root hst configuration nodes
             {
-                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")";
+                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")  order by @jcr:score descending ";
                 QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
                 NodeIterator configurationRootJcrNodes = result.getNodes();
                 
@@ -176,7 +176,7 @@ public class HstManagerImpl implements HstManager {
             }
             
             // get all the mount points
-            String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_SITE+")";
+            String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_SITE+")  order by @jcr:score descending ";
             QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator siteRootJcrNodes = result.getNodes();
             

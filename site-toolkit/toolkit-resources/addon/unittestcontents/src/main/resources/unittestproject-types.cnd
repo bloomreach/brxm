@@ -17,20 +17,20 @@
 <'unittestproject'='http://www.hippoecm.org/hst/nt/unittestproject/1.0'>
 <'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <'hst'='http://www.hippoecm.org/hst/nt/2.0'>
-<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
-[unittestproject:basedocument] > hippostdpubwf:document, hippostd:publishableSummary, hippo:document
+[unittestproject:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
 
 [unittestproject:textpage] > unittestproject:basedocument
-+ unittestproject:body (hippostd:html)
 - unittestproject:summary (string)
 - unittestproject:title (string)
 - unittestproject:date (date)
++ unittestproject:body (hippostd:html)
 
 [unittestproject:newspage] > unittestproject:basedocument
-+ unittestproject:body (hippostd:html)
 - unittestproject:summary (string)
 - unittestproject:title (string)
 - unittestproject:date (date)
++ unittestproject:body (hippostd:html)
 

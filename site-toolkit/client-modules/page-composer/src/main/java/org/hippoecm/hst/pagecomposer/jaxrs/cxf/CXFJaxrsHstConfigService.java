@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -27,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
 import org.hippoecm.hst.core.request.HstRequestContext;

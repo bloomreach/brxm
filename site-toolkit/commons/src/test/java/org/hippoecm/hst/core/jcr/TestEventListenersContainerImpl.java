@@ -34,6 +34,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Workspace;
 import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventJournal;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
@@ -209,6 +210,19 @@ public class TestEventListenersContainerImpl {
         
         public int size() {
             return absPathListenersMap.size();
+        }
+
+        public EventJournal getEventJournal() throws RepositoryException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public EventJournal getEventJournal(int eventTypes, String absPath, boolean isDeep, String[] uuid,
+                String[] nodeTypeName) throws RepositoryException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void setUserData(String userData) throws RepositoryException {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
     
