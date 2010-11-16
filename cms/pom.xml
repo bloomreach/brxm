@@ -118,6 +118,22 @@
     <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk</url>
   </scm>
 
+  <!-- Where to publish the project data, especially the documentation site -->
+  <distributionManagement>
+    <site>
+      <id>repodocs.hippocms.org</id>
+      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
+    </site>
+    <repository>
+      <id>repository.hippocms.org</id>
+      <url>ftp://repository.hippocms.org/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>repository.hippocms.org</id>
+      <url>ftp://repository.hippocms.org/maven2</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <!-- Where issues (bugs reports and improvement requests) are handled. 
        Used in the documentation at target/site/issue-tracking.html 
   -->
@@ -283,6 +299,18 @@
 
   <repositories>
     <repository>
+      <id>hippoecm</id>
+      <name>Hippo ECM maven 2 repository.</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <layout>default</layout>
+    </repository>
+    <repository>
       <id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
       <snapshots>
@@ -353,6 +381,18 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>hippoecm</id>
+      <name>Hippo ECM maven 2 repository.</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <layout>default</layout>
     </pluginRepository>
   </pluginRepositories>
 
