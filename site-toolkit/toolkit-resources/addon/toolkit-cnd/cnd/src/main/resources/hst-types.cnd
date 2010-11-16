@@ -25,6 +25,7 @@
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
+- hst:isnamedrenderer (boolean)
 - hst:containers (string) multiple
 
 [hst:templates] > nt:base, mix:referenceable orderable
@@ -34,7 +35,8 @@
 [hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
 - hst:template (string)
 - hst:componentclassname (string)
-- hst:serveresourcepath (string)
+- hst:serveresourcepath (string) 
+- hst:isnamedresourceserver (boolean)
 - hst:referencename (string)
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
