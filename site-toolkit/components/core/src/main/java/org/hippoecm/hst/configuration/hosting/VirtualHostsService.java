@@ -46,7 +46,7 @@ public class VirtualHostsService implements VirtualHosts {
     public final static String DEFAULT_SCHEME = "http";
 
     private HstManagerImpl hstManager;
-    private Map<String, VirtualHostService> rootVirtualHosts = virtualHostHashMap();
+    private Map<String, Map<String, VirtualHostService>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<String, Map<String, VirtualHostService>>();
 
     private Map<String, List<Mount>> mountByHostGroup = new HashMap<String, List<Mount>>();
     private Map<String, Map<String, Mount>> mountByGroupAliasAndType = new HashMap<String, Map<String, Mount>>();
@@ -104,10 +104,16 @@ public class VirtualHostsService implements VirtualHosts {
             if(!HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP.equals(hostGroupNode.getNodeTypeName())) {
                 throw new ServiceException("Expected a hostgroup node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP+"' but found a node of type '"+hostGroupNode.getNodeTypeName()+"' at '"+hostGroupNode.getValueProvider().getPath()+"'");
             }
+            Map<String, VirtualHostService> rootVirtualHosts =  virtualHostHashMap();
+            try {
+                rootVirtualHostsByGroup.put(hostGroupNode.getValueProvider().getName(), rootVirtualHosts);
+            } catch (IllegalArgumentException e) {
+                throw new ServiceException("It should not be possible to have two hostgroups with the same name. We found duplicate group with name '"+hostGroupNode.getValueProvider().getName()+"'");
+            }
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
                 try {
                     VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hostGroupNode.getValueProvider().getName() ,hstManager);
-                    this.rootVirtualHosts.put(virtualHost.getName(), virtualHost);
+                    rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (IllegalArgumentException e) {
                     log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
                             + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
@@ -255,17 +261,21 @@ public class VirtualHostsService implements VirtualHosts {
     protected ResolvedVirtualHost findMatchingVirtualHost(String hostName, int portNumber) {
         String[] requestServerNameSegments = hostName.split("\\.");
         int depth = requestServerNameSegments.length - 1;
-        
-        VirtualHost host  = rootVirtualHosts.get(requestServerNameSegments[depth]);
-        if(host == null) {
-          return null;   
+        VirtualHost host = null;
+        for(Map<String, VirtualHostService> rootVirtualHosts : rootVirtualHostsByGroup.values()) {
+            host = rootVirtualHosts.get(requestServerNameSegments[depth]);
+            if(host == null) {
+              continue;
+            }
+            host = traverseInToHost(host, requestServerNameSegments, depth);
+            if(host != null) {
+                break;
+            }
         }
-        
-        host = traverseInToHost(host, requestServerNameSegments, depth);
-        
         if(host == null) {
             return null;
         }
+        
         return new ResolvedVirtualHostImpl(host, hostName, portNumber);
       
     }
