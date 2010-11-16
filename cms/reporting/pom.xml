@@ -61,6 +61,12 @@
           <include>**/*.html</include>
           <include>**/*.css</include>
           <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
           <include>**/*.xml</include>
         </includes>
       </resource>
