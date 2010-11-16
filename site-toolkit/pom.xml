@@ -92,6 +92,7 @@
     <aspectj.version>1.6.2</aspectj.version>
 
     <jackrabbit.version>2.1.2</jackrabbit.version>
+    <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippoecm.version>2.17.01</hippoecm.version>
     <hst-configuration-editor.version>1.04.02-SNAPSHOT</hst-configuration-editor.version>
@@ -726,17 +727,17 @@
         <version>${jackrabbit.version}</version>
       </dependency>
       
-      <!-- dependency>
+      <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-ocm</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>${jackrabbit-ocm.version}</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency-->
+      </dependency>
       
       <!-- HTML Cleaner -->
       
@@ -1027,7 +1028,7 @@
         <module>client</module>
         <module>client-modules</module>
         <module>dependencies</module>
-        <!-- module>sandbox</module-->
+        <module>sandbox</module>
         <module>demosuite</module>
       </modules>
     </profile>
