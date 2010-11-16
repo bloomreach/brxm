@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-addon-sample</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository-sample</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Sample repository addon</name>
   <description>Hippo ECM sample repository addon</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon-sample-repository</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository-sample-repository</artifactId>
   <packaging>jar</packaging>
 
   <scm>
@@ -41,18 +41,18 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-connector</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-sample-common</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-sample-common</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
 

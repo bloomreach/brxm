@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-repository</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Sample addon</name>
   <description>Hippo ECM sample addon</description>
-  <artifactId>hippo-ecm-addon-sample</artifactId>
-  <groupId>org.hippoecm</groupId>
+  <artifactId>hippo-repository-sample</artifactId>
+  <groupId>org.onehippo</groupId>
   <packaging>pom</packaging>
 
   <scm>

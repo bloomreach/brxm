@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-repository</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Repository WAR</name>
   <description>Hippo ECM minimal repository application</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-repository-application</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository-application</artifactId>
   <packaging>war</packaging>
 
   <scm>
@@ -44,23 +44,23 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-modules</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-config</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-servlets</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-servlets</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -74,8 +74,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-tools-testutils</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-tools-testutils</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <type>jar</type>
       <scope>test</scope>
@@ -216,8 +216,8 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-repository-engine</artifactId>
+          <groupId>org.onehippo</groupId>
+          <artifactId>hippo-repository-engine</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
@@ -237,8 +237,8 @@
       <dependencyManagement>
         <dependencies>
           <dependency>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-repository-engine</artifactId>
+            <groupId>org.onehippo</groupId>
+            <artifactId>hippo-repository-engine</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>
@@ -257,8 +257,8 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-repository-engine</artifactId>
+          <groupId>org.onehippo</groupId>
+          <artifactId>hippo-repository-engine</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>

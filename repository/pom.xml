@@ -17,8 +17,8 @@
 
   <name>Repository</name>
   <description>Hippo ECM repository</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-repository</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository</artifactId>
   <version>2.17.02-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -46,6 +46,7 @@
     <module>application</module>
     <module>checker</module>
     <module>builtin</module>
+    <module>config</module>
     <module>ldap</module>
     <module>sample</module>
     <module>tools</module>
@@ -536,8 +537,8 @@
           </links>
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-tools-documentation</artifactId>
+            <groupId>org.onehippo</groupId>
+            <artifactId>hippo-repository-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
         </configuration>
@@ -852,8 +853,8 @@
           </links>
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-tools-documentation</artifactId>
+            <groupId>org.onehippo</groupId>
+            <artifactId>hippo-repository-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
         </configuration>

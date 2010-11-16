@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-repository</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Repository LDAP based Authorization</name>
   <description>Hippo ECM Ldap Addon Repository</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon-ldap-repository</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository-ldap</artifactId>
   <packaging>jar</packaging>
   
   <dependencies>
@@ -33,14 +33,14 @@
       <artifactId>jcr</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>

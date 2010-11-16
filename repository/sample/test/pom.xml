@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-addon-sample</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository-sample</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Sample addon tests</name>
   <description>Hippo ECM sample addon tests</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon-sample-test</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository-sample-test</artifactId>
   <packaging>jar</packaging>
 
   <scm>
@@ -49,32 +49,32 @@
 
     <!-- test -->
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-modules</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-config</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-sample-common</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-sample-common</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-sample-repository</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-sample-repository</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

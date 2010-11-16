@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-repository</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Repository servlets</name>
   <description>Hippo ECM repository servlets</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-repository-servlets</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository-servlets</artifactId>
   <packaging>jar</packaging>
 
   <scm>
@@ -51,18 +51,18 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-connector</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-utilities</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-utilities</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>

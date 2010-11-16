@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-repository</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Repository test</name>
   <description>Hippo ECM repository test</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-repository-test</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository-test</artifactId>
   <packaging>jar</packaging>
 
   <scm>
@@ -43,25 +43,25 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-provider</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-provider</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-modules</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
 
     <!-- test -->
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-tools-testutils</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-tools-testutils</artifactId>
       <version>2.17.02-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
@@ -82,8 +82,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-config</artifactId>
       <scope>test</scope>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
@@ -126,8 +126,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
   </dependencies>
@@ -231,8 +231,8 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-repository-engine</artifactId>
+          <groupId>org.onehippo</groupId>
+          <artifactId>hippo-repository-engine</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
@@ -251,8 +251,8 @@
       <dependencyManagement>
         <dependencies>
           <dependency>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-repository-engine</artifactId>
+            <groupId>org.onehippo</groupId>
+            <artifactId>hippo-repository-engine</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>

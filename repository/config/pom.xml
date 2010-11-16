@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-addon-builtin</artifactId>
-    <version>2.17.02-SNAPSHOT</version>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository</artifactId>
+    <version>2.17.01-SNAPSHOT</version>
   </parent>
 
   <name>Builtin repository addon</name>
   <description>Hippo ECM builtin addon</description>
-  <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-  <groupId>org.hippoecm</groupId>
+  <artifactId>hippo-repository-config</artifactId>
+  <groupId>org.onehippo</groupId>
   <packaging>jar</packaging>
 
   <scm>
@@ -35,15 +35,15 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+      <version>2.17.01-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
+      <version>2.17.01-SNAPSHOT</version>
     </dependency>
 
     <!-- test -->

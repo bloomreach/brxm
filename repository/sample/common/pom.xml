@@ -16,15 +16,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-addon-sample</artifactId>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-repository-sample</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Sample common addon</name>
   <description>Hippo ECM sample common addon</description>
-  <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon-sample-common</artifactId>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-repository-sample-common</artifactId>
   <packaging>jar</packaging>
 
   <scm>
@@ -40,8 +40,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
