@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class HtmlDiffModel extends LoadableDetachableModel<String> {
     @SuppressWarnings("unused")
@@ -55,7 +56,7 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DiffHelper.diffHtml(original.getObject(), current.getObject(), new StreamResult(baos),
                     Session.get().getLocale());
-            return baos.toString();
+            return baos.toString("UTF-8");
         } catch (TransformerConfigurationException e) {
             log.error(e.getMessage(), e);
         } catch (SAXException e) {
