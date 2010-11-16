@@ -20,6 +20,9 @@
       <New class="org.mortbay.jetty.plus.jaas.JAASUserRealm">
         <Set name="name">HST Site Realm</Set>
         <Set name="LoginModuleName">HSTSITE</Set>
+        <Set name="CallbackHandlerClass">
+          org.mortbay.jetty.plus.jaas.callback.DefaultCallbackHandler
+        </Set>
         <Set name="roleClassNames">
           <Array type="String">
             <Item>org.hippoecm.hst.security.TransientRole</Item>
