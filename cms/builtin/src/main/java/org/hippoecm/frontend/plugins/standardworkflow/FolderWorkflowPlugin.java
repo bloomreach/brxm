@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
@@ -186,10 +187,12 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                         boolean deleteAllowed = true;
                         for (NodeIterator iter = folderNode.getNodes(); iter.hasNext();) {
                             Node child = iter.nextNode();
-                            if (!child.isNodeType(HippoNodeType.NT_TRANSLATION)) {
-                                deleteAllowed = false;
-                                break;
+                            NodeDefinition nd = child.getDefinition();
+                            if (nd.getDeclaringNodeType().isMixin()) {
+                                continue;
                             }
+                            deleteAllowed = false;
+                            break;
                         }
                         StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
                                 FolderWorkflowPlugin.this, null, new Object[]{folderName}) {
