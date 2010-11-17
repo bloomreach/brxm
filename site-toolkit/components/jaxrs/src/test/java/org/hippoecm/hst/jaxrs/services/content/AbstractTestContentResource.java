@@ -16,7 +16,9 @@
 package org.hippoecm.hst.jaxrs.services.content;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +39,7 @@ import org.hippoecm.hst.core.container.Pipeline;
 import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.services.AbstractJaxrsSpringTestCase;
@@ -98,12 +101,15 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         resolvedVirtualHost = EasyMock.createNiceMock(ResolvedVirtualHost.class);
         EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn("localhost").anyTimes();
         EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(8085).anyTimes();
-
+        
+        String hostGroupName = "dev";
+        List<Mount> mountsForHostGroup = Collections.emptyList();
         virtualHosts = EasyMock.createNiceMock(VirtualHosts.class);
+        EasyMock.expect(virtualHosts.getMountsByHostGroup(hostGroupName)).andReturn(mountsForHostGroup).anyTimes();
         
         virtualHost = EasyMock.createNiceMock(VirtualHost.class);
         EasyMock.expect(virtualHost.getHostName()).andReturn("localhost").anyTimes();
-        EasyMock.expect(virtualHost.getHostGroupName()).andReturn("dev").anyTimes();
+        EasyMock.expect(virtualHost.getHostGroupName()).andReturn(hostGroupName).anyTimes();
         EasyMock.expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
 
         mount = EasyMock.createNiceMock(Mount.class);
@@ -119,16 +125,20 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         EasyMock.expect(resolvedMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
         EasyMock.expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
         EasyMock.expect(resolvedMount.getResolvedMountPath()).andReturn("/preview/services").anyTimes();
+        
+        HstLinkCreator linkCreator = EasyMock.createNiceMock(HstLinkCreator.class);
 
         EasyMock.replay(resolvedVirtualHost);
         EasyMock.replay(virtualHosts);
         EasyMock.replay(virtualHost);
         EasyMock.replay(mount);
         EasyMock.replay(resolvedMount);
+        EasyMock.replay(linkCreator);
         
         requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
         requestContext.setServletContext(servletContext);
         requestContext.setResolvedMount(resolvedMount);
+        requestContext.setLinkCreator(linkCreator);
         
         urlFactory = getComponent(HstURLFactory.class.getName());
         urlProvider = this.urlFactory.getContainerURLProvider();        

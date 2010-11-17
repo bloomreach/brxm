@@ -37,11 +37,22 @@ public class InitializationValve extends AbstractValve
     public void invoke(ValveContext context) throws ContainerException
     {
         HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
-
-        requestContext.setURLFactory(getUrlFactory());
-        requestContext.setLinkCreator(getLinkCreator());
-        requestContext.setSiteMapMatcher(getSiteMapMatcher());
-        requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
+        
+        if (requestContext.getURLFactory() == null) {
+            requestContext.setURLFactory(getUrlFactory());
+        }
+        
+        if (requestContext.getHstLinkCreator() == null) {
+            requestContext.setLinkCreator(getLinkCreator());
+        }
+        
+        if (requestContext.getSiteMapMatcher() == null) {
+            requestContext.setSiteMapMatcher(getSiteMapMatcher());
+        }
+        
+        if (requestContext.getHstQueryManagerFactory() == null) {
+            requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
+        }
         
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {

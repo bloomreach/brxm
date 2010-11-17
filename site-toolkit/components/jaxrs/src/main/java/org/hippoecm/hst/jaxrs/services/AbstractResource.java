@@ -210,7 +210,9 @@ public abstract class AbstractResource {
                 }
             }
         } catch (Exception e) {
-            if (log.isWarnEnabled()) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to generate a page link. " + e.toString(), e);
+            } else if (log.isWarnEnabled()) {
                 log.warn("Failed to generate a page link. {}", e.toString());
             }
         }

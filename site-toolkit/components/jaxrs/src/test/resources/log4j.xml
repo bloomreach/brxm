@@ -47,10 +47,14 @@
     <appender-ref ref="console"/>
   </category>
   
+  <category additivity="false" name="net.sf.ehcache">
+    <level value="error"/>
+    <appender-ref ref="console"/>
+  </category>
+  
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>
-    <appender-ref ref="root"/>
   </root>
 
 </log4j:configuration>

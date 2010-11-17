@@ -50,6 +50,11 @@
     <appender-ref ref="console"/>
   </category>
   
+  <category additivity="false" name="net.sf.ehcache">
+    <level value="ERROR"/>
+    <appender-ref ref="console"/>
+  </category>
+  
   <root>
     <level value="WARN"/>
     <appender-ref ref="console"/>

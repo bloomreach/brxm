@@ -19,6 +19,7 @@
 <'hst'='http://www.hippoecm.org/hst/nt/2.0'>
 <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
 
 [testproject:sitemenuitem] > hst:sitemenuitem
 - testproject:title 
@@ -46,3 +47,4 @@
 - testproject:price (double)
 - testproject:product (string)
 + testproject:body (hippostd:html)
++ testproject:image (hippogallerypicker:imagelink)
