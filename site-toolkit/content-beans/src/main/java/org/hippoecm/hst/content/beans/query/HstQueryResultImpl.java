@@ -15,11 +15,13 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIteratorImpl;
+import org.hippoecm.repository.api.HippoNodeIterator;
 import org.slf4j.LoggerFactory;
 
 public class HstQueryResultImpl implements HstQueryResult {
@@ -44,7 +46,28 @@ public class HstQueryResultImpl implements HstQueryResult {
             return null;
         }
     }
-
+    
+    public int getTotalSize() {
+        try {
+            NodeIterator iterator = queryResult.getNodes();
+            if(iterator instanceof HippoNodeIterator) {
+                int total = (int)((HippoNodeIterator)iterator).getTotalSize();
+                if(total == -1) {
+                    log.warn("getTotalSize returned -1 for query. Should not happen. Fallback to normal getSize()");
+                    return getSize();
+                } else {
+                    log.debug("getTotalSize call returned '{}' hits", total);
+                    return total;
+                }
+            }
+            log.debug("The getTotalSize method only works properly in embedded repository mode. Fallback to normal getSize()");
+            return getSize();
+        } catch (RepositoryException e) {
+            log.error("RepositoryException. Return 0. {}", e);
+            return 0;
+        }
+    }
+    
     public int getSize() {
         try {
             return (int) queryResult.getNodes().getSize();

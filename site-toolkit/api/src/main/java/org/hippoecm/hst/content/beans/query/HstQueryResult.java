@@ -23,12 +23,37 @@ import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 public interface HstQueryResult {
     
     /**
+     * <p>
      * Returns the total number of hits. A hit from a HstQuery is always a single hit. If the hit matches the search criteria multiple
-     * times, it still results as a single hit. It does however influence the Lucene scoring, hence, when no sorting is applied, the hit
-     * might have a higher precendence than other hits.
-     * @return the total number of hits. 
+     * times, it still results as a single hit.
+     * </p>
+     * <p>
+     * Note that when a limit is set on the query, for example through {@link HstQuery#setLimit(int)}, then this method will never
+     * give a higher value then this limit. If you need the total hit number you can use {@link #getTotalSize()}. You can better not
+     * set the limit to {@link Integer#MAX_VALUE} to get the actual total hits, as this means all hits need to be
+     * authorized. In that case, {@link #getTotalSize()} if much faster as it does not authorize the hits. 
+     * </p>
+     * <p>
+     * The {@link #getTotalSize()} will return the correct authorized size once we have tackled this in the Repository, see HREPTWO-619
+     * </p>
+     * @see #getTotalSize()
+     * @return the total number of authorized hits. 
      */
     int getSize();
+    
+    /**
+     * <p>
+     * Returns the total number of hits. This is the total size of hits, even if a {@link HstQuery#setLimit(int)} was used that was smaller.
+     * This is different then {@link #getSize()}. Also this method does not imply that every hit needs to be authorized. Hence, this call
+     * is much more efficient than {@link #getSize()}.
+     * </p>
+     * <p>
+     *  The {@link #getTotalSize()} will return the correct authorized size once we have tackled this in the Repository, see HREPTWO-619
+     * </p>
+     * @see #getSize()
+     * @return the total number of authorized hits. 
+     */
+    int getTotalSize();
     
     /**
      * This returns a HippoBeanIterator, which is a lazy loading proxy for accessing the beans in the HstQueryResult. This is really efficient
