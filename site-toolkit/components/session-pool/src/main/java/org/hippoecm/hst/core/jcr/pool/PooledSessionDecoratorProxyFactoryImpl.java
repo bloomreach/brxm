@@ -93,8 +93,10 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 this.passivated = true;
             } else if ("logoutSession".equals(methodName)) {
                 Session session = (Session) invocation.getProxy();
-                
-                session.logout();
+                // HSTTWO-1337: Hippo Repository requires to check isLive() before logout().
+                if (session.isLive()) {
+                    session.logout();
+                }
             } else if ("lastRefreshed".equals(methodName)) {
                 ret = new Long(lastRefreshed);
             } else if ("getUserID".equals(methodName)) {

@@ -1022,7 +1022,10 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                     pooledSession.passivate();
                     pooledSession.logoutSession();
                 } else {
-                    session.logout();
+                    // HSTTWO-1337: Hippo Repository requires to check isLive() before logout().
+                    if (session.isLive()) {
+                        session.logout();
+                    }
                 }
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
