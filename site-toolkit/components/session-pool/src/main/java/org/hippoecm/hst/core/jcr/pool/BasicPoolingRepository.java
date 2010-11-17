@@ -1004,7 +1004,10 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
             
                 if (sessionsRefreshPendingTimeMillis > 0L) { 
                     if (session.lastRefreshed() < sessionsRefreshPendingTimeMillis) {  
-                        session.refresh(keepChangesOnRefresh);
+                     // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
+                        if (session.isLive()) {
+                            session.refresh(keepChangesOnRefresh);
+                        }
                     }
                 }
             }
@@ -1022,7 +1025,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                     pooledSession.passivate();
                     pooledSession.logoutSession();
                 } else {
-                    // HSTTWO-1337: Hippo Repository requires to check isLive() before logout().
+                    // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
                     if (session.isLive()) {
                         session.logout();
                     }
@@ -1073,10 +1076,16 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                 if (refreshOnPassivate) {
                     if (maxRefreshIntervalOnPassivate > 0L) {
                         if (System.currentTimeMillis() - pooledSession.lastRefreshed() > maxRefreshIntervalOnPassivate) {
-                            pooledSession.refresh(keepChangesOnRefresh);
+                            // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
+                            if (session.isLive()) {
+                                pooledSession.refresh(keepChangesOnRefresh);
+                            }
                         }
                     } else {
-                        pooledSession.refresh(keepChangesOnRefresh);
+                        // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
+                        if (session.isLive()) {
+                            pooledSession.refresh(keepChangesOnRefresh);
+                        }
                     }
                 }
                 
