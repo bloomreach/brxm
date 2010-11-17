@@ -66,11 +66,6 @@
             <sv:value>new-translated-folder</sv:value>
             <sv:value>new-document</sv:value>
           </sv:property>
-          <sv:node sv:name="hippotranslation:translations"> 
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotranslation:translations</sv:value>
-            </sv:property>
-          </sv:node>
         </sv:node>
         <sv:node  sv:name="demosubsite">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -94,11 +89,6 @@
             <sv:value>new-translated-folder</sv:value>
             <sv:value>new-document</sv:value>
           </sv:property>
-          <sv:node sv:name="hippotranslation:translations"> 
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippotranslation:translations</sv:value>
-            </sv:property>
-          </sv:node>
         </sv:node>
     </sv:node>
     <sv:node sv:name="gallery">

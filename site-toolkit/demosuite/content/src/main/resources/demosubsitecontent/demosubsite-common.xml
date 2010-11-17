@@ -102,11 +102,6 @@
                         website"&gt;www.onehippo.com&lt;/a&gt;!</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="hippotranslation:translations"> 
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippotranslation:translations</sv:value>
-        </sv:property>
-      </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -204,11 +199,6 @@
           <sv:property sv:name="hippo:modes" sv:type="String"/>
           <sv:property sv:name="hippo:values" sv:type="String"/>
         </sv:node>
-      </sv:node>
-      <sv:node sv:name="hippotranslation:translations"> 
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippotranslation:translations</sv:value>
-        </sv:property>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
