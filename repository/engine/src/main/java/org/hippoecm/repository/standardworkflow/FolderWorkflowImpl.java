@@ -801,6 +801,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document copyFrom(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        if (targetName == null || targetName.equals("")) {
+            throw new WorkflowException("No target name given");
+        }
         String path = rootSubject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         Node destination = userSession.getNodeByUUID(targetFolder.getIdentity());
@@ -818,6 +821,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = rootSubject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        if (targetName == null || targetName.equals("")) {
+            throw new WorkflowException("No target name given");
+        }
         if (folder.hasNode(targetName)) {
             throw new WorkflowException("Cannot copy document when document with same name exists");
         }
