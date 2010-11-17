@@ -93,7 +93,22 @@
         </exclusion>
       </exclusions>
     </dependency>
-
+    
+    <!-- HST Configuration Editor Dependencies for testing purpose. By default, these should be commented out. -->
+    <!--
+    <dependency>
+      <groupId>org.onehippo.ecm</groupId>
+      <artifactId>hst-addon-configuration-editor-frontend</artifactId>
+      <version>1.04.02-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm</groupId>
+      <artifactId>hst-addon-configuration-editor-repository</artifactId>
+      <version>1.04.02-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    -->
     
   </dependencies>
 
