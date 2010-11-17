@@ -40,7 +40,9 @@ public interface RemoteQuery extends org.apache.jackrabbit.rmi.remote.RemoteQuer
     public String[] getArguments() throws RepositoryException, RemoteException;
     public int getArgumentCount() throws RepositoryException, RemoteException;
     public RemoteQueryResult execute(Map<String,String> arguments) throws RepositoryException, RemoteException;
-    public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException, RemoteException;
+
+    public void bindValue(String varName, Value value) throws RepositoryException, RemoteException;
+    public String[] getBindVariableNames() throws RepositoryException, RemoteException;
     public void setLimit(long limit) throws RemoteException;
     public void setOffset(long offset) throws RemoteException;
 }

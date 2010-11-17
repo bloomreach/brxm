@@ -92,11 +92,36 @@ public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery im
         }
     }
 
-    public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException {
+    public void bindValue(String varName, Value value)
+            throws RepositoryException {
         try {
             remote.bindValue(varName, value);
-        } catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public String[] getBindVariableNames() throws RepositoryException {
+        try {
+            return remote.getBindVariableNames();
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public void setLimit(long limit) {
+        try {
+            remote.setLimit(limit);
+        } catch (RemoteException ex) {
+            // this is in case of a connection problem, the actual call to execute() will fail next
+        }
+    }
+
+    public void setOffset(long offset){
+        try {
+            remote.setOffset(offset);
+        } catch (RemoteException ex) {
+            // this is in case of a connection problem, the actual call to execute() will fail next
         }
     }
 }

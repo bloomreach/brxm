@@ -64,8 +64,12 @@ public class ServerQuery extends org.apache.jackrabbit.rmi.server.ServerQuery im
         return new ServerQueryResult(query.execute(arguments), getFactory());
     }
 
-    public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException, RemoteException {
+    public void bindValue(String varName, Value value) throws RepositoryException, RemoteException {
         query.bindValue(varName, value);
+    }
+
+    public String[] getBindVariableNames() throws RepositoryException, RemoteException {
+        return getBindVariableNames();
     }
 
     public void setLimit(long limit) throws RemoteException {
