@@ -251,7 +251,10 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             }
             
             try {
-                session.logout();
+                // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
+                if (session.isLive()) {
+                    session.logout();
+                }
                 
                 if (log.isDebugEnabled()) {
                     log.debug("LazySession's session is logged out.");
