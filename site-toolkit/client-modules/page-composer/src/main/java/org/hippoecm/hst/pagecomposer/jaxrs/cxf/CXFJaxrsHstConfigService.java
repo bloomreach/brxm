@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -82,16 +83,23 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         	Session jcrSession = requestContext.getSession();
         	node = jcrSession.getNodeByUUID(uuid);
         	if (node == null) {
+        	    // TODO log warn and return a proper json response containing the error instead of throwing
                 throw new ContainerNotFoundException("Cannot find content node with uuid '"+uuid+"'",new WebApplicationException(Response.Status.NOT_FOUND));
         	}
         	resourceType = node.getPrimaryNodeType().getName();
            
         } catch (PathNotFoundException pnf) {
+           // TODO log warn and return a proper json response containing the error instead of throwing
             throw new ContainerNotFoundException(new WebApplicationException(Response.Status.NOT_FOUND));
+        } catch (ItemNotFoundException e) {
+            // TODO log warn and return a proper json response containing the error instead of throwing
+            throw new ContainerException(e);
         } catch (LoginException e) {
+         // TODO log warn and return a proper json response containing the error instead of throwing
             throw new ContainerException(e);
 		} catch (RepositoryException e) {
-            throw new ContainerException(e);
+		 // TODO log warn and return a proper json response containing the error instead of throwing
+		    throw new ContainerException(e);
 		} 
 
         requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, node);
