@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-war</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
       <type>war</type>
     </dependency>
     
@@ -77,7 +77,7 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gotolink</artifactId>
       <type>jar</type>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>     
 
     <!--  Gallery picker dependency -->

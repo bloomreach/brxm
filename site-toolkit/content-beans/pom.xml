@@ -64,7 +64,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.hippoecm</groupId>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.hippoecm</groupId>

@@ -94,7 +94,7 @@
     <jackrabbit.version>2.1.2</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippoecm.version>2.17.01</hippoecm.version>
+    <hippo.cms.version>2.17.01</hippo.cms.version>
    
     <jdo.version>2.0</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
@@ -339,7 +339,7 @@
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-api</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
       </dependency>
 
       <!-- Java Mail dependencies for site example -->
@@ -672,7 +672,7 @@
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-repository-connector</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
@@ -689,19 +689,19 @@
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
       </dependency>
       
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
       </dependency>
       
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-package-war</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
         <type>war</type>
       </dependency>
       
@@ -887,7 +887,7 @@
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-repository-engine</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
         <scope>test</scope>
       </dependency>
       -->

@@ -30,13 +30,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
       <classifier>tests</classifier>
     </dependency>
     <!-- end  repository engine -->
@@ -44,78 +44,78 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-upgrade</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-modules</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-plugins</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-config</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gotolink</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-faceteddate-repository</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor-repository</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gallery-repository</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-translation-repository</artifactId>
-      <version>${hippoecm.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
    
 

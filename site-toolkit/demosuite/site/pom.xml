@@ -362,19 +362,19 @@
                     <artifactItem>
                       <groupId>org.hippoecm</groupId>
                       <artifactId>hippo-ecm-api</artifactId>
-                      <version>${hippoecm.version}</version>
+                      <version>${hippo.cms.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.hippoecm</groupId>
                       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-                      <version>${hippoecm.version}</version>
+                      <version>${hippo.cms.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.hippoecm</groupId>
                       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-                      <version>${hippoecm.version}</version>
+                      <version>${hippo.cms.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
@@ -417,9 +417,9 @@
                       <excludes>
                         WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
                         WEB-INF/lib/jcr-${javax.jcr.version}.jar,
-                        WEB-INF/lib/hippo-ecm-api-${hippoecm.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippoecm.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${hippo.cms.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippo.cms.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippo.cms.version}.jar,
                         WEB-INF/lib/jdo2-api-${jdo.version}.jar,
                         WEB-INF/lib/hst-api-${project.version}.jar,
                         WEB-INF/lib/hst-commons-${project.version}.jar
@@ -436,9 +436,9 @@
                       <excludes>
                         WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
                         WEB-INF/lib/jcr-${javax.jcr.version}.jar,
-                        WEB-INF/lib/hippo-ecm-api-${hippoecm.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippoecm.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${hippo.cms.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippo.cms.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippo.cms.version}.jar,
                         WEB-INF/lib/jdo2-api-${jdo.version}.jar,
                         WEB-INF/lib/hst-api-${project.version}.jar,
                         WEB-INF/lib/hst-commons-${project.version}.jar
@@ -508,19 +508,19 @@
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-api</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${hippo.cms.version}</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>
