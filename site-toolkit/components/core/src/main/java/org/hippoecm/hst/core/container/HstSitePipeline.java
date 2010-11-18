@@ -37,15 +37,30 @@ public class HstSitePipeline implements Pipeline
     }
 
     public void setPreInvokingValves(Valve [] preInvokingValves) {
-        this.preInvokingValves = preInvokingValves;
+        if (preInvokingValves == null) {
+            this.preInvokingValves = null;
+        } else {
+            this.preInvokingValves = new Valve[preInvokingValves.length];
+            System.arraycopy(preInvokingValves, 0, this.preInvokingValves, 0, preInvokingValves.length);
+        }
     }
     
     public void setInvokingValves(Valve [] invokingValves) {
-        this.invokingValves = invokingValves;
+        if (invokingValves == null) {
+            this.invokingValves = null;
+        } else {
+            this.invokingValves = new Valve[invokingValves.length];
+            System.arraycopy(invokingValves, 0, this.invokingValves, 0, invokingValves.length);
+        }
     }
     
     public void setPostInvokingValves(Valve [] postInvokingValves) {
-        this.postInvokingValves = postInvokingValves;
+        if (postInvokingValves == null) {
+            this.postInvokingValves = null;
+        } else {
+            this.postInvokingValves = new Valve[postInvokingValves.length];
+            System.arraycopy(postInvokingValves, 0, this.postInvokingValves, 0, postInvokingValves.length);
+        }
     }
 
     public void initialize() throws ContainerException {

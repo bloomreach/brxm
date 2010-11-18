@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 /**
  * A ContainerRepresentation extends {@link org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentRepresentation} with
@@ -27,31 +29,35 @@ import java.util.Map;
  */
 public class ContainerRepresentation extends ComponentRepresentation {
 
-    private String[] children;
+    private List<String> children;
 
     @Override
     public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration) {
         super.represent(componentConfiguration);
-        String value = "";
-        for (Map.Entry<String, HstComponentConfiguration> entry : componentConfiguration.getChildren().entrySet()) {
-            HstComponentConfiguration cc = entry.getValue();
-            if (value.length() > 0) {
-                value += ",";
+        
+        Map<String, HstComponentConfiguration> childrenMap = componentConfiguration.getChildren();
+        
+        if (!childrenMap.isEmpty()) {
+            children = new LinkedList<String>();
+            for (Map.Entry<String, HstComponentConfiguration> entry : componentConfiguration.getChildren().entrySet()) {
+                HstComponentConfiguration cc = entry.getValue();
+                children.add(cc.getCanonicalIdentifier());
             }
-            value += cc.getCanonicalIdentifier();
         }
-        if (value != null) {
-            this.children = value.split(",");
-        }
+        
         return this;
     }
 
-    public String[] getChildren() {
+    public List<String> getChildren() {
         return children;
     }
 
-    public void setChildren(String[] children) {
-        this.children = children;
+    public void setChildren(List<String> children) {
+        if (children == null) {
+            this.children = null;
+        } else {
+            this.children = new LinkedList<String>(children);
+        }
     }
 
 }

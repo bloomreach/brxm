@@ -56,7 +56,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
     
     public void setBinaryLocations(String[] binaryLocations) {
-        this.binaryLocations = binaryLocations;
+        if (binaryLocations == null) {
+            this.binaryLocations = null;
+        } else {
+            this.binaryLocations = new String[binaryLocations.length];
+            System.arraycopy(binaryLocations, 0, this.binaryLocations, 0, binaryLocations.length);
+        }
     }
     
     public void setlinkProcessor(HstLinkProcessor linkProcessor) {

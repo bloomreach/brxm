@@ -188,7 +188,9 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     }
     
     public ResourceLifecycleManagement [] getResourceLifecycleManagements() {
-        return this.resourceLifecycleManagements;
+        ResourceLifecycleManagement [] cloned = new ResourceLifecycleManagement[resourceLifecycleManagements.length];
+        System.arraycopy(resourceLifecycleManagements, 0, cloned, 0, resourceLifecycleManagements.length);
+        return cloned;
     }
     
     protected Repository getCurrentThreadRepository() {

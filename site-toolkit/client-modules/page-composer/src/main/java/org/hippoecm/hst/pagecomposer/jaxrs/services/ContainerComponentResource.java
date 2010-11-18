@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.UUID;
 
 import javax.jcr.LoginException;
@@ -141,25 +142,27 @@ public class ContainerComponentResource extends AbstractConfigResource {
         try {
             Session session = requestContext.getSession();
             Node containerNode = getRequestConfigNode(requestContext);
-            String[] children = container.getChildren();
-            for (String childId : children) {
-                checkIfMoveIntended(containerNode, childId, session);
-            }
-
-            int index = children.length - 1;
-            while (index > -1) {
-                String childId = children[index];
-                Node childNode = session.getNodeByUUID(childId);
-                String nodeName = childNode.getName();
-
-                int next = index + 1;
-                if (next == children.length) {
-                    containerNode.orderBefore(nodeName, null);
-                } else {
-                    Node nextChildNode = session.getNodeByUUID(children[next]);
-                    containerNode.orderBefore(nodeName, nextChildNode.getName());
+            List<String> children = container.getChildren();
+            int childCount = (children != null ? children.size() : 0);
+            if (childCount > 0) {
+                for (String childId : children) {
+                    checkIfMoveIntended(containerNode, childId, session);
                 }
-                --index;
+                int index = childCount - 1;
+                while (index > -1) {
+                    String childId = children.get(index);
+                    Node childNode = session.getNodeByUUID(childId);
+                    String nodeName = childNode.getName();
+    
+                    int next = index + 1;
+                    if (next == childCount) {
+                        containerNode.orderBefore(nodeName, null);
+                    } else {
+                        Node nextChildNode = session.getNodeByUUID(children.get(next));
+                        containerNode.orderBefore(nodeName, nextChildNode.getName());
+                    }
+                    --index;
+                }
             }
             session.save();
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);

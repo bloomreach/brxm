@@ -50,7 +50,12 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     }
     
     public void setBinaryLocations(String[] binaryLocations) {
-        this.binaryLocations = binaryLocations;
+        if (binaryLocations == null) {
+            this.binaryLocations = null;
+        } else {
+            this.binaryLocations = new String[binaryLocations.length];
+            System.arraycopy(binaryLocations, 0, this.binaryLocations, 0, binaryLocations.length);
+        }
     }
     
     public void setResourceContainers(List<ResourceContainer> resourceContainers) {

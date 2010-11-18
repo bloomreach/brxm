@@ -42,7 +42,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     
     private final static Logger log = LoggerFactory.getLogger(SimpleContentRewriter.class);
     
-    protected static final String[] EXTERNALS = {"http:", "https:", "webdav:", "ftp:", "mailto:", "#"};
+    static final String[] EXTERNALS = {"http:", "https:", "webdav:", "ftp:", "mailto:", "#"};
     protected static final String LINK_TAG = "<a";
     protected static final String IMG_TAG = "<img";
     protected static final String END_TAG = ">";

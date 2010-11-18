@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.jaxrs.util;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -34,16 +36,17 @@ public class NodePropertyUtils {
     public static void setProperty(Node contentNode, NodeProperty nodeProperty) throws RepositoryException {
         int type = nodeProperty.getType();
         boolean multiple = nodeProperty.getMultiple();
-        PropertyValue [] propertyValues = nodeProperty.getValues();
+        List<PropertyValue> propertyValues = nodeProperty.getValues();
         
         if (!multiple) {
-            String value = ((propertyValues != null && propertyValues.length > 0) ? propertyValues[0].getValue() : null);
+            String value = ((propertyValues != null && !propertyValues.isEmpty()) ? propertyValues.get(0).getValue() : null);
             contentNode.setProperty(nodeProperty.getName(), value, type);
         } else {
-            String [] values = new String[propertyValues.length];
+            int size = (propertyValues != null ? propertyValues.size() : 0);
+            String [] values = new String[size];
             
-            for (int i = 0; i < propertyValues.length; i++) {
-                values[i] = propertyValues[i].getValue();
+            for (int i = 0; i < size; i++) {
+                values[i] = propertyValues.get(i).getValue();
             }
             
             contentNode.setProperty(nodeProperty.getName(), values, type);

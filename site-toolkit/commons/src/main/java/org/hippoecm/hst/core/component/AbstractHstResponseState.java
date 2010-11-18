@@ -40,12 +40,12 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractHstResponseState implements HstResponseState {
     
-    protected static class CharArrayWriterBuffer extends CharArrayWriter {
-        public char[] getBuffer() {
+    private static class CharArrayWriterBuffer extends CharArrayWriter {
+        private char [] getBuffer() {
             return buf;
         }
 
-        public int getCount() {
+        private int getCount() {
             return count;
         }
     }

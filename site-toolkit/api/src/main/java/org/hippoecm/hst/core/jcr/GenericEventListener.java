@@ -33,11 +33,22 @@ public class GenericEventListener implements EventListener {
     protected String [] skipPaths = new String [] { "/jcr:system", "/hippo:log" };
     
     public String [] getSkipPaths() {
-        return skipPaths;
+        if (skipPaths == null) {
+            return null;
+        }
+        
+        String [] cloned = new String[skipPaths.length];
+        System.arraycopy(skipPaths, 0, cloned, 0, skipPaths.length);
+        return cloned;
     }
     
     public void setSkipPaths(String [] skipPaths) {
-        this.skipPaths = skipPaths;
+        if (skipPaths == null) {
+            this.skipPaths = null;
+        } else {
+            this.skipPaths = new String[skipPaths.length];
+            System.arraycopy(skipPaths, 0, this.skipPaths, 0, skipPaths.length);
+        }
     }
     
     protected boolean isEventOnSkippedPath(Event event) throws RepositoryException {

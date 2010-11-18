@@ -43,10 +43,15 @@ public class ObjectConverterImpl implements ObjectConverter {
     public ObjectConverterImpl(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, String [] fallBackJcrNodeTypes) {
         this.jcrPrimaryNodeTypeBeanPairs = jcrPrimaryNodeTypeBeanPairs;
         this.jcrBeanPrimaryNodeTypePairs = new HashMap<Class<? extends HippoBean>, String>();
+        
         for(Entry<String, Class<? extends HippoBean>> entry: jcrPrimaryNodeTypeBeanPairs.entrySet()) {
             jcrBeanPrimaryNodeTypePairs.put(entry.getValue(), entry.getKey());
         }
-        this.fallBackJcrNodeTypes = fallBackJcrNodeTypes;
+        
+        if (fallBackJcrNodeTypes != null) {
+            this.fallBackJcrNodeTypes = new String[fallBackJcrNodeTypes.length];
+            System.arraycopy(fallBackJcrNodeTypes, 0, this.fallBackJcrNodeTypes, 0, fallBackJcrNodeTypes.length);
+        }
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {

@@ -154,11 +154,22 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
     }
 
     public String[] getConfigurationResources() {
-        return this.configurationResources;
+        if (configurationResources == null) {
+            return null;
+        }
+        
+        String [] cloned = new String[configurationResources.length];
+        System.arraycopy(configurationResources, 0, cloned, 0, configurationResources.length);
+        return cloned;
     }
     
     public void setConfigurationResources(String [] configurationResources) {
-        this.configurationResources = configurationResources;
+        if (configurationResources == null) {
+            this.configurationResources = null;
+        } else {
+            this.configurationResources = new String[configurationResources.length];
+            System.arraycopy(configurationResources, 0, this.configurationResources, 0, configurationResources.length);
+        }
     }
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {

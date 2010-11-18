@@ -119,7 +119,9 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             lazyResourceLifecycleManagements = tempResourceLifecycleManagements;
         }
         
-        return lazyResourceLifecycleManagements;
+        ResourceLifecycleManagement [] cloned = new ResourceLifecycleManagement[lazyResourceLifecycleManagements.length];
+        System.arraycopy(lazyResourceLifecycleManagements, 0, cloned, 0, lazyResourceLifecycleManagements.length);
+        return cloned;
     }
     
     public Map<String, Map<String, PoolingRepository>> cloneRepositoriesMapByCredsDomain() {

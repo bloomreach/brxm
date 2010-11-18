@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.jaxrs.model.content;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -39,7 +43,7 @@ public class NodeProperty {
 	private String name;
 	private int type;
 	private boolean multiple;
-	private PropertyValue[] values;
+	private List<PropertyValue> values;
 	
     public NodeProperty() {
     }
@@ -54,15 +58,15 @@ public class NodeProperty {
         this.multiple = property.getDefinition().isMultiple();
         
         try {
+            this.values = new LinkedList<PropertyValue>();
             if (property.getDefinition().isMultiple()) {
                 Value [] valueObjects = property.getValues();
-                this.values = new PropertyValue[valueObjects.length];
                 for (int i = 0; i < valueObjects.length; i++) {
-                    this.values[i] = new PropertyValue(valueObjects[i]);
+                    this.values.add(new PropertyValue(valueObjects[i]));
                 }
             } 
             else {
-                this.values = new PropertyValue [] { new PropertyValue(property.getValue()) };
+                this.values.add(new PropertyValue(property.getValue()));
             }
         } catch (Exception e) {
         	// TODO: exception?
@@ -104,11 +108,19 @@ public class NodeProperty {
     
     @XmlElementWrapper(name="values")
     @XmlElements(@XmlElement(name="value"))
-    public PropertyValue [] getValues() {
-        return values;
+    public List<PropertyValue> getValues() {
+        if (values == null) {
+            return null;
+        }
+        
+        return Collections.unmodifiableList(values);
     }
     
-    public void setValues(PropertyValue [] values) {
-        this.values = values;
+    public void setValues(List<PropertyValue> values) {
+        if (values == null) {
+            this.values = null;
+        } else {
+            this.values = new LinkedList<PropertyValue>(values);
+        }
     }
 }

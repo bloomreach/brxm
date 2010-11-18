@@ -93,19 +93,41 @@ public class EventListenerItemImpl implements EventListenerItem {
     }
     
     public String[] getUuids() {
-        return uuids;
+        if (uuids == null) {
+            return null;
+        }
+        
+        String [] cloned = new String[uuids.length];
+        System.arraycopy(uuids, 0, cloned, 0, uuids.length);
+        return cloned;
     }
     
     public void setUuids(String[] uuids) {
-        this.uuids = uuids;
+        if (uuids == null) {
+            this.uuids = null;
+        } else {
+            this.uuids = new String[uuids.length];
+            System.arraycopy(uuids, 0, this.uuids, 0, uuids.length);
+        }
     }
     
     public String[] getNodeTypeNames() {
-        return nodeTypeNames;
+        if (nodeTypeNames == null) {
+            return null;
+        }
+        
+        String [] cloned = new String[nodeTypeNames.length];
+        System.arraycopy(nodeTypeNames, 0, cloned, 0, nodeTypeNames.length);
+        return cloned;
     }
     
     public void setNodeTypeNames(String[] nodeTypeNames) {
-        this.nodeTypeNames = nodeTypeNames;
+        if (nodeTypeNames == null) {
+            this.nodeTypeNames = null;
+        } else {
+            this.nodeTypeNames = new String[nodeTypeNames.length];
+            System.arraycopy(nodeTypeNames, 0, this.nodeTypeNames, 0, nodeTypeNames.length);
+        }
     }
     
     public boolean isNoLocal() {
