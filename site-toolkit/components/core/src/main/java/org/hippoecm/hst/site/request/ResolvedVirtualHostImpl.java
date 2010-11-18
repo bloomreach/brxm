@@ -58,6 +58,10 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
                 return null;
             }
         }
+        if(portMount == null) {
+            log.warn("Cannot match virtual Host '{}' for portnumber '{}': We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
+            return null;
+        }
         
         if(portMount.getRootMount() == null) {
             log.warn("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
