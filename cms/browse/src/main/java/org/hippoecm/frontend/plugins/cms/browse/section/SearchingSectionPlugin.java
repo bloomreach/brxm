@@ -199,14 +199,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             @Override
             protected void onSubmit() {
             }
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("onkeyup", "Wicket.stopEvent(event); return false;");
-                tag.put("onkeypress", "Wicket.stopEvent(event); return false;");
-                tag.put("onsubmit", "Wicket.stopEvent(event); return false;");
-            }
         };
         container.setOutputMarkupId(true);
 
