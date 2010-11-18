@@ -97,7 +97,15 @@ public interface ContainerConstants {
      * The dispatch URI scheme attribute name
      */
     String DISPATCH_URI_SCHEME = "org.hippoecm.hst.core.container.HstComponentWindow.dispatch.uri.scheme";
-
+    
+    String MOUNT_ALIAS_REST = "rest";
+    
+    String MOUNT_ALIAS_SITE = "site";
+    
+    String MOUNT_ALIAS_GALLERY = "gallery";
+    
+    String MOUNT_ALIAS_ASSETS = "assets";
+    
     /**
      * 'composermode' type name
      */

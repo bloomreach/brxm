@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -78,10 +79,22 @@ public class SecurityValve extends AbstractValve {
         
         if (!accessAllowed) {
             HstLink destinationLink = null;
+            String formLoginPage = resolvedMount.getFormLoginPage();
             
             try {
-                String pathInfo = (requestContext.getResolvedSiteMapItem() == null ? "" : requestContext.getResolvedSiteMapItem().getPathInfo());
-                destinationLink = requestContext.getHstLinkCreator().create(pathInfo, resolvedMount.getMount());
+                Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+                
+                if (siteMount == null) {
+                    siteMount = resolvedMount.getMount();
+                }
+                
+                if (StringUtils.isBlank(formLoginPage)) {
+                    formLoginPage = siteMount.getFormLoginPage();
+                }
+                
+                ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+                String pathInfo = (resolvedSiteMapItem == null ? "" : resolvedSiteMapItem.getPathInfo());
+                destinationLink = requestContext.getHstLinkCreator().create(pathInfo, siteMount);
             } catch (Exception linkEx) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to create destination link.", linkEx);
@@ -91,8 +104,6 @@ public class SecurityValve extends AbstractValve {
             }
             
             if (authenticationRequired) {
-                String formLoginPage = requestContext.getResolvedMount().getFormLoginPage();
-                
                 if (!StringUtils.isBlank(formLoginPage)) {
                     try {
                         HttpSession httpSession = servletRequest.getSession(true);

@@ -451,14 +451,21 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             requestURI = HstRequestUtils.getRequestURI(request, true);
         }
         
+        String namespacedPathPart = "";
+        String pathInfoFromURI = "";
+        
         String temp = requestURI.substring(requestURI.indexOf(urlNamespacePrefixedPath));
         int offset = temp.indexOf('/', 1);
-        String namespacedPathPart = temp.substring(0, offset);
-        String pathInfoFromURI = "";
-
+        if (offset != -1) {
+            namespacedPathPart = temp.substring(0, offset);
+            pathInfoFromURI = temp.substring(offset);
+        } else {
+            namespacedPathPart = temp;
+        }
+        
         try {
             namespacedPathPart = URLDecoder.decode(namespacedPathPart, characterEncoding);
-            pathInfoFromURI = URLDecoder.decode(temp.substring(offset), characterEncoding);
+            pathInfoFromURI = URLDecoder.decode(pathInfoFromURI, characterEncoding);
         } catch (UnsupportedEncodingException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Invalid request uri: {}", requestURI, e);

@@ -52,10 +52,10 @@ public abstract class AbstractResource {
 	
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     
-    public static final String MOUNT_ALIAS_REST = "rest";
-    public static final String MOUNT_ALIAS_SITE = "site";
-    public static final String MOUNT_ALIAS_GALLERY = "gallery";
-    public static final String MOUNT_ALIAS_ASSETS = "assets";
+    public static final String MOUNT_ALIAS_REST = ContainerConstants.MOUNT_ALIAS_REST;
+    public static final String MOUNT_ALIAS_SITE = ContainerConstants.MOUNT_ALIAS_SITE;
+    public static final String MOUNT_ALIAS_GALLERY = ContainerConstants.MOUNT_ALIAS_GALLERY;
+    public static final String MOUNT_ALIAS_ASSETS = ContainerConstants.MOUNT_ALIAS_ASSETS;
     
     private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;

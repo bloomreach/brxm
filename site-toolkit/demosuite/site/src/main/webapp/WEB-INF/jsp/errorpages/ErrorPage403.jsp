@@ -24,7 +24,7 @@ if (destination == null) destination = "";
 <html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-<hst:link var="loginPageUrl" path="/login/form">
+<hst:link var="loginPageUrl" path="/login/form" mount="site">
    <hst:param name="destination" value="<%=destination%>" />
 </hst:link>
 <meta http-equiv='refresh' content='1;${loginPageUrl}' />
