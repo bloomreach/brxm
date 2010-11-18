@@ -306,8 +306,6 @@ public class TabsPlugin extends RenderPlugin {
         }
         final IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
         try {
-            System.out.println(tab.getTitle().getObject() + "  tab : " + editor.isModified());
-
             if (editor.isModified()) {
 
                 OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
