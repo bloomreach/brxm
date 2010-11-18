@@ -188,6 +188,10 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     }
     
     public ResourceLifecycleManagement [] getResourceLifecycleManagements() {
+        if (resourceLifecycleManagements == null) {
+            return null;
+        }
+        
         ResourceLifecycleManagement [] cloned = new ResourceLifecycleManagement[resourceLifecycleManagements.length];
         System.arraycopy(resourceLifecycleManagements, 0, cloned, 0, resourceLifecycleManagements.length);
         return cloned;
