@@ -73,7 +73,7 @@ public class HstFilter implements Filter {
     protected String contextNamespace;
     protected String clientComponentManagerClassName;
     protected String [] clientComponentManagerConfigurations;
-    protected boolean initialized;
+    protected volatile boolean initialized;
     protected ComponentManager clientComponentManager;
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     protected HstContainerConfig requestContainerConfig;
@@ -107,27 +107,26 @@ public class HstFilter implements Filter {
         initialized = false;
         
         if (HstServices.isAvailable()) {
-            doInit(filterConfig);
+            synchronized (this) {
+                doInit(filterConfig);
+                initialized = true;
+            }
+            
+            Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+            
+            if (hstSitesManager != null) {
+                siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
+                if(siteMapItemHandlerFactory == null) {
+                    logger.error("Cannot find the siteMapItemHandlerFactory component");
+                }
+            } else {
+                logger.error("Cannot find the virtualHostsManager component for '{}'", HstManager.class.getName());
+            }
         }
     }
     
-    protected synchronized void doInit(FilterConfig config) {
-        if (initialized) {
-            return;
-        }
-        
-
-        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-        
+    protected void doInit(FilterConfig config) {
         hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        if(hstSitesManager != null) {
-            siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
-            if(siteMapItemHandlerFactory == null) {
-                logger.error("Cannot find the siteMapItemHandlerFactory component");
-            }
-        } else {
-            logger.error("Cannot find the virtualHostsManager component for '{}'", HstManager.class.getName());
-        }
         
         if (clientComponentManager != null) {
             try {
@@ -159,9 +158,6 @@ public class HstFilter implements Filter {
         } 
         catch (Exception e) {
             log("Invalid client component manager class or configuration: " + e);
-        } 
-        finally {
-            initialized = true;
         }
     }
     
@@ -214,7 +210,12 @@ public class HstFilter implements Filter {
 
     		// ensure ClientComponentManager (if defined) is initialized properly
     		if (!initialized) {
-    			doInit(filterConfig);
+    		    synchronized (this) {
+    		        if (!initialized) {
+    	                doInit(filterConfig);
+    	                initialized = true;
+    		        }
+    		    }
     		}
 
     		if(this.siteMapItemHandlerFactory == null || this.hstSitesManager == null) {
@@ -421,9 +422,7 @@ public class HstFilter implements Filter {
         return newResolvedSiteMapItem;
     }
     
-    public void destroy() {
-        initialized = false;
-
+    public synchronized void destroy() {
         if (clientComponentManager != null) {
             try{
                 clientComponentManager.stop();

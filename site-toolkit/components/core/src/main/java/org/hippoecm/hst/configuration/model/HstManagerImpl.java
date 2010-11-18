@@ -47,7 +47,7 @@ public class HstManagerImpl implements HstManager {
     private Repository repository;
     private Credentials credentials;
 
-    private VirtualHosts virtualHosts;
+    private volatile VirtualHosts virtualHosts;
     private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
     private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
@@ -77,19 +77,19 @@ public class HstManagerImpl implements HstManager {
      */
     private String pathSuffixDelimiter = "./";
     
-    public void setRepository(Repository repository) {
+    public synchronized void setRepository(Repository repository) {
         this.repository = repository;
     }
     
-    public void setCredentials(Credentials credentials) {
+    public synchronized void setCredentials(Credentials credentials) {
         this.credentials = credentials;
     }
     
-    public void setRootPath(String rootPath) {
+    public synchronized void setRootPath(String rootPath) {
         this.rootPath = rootPath;
     }
     
-    public String getRootPath() {
+    public synchronized String getRootPath() {
         return rootPath;
     }
     
@@ -117,25 +117,21 @@ public class HstManagerImpl implements HstManager {
         return siteMapItemHandlerFactory;
     }
     
-    public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException{
-        VirtualHosts vHosts = this.virtualHosts;
-        
-        if (vHosts == null) {
+    public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
+        if (virtualHosts == null) {
             synchronized(this) {
-                buildSites();
-                vHosts = this.virtualHosts;
+                if (virtualHosts == null) {
+                    buildSites();
+                }
             }
         }
         
-        return vHosts;
+        return virtualHosts;
     }
     
-    protected synchronized void buildSites() throws RepositoryNotAvailableException{
-        if (this.virtualHosts != null) {
-            return;
-        }
-        
+    protected void buildSites() throws RepositoryNotAvailableException{
         Session session = null;
+        
         try {
             if (this.credentials == null) {
                 session = this.repository.login();
@@ -205,11 +201,9 @@ public class HstManagerImpl implements HstManager {
         }
     }
     
-    public synchronized void invalidate(String path) {
+    public void invalidate(String path) {
         this.virtualHosts = null;
     }
-    
-    
     
     public HstNode getVirtualHostsNode() {
         return virtualHostsNode;
