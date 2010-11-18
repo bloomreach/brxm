@@ -207,7 +207,7 @@ public class HstFilter implements Filter {
     			logger.error("The HST Container Services are not initialized yet.");
     			return;
     		}
-
+    		
     		// ensure ClientComponentManager (if defined) is initialized properly
     		if (!initialized) {
     		    synchronized (this) {
@@ -216,8 +216,17 @@ public class HstFilter implements Filter {
     	                initialized = true;
     		        }
     		    }
+    		    
+                if (hstSitesManager != null) {
+                    siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
+                    if(siteMapItemHandlerFactory == null) {
+                        logger.error("Cannot find the siteMapItemHandlerFactory component");
+                    }
+                } else {
+                    logger.error("Cannot find the virtualHostsManager component for '{}'", HstManager.class.getName());
+                }
     		}
-
+    		
     		if(this.siteMapItemHandlerFactory == null || this.hstSitesManager == null) {
     			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     			logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
