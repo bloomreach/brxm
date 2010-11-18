@@ -72,7 +72,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstSiteMenus siteMenus;
     protected HstQueryManagerFactory hstQueryManagerFactory;
-    protected Map<String, Object> attributes;
+    protected volatile Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     protected String embeddingContextPath;
     protected ResolvedMount resolvedEmbeddingMount;  

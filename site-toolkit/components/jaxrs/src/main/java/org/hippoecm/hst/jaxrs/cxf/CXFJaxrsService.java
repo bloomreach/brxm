@@ -53,7 +53,7 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     	this.cxfBusAttributeName = CXF_BUS_ATTRIBUTE_NAME_PREFIX + serviceName;
     }
     
-	public void setJaxrsServerFactoryBean(JAXRSServerFactoryBean jaxrsServerFactoryBean) {
+	public synchronized void setJaxrsServerFactoryBean(JAXRSServerFactoryBean jaxrsServerFactoryBean) {
 		this.jaxrsServerFactoryBean = jaxrsServerFactoryBean;
 	}
 	

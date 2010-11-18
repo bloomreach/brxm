@@ -48,7 +48,7 @@ public class ServletDelegatingValve extends AbstractValve
     
     protected HttpServlet servlet;
     protected ServletConfig config;
-    protected boolean servletInitialized;
+    protected volatile boolean servletInitialized;
     
     public ServletDelegatingValve(HttpServlet servlet, ServletConfig config) {
         this.servlet = servlet;

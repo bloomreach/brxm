@@ -76,12 +76,12 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         this.defaultConfigMap = trimWhiteSpaceValues(defaultConfigMap);
     }
     
-    public void setPoolingRepositoryFactory(BasicPoolingRepositoryFactory poolingRepositoryFactory) {
+    public synchronized void setPoolingRepositoryFactory(BasicPoolingRepositoryFactory poolingRepositoryFactory) {
         this.poolingRepositoryFactory = poolingRepositoryFactory;
     }
     
-    public void setDefaultConfigMap(Map<String, String> defaultConfigMap) {
-        this.defaultConfigMap = defaultConfigMap;
+    public synchronized void setDefaultConfigMap(Map<String, String> defaultConfigMap) {
+        this.defaultConfigMap = trimWhiteSpaceValues(defaultConfigMap);
     }
     
     public void setPooledSessionLifecycleManagementActive(boolean pooledSessionLifecycleManagementActive) {
@@ -356,19 +356,19 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             setDaemon(true);
         }
         
-        private void setStopped(boolean stopped) {
-            this.stopped = stopped;
-        }
-        
         public void run() {
+            
+            boolean interrupted = stopped;
             
             synchronized (this) {
                 try {
                     wait(timeBetweenEvictionRunsMillis);
                 } catch (InterruptedException e) {
-                    stopped = true;
+                    interrupted = true;
                 }
             }
+            
+            stopped = interrupted;
             
             while (!stopped) {
                 Map<String, Map<String, PoolingRepository>> clonedRepositoriesMapByCredsDomain = cloneRepositoriesMapByCredsDomain();
@@ -408,15 +408,20 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                     try {
                         wait(timeBetweenEvictionRunsMillis);
                     } catch (InterruptedException e) {
-                        stopped = true;
+                        interrupted = true;
                         break;
                     }
                 }
+                
+                stopped = interrupted;
             }
         }
     }
     
     private Map<String, String> trimWhiteSpaceValues(Map<String, String> configMap) {
+        if (configMap == null) {
+            return Collections.emptyMap();
+        }
         Map<String, String> trimmedConfigMap = new HashMap<String, String>(configMap.size());
         for(Entry<String, String> entry : configMap.entrySet()) {
             trimmedConfigMap.put(entry.getKey(), entry.getValue().trim());

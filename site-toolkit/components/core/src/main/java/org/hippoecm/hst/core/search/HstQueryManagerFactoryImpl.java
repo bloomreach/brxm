@@ -22,7 +22,7 @@ import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
 
 public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
 
-    private org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
+    private volatile org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     
     public org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer getHstCtxWhereClauseComputer() {
         if(this.hstCtxWhereClauseComputer == null) {

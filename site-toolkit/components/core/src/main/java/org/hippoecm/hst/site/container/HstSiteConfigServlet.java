@@ -272,6 +272,10 @@ public class HstSiteConfigServlet extends HttpServlet {
         }
     }
     
+    protected synchronized boolean isInitialized() {
+        return initialized;
+    }
+    
     protected synchronized void initializeComponentManager(ServletConfig config) {
 
         try {
@@ -324,10 +328,11 @@ public class HstSiteConfigServlet extends HttpServlet {
             log.error(msg, e);
         }
     }
-
+    
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
-        if (!this.initialized) {
+        if (!isInitialized()) {
             initializeComponentManager(getServletConfig());
         }
         
@@ -345,6 +350,7 @@ public class HstSiteConfigServlet extends HttpServlet {
      * @exception ServletException
      *                a servlet exception.
      */
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         doGet(req, res);
     }
@@ -352,8 +358,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     // -------------------------------------------------------------------
     // S E R V L E T S H U T D O W N
     // -------------------------------------------------------------------
-
-    public void destroy() {
+    @Override
+    public synchronized void destroy() {
         log.info("Done shutting down!");
 
         try {

@@ -53,7 +53,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
     
-    private static String [] CONTAINER_ATTR_NAME_PREFIXES = null;
+    private static volatile String [] CONTAINER_ATTR_NAME_PREFIXES = null;
     
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
