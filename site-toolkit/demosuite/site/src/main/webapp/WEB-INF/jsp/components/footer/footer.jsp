@@ -17,6 +17,44 @@
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
+<hst:element name="script" var="yui3Elem">
+  <hst:attribute name="type" value="text/javascript" />
+  <hst:attribute name="src" value="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js" />
+</hst:element>
+<hst:head-contribution keyHint="yui3" element="${yui3Elem}" />
+
 <div id="ft">
-  <p><a title="NewsRSS" href="<hst:link path="/rss.xml"/>">RSS <img src="<hst:link path="/images/rss.gif"/>" alt="RSS icon"/></a></p>
+  <p>
+    <a title="NewsRSS" href="<hst:link path="/rss.xml"/>">RSS <img src="<hst:link path="/images/rss.gif"/>" alt="RSS icon"/></a>
+    &nbsp;
+    <span id="<hst:namespace/>datetime"><hst:include ref="datetime"/></span>
+  </p>
 </div>
+
+<script language="javascript"> 
+YUI().use('io', 'node', 'async-queue',
+function(Y) {
+  var datetimePane = Y.one("#<hst:namespace/>datetime");
+  var asyncQueue = new Y.AsyncQueue();
+  var updateTimeout = 60000;
+
+  var onUpdateTimeComplete = function(id, o, args) {
+    datetimePane.set("innerHTML", o.responseText);
+    asyncQueue.add({fn: function() {}, timeout: updateTimeout}, updateTime);
+    asyncQueue.run();
+  };
+	  
+  var updateTime = function(e) {
+    var uri = '<hst:resourceURL/>';
+    var cfg = { 
+          on: { complete: onUpdateTimeComplete },
+          arguments: {},
+          method: "GET"
+    };
+    var request = Y.io(uri, cfg);
+  };
+  
+  asyncQueue.add({fn: function() {}, timeout: updateTimeout}, updateTime);
+  asyncQueue.run();
+});
+</script>

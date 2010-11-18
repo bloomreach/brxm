@@ -66,8 +66,12 @@ public class GenericHstComponent implements HstComponent {
     }
 
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-        if (componentConfig.getServeResourcePath() == null && request.getResourceID() != null) {
-            response.setServeResourcePath(request.getResourceID());
+        if (componentConfig.getServeResourcePath() == null) {
+            String resourceID = request.getResourceID();
+            
+            if (resourceID != null && !"".equals(resourceID.trim())) {
+                response.setServeResourcePath(resourceID);
+            }
         }
     }
     

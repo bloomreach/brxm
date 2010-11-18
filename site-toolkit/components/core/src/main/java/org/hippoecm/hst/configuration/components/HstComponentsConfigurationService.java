@@ -59,7 +59,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
 
-    public HstComponentsConfigurationService(HstNode configurationNode, String hstConfigurationsRootPath, Map<String, String> templateRenderMap) throws ServiceException {
+    public HstComponentsConfigurationService(HstNode configurationNode, String hstConfigurationsRootPath, Map<String, HstNode> templateResourceMap) throws ServiceException {
 
         HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
         
@@ -90,11 +90,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
          * 3: setting renderpaths for each component
          * 4: Adding parameters from parent components to child components and override them when they already are present
          */
-        enhanceComponentTree(templateRenderMap);
+        enhanceComponentTree(templateResourceMap);
 
     }
 
-    private void enhanceComponentTree(Map<String, String> templateRenderMap) throws ServiceException{
+    private void enhanceComponentTree(Map<String, HstNode> templateResourceMap) throws ServiceException{
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
         for (HstComponentConfiguration child : rootComponentConfigurations.values()) {
@@ -111,7 +111,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         // setting renderpaths for each component
         for (HstComponentConfiguration child : childComponents) {
-            ((HstComponentConfigurationService) child).setRenderPath(templateRenderMap);
+            ((HstComponentConfigurationService) child).setRenderPath(templateResourceMap);
+            ((HstComponentConfigurationService) child).setServeResourcePath(templateResourceMap);
         }
 
         // adding parameters from parent components to child components and override them in a child when they already are present

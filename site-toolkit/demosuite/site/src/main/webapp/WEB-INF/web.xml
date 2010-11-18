@@ -264,7 +264,12 @@
     <servlet-name>LoginServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.security.servlet.LoginServlet</servlet-class>
   </servlet>
-
+  
+  <servlet>
+    <servlet-name>DateTimeServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.demo.servlet.DateTimeServlet</servlet-class>
+  </servlet>
+  
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>

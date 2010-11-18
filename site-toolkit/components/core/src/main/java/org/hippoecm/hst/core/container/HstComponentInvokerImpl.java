@@ -20,6 +20,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
@@ -172,7 +173,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         boolean namedDispatching = false;
         String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath(); 
         
-        if (dispatchUrl == null) {
+        if (StringUtils.isBlank(dispatchUrl)) {
             dispatchUrl = window.getRenderPath();
         }
         
@@ -301,10 +302,15 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         boolean namedDispatching = false;
         String dispatchUrl = ((HstResourceResponseImpl) hstResponse).getServeResourcePath();
         
-        if (dispatchUrl == null) {
+        if (StringUtils.isBlank(dispatchUrl)) {
             dispatchUrl = window.getServeResourcePath();
         }
-
+        
+        if (dispatchUrl == null) {
+            dispatchUrl = window.getNamedResourceServer();
+            namedDispatching = (dispatchUrl != null);
+        }
+        
         if (dispatchUrl == null) {
             dispatchUrl = window.getRenderPath();
         }
@@ -357,7 +363,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, boolean namedDispatching, String dispatchUrl, HstComponentWindow window) throws Exception {
         RequestDispatcher disp = null;
         
-        if (dispatchUrl != null) {
+        if (!StringUtils.isBlank(dispatchUrl)) {
             if (log.isDebugEnabled()) {
                 log.debug("Invoking dispatcher of url: {}", dispatchUrl);
             }

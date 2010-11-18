@@ -86,9 +86,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
             Node newItem = containerNode.addNode(newItemNodeName, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
 
             // now we only copy the template, xtype and component class name properties
-            if(containerItem.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_)) {
-                newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_,
-                    containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_).getString());
+            if(containerItem.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE)) {
+                newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE,
+                    containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE).getString());
             }
             newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME,
                     containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString());

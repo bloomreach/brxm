@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -54,11 +53,21 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String componentClassName;
 
     private boolean hasClassNameConfigured;
+    
+    private String hstTemplate;
+    
+    private String hstResourceTemplate;
 
+    private boolean isNamedRenderer;
+    
+    private boolean isNamedResourceServer;
+    
     private String renderPath;
     
+    private String serveResourcePath;
+    
     private String xtype;
-
+    
     /**
      * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have sample content
      */
@@ -68,10 +77,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * the type of this {@link HstComponentConfiguration}. 
      */
     private Type type;
-
-    private String hstTemplate;
-
-    private String serveResourcePath;
 
     private String referenceName;
 
@@ -93,11 +98,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     
     private String canonicalIdentifier;
     
-    // whether the renderPath is a resource location or a named servlet. Default false
-    // TODO still need to get the isNamed boolean from the template
-    private boolean isNamedRenderer;
-    private boolean isNamedResourceServer;
-
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = id;
@@ -148,8 +148,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
         
-        this.hstTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
-        this.serveResourcePath = StringUtils.trim(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH));
+        this.hstTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE);
+        this.hstResourceTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_RESOURCE_TEMPLATE);
         this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
         this.propertyMap = node.getValueProvider().getPropertyMap();
         
@@ -210,6 +210,18 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return this.componentClassName;
     }
 
+    public String getXType() {
+        return this.xtype;
+    }
+
+    public Type getComponentType() {
+        return this.type;
+    }
+
+    public String getHstTemplate() {
+        return this.hstTemplate;
+    }
+
     public String getRenderPath() {
         if(isNamedRenderer) {
             return null;
@@ -224,19 +236,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return this.renderPath;
     }
     
-    public String getXType() {
-        return this.xtype;
+    public String getHstResourceTemplate() {
+        return this.hstResourceTemplate;
     }
-
-    public Type getComponentType() {
-        return this.type;
-    }
-
-
-    public String getHstTemplate() {
-        return this.hstTemplate;
-    }
-
+    
     public String getServeResourcePath() {
         if (isNamedResourceServer) {
             return null;
@@ -331,18 +334,19 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.parent = parent;
         copy.componentClassName = child.componentClassName;
         copy.configurationRootNodePath = child.configurationRootNodePath;
-        copy.hstTemplate = child.hstTemplate;
         copy.name = child.name;
         copy.propertyMap = child.propertyMap;
         copy.referenceName = child.referenceName;
+        copy.hstTemplate = child.hstTemplate;
         copy.renderPath = child.renderPath;
         copy.isNamedRenderer = child.isNamedRenderer;
+        copy.hstResourceTemplate = child.hstResourceTemplate;
+        copy.serveResourcePath = child.serveResourcePath;
+        copy.isNamedResourceServer = child.isNamedResourceServer;
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.xtype = child.xtype;
         copy.type = child.type;
-        copy.serveResourcePath = child.serveResourcePath;
-        copy.isNamedResourceServer = child.isNamedResourceServer;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.dummyContent = child.dummyContent;
@@ -391,9 +395,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.configurationRootNodePath == null) {
                     this.configurationRootNodePath = referencedComp.configurationRootNodePath;
                 }
-                if (this.hstTemplate == null) {
-                    this.hstTemplate = referencedComp.hstTemplate;
-                }
                 if (this.name == null) {
                     this.name = referencedComp.name;
                 }
@@ -403,12 +404,18 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.referenceName == null) {
                     this.referenceName = referencedComp.referenceName;
                 }
+                if (this.referenceComponent == null) {
+                    this.referenceComponent = referencedComp.referenceComponent;
+                }
+                if (this.hstTemplate == null) {
+                    this.hstTemplate = referencedComp.hstTemplate;
+                }
                 if (this.renderPath == null) {
                     this.renderPath = referencedComp.renderPath;
                     this.isNamedRenderer = referencedComp.isNamedRenderer;
                 }
-                if (this.referenceComponent == null) {
-                    this.referenceComponent = referencedComp.referenceComponent;
+                if (this.hstResourceTemplate == null) {
+                    this.hstResourceTemplate = referencedComp.hstResourceTemplate;
                 }
                 if (this.serveResourcePath == null) {
                     this.serveResourcePath = referencedComp.serveResourcePath;
@@ -493,6 +500,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.hstTemplate == null) {
             this.hstTemplate = childToMerge.hstTemplate;
         }
+        if (this.hstResourceTemplate == null) {
+            this.hstResourceTemplate = childToMerge.hstResourceTemplate;
+        }
         if (this.name == null) {
             this.name = childToMerge.name;
         }
@@ -561,14 +571,35 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     }
 
-    protected void setRenderPath(Map<String, String> templateRenderMap) {
-        String templateRenderPath = templateRenderMap.get(getHstTemplate());
+    protected void setRenderPath(Map<String, HstNode> templateResourceMap) {
+        String templateRenderPath = null;
+        HstNode template = templateResourceMap.get(getHstTemplate());
+        if (template != null) {
+            templateRenderPath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+            this.isNamedRenderer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+        }
+        
         this.renderPath = templateRenderPath;
+        
         for (HstComponentConfigurationService child : orderedListConfigs) {
-            child.setRenderPath(templateRenderMap);
+            child.setRenderPath(templateResourceMap);
         }
     }
-
+    
+    protected void setServeResourcePath(Map<String, HstNode> templateResourceMap) {
+        String templateServeResourcePath = null;
+        HstNode template = templateResourceMap.get(getHstResourceTemplate());
+        if (template != null) {
+            templateServeResourcePath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+            this.isNamedResourceServer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+        }
+        
+        this.serveResourcePath = templateServeResourcePath;
+        for (HstComponentConfigurationService child : orderedListConfigs) {
+            child.setServeResourcePath(templateResourceMap);
+        }
+    }
+    
     protected void inheritParameters() {
         // before traversing child components add the parameters from the parent, and if already present, override them
         if (this.parent != null && this.parent.getParameters() != null) {

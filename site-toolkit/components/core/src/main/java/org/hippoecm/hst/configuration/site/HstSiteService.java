@@ -23,9 +23,9 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
@@ -78,7 +78,7 @@ public class HstSiteService implements HstSite {
 
     
     private void init(HstNode configurationNode, String hstConfigurationsRootPath) throws ServiceException {
-       Map<String, String> templateRenderMap = new HashMap<String,String>();
+       Map<String, HstNode> templateResourceMap = new HashMap<String, HstNode>();
        
        // templates
        HstNode hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
@@ -90,14 +90,14 @@ public class HstSiteService implements HstSite {
                log.warn("Skipping template '{}' because missing '{}' property", template.getValueProvider().getPath(), HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
                continue;
            }
-           String renderpath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-           if(renderpath != null && ! "".equals(renderpath)) {
-               templateRenderMap.put(template.getValueProvider().getName(), renderpath.trim());
+           String resourcePath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+           if(resourcePath != null && ! "".equals(resourcePath)) {
+               templateResourceMap.put(template.getValueProvider().getName(), template);
            }
        }
        
        // component configuration
-       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, hstConfigurationsRootPath , templateRenderMap); 
+       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, hstConfigurationsRootPath , templateResourceMap); 
        
        // sitemapitem handlers
        

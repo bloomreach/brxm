@@ -53,8 +53,8 @@ public interface HstNodeTypes {
     
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
-    public final static String COMPONENT_PROPERTY_TEMPLATE_ = "hst:template";
-    public final static String COMPONENT_PROPERTY_SERVE_RESOURCE_PATH = "hst:serveresourcepath";
+    public final static String COMPONENT_PROPERTY_TEMPLATE = "hst:template";
+    public final static String COMPONENT_PROPERTY_RESOURCE_TEMPLATE = "hst:resourcetemplate";
     public final static String COMPONENT_PROPERTY_XTYPE = "hst:xtype";
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
@@ -63,7 +63,7 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_DUMMY_CONTENT = "hst:dummycontent";
 
     public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
-    public final static String TEMPLATE_PROPERTY_IS_NAMED =  "hst:isNamed";
+    public final static String TEMPLATE_PROPERTY_IS_NAMED =  "hst:isnamed";
     public final static String SCRIPT_PROPERTY_TEMPLATE =  "hst:template";
     
     public final static String SITEMAPITEM_PROPERTY_REF_ID = "hst:refId";
