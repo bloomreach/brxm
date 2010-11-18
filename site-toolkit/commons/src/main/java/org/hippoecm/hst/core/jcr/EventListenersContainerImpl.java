@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.jcr;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -224,8 +225,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 
                 if (log.isInfoEnabled()) {
                     log.info("An event listener registered: listener=" + eventListener + ", eventTypes=" + eventTypes
-                            + ", absolutePath=" + absolutePath + ", isDeep=" + isDeep + ", uuids=" + uuids
-                            + ", nodeTypeNames=" + nodeTypeNames + ", noLocal=" + noLocal);
+                            + ", absolutePath=" + absolutePath + ", isDeep=" + isDeep + ", uuids=" + Arrays.toString(uuids)
+                            + ", nodeTypeNames=" + Arrays.toString(nodeTypeNames) + ", noLocal=" + noLocal);
                 }
             }
 

@@ -448,14 +448,15 @@ public class BeanUtils {
             }
             if(facetNavBean == null) {
                 log.info("We did not find a Document in the faceted navigation for path '{}' and query '{}'. Return null.",absPath, query);
+                return null;
+            } else {
+                // now we have the faceted navigation bean with search. Let's try to fetch the remainder path
+                T bean = facetNavBean.getBean(remainderPath, beanMappingClass);
+                if(bean == null) {
+                    log.info("We did not find a Document in the faceted navigation for path '{}' and query '{}'. Return null.",absPath, query);
+                }
+                return bean;
             }
-            
-            // now we have the faceted navigation bean with search. Let's try to fetch the remainder path
-            T bean = facetNavBean.getBean(remainderPath, beanMappingClass);
-            if(bean == null) {
-                log.info("We did not find a Document in the faceted navigation for path '{}' and query '{}'. Return null.",absPath, query);
-            }
-            return bean;
         } catch (PathNotFoundException e) {
             throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+query+"'", e);
         } catch (RepositoryException e) {

@@ -82,7 +82,7 @@ public class ParameterUtils {
                     isGetter = true;
                 } else if (methodName.startsWith("is") && (args == null || args.length == 0)) {
                     isGetter = true;
-                } else if (methodName.startsWith("set") && (args != null || args.length == 1)) {
+                } else if (methodName.startsWith("set") && (args != null && args.length == 1)) {
                     isSetter = true;
                 } else {
                     return null;

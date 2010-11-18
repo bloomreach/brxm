@@ -46,8 +46,10 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     }
     
     public MultipleRepositoryImpl(Map<Credentials, Repository> repoMap, Credentials defaultCredentials) {
-        this.defaultCredentialsWrapper = new CredentialsWrapper(defaultCredentials);
-
+        if (defaultCredentials != null) {
+            this.defaultCredentialsWrapper = new CredentialsWrapper(defaultCredentials);
+        }
+        
         if (repoMap != null) {
             for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
                 Credentials cred = entry.getKey();
@@ -154,6 +156,10 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     }
 
     public Session login() throws LoginException, RepositoryException {
+        if (defaultCredentialsWrapper == null) {
+            throw new LoginException("No default credentials is not configured for this multiple repository.");
+        }
+        
         return login(this.defaultCredentialsWrapper);
     }
 

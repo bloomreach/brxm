@@ -64,11 +64,9 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
                 }
             }
             if(sorted) {
-                if(sorted) {
-                    ArrayList<HippoFolderBean> dest = (ArrayList<HippoFolderBean>) this.hippoFolders.clone();
-                    Collections.sort(dest);
-                    return dest;
-                }
+                ArrayList<HippoFolderBean> dest = (ArrayList<HippoFolderBean>) this.hippoFolders.clone();
+                Collections.sort(dest);
+                return dest;
             }
             return this.hippoFolders;
         } catch (RepositoryException e) {
@@ -223,11 +221,12 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
             this.beanMappingClass = beanMappingClass;
             if(HippoFolder.this.node == null) {
                 log.warn("Cannot get documents because node is null");
-            }
-            try {
-                nodeIterator = node.getNodes();
-            } catch (RepositoryException e) {
-                log.warn("Repository exception happened. Return empty iterator");
+            } else {
+                try {
+                    nodeIterator = node.getNodes();
+                } catch (RepositoryException e) {
+                    log.warn("Repository exception happened. Return empty iterator");
+                }
             }
         }
 

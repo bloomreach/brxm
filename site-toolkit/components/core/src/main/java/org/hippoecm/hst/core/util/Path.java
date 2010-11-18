@@ -160,7 +160,7 @@ public class Path implements Serializable, Cloneable
         for (int i = 0; i < parent.segments.length-2; i++)
         {
             segments[i] = parent.segments[i];
-            code += segments.hashCode();
+            code += segments[i].hashCode();
         }
         if (fileName != null)
         {

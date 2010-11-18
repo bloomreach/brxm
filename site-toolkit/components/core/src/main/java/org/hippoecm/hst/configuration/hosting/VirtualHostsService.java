@@ -198,9 +198,7 @@ public class VirtualHostsService implements VirtualHosts {
         }
         ResolvedMount resolvedMount  = resolvedVirtualHost.matchMount(hstContainerURL.getContextPath(), hstContainerURL.getRequestPath());
         if(resolvedMount == null) {
-            if(resolvedMount == null) {
-                throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a mount");
-            }
+            throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a mount");
         }
         return resolvedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
     }

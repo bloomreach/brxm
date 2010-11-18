@@ -281,7 +281,10 @@ public class SecurityValve extends AbstractValve {
             }
             
             subject = new Subject(true, principals, pubCred, privCred);
-            session.setAttribute(ContainerConstants.SUBJECT_ATTR_NAME, subject);
+            
+            if (session != null) {
+                session.setAttribute(ContainerConstants.SUBJECT_ATTR_NAME, subject);
+            }
         }
         
         if (subject == null) {
