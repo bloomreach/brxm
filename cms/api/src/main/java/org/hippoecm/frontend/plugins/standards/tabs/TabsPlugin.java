@@ -226,7 +226,8 @@ public class TabsPlugin extends RenderPlugin {
     private List<Tab> getChangedTabs(Tab ignoreTab) {
         List<Tab> changedTabs = new ArrayList<Tab>();
         for (Tab tab : tabs) {
-            if (ignoreTab != null && tab == ignoreTab) {
+            if (ignoreTab != null && tab.equals(ignoreTab)) {
+                System.out.println("ignoring tab " + ignoreTab.getTitle());
                 continue;
             }
             IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
@@ -271,6 +272,9 @@ public class TabsPlugin extends RenderPlugin {
 
             List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
             for (TabsPlugin.Tab currentTab : tabsCopy) {
+                if(ignoredTab != null && ignoredTab.equals(currentTab)){
+                    continue;
+                }
                 onClose(currentTab, target);
             }
         }
