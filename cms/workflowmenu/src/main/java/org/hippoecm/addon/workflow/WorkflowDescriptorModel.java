@@ -55,8 +55,6 @@ public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
             WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
             return workflowManager.getWorkflowDescriptor(category, getNode(session));
         } catch (RepositoryException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
             return null;
         }
     }

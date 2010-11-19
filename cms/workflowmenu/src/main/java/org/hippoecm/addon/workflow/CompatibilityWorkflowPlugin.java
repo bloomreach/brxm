@@ -138,10 +138,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 try {
                     execute();
                 } catch (WorkflowException ex) {
-                    log.warn("Workflow call failed", ex);
+                    log.info("Workflow call failed", ex);
                     getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
                 } catch (Exception ex) {
-                    log.error("Workflow call failed", ex);
+                    log.info("Workflow call failed", ex);
                     getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
                 }
             }
@@ -208,10 +208,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 try {
                     execute();
                 } catch (WorkflowException ex) {
-                    log.warn("Error during workflow execution", ex);
+                    log.info("Error during workflow execution", ex);
                     error(ex);
                 } catch (Exception ex) {
-                    log.error("Error during workflow execution", ex);
+                    log.info("Error during workflow execution", ex);
                     error(ex);
                 }
             }
