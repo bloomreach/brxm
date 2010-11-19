@@ -16,6 +16,7 @@
 package org.hippoecm.addon.workflow;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -442,15 +443,19 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         @Deprecated
         public class DateDialog extends WorkflowDialog {
 
-            public DateDialog(IModel question, final PropertyModel dateModel) {
+            public DateDialog(IModel question, final PropertyModel<Date> dateModel) {
                 super();
-
+                Calendar minimum = Calendar.getInstance();
+                minimum.setTime(dateModel.getObject());
+                minimum.set(Calendar.SECOND, 0);
+                minimum.set(Calendar.MILLISECOND, 0);
+                // if you want to round upwards, the following ought to be executed: minimum.add(Calendar.MINUTE, 1);
+                dateModel.setObject(minimum.getTime());
                 add(new Label("question", question));
                 YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
-                ydtf.add(DateValidator.minimum(new Date()));
+                ydtf.add(DateValidator.minimum(minimum.getTime()));
                 add(ydtf);
                 setFocusOnCancel();
-
             }
 
             @Override
