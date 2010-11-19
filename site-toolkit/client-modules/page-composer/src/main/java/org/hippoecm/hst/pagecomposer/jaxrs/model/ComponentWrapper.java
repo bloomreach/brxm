@@ -116,7 +116,7 @@ public class ComponentWrapper {
         this.success = success;
     }
 
-    private class Property {
+    private static class Property {
         private String name;
         private String value;
         private String type;

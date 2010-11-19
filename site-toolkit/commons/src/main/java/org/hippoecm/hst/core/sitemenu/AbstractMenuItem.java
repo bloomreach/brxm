@@ -87,7 +87,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
         return resolvedSiteMapItem.resolvedItem;
     }
 
-   private class ResolvedSiteMapItemWrapper {
+    private static class ResolvedSiteMapItemWrapper {
         
         private ResolvedSiteMapItem resolvedItem;
         

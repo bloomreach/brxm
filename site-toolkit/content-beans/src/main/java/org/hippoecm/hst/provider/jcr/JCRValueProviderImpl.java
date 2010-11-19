@@ -299,14 +299,14 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         } 
         
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return new Long(0);
+            return Long.valueOf(0);
         }
         
         loadProperty(propertyName,PropertyType.LONG, false);
         
         o = this.propertyMap.getLongs().get(propertyName);
         if(o == null) {
-           return new Long(0); 
+           return Long.valueOf(0); 
         } 
         return o;
     }

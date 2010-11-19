@@ -132,7 +132,7 @@ public class HstQueryImpl implements HstQuery {
         }
         BaseFilter ctxWhereFilter = new HstCtxWhereFilter(this.hstCtxWhereClauseComputer, this.scopes, this.skipInvalidScopes);
         
-        StringBuilder query = new StringBuilder();
+        StringBuilder query = new StringBuilder(256);
         
         if(ctxWhereFilter.getJcrExpression() == null || "".equals(ctxWhereFilter.getJcrExpression())) {
             // no ctxWhereFilter will be applied
@@ -141,7 +141,7 @@ public class HstQueryImpl implements HstQuery {
         }
         
         if(this.excludeScopes != null && !this.excludeScopes.isEmpty()) {
-            String excludeExpr = "";
+            StringBuilder excludeExpr = new StringBuilder(80);
             for(Node excludeScope : this.excludeScopes) {
                 String scopeUUID = null;
                 try {
@@ -164,18 +164,18 @@ public class HstQueryImpl implements HstQuery {
                 }
                 
                 if(scopeUUID != null) {
-                    if(!"".equals(excludeExpr)) {
-                        excludeExpr = excludeExpr + " and ";
+                    if(excludeExpr.length() > 0) {
+                        excludeExpr.append(" and ");
                     }
                     // do not use a!=b but not(a=b) as this is different for multivalued properties in jcr!
-                    excludeExpr = excludeExpr + "not(@"+(HippoNodeType.HIPPO_PATHS) +"='"+scopeUUID+"')";
+                    excludeExpr.append("not(@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("')");
                 }
             }
-            if(!"".equals(excludeExpr)) {
+            if(excludeExpr.length() > 0) {
                 if(query.length() == 0) {
-                    query.append("(").append(excludeExpr).append(")");
+                    query.append("(").append(excludeExpr.toString()).append(")");
                 } else {
-                    query.append(" and (").append(excludeExpr).append(")");
+                    query.append(" and (").append(excludeExpr.toString()).append(")");
                 }
             }
         } 

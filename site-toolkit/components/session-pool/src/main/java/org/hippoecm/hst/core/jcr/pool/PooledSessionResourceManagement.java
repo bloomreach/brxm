@@ -38,7 +38,7 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
         Boolean activeState = tlActiveState.get();
         
         if (activeState == null || activeState.booleanValue() != active) {
-            activeState = new Boolean(active);
+            activeState = Boolean.valueOf(active);
             tlActiveState.set(activeState);
         }
     }

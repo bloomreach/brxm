@@ -110,7 +110,7 @@ public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory
         {
             if (isHashCode(method))
             {
-                return new Integer(System.identityHashCode(proxy));
+                return Integer.valueOf(System.identityHashCode(proxy));
             }
             else if (isEqualsMethod(method))
             {

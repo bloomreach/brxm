@@ -98,7 +98,7 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                     session.logout();
                 }
             } else if ("lastRefreshed".equals(methodName)) {
-                ret = new Long(lastRefreshed);
+                ret = Long.valueOf(lastRefreshed);
             } else if ("getUserID".equals(methodName)) {
                 if (userID != null) {
                     ret = userID;

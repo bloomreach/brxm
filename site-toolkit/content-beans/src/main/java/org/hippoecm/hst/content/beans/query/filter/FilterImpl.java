@@ -363,7 +363,7 @@ public class FilterImpl implements Filter{
      * BaseFilter wrapper so we can distinguish between AND and or filters.
      * 
      */
-    private class FilterTypeWrapper {
+    private static class FilterTypeWrapper {
         private boolean and;
         private BaseFilter filter;
 

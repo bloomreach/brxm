@@ -237,7 +237,7 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         return false;
     }
 
-    protected class CredentialsWrapper implements Serializable {
+    protected static class CredentialsWrapper implements Serializable {
         
         private static final long serialVersionUID = 1L;
         

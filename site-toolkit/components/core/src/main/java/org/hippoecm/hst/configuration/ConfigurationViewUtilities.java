@@ -20,7 +20,6 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public class ConfigurationViewUtilities {
 
@@ -121,10 +120,8 @@ public class ConfigurationViewUtilities {
         }
     }
     
-
-
-    private static void view(StringBuffer buf, String indent, ResolvedSiteMapItem resolvedSiteMapItem) {
-        buf.append("\n\n **** TODO *** : String presentation of ResolvedSiteMapItem \n\n");
-    }
+//    private static void view(StringBuffer buf, String indent, ResolvedSiteMapItem resolvedSiteMapItem) {
+//        buf.append("\n\n **** TODO *** : String presentation of ResolvedSiteMapItem \n\n");
+//    }
 
 }
