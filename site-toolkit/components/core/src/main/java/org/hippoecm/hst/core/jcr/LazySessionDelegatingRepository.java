@@ -101,7 +101,9 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         return lazySession;
     }
     
-    protected static class SessionsRefreshCounter {
+    protected static class SessionsRefreshCounter implements Serializable {
+        
+        private static final long serialVersionUID = 1L;
         
         private long sessionsRefreshPendingTimeMillis;
         

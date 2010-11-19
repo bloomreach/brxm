@@ -297,8 +297,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         if (isContainerAttributeName(name)) {
             super.removeAttribute(name);
         } else {
-            Object value = getAttributeMap().remove(name);
-            
+            getAttributeMap().remove(name);
             String prefix = getFullNamespacePrefix(this.componentWindow.getReferenceNamespace(), false);
             super.removeAttribute(prefix + name);
         }

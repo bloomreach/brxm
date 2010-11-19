@@ -209,10 +209,8 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     public void setResourceLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
         this.pooledSessionLifecycleManagement = pooledSessionLifecycleManagement;
         
-        if (this.pooledSessionLifecycleManagement != null) {
-            if (this.pooledSessionLifecycleManagement instanceof PoolingRepositoryAware) {
-                ((PoolingRepositoryAware) this.pooledSessionLifecycleManagement).setPoolingRepository(this);
-            }
+        if (this.pooledSessionLifecycleManagement instanceof PoolingRepositoryAware) {
+            ((PoolingRepositoryAware) this.pooledSessionLifecycleManagement).setPoolingRepository(this);
         }
     }
     

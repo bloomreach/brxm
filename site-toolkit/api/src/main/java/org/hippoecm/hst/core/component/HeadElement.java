@@ -99,5 +99,5 @@ public interface HeadElement extends Serializable, Cloneable
     /**
      * {@inheritDoc}
      */
-    Object clone();
+    Object clone() throws CloneNotSupportedException;
 }

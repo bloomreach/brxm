@@ -351,6 +351,8 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         }
                     }
                 }
+            } catch (ObjectBeanPersistenceException e) {
+                throw e;
             } catch (Exception e) {
                 if(path != null) {
                     throw new ObjectBeanPersistenceException("Exception while trying to update '"+path+"'" ,e);

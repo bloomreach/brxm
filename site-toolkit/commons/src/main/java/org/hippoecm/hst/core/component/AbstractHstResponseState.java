@@ -228,8 +228,6 @@ public abstract class AbstractHstResponseState implements HstResponseState {
             closed = true;
             committed = true;
 
-            if (isMimeResponse) {
-            }
             this.redirectLocation = redirectLocation;
         }
     }

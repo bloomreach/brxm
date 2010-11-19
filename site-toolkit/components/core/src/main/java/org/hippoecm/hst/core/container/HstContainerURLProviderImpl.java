@@ -216,7 +216,14 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
     
     public HstContainerURL createURL(HstContainerURL baseContainerURL, HstURL hstUrl) {
-        HstContainerURLImpl containerURL = (HstContainerURLImpl) ((HstContainerURLImpl) baseContainerURL).clone();
+        HstContainerURLImpl containerURL = null;
+        
+        try {
+            containerURL = (HstContainerURLImpl) ((HstContainerURLImpl) baseContainerURL).clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException("Clone not supported on the container url. " + e);
+        }
+        
         containerURL.setActionWindowReferenceNamespace(null);
         containerURL.setResourceWindowReferenceNamespace(null);
         

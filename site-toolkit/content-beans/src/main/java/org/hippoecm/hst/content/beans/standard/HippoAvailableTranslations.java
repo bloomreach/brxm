@@ -16,7 +16,6 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,4 +80,13 @@ public class HippoAvailableTranslations extends HippoItem implements HippoAvaila
         
         // TODO populate here the translations!
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HippoAvailableTranslations)) {
+            return false;
+        }
+        return super.equals(obj);
+    }
+
 }

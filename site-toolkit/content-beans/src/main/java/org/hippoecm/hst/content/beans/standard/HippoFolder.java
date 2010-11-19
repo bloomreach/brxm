@@ -175,7 +175,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
         try {
             if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if(node.hasNode(node.getName())) {
-                    Object o  = objectConverter.getObject(node.getNode(node.getName()));
+                    Object o = objectConverter.getObject(node.getNode(node.getName()));
                     if(o instanceof HippoDocumentBean) {
                         return (HippoDocumentBean)o;
                     } else {
@@ -184,12 +184,11 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
                 } 
                 return null;
             } else if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE) || node.getParent().isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                Object o  = (HippoDocument)objectConverter.getObject(node);
-                if(o instanceof HippoDocument) {
-                    return (HippoDocumentBean)o;
-                } else {
+                HippoDocument hippoDoc  = (HippoDocument)objectConverter.getObject(node);
+                if (hippoDoc == null) {
                     log.warn("Cannot return HippoDocument for. Return null '{}'", node.getPath());
                 }
+                return hippoDoc;
             }
         } catch (RepositoryException e) {
             log.error("Cannot return HippoDocument. Return null : {} " , e);
@@ -201,6 +200,14 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
 
     public <T> HippoDocumentIterator<T> getDocumentIterator(Class<T> beanMappingClass){
         return new HippoDocumentIteratorImpl<T>(beanMappingClass);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HippoFolder)) {
+            return false;
+        }
+        return super.equals(obj);
     }
     
     private class HippoDocumentIteratorImpl<T> implements HippoDocumentIterator<T> {

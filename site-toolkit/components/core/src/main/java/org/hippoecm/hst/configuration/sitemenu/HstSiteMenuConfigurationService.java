@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration {
 
-    private static final long serialVersionUID = 1L;
-    
     private static final Logger log = LoggerFactory.getLogger(HstSiteMenuConfigurationService.class);
     private String name;
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;

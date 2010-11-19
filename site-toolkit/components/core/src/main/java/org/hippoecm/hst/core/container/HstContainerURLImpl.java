@@ -180,8 +180,8 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
     }
     
     @Override
-    public Object clone() {
-        HstContainerURLImpl cloned = new HstContainerURLImpl();
+    public Object clone() throws CloneNotSupportedException {
+        HstContainerURLImpl cloned = (HstContainerURLImpl) super.clone();
         
         cloned.characterEncoding = this.characterEncoding;
         cloned.contextPath = this.contextPath;

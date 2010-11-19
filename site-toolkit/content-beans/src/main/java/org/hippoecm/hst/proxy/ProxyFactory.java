@@ -66,6 +66,8 @@ public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory
 
     private static class DelegatorInvocationHandler extends AbstractInvocationHandler
     {
+        private static final long serialVersionUID = 1L;
+        
         private final ObjectProvider delegateProvider;
 
         protected DelegatorInvocationHandler(ObjectProvider delegateProvider)
@@ -88,6 +90,8 @@ public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory
 
     private static class InterceptorInvocationHandler extends AbstractInvocationHandler
     {
+        private static final long serialVersionUID = 1L;
+        
         private final Object target;
         private final Interceptor methodInterceptor;
 
@@ -106,6 +110,8 @@ public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory
 
     private abstract static class AbstractInvocationHandler implements InvocationHandler, Serializable
     {
+        private static final long serialVersionUID = 1L;
+        
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
         {
             if (isHashCode(method))
@@ -127,6 +133,8 @@ public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory
 
     private static class InvokerInvocationHandler extends AbstractInvocationHandler
     {
+        private static final long serialVersionUID = 1L;
+        
         private final Invoker invoker;
 
         public InvokerInvocationHandler(Invoker invoker)
@@ -157,9 +165,11 @@ public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory
 
     private static class ReflectionInvocation implements Invocation, Serializable
     {
-        private final Method method;
-        private final Object[] arguments;
-        private final Object target;
+        private static final long serialVersionUID = 1L;
+
+        private transient Method method;
+        private transient Object[] arguments;
+        private transient Object target;
 
         public ReflectionInvocation(Object target, Method method, Object[] arguments)
         {

@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -189,10 +190,10 @@ public class SimpleHtmlExtractor {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            if (br != null) try { br.close(); } catch (Exception ce) { }
-            if (sr != null) try { sr.close(); } catch (Exception ce) { }
-            if (out != null) try { out.close(); } catch (Exception ce) { }
-            if (sw != null) try { sw.close(); } catch (Exception ce) { }
+            IOUtils.closeQuietly(br);
+            IOUtils.closeQuietly(sr);
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(sw);
         }
         
         log.debug("Tag '{}' not found. Return null", tagName);

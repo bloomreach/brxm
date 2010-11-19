@@ -40,7 +40,6 @@
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>
-    <appender-ref ref="root"/>
   </root>
 
 </log4j:configuration>

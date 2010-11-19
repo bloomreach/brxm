@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.logging;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.logging.LogEvent;
 import org.hippoecm.hst.logging.LogEventBuffer;
 import org.hippoecm.hst.logging.Logger;
@@ -189,8 +190,8 @@ public class TraceToolSlf4jLogger implements Logger {
         } catch (Exception e) {
             sbMessage.append("Failed to print stack trace.");
         } finally {
-            if (pw != null) try { pw.close(); } catch (Exception ce) { }
-            if (sw != null) try { sw.close(); } catch (Exception ce) { }
+            IOUtils.closeQuietly(pw);
+            IOUtils.closeQuietly(sw);
         }
         
         LogEvent event = new LogEventImpl(logger.getName(), level, sbMessage.toString());

@@ -220,12 +220,10 @@ public class ObjectConverterImpl implements ObjectConverter {
         log.warn("No Descriptor found for node '{}'. Cannot return a matching node type for '{}'.", path , jcrPrimaryNodeType);
         return null;
     }
-   
     
     private void checkUUID(String uuid) throws ObjectBeanManagerException{
         try {
-            @SuppressWarnings("unused")
-            UUID uuidObj = UUID.fromString(uuid);
+            UUID.fromString(uuid);
         } catch (IllegalArgumentException e){
             throw new ObjectBeanManagerException("Uuid is not parseable to a valid uuid: '"+uuid+"'");
         }

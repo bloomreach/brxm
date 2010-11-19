@@ -85,5 +85,5 @@ public interface WrapperElement extends Serializable, Cloneable
     /**
      * {@inheritDoc}
      */
-    Object clone();
+    Object clone() throws CloneNotSupportedException;
 }

@@ -134,8 +134,8 @@ public class WrapperElementImpl implements WrapperElement
     }
     
     @Override
-    public Object clone() {
-        WrapperElementImpl cloned = new WrapperElementImpl();
+    public Object clone() throws CloneNotSupportedException {
+        WrapperElementImpl cloned = (WrapperElementImpl) super.clone();
         
         cloned.tagName = tagName;
         cloned.attributes = new HashMap<String, String>(attributes);

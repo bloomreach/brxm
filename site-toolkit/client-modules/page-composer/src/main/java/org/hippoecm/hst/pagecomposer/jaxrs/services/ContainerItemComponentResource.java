@@ -15,16 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,8 +32,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomoponent". This is specified using the @Path annotation.
@@ -84,7 +83,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                             MultivaluedMap<String, String> params) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            Session session = requestContext.getSession();
             Node jcrNode = getRequestConfigNode(requestContext);
 
             Map<String, String> hstParameters = new HashMap<String, String>();

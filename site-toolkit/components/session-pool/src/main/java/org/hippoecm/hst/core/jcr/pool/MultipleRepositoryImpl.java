@@ -274,6 +274,10 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         
         @Override
         public boolean equals(final Object other) {
+            if (!(other instanceof CredentialsWrapper)) {
+                return false;
+            }
+            
             CredentialsWrapper cwOther = (CredentialsWrapper) other;
             return (this.userID.equals(cwOther.userID) && this.password.equals(cwOther.password));
         }

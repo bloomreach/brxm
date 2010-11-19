@@ -174,8 +174,8 @@ public class HeadElementImpl implements HeadElement
     }
     
     @Override
-    public Object clone() {
-        HeadElementImpl cloned = new HeadElementImpl();
+    public Object clone() throws CloneNotSupportedException {
+        HeadElementImpl cloned = (HeadElementImpl) super.clone();
         
         cloned.tagName = tagName;
         cloned.attributes = new HashMap<String, String>(attributes);

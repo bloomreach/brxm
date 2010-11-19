@@ -57,6 +57,14 @@ public class HippoImage extends HippoItem implements HippoImageBean {
         picture = getResourceBean("hippogallery:picture");
         return picture.getBean();
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HippoImage)) {
+            return false;
+        }
+        return super.equals(obj);
+    }
 
     private BeanWrapper<HippoResourceBean> getResourceBean(String relPath){
         BeanWrapper<HippoResourceBean> resource; 

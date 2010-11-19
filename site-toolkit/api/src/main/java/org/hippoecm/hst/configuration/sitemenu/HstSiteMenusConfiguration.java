@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.configuration.sitemenu;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -25,7 +24,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
  * be able to modify the configuration
  *
  */
-public interface HstSiteMenusConfiguration extends Serializable{
+public interface HstSiteMenusConfiguration {
     
     /**
      * Return the {@link HstSite} this <code>HstSiteMap</code> belongs to. 

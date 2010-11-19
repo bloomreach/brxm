@@ -59,7 +59,7 @@ import java.util.HashMap;
  * 
  * @version $Id$
  */
-public class Path implements Serializable, Cloneable
+public class Path implements Serializable
 {
     /** The serial version uid. */
     private static final long serialVersionUID = 6890966283704092945L;

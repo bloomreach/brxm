@@ -70,4 +70,12 @@ public class HippoStdPubWfRequest extends HippoItem implements HippoRequestBean 
         return getProperty("hippostdpubwf:reqdate");
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HippoStdPubWfRequest)) {
+            return false;
+        }
+        return super.equals(obj);
+    }
+
 }

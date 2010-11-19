@@ -15,18 +15,15 @@
  */
 package org.hippoecm.hst.configuration.sitemenu;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 /**
  * Implementations should return an unmodifiable map for {@link #getSiteMenuItemConfigurations()} because clients should not
  * be able to modify the configuration
  *
  */
-public interface HstSiteMenuItemConfiguration extends Serializable{
+public interface HstSiteMenuItemConfiguration {
     /**
      * 
      * @return the name of this SiteMenuItem
