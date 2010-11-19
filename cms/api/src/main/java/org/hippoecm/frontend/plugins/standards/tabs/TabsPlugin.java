@@ -217,27 +217,32 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     /**
-     * Get the list of tabs (editors) that are modified.
+     * Get the list of tabs that are modified.
      *
-     * @return List<Tab> of changed tabs, empty if there are none.
+     * @param ignoreTab - Ignore this tab while getting the list of tabs. Can be null, if all the changed tabs
+     * need to be retrieved.
+     * @return List<Tab> of changed tabs, empty list if there are none.
      */
-    List<JcrNodeModel> getChangedTabs() {
-        List<JcrNodeModel> changedTabs = new ArrayList<JcrNodeModel>();
+    private List<Tab> getChangedTabs(Tab ignoreTab) {
+        List<Tab> changedTabs = new ArrayList<Tab>();
         for (Tab tab : tabs) {
+            if (ignoreTab != null && tab == ignoreTab) {
+                continue;
+            }
             IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
             if (reference == null) {
                 continue;
             }
             IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-
             try {
                 if (editor != null && editor.isModified()) {
-                    changedTabs.add(new JcrNodeModel((Node) editor.getModel().getObject()));
+                    changedTabs.add(tab);
                 }
             } catch (EditorException e) {
                 log.warn("Failed to find out if the editor is modified: " + e.getMessage());
             }
         }
+
         return changedTabs;
     }
 
@@ -250,12 +255,17 @@ public class TabsPlugin extends RenderPlugin {
     protected void onSelectTab(int index) {
     }
 
-    void closeAll(final AjaxRequestTarget target) {
-        List<JcrNodeModel> changedTabs = getChangedTabs();
-
+     /**
+     * Closes all tabs except the ignoredTab tab
+     *
+     * @param ignoredTab    the tab to exclude from closing, pass null to close all the tabs.
+     * @param target AjaxRequestTarget
+     */
+    void closeAll(Tab ignoredTab, final AjaxRequestTarget target) {
+        List<Tab> changedTabs = getChangedTabs(ignoredTab);
         if (changedTabs.size() > 0) {
             IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(), IDialogService.class);
-            dialogService.show(new CloseAllDialog());
+            dialogService.show(new CloseAllDialog(changedTabs));
 
         } else {
 
@@ -268,7 +278,8 @@ public class TabsPlugin extends RenderPlugin {
 
     /**
      * Closes the tab if it is unmodified and the editor is not in Edit mode.
-     * @param tab  The tab to close
+     *
+     * @param tab    The tab to close
      * @param target AjaxRequestTarget
      */
     void onCloseUnmodified(Tab tab, AjaxRequestTarget target) {
@@ -342,6 +353,9 @@ public class TabsPlugin extends RenderPlugin {
                 dialogService.show(onCloseDialog);
 
             } else {
+                if (editor.getMode() == IEditor.Mode.EDIT) {
+                    editor.done();
+                }
                 editor.close();
             }
         } catch (EditorException e) {
@@ -514,7 +528,7 @@ public class TabsPlugin extends RenderPlugin {
 
     private class CloseAllDialog extends AbstractDialog {
 
-        public CloseAllDialog() {
+        public CloseAllDialog(final List<Tab> changedTabs) {
             super();
             setOkVisible(false);
 
@@ -523,8 +537,7 @@ public class TabsPlugin extends RenderPlugin {
 
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
-                    List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
-                    for (TabsPlugin.Tab currentTab : tabsCopy) {
+                    for (TabsPlugin.Tab currentTab : changedTabs) {
                         IServiceReference<IRenderService> reference = getPluginContext().getReference(currentTab.renderer);
                         if (reference == null) {
                             log.error("Could not find render service for a tab");
@@ -582,8 +595,27 @@ public class TabsPlugin extends RenderPlugin {
 
             addButton(button);
 
-            ModifiedDocumentsProvider provider = new ModifiedDocumentsProvider(getChangedTabs());
+            ModifiedDocumentsProvider provider = new ModifiedDocumentsProvider(getTabModelList(changedTabs));
             add(new ModifiedDocumentsView("modified-docs-view", provider));
+        }
+
+        private List<JcrNodeModel> getTabModelList(List<Tab> changedTabs) {
+            List<JcrNodeModel> tabModels = new ArrayList<JcrNodeModel>();
+            for (Tab tab : changedTabs) {
+                IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
+                if (reference == null) {
+                    continue;
+                }
+                IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+                try {
+                    if (editor != null && editor.isModified()) {
+                        tabModels.add(new JcrNodeModel((Node) editor.getModel().getObject()));
+                    }
+                } catch (EditorException e) {
+                    log.warn("Failed to find out if the editor is modified: " + e.getMessage());
+                }
+            }
+            return tabModels;
         }
 
         public IModel getTitle() {

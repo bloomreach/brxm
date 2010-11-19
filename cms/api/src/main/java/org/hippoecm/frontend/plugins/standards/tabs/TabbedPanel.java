@@ -157,12 +157,7 @@ public class TabbedPanel extends WebMarkupContainer {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 //Create a copy so we won't run into ConcurrentModificationException
-                List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
-                for (TabsPlugin.Tab currentTab : tabsCopy) {
-                    if (!currentTab.equals(tab)) {
-                        plugin.onClose(currentTab, target);
-                    }
-                }
+                plugin.closeAll(tab, target);
             }
         };
 
@@ -172,7 +167,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                plugin.closeAll(target);
+                plugin.closeAll(null, target);
             }
         };
 
