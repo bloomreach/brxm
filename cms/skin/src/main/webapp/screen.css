@@ -1354,10 +1354,9 @@ body.hippo-root div.yui-log-container {
 
 .hippo-preview-document .resource-values { padding-left: 0px; }
 
-.resource-upload { margin-top: 10px; height: 75px; }
+.resource-upload { margin-top: 10px; }
 .resource-upload input {clear: left; float: left;}
 .resource-upload input[type="submit"] {  padding:0; margin:0;}
-
 
 /* Xinha preview style, taken form http://www.w3.org/TR/CSS2/sample.html */
 

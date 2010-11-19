@@ -15,9 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.yui.webapp;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.resources.CompressedResourceReference;
+import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
+import org.hippoecm.frontend.plugins.yui.flash.ProbeFlashBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.YuiContext;
 import org.hippoecm.frontend.plugins.yui.header.YuiHeaderCache;
@@ -37,6 +40,10 @@ import org.onehippo.yui.YahooNamespace;
  * <a href="http://developer.yahoo.com/yui/grids/">grids</a>, <a href="http://developer.yahoo.com/yui/base/">base</a> 
  * and reset-fonts-grids stylesheets, as well as pre-loading Wicket-Ajax dependencies. This can be configured in the
  * {@link WebAppSettings}.
+ * </p>
+ * <p>
+ * Upon the first load, it will probe the client for a flash version and store the result so other components
+ * can query it.
  * </p>
  * 
  * @see IYuiManager
@@ -62,6 +69,8 @@ public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
     YuiHeaderCache headerContributor;
     YuiContext helper;
 
+    FlashVersion flash;
+
     public WebAppBehavior(WebAppSettings settings) {
         headerContributor = new YuiHeaderCache(settings.isLoadWicketAjax());
         helper = new YuiContext(headerContributor);
@@ -84,6 +93,20 @@ public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
     }
 
     @Override
+    public void bind(Component component) {
+        super.bind(component);
+
+        component.add(new ProbeFlashBehavior() {
+
+            @Override
+            protected void handleFlash(FlashVersion flash) {
+                WebAppBehavior.this.flash = flash;
+            }
+        });
+
+    }
+
+    @Override
     public void renderHead(IHeaderResponse response) {
         headerContributor.renderHead(response);
         helper.renderHead(response);
@@ -93,4 +116,11 @@ public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
         return new YuiContext(headerContributor);
     }
 
+    public FlashVersion getFlash() {
+        return flash;
+    }
+
+    public void setFlash(FlashVersion flash) {
+        this.flash = flash;
+    }
 }

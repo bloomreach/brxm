@@ -32,19 +32,6 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
     private FileUploadWidget widget;
     private AjaxButton ajaxButton;
 
-    @Override
-    protected void onOk() {
-        if (widget.isFlash()) {
-            AjaxRequestTarget target = AjaxRequestTarget.get();
-            if (target != null) {
-                ajaxButton.setEnabled(false);
-                target.addComponent(ajaxButton);
-            }
-        } else {
-            widget.handleNonFlashSubmit();
-        }
-    }
-
     protected MultiFileUploadDialog(String[] fileExtensions) {
         setOutputMarkupId(true);
 
@@ -83,23 +70,29 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
             }
 
             @Override
-            public void handleFlash(AjaxRequestTarget target) {
-                super.handleFlash(target);
+            public void renderFlashUpload() {
+                super.renderFlashUpload();
 
                 ajaxButton.setEnabled(true);
                 ajaxButton.setVisible(true);
 
-                target.addComponent(MultiFileUploadDialog.this);
+                AjaxRequestTarget target = AjaxRequestTarget.get();
+                if (target != null) {
+                    target.addComponent(MultiFileUploadDialog.this);
+                }
             }
 
             @Override
-            public void handleJavascript(AjaxRequestTarget target) {
-                super.handleJavascript(target);
+            public void renderJavascriptUpload() {
+                super.renderJavascriptUpload();
 
                 setOkEnabled(true);
                 setOkVisible(true);
 
-                target.addComponent(MultiFileUploadDialog.this);
+                AjaxRequestTarget target = AjaxRequestTarget.get();
+                if (target != null) {
+                    target.addComponent(MultiFileUploadDialog.this);
+                }
             }
 
             @Override
@@ -108,6 +101,19 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
             }
         };
         add(widget);
+    }
+
+    @Override
+    protected void onOk() {
+        if (widget.isFlash()) {
+            AjaxRequestTarget target = AjaxRequestTarget.get();
+            if (target != null) {
+                ajaxButton.setEnabled(false);
+                target.addComponent(ajaxButton);
+            }
+        } else {
+            widget.handleNonFlashSubmit();
+        }
     }
 
     @Override

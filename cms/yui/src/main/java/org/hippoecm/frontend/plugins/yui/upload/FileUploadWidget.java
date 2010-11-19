@@ -16,56 +16,69 @@
 package org.hippoecm.frontend.plugins.yui.upload;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.plugins.yui.flash.ProbeFlashBehavior;
+import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
 import org.hippoecm.frontend.plugins.yui.upload.multifile.MultiFileUploadComponent;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 
 import java.util.Collection;
 
-public class FileUploadWidget extends Panel implements ProbeFlashBehavior.IProbeFlashHandler {
+public class FileUploadWidget extends Panel {
     final static String SVN_ID = "$Id$";
 
     private static final String COMPONENT_ID = "component";
 
     private FileUploadWidgetSettings settings;
-    private boolean isFlash;
-
     private Panel panel;
 
-    ProbeFlashBehavior probeBehavior;
+    private final static FlashVersion VALID_FLASH = new FlashVersion(9, 0, 45);
+    private FlashVersion detectedFlash;
 
     public FileUploadWidget(String id, FileUploadWidgetSettings settings) {
         super(id);
+
         setOutputMarkupId(true);
-
         this.settings = settings;
-
-        add(probeBehavior = new ProbeFlashBehavior(this) {
-
-            @Override
-            protected boolean isValid(Flash flash) {
-                return flash.isAvailable() && flash.isValid(9, 0, 45);
-            }
-        });
         add(panel = new EmptyPanel(COMPONENT_ID));
     }
 
     protected void onFileUpload(FileUpload fileUpload) {
     }
 
-    public boolean isFlash() {
-        return isFlash;
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+
+        if(detectedFlash == null) {
+            Page page = getPage();
+            for(IBehavior behavior : page.getBehaviors()) {
+                if(behavior instanceof WebAppBehavior) {
+                    WebAppBehavior webapp = (WebAppBehavior) behavior;
+                    detectedFlash = webapp.getFlash();
+                }
+            }
+        }
+
+        if(isFlash()) {
+            renderFlashUpload();
+        } else {
+            renderJavascriptUpload();
+        }
     }
 
-    public void handleFlash(AjaxRequestTarget target) {
-        isFlash = true;
+    public boolean isFlash() {
+        return detectedFlash != null && detectedFlash.isValid(VALID_FLASH);
+    }
 
+    protected void renderFlashUpload() {
         AjaxMultiFileUploadSettings ajaxMultiFileUploadSettings = new AjaxMultiFileUploadSettings();
         ajaxMultiFileUploadSettings.setFileExtensions(settings.getFileExtensions());
         ajaxMultiFileUploadSettings.setAllowMultipleFiles(settings.getMaxNumberOfFiles() > 1);
@@ -90,9 +103,10 @@ public class FileUploadWidget extends Panel implements ProbeFlashBehavior.IProbe
             protected void onUploadSuccess() {
             }
         });
+    }
 
-        remove(probeBehavior);
-        target.addComponent(this);
+    protected void renderJavascriptUpload() {
+        replace(panel = new MultiFileUploadComponent(COMPONENT_ID));
     }
 
     protected String getAjaxIndicatorId() {
@@ -109,16 +123,8 @@ public class FileUploadWidget extends Panel implements ProbeFlashBehavior.IProbe
     protected void onFinishAjaxUpload(AjaxRequestTarget target) {
     }
 
-    public void handleJavascript(AjaxRequestTarget target) {
-        isFlash = false;
-        replace(panel = new MultiFileUploadComponent(COMPONENT_ID));
-
-        remove(probeBehavior);
-        target.addComponent(this);
-    }
-
     public void handleNonFlashSubmit() {
-        if (!isFlash) {
+        if (!isFlash()) {
             Collection<FileUpload> uploads = ((MultiFileUploadComponent) panel).getUploads();
             if (uploads != null) {
                 for (FileUpload upload : uploads) {
