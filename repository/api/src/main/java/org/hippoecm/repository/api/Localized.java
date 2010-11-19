@@ -97,30 +97,26 @@ public final class Localized implements Serializable {
         return hash;
     }
 
-    /**
-     * DO NOT USE THIS METHOD IS NOT PART OF THE PUBLIC API
-     * @exclude
-     */
-    public boolean matches(Localized other) {
+    private boolean matches(Localized other) {
         Locale otherLocale = other.getLocale();
         if(locale != null && locale.getLanguage() != null)
             if(otherLocale != null && otherLocale.getLanguage() != null) {
                 if(!locale.getLanguage().equals(otherLocale.getLanguage()))
                     return false;
             } else
-                return false;
+                return true;
         if(locale != null && locale.getCountry() != null)
             if(otherLocale != null && otherLocale.getCountry() != null) {
                 if(!locale.getCountry().equals(otherLocale.getCountry()))
                     return false;
             } else
-                return false;
+                return true;
         if(locale != null && locale.getVariant() != null)
             if(otherLocale != null && otherLocale.getVariant() != null) {
                 if(!locale.getVariant().equals(otherLocale.getVariant()))
                     return false;
             } else
-                return false;
+                return true;
         return true;
     }
 
@@ -129,64 +125,41 @@ public final class Localized implements Serializable {
      * @exclude
      */
     public Localized matches(Localized candidate1, Localized candidate2) {
-        if(candidate1 == null) {
-            if(candidate2 != null && matches(candidate2)) {
+        if (candidate1 == null && candidate2 == null)
+            return null;
+        if (candidate1 == null)
+            if (matches(candidate2))
                 return candidate2;
-            } else {
+            else
                 return null;
-            }
-        } else if(candidate2 == null) {
-            if(matches(candidate1)) {
+        if (candidate2 == null)
+            if (matches(candidate1))
                 return candidate1;
-            } else {
+            else
                 return null;
-            }
-        }
+        if (matches(candidate1) && !matches(candidate2))
+            return candidate1;
+        if (matches(candidate2) && !matches(candidate1))
+            return candidate2;
         Locale locale1 = candidate1.getLocale();
         Locale locale2 = candidate2.getLocale();
-        if(locale != null && locale.getLanguage() != null) {
-            if(locale1.getLanguage()==null) {
-                if(locale2.getLanguage()!=null) {
-                    return candidate2;
-                }
-            } else if(locale2.getLanguage()==null)
+        String locale1Language = (locale1 != null ? locale1.getLanguage() : null);
+        String locale2Language = (locale2 != null ? locale2.getLanguage() : null);
+        String locale1Country = (locale1 != null ? locale1.getCountry() : null);
+        String locale2Country = (locale2 != null ? locale2.getCountry() : null);
+        String locale1Variant = (locale1 != null ? locale1.getVariant() : null);
+        String locale2Variant = (locale2 != null ? locale2.getVariant() : null);
+        if (locale != null && locale.getLanguage() != null) {
+            if (locale1Language == null)
+                return candidate2;
+            if (locale2Language == null)
                 return candidate1;
         } else {
-            if(locale1.getLanguage()!=null) {
-                if(locale2.getLanguage()==null) {
-                    return candidate2;
-                }
-            } else if(locale2.getLanguage()!=null)
-                return candidate1;
-        }
-        if(locale != null && locale.getCountry() != null) {
-            if(locale1.getCountry()==null) {
-                if(locale2.getCountry()!=null) {
-                    return candidate2;
-                }
-            } else if(locale2.getCountry()==null)
-                return candidate1;
-        } else {
-            if(locale1.getCountry()!=null) {
-                if(locale2.getCountry()==null) {
-                    return candidate2;
-                }
-            } else if(locale2.getCountry()!=null)
-                return candidate1;
-        }
-        if(locale != null && locale.getVariant() != null) {
-            if(locale1.getVariant()==null) {
-                if(locale2.getVariant()!=null) {
-                    return candidate2;
-                }
-            } else if(locale2.getVariant()==null)
-                return candidate1;
-        } else {
-            if(locale1.getVariant()!=null) {
-                if(locale2.getVariant()==null) {
-                    return candidate2;
-                }
-            } else if(locale2.getVariant()!=null)
+            if (locale1Language != null && locale2Language != null)
+                return null;
+            if (locale1Language != null && locale2Language == null)
+                return candidate2;
+            if (locale2Language != null && locale1Language == null)
                 return candidate1;
         }
         return candidate1;
