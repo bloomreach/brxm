@@ -76,7 +76,7 @@ public class HstFilter implements Filter {
     protected volatile boolean initialized;
     protected ComponentManager clientComponentManager;
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
-    protected HstContainerConfig requestContainerConfig;
+    protected volatile HstContainerConfig requestContainerConfig;
     
     protected HstManager hstSitesManager;
     protected HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
@@ -232,13 +232,15 @@ public class HstFilter implements Filter {
     			logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
     			return;
     		}
-
-    		synchronized (this) {
-    			if (this.requestContainerConfig == null) {
-    				this.requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
-    			}
+    		
+    		if (requestContainerConfig == null) {
+        		synchronized (this) {
+        			if (requestContainerConfig == null) {
+        				requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
+        			}
+        		}
     		}
-
+    		
     		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
     		
     		// Sets up the container request wrapper
@@ -329,7 +331,7 @@ public class HstFilter implements Filter {
     	} 
     	catch (Exception e) {
     		final String msg = "Fatal error encountered while processing request: " + e.toString();
-    		if (logger != null && logger.isDebugEnabled()) {
+    		if (logger.isDebugEnabled()) {
     			logger.error(msg, e);
     		}
     		throw new ServletException(msg, e);
@@ -378,8 +380,8 @@ public class HstFilter implements Filter {
 		
 		HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
 		
-		 // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem: 
-         if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+		// now, as long as there is a forward, we keep invoking processResolvedSiteMapItem: 
+        if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
             String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
             req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
 
