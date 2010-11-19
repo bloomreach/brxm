@@ -82,19 +82,23 @@ public class SecurityValve extends AbstractValve {
             String formLoginPage = resolvedMount.getFormLoginPage();
             
             try {
-                Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+                Mount destLinkMount = resolvedMount.getMount();
                 
-                if (siteMount == null) {
-                    siteMount = resolvedMount.getMount();
+                if (!destLinkMount.isSite()) {
+                    Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+                    
+                    if (siteMount != null) {
+                        destLinkMount = siteMount;
+                    }
                 }
                 
                 if (StringUtils.isBlank(formLoginPage)) {
-                    formLoginPage = siteMount.getFormLoginPage();
+                    formLoginPage = destLinkMount.getFormLoginPage();
                 }
                 
                 ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
                 String pathInfo = (resolvedSiteMapItem == null ? "" : resolvedSiteMapItem.getPathInfo());
-                destinationLink = requestContext.getHstLinkCreator().create(pathInfo, siteMount);
+                destinationLink = requestContext.getHstLinkCreator().create(pathInfo, destLinkMount);
             } catch (Exception linkEx) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to create destination link.", linkEx);
