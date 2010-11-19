@@ -32,7 +32,5 @@ public interface JAXRSService {
 	String REQUEST_CONTENT_PATH_KEY = "org.hippoecm.hst.jaxrs.request.contentPath";
 	String REQUEST_CONTENT_NODE_KEY = "org.hippoecm.hst.jaxrs.request.contentNode";
 	
-	/** @deprecated **/
-	String getBasePath();
 	void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException;
 }

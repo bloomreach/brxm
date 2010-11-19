@@ -47,19 +47,19 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     
 	private Map<String,String> jaxrsConfigParameters;
 	private String serviceName;
-	private String basePath = "";
+	private String servletPath = "";
 	
 	protected AbstractJaxrsService(String serviceName, Map<String,String> jaxrsConfigParameters) {
 		this.serviceName = serviceName;
 		this.jaxrsConfigParameters = jaxrsConfigParameters;
 	}
 	
-	public String getBasePath() {
-		return basePath;
+	public String getServletPath() {
+		return servletPath;
 	}
 	
     public void setServletPath(String servletPath) {
-    	this.basePath = servletPath;
+    	this.servletPath = servletPath;
     }
     
 	public abstract void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException;
@@ -70,7 +70,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     
     protected String getJaxrsServletPath(HstRequestContext requestContext) throws ContainerException {
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
-        return new StringBuilder(resolvedMount.getResolvedMountPath()).append(getBasePath()).toString();
+        return new StringBuilder(resolvedMount.getResolvedMountPath()).append(getServletPath()).toString();
     }
     
     protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
