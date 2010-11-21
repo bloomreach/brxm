@@ -70,8 +70,8 @@ public final class FacetSearchProvider extends SortableDataProvider<Node> implem
                     try {
                         return node.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes();
                     } catch (RepositoryException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        log.info("Could not get NodeIterator from resultset for FacetSearchProvider, will return null.",
+                                e);
                     }
                 }
                 return null;
