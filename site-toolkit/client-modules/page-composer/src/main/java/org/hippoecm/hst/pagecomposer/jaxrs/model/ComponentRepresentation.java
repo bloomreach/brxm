@@ -41,7 +41,9 @@ public class ComponentRepresentation {
         id = componentConfiguration.getCanonicalIdentifier();
         name = componentConfiguration.getName();
         path = componentConfiguration.getCanonicalStoredLocation();
-        parentId = componentConfiguration.getParent().getCanonicalIdentifier();
+        if(componentConfiguration.getParent() != null) {
+            parentId = componentConfiguration.getParent().getCanonicalIdentifier();
+        }
         componentClassName = componentConfiguration.getComponentClassName();
         template = componentConfiguration.getRenderPath();
         type = componentConfiguration.getComponentType().toString();
