@@ -14,6 +14,67 @@
  * limitations under the License.
  */
 
+
+if (Hippo.Translation.Queue == undefined) {
+  (function() {
+
+    Hippo.Translation.Queue = {
+      tasks: [],
+
+      cleanup: function() {
+        for (var i = 0; i < this.tasks.length;) {
+          var handle = this.tasks[i];
+          if (handle.completed) {
+            this.tasks.splice(i, 1);
+          } else {
+            i++;
+          }
+        }
+      },
+
+      add: function(task, delay, callback) {
+        this.cleanup();
+
+        var handle = {
+           task: task,
+           started: false,
+           completed: false,
+           callback: callback
+        };
+        this.tasks.push(handle);
+        task.delay(delay, function() {
+          if (!handle.started) {
+            handle.started = true;
+            callback.call(window, function() {
+              handle.completed = true;
+            });
+          }
+        });
+        return handle;
+      },
+
+      flush: function() {
+        this.cleanup();
+
+        for (var i = 0; i < this.tasks.length; i++) {
+          var handle = this.tasks[i];
+          if (!handle.started) {
+            handle.task.cancel();
+            handle.started = true;
+            handle.callback.call(window);
+            handle.completed = true;
+          }
+        }
+      }
+
+    };
+
+  })();
+  Wicket.Ajax.registerPreCallHandler(function() { 
+    Hippo.Translation.Queue.flush(); 
+  });
+}
+
 Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
 
   labelWidth: 75, // label settings here cascade unless overridden
@@ -40,22 +101,31 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
     this.record = null;
     this.task = null;
 
-    this.updateUrl = function(record, value) {
-      Ext.Ajax.request({
-        url: self.codecUrl,
-        params: { name: value },
-        success: function(response, opts) {
-          var obj = Ext.decode(response.responseText);
-          record.data['urlfr'] = obj.data;
-          record.commit();
+    this.updateUrl = function(record, value, callback) {
+        if (window.XMLHttpRequest) {    // Mozilla/Safari
+            xhr = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {     // IE
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
         }
-      });
+        xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), callback != undefined);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Wicket-Ajax', "true");
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4) {
+            var obj = Ext.decode(xhr.responseText);
+            record.set('urlfr', obj.data);
+            if (callback != undefined) {
+              callback.call(this);
+            }
+          }
+        };
+        xhr.send(null);
     },
 
     this.onKeyUp = function (field, event) {
       var rec = self.record;
-      self.task.delay(500, function() {
-      	self.updateUrl(rec, field.getRawValue());
+      Hippo.Translation.Queue.add(self.task, 500, function(callback) {
+      	self.updateUrl(rec, field.getRawValue(), callback);
       });
     };
 

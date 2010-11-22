@@ -51,13 +51,11 @@ final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
             String id = record.getString("id");
             for (FolderTranslation data : translations) {
                 if (data.getId().equals(id)) {
-                    if (record.has("namefr")) {
+                    if (record.has("namefr") && !"".equals(record.getString("namefr"))) {
                         data.setNamefr(record.getString("namefr"));
-                        if (record.has("urlfr") && !"".equals(record.getString("urlfr"))) {
-                            data.setUrlfr(record.getString("urlfr"));
-                        } else {
-                            data.setUrlfr(record.getString("namefr").toLowerCase());
-                        }
+                    }
+                    if (record.has("urlfr") && !"".equals(record.getString("urlfr"))) {
+                        data.setUrlfr(record.getString("urlfr"));
                     }
 
                     JSONObject jsonLine = new JSONObject();

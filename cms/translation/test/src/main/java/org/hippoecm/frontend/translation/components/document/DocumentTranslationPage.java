@@ -18,17 +18,21 @@ package org.hippoecm.frontend.translation.components.document;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.ajax.WicketAjaxReference;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WicketEventReference;
 import org.hippoecm.frontend.translation.components.TestLocaleProvider;
 import org.hippoecm.frontend.translation.components.TestStringCodecModel;
-import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
-import org.hippoecm.frontend.translation.components.document.FolderTranslation;
 
 public class DocumentTranslationPage extends WebPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     public DocumentTranslationPage() {
+        add(JavascriptPackageResource.getHeaderContribution(WicketEventReference.INSTANCE));
+        add(JavascriptPackageResource.getHeaderContribution(WicketAjaxReference.INSTANCE));
+        
         List<FolderTranslation> fts = new LinkedList<FolderTranslation>();
         
         FolderTranslation top = new FolderTranslation("top");
