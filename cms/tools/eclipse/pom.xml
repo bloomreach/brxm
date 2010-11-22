@@ -22,9 +22,9 @@
   </parent>
 
   <artifactId>hippo-cms-tools-eclipse</artifactId>
-  <name>Eclipse utilities</name>
+  <name>CMS Eclipse utilities</name>
   <description>
-    Some utility scripts for making debugging Hippo ECM
+    Some utility scripts for making debugging Hippo CMS
     with Eclipse more easy. This project has no deliverables and acts
     as a placeholder for Eclipse related scripts and shortcuts.
   </description>

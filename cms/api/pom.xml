@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Standards frontend addon</name>
-  <description>Hippo ECM standards frontend addons</description>
+  <name>CMS Standards frontend addon</name>
+  <description>Hippo CMS standards frontend addons</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-api</artifactId>
   <packaging>jar</packaging>

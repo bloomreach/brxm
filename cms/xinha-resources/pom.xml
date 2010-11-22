@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Xinha addon</name>
-  <description>Hippo ECM Xinha addon</description>
+  <name>CMS Xinha addon</name>
+  <description>Hippo CMS Xinha addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-xinha-resources</artifactId>
   <packaging>war</packaging>

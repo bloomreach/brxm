@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo ECM CMS layout</name>
-  <description>Hippo ECM CMS layout</description>
+  <name>CMS layout</name>
+  <description>Hippo CMS layout</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-layout</artifactId>
   <packaging>war</packaging>

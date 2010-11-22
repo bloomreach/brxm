@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Translation repository addon</name>
-  <description>Hippo ECM Translation Repository Addon</description>
+  <name>CMS Translation repository addon</name>
+  <description>Hippo CMS Translation Repository Addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-translation-repository</artifactId>
   <packaging>jar</packaging>

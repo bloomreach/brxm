@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Gallery Addon</name>
-  <description>Hippo ECM Gallery Addon</description>
+  <name>CMS Gallery Addon</name>
+  <description>Hippo CMS Gallery Addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-gallery</artifactId>
   <packaging>pom</packaging>

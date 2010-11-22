@@ -22,7 +22,7 @@
   </parent>
 
   <name>CMS dashboard addon</name>
-  <description>Hippo ECM CMS dashboard addons</description>
+  <description>Hippo CMS dashboard addons</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-dashboard</artifactId>
   <packaging>jar</packaging>

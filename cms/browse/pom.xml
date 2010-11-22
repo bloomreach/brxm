@@ -22,7 +22,7 @@
   </parent>
 
   <name>CMS browse addon</name>
-  <description>Hippo ECM CMS browse addons</description>
+  <description>Hippo CMS browse addons</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-browse</artifactId>
   <packaging>jar</packaging>

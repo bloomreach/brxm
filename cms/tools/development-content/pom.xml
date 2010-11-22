@@ -23,8 +23,8 @@
 
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-tools-development-content</artifactId>
-  <name>Development content</name>
-  <description>Hippo ECM tool for creating development content</description>
+  <name>CMS Development content</name>
+  <description>Hippo CMS tool for creating development content</description>
   <packaging>jar</packaging>
 
   <scm>

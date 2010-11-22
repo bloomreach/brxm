@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Tools</name>
-  <description>Hippo ECM tools</description>
+  <name>CMS Tools</name>
+  <description>Hippo CMS tools</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-tools</artifactId>
   <packaging>pom</packaging>

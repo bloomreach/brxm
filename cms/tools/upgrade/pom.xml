@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Upgrade utilities</name>
-  <description>Upgrade utilities</description>
+  <name>CMS Upgrade utilities</name>
+  <description>Hippo CMS Upgrade utilities</description>
 
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-tools-upgrade</artifactId>

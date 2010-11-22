@@ -19,10 +19,8 @@
   <artifactId>hippo-cms</artifactId>
   <version>2.17.02-SNAPSHOT</version>
 
-  <name>Hippo CMS</name>
-  <description>The core of Hippo ECM, i.e. repository 2, plus an advanced webbased userinterface for content management: CMS, 
-    plus a simple webbased userinterface to access the repository: console.
-  </description>
+  <name>CMS</name>
+  <description>Hippo CMS</description>
   <packaging>pom</packaging>
 
   <url>http://www.onehippo.org/cms7/</url>
@@ -299,8 +297,8 @@
 
   <repositories>
     <repository>
-      <id>hippoecm</id>
-      <name>Hippo ECM maven 2 repository.</name>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
       <url>http://repository.hippocms.org/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
@@ -383,8 +381,8 @@
       </releases>
     </pluginRepository>
     <pluginRepository>
-      <id>hippoecm</id>
-      <name>Hippo ECM maven 2 repository.</name>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
       <url>http://repository.hippocms.org/maven2/</url>
       <snapshots>
         <enabled>false</enabled>

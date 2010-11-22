@@ -21,7 +21,7 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo CMS editor frontend addon</name>
+  <name>CMS editor frontend addon</name>
   <description>Hippo CMS editor frontend addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-editor-frontend</artifactId>

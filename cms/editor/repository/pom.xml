@@ -23,7 +23,7 @@
   </parent>
   -->
 
-  <name>Hippo CMS editor repository addon</name>
+  <name>CMS editor repository addon</name>
   <description>Hippo CMS editor repository addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-editor-repository</artifactId>

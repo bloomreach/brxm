@@ -22,7 +22,7 @@
   </parent>
 
   <name>CMS admin addon</name>
-  <description>Hippo ECM CMS administration addon</description>
+  <description>Hippo CMS administration addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-admin</artifactId>
   <packaging>jar</packaging>

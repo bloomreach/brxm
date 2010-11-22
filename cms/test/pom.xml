@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Frontend engine test</name>
-  <description>Library with test base classes for Hippo ECM frontend plugins</description>
+  <name>CMS Frontend engine test</name>
+  <description>Hippo CMS Library with test base classes for frontend plugins</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-test</artifactId>
   <packaging>jar</packaging>

@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Versioning frontend addon</name>
-  <description>Hippo ECM versioning frontend addon</description>
+  <name>CMS Versioning frontend addon</name>
+  <description>Hippo CMS versioning frontend addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-versioning</artifactId>
 

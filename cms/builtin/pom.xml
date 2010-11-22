@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Builtin frontend addon</name>
-  <description>Hippo ECM builtin frontend addons</description>
+  <name>CMS Builtin frontend addon</name>
+  <description>Hippo CMS builtin frontend addons</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-builtin</artifactId>
   <packaging>jar</packaging>

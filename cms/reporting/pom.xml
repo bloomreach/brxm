@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Reporting frontend addon</name>
-  <description>Hippo ECM reporting frontend addon</description>
+  <name>CMS Reporting</name>
+  <description>Hippo CMS reporting</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-reporting</artifactId>
   <packaging>jar</packaging>

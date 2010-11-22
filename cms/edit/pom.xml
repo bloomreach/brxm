@@ -22,7 +22,7 @@
   </parent>
 
   <name>CMS edit addon</name>
-  <description>Hippo ECM CMS edit addons</description>
+  <description>Hippo CMS edit addons</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-edit</artifactId>
   <packaging>jar</packaging>

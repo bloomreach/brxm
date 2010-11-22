@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Frontend plugins</name>
-  <description>Hippo ECM frontend plugins</description>
+  <name>CMS Frontend plugins</name>
+  <description>Hippo CMS frontend plugins</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-plugins</artifactId>
   <packaging>jar</packaging>

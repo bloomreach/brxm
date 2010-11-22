@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo ECM package skin</name>
-  <description>Hippo ECM package skin</description>
+  <name>CMS skin</name>
+  <description>Hippo CMS skin</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-skin</artifactId>
   <packaging>war</packaging>
