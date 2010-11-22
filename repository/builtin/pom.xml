@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Builtin common addon</name>
-  <description>Hippo ECM builtin addon</description>
+  <name>Repository Builtin workflow</name>
+  <description>Hippo Repository builtin workflow API package</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-builtin</artifactId>
   <packaging>jar</packaging>

@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Repository upgrade module</name>
-  <description>Hippo ECM repository upgrade module</description>
+  <name>Repository Upgrade Module</name>
+  <description>Hippo Repository Upgrade Module</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-upgrade</artifactId>
   <packaging>jar</packaging>

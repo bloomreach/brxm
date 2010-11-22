@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Repository servlets</name>
-  <description>Hippo ECM repository servlets</description>
+  <name>Repository Servlets</name>
+  <description>Hippo Repository Servlets</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-servlets</artifactId>
   <packaging>jar</packaging>

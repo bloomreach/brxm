@@ -22,7 +22,7 @@
   </parent>
 
   <name>Repository API</name>
-  <description>Hippo ECM specific extensions to the JCR API</description>
+  <description>Hippo Repository specific extensions to the JCR API</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-api</artifactId>
 

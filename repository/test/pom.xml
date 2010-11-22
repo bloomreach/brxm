@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Repository test</name>
-  <description>Hippo ECM repository test</description>
+  <name>Repository Test</name>
+  <description>Hippo Repository Test</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-test</artifactId>
   <packaging>jar</packaging>
@@ -220,7 +220,21 @@
           </dependency>
         </dependencies>
       </plugin>
-   </plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <additionalBuildcommands>
+            <buildCommand>
+              <name>org.jpox.ide.eclipse.enhancerbuilder</name>
+            </buildCommand>
+          </additionalBuildcommands>
+          <additionalProjectnatures>
+            <projectnature>org.jpox.ide.eclipse.projectnature</projectnature>
+          </additionalProjectnatures>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <profiles>

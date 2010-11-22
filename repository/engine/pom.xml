@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Repository engine</name>
-  <description>Hippo ECM repository engine</description>
+  <name>Repository Engine</name>
+  <description>Hippo Repository Engine</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-engine</artifactId>
   <packaging>jar</packaging>

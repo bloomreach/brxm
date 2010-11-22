@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Builtin repository addon</name>
-  <description>Hippo ECM builtin addon</description>
+  <name>Repository Default Configuration</name>
+  <description>Hippo Repository default configuration</description>
   <artifactId>hippo-repository-config</artifactId>
   <groupId>org.onehippo</groupId>
   <packaging>jar</packaging>

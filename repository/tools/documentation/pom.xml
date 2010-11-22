@@ -23,8 +23,8 @@
 
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-tools-documentation</artifactId>
-  <name>Documentation tools</name>
-  <description>Hippo ECM Documentation Tools</description>
+  <name>Repository Documentation tools</name>
+  <description>Hippo Repository Documentation Tools</description>
   <packaging>jar</packaging>
 
   <scm>

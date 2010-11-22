@@ -22,7 +22,7 @@
   </parent>
 
   <name>Repository LDAP based Authorization</name>
-  <description>Hippo ECM Ldap Addon Repository</description>
+  <description>Hippo Repository LDAP-based authorization add-on</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-ldap</artifactId>
   <packaging>jar</packaging>

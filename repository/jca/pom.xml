@@ -22,7 +22,7 @@
   </parent>
 
   <name>Repository JCA</name>
-  <description>Hippo ECM repository adapter</description>
+  <description>Hippo Repository Adapter</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-jca</artifactId>
   <packaging>rar</packaging>

@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Repository modules</name>
-  <description>Hippo ECM repository modules</description>
+  <name>Repository Modules</name>
+  <description>Hippo Repository Modules</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-repository-modules</artifactId>
   <packaging>jar</packaging>

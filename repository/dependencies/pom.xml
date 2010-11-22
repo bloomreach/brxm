@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
-  Copyright 2007-2008 Hippo.
+  Copyright 2007-2010 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -21,71 +21,67 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Repository Provider Module Interface</name>
-  <description>Hippo Repository Data Provider Module Interface</description>
+  <name>Repository Dependencies</name>
+  <description>Hippo Repository Dependencies</description>
   <groupId>org.onehippo</groupId>
-  <artifactId>hippo-repository-provider</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>hippo-repository-dependencies</artifactId>
+  <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/provider</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/provider</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/provider</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/dependencies</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/dependencies</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/dependencies</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-core</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-api</artifactId>
+      <artifactId>hippo-repository-engine</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
-      <artifactId>hippo-repository-utilities</artifactId>
+      <artifactId>hippo-repository-modules</artifactId>
       <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-config</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
-
     <dependency>
-      <groupId>net.sf.json-lib</groupId>
-      <artifactId>json-lib</artifactId>
-      <version>2.2.2</version>
-      <classifier>jdk15</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-servlets</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
     </dependency>
   </dependencies>
 
   <build>
-    <defaultGoal>install</defaultGoal>
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.0-beta-4</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
         </configuration>
       </plugin>
     </plugins>
