@@ -540,34 +540,24 @@ public class FacetedAuthorizationTest extends TestCase {
         // FIXME HREPTWO-3554 assertEquals(10L, navNode.getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
     }
 
-    /**
-     * FIXME: HREPTWO-3290
-     * @throws RepositoryException
-     */
-    @Ignore
+    @Test
     public void testFacetSelect() throws RepositoryException {
         Node navNode = testNav.getNode("select");
         assertTrue(navNode.hasNode("readdoc0"));
         assertTrue(navNode.hasNode("readdoc0/subread"));
 
-        System.out.println("************** DIRECT number of nodes found " + testData.getNodes().getSize());
-        System.out.print("************** DIRECT Nodes found");
         NodeIterator directIter = testData.getNodes();
         while (directIter.hasNext()) {
-            System.out.print(" " + directIter.nextNode().getName());
+            directIter.nextNode().getName();
         }
-        System.out.println("");
         
         
         NodeIterator iter = navNode.getNodes();
         
-        System.out.println("************** SELECT number of nodes found " + iter.getSize());
-        System.out.print("************** SELECT Nodes found");
         while (iter.hasNext()) {
-            System.out.print(" " + iter.nextNode().getName());
+            iter.nextNode().getName();
         }
-        System.out.println("");
-        assertEquals(testData.getNodes().getSize(), iter.getSize());
+        assertEquals(directIter.getSize(), iter.getSize());
     }
 
     @Test
