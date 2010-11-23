@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,11 +27,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.core.container.ContainerNotFoundException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
@@ -47,6 +45,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     private static Logger log = LoggerFactory.getLogger(CXFJaxrsHstConfigService.class);
  
     public final static String REQUEST_CONFIG_NODE_IDENTIFIER = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.contentNode.identifier";
+    public final static String REQUEST_ERROR_MESSAGE_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.exception.message";
     
 	public CXFJaxrsHstConfigService(String serviceName) {
 		super(serviceName);
@@ -81,25 +80,43 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 		
         try {
         	Session jcrSession = requestContext.getSession();
-        	node = jcrSession.getNodeByUUID(uuid);
-        	if (node == null) {
-        	    // TODO log warn and return a proper json response containing the error instead of throwing
-                throw new ContainerNotFoundException("Cannot find content node with uuid '"+uuid+"'",new WebApplicationException(Response.Status.NOT_FOUND));
-        	}
+        	node = jcrSession.getNodeByIdentifier(uuid);
         	resourceType = node.getPrimaryNodeType().getName();
-           
-        } catch (PathNotFoundException pnf) {
-           // TODO log warn and return a proper json response containing the error instead of throwing
-            throw new ContainerNotFoundException(new WebApplicationException(Response.Status.NOT_FOUND));
-        } catch (ItemNotFoundException e) {
-            // TODO log warn and return a proper json response containing the error instead of throwing
-            throw new ContainerException(e);
+          
+        } catch (UndeclaredThrowableException e) {
+          // TODO HSTTWO-1368 this is a temporary fix as long as jcrSession.getNodeByIdentifier throws this exception over RMI when the uuid does not exist
+          if(log.isDebugEnabled()) { 
+                log.warn("ItemNotFoundException{} ", uuid);
+          } 
+          return  setErrorMessageAndReturn(requestContext, request, "ItemNotFoundException: unknown uuid '"+uuid+"'");
+        } catch (PathNotFoundException e) {
+           if(log.isDebugEnabled()) { 
+               log.warn("PathNotFoundException ", e);
+           } else {
+              log.warn("PathNotFoundException {}", e.toString());
+           }
+           return setErrorMessageAndReturn(requestContext, request, e.toString());
+        }  catch (ItemNotFoundException e) {
+            if(log.isDebugEnabled()) { 
+                log.warn("ItemNotFoundException ", e);
+            } else {
+               log.warn("ItemNotFoundException {}", e.toString());
+            }
+            return  setErrorMessageAndReturn(requestContext, request, e.toString());
         } catch (LoginException e) {
-         // TODO log warn and return a proper json response containing the error instead of throwing
-            throw new ContainerException(e);
+            if(log.isDebugEnabled()) { 
+                log.warn("LoginException ", e);
+            } else {
+               log.warn("LoginException {}", e.toString());
+            }
+            return  setErrorMessageAndReturn(requestContext, request, e.toString());
 		} catch (RepositoryException e) {
-		 // TODO log warn and return a proper json response containing the error instead of throwing
-		    throw new ContainerException(e);
+		    if(log.isDebugEnabled()) { 
+	           log.warn("RepositoryException ", e);
+	        } else {
+	          log.warn("RepositoryException {}", e.toString());
+	        }
+		    return setErrorMessageAndReturn(requestContext, request, e.toString());
 		} 
 
         requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, node);
@@ -116,7 +133,13 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
 	}
 	
-	@Override
+	private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {
+	    request.setAttribute(REQUEST_ERROR_MESSAGE_ATTRIBUTE, message);
+	    String jaxrsEndpointRequestPath = "/hst:exception/";
+	    return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath);
+    }
+
+    @Override
 	public void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException {
 		super.invoke(requestContext, request, response);
 	}

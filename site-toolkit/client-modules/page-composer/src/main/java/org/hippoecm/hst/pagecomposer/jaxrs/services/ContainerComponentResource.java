@@ -16,9 +16,11 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.UUID;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -38,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
@@ -49,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+//TODO When HSTTWO-1368 is fixed, we can remove the UndeclaredThrowableException
 
 @Path("/hst:containercomponent/")
 public class ContainerComponentResource extends AbstractConfigResource {
@@ -74,7 +78,15 @@ public class ContainerComponentResource extends AbstractConfigResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
             Session session = requestContext.getSession();
-            Node containerItem = session.getNodeByUUID(itemUUID);
+            Node containerItem;
+            try {
+                containerItem = session.getNodeByIdentifier(itemUUID);
+            } catch (ItemNotFoundException e) {
+                return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
+            } catch (UndeclaredThrowableException e) {
+                return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
+            }
+            
             if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 throw new ContainerException("Need a container item");
             }
@@ -133,23 +145,30 @@ public class ContainerComponentResource extends AbstractConfigResource {
             List<String> children = container.getChildren();
             int childCount = (children != null ? children.size() : 0);
             if (childCount > 0) {
-                for (String childId : children) {
-                    checkIfMoveIntended(containerNode, childId, session);
-                }
-                int index = childCount - 1;
-                while (index > -1) {
-                    String childId = children.get(index);
-                    Node childNode = session.getNodeByUUID(childId);
-                    String nodeName = childNode.getName();
-    
-                    int next = index + 1;
-                    if (next == childCount) {
-                        containerNode.orderBefore(nodeName, null);
-                    } else {
-                        Node nextChildNode = session.getNodeByUUID(children.get(next));
-                        containerNode.orderBefore(nodeName, nextChildNode.getName());
+                try {
+                    for (String childId : children) {
+                        checkIfMoveIntended(containerNode, childId, session);
                     }
-                    --index;
+                    int index = childCount - 1;
+             
+                    while (index > -1) {
+                        String childId = children.get(index);
+                        Node childNode = session.getNodeByIdentifier(childId);
+                        String nodeName = childNode.getName();
+        
+                        int next = index + 1;
+                        if (next == childCount) {
+                            containerNode.orderBefore(nodeName, null);
+                        } else {
+                            Node nextChildNode = session.getNodeByIdentifier(children.get(next));
+                            containerNode.orderBefore(nodeName, nextChildNode.getName());
+                        }
+                        --index;
+                    }
+                } catch (ItemNotFoundException e) {
+                    return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
+                } catch (UndeclaredThrowableException e) {
+                    return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
                 }
             }
             session.save();
@@ -170,7 +189,14 @@ public class ContainerComponentResource extends AbstractConfigResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
             Session session = requestContext.getSession();
-            Node node = session.getNodeByUUID(itemUUID);
+            Node node;
+            try {
+                node = session.getNodeByIdentifier(itemUUID);
+            } catch (ItemNotFoundException e) {
+                return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot delete item");
+            } catch (UndeclaredThrowableException e) {
+                return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot delete item");
+            }
             node.remove();
             session.save();
         } catch (RepositoryException e) {
@@ -189,9 +215,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
 
-    private void checkIfMoveIntended(Node parent, String childId, Session session) throws RepositoryException {
+    private void checkIfMoveIntended(Node parent, String childId, Session session) throws RepositoryException, NotFoundException, UndeclaredThrowableException {
         String parentPath = parent.getPath();
-        Node childNode = session.getNodeByUUID(childId);
+        Node childNode = session.getNodeByIdentifier(childId);
         String childPath = childNode.getPath();
         String childParentPath = childPath.substring(0, childPath.lastIndexOf('/'));
         if (!parentPath.equals(childParentPath)) {

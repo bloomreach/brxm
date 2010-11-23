@@ -64,6 +64,11 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteResource"/>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource"/>
+          </constructor-arg>
+        </bean>
       </list>
     </property>
   </bean>
