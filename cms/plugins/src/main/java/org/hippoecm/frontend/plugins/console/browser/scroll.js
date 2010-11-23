@@ -32,7 +32,11 @@ function Hippo_scroll_savePosition() {
 }
 
 function Hippo_scroll_getElement() {
-    return YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get(Hippo_scroll_element_id)).body;
+    var el = YAHOO.util.Dom.get(Hippo_scroll_element_id);
+    if(!el) {
+        return YAHOO.hippo.LayoutManager.findLayoutUnit(el).body;
+    }
+    return null;
 }
 
 function Hippo_scroll_loadPosition() {
