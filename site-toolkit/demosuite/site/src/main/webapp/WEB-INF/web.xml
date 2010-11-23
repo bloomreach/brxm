@@ -224,11 +224,6 @@
   </servlet>
 
   <servlet>
-    <servlet-name>DojoResourceServlet</servlet-name>
-    <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
-  </servlet>
-
-  <servlet>
     <servlet-name>freemarker</servlet-name>
     <servlet-class>org.hippoecm.hst.servlet.HstFreemarkerServlet</servlet-class>
     <!-- FreemarkerServlet settings: -->
@@ -293,11 +288,6 @@
   <servlet-mapping>
     <servlet-name>PageComposerResourceServlet</servlet-name>
     <url-pattern>/hst/pagecomposer/sources/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>DojoResourceServlet</servlet-name>
-    <url-pattern>/javascript/dojo/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
