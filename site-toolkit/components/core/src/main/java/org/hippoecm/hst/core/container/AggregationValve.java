@@ -54,7 +54,6 @@ public class AggregationValve extends AbstractValve {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
-        boolean isDevelopmentMode = getContainerConfiguration().isDevelopmentMode();
         
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() == null) {
             HstComponentWindow rootWindow = context.getRootComponentWindow();
@@ -85,21 +84,6 @@ public class AggregationValve extends AbstractValve {
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
                 List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
                 sortComponentWindowsByHierarchy(rootWindow, sortedComponentWindowList);
-                
-                // create and add a window for trace tool
-                HstComponentWindow traceToolWindow = null;
-                if (isDevelopmentMode && !sortedComponentWindowList.isEmpty()) {
-                    HstComponentWindow lastChildWindow = sortedComponentWindowList.get(sortedComponentWindowList.size() - 1);
-                    traceToolWindow = createTraceToolComponent(context, requestContext, lastChildWindow);
-                    
-                    if (traceToolWindow != null) {
-                        ((HstComponentWindowImpl) lastChildWindow).addChildWindow(traceToolWindow);
-                        createHstRequestResponseForWindows(traceToolWindow, requestContext, 
-                                requestMap.get(lastChildWindow), responseMap.get(lastChildWindow), 
-                                requestMap, responseMap, topParentResponse);
-                        sortedComponentWindowList.add(traceToolWindow);
-                    }
-                }
                 
                 HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[sortedComponentWindowList.size()]);
                 
@@ -207,7 +191,7 @@ public class AggregationValve extends AbstractValve {
                 } else {
                     
                     // process doRender() of each component as reversed sort order, child first.
-                    processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap, isDevelopmentMode, traceToolWindow);
+                    processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
                     
                     // page error handling...
                     pageErrors = getPageErrors(sortedComponentWindows, true);
@@ -343,15 +327,12 @@ public class AggregationValve extends AbstractValve {
                     response.addHeadElement(el, rootCompConfig.getCanonicalIdentifier());
                 } else {
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                    if(!compConfig.getComponentClassName().equals(traceToolComponentClassName)) {
-                        Element el = response.createElement("div");
-                        el.setAttribute("class", "componentContentWrapper");
-                        el.setAttribute("hst:id", compConfig.getCanonicalIdentifier());
-                        el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
-                        el.setAttribute("hst:type", compConfig.getComponentType().toString());
-                        response.setWrapperElement(el);
-                    }
-                    
+                    Element el = response.createElement("div");
+                    el.setAttribute("class", "componentContentWrapper");
+                    el.setAttribute("hst:id", compConfig.getCanonicalIdentifier());
+                    el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
+                    el.setAttribute("hst:type", compConfig.getComponentType().toString());
+                    response.setWrapperElement(el);
                 }
             } 
             // TODO ////////////////////////////////////////////////////////////////////////////
@@ -397,62 +378,16 @@ public class AggregationValve extends AbstractValve {
         el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer"); 
         response.addHeadElement(el, src);
     }
-// TODO //////////////////////////////////////////////////////////////////////////////
-// TODO //////////////////////////////////////////////////////////////////////////////
     
-    protected void processWindowsRender(
-            final HstContainerConfig requestContainerConfig, 
-            final HstComponentWindow [] sortedComponentWindows,
-            final Map<HstComponentWindow, HstRequest> requestMap, 
-            final Map<HstComponentWindow, HstResponse> responseMap,
-            final boolean isDevelopmentMode,
-            final HstComponentWindow traceToolWindow)
-            throws ContainerException {
+    protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
+            final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
+            final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
 
-        if (isDevelopmentMode) {
-            boolean traceToolWindowFlushed = false;
-    
-            for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
-                HstComponentWindow window = sortedComponentWindows[i];
-                HstRequest request = requestMap.get(window);
-                HstResponse response = responseMap.get(window);
-
-                if (window == traceToolWindow) {
-                    try {
-                        getComponentInvoker().invokeRender(requestContainerConfig, request, response);
-                    } catch (Exception e) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Failed to render tracetool.", e);
-                        } else if (log.isWarnEnabled()) {
-                            log.warn("Failed to render tracetool. {}", e.toString());
-                        }
-                    }
-                } else {
-                    getComponentInvoker().invokeRender(requestContainerConfig, request, response);
-                    
-                    if (isDevelopmentMode && !traceToolWindowFlushed) {
-                        try {
-                            traceToolWindowFlushed = true;
-                            if (traceToolWindow != null) {
-                                traceToolWindow.getResponseState().flush();
-                            }
-                        } catch (Exception e) {
-                            if (log.isDebugEnabled()) {
-                                log.warn("Exception during flushing the traceToolWindow's response state.", e);
-                            } else if (log.isWarnEnabled()) {
-                                log.warn("Exception during flushing the traceToolWindow's response state. {}", e.toString());
-                            }                    
-                        }
-                    }
-                }
-            }
-        } else {
-            for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
-                HstComponentWindow window = sortedComponentWindows[i];
-                HstRequest request = requestMap.get(window);
-                HstResponse response = responseMap.get(window);
-                getComponentInvoker().invokeRender(requestContainerConfig, request, response);
-            }
+        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+            HstComponentWindow window = sortedComponentWindows[i];
+            HstRequest request = requestMap.get(window);
+            HstResponse response = responseMap.get(window);
+            getComponentInvoker().invokeRender(requestContainerConfig, request, response);
         }
     }
     

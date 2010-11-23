@@ -3,12 +3,8 @@ package org.hippoecm.hst.core.container;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -17,7 +13,6 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
@@ -47,9 +42,6 @@ public abstract class AbstractValve implements Valve {
     protected HstSiteMenusManager siteMenusManager;
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected PageErrorHandler defaultPageErrorHandler;
-    
-    protected String traceToolComponentName = "hstTraceToolComponent";
-    protected String traceToolComponentClassName = "org.hippoecm.hst.component.support.tool.HstTraceToolComponent";
     
     protected boolean alwaysRedirectLocationToAbsoluteUrl = true;
     
@@ -157,71 +149,12 @@ public abstract class AbstractValve implements Valve {
     public void destroy() {
     }
     
-    public void setTraceToolComponentName(String traceToolComponentName) {
-        this.traceToolComponentName = StringUtils.trim(traceToolComponentName);
-    }
-    
-    public String getTraceToolComponentName() {
-        return this.traceToolComponentName;
-    }
-
-    public void setTraceToolComponentClassName(String traceToolComponentClassName) {
-        this.traceToolComponentClassName = StringUtils.trim(traceToolComponentClassName);
-    }
-    
-    public String getTraceToolComponentClassName() {
-        return this.traceToolComponentClassName;
-    }
-    
     public boolean isAlwaysRedirectLocationToAbsoluteUrl() {
         return alwaysRedirectLocationToAbsoluteUrl;
     }
     
     public void setAlwaysRedirectLocationToAbsoluteUrl(boolean alwaysRedirectLocationToAbsoluteUrl) {
         this.alwaysRedirectLocationToAbsoluteUrl = alwaysRedirectLocationToAbsoluteUrl;
-    }
-    
-    protected HstComponentWindow createTraceToolComponent(ValveContext context, HstRequestContext requestContext, HstComponentWindow parentWindow) {
-        HstComponentWindow traceToolComponentWindow = null;
-        final String traceCompName = getTraceToolComponentName();
-        final String traceToolCompClassName = getTraceToolComponentClassName();
-
-        if (traceToolCompClassName != null && !"".equals(traceToolCompClassName)) {
-            try {
-                HstComponentConfiguration compConfig = new HstComponentConfiguration() {
-                    public SortedMap<String, HstComponentConfiguration> getChildren() { return null; }
-                    public HstComponentConfiguration getChildByName(String name) { return null; }
-                    public String getComponentClassName() { return traceToolCompClassName; }
-                    public String getId() { return traceCompName; }
-                    public String getName() { return traceCompName; }
-                    public String getParameter(String name) { return null; }
-                    public Map<String, String> getParameters() { return null; }
-                    public String getReferenceName() { return traceCompName; }
-                    public String getRenderPath() { return null; }
-                    public String getNamedRenderer() { return null; }
-                    public String getServeResourcePath() { return null; }
-                    public String getNamedResourceServer() { return null; }
-                    public HstComponentConfiguration getParent() { return null; }
-					public String getLocalParameter(String name) {return null;}
-					public Map<String, String> getLocalParameters() {return null;}
-					public String getCanonicalStoredLocation() {return null;}
-                    public String getPageErrorHandlerClassName() {return null;}
-                    public String getXType() {return null;}
-                    public String getCanonicalIdentifier() {return null;}
-                    public Type getComponentType() {return null;}
-                };
-                
-                traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to create hstTraceTool component windows.", e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Failed to create hstTraceTool component windows: {}", e.toString());
-                }
-            }
-        }
-        
-        return traceToolComponentWindow;
     }
     
     protected HstComponentWindow findComponentWindow(HstComponentWindow rootWindow, String windowReferenceNamespace) {
