@@ -15,9 +15,14 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.util.Collections;
 import java.util.List;
 
-public interface HippoAvailableTranslationsBean extends HippoBean {
+public interface HippoAvailableTranslationsBean<K extends HippoBean> {
+
+    public final static HippoAvailableTranslationsBean<HippoBean> noopTranslationHippoBean = new NoopTranslationsBean<HippoBean>();
+    public final static HippoAvailableTranslationsBean<HippoDocumentBean> noopTranslationDocumentBean = new NoopTranslationsBean<HippoDocumentBean>();
+    public final static HippoAvailableTranslationsBean<HippoFolderBean> noopTranslationFolderBean = new NoopTranslationsBean<HippoFolderBean>();
 
     /**
      * It returns the available translations. 
@@ -27,26 +32,45 @@ public interface HippoAvailableTranslationsBean extends HippoBean {
     
     /**
      * @param locale
-     * @return <code>true</code> when the the translation for <code>locale</code> is present
+     * @return <code>true</code> when the translation for <code>locale</code> is present
      */
-    boolean hasTranslations(String locale);
+    boolean hasTranslation(String locale);
     
     /**
-     * @return the List of all {@link HippoBean}'s and an empty {@link List} if no translations found
+     * @param <K> the type of elements in the {@link List} to be returned
+     * @return the List of all {@link T}'s and an empty {@link List} if no translations found
+     * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <K>
      */
-    List<HippoBean> getTranslations();
+    List<K> getTranslations() throws ClassCastException;
     
     /**
-     * @param locale
-     * @return returns the {@link HippoBean} for <code>locale</code> and <code>null</code> if not present
+     * @param <K> the return type
+     * @param locale the locale for the translation
+     * @return returns the {@link T} for <code>locale</code> and <code>null</code> if not present
+     * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <K>
      */
-    HippoBean getTranslation(String locale);
-    
-    /**
-     * @param <T> the return type
-     * @param locale the locale the translation should be in
-     * @param beanMappingClass the returned type must be of <code>beanMappingClass</code>. 
-     * @return A {@link HippoBean} with this <code>locale</code> and of type <code>beanMappingClass</code>. <code>null</code> if there is not {@link HippoBean} with correct locale or correct <code>beanMappingClass</code> 
-     */
-    <T extends HippoBean> T getTranslation(String locale, Class<T> beanMappingClass);
+     K getTranslation(String locale) throws ClassCastException;
+
+     /**
+      * A No-operation instance of a HippoAvailableTranslationsBean 
+      */
+     final static class NoopTranslationsBean<K extends HippoBean> implements HippoAvailableTranslationsBean<K> {
+
+        public List<String> getAvailableLocales() {
+            return Collections.EMPTY_LIST;
+        }
+
+        public K getTranslation(String locale) throws ClassCastException {
+            return null;
+        }
+
+        public List<K> getTranslations() throws ClassCastException {
+            return null;
+        }
+
+        public boolean hasTranslation(String locale) {
+            return false;
+        }
+         
+     }
 }

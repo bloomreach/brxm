@@ -34,6 +34,9 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
     protected ArrayList<HippoFolderBean> hippoFolders;
     protected ArrayList<HippoDocumentBean> hippoDocuments;
+
+    private boolean availableTranslationsBeanInitialized = false;
+    private HippoAvailableTranslationsBean<HippoFolderBean> availableTranslationsBean;
     
     public List<HippoFolderBean> getFolders(){
          return this.getFolders(false);
@@ -315,4 +318,23 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
         }
 
     }
+    
+    public HippoAvailableTranslationsBean<HippoFolderBean> getAvailableTranslationsBean() {
+        if(!availableTranslationsBeanInitialized) {
+            availableTranslationsBeanInitialized = true;
+            try {
+                availableTranslationsBean = getBean("hippotranslation:translations");
+            } catch (ClassCastException e) {
+                 log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
+            }
+            if(availableTranslationsBean== null) {
+                availableTranslationsBean = HippoAvailableTranslationsBean.noopTranslationFolderBean;
+                log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
+            } else {
+                ((HippoAvailableTranslations)availableTranslationsBean).setBeanMappingClass(HippoFolderBean.class);
+            }
+        }
+        return availableTranslationsBean;
+    }
+  
 }

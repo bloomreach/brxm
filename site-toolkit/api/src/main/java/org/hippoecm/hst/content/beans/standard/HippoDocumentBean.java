@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
+
 /**
  * This is a marker interface for all beans that represent a document. When developers implement their own bean which
  * does not extend the standard HippoDocument bean, they should implement this interface. This ensures that linkrewriting
@@ -27,4 +29,20 @@ public interface HippoDocumentBean extends HippoBean {
      * @return the uuid of the canonical handle (the physical node) and <code>null</code> if some exception happened
      */
     String getCanonicalHandleUUID();
+    
+    
+    /**
+     * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
+     * @return a {@link HippoAvailableTranslationsBean}. This method never returns <code>null</code>
+     */
+    HippoAvailableTranslationsBean<HippoDocumentBean> getAvailableTranslationsBean();
+    
+    /**
+     * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
+     * @param beanMappingClass
+     * @return a {@link HippoAvailableTranslationsBean} where the translations must be of type <code>beanMappingClass</code>. This method never returns <code>null</code>
+     */
+    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass);
+ 
+    
 }

@@ -17,12 +17,14 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.List;
 
+import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
+
 
 /**
  * This is a base interface for all beans that represent a folder should implement. When developers implement their own bean which
  * does not extend the standard HippoFolder bean, they should implement this interface. 
  */
-public interface HippoFolderBean extends HippoBean{
+public interface HippoFolderBean extends HippoBean {
 
     /**
      * @return the list of <code>HippoFolderBean</code> below this <code>HippoFolderBean</code> and an empty list of no folders present
@@ -95,4 +97,10 @@ public interface HippoFolderBean extends HippoBean{
      */
     <T> HippoDocumentIterator<T> getDocumentIterator(Class<T> beanMappingClass);
     
+    /**
+     * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
+     * @return a {@link HippoAvailableTranslationsBean}. The method never return <code>null</code>
+     */
+    HippoAvailableTranslationsBean<HippoFolderBean> getAvailableTranslationsBean();
+      
 }

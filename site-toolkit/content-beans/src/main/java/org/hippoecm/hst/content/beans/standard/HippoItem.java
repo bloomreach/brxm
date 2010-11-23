@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HippoItem implements HippoBean {
-
+ 
     private static Logger log = LoggerFactory.getLogger(HippoItem.class);
 
     protected String canonicalId;
@@ -104,7 +104,6 @@ public class HippoItem implements HippoBean {
             } else if (this.node.isNodeType("mix:referenceable")) {
                 this.canonicalId = this.node.getUUID();
             } else if( (canonicalNode = ((HippoNode)node).getCanonicalNode()) != null) {
-                // TODO once HREPTWO-4680 is fixed, this else if can (should) be removed again as it is less efficient
                 canonicalId = canonicalNode.getIdentifier();
             } 
         } catch (RepositoryException e) {
@@ -174,6 +173,141 @@ public class HippoItem implements HippoBean {
         return null;
     }
 
+    public <T extends HippoBean> List<T> getChildBeans(Class<T> beanMappingClass) {
+        List<T> childBeans = new ArrayList<T>();
+        NodeIterator nodes;
+        try {
+            nodes = node.getNodes();
+            while (nodes.hasNext()) {
+                Node child = nodes.nextNode();
+                if (child == null) {
+                    continue;
+                }
+               try {
+                    Object bean = this.objectConverter.getObject(child);
+                    if (bean != null) {
+                        if (beanMappingClass != null) {
+                            if(beanMappingClass.isAssignableFrom(bean.getClass())) {
+                                childBeans.add((T) bean); 
+                            } else {
+                                log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
+                            }
+                        } else {
+                            childBeans.add((T) bean); 
+                        }
+                    }
+                } catch (ObjectBeanManagerException e) {
+                    log.warn("Skipping bean: {}", e);
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: Error while trying to create childBeans:", e);
+            return new ArrayList<T>();
+        }
+        return childBeans;
+    }
+
+
+    public <T> List<T> getChildBeansByName(String childNodeName) {
+        return getChildBeansByName(childNodeName, (Class)null);
+    }
+    
+    public <T extends HippoBean> List<T> getChildBeansByName(String childNodeName, Class<T> beanMappingClass) {
+        List<T> childBeans = new ArrayList<T>();
+        NodeIterator nodes;
+        try {
+            nodes = node.getNodes();
+            while (nodes.hasNext()) {
+                Node child = nodes.nextNode();
+                if (child == null) {
+                    continue;
+                }
+                if (child.getName().equals(childNodeName)) {
+                    try {
+                        Object bean = this.objectConverter.getObject(child);
+                        if (bean != null) {
+                            if (beanMappingClass != null) {
+                                if(beanMappingClass.isAssignableFrom(bean.getClass())) {
+                                    childBeans.add((T) bean); 
+                                } else {
+                                    log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
+                                }
+                            } else {
+                                childBeans.add((T) bean); 
+                            }
+                        }
+                    } catch (ObjectBeanManagerException e) {
+                        log.warn("Skipping bean: {}", e);
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: Error while trying to create childBeans:", e);
+            return new ArrayList<T>();
+        }
+        return childBeans;
+    }
+
+    
+
+    public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
+        Class annotatedClass = this.objectConverter.getAnnotatedClassFor(jcrPrimaryNodeType);
+        if (annotatedClass == null) {
+            log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because there is no annotated class for this node type. Return null",
+                      jcrPrimaryNodeType);
+            return new ArrayList<T>();
+        }
+        if (this.node == null) {
+            log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because the jcr node is detached. ",
+                    jcrPrimaryNodeType);
+            return new ArrayList<T>();
+        }
+
+        List<T> childBeans = new ArrayList<T>();
+        NodeIterator nodes;
+        try {
+            nodes = node.getNodes();
+            while (nodes.hasNext()) {
+                Node child = nodes.nextNode();
+                if (child == null) {
+                    continue;
+                }
+
+                boolean nodeTypeMatch = false;
+                if (child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
+                    nodeTypeMatch = true;
+                } else if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (child.hasNode(child.getName())) {
+                        child = child.getNode(child.getName());
+                        if (child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
+                            nodeTypeMatch = true;
+                        }
+                    }
+                }
+
+                if (!nodeTypeMatch) {
+                    continue;
+                }
+
+                try {
+                    Object bean = this.objectConverter.getObject(child);
+                    if (bean != null && annotatedClass.isAssignableFrom(bean.getClass())) {
+                        childBeans.add((T) bean);
+                    }
+                } catch (ObjectBeanManagerException e) {
+                    log.warn("Skipping bean: {}", e);
+                }
+
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: '" + jcrPrimaryNodeType
+                    + "' ", e);
+            return new ArrayList<T>();
+        }
+
+        return childBeans;
+    }
+  
     public <T extends HippoBean> T getLinkedBean(String relPath, Class<T> beanMappingClass) {
         HippoMirrorBean mirror = getBean(relPath, HippoMirrorBean.class);
         if (mirror == null) {
@@ -247,94 +381,6 @@ public class HippoItem implements HippoBean {
         return childBeans;
     }
 
-    public <T> List<T> getChildBeansByName(String childNodeName) {
-        List<T> childBeans = new ArrayList<T>();
-        NodeIterator nodes;
-        try {
-            nodes = node.getNodes();
-            while (nodes.hasNext()) {
-                Node child = nodes.nextNode();
-                if (child == null) {
-                    continue;
-                }
-                if (child.getName().equals(childNodeName)) {
-                    try {
-                        Object bean = this.objectConverter.getObject(child);
-                        if (bean != null) {
-                            childBeans.add((T) bean);
-                        }
-                    } catch (ObjectBeanManagerException e) {
-                        log.warn("Skipping bean: {}", e);
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("RepositoryException: Error while trying to create childBeans:", e);
-            return new ArrayList<T>();
-        }
-        return childBeans;
-    }
-
-    public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
-        Class annotatedClass = this.objectConverter.getAnnotatedClassFor(jcrPrimaryNodeType);
-        if (annotatedClass == null) {
-            log
-                    .warn(
-                            "Cannot get ChildBeans for jcrPrimaryNodeType '{}' because there is no annotated class for this node type. Return null",
-                            jcrPrimaryNodeType);
-            return new ArrayList<T>();
-        }
-        if (this.node == null) {
-            log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because the jcr node is detached. ",
-                    jcrPrimaryNodeType);
-            return new ArrayList<T>();
-        }
-
-        List<T> childBeans = new ArrayList<T>();
-        NodeIterator nodes;
-        try {
-            nodes = node.getNodes();
-            while (nodes.hasNext()) {
-                Node child = nodes.nextNode();
-                if (child == null) {
-                    continue;
-                }
-
-                boolean nodeTypeMatch = false;
-                if (child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
-                    nodeTypeMatch = true;
-                } else if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    if (child.hasNode(child.getName())) {
-                        child = child.getNode(child.getName());
-                        if (child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
-                            nodeTypeMatch = true;
-                        }
-                    }
-                }
-
-                if (!nodeTypeMatch) {
-                    continue;
-                }
-
-                try {
-                    Object bean = this.objectConverter.getObject(child);
-                    if (bean != null && annotatedClass.isAssignableFrom(bean.getClass())) {
-                        childBeans.add((T) bean);
-                    }
-                } catch (ObjectBeanManagerException e) {
-                    log.warn("Skipping bean: {}", e);
-                }
-
-            }
-        } catch (RepositoryException e) {
-            log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: '" + jcrPrimaryNodeType
-                    + "' ", e);
-            return new ArrayList<T>();
-        }
-
-        return childBeans;
-    }
-
     public HippoBean getParentBean() {
         try {
             Node parentNode = valueProvider.getParentJcrNode();
@@ -366,7 +412,7 @@ public class HippoItem implements HippoBean {
 
     public HippoBean getContextualBean() {
         if(this.getNode() == null) {
-            log.warn("Cannot get parent bean for detached bean");
+            log.warn("Cannot get contextual bean for detached bean");
         }
         HstCtxWhereClauseComputer ctxWCC = new HstCtxWhereClauseComputerImpl();
         try {
@@ -465,6 +511,14 @@ public class HippoItem implements HippoBean {
         return this instanceof HippoFolderBean;
     }
 
+    /*
+     * Document and Folder beans will override this method 
+     */
+    public HippoAvailableTranslationsBean<?> getAvailableTranslationsBean() {
+        return HippoAvailableTranslationsBean.noopTranslationHippoBean;
+    }
+
+    
     public boolean equalCompare(Object compare) {
         return (Boolean) new ComparatorMap().get(compare);
     }

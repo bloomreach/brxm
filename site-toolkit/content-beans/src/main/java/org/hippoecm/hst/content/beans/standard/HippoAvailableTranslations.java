@@ -31,41 +31,30 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Node(jcrType="hippotranslation:translations")
-public class HippoAvailableTranslations extends HippoItem implements HippoAvailableTranslationsBean {
+public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem implements HippoAvailableTranslationsBean<K> {
 
     private static Logger log = LoggerFactory.getLogger(HippoAvailableTranslations.class);
     
-    private Map<String, HippoBean> translations;
+    private Map<String, K> translations;
+    private Class<HippoBean> beanMappingClass;
     
     public List<String> getAvailableLocales() {
         populate();
         return new ArrayList<String>(translations.keySet());
     }
 
-
-    public HippoBean getTranslation(String locale) {
+    public K getTranslation(String locale) {
         populate();
-        return translations.get(locale);
+        return (K)translations.get(locale);
     }
 
 
-    public List<HippoBean> getTranslations() {
-        populate();
-        return new ArrayList<HippoBean>(translations.values());
-    }
-    
-    public <T extends HippoBean> T getTranslation(String locale, Class<T> beanMappingClass) {
-        populate();
-        HippoBean o = translations.get(locale);
-        if (!beanMappingClass.isAssignableFrom(o.getClass())) {
-            log.debug("beanMappingClass of type '{}' wanted but found of type '{}'. Return null.",
-                    beanMappingClass.getName(), o.getClass().getName());
-            return null;
-        }
-        return (T) o;
+    public List<K> getTranslations() {
+        populate();        
+        return new ArrayList(translations.values());
     }
 
-    public boolean hasTranslations(String locale) {
+    public boolean hasTranslation(String locale) {
         populate();
         return translations.get(locale) != null;
     }
@@ -76,10 +65,27 @@ public class HippoAvailableTranslations extends HippoItem implements HippoAvaila
             return;
         }
         // use LinkedHashMap as we want to keep the order of the locales
-        translations = new LinkedHashMap<String,HippoBean>();
+        translations = new LinkedHashMap<String,K>();
+        if(beanMappingClass == null) {
+            beanMappingClass = HippoBean.class;
+        } 
         
-        // TODO populate here the translations!
+        List<HippoBean> childBeans = getChildBeans(beanMappingClass);
+        for(HippoBean child : childBeans) {
+            // the child name is the locale
+            translations.put(child.getName(), (K)child);
+        }
+        
     }
+    
+    /**
+     * Sets the <code>beanMappingClass</code> for this {@link HippoAvailableTranslationsBean}. Only translations of type
+     * <code>beanMappingClass</code> will be returned
+     * @param beanMappingClass
+     */
+    public void setBeanMappingClass(Class<HippoBean> beanMappingClass) {
+        this.beanMappingClass = beanMappingClass;
+     }
     
     @Override
     public boolean equals(Object obj) {

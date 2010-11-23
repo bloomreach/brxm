@@ -16,12 +16,14 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -35,6 +37,13 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     private Map<String, BeanWrapper<HippoHtml>> htmls = new HashMap<String, BeanWrapper<HippoHtml>>();
     
     private String canonicalHandleUUID;
+
+    private boolean availableTranslationsBeanInitialized;
+    private HippoAvailableTranslationsBean<HippoDocumentBean> availableTranslationsBean;
+    
+
+    private boolean availableTranslationsBeanMappingClassInitialized;
+    private HippoAvailableTranslationsBean<HippoDocumentBean> availableTranslationsBeanMappingClass;
     
     /**
      * @param relPath
@@ -83,7 +92,6 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
             } else if (handle.isNodeType("mix:referenceable")) {
                 canonicalHandleUUID =  handle.getIdentifier();
             } else if( (canonicalNode = ((HippoNode)handle).getCanonicalNode()) != null) {
-                // TODO once HREPTWO-4680 is fixed, this else if can (should) be removed again as it is less efficient
                 canonicalHandleUUID = canonicalNode.getIdentifier();
             } else {
                 log.warn("Cannot get uuid of handle for '{}'", this.getPath());
@@ -92,6 +100,44 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
             log.error("Cannot get handle uuid for node '"+this.getPath()+"'", e);
         }
         return canonicalHandleUUID;
+    }
+    
+   
+    
+    public HippoAvailableTranslationsBean<HippoDocumentBean> getAvailableTranslationsBean() {
+        if(!availableTranslationsBeanInitialized) {
+            availableTranslationsBeanInitialized = true;
+            try {
+                availableTranslationsBean = getBean("hippotranslation:translations");
+            } catch (ClassCastException e) {
+                 log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
+            }
+            if(availableTranslationsBean== null) {
+                availableTranslationsBean = HippoAvailableTranslationsBean.noopTranslationDocumentBean;
+                log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
+            } else {
+                ((HippoAvailableTranslations)availableTranslationsBean).setBeanMappingClass(HippoDocumentBean.class);
+            }
+        }
+        return availableTranslationsBean;
+    }
+
+    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass) {
+        if(!availableTranslationsBeanMappingClassInitialized) {
+            availableTranslationsBeanMappingClassInitialized = true;
+            try {
+                availableTranslationsBeanMappingClass = getBean("hippotranslation:translations");
+            } catch (ClassCastException e) {
+                 log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
+            }
+            if(availableTranslationsBeanMappingClass== null) {
+                availableTranslationsBeanMappingClass = HippoAvailableTranslationsBean.noopTranslationDocumentBean;
+                log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
+            } else {
+                ((HippoAvailableTranslations)availableTranslationsBeanMappingClass).setBeanMappingClass(beanMappingClass);
+            }
+        }
+        return (HippoAvailableTranslationsBean<T>)availableTranslationsBeanMappingClass;
     }
     
     @Override
@@ -110,6 +156,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         this.htmls.clear();
     }
 
+    
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof HippoDocument)) {

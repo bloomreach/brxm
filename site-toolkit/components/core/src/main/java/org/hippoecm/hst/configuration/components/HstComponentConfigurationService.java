@@ -84,8 +84,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String pageErrorHandlerClassName;
 
-    private PropertyMap propertyMap;
-
     private String configurationRootNodePath;
     
     private ArrayList<String> usedChildReferenceNames = new ArrayList<String>();
@@ -151,7 +149,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.hstTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE);
         this.hstResourceTemplate = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_RESOURCE_TEMPLATE);
         this.pageErrorHandlerClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME);
-        this.propertyMap = node.getValueProvider().getPropertyMap();
         
         if(type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
             this.xtype = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE);
@@ -335,7 +332,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.componentClassName = child.componentClassName;
         copy.configurationRootNodePath = child.configurationRootNodePath;
         copy.name = child.name;
-        copy.propertyMap = child.propertyMap;
         copy.referenceName = child.referenceName;
         copy.hstTemplate = child.hstTemplate;
         copy.renderPath = child.renderPath;
@@ -397,9 +393,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.name == null) {
                     this.name = referencedComp.name;
-                }
-                if (this.propertyMap == null) {
-                    this.propertyMap = referencedComp.propertyMap;
                 }
                 if (this.referenceName == null) {
                     this.referenceName = referencedComp.referenceName;
@@ -505,9 +498,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.name == null) {
             this.name = childToMerge.name;
-        }
-        if (this.propertyMap == null) {
-            this.propertyMap = childToMerge.propertyMap;
         }
         if (this.referenceName == null) {
             this.referenceName = childToMerge.referenceName;

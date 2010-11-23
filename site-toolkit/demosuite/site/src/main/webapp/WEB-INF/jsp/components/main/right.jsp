@@ -20,5 +20,25 @@
 
 
 <div class="yui-b">
-  <p>This is the right column</p>
+  <p>Available in these languages:</p>
+  <br/>
+  <c:forEach var="language" items="${crBean.availableTranslationsBean.translations}">
+      <hst:link var="flag" path="/images/icons/flag-16_${language.name}.png"/>
+      <hst:link var="link" hippobean="${language}"/>
+      <!-- the equal comparator can be used to check whether the translation is the current bean  -->
+      <c:choose>
+         <c:when test="${language.equalComparator[crBean]}">
+           <div>
+             <img src="${flag}"/> ${language.name}  &nbsp;&nbsp;&nbsp;(current)
+          </div>
+         </c:when>
+         <c:otherwise>
+            <div>
+              <a href="${link}" style="text-decoration:underline">
+               <img src="${flag}"/> ${language.name}
+              </a>
+            </div>
+         </c:otherwise>
+      </c:choose>
+  </c:forEach>
 </div>

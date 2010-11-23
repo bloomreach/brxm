@@ -105,10 +105,62 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @See {@link #getBean(String)}. Now, only if a bean found of type <code>beanMappingClass</code>, it is returned, and otherwise <code>null</code> is returned.
      * @param <T>
      * @param relPath a path that does not start with a "/"
-     * @param beanMappingClass
+     * @param beanMappingClass the class {@link T} that the child bean must be off
      * @return returns the <code>HippoBean</code> of (sub)type beanMappingClass with relative path <code>relPath</code> to this bean, or <code>null</code> when it does not exist, is not of (sub)type beanMappingClass, or when the relPath is not a valid relative path
      */
     <T extends HippoBean> T getBean(String relPath, Class<T> beanMappingClass);
+      
+    /**
+     * <p>
+     * Returns all the child beans as a {@link List} with elements of type {@link T}. When a child bean
+     * is found that is not of type <code>beanMappingClass</code>, it is skipped
+     * </p>
+     * <p>
+     * If you want all child beans that can be mapped to a {@link HippoBean}, just call 
+     * <code>List<HippoBean> beans = getBeans(HippoBean.class);</code>
+     * </p>
+     * @param <T> the return type of the child bean
+     * @param beanMappingClass the class {@link T} that the child beans must be off
+     * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
+     */
+    <T extends HippoBean> List<T> getChildBeans(Class<T> beanMappingClass);
+    
+    /**
+     * Returns all the child beans of name <code>childNodeName</code> as a {@link List} with elements of type {@link T}. When a found bean is not of type {@link T} a
+     * {@link ClassCastException} is thrown. 
+     * @param <T> the return type of the child bean
+     * @param childNodeName
+     * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
+     * @throws ClassCastException 
+     */
+    <T> List<T> getChildBeansByName(String childNodeName) throws ClassCastException;
+    
+    /**
+     * <p>
+     * Returns all the child beans of name <code>childNodeName</code> as a {@link List} with elements of type {@link T}. When a child bean
+     * is found that is not of type <code>beanMappingClass</code>, it is skipped
+     * </p>
+     * <p>If the <code>beanMappingClass</code> is <code>null</code>, it is ignored. Then, this method returns the same a {@link #getChildBeansByName(String)} and
+     * can throw a {@link ClassCastException}
+     * </p>
+     * @param <T> the return type of the child bean
+     * @param childNodeName
+     * @param beanMappingClass the class {@link T} that the child beans must be off. 
+     * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
+     */
+    <T extends HippoBean> List<T> getChildBeansByName(String childNodeName, Class<T> beanMappingClass);
+    
+   
+    /**
+     * Returns all the child beans of this bean, where the backing jcr node primary node type equals jcrPrimaryNodeType.
+     * If a jcr child node is of primary nodetype 'hippo:handle', we look whether the underlying 'Document' has the corresponding 
+     * jcrPrimaryNodeType. If so, we return the bean for this 'Document'.
+     * 
+     * @param <T> the return type of the {@link List} elements
+     * @param jcrPrimaryNodeType the primary type the child beans should be off
+     * @return List<HippoBean> where the backing jcr nodes are of type jcrPrimaryNodeType
+     */
+    <T> List<T> getChildBeans(String jcrPrimaryNodeType);
     
     /**
      * This method returns the <code>HippoBean</code> linked by <code>relPath</code> of type beanMappingClass, or <code>null</code> if no bean found or not of (sub)type beanMappingClass.
@@ -137,6 +189,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @return
      */
     <T extends HippoBean> List<T> getLinkedBeans(String relPath, Class<T> beanMappingClass);
+  
     
     /**
      * Returns the parent bean wrt this bean. Note that this does not automatically imply
@@ -148,7 +201,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     
     
     /**
-     * Returns the 'real' contextual (preview / live context) bean version of this bean. Most of the time, this is just the current bean. However, 
+     * Expert: Returns the 'real' contextual (preview / live context) bean version of this bean. Most of the time, this is just the current bean. However, 
      * when the current bean is below some parent bean because it was mirrored by this parent, then, this method returns
      * the 'real' contextual version, where the {@link #getParentBean()} also returns the contextualized version of the physical parent
      * 
@@ -158,9 +211,10 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     HippoBean getContextualBean();
     
     /**
+     * Expert: Returns the parent bean in the context of live/preview.
      * @see {@link #getParentBean()}, only this method returns the 'real' contextual parent bean. Suppose I have some HippoBean (= myBean), that 
      * I got through a mirror, in other, words, the HippoBean is below the document (=docA) that had the mirror (link). {@link #getParentBean()} will
-     * return a bean for <code>docA</code>, but this is not the 'real' contextual parent bean of <code>myBean</code>. The 'real' contextual parent can be 
+     * return <code>docA</code>, but this is not the 'real' contextual parent bean of <code>myBean</code>. The 'real' contextual parent can be 
      * fetched through this method. Note, that when <code>myBean</code> was not the result of a mirror, that {@link #getParentBean()} will then return the 
      * same bean
      * 
@@ -168,25 +222,6 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @return the 'unmirrored' parent bean in wrt this bean, but still in context, or if this bean backing jcr node is null or if the object converter cannot create a bean for the parent, return <code>null</code>
      */
     HippoBean getContextualParentBean();
-    
-    /**
-     * @param <T>
-     * @param childNodeName
-     * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
-     */
-    <T> List<T> getChildBeansByName(String childNodeName);
-    
-    
-    /**
-     * Returns all the child beans of this bean, where the backing jcr node primary node type equals jcrPrimaryNodeType.
-     * If a jcr child node is of primary nodetype 'hippo:handle', we look whether the underlying 'Document' has the corresponding 
-     * jcrPrimaryNodeType. If so, we return the bean for this 'Document'.
-     * 
-     * @param <T> 
-     * @param jcrPrimaryNodeType
-     * @return List<HippoBean> where the backing jcr nodes are of type jcrPrimaryNodeType
-     */
-    <T> List<T> getChildBeans(String jcrPrimaryNodeType);
     
     /**
      * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoDocumentBean}</code>
@@ -230,6 +265,14 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @return Returns <code>true</code> when this <code>HippoBean</code> has the same underlying jcr node path as the <code>compare</code> HippoBean. 
      */
     boolean isSelf(HippoBean compare);
+    
+    /**
+     * In general, only a {@link HippoDocumentBean} and {@link HippoFolderBean} can have a {@link HippoAvailableTranslationsBean}. However, to make sure that on
+     * any {@link HippoBean} you can call {@link #getAvailableTranslationsBean()}, we add it to the base {@link HippoBean} as well. If the bean is not a document or folder, this method
+     * will return a no-operation {@link HippoAvailableTranslationsBean} instance.
+     * @return A {@link HippoAvailableTranslationsBean}. If there are no translations for this {@link HippoBean}, a no-operation {@link HippoAvailableTranslationsBean} will be returned 
+     */
+    HippoAvailableTranslationsBean<?> getAvailableTranslationsBean();
     
     /**
      * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 
