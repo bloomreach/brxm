@@ -47,10 +47,12 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
     Name hardDocumentName;
     Name hardHandleName;
     Name softDocumentName;
+    Name softHandleName;
     Name mixinReferenceableName;
     Name mixinVersionableName;
 
-    QPropertyDefinition hippoUUIDPropDef;
+    //QPropertyDefinition documentHippoUUIDPropDef;
+    //QPropertyDefinition handleHippoUUIDPropDef;
 
     @Override
     protected void initialize() throws RepositoryException {
@@ -61,6 +63,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
         hardDocumentName = resolveName(HippoNodeType.NT_HARDDOCUMENT);
         hardHandleName = resolveName(HippoNodeType.NT_HARDHANDLE);
         softDocumentName = resolveName(HippoNodeType.NT_SOFTDOCUMENT);
+        softHandleName = resolveName("hipposys:softhandle");
         mixinReferenceableName = resolveName("mix:referenceable");
         mixinVersionableName = resolveName("mix:versionable");
 
@@ -74,7 +77,8 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
         omittedProperties.add(resolveName("jcr:activity"));
         omittedProperties.add(resolveName("jcr:configuration"));
 
-        hippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
+        //documentHippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
+        //handleHippoUUIDPropDef = lookupPropDef(softHandleName, hippoUUIDName);
     }
 
     @Override
@@ -92,6 +96,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
         }
         if(mixins.contains(hardHandleName)) {
             mixins.remove(hardHandleName);
+            mixins.add(softHandleName);
         }
         if(mixins.contains(mixinVersionableName)) {
             mixins.remove(mixinVersionableName);
@@ -107,7 +112,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
             PropertyId upstreamPropId = new PropertyId(dereference.getNodeId(), propName);
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
             if(propName.equals(jcrUUIDName)) {
-                if(mixins.contains(softDocumentName)) {
+                if(mixins.contains(softDocumentName) || mixins.contains(softHandleName)) {
                     propName = hippoUUIDName;
                 } else {
                     continue;
