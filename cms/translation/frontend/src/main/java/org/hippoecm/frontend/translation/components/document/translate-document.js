@@ -32,11 +32,12 @@ if (Hippo.Translation.Queue == undefined) {
         }
       },
 
-      add: function(task, delay, callback) {
+      enqueue: function(callback, delay) {
         this.cleanup();
 
+        var task = new Ext.util.DelayedTask();
         var handle = {
-           task: task,
+           extTask: task,
            started: false,
            completed: false,
            callback: callback
@@ -53,13 +54,21 @@ if (Hippo.Translation.Queue == undefined) {
         return handle;
       },
 
+      cancel: function(handle) {
+        if (!handle.started) {
+          handle.started = true;
+          handle.extTask.cancel();
+          handle.completed = true;
+        }
+      },
+
       flush: function() {
         this.cleanup();
 
         for (var i = 0; i < this.tasks.length; i++) {
           var handle = this.tasks[i];
           if (!handle.started) {
-            handle.task.cancel();
+            handle.extTask.cancel();
             handle.started = true;
             handle.callback.call(window);
             handle.completed = true;
@@ -124,9 +133,16 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
 
     this.onKeyUp = function (field, event) {
       var rec = self.record;
-      Hippo.Translation.Queue.add(self.task, 500, function(callback) {
-      	self.updateUrl(rec, field.getRawValue(), callback);
-      });
+      if (self.task == null) {
+        self.task = Hippo.Translation.Queue.enqueue(function(callback) {
+          self.task = null;
+          if (Ext.getCmp('urlfr').disabled) {
+            self.updateUrl(rec, field.getRawValue(), callback);
+          } else {
+            callback.call(this);
+          }
+        }, 500);
+      }
     };
 
     // the column model has information about grid columns
@@ -188,9 +204,17 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
           listeners: {
             rowselect: function(sm, row, rec) {
               if (rec != self.record) {
-                self.task = new Ext.util.DelayedTask(null, self);
+                if (self.task != null) {
+                  Hippo.Translation.Queue.cancel(self.task);
+                  self.task = null;
+                }
                 self.record = rec;
                 self.form.loadRecord(rec);
+                Ext.getCmp('url-edit').setDisabled(!self.record.get('editable'));
+
+                var checked = (self.record.checked || false);
+                Ext.getCmp('urlfr').setDisabled(!checked);
+                Ext.getCmp('url-edit').setValue(checked);
               }
             },
           },
@@ -198,7 +222,13 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
         listeners: {
       		afteredit: function(e) {
       			if (e.field == "namefr") {
-      				self.updateUrl(e.record, e.value);
+      			  if (self.task != null) {
+      			    Hippo.Translation.Queue.cancel(self.task);
+      			    self.task = null;
+      			  }
+              if (Ext.getCmp('urlfr').disabled) {
+                self.updateUrl(e.record, e.value);
+              }
       			}
       		}
       	}
@@ -246,15 +276,22 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
               name: 'urlfr',
               id: 'urlfr',
               width: 225,
+              listeners: {
+                blur: function(field) {
+                  self.record.set('urlfr', field.getRawValue());
+                }
+              }
             }, {
               xtype: 'checkbox',
               name: 'edit',
+              id: 'url-edit',
+              disabled: true,
               value: false,
               hideLabel: false,
               boxLabel: self.resources['edit'],
-//              fieldLabel: 'edit',
               listeners: {
                 check: function(chkbox, checked) {
+                  self.record.checked = checked;
                   Ext.getCmp('urlfr').setDisabled(!checked);
                 }
               }
