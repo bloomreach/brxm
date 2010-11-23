@@ -84,21 +84,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
             // now we have the containerItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
             String newItemNodeName = findNewName(containerItem.getName(), containerNode);
-            Node newItem = containerNode.addNode(newItemNodeName, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
 
-            // now we only copy the template, xtype and component class name properties
-            if(containerItem.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE)) {
-                newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE,
-                    containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE).getString());
-            }
-            newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME,
-                    containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString());
-            newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE,
-                    containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
-            if(containerItem.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT)) {
-                newItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT,
-                        containerItem.getProperty(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT).getString());
-            }
+            session.getWorkspace().copy(containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
+            Node newItem = containerNode.getNode(newItemNodeName);
             // now copy all the other child nodes from containerNode to newItem
             Workspace workspace = session.getWorkspace();
             NodeIterator childs = containerItem.getNodes();
