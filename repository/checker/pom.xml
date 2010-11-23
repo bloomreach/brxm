@@ -95,7 +95,7 @@
 
   <repositories>
     <repository>
-      <id>hippoecm</id>
+      <id>hippo</id>
       <name>Hippo ECM maven 2 repository.</name>
       <url>http://repository.hippocms.org/maven2/</url>
       <snapshots>
