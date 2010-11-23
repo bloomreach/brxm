@@ -113,7 +113,12 @@ function(Y) {
 
   var asyncQueue = new Y.AsyncQueue();
   
-  var onSaveComplete = function(id, o, args) { 
+  var onSaveComplete = function(id, o, args) {
+    if (o.status > 400) {
+      alert("You are not authorized to edit the tags.");
+      return;
+    }
+     
     var id = id;
     var data = o.responseText;
     var dataOut = null;

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.demo.jaxrs.services;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +66,7 @@ public class ProductContentResource extends AbstractContentResource {
         }
     }
     
+    @RolesAllowed( { "admin", "author", "editor" } )
     @PUT
     @Path("/")
     public ProductRepresentation updateProductResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,

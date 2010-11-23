@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.demo.jaxrs.services;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,6 +68,7 @@ public class BaseDocumentContentResource extends AbstractContentResource {
         }
     }
     
+    @RolesAllowed( { "admin", "author", "editor" } )
     @PUT
     @Path("/")
     public BaseDocumentRepresentation updateDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
@@ -128,6 +130,7 @@ public class BaseDocumentContentResource extends AbstractContentResource {
         return super.getHippoHtmlRepresentation(servletRequest, relPath, targetMountAlias);
     }
     
+    @RolesAllowed( { "admin", "author", "editor" } )
     @PUT
     @Path("/html/")
     public HippoHtmlRepresentation updateHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
@@ -143,6 +146,7 @@ public class BaseDocumentContentResource extends AbstractContentResource {
         return super.getHippoHtmlContent(servletRequest, relPath, targetMountAlias);
     }
     
+    @RolesAllowed( { "admin", "author", "editor" } )
     @PUT
     @Path("/html/content/")
     public String updateHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
