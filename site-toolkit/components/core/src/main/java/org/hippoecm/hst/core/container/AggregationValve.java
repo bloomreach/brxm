@@ -343,7 +343,7 @@ public class AggregationValve extends AbstractValve {
                     response.addHeadElement(el, rootCompConfig.getCanonicalIdentifier());
                 } else {
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                    if(!compConfig.getComponentClassName().equals(traceToolComponentName)) {
+                    if(!compConfig.getComponentClassName().equals(traceToolComponentClassName)) {
                         Element el = response.createElement("div");
                         el.setAttribute("class", "componentContentWrapper");
                         el.setAttribute("hst:id", compConfig.getCanonicalIdentifier());
