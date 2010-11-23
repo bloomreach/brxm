@@ -181,7 +181,7 @@ public class HstSiteConfigServlet extends HttpServlet {
 
     protected ComponentManager componentManager;
 
-    protected String [] assemblyOverridesConfigurations;
+    protected String [] assemblyOverridesConfigurations = { "META-INF/hst-assembly/overrides/*.xml" };
     
     protected boolean initialized;
     
@@ -221,7 +221,9 @@ public class HstSiteConfigServlet extends HttpServlet {
         
         this.configuration = getConfiguration(config);
         
-        assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
+        if (this.configuration.containsKey(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM)) {
+            assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
+        }
         
         checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
         
