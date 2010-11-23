@@ -123,17 +123,31 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             if (prototypes == null) {
                 throw new WorkflowException("No prototype hints available in workflow of target folder.");
             }
+
+            // find best matching category and type from prototypes
             String primaryType = userSubject.getPrimaryNodeType().getName();
-            for (Map.Entry<String, Set<String>> category : prototypes.entrySet()) {
-                String categoryName = category.getKey();
-                Set<String> types = category.getValue();
+            String category = null;
+            String type = null;
+            for (Map.Entry<String, Set<String>> candidate : prototypes.entrySet()) {
+                String categoryName = candidate.getKey();
+                Set<String> types = candidate.getValue();
                 if (types.contains(primaryType)) {
-                    String path = ((FolderWorkflow) internalWorkflow).add(categoryName, primaryType, name);
-                    copiedDoc = rootSession.getNode(path);
+                    category = categoryName;
+                    type = primaryType;
                     break;
                 }
+                if (category == null) {
+                    category = categoryName;
+                }
+                if (type == null && types.size() > 0) {
+                    type = types.iterator().next();
+                }
             }
-            if (copiedDoc == null) {
+
+            if (category != null && type != null) {
+                String path = ((FolderWorkflow) internalWorkflow).add(category, type, name);
+                copiedDoc = rootSession.getNode(path);
+            } else {
                 throw new WorkflowException("No category found to use for adding translation to target folder");
             }
             if (!copiedDoc.isCheckedOut()) {
