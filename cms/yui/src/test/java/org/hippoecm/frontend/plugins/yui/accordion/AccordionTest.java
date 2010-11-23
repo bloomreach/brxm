@@ -16,14 +16,18 @@
 package org.hippoecm.frontend.plugins.yui.accordion;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.hippoecm.frontend.plugins.yui.YuiPage;
 import org.hippoecm.frontend.plugins.yui.YuiTest;
+import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
+import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 public class AccordionTest extends YuiTest {
@@ -63,10 +67,22 @@ public class AccordionTest extends YuiTest {
     public void testAccordion() throws Exception {
         setUp(Page.class);
 
-        List<HtmlElement> elements = page.getElementById("first2").getElementsByAttribute("div", "class",
-                "hippo-accordion-unit-center");
+//        System.out.println(page.asXml());
+
+        HtmlElement firstSection = null;
+        for (HtmlElement element : page.getElementsByTagName("div")) {
+            if (element.hasAttribute("wicketpath") && "container_first".equals(element.getAttribute("wicketpath"))) {
+                firstSection = element;
+                break;
+            }
+        }
+        assertNotNull("First section is present", firstSection);
+
+        List<HtmlElement> elements = firstSection.getElementsByAttribute("div", "class", "hippo-accordion-unit-center");
+        assertEquals("Center unit available in section", 1, elements.size());
+
         String style = elements.get(0).getAttribute("style");
-        assertEquals("height: 30px;", style);
+        assertEquals("Unit has been resized", "height: 30px;", style);
     }
 
 }

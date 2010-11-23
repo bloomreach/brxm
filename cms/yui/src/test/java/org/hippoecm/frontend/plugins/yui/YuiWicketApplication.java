@@ -23,6 +23,12 @@ public class YuiWicketApplication extends WebApplication {
     private final static String SVN_ID = "$Id$";
 
     @Override
+    protected void init() {
+        getDebugSettings().setOutputComponentPath(true);
+        super.init();
+    }
+    
+    @Override
     public Class<? extends Page> getHomePage() {
         try {
             return (Class<? extends Page>) getClass().getClassLoader().loadClass(getInitParameter("test-page-class"));
