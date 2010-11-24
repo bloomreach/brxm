@@ -29,6 +29,10 @@ table#translations-break-link {
   padding-bottom: 17px;
 }
 
+.hippo-root .x-panel-body {
+  border-color: #ccc;
+}
+
 /**
  * Below this line file has been generated with the generate_countries.sh script.
  **/

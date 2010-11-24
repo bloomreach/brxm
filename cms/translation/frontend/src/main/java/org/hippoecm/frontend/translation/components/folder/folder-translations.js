@@ -180,8 +180,8 @@ Hippo.Translation.Folder.SelectTree = Ext.extend(Ext.ux.tree.TreeGrid, {
   enableHdMenu: false,
   enableDD: true,
   collapsible: false,
-  width: 657,
-  height: 205,
+  width: 618,
+  height: 137,
 
   constructor: function(config) {
   	this.images = config.images;
