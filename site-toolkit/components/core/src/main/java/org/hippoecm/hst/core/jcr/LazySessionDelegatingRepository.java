@@ -202,9 +202,14 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                     lastRefreshed = 0L;
                     sessionWeakRef = new WeakReference<Session>(session);
                 }
+                Object ret;
                 
-                Object ret = method.invoke(session, args);
-                
+                try {
+                   ret = method.invoke(session, args);
+                } catch (Exception e) {
+                    throw e.getCause();
+                }
+                   
                 if ("refresh".equals(methodName)) {
                     lastRefreshed = System.currentTimeMillis();
                 }

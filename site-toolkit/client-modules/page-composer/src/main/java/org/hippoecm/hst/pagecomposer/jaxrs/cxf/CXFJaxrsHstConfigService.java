@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -83,12 +82,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         	node = jcrSession.getNodeByIdentifier(uuid);
         	resourceType = node.getPrimaryNodeType().getName();
           
-        } catch (UndeclaredThrowableException e) {
-          // TODO HSTTWO-1368 this is a temporary fix as long as jcrSession.getNodeByIdentifier throws this exception over RMI when the uuid does not exist
-          if(log.isDebugEnabled()) { 
-                log.warn("ItemNotFoundException{} ", uuid);
-          } 
-          return  setErrorMessageAndReturn(requestContext, request, "ItemNotFoundException: unknown uuid '"+uuid+"'");
         } catch (PathNotFoundException e) {
            if(log.isDebugEnabled()) { 
                log.warn("PathNotFoundException ", e);

@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.lang.reflect.Type;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,8 +51,6 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-//TODO When HSTTWO-1368 is fixed, we can remove the UndeclaredThrowableException
-
 @Path("/hst:containercomponent/")
 public class ContainerComponentResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
@@ -83,10 +80,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 containerItem = session.getNodeByIdentifier(itemUUID);
             } catch (ItemNotFoundException e) {
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
-            } catch (UndeclaredThrowableException e) {
-                return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
             }
-            
             if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 throw new ContainerException("Need a container item");
             }
@@ -167,8 +161,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
                     }
                 } catch (ItemNotFoundException e) {
                     return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
-                } catch (UndeclaredThrowableException e) {
-                    return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
                 }
             }
             session.save();
@@ -194,8 +186,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 node = session.getNodeByIdentifier(itemUUID);
             } catch (ItemNotFoundException e) {
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot delete item");
-            } catch (UndeclaredThrowableException e) {
-                return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot delete item");
             }
             node.remove();
             session.save();
@@ -215,7 +205,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
 
-    private void checkIfMoveIntended(Node parent, String childId, Session session) throws RepositoryException, NotFoundException, UndeclaredThrowableException {
+    private void checkIfMoveIntended(Node parent, String childId, Session session) throws RepositoryException, NotFoundException {
         String parentPath = parent.getPath();
         Node childNode = session.getNodeByIdentifier(childId);
         String childPath = childNode.getPath();
