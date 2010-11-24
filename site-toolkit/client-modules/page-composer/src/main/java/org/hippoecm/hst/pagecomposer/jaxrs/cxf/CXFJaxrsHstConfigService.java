@@ -79,6 +79,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 		
         try {
         	Session jcrSession = requestContext.getSession();
+        	jcrSession.refresh(false);
         	node = jcrSession.getNodeByIdentifier(uuid);
         	resourceType = node.getPrimaryNodeType().getName();
           
