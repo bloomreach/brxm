@@ -102,7 +102,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 throw new HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
             }
             
-            Node canonicalContentNode = session.getNodeByUUID(docbase);
+            Node canonicalContentNode = session.getNodeByIdentifier(docbase);
             
             String canonicalContentNodePath = canonicalContentNode.getPath();
             String contentFacetSelectNodePath = contentFacetSelectNode.getPath();

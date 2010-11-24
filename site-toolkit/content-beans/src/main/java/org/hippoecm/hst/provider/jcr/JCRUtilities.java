@@ -71,7 +71,7 @@ public class JCRUtilities {
                 log.warn("Docbase cannot be parsed to a valid uuid. Return null");
                 return null;
             }
-            return mirrorNode.getSession().getNodeByUUID(docBaseUUID);
+            return mirrorNode.getSession().getNodeByIdentifier(docBaseUUID);
         } catch (ItemNotFoundException e) {
             String path = null;
             try {

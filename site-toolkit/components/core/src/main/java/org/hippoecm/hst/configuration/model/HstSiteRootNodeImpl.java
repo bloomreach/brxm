@@ -54,7 +54,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                             // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
                             
                             UUID.fromString(docbaseUuid);
-                            Item item =  contentNode.getSession().getNodeByUUID(docbaseUuid); 
+                            Item item =  contentNode.getSession().getNodeByIdentifier(docbaseUuid); 
                             if(item instanceof Node) {
                                 // set the canonical content path
                                 this.canonicalContentPath = ((Node)item).getPath();

@@ -107,7 +107,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     public Object getObject(String uuid, Session session) throws ObjectBeanManagerException {
         checkUUID(uuid);
         try {
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             return this.getObject(node);
         } catch (ItemNotFoundException e) {
             log.warn("ItemNotFoundException for uuid '{}'. Return null.", uuid);

@@ -200,7 +200,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                             throw new ObjectBeanPersistenceException("hippo:docbase in mirror does not contain a valid uuid", e);
                         }
                         // this is always the canonical
-                        curNode = session.getNodeByUUID(docbaseUuid);
+                        curNode = session.getNodeByIdentifier(docbaseUuid);
                     } else {
                         curNode = NodeUtils.getCanonicalNode(curNode, curNode);
                     }
@@ -319,7 +319,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                             String uuid = document.getIdentity();
                             
                             if (uuid != null && !"".equals(uuid)) {
-                                contentNode = session.getNodeByUUID(uuid);
+                                contentNode = session.getNodeByIdentifier(uuid);
                             }
                             boolean changed = customContentNodeBinder.bind(content, contentNode);
                             

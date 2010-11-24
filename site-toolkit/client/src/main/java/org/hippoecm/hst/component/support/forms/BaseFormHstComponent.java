@@ -85,7 +85,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
             try {
                 validateId(uuid);
                 Session session = request.getRequestContext().getSession();
-                Node persistedFormData = session.getNodeByUUID(uuid);
+                Node persistedFormData = session.getNodeByIdentifier(uuid);
                 // check if form is sealed
                 if(persistedFormData.hasProperty(HST_SEALED) && persistedFormData.getProperty(HST_SEALED).getBoolean()){
                     log.debug("From is sealed, not allowed to read data");

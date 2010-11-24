@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.GenericHstComponent;
-import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +141,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else {
             this.hasClassNameConfigured = true;
         }
-
+      
         this.referenceComponent = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
         
         if(referenceComponent != null) {

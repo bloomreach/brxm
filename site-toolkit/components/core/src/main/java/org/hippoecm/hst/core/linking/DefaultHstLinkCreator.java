@@ -92,7 +92,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
      */
     public HstLink create(String uuid, Session session, HstRequestContext requestContext) {
         try {
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             return create(node, requestContext);
         } catch (ItemNotFoundException e) {
             log.warn("Node with uuid '{}' cannot be found. Cannot create a HstLink, return null", uuid);
@@ -221,7 +221,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     @Deprecated
     public HstLink create(String uuid, Session session, ResolvedSiteMapItem resolvedSiteMapItem) {
         try {
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             return create(node, resolvedSiteMapItem);
         } catch (ItemNotFoundException e) {
             log.warn("Node with uuid '{}' cannot be found. Cannot create a HstLink, return null", uuid);
