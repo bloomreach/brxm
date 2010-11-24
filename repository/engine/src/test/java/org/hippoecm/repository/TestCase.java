@@ -15,6 +15,11 @@
  */
 package org.hippoecm.repository;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -88,6 +93,50 @@ public abstract class TestCase
         }
     }
 
+    static protected void fixture() {
+        File fixtureDump = new File("../src/test/fixtures/dump.zip");
+        if (fixtureDump.exists()) {
+            FileInputStream fixtureStream = null;
+            try {
+                fixtureStream = new FileInputStream(fixtureDump);
+                JarInputStream istream = new JarInputStream(fixtureStream);
+                ZipEntry ze;
+                do {
+                    ze = istream.getNextEntry();
+                    if (ze != null) {
+                        if (ze.isDirectory()) {
+                            String name = ze.getName();
+                            File file = new File(name);
+                            file.mkdir();
+                        } else {
+                            FileOutputStream ostream = new FileOutputStream(ze.getName());
+                            byte[] buffer = new byte[1024];
+                            int len;
+                            do {
+                                len = istream.read(buffer);
+                                if (len >= 0) {
+                                    ostream.write(buffer, 0, len);
+                                }
+                            } while (len >= 0);
+                            ostream.close();
+                        }
+                    }
+                } while (ze != null);
+                istream.close();
+                fixtureStream.close();
+            } catch (IOException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage()); // BERRY
+                try {
+                    if (fixtureStream != null) {
+                        fixtureStream.close();
+                    }
+                } catch (IOException e) {
+                    clear();
+                }
+            }
+        }
+    }
+
     static public void setRepository(HippoRepository repository) {
         external = repository;
     }
@@ -123,6 +172,18 @@ public abstract class TestCase
         } else {
             if(clearRepository) {
                 clear();
+                if (Boolean.getBoolean("org.onehippo.repository.test.usefixture") ||
+                    Boolean.getBoolean("org.onehippo.repository.test.forcefixture") ||
+                    Boolean.getBoolean("org.onehippo.repository.test.installfixture")) {
+                    fixture();
+                }
+            } else {
+                if (Boolean.getBoolean("org.onehippo.repository.test.forcefixture")) {
+                    clear();
+                    fixture();
+                } else if (Boolean.getBoolean("org.onehippo.repository.test.installfixture") && !(new File("repository").exists())) {
+                    fixture();
+                }
             }
             server = HippoRepositoryFactory.getHippoRepository();
         }
