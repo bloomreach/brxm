@@ -39,10 +39,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class TestMultiplePoolingRepositoryFactory {
     
     private Map<String, String> multiplePoolConfigMap = new HashMap<String, String>();
@@ -50,8 +48,8 @@ public class TestMultiplePoolingRepositoryFactory {
     @Before
     public void setUp() {
         multiplePoolConfigMap.put("repositoryAddress", " , ");
-        multiplePoolConfigMap.put("defaultCredentialsUserID", "editor, admin");
-        multiplePoolConfigMap.put("defaultCredentialsPassword", "editor, admin");
+        multiplePoolConfigMap.put("defaultCredentialsUserID", "admin@1, admin@2");
+        multiplePoolConfigMap.put("defaultCredentialsPassword", "admin, admin");
         multiplePoolConfigMap.put("maxActive", "4, 4");
         multiplePoolConfigMap.put("maxIdle", "2, 2");
         multiplePoolConfigMap.put("minIdle", "1, 1");
@@ -75,12 +73,12 @@ public class TestMultiplePoolingRepositoryFactory {
         Map<Credentials, Repository> repoMap = multipleRepository.getRepositoryMap();
         assertEquals("The repository map size is wrong.", 2, repoMap.size());
         
-        Credentials firstCreds = new SimpleCredentials("editor", "editor".toCharArray());
+        Credentials firstCreds = new SimpleCredentials("admin@1", "admin".toCharArray());
         Repository firstRepo = multipleRepository.getRepositoryByCredentials(firstCreds);
         assertNotNull(firstRepo);
         assertTrue(firstRepo instanceof PoolingRepository);
         
-        Credentials secondCreds = new SimpleCredentials("admin", "admin".toCharArray());
+        Credentials secondCreds = new SimpleCredentials("admin@2", "admin".toCharArray());
         Repository secondRepo = multipleRepository.getRepositoryByCredentials(secondCreds);
         assertNotNull(secondRepo);
         assertTrue(secondRepo instanceof PoolingRepository);
@@ -91,13 +89,13 @@ public class TestMultiplePoolingRepositoryFactory {
         Session session = multipleRepository.login(firstCreds);
         assertNotNull(session);
         assertTrue(session instanceof PooledSession);
-        assertEquals("editor", session.getUserID());
+        assertEquals("admin@1", session.getUserID());
         session.logout();
         
         session = multipleRepository.login(secondCreds);
         assertNotNull(session);
         assertTrue(session instanceof PooledSession);
-        assertEquals("admin", session.getUserID());
+        assertEquals("admin@2", session.getUserID());
         session.logout();
     }
     

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.RefAddr;
@@ -149,6 +150,8 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setWhenExhaustedAction(value);
             }
         }
+        
+        poolingRepository.setDefaultCredentials(new SimpleCredentials(poolingRepository.getDefaultCredentialsUserID(), poolingRepository.getDefaultCredentialsPassword()));
         
         poolingRepository.initialize();
         

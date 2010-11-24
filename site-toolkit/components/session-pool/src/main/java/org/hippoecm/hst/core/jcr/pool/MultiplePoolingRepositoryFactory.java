@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
+import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.RefAddr;
@@ -204,17 +205,21 @@ public class MultiplePoolingRepositoryFactory implements ObjectFactory {
             }
         }
         
-        for (int i = 0; i < poolingRepositoryArray.length; i++) {
+        for (int i = 0; i < repositoryCount; i++) {
+            poolingRepositoryArray[i].setDefaultCredentials(new SimpleCredentials(poolingRepositoryArray[i].getDefaultCredentialsUserID(), poolingRepositoryArray[i].getDefaultCredentialsPassword()));
+        }
+        
+        for (int i = 0; i < repositoryCount; i++) {
             poolingRepositoryArray[i].initialize();
         }
         
         Map<Credentials, Repository> repositoryMap = new HashMap<Credentials, Repository>();
         
-        for (int i = 0; i < poolingRepositoryArray.length; i++) {
+        for (int i = 0; i < repositoryCount; i++) {
             repositoryMap.put(poolingRepositoryArray[i].getDefaultCredentials(), poolingRepositoryArray[i]);
         }
         
-        Credentials multipleRepositoryDefaultCredentials = (poolingRepositoryArray.length > 0 ? poolingRepositoryArray[0].getDefaultCredentials() : null);
+        Credentials multipleRepositoryDefaultCredentials = (repositoryCount > 0 ? poolingRepositoryArray[0].getDefaultCredentials() : null);
         
         MultipleRepository multipleRepository = new MultipleRepositoryImpl(repositoryMap, multipleRepositoryDefaultCredentials);
         
