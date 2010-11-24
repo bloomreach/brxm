@@ -23,6 +23,7 @@ import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
@@ -57,17 +58,17 @@ public class FileUploadWidget extends Panel {
     protected void onBeforeRender() {
         super.onBeforeRender();
 
-        if(detectedFlash == null) {
+        if (detectedFlash == null) {
             Page page = getPage();
-            for(IBehavior behavior : page.getBehaviors()) {
-                if(behavior instanceof WebAppBehavior) {
+            for (IBehavior behavior : page.getBehaviors()) {
+                if (behavior instanceof WebAppBehavior) {
                     WebAppBehavior webapp = (WebAppBehavior) behavior;
                     detectedFlash = webapp.getFlash();
                 }
             }
         }
 
-        if(isFlash()) {
+        if (isFlash()) {
             renderFlashUpload();
         } else {
             renderJavascriptUpload();
@@ -111,9 +112,9 @@ public class FileUploadWidget extends Panel {
 
     protected String getAjaxIndicatorId() {
         Component c = this;
-        while(c != null) {
-            if(IAjaxIndicatorAware.class.isAssignableFrom(c.getClass())) {
-                return ((IAjaxIndicatorAware)c).getAjaxIndicatorMarkupId();
+        while (c != null) {
+            if (IAjaxIndicatorAware.class.isAssignableFrom(c.getClass())) {
+                return ((IAjaxIndicatorAware) c).getAjaxIndicatorMarkupId();
             }
             c = c.getParent();
         }
@@ -128,7 +129,7 @@ public class FileUploadWidget extends Panel {
             Collection<FileUpload> uploads = ((MultiFileUploadComponent) panel).getUploads();
             if (uploads != null) {
                 for (FileUpload upload : uploads) {
-                    if(fileUploadIsValid(upload)) {
+                    if (fileUploadIsValid(upload)) {
                         onFileUpload(upload);
                     }
                 }
@@ -143,27 +144,35 @@ public class FileUploadWidget extends Panel {
 
         String fileName = upload.getClientFileName();
         int dotIndex = fileName.lastIndexOf('.');
-        if(dotIndex == -1 || dotIndex == fileName.length()-1) {
-            error("No extension found on uploaded file " + fileName + ". Extension allowed: " + settings.getFileExtensions());
+        if (dotIndex == -1 || dotIndex == fileName.length() - 1) {
+            String msg = new StringResourceModel("extension.not.found", this, null,
+                    new Object[]{fileName, getReadableFileExtensions()}).getObject();
+            error(msg);
             return false;
         }
         String uploadExt = fileName.substring(dotIndex + 1).toLowerCase();
         for (String extension : settings.getFileExtensions()) {
             extension = extension.toLowerCase();
             int extDotIndex = extension.lastIndexOf('.');
-            if(extDotIndex > -1) {
+            if (extDotIndex > -1) {
                 extension = extension.substring(extDotIndex + 1);
             }
-            if(uploadExt.equals(extension)) {
+            if (uploadExt.equals(extension)) {
                 return true;
             }
         }
+        String msg = new StringResourceModel("extension.not.allowed", this, null,
+                new Object[]{getReadableFileExtensions()}).getObject();
+        error(msg);
+        return false;
+    }
+
+    private String getReadableFileExtensions() {
         StringBuilder sb = new StringBuilder();
         for (String extension : settings.getFileExtensions()) {
             sb.append(extension).append(" ");
         }
-        error("The file you've uploaded contains an extension we don't allow. Allowed extensions are: " + sb.toString());
-        return false;
+        return sb.toString();
     }
 
     public String getStartAjaxUploadScript() {

@@ -117,10 +117,6 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
     }
 
     @Override
-    protected final void handleSubmit() {
-    }
-    
-    @Override
     public IValueMap getProperties() {
         return MEDIUM;
     }
