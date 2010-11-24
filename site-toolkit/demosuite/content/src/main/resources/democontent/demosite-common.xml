@@ -185,8 +185,8 @@
             
             &lt;p&gt;Now go ahead and build your own website!&lt;/p&gt;
             
-            &lt;p&gt;This is a &lt;strong&gt;cross-domain&lt;/strong&gt; link to the &lt;strong&gt;&lt;a href="home-page"&gt;demo subsite&lt;/a&gt;&lt;/strong&gt;.  If
-            you change the virtual hosts such that the demo subsite is located at a
+            &lt;p&gt;This is a &lt;strong&gt;cross-domain&lt;/strong&gt; link to the &lt;strong&gt;&lt;a href="home-page"&gt;demo French&lt;/a&gt;&lt;/strong&gt;.  If
+            you change the virtual hosts such that the demo French is located at a
             different host, you'll see that there is an automatic cross-domain link to the
             different host name&lt;/p&gt;
             

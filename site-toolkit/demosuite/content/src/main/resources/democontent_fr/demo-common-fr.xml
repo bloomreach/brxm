@@ -13,7 +13,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. -->
-<sv:node sv:name="common" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="general" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:directory</sv:value>
   </sv:property>
@@ -36,7 +36,7 @@
       <sv:value>hippotranslation:translations</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="about-us">
+  <sv:node sv:name="a-propos">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
@@ -44,7 +44,7 @@
       <sv:value>hippo:hardhandle</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    <sv:node sv:name="about-us">
+    <sv:node sv:name="a-propos">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>demosite:textdocument</sv:value>
       </sv:property>
@@ -59,7 +59,7 @@
         <sv:value>demosite-common-folder-about-us-id</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
-        <sv:value>Who we are. We are part of the subsite</sv:value>
+        <sv:value>Who we are. We are part of the French site</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:title" sv:type="String">
         <sv:value>Sub About us</sv:value>
@@ -97,7 +97,7 @@
           <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>We are at a subsite of Hippo! Come and visit us at &lt;a
+          <sv:value>We are at a  French site of Hippo! Come and visit us at &lt;a
                         href="http://www.onehippo.com" target="_blank" title="Hippo
                         website"&gt;www.onehippo.com&lt;/a&gt;!</sv:value>
         </sv:property>
@@ -111,11 +111,11 @@
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>About Us</sv:value>
+        <sv:value>À propos</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="home-page">
+  <sv:node sv:name="accueil">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
@@ -126,7 +126,7 @@
       <sv:value>hippo:hardhandle</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    <sv:node sv:name="home-page">
+    <sv:node sv:name="accueil">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>demosite:textdocument</sv:value>
       </sv:property>
@@ -209,7 +209,7 @@
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Home Page</sv:value>
+        <sv:value>Accueil</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

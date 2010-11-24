@@ -62,8 +62,11 @@
     </div> 
     <div id="nav">
       <ul class="menu">
-        <li class="active">Tutorial</li>      
-        <li><a href="http://www.onehippo.org/" title="News">Main documentation</a></li>
+        <hst:link var="home" siteMapItemRefId="home"/>
+        <li><a href="${home}">label.home</a></li>
+        <hst:link var="about" siteMapItemRefId="about"/>
+        <li><a href="${about}">label.aboutus</a></li>
+        (examples.of.links.by.refId)      
       </ul>
     </div>  
   </div>

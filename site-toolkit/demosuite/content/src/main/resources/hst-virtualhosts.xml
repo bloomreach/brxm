@@ -83,12 +83,12 @@
             <sv:property sv:name="hst:mountrest" sv:type="String">
               <sv:value>restapi</sv:value>
             </sv:property>
-            <sv:node sv:name="demosubsite">
+            <sv:node sv:name="demosite_fr">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
-                <sv:value>/hst:hst/hst:sites/demosubsite-live</sv:value>
+                <sv:value>/hst:hst/hst:sites/demosite_fr-live</sv:value>
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
@@ -206,12 +206,12 @@
               <sv:property sv:name="hst:mountrest" sv:type="String">
                 <sv:value>restapi</sv:value>
               </sv:property>
-              <sv:node sv:name="demosubsite">
+              <sv:node sv:name="demosite_fr">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosubsite-preview</sv:value>
+                  <sv:value>/hst:hst/hst:sites/demosite_fr-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:type" sv:type="String">
                   <sv:value>preview</sv:value>
@@ -431,12 +431,12 @@
             <sv:property sv:name="hst:mountrest" sv:type="String">
               <sv:value>restapi</sv:value>
             </sv:property>
-            <sv:node sv:name="demosubsite">
+            <sv:node sv:name="demosite_fr">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
-                <sv:value>/hst:hst/hst:sites/demosubsite-live</sv:value>
+                <sv:value>/hst:hst/hst:sites/demosite_fr-live</sv:value>
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
@@ -554,12 +554,12 @@
               <sv:property sv:name="hst:mountrest" sv:type="String">
                 <sv:value>restapi</sv:value>
               </sv:property>
-              <sv:node sv:name="demosubsite">
+              <sv:node sv:name="demosite_fr">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:mount</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosubsite-preview</sv:value>
+                  <sv:value>/hst:hst/hst:sites/demosite_fr-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:type" sv:type="String">
                   <sv:value>preview</sv:value>

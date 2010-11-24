@@ -71,12 +71,12 @@
     </sv:node>
   </sv:node>
   
-  <sv:node sv:name="demosubsite-live">
+  <sv:node sv:name="demosite_fr-live">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
     <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosubsite</sv:value>
+      <sv:value>/hst:hst/hst:configurations/demosite_fr</sv:value>
     </sv:property>
     
     <sv:node sv:name="hst:content">
@@ -97,12 +97,12 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="demosubsite-preview">
+  <sv:node sv:name="demosite_fr-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
     <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosubsite</sv:value>
+      <sv:value>/hst:hst/hst:configurations/demosite_fr</sv:value>
     </sv:property>
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

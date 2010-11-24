@@ -27,7 +27,7 @@
       <sv:value>hst:configuration</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="demosubsite">
+  <sv:node sv:name="demosite_fr">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>
     </sv:property>

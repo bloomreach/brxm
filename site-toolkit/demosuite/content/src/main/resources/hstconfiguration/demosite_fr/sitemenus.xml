@@ -7,12 +7,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemenu</sv:value>
         </sv:property>
-        <sv:node sv:name="Home">
+        <sv:node sv:name="Accueil">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>home</sv:value>
+                <sv:value>accueil</sv:value>
             </sv:property>
         </sv:node>
         <sv:node sv:name="About">

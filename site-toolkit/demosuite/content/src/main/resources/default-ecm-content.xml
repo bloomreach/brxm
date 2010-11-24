@@ -67,7 +67,7 @@
             <sv:value>new-document</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node  sv:name="demosubsite">
+        <sv:node  sv:name="demosite_fr">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippostd:folder</sv:value>
           </sv:property>
