@@ -30,13 +30,6 @@ public interface HippoDocumentBean extends HippoBean {
      */
     String getCanonicalHandleUUID();
     
-    
-    /**
-     * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
-     * @return a {@link HippoAvailableTranslationsBean}. This method never returns <code>null</code>
-     */
-    HippoAvailableTranslationsBean<HippoDocumentBean> getAvailableTranslationsBean();
-    
     /**
      * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
      * @param beanMappingClass
@@ -44,5 +37,4 @@ public interface HippoDocumentBean extends HippoBean {
      */
     <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass);
  
-    
 }

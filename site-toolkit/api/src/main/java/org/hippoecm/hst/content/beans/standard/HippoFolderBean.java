@@ -97,10 +97,5 @@ public interface HippoFolderBean extends HippoBean {
      */
     <T> HippoDocumentIterator<T> getDocumentIterator(Class<T> beanMappingClass);
     
-    /**
-     * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
-     * @return a {@link HippoAvailableTranslationsBean}. The method never return <code>null</code>
-     */
-    HippoAvailableTranslationsBean<HippoFolderBean> getAvailableTranslationsBean();
       
 }

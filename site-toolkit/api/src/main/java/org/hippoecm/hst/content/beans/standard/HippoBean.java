@@ -272,7 +272,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * will return a no-operation {@link HippoAvailableTranslationsBean} instance.
      * @return A {@link HippoAvailableTranslationsBean}. If there are no translations for this {@link HippoBean}, a no-operation {@link HippoAvailableTranslationsBean} will be returned 
      */
-    HippoAvailableTranslationsBean<?> getAvailableTranslationsBean();
+    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean();
     
     /**
      * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 
