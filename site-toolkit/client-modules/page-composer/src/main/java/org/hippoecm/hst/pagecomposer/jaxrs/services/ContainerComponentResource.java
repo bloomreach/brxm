@@ -82,7 +82,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
             }
             if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                throw new ContainerException("Need a container item");
+                return error("The container component where the item should be created in is not of the correct type. Cannot create item '"+itemUUID+"'");
             }
 
             Node containerNode = getRequestConfigNode(requestContext);
@@ -110,14 +110,14 @@ public class ContainerComponentResource extends AbstractConfigResource {
             ContainerItemRepresentation item = new ContainerItemRepresentation().represent(newItem);
             return ok("Successfully create item " + newItem.getName() + " with path " + newItem.getPath(), item);
 
-        } catch (LoginException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            if(log.isDebugEnabled()) {
+                log.warn("Exception during creating new container item: {}", e);
+            } else {
+                log.warn("Exception during creating new container item: {}", e.getMessage());
+            }
+            return error("Exception during creating new container item : " + e.getMessage());
         }
-        return error("Exception during creating new container item");
     }
 
     @POST
@@ -167,7 +167,12 @@ public class ContainerComponentResource extends AbstractConfigResource {
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
         } catch (RepositoryException e) {
-            return error(e.getMessage(), container);
+            if(log.isDebugEnabled()) {
+                log.warn("Exception during updating container item: {}", e);
+            } else {
+                log.warn("Exception during updating container item: {}", e.getMessage());
+            }
+            return error("Exception during updating container item: " + e.getMessage(), container);
         }
     }
 
@@ -190,7 +195,13 @@ public class ContainerComponentResource extends AbstractConfigResource {
             node.remove();
             session.save();
         } catch (RepositoryException e) {
-            log.warn("Failed to delete node with id {} but returning OK anyway.", itemUUID);
+            if(log.isDebugEnabled()) {
+                log.warn("Exception during delete container item: {}", e);
+            } else {
+                log.warn("Exception during delete container item: {}", e.getMessage());
+            }
+            log.warn("Failed to delete node with id {}.", itemUUID);
+            return error("Failed  to delete node with id '"+itemUUID+"': " + e.getMessage());
         }
         return ok("Successfully removed node with UUID: " + itemUUID);
     }
