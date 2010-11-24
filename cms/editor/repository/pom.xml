@@ -15,14 +15,16 @@
 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!--
   <parent>
     <groupId>org.onehippo</groupId>
     <artifactId>hippo-cms-editor</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
+  -->
 
-  <name>CMS Editor Repository</name>
-  <description>Hippo CMS editor - configuration and workflow</description>
+  <name>CMS editor repository addon</name>
+  <description>Hippo CMS editor repository addon</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-editor-repository</artifactId>
   <version>2.17.02-SNAPSHOT</version>
@@ -33,15 +35,22 @@
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor/repository</developerConnection>
     <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/editor/repository</url>
   </scm>
+  <properties>
+    <repository.version>2.17.02-SNAPSHOT</repository.version>
+    <repository.version>2.17.02-SNAPSHOT</repository.version>
+  </properties>
 
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-api</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
@@ -51,22 +60,40 @@
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
+      <version>2.0</version>
+      <!--
+      <scope>provided</scope>
+      -->
+      <exclusions>
+        <exclusion>
+          <groupId>geronimo-spec</groupId>
+          <artifactId>geronimo-spec-jta</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>jpox</groupId>
       <artifactId>jpox-core</artifactId>
+      <version>1.2.0-beta-3</version>
+      <!--
+      <scope>provided</scope>
+      -->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+      <version>1.5.8</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
