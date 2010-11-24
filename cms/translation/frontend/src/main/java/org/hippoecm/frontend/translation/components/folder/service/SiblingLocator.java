@@ -109,8 +109,7 @@ public final class SiblingLocator extends ExtObservable {
         try {
             properties.put("dataUrl", behavior.getCallbackUrl());
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new WicketRuntimeException("Could not build ext component configuration", e);
         }
         return properties;
     }
