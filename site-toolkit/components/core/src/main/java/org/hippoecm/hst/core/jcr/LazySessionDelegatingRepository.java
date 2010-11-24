@@ -202,12 +202,17 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                     lastRefreshed = 0L;
                     sessionWeakRef = new WeakReference<Session>(session);
                 }
-                Object ret;
+                
+                Object ret = null;
                 
                 try {
                    ret = method.invoke(session, args);
                 } catch (Exception e) {
-                    throw e.getCause();
+                    if (e.getCause() != null) {
+                        throw e.getCause();
+                    } else {
+                        throw e;
+                    }
                 }
                    
                 if ("refresh".equals(methodName)) {
