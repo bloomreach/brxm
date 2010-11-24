@@ -319,18 +319,6 @@
       </releases>
     </repository>
     <repository>
-      <id>jpox.legacy</id>
-      <name>JPOX Maven 1 repository.</name>
-      <url>http://www.jpox.org/downloads/maven/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>legacy</layout>
-    </repository>
-    <repository>
       <id>glassfish</id>
       <name>Glassfish maven repository</name>
       <url>http://download.java.net/maven/glassfish</url>
