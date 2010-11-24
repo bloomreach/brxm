@@ -56,6 +56,12 @@
 - hst:xtype (string) mandatory
 + * (hst:containeritemcomponent)
 
+[hst:containeritempackage] > nt:base, mix:referenceable orderable
++ * (hst:containeritemcomponent)
+
+[hst:catalog] > nt:base, mix:referenceable orderable
++ * (hst:containeritempackage)
+
 [hst:components] > nt:base, mix:referenceable orderable
 - hst:inheritsfrom (string)
 + * (hst:abstractcomponent)
@@ -149,9 +155,11 @@
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
 + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
 + hst:scripts (hst:scripts) = hst:scripts
++ hst:catalog (hst:catalog) = hst:catalog
 
 [hst:configurations] > nt:base, mix:referenceable, mix:versionable
 + * (hst:configuration) = hst:configuration version
++ hst:catalog (hst:catalog) = hst:catalog
 
 [hst:site] > nt:base, mix:referenceable, mix:versionable
 + hst:content (hippo:facetselect) mandatory

@@ -38,7 +38,7 @@ public class ToolkitRepresentation {
      */
     public ToolkitRepresentation represent(Mount mount) {
         HstSite site = mount.getHstSite();
-        List<HstComponentConfiguration> allUniqueContainerItems = site.getComponentsConfiguration().getUniqueContainerItems();
+        List<HstComponentConfiguration> allUniqueContainerItems = site.getComponentsConfiguration().getAvailableContainerItems();
         for (HstComponentConfiguration child : allUniqueContainerItems) {
             components.add(new ComponentRepresentation().represent(child));
         }

@@ -73,11 +73,11 @@ public class HstSiteService implements HstSite {
             throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );
         }
         
-        init(configurationNode, hstManager.getRootPath() + "/hst:configurations");
+        init(configurationNode, hstManager.getRootPath() + "/hst:configurations", hstManager);
     }
 
     
-    private void init(HstNode configurationNode, String hstConfigurationsRootPath) throws ServiceException {
+    private void init(HstNode configurationNode, String hstConfigurationsRootPath, HstManagerImpl hstManager) throws ServiceException {
        Map<String, HstNode> templateResourceMap = new HashMap<String, HstNode>();
        
        // templates
@@ -97,7 +97,7 @@ public class HstSiteService implements HstSite {
        }
        
        // component configuration
-       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, hstConfigurationsRootPath , templateResourceMap); 
+       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, hstConfigurationsRootPath , templateResourceMap, hstManager); 
        
        // sitemapitem handlers
        

@@ -103,6 +103,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
             String hstConfigurationsNodePath) throws ServiceException {
+        this(node, parent, hstConfigurationsNodePath, true);
+    }
+
+    public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
+            String hstConfigurationsNodePath, boolean traverseDescendants) throws ServiceException {
+    
         if (!node.getValueProvider().getPath().startsWith(hstConfigurationsNodePath)) {
             throw new ServiceException(
                     "Node path of the component cannot start without the global components path. Skip Component");
@@ -142,7 +148,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if(referenceComponent != null) {
             if(type == Type.CONTAINER_COMPONENT) {
                 throw new ServiceException("ContainerComponents are not allowed to have a reference. Pls fix the" +
-                		"configuration for '"+canonicalStoredLocation+"'");
+                        "configuration for '"+canonicalStoredLocation+"'");
             }
         }
         
@@ -167,6 +173,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
       
+        if(!traverseDescendants) {
+            // do not load children 
+            return;
+        }
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
                     || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
@@ -177,7 +187,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 try {
                     HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(
-                            child, this, hstConfigurationsNodePath);
+                            child, this, hstConfigurationsNodePath, true);
                     componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
 
                     // we also need an ordered list
@@ -196,9 +206,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         (HstNodeTypes.NODETYPE_HST_COMPONENT));
             }
         }
-        
     }
-
     public HstComponentConfiguration getParent() {
         return parent;
     }

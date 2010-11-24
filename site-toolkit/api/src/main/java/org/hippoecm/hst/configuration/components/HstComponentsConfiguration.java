@@ -56,18 +56,11 @@ public interface HstComponentsConfiguration {
     HstComponentConfiguration getComponentConfiguration(String id);
     
     /**
-     * Returns all the unique {@link HstComponentConfiguration}'s belonging to the {@link HstSite} containing this {@link HstComponentsConfiguration} that 
-     * are of type {@link Type#CONTAINER_ITEM_COMPONENT}. The following criteria are taking into account for defining uniqueness:
-     * <ul>
-     *  <li>{@link HstComponentConfiguration#getComponentClassName()}</li>
-     *  <li>{@link HstComponentConfiguration#getRenderPath()}</li>
-     * </ul>
-     * 
-     * Optionally, also the above to criteria for all descendant components of the {@link HstComponentConfiguration} are checked to define the uniqueness.
+     * Returns all the available {@link HstComponentConfiguration}'s belonging to the {@link HstSite} 
      * 
      * Implementations should return an unmodifiable List
-     * @return the {@link List} of all unique container items
+     * @return the {@link List} of all available container items
      */
-    List<HstComponentConfiguration> getUniqueContainerItems();
+    List<HstComponentConfiguration> getAvailableContainerItems();
 
 }

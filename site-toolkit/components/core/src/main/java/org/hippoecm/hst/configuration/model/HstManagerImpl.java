@@ -61,6 +61,11 @@ public class HstManagerImpl implements HstManager {
      * The root of the virtual hosts node. There should always be exactly one.
      */
     HstNode virtualHostsNode; 
+    
+    /**
+     * The common catalog node and <code>null</code> if there is no common catalog (hst:configurations/hst:catalog)
+     */
+    HstNode commonCatalog;
 
     /**
      * The map of all configurationRootNodes where the key is the path to the configuration
@@ -157,6 +162,12 @@ public class HstManagerImpl implements HstManager {
                 virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
             } 
             
+            // if there is a common catalog, we load this one:
+            if(session.itemExists(rootPath +"/hst:configurations/hst:catalog")) {
+                // we have a common catalog. Load this catalog. It is available for every (sub)site
+                Node catalog = (Node)session.getItem(rootPath +"/hst:configurations/hst:catalog");
+                commonCatalog = new HstNodeImpl(catalog, null, true);
+            } 
             
             // get all the root hst configuration nodes
             {
@@ -202,7 +213,10 @@ public class HstManagerImpl implements HstManager {
     }
     
     public void invalidate(String path) {
-        this.virtualHosts = null;
+        virtualHosts = null;
+        commonCatalog = null;
+        configurationRootNodes.clear();
+        siteRootNodes.clear();
     }
     
     public HstNode getVirtualHostsNode() {
@@ -215,6 +229,10 @@ public class HstManagerImpl implements HstManager {
 
     public Map<String, HstNode> getConfigurationRootNodes() {
         return configurationRootNodes;
+    }
+    
+    public HstNode getCommonCatalog(){
+        return commonCatalog;
     }
 
     public String getPathSuffixDelimiter() {

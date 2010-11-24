@@ -24,8 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.NodeIterator;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
@@ -50,35 +53,43 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private List<HstComponentConfiguration> childComponents  = new ArrayList<HstComponentConfiguration>();
     
     /*
-     * The Map of all containter items that are unique: A container item can be used multiple times with a single HstSite. This Map contains only the unique container items.
-     * The key is composed of the component class name & template value
-     * TODO Currently, in uniqueness calculation, we do not take into account possible different child components.
+     * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
      */
-    private Map<String, HstComponentConfiguration> uniqueContainerItemsMap  = new HashMap<String, HstComponentConfiguration>();
+    private List<HstComponentConfiguration> availableContainerItems  = new ArrayList<HstComponentConfiguration>();
 
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
 
-    public HstComponentsConfigurationService(HstNode configurationNode, String hstConfigurationsRootPath, Map<String, HstNode> templateResourceMap) throws ServiceException {
+    public HstComponentsConfigurationService(HstNode configurationNode, String hstConfigurationsRootPath, Map<String, HstNode> templateResourceMap, HstManagerImpl hstManager) throws ServiceException {
 
         HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
         
         if (components != null) {
-            log.debug("Initializing the components for '{}'", HstNodeTypes.NODENAME_HST_COMPONENTS);
+            log.debug("Initializing the components");
             init(components, hstConfigurationsRootPath);
         }
 
         HstNode pages =  configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES);
         if (pages != null) {
-            log.debug("Initializing the pages for '{}'", HstNodeTypes.NODENAME_HST_PAGES);
+            log.debug("Initializing the pages");
             init(pages, hstConfigurationsRootPath);
         }
 
-        // we rather compute all the unique container items before enhancing.
-        for (HstComponentConfiguration child : childComponents) {
-            populateUniqueContainerItems(child);
+        // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
+        // are *never* used directly. They are only to be used by the page composer that can drop these containeritems into containers
+        
+        HstNode catalog =  configurationNode.getNode(HstNodeTypes.NODENAME_HST_CATALOG);
+        if (catalog != null) {
+            log.debug("Initializing the catalog");
+            initCatalog(catalog, hstConfigurationsRootPath);
         }
         
+        if(hstManager.getCommonCatalog() != null) {
+            // now also load the COMMON catalog
+            log.debug("Initializing the common catalog");
+            initCatalog(hstManager.getCommonCatalog(), hstConfigurationsRootPath);
+        }
+     
         for (HstComponentConfiguration child : childComponents) {
             populateRootComponentConfigurations(child);
         }
@@ -94,6 +105,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     }
 
+    
     private void enhanceComponentTree(Map<String, HstNode> templateResourceMap) throws ServiceException{
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
@@ -130,8 +142,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
 
 
-    public List<HstComponentConfiguration> getUniqueContainerItems() {
-        return Collections.unmodifiableList(new ArrayList<HstComponentConfiguration>(uniqueContainerItemsMap.values()));
+    public List<HstComponentConfiguration> getAvailableContainerItems() {
+        return availableContainerItems;
     }
     
     private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
@@ -154,19 +166,6 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
-    private void populateUniqueContainerItems(HstComponentConfiguration candidateConfiguration) {
-        if(candidateConfiguration.getComponentType() == Type.CONTAINER_ITEM_COMPONENT) {
-            // check whether we already have this container item. If not,  we add it
-            String key = candidateConfiguration.getComponentClassName() + '\uFFFF' + ((HstComponentConfigurationService)candidateConfiguration).getHstTemplate();
-            if(!uniqueContainerItemsMap.containsKey(key)) {
-                uniqueContainerItemsMap.put(key, candidateConfiguration);
-            }
-        }
-        for (HstComponentConfiguration child : candidateConfiguration.getChildren().values()) {
-            populateUniqueContainerItems(child);
-        }
-    }
-    
     private void init(HstNode node, String hstConfigurationsRootPath) {
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())
@@ -194,6 +193,38 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             else {
                 log.warn("Skipping node '{}' because is not of type '{}'", child.getValueProvider().getPath(),
                         (HstNodeTypes.NODETYPE_HST_COMPONENT));
+            }
+        }
+    }
+    
+    private void initCatalog(HstNode catalog, String hstConfigurationsRootPath) {
+        
+        for(HstNode itemPackage :catalog.getNodes()){
+            if(HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE.equals(itemPackage.getNodeTypeName())) {
+                for(HstNode containerItem : itemPackage.getNodes()) {
+                    if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(containerItem.getNodeTypeName()))
+                    {
+                        try {
+                            // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
+                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,null, hstConfigurationsRootPath, false);
+                            availableContainerItems.add(componentConfiguration);
+                            log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
+                        } catch (ServiceException e) {
+                            if (log.isDebugEnabled()) {
+                                log.warn("Skipping catalog component '{}'", containerItem.getValueProvider().getPath(), e);
+                            } else if (log.isWarnEnabled()) {
+                                log.warn("Skipping catalog component '{}' : '{}'", containerItem.getValueProvider().getPath(), e.toString());
+                            }
+                        }
+                    }
+                    else {
+                        log.warn("Skipping catalog component '{}' because is not of type '{}'", containerItem.getValueProvider().getPath(),
+                                (HstNodeTypes.NODETYPE_HST_COMPONENT));
+                    }
+                }
+            } else {
+                log.warn("Skipping node '{}' because is not of type '{}'", itemPackage.getValueProvider().getPath(),
+                        (HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE));
             }
         }
     }
