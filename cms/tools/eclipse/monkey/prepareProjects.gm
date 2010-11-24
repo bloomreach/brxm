@@ -1,6 +1,6 @@
 /*
  * Menu: Prepare Hippo ECM projects
- * Script-Path: /hippo-ecm-tools-eclipse/monkey/prepareProjects.gm
+ * Script-Path: /hippo-cms-tools-eclipse/monkey/prepareProjects.gm
  * Kudos: Wander Grevink (onehippo.com)
  * License: Apache 2.0
  * Job: WorkspaceJob
@@ -18,17 +18,17 @@ import org.eclipse.core.internal.resources.Workspace
 out.clear()
 println "$metadata.menuName started\n"
 
-addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-repository-application')
-addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-frontend-application')
-addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-repository-application')
-addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-frontend-application')
+addProjectDependency('hippo-quickstart-war', 'hippo-repository-application')
+addProjectDependency('hippo-quickstart-war', 'hippo-cms-application')
+addProjectDependency('hippo-package-war', 'hippo-repository-application')
+addProjectDependency('hippo-package-war', 'hippo-cms-application')
 
 cleanupSharedResources()
-cleanupTestResourcesInDependencies('hippo-ecm-quickstart-war')
-cleanupTestResourcesInDependencies('hippo-ecm-repository-application')
-cleanupTestResourcesInDependencies('hippo-ecm-frontend-application')
+cleanupTestResourcesInDependencies('hippo-quickstart-war')
+cleanupTestResourcesInDependencies('hippo-repository-application')
+cleanupTestResourcesInDependencies('hippo-cms-application')
 
-convertResourcesToAny('hippo-ecm-repository-upgrade', 'src/main/resources')
+convertResourcesToAny('hippo-repository-upgrade', 'src/main/resources')
 
 println "\n$metadata.menuName finished"
 
@@ -44,8 +44,8 @@ def cleanupTestResourcesInDependencies(projectName) {
         classpath.each() {
             if (it.entryKind == IClasspathEntry.CPE_PROJECT) {
                 def name = it.path.lastSegment()
-                removeProjectDependency(name, 'hippo-ecm-frontend-engine-test')
-                removeProjectDependency(name, 'hippo-ecm-addon-builtin-test')
+                removeProjectDependency(name, 'hippo-cms-engine-test')
+                removeProjectDependency(name, 'hippo-cms-builtin-test')
                 removeClasspathEntry(name, 'src/test/java')
                 removeClasspathEntry(name, 'src/test/resources')
             }
