@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Goto frontend addon</name>
-  <description>Hippo CMS gotolink addon</description>
+  <name>CMS Goto</name>
+  <description>Hippo CMS gotolink plugin</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-gotolink</artifactId>
 

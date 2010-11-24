@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Search frontend addon</name>
-  <description>Hippo CMS Search fronend addon</description>
+  <name>CMS Search</name>
+  <description>Hippo CMS Search</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-search</artifactId>
   <packaging>jar</packaging>

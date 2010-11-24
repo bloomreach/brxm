@@ -21,9 +21,9 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
+  <name>CMS Development content</name>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-tools-development-content</artifactId>
-  <name>CMS Development content</name>
   <description>Hippo CMS tool for creating development content</description>
   <packaging>jar</packaging>
 

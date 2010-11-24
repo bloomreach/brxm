@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Minimal frontend app</name>
-  <description>Hippo CMS minimal frontend application</description>
+  <name>CMS Minimal Application</name>
+  <description>Hippo CMS Minimal frontend application</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-application</artifactId>
   <packaging>war</packaging>

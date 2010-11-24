@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS root addon</name>
-  <description>Hippo CMS root addons</description>
+  <name>CMS Root</name>
+  <description>Hippo CMS root plugin</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-rootpage</artifactId>
   <packaging>jar</packaging>

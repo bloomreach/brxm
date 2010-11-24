@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Standards frontend addon</name>
-  <description>Hippo CMS standards frontend addons</description>
+  <name>CMS API</name>
+  <description>Hippo CMS reusable components and extension points</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-api</artifactId>
   <packaging>jar</packaging>

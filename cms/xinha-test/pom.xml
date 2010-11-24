@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Xinha addon frontend plugin test</name>
-  <description>Hippo CMS Xinha addon frontend plugin test</description>
+  <name>CMS Xinha Editor Plugin Test</name>
+  <description>Hippo CMS Xinha editor plugin test</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-xinha-test</artifactId>
   <packaging>war</packaging>

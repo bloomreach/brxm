@@ -21,7 +21,7 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS YUI frontend addon</name>
+  <name>CMS YUI</name>
   <description>Hippo CMS Yahoo! User Interface Library (YUI) components</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-yui</artifactId>

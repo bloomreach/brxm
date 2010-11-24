@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Frontend engine</name>
-  <description>Hippo CMS Wicket component library for use by frontend applications and components</description>
+  <name>CMS Engine</name>
+  <description>Hippo CMS Wicket plugin framework for use by frontend applications and components</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-engine</artifactId>
   <packaging>jar</packaging>

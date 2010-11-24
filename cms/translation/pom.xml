@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Translation Addon</name>
-  <description>Hippo CMS Translation Addon</description>
+  <name>CMS Translation</name>
+  <description>Hippo CMS Translation</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-translation</artifactId>
   <packaging>pom</packaging>

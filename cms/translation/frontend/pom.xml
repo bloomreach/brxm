@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Translation frontend addon</name>
-  <description>Hippo CMS Translation frontend addon</description>
+  <name>CMS Translation Plugins</name>
+  <description>Hippo CMS Translation plugins</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-translation-frontend</artifactId>
   <packaging>jar</packaging>

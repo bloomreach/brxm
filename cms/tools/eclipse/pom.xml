@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hippo-cms-tools-eclipse</artifactId>
   <name>CMS Eclipse utilities</name>
+  <artifactId>hippo-cms-tools-eclipse</artifactId>
   <description>
     Some utility scripts for making debugging Hippo CMS
     with Eclipse more easy. This project has no deliverables and acts

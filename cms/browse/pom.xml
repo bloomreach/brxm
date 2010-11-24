@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS browse addon</name>
-  <description>Hippo CMS browse addons</description>
+  <name>CMS Browse</name>
+  <description>Hippo CMS Browse perspective</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-browse</artifactId>
   <packaging>jar</packaging>

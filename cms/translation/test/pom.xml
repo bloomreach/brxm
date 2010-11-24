@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Translation test addon</name>
-  <description>Hippo CMS Translation Test Addon</description>
+  <name>CMS Translation Test</name>
+  <description>Hippo CMS Translation test application for plugin development and tests for repository development</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-translation-test</artifactId>
   <packaging>war</packaging>

@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Xinha addon frontend plugin</name>
-  <description>Hippo CMS Xinha addon frontend plugin</description>
+  <name>CMS Xinha Editor Plugin</name>
+  <description>Hippo CMS Xinha Editor Plugin</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-xinha-integration</artifactId>
   <packaging>jar</packaging>

@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS admin addon</name>
-  <description>Hippo CMS administration addon</description>
+  <name>CMS Admin Perspective</name>
+  <description>Hippo CMS Administration perspective</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-admin</artifactId>
   <packaging>jar</packaging>

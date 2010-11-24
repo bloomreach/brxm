@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Gallery repository addon</name>
-  <description>Hippo CMS Gallery Addon</description>
+  <name>CMS Gallery Repository</name>
+  <description>Hippo CMS Gallery configuration and workflow implementation</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-gallery-repository</artifactId>
   <packaging>jar</packaging>

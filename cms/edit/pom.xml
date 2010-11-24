@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS edit addon</name>
-  <description>Hippo CMS edit addons</description>
+  <name>CMS Edit Perspective</name>
+  <description>Hippo CMS Edit Perspective</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-edit</artifactId>
   <packaging>jar</packaging>

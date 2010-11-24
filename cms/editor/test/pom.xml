@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS editor test addon</name>
-  <description>Hippo CMS editor test addon</description>
+  <name>CMS Editor Test</name>
+  <description>Hippo CMS editor test</description>
   <groupId>org.onehippo</groupId>
   <artifactId>hippo-cms-editor-test</artifactId>
   <packaging>jar</packaging>

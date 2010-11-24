@@ -21,8 +21,8 @@
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Editor addon</name>
-  <description>Hippo CMS editor addons</description>
+  <name>CMS Editor</name>
+  <description>Hippo CMS editor</description>
   <artifactId>hippo-cms-editor</artifactId>
   <groupId>org.onehippo</groupId>
   <packaging>pom</packaging>
