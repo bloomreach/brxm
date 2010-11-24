@@ -328,7 +328,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
                  log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
             }
             if(availableTranslationsBean== null) {
-                availableTranslationsBean = HippoAvailableTranslationsBean.noopTranslationFolderBean;
+                availableTranslationsBean = HippoAvailableTranslationsBean.NOOP_TRANSLATION_FOLDERBEAN;
                 log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
             } else {
                 ((HippoAvailableTranslations)availableTranslationsBean).setBeanMappingClass(HippoFolderBean.class);

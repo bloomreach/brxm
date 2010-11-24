@@ -20,9 +20,9 @@ import java.util.List;
 
 public interface HippoAvailableTranslationsBean<K extends HippoBean> {
 
-    public final static HippoAvailableTranslationsBean<HippoBean> noopTranslationHippoBean = new NoopTranslationsBean<HippoBean>();
-    public final static HippoAvailableTranslationsBean<HippoDocumentBean> noopTranslationDocumentBean = new NoopTranslationsBean<HippoDocumentBean>();
-    public final static HippoAvailableTranslationsBean<HippoFolderBean> noopTranslationFolderBean = new NoopTranslationsBean<HippoFolderBean>();
+    public final static HippoAvailableTranslationsBean<HippoBean> NOOP_TRANSLATION_HIPPOBEAN = new NoopTranslationsBean<HippoBean>();
+    public final static HippoAvailableTranslationsBean<HippoDocumentBean> NOOP_TRANSLATION_DOCUMENTBEAN = new NoopTranslationsBean<HippoDocumentBean>();
+    public final static HippoAvailableTranslationsBean<HippoFolderBean> NOOP_TRANSLATION_FOLDERBEAN = new NoopTranslationsBean<HippoFolderBean>();
 
     /**
      * It returns the available translations. 

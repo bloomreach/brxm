@@ -113,7 +113,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
                  log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
             }
             if(availableTranslationsBean== null) {
-                availableTranslationsBean = HippoAvailableTranslationsBean.noopTranslationDocumentBean;
+                availableTranslationsBean = HippoAvailableTranslationsBean.NOOP_TRANSLATION_DOCUMENTBEAN;
                 log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
             } else {
                 ((HippoAvailableTranslations)availableTranslationsBean).setBeanMappingClass(HippoDocumentBean.class);
@@ -131,7 +131,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
                  log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
             }
             if(availableTranslationsBeanMappingClass== null) {
-                availableTranslationsBeanMappingClass = HippoAvailableTranslationsBean.noopTranslationDocumentBean;
+                availableTranslationsBeanMappingClass = HippoAvailableTranslationsBean.NOOP_TRANSLATION_DOCUMENTBEAN;
                 log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
             } else {
                 ((HippoAvailableTranslations)availableTranslationsBeanMappingClass).setBeanMappingClass(beanMappingClass);

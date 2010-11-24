@@ -515,7 +515,7 @@ public class HippoItem implements HippoBean {
      * Document and Folder beans will override this method 
      */
     public HippoAvailableTranslationsBean<?> getAvailableTranslationsBean() {
-        return HippoAvailableTranslationsBean.noopTranslationHippoBean;
+        return HippoAvailableTranslationsBean.NOOP_TRANSLATION_HIPPOBEAN;
     }
 
     
