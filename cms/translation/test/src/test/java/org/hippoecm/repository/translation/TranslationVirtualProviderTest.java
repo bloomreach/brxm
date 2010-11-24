@@ -221,6 +221,25 @@ public class TranslationVirtualProviderTest extends TestCase {
     }
 
     @Test
+    public void facetSelectToDocumentHasDescendants() throws Exception {
+        Node docsFolder = session.getRootNode().getNode("test/docs");
+        docsFolder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        docsFolder.setProperty(HippoTranslationNodeType.LOCALE, "nl");
+        docsFolder.setProperty(HippoTranslationNodeType.ID, FOLDER_T9N_ID);
+
+        Node filter = session.getRootNode().getNode("test").addNode("filter", "hippo:facetselect");
+        filter.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
+        filter.setProperty("hippo:facets", new String[] { "state" });
+        filter.setProperty("hippo:values", new String[] { "unpublished" });
+        filter.setProperty("hippo:modes", new String[] { "prefer-single" });
+
+        session.save();
+        session.refresh(false);
+
+        assertTrue(session.itemExists("/test/filter/" + HippoTranslationNodeType.TRANSLATIONS + "/nl"));
+    }
+    
+    @Test
     public void testInheritsPreferFacetFilter() throws Exception {
         Node txnDoc = session.getRootNode().getNode("test/docs/txn/txn");
         txnDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);

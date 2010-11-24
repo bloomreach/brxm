@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import javax.jcr.RepositoryException;
 
@@ -56,6 +57,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
     private Name handleName;
     private Name idName;
     private Name localeName;
+    private Name docbaseName;
 
     @Override
     protected void initialize() throws RepositoryException {
@@ -64,6 +66,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
         handleName = resolveName(HippoNodeType.NT_HANDLE);
         idName = nf.create(HippoTranslationNodeType.NS, "id");
         localeName = nf.create(HippoTranslationNodeType.NS, "locale");
+        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
     }
 
     @Override
@@ -88,6 +91,16 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
         NodeId docId = parentId;
         if (docId instanceof MirrorNodeId) {
             docId = ((MirrorNodeId) docId).getCanonicalId();
+        } else {
+            String[] docbase = getProperty(docId, docbaseName);
+            if (docbase != null && docbase.length > 0) {
+                try {
+                    docId = new NodeId(UUID.fromString(docbase[0]));
+                } catch (IllegalArgumentException e) {
+                    log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
+                    return super.populate(context, state);
+                }
+            }
         }
         String[] ids = getProperty(docId, idName);
         if (ids == null || ids.length == 0) {
