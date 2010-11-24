@@ -99,6 +99,9 @@
     <property name="subjectBasedRepository" ref="javax.jcr.Repository.subjectBased" />
   </bean>
   
+  <bean id="jcrSessionConcurrencyValve" parent="abstractValve" class="org.hippoecm.hst.core.container.JCRSessionConcurrencyValve">
+  </bean>
+  
   <bean id="siteMenusResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SiteMenusResolvingValve">
   </bean>
   

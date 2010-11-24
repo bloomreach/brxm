@@ -102,7 +102,11 @@ public class CleanupValve extends AbstractValve
                         lazySession.refresh(keepChangesOnRefreshLazySession);
                     }
                 } catch (RepositoryException e) {
-                    log.error("Failed to refresh session.", e);
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to refresh session.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to refresh session. " + e);
+                    }
                 }
             }
         } else {
@@ -112,7 +116,11 @@ public class CleanupValve extends AbstractValve
                 try {
                     lazySession.logout();
                 } catch (Exception e) {
-                    log.error("Failed to logout session.", e);
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to logout session.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to logout session. " + e);
+                    }
                 }
                 
                 requestContext.removeAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);

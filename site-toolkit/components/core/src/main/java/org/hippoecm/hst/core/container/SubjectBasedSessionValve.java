@@ -15,10 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -57,22 +55,6 @@ public class SubjectBasedSessionValve extends AbstractValve {
                 }
             } else {
                 setSubjectSession(context, requestContext, sessionStateful);
-                if(sessionStateful) {
-                    // for session stateful, we need synchronized request processing on session instance to avoid concurrency issues
-                    try {
-                        Session session = requestContext.getSession();
-                        if(session != null) {
-                           synchronized (session) {
-                                context.invokeNext();
-                                return;
-                           }
-                        }
-                    } catch (LoginException e) {
-                        throw new ContainerException(e);
-                    } catch (RepositoryException e) {
-                        throw new ContainerException(e);
-                    }
-                }
             }
         }
         context.invokeNext();
