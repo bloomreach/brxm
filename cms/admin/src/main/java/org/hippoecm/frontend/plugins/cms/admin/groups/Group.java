@@ -67,7 +67,7 @@ public class Group implements Comparable<Group>, IClusterable {
         String queryString = QUERY_GROUP_EXISTS.replace("{}", groupname);
         try {
             Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            if (query.execute().getNodes().getSize() > 0) {
+            if (query.execute().getNodes().hasNext()) {
                 return true;
             }
         } catch (RepositoryException e) {

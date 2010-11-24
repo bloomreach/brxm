@@ -57,11 +57,11 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
                     HippoNodeType.HIPPO_LANGUAGE + "='" + NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_LANGUAGE)) + "']";
             Query query = qMgr.createQuery(strQuery, Query.XPATH);
             NodeIterator nodes = query.execute().getNodes();
-            if (nodes.getSize() > 0) {
-                Set<NodeWrapper> list = new HashSet<NodeWrapper>((int) nodes.getSize());
-                while (nodes.hasNext()) {
-                    list.add(new NodeWrapper(nodes.nextNode(), criteria));
-                }
+            Set<NodeWrapper> list = new HashSet<NodeWrapper>();
+            while (nodes.hasNext()) {
+                list.add(new NodeWrapper(nodes.nextNode(), criteria));
+            }
+            if (list.size() > 0) {
                 return new TranslationSelectionStrategy<IModel>(criteria.keySet()).select(list).getModel();
             }
         } catch (RepositoryException ex) {

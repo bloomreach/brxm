@@ -423,10 +423,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 }
                 if (prototype != null) {
                     String[] translated = getPluginConfig().getStringArray("workflow.translated");
-                    for (String translatedPrototype : translated) {
-                        if (translatedPrototype.equals(templateCategory)) {
-                            languageVisible = true;
-                            break;
+                    if (translated != null) {
+                        for (String translatedPrototype : translated) {
+                            if (translatedPrototype.equals(templateCategory)) {
+                                languageVisible = true;
+                                break;
+                            }
                         }
                     }
                 }

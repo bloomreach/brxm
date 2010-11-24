@@ -85,7 +85,7 @@ public class User implements Comparable<User>, IClusterable {
         String queryString = QUERY_USER_EXISTS.replace("{}", username);
         try {
             Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            if (query.execute().getNodes().getSize() > 0) {
+            if (query.execute().getNodes().hasNext()) {
                 return true;
             }
         } catch (RepositoryException e) {
