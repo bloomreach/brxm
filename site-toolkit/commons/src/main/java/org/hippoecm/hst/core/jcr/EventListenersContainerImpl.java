@@ -229,10 +229,46 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                             + ", nodeTypeNames=" + Arrays.toString(nodeTypeNames) + ", noLocal=" + noLocal);
                 }
             }
-
-            this.firstInitializationDone = true;
-
-            log.info("EventListenersContainer's initialization done.");
+            
+            if (!firstInitializationDone) {
+                firstInitializationDone = true;
+                
+                for (EventListenerItem item : getEventListenerItems()) {
+                    EventListener eventListener = item.getEventListener();
+                    
+                    if (eventListener instanceof EventListenersContainerListener) {
+                        try {
+                            ((EventListenersContainerListener) eventListener).onEventListenersContainerStarted();
+                        } catch (Exception elcle) {
+                            if (log.isDebugEnabled()) {
+                                log.warn("Failed to fire started event. " + elcle, elcle);
+                            } else {
+                                log.warn("Failed to fire started event. " + elcle);
+                            }
+                        }
+                    }
+                }
+                
+                log.info("EventListenersContainer's initialization done.");
+            } else {
+                for (EventListenerItem item : getEventListenerItems()) {
+                    EventListener eventListener = item.getEventListener();
+                    
+                    if (eventListener instanceof EventListenersContainerListener) {
+                        try {
+                            ((EventListenersContainerListener) eventListener).onEventListenersContainerRefreshed();
+                        } catch (Exception elcle) {
+                            if (log.isDebugEnabled()) {
+                                log.warn("Failed to fire refreshed event. " + elcle, elcle);
+                            } else {
+                                log.warn("Failed to fire refreshed event. " + elcle);
+                            }
+                        }
+                    }
+                }
+                
+                log.info("EventListenersContainer's initialization done again.");
+            }
             
         } catch (LoginException e) {
             if (log.isDebugEnabled()) {
@@ -269,6 +305,24 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 }
             }
             eventListenersContainerSessionChecker = null;
+        }
+        
+        for (EventListenerItem item : getEventListenerItems()) {
+            EventListener eventListener = item.getEventListener();
+            
+            if (eventListener instanceof EventListenersContainerListener) {
+                try {
+                    ((EventListenersContainerListener) eventListener).onEventListenersContainerStopped();
+                } catch (Exception elcle) {
+                    Logger log = getLogger();
+                    
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to fire stopped event. " + elcle, elcle);
+                    } else {
+                        log.warn("Failed to fire stopped event. " + elcle);
+                    }
+                }
+            }
         }
     }
     

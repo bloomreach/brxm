@@ -20,12 +20,13 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.core.container.HstComponentRegistry;
+import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstConfigurationEventListener extends GenericEventListener {
+public class HstConfigurationEventListener extends GenericEventListener implements EventListenersContainerListener {
     
     static Logger log = LoggerFactory.getLogger(HstConfigurationEventListener.class);
     
@@ -68,9 +69,26 @@ public class HstConfigurationEventListener extends GenericEventListener {
                 if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", invaliationEvent.getPath());
                 doInvalidation(invaliationEvent.getPath());
             } catch (RepositoryException e) {
-                if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
+                if (log.isWarnEnabled()) log.warn("Cannot invalidate: {}", e.getMessage());
             }
         }
+    }
+    
+    public void onEventListenersContainerStarted() {
+        // do nothing
+    }
+    
+    public void onEventListenersContainerRefreshed() {
+        try {
+            if (log.isDebugEnabled()) log.debug("Event received: onEventListenersContainerRefreshed");
+            doInvalidation(null);
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) log.warn("Cannot invalidate {}", e.getMessage());
+        }
+    }
+    
+    public void onEventListenersContainerStopped() {
+        // do nothing
     }
     
     private void doInvalidation(String path) {

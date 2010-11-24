@@ -38,7 +38,7 @@ import org.hippoecm.hst.site.HstServices;
  * 
  * @version $Id$
  */
-public class DelegatingEventListener implements EventListener {
+public class DelegatingEventListener implements EventListener, EventListenersContainerListener {
     
     private static final String LOGGER_CATEGORY_NAME = DelegatingEventListener.class.getName();
 
@@ -107,4 +107,78 @@ public class DelegatingEventListener implements EventListener {
         }
     }
     
+    public void onEventListenersContainerStarted() {
+        if (delegatees == null || delegatees.isEmpty()) {
+            return;
+        }
+        
+        Logger log = null;
+        
+        for (EventListener delegatee : delegatees) {
+            if (delegatee instanceof EventListenersContainerListener) {
+                try {
+                    ((EventListenersContainerListener) delegatee).onEventListenersContainerStarted();
+                } catch (Exception e) {
+                    if (log == null) {
+                        log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception during invoking delegatee event listener (onEventListenersContainerStarted).", e);
+                    } else {
+                        log.warn("Exception during invoking delegatee event listener (onEventListenersContainerStarted). {}", e.toString());
+                    }
+                }
+            }
+        }
+    }
+    
+    public void onEventListenersContainerRefreshed() {
+        if (delegatees == null || delegatees.isEmpty()) {
+            return;
+        }
+        
+        Logger log = null;
+        
+        for (EventListener delegatee : delegatees) {
+            if (delegatee instanceof EventListenersContainerListener) {
+                try {
+                    ((EventListenersContainerListener) delegatee).onEventListenersContainerRefreshed();
+                } catch (Exception e) {
+                    if (log == null) {
+                        log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception during invoking delegatee event listener (onEventListenersContainerRefreshed).", e);
+                    } else {
+                        log.warn("Exception during invoking delegatee event listener (onEventListenersContainerRefreshed). {}", e.toString());
+                    }
+                }
+            }
+        }
+    }
+    
+    public void onEventListenersContainerStopped() {
+        if (delegatees == null || delegatees.isEmpty()) {
+            return;
+        }
+        
+        Logger log = null;
+        
+        for (EventListener delegatee : delegatees) {
+            if (delegatee instanceof EventListenersContainerListener) {
+                try {
+                    ((EventListenersContainerListener) delegatee).onEventListenersContainerStopped();
+                } catch (Exception e) {
+                    if (log == null) {
+                        log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception during invoking delegatee event listener (onEventListenersContainerStopped).", e);
+                    } else {
+                        log.warn("Exception during invoking delegatee event listener (onEventListenersContainerStopped). {}", e.toString());
+                    }
+                }
+            }
+        }
+    }
 }
