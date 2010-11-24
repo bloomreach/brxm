@@ -20,10 +20,6 @@ import java.util.List;
 
 public interface HippoAvailableTranslationsBean<K extends HippoBean> {
 
-    public final static HippoAvailableTranslationsBean<HippoBean> NOOP_TRANSLATION_HIPPOBEAN = new NoopTranslationsBean<HippoBean>();
-    public final static HippoAvailableTranslationsBean<HippoDocumentBean> NOOP_TRANSLATION_DOCUMENTBEAN = new NoopTranslationsBean<HippoDocumentBean>();
-    public final static HippoAvailableTranslationsBean<HippoFolderBean> NOOP_TRANSLATION_FOLDERBEAN = new NoopTranslationsBean<HippoFolderBean>();
-
     /**
      * It returns the available translations. 
      * @return the {@link List} of available locale's and an empty {@link List} is no locale's are present

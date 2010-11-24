@@ -16,7 +16,6 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
@@ -38,12 +37,9 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     
     private String canonicalHandleUUID;
 
-    private boolean availableTranslationsBeanInitialized;
-    private HippoAvailableTranslationsBean<HippoDocumentBean> availableTranslationsBean;
-    
 
     private boolean availableTranslationsBeanMappingClassInitialized;
-    private HippoAvailableTranslationsBean<HippoDocumentBean> availableTranslationsBeanMappingClass;
+    private HippoAvailableTranslationsBean availableTranslationsBeanMappingClass;
     
     /**
      * @param relPath
@@ -102,25 +98,8 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         return canonicalHandleUUID;
     }
     
-   
+
     
-    public HippoAvailableTranslationsBean<HippoDocumentBean> getAvailableTranslationsBean() {
-        if(!availableTranslationsBeanInitialized) {
-            availableTranslationsBeanInitialized = true;
-            try {
-                availableTranslationsBean = getBean("hippotranslation:translations");
-            } catch (ClassCastException e) {
-                 log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
-            }
-            if(availableTranslationsBean== null) {
-                availableTranslationsBean = HippoAvailableTranslationsBean.NOOP_TRANSLATION_DOCUMENTBEAN;
-                log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
-            } else {
-                ((HippoAvailableTranslations)availableTranslationsBean).setBeanMappingClass(HippoDocumentBean.class);
-            }
-        }
-        return availableTranslationsBean;
-    }
 
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass) {
         if(!availableTranslationsBeanMappingClassInitialized) {
@@ -131,7 +110,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
                  log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
             }
             if(availableTranslationsBeanMappingClass== null) {
-                availableTranslationsBeanMappingClass = HippoAvailableTranslationsBean.NOOP_TRANSLATION_DOCUMENTBEAN;
+                availableTranslationsBeanMappingClass = new NoopTranslationsBean<T>();
                 log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
             } else {
                 ((HippoAvailableTranslations)availableTranslationsBeanMappingClass).setBeanMappingClass(beanMappingClass);

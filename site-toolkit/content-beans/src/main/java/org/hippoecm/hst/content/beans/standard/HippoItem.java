@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.query.HstContextualizeException;
 import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl;
 import org.hippoecm.hst.content.beans.query.HstVirtualizer;
+import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.util.NOOPELMap;
@@ -53,6 +54,10 @@ public class HippoItem implements HippoBean {
     protected transient ObjectConverter objectConverter;
     protected boolean detached = false;
 
+    private boolean availableTranslationsBeanInitialized;
+    private HippoAvailableTranslationsBean availableTranslationsBean;
+    
+    
     public void setObjectConverter(ObjectConverter objectConverter) {
         this.objectConverter = objectConverter;
     }
@@ -511,13 +516,23 @@ public class HippoItem implements HippoBean {
         return this instanceof HippoFolderBean;
     }
 
-    /*
-     * Document and Folder beans will override this method 
-     */
-    public HippoAvailableTranslationsBean<?> getAvailableTranslationsBean() {
-        return HippoAvailableTranslationsBean.NOOP_TRANSLATION_HIPPOBEAN;
+    
+    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean() {
+        if(!availableTranslationsBeanInitialized) {
+            availableTranslationsBeanInitialized = true;
+            try {
+                availableTranslationsBean = getBean("hippotranslation:translations");
+            } catch (ClassCastException e) {
+                 log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
+            }
+            if(availableTranslationsBean== null) {
+                availableTranslationsBean = new NoopTranslationsBean<T>();
+                log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
+            }
+        }
+        return availableTranslationsBean;
     }
-
+    
     
     public boolean equalCompare(Object compare) {
         return (Boolean) new ComparatorMap().get(compare);
