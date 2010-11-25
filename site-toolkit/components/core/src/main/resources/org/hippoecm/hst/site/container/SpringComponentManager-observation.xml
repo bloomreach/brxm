@@ -72,7 +72,7 @@
           <property name="propertyAddedEnabled" value="true"/>
           <property name="propertyChangedEnabled" value="true"/>
           <property name="propertyRemovedEnabled" value="true"/>
-          <property name="absolutePath" value="/hst:hst"/>
+          <property name="absolutePath" value="${hst.configuration.rootPath}"/>
           <property name="deep" value="true"/>
           <property name="uuids">
             <null/>
