@@ -39,7 +39,7 @@
 
 .hst-overlay-menu, .hst-dd-helper {
     height: 18px;
-    width: 85px;
+    width: 100px;
     position: absolute;
     background: #fff4c3;
     border: 1px solid #f9bc39;
@@ -62,7 +62,7 @@
 
 .hst-overlay-name-label{
     float: left;
-    width: 60px;
+    width: 75px;
     overflow-x: hidden;
     padding-left: 2px;
     padding-right: 2px;
@@ -92,22 +92,6 @@
 }
 
 /* Drag&Drop elements */
-
-/*.hst-dd-helper {*/
-    /*z-index: 1000;*/
-    /*opacity: 1;*/
-    /*background-color: #e3e3e3;*/
-    /*width: 160px;*/
-    /*height: 40px;*/
-    /*text-align: left;*/
-    /*color: #000;*/
-    /*font-size: 11px;*/
-    /*border: 2px solid #666;*/
-    /*padding: 5px;*/
-    /*-moz-border-radius: 6px;*/
-    /*-webkit-border-radius: : 6px;*/
-/*}*/
-
 .hst-placeholder {
     margin: 0;
     padding: 0;
@@ -159,6 +143,13 @@ li.hst-empty-container-item {
 
 li.placeholdert {
     list-style: none;
+}
+
+/* New containerItems get this class, removed again after refresh */
+.hst-temporary {
+  padding: 5px;
+  background-color: red;
+  color: white;
 }
 
 .title-button {

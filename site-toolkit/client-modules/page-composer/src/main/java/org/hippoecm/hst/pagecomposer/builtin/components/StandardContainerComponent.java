@@ -26,12 +26,15 @@ public class StandardContainerComponent extends GenericHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         if(getComponentConfiguration().getRenderPath() == null || "".equals(getComponentConfiguration().getRenderPath())) {
             // set default builtin template. This is hardcoded. The freemarker templates are relative to the current package name
-            if("HST.Table".equalsIgnoreCase(getComponentConfiguration().getXType())) {
+            String xtype = getComponentConfiguration().getXType();
+            if("HST.Table".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:table.ftl");
-            } else if ("HST.UnorderedList".equalsIgnoreCase(getComponentConfiguration().getXType())) {
+            } else if ("HST.UnorderedList".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:ul.ftl");
-            } else if ("HST.OrderedList".equalsIgnoreCase(getComponentConfiguration().getXType())) {
+            } else if ("HST.OrderedList".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:ol.ftl");
+            } else if ("HST.vBox".equalsIgnoreCase(xtype)) {
+                response.setRenderPath("classpath:vbox.ftl");
             } else {
                 response.setRenderPath("classpath:table.ftl");
             }

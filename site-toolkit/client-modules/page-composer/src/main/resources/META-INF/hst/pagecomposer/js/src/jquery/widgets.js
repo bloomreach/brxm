@@ -194,10 +194,12 @@ jQuery.noConflict();
         init : function(id, element) {
             this._super(id, element);
 
-            this.state = new Hippo.PageComposer.UI.DDState();
             this.items = new Hippo.Util.OrderedMap();
+
+            this.ddTolerance = 'intersect';
             this.dropIndicator = null;
-            this.draw = new Hippo.Util.Draw({min: 3, tresholdLow: 0});
+            this.direction = HST.DIR.VERTICAL;
+            this.draw = new Hippo.Util.Draw({min: 3, thresholdLow: 0});
 
             this.parentMargin = 0; //margin of overlay
 
@@ -235,6 +237,8 @@ jQuery.noConflict();
             $(this.sel.item).each(function() {
                 self._insertNewItem(this, true);
             });
+
+            this.state = new Hippo.PageComposer.UI.DDState(this.items.keySet());
         },
 
         onRender : function() {
@@ -271,34 +275,6 @@ jQuery.noConflict();
 
         _syncAll : function() {
             this.parent.checkStateChanges();
-        },
-
-        _updateOrder : function(itemsUpToDate) {
-            var order = [], lookup = {}, count = 0;
-            if(itemsUpToDate) {
-                //items in container are up to date, no re-order needed
-                order = this.items.keySet();
-            } else {
-                //replicate order from layout-items
-                //then sort container-item elements according to new order
-                $(this.sel.sort.items).each(function() {
-                    var id = $(this).attr(HST.ATTR.ID);
-                    order.push(id);
-                    lookup[id] = count++;
-                });
-                this.items.updateOrder(order);
-                var container = $(this.sel.container);
-                var items = $(this.sel.itemWrapper).get();
-                items.sort(function(a, b) {
-                    a = lookup[$('div.componentContentWrapper', a).attr(HST.ATTR.ID)];
-                    b = lookup[$('div.componentContentWrapper', b).attr(HST.ATTR.ID)];
-                    return (a < b) ? -1 : (a > b) ? 1 : 0;
-                });
-                $.each(items, function(idx, itm) {
-                    container.append(itm);
-                });
-            }
-            sendMessage({id: this.id, children: order}, 'rearrange');
         },
 
         //if container is empty, make sure it still has a size so items form a different container can be dropped
@@ -342,7 +318,7 @@ jQuery.noConflict();
                 update  : $.proxy(this.ddOnUpdate, this),
                 receive : $.proxy(this.ddOnReceive, this),
                 remove  : $.proxy(this.ddOnRemove, this),
-                tolerance : 'pointer',
+                tolerance : this.ddTolerance,
                 change : $.proxy(this.ddOnChange, this)
             }).disableSelection();
         },
@@ -378,13 +354,9 @@ jQuery.noConflict();
         },
 
         ddOnUpdate : function(event, ui) {
-            this.state.orderChanged = true;
+            this.state.syncItemsWithOverlayOrder = true;
         },
 
-        /**
-         * ddOnReceive is not called in the onStart-onStop lifecycle, but independently, so it can not depend on this.state
-         * but calls stateChecking itself
-         */
         ddOnReceive : function(event, ui) {
             var id = ui.item.attr(HST.ATTR.ID);
             var item = Hippo.PageComposer.UI.Factory.getById(id);
@@ -395,7 +367,8 @@ jQuery.noConflict();
                     item.onDragStop(event, ui);
                     item.destroy();
                     self.add(item.element, index);
-                    self.state.itemsUpToDate = true;
+
+                    self.state.syncOverlaysWithItemOrder = true;
                     return false;
                 }
             });
@@ -409,8 +382,7 @@ jQuery.noConflict();
         ddHelper : function(event, element) {
             var id = element.attr(HST.ATTR.ID);
             var item = this.items.get(id);
-            return item.menu.clone().css('width', '85px').css('height', '18px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
-//            return $('<div class="hst-dd-helper">' + item.data.name + '</div>').css('width', '85px').css('height', '18px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
+            return item.menu.clone().css('width', '100px').css('height', '18px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
         },
 
         ddOnChange : function(event, ui) {
@@ -420,7 +392,7 @@ jQuery.noConflict();
         drawDropIndicator : function(ui, el) {
             if(ui.placeholder.siblings().length == 0) {
                 //draw indicator inside empty container
-                this.draw.inside(this.el, el);
+                this.draw.inside(this.el, el, this.direction);
             } else {
                 var prev = ui.placeholder.prev();
                 var next = ui.placeholder.next();
@@ -429,14 +401,14 @@ jQuery.noConflict();
                 };
                 var original = ui.item[0];
                 if(prev[0] == original || (next.length > 0 && next[0] == original)) {
-                    this.draw.inside(getEl(ui.item), el);
+                    this.draw.inside(getEl(ui.item), el, this.direction);
                 } else {
                     if(prev.length == 0) {
-                        this.draw.before(getEl(next), el);
+                        this.draw.before(getEl(next), el, this.direction);
                     } else if (next.length == 0) {
-                        this.draw.after(getEl(prev), el);
+                        this.draw.after(getEl(prev), el, this.direction);
                     } else {
-                        this.draw.between(getEl(prev), getEl(next), el);
+                        this.draw.between(getEl(prev), getEl(next), el, this.direction);
                     }
                 }
             }
@@ -467,9 +439,46 @@ jQuery.noConflict();
             if(this.state.checkEmpty) {
                 this._checkEmpty();
             }
-            if(this.state.orderChanged) {
-                this._updateOrder(this.state.itemsUpToDate);
+
+            if(this.state.syncOverlaysWithItemOrder) {
+                var lookup = this.items.getIndexMap();
+                var items = $(this.sel.sort.items).get();
+                items.sort(function(a, b) {
+                    a = lookup[$(a).attr(HST.ATTR.ID)];
+                    b = lookup[$(b).attr(HST.ATTR.ID)];
+                    return (a < b) ? -1 : (a > b) ? 1 : 0;
+                });
+                var self = this;
+                $.each(items, function(idx, itm) {
+                    self.overlay.append(itm);
+                });
+
+            }else if(this.state.syncItemsWithOverlayOrder) {
+                var order = [];
+                $(this.sel.sort.items).each(function() {
+                    var id = $(this).attr(HST.ATTR.ID);
+                    order.push(id);
+                });
+                this.items.updateOrder(order);
+
+                var lookup = this.items.getIndexMap();
+                var container = $(this.sel.container);
+                var items = $(this.sel.itemWrapper).get();
+                items.sort(function(a, b) {
+                    a = lookup[$('div.componentContentWrapper', a).attr(HST.ATTR.ID)];
+                    b = lookup[$('div.componentContentWrapper', b).attr(HST.ATTR.ID)];
+                    return (a < b) ? -1 : (a > b) ? 1 : 0;
+                });
+                $.each(items, function(idx, itm) {
+                    container.append(itm);
+                });
+            }
+
+            var currentOrder = this.items.keySet();
+            if(this.state.orderChanged(currentOrder)) {
+                this.state.previousOrder = currentOrder;
                 this.parent.requestSync();
+                sendMessage({id: this.id, children: currentOrder}, 'rearrange');
             }
             this.state.reset();
         },
@@ -480,7 +489,6 @@ jQuery.noConflict();
                 item.toggleNoHover();
             });
         },
-
 
         sync : function() {
             this._syncOverlay();
@@ -493,8 +501,6 @@ jQuery.noConflict();
             $(this.sel.sortable).sortable('refresh');
 
             this.state.checkEmpty = true;
-            this.state.orderChanged = true;
-            this.state.itemsUpToDate = true;
         },
 
         remove: function(id) {
@@ -510,7 +516,6 @@ jQuery.noConflict();
                 }
 
                 this.state.checkEmpty = true;
-                this.state.orderChanged = true;
                 return true;
             }
             return false;
@@ -604,6 +609,24 @@ jQuery.noConflict();
     });
     Hippo.PageComposer.UI.Factory.register('HST.OrderedList', Hippo.PageComposer.UI.Container.OrderedList);
 
+    Hippo.PageComposer.UI.Container.VerticalBox = Hippo.PageComposer.UI.Container.Base.extend({
+
+        init : function(id, element) {
+            this._super(id, element);
+
+            this.sel.append.item = this.sel.container + ' > div.' + this.cls.item;
+            this.sel.append.container = this.sel.container;
+            this.sel.append.insertAt = this.sel.container + ' > div';
+        },
+
+        createItemElement : function(element) {
+            return $('<div class="' + this.cls.item + '"></div>').append(element);
+        }
+
+    });
+    Hippo.PageComposer.UI.Factory.register('HST.vBox', Hippo.PageComposer.UI.Container.VerticalBox);
+
+    //Container items
     Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
         init : function(id, element) {
             this._super(id, element);
@@ -709,17 +732,36 @@ jQuery.noConflict();
     Hippo.PageComposer.UI.Factory.register('HST.Item', Hippo.PageComposer.UI.ContainerItem.Base);
 
 
-    Hippo.PageComposer.UI.DDState = function() {
-        this.orderChanged = false;
+    Hippo.PageComposer.UI.DDState = function(initialOrder) {
         this.checkEmpty = false;
-        this.itemsUpToDate = false;
+
+        this.syncItemsWithOverlayOrder = false;
+        this.syncOverlaysWithItemOrder = false;
+
+        this.previousOrder = initialOrder;
+
     };
 
     Hippo.PageComposer.UI.DDState.prototype = {
+
+        orderChanged : function(test) {
+            if(test.length != this.previousOrder.length) {
+                return true;
+            }
+
+            for (var i=0; i<test.length; i++) {
+                if(test[i] != this.previousOrder[i]) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
         reset : function() {
-            this.orderChanged = false;
             this.checkEmpty = false;
-            this.itemsUpToDate = false;
+
+            this.syncItemsWithOverlayOrder = false;
+            this.syncOverlaysWithItemOrder = false;
         }
     };
 

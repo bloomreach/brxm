@@ -35,6 +35,11 @@
 
         ATTR : {
             ID : 'hst:id'
+        },
+
+        DIR : {
+            VERTICAL    : 1,
+            HORIZONTAL  : 1
         }
     };
 

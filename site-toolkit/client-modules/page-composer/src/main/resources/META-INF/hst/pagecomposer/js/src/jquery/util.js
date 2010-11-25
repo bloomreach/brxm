@@ -63,11 +63,19 @@ jQuery.noConflict();
         },
 
         keySet : function() {
-            var keys = [this.keys.length], len = this.keys.length;
+            var keys = [], len = this.keys.length;
             for(var i=0; i<len; ++i) {
-                keys[i] = this.keys[i];
+                keys.push(this.keys[i]);
             }
             return keys;
+        },
+
+        getIndexMap : function() {
+            var map = {};
+            for(var i=0; i<this.keys.length; i++) {
+                map[this.keys[i]] = i+1;
+            }
+            return map;
         },
 
         size : function() {
@@ -99,51 +107,44 @@ jQuery.noConflict();
     });
 
     Hippo.Util.Draw = Class.extend({
-        VERTICAL : 'v',
-        HORIZONTAL : 'h',
-
         init: function(cfg) {
-            this.thresHigh = cfg.tresholdHigh || 0.8;
-            this.thresLow = cfg.tresholdLow || 0;
-            this.min = cfg.min || 0;
-            this.beforeOffset = cfg.beforeOffset || 2;
-            this.afterOffset = cfg.afterOffset || 2;
-
             this.cache = {};
+            this.config = $.extend({
+                min             : 0,
+                thresholdHigh   : 0.8,
+                thresholdLow    : 0,
+                beforeOffset    : 2,
+                afterOffset     : 2
+            }, cfg);
         },
 
-        _draw : function(type, source, el, pos, thresHigh, thresLow, min, orientation) {
+        _draw : function(type, source, el, pos, direction, opts) {
+            opts = $.extend({}, this.config, opts);
+
             var key = type + source[0].id;
             var o = this.cache[key];
             if(typeof o === 'undefined') {
-                thresHigh = thresHigh || this.thresHigh;
-                thresLow = thresLow || this.thresLow;
-                min = min || this.min;
-
                 var src = {
                     offset : source.offset(),
                     width  : source.outerWidth(),
                     height : source.outerHeight()
                 };
                 var ind = {
+                    direction: direction,
                     width  : src.width,
                     height : src.height,
-                    orientation: orientation || src.height > src.width ? this.HORIZONTAL : this.VERTICAL,
                     left: src.offset.left,
                     top: src.offset.top
                 };
 
-                if(ind.orientation == this.VERTICAL) {
-                    ind.width -= (ind.width  * thresLow);
-                    ind.height = min > 0 ? min : ind.height - (ind.height * thresHigh);
-                } else {
-                    ind.height -= (ind.height * thresLow);
-                    ind.width = min > 0 ? min : ind.width - (ind.width * thresHigh);
+                if(direction == HST.DIR.VERTICAL) {
+                    ind.width -= (ind.width  * opts.thresholdLow);
+                    ind.height = opts.min > 0 ? opts.min : ind.height - (ind.height * opts.thresholdHigh);
+                } else if(direction == HST.DIR.HORIZONTAL) {
+                    ind.height -= (ind.height * opts.thresholdLow);
+                    ind.width = opts.min > 0 ? opts.min : ind.width - (ind.width * opts.thresholdHigh);
                 }
-                o = {
-                    src : src,
-                    ind : ind
-                };
+                o = {src : src, ind : ind};
                 pos.call(this, o);
                 this.cache[key] = o;
             }
@@ -154,49 +155,49 @@ jQuery.noConflict();
                 left: o.ind.left,
                 top : o.ind.top
             });
-
         },
 
-        inside : function (source, el, thresHigh, thresLow, min, orientation){
+        inside : function (source, el, direction, opts) {
             this._draw('inside', source, el, function(data) {
-                if(data.ind.orientation == this.VERTICAL) {
+                if(direction == HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width-data.ind.width) / 2;
                     data.ind.top  += (data.src.height-data.ind.height) / 2;
+                } else {
                 }
-            }, thresHigh, thresLow, min, orientation);
+            }, direction, opts);
         },
 
-        after : function(source, el, thresHigh, thresLow, min, orientation) {
+        after : function(source, el, direction, opts) {
             this._draw('after', source, el, function(data) {
-                if(data.ind.orientation == this.VERTICAL) {
+                if(direction == HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width-data.ind.width) / 2;
-                    data.ind.top += data.src.height + this.afterOffset;
+                    data.ind.top  += data.src.height + this.config.afterOffset;
+                } else {
                 }
-            }, thresHigh, thresLow, min, orientation);
+            }, direction, opts);
         },
 
-        before : function(source, el, thresHigh, thresLow, min, orientation) {
+        before : function(source, el, direction, opts) {
             this._draw('before', source, el, function(data) {
-                if(data.ind.orientation == this.VERTICAL) {
+                if(direction == HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width - data.ind.width) / 2;
-                    data.ind.top -= this.beforeOffset;
+                    data.ind.top -= this.config.beforeOffset;
                 }
-            }, thresHigh, thresLow, min, orientation);
+            }, direction, opts);
         },
 
-        between : function(prev, next, el, thresHigh, thresLow, min, orientation) {
+        between : function(prev, next, el, direction, opts) {
             //take prev as source
             this._draw('between', prev, el, function(data) {
-                //TODO: maybe use offset instead
-                var nextPosition = next.position();
 
-                if(data.ind.orientation == this.VERTICAL) {
+                var nextPosition = next.offset();
+                if(direction == HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width - data.ind.width) / 2;
                     var bottom = data.ind.top + data.src.height;
                     data.ind.top = bottom + ((nextPosition.top - bottom) / 2) - (data.ind.height/2);
                 }
 
-            }, thresHigh, thresLow, min, orientation);
+            }, direction, opts);
         },
 
         reset : function() {
