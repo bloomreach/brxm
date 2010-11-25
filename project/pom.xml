@@ -58,6 +58,13 @@
     <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/parent/trunk</url>
   </scm>
 
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://issues.onehippo.org/browse/HREPTWO</url>
+  </issueManagement>
+
+  <inceptionYear>2007</inceptionYear>
+
   <!-- Where to publish the project data, especially the documentation site -->
   <distributionManagement>
     <site>
