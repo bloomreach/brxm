@@ -53,7 +53,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     private boolean lookupVirtualWebappLibResourcePathsEnabled;
 
-    private boolean tablibModelInitialized;
+    private boolean taglibModelInitialized;
 
     @Override
     public void init() throws ServletException {
@@ -107,7 +107,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         
         TemplateModel params = super.createModel(wrapper, servletContext, request, response);
         
-        if (!tablibModelInitialized) {
+        if (!taglibModelInitialized) {
             ProxyFactory factory = new ProxyFactory();
             Interceptor interceptor = new Interceptor() {
                 public Object intercept(Invocation invocation) throws Throwable {
@@ -149,7 +149,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             TaglibFactory taglibs = new TaglibFactory(virtualContext);
             servletContext.setAttribute(ATTR_JSP_TAGLIBS_MODEL, taglibs);
             
-            tablibModelInitialized = true;
+            taglibModelInitialized = true;
         }
         
         if (params instanceof AllHttpScopesHashModel) {
