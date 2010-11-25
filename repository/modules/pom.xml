@@ -16,22 +16,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Repository Modules</name>
   <description>Hippo Repository Modules</description>
-  <groupId>org.onehippo</groupId>
+  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-modules</artifactId>
   <packaging>jar</packaging>
-
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/modules</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/modules</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/modules</url>
-  </scm>
 
   <dependencies>
     <dependency>
@@ -49,19 +43,19 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-provider</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -71,7 +65,7 @@
     <dependency>
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
-      <version>2.2.2</version>
+      <version>${json-lib.version}</version>
       <classifier>jdk15</classifier>
       <exclusions>
         <exclusion>
@@ -97,14 +91,6 @@
               <Hippo-Modules>org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetsAvailableNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider org.hippoecm.repository.quartz.SchedulerModule</Hippo-Modules>
             </manifestEntries>
           </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
         </configuration>
       </plugin>
     </plugins>

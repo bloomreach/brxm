@@ -16,22 +16,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Repository Application</name>
   <description>Hippo Repository Application</description>
-  <groupId>org.onehippo</groupId>
+  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-application</artifactId>
   <packaging>war</packaging>
-
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/application</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/application</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/application</url>
-  </scm>
 
   <dependencies>
     <dependency>
@@ -43,21 +37,21 @@
       <artifactId>servlet-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-dependencies</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-resources</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-servlets</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -65,9 +59,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-tools-testutils</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>jar</type>
       <scope>test</scope>
     </dependency>
@@ -207,7 +201,7 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.onehippo</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-repository-engine</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
@@ -228,7 +222,7 @@
       <dependencyManagement>
         <dependencies>
           <dependency>
-            <groupId>org.onehippo</groupId>
+            <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-repository-engine</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
@@ -248,7 +242,7 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.onehippo</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-repository-engine</artifactId>
           <version>${project.version}</version>
           <type>jar</type>

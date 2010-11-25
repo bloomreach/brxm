@@ -16,7 +16,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
@@ -24,38 +24,32 @@
   <name>Repository Default Configuration</name>
   <description>Hippo Repository default configuration</description>
   <artifactId>hippo-repository-config</artifactId>
-  <groupId>org.onehippo</groupId>
+  <groupId>org.onehippo.cms7</groupId>
   <packaging>jar</packaging>
-
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/builtin/repository</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/builtin/repository</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/repository/trunk/builtin/repository</url>
-  </scm>
 
   <dependencies>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
@@ -67,7 +61,7 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <version>2.0</version>
+      <version>${javax.jcr.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -86,14 +80,6 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
         </configuration>
       </plugin>
    </plugins>
