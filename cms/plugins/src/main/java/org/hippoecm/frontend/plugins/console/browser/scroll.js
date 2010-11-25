@@ -33,8 +33,11 @@ function Hippo_scroll_savePosition() {
 
 function Hippo_scroll_getElement() {
     var el = YAHOO.util.Dom.get(Hippo_scroll_element_id);
-    if(!el) {
-        return YAHOO.hippo.LayoutManager.findLayoutUnit(el).body;
+    if(el) {
+        var unit = YAHOO.hippo.LayoutManager.findLayoutUnit(el);
+        if(unit) {
+            return unit.body;
+        }
     }
     return null;
 }
