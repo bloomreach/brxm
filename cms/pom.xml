@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-  Copyright 2007-2009 Hippo.
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2010 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -12,26 +13,22 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.onehippo</groupId>
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7</artifactId>
+    <version>1-SNAPSHOT</version>
+  </parent>
+  
   <artifactId>hippo-cms</artifactId>
   <version>2.17.02-SNAPSHOT</version>
 
   <name>CMS</name>
   <description>Hippo CMS</description>
   <packaging>pom</packaging>
-
-  <url>http://www.onehippo.org/cms7/</url>
-  <prerequisites>
-    <maven>[2.1.0,)</maven>
-  </prerequisites>
-
-  <organization>
-    <name>Hippo</name>
-    <url>http://www.onehippo.com/</url>
-  </organization>
 
   <modules>
     <module>engine</module>
@@ -70,6 +67,8 @@
     <easymock.version>2.4</easymock.version>
     <selenium.version>0.9.2</selenium.version>
     <atomikos.version>3.1.4</atomikos.version>
+    <htmlunit.version>2.7</htmlunit.version>
+    <junit.version>4.4</junit.version>
 
     <!-- Project Dependencies -->
     <commons-collections.version>3.1</commons-collections.version>
@@ -93,333 +92,29 @@
     <wicket.version>1.4.13</wicket.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <jetty.version>6.1.22</jetty.version>
-
-    <!-- use UTF-8 encoding for filtered file copy -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <joda-time.version>1.6</joda-time.version>
+    <json-lib.version>2.2.2</json-lib.version>
+    <jackrabbit.version>2.1.2</jackrabbit.version>
+    <hippo.htmlcleaner.version>1.02.04</hippo.htmlcleaner.version>
+    <xerces.xercesImpl.version>2.8.1</xerces.xercesImpl.version>
   </properties>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
 
   <!-- 
      Software configuration management (scm): where to find and how to get acces to the source repository 
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
   </scm>
 
-  <!-- Where to publish the project data, especially the documentation site -->
-  <distributionManagement>
-    <site>
-      <id>repodocs.hippocms.org</id>
-      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
-    </site>
-    <repository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <!-- Where issues (bugs reports and improvement requests) are handled. 
-       Used in the documentation at target/site/issue-tracking.html 
-  -->
-  <issueManagement>
-    <system>Jira</system>
-    <url>http://issues.onehippo.org/browse/HREPTWO</url>
-  </issueManagement>
-
-  <ciManagement>
-    <system>Hudson</system>
-    <url>http://hudson.onehippo.org/</url>
-  </ciManagement>
-
-  <inceptionYear>2007</inceptionYear>
-
-  <developers>
-    <developer>
-      <name>Arje Cahn</name>
-      <id>acahn</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Project Lead</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Ate Douma</name>
-      <id>adouma</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Ard Schrijvers</name>
-      <id>aschrijvers</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>(Berry) A.W. van Halderen</name>
-      <id>bvanhalderen</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Bart van der Schans</name>
-      <id>bvdschans</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Niels van Kampenhout</name>
-      <id>nvankampenhout</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Doctator</role>
-      </roles>
-      <timezone>-8</timezone>
-    </developer>
-    <developer>
-      <name>Frank van Lankvelt</name>
-      <id>fvlankvelt</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Auke van Scheltinga</name>
-      <id>avanscheltinga</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Designer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Arthur Bogaart</name>
-      <id>abogaart</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Rita Bijlsma</name>
-      <id>rbijlsma</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Doctator</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Jeroen Tietema</name>
-      <id>jtietema</id>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
-
-  <contributors>
-    <contributor>
-      <name>Wander Grevink</name>
-      <email>wander at xs4all. nl</email>
-      <url>http://www.weloveit.nl/hippo_310506.htm</url>
-      <organization>SIG, Software improvement group</organization>
-      <organizationUrl>http://www.sig.nl/</organizationUrl>
-      <roles>
-        <role>Previous developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </contributor>
-    <contributor>
-      <name>Jettro Coenradie</name>
-      <organization>JTeam</organization>
-      <organizationUrl>http://www.jteam.nl/</organizationUrl>
-      <roles>
-        <role>External contributor</role>
-      </roles>
-      <timezone>+1</timezone>
-    </contributor>
-    <contributor>
-      <name>Rob van der Linden Vooren</name>
-      <organization>JTeam</organization>
-      <organizationUrl>http://www.jteam.nl/</organizationUrl>
-      <roles>
-        <role>External contributor</role>
-      </roles>
-      <timezone>+1</timezone>
-    </contributor>
-  </contributors>
-
-  <mailingLists>
-   <mailingList>
-    <name>Hippo CMS 7 User Forums</name>
-    <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-    <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-    <!--<post>hippo-cms7-user@lists.onehippo.org</post>-->
-    <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-   </mailingList>
-   <mailingList>
-    <name>Hippo Repository 2 Dev List</name>
-    <archive>http://lists.onehippo.org/pipermail/hipporepos-dev/</archive>
-   </mailingList>
-  </mailingLists>
-
-  <repositories>
-    <repository>
-      <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>codehaus</id>
-      <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <repository>
-      <id>glassfish</id>
-      <name>Glassfish maven repository</name>
-      <url>http://download.java.net/maven/glassfish</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <repository>
-      <id>openqa</id>
-      <name>OpenQA Repository</name>
-      <url>http://nexus.openqa.org/content/repositories/releases</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>m2snapshots</id>
-      <name>Maven 2 snapshots repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>jpox.plugin</id>
-      <name>JPOX maven 2 plugin repository.</name>
-      <url>http://www.jpox.org/downloads/maven2/</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ftp</artifactId>
-        <version>1.0-alpha-6</version>
-      </extension>
-    </extensions>
     <plugins>
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.4</version>
-      </plugin>
-      <plugin>      
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>1.1</version>
-        <artifactId>maven-remote-resources-plugin</artifactId>        
-        <executions>
-          <execution>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <resourceBundles>
-                <resourceBundle>org.apache:apache-jar-resource-bundle:1.2</resourceBundle>
-              </resourceBundles>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.0-beta-8</version>
           <configuration>
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -427,57 +122,6 @@
           <tag>Tag-HREPTWO-v2_17_01</tag>
           <!-- preparationGoals>clean</preparationGoals -->
         </configuration>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.8</version>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <downloadJavadocs>true</downloadJavadocs>
-        </configuration>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <workingDirectory>target</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.1</version>
-        <configuration>
-          <fork>true</fork>
-          <meminitial>128m</meminitial>
-          <maxmem>256m</maxmem>
-          <target>1.5</target>
-          <source>1.5</source>
-        </configuration>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.1.2</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
        <!-- Report project history via xdoc, by supplying information in src/changes/changes.xml 
@@ -496,7 +140,6 @@
         -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.3</version>
         <configuration>
           <issueLinkTemplatePerSystem>
             <Jira>%URL%/%ISSUE%</Jira>
@@ -522,21 +165,20 @@
         <inherited>false</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.7</version>
         <configuration>
           <aggregate>true</aggregate>
           <author>false</author>
           <show>protected</show>
-          <source>1.5</source>
+          <source>1.6</source>
           <javadocVersion>1.6</javadocVersion>
           <docfilessubdirs>true</docfilessubdirs>
           <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://java.sun.com/javase/1.6/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-2.0/</link>
           </links>
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
-            <groupId>org.onehippo</groupId>
+            <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-repository-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
@@ -562,55 +204,55 @@
       </dependency>
 
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-builtin</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-connector</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-utilities</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-provider</artifactId>
         <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-config</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-modules</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-engine</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-tools-testutils</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
@@ -650,7 +292,7 @@
       <dependency>
         <groupId>net.sourceforge.htmlunit</groupId>
         <artifactId>htmlunit</artifactId>
-        <version>2.7</version>
+        <version>${htmlunit.version}</version>
       </dependency>
 
       <dependency>
@@ -827,7 +469,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.4</version>
+        <version>${junit.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
@@ -895,26 +537,24 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
       </plugin>
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.6</version>
         <configuration>
           <aggregate>true</aggregate>
           <author>false</author>
           <show>protected</show>
-          <source>1.5</source>
+          <source>1.6</source>
           <docfilessubdirs>true</docfilessubdirs>
           <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
+            <link>http://java.sun.com/javase/1.6/docs/api/</link>
+            <link>http://www.day.com/maven/jsr170/javadocs/jcr-2.0/</link>
           </links>
           <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
           <docletArtifact>
-            <groupId>org.onehippo</groupId>
+            <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-repository-tools-documentation</artifactId>
             <version>${project.version}</version>
           </docletArtifact>
@@ -937,7 +577,6 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
         <configuration>
           <type>range</type>
           <range>31</range>
@@ -947,7 +586,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
         <configuration>
           <issueLinkTemplatePerSystem>
             <Jira>%URL%/%ISSUE%</Jira>
@@ -1017,55 +655,5 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <profiles>
-    <profile>
-      <id>netbeans</id>
-      <build>
-        <plugins>
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.5</version>
-            <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>clean</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <inherited>false</inherited>
-            <artifactId>maven-clean-plugin</artifactId>
-            <version>2.4.1</version>
-            <configuration>
-              <filesets>
-                <fileset>
-                  <directory>.</directory>
-                  <includes>
-                    <include>**/*~</include>
-                    <include>**/derby.log</include>
-                    <include>**/tmlog*</include>
-                    <include>**/tm.*</include>
-                    <include>**/.lock</include>
-                    <include>**/atomikos</include>
-                    <include>**/jpox.log</include>
-                  </includes>
-                </fileset>
-              </filesets>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>

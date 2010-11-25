@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2008 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +13,21 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>CMS Browse</name>
   <description>Hippo CMS Browse perspective</description>
-  <groupId>org.onehippo</groupId>
+  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-browse</artifactId>
   <packaging>jar</packaging>
-
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/browse</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/browse</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/cms/browse</url>
-  </scm>
 
   <dependencies>
     <dependency>
@@ -43,48 +39,48 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-engine</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-yui</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-workflowmenu</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-frontend</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
 
     <!-- test -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-config</artifactId>
     </dependency>
     <dependency>
@@ -135,7 +131,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>1.6</version>
+      <version>${joda-time.version}</version>
     </dependency>
   </dependencies>
 
@@ -164,14 +160,6 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
    </plugins>
   </build>
 
@@ -183,7 +171,7 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.onehippo</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-repository-engine</artifactId>
           <version>${repository.version}</version>
           <type>jar</type>
@@ -191,7 +179,7 @@
           <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.onehippo</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-cms-test</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
@@ -211,7 +199,7 @@
       <dependencyManagement>
         <dependencies>
           <dependency>
-            <groupId>org.onehippo</groupId>
+            <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-repository-engine</artifactId>
             <version>${repository.version}</version>
             <type>jar</type>
@@ -220,7 +208,7 @@
             <optional>true</optional>
           </dependency>
           <dependency>
-            <groupId>org.onehippo</groupId>
+            <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-cms-test</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

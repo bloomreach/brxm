@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2008 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,30 +13,25 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-translation</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>CMS Translation Repository</name>
   <description>Hippo CMS Translation configuration, workflow and virtual provider</description>
-  <groupId>org.onehippo</groupId>
+  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-translation-repository</artifactId>
   <packaging>jar</packaging>
 
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/translation/repository</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/translation/repository</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/cms/trunk/addon/translation/repository</url>
-  </scm>
-
   <dependencies>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
     <dependency>
@@ -47,23 +43,23 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-provider</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-api</artifactId>
-      <version>2.1.2</version>
+      <version>${jackrabbit.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-common</artifactId>
-      <version>2.17.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
@@ -82,14 +78,6 @@
               <Hippo-Modules>org.hippoecm.repository.translation.impl.TranslationVirtualProvider</Hippo-Modules>
             </manifestEntries>
           </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
         </configuration>
       </plugin>
     </plugins>
