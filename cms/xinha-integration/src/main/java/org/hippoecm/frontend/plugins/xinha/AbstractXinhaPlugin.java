@@ -132,7 +132,12 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     protected abstract JcrPropertyValueModel getBaseModel();
 
     protected IModel<String> newCompareModel() {
-        return new HtmlDiffModel(new StripScriptModel(getBaseModel()), new StripScriptModel(getValueModel()));
+        JcrPropertyValueModel baseModel = getBaseModel();
+        if (baseModel != null) {
+            return new HtmlDiffModel(new StripScriptModel(baseModel), new StripScriptModel(getValueModel()));
+        } else {
+            return newViewModel();
+        }
     }
 
     protected IModel<String> newViewModel() {

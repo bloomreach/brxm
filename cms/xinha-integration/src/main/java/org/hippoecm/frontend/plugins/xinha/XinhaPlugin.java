@@ -44,11 +44,13 @@ public class XinhaPlugin extends AbstractXinhaPlugin {
     protected JcrPropertyValueModel getBaseModel() {
         IPluginConfig config = getPluginConfig();
         if (!config.containsKey("model.compareTo")) {
+            log.warn("No model.compareTo reference configured");
             return null;
         }
         IModelReference modelRef = getPluginContext().getService(config.getString("model.compareTo"),
                 IModelReference.class);
-        if (modelRef == null) {
+        if (modelRef == null || !(modelRef.getModel() instanceof JcrPropertyValueModel)) {
+            log.warn("The configured model.compareTo service is not available or does provide a valid property value model");
             return null;
         }
         return (JcrPropertyValueModel) modelRef.getModel();

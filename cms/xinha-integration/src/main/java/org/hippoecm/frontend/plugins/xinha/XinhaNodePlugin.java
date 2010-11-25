@@ -89,11 +89,13 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
     private JcrNodeModel getBaseNodeModel() {
         IPluginConfig config = getPluginConfig();
         if (!config.containsKey("model.compareTo")) {
+            log.warn("No model.compareTo reference configured");
             return null;
         }
         IModelReference modelRef = getPluginContext().getService(config.getString("model.compareTo"),
                 IModelReference.class);
         if (modelRef == null || modelRef.getModel() == null) {
+            log.warn("The configured model.compareTo service is not available or does provide a valid node model");
             return null;
         }
         return (JcrNodeModel) modelRef.getModel();
@@ -102,6 +104,9 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
     @Override
     protected IModel<String> newCompareModel() {
         JcrNodeModel baseNodeModel = getBaseNodeModel();
+        if (baseNodeModel == null) {
+            return newViewModel();
+        }
         JcrPropertyValueModel<String> baseModel = getContentModel(baseNodeModel);
         final IRichTextLinkFactory baseLinkFactory = new JcrRichTextLinkFactory(baseNodeModel);
         IRichTextImageFactory baseImageFactory = new JcrRichTextImageFactory(baseNodeModel);
