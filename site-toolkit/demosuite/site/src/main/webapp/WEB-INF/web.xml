@@ -369,17 +369,6 @@
     <role-name>everybody</role-name>
   </security-role>
 
-  <jsp-config>
-    <!--
-      This taglib definition is required if you want to use JSP taglibs
-      in freemarker templates.
-    -->
-    <taglib>
-      <taglib-uri>http://www.hippoecm.org/jsp/hst/core</taglib-uri>
-      <taglib-location>/WEB-INF/hst-core.tld</taglib-location>
-    </taglib>
-  </jsp-config>
-
   <!--
     If you want to use a pooling JCR repository from JNDI, uncomment the
     following and configure the correct jndiName.
