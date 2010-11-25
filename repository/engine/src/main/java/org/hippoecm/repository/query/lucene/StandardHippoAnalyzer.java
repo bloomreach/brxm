@@ -80,7 +80,7 @@ public class StandardHippoAnalyzer extends Analyzer{
 
     public final static String[] SPANISH_STOP_WORDS = { " a ", " ante ", " bajo ", " con ", " de ", " desde ",
             " durante ", " en ", " entre ", " excepto ", " hacia ", " hasta ", " mediante ", " para ", " por ",
-            " salvo ", " segun ", " según ", " sin ", " sobre ", " y ", " o ", " u ", " tras ", " el ", " la ", " lo ",
+            " salvo ", " segun ", " segÃºn ", " sin ", " sobre ", " y ", " o ", " u ", " tras ", " el ", " la ", " lo ",
             " los ", " las ", " un ", " una ", " unos ", " unas " };
 
     public final static String[] DUTCH_STOP_SET = { "de", "en", "van", "ik", "te", "dat", "die", "in", "een", "hij",
