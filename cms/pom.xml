@@ -632,6 +632,28 @@
         <version>${wicket.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.wicketstuff</groupId>
+        <artifactId>wicket-extjs</artifactId>
+        <version>0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.yui</groupId>
+        <artifactId>yui-2.xx-sources</artifactId>
+        <version>1.01.09</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>net.sourceforge.htmlunit</groupId>
+        <artifactId>htmlunit</artifactId>
+        <version>2.7</version>
+      </dependency>
+
+      <dependency>
         <groupId>javax.jdo</groupId>
         <artifactId>jdo2-api</artifactId>
         <version>${javax.jdo2-api.version}</version>

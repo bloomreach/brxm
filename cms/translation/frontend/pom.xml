@@ -88,33 +88,6 @@
     <dependency>
       <groupId>org.wicketstuff</groupId>
       <artifactId>wicket-extjs</artifactId>
-      <version>0.3</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.wicket</groupId>
-          <artifactId>wicket</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.sourceforge.htmlunit</groupId>
-          <artifactId>htmlunit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo</groupId>
