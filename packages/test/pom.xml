@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  Copyright 2007-2008 Hippo.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo</groupId>
+    <artifactId>hippo-package-cms</artifactId>
+    <version>2.17.02-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo package test CMS</name>
+  <description>Hippo package test CMS</description>
+  <groupId>org.onehippo</groupId>
+  <artifactId>hippo-package-cms-test</artifactId>
+  <packaging>jar</packaging>
+
+  <scm>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/test</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/test</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/test</url>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-package-cms-war</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <type>war</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
+      <version>${repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <version>${repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-package-cms-ear</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <type>ear</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-quickstart-ear</artifactId>
+      <version>2.17.02-SNAPSHOT</version>
+      <type>ear</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo</groupId>
+      <artifactId>hippo-repository-tools-testutils</artifactId>
+      <version>${repository.version}</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openqa.selenium.client-drivers</groupId>
+      <artifactId>selenium-java-client-driver</artifactId>
+      <version>0.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openqa.selenium.server</groupId>
+      <artifactId>selenium-server</artifactId>
+      <version>0.8.1</version>
+    </dependency>
+
+    <!-- Testing needs a JTA implementation -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-jta</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>atomikos-util</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <defaultGoal>test</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+   </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>tests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo</groupId>
+          <artifactId>hippo-repository-engine</artifactId>
+          <version>${repository.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>skip-tests</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.onehippo</groupId>
+            <artifactId>hippo-repository-engine</artifactId>
+            <version>${repository.version}</version>
+            <type>jar</type>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <optional>true</optional>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+    <profile>
+      <id>appserver-tests</id>
+      <activation>
+        <property>
+          <name>appserver.home</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo</groupId>
+          <artifactId>hippo-repository-engine</artifactId>
+          <version>${repository.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkMode>always</forkMode>
+              <workingDirectory>${project.build.directory}</workingDirectory>
+              <excludes>
+                <exclude>**/*SeleniumTest.java</exclude>
+                <exclude>**/SmokeTest.java</exclude>
+              </excludes>
+              <systemProperties>
+                <property>
+                  <name>product</name>
+                  <value>${basedir}/../../quickstart/ear/target/hippo-quickstart-ear-${project.version}.ear</value>
+                  <!-- FIXME: should have better reference above -->
+                </property>
+              </systemProperties>
+              <additionalClasspathElements>
+                <!-- FIXME: not all of these dependencies are needed, should be sorted out -->
+                <additionalClasspathElement>${appserver.home}/lib/appserv-deployment-client.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/Pack200Task.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/activation.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/admin-cli-ee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/admin-cli.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-admin.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-cmp.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-deployment-client.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-ee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-ext.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-jstl.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-jwsacc.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-launch.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-rt.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-se.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-tags.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-upgrade.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-ws.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/com-sun-commons-launcher.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/com-sun-commons-logging.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/dbschema.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/j2ee-svc.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/j2ee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/javaee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jesmf-plugin.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jhall.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jmac-api.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jmxremote_optional.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jsf-impl.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jxta.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/mail.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/shoal-gms.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/sun-appserv-ant.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/toplink-essentials-agent.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/toplink-essentials.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/webservices-rt.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/webservices-tools.jar</additionalClasspathElement>
+              </additionalClasspathElements>
+              <skip>true</skip>
+              <!-- skipTests>true</skipTests -->
+            </configuration>
+            <executions>
+              <execution>
+                <id>testing</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <skipTests>false</skipTests>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.geronimo.plugins</groupId>
+            <artifactId>selenium-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>start-selenium</id>
+                <phase>pre-integration-test</phase>
+                 <goals>
+                   <goal>start-server</goal>
+                 </goals>
+                 <configuration>
+                   <background>true</background>
+                 </configuration>
+               </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>legacy</id>
+      <activation>
+        <jdk>1.4</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>retrotranslator-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>translate-war</goal>
+                </goals>
+                <configuration>
+                  <classifier>jdk1.4</classifier>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
