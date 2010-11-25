@@ -160,14 +160,14 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
         header: "<img src='" + self.imgLeft + "' style='vertical-align: top;' /> " + self.resources['folder-name'],
         dataIndex: 'name',
         width: 323,
-        renderer: self.renderFolder.createDelegate(self, [], 3),
+        renderer: self.renderFolder.createDelegate(self, ['url'], 0),
         // use shorthand alias defined above
       }, {
         id: 'namefr',
         header: "<img src='" + self.imgRight + "' style='vertical-align: top;' /> " + self.resources['folder-name'],
         dataIndex: 'namefr',
         width: 334,
-        renderer: self.renderFolder.createDelegate(self, [], 3),
+        renderer: self.renderFolder.createDelegate(self, ['urlfr'], 0),
         editor: new Ext.form.TextField({
           allowBlank: false,
           enableKeyEvents: true,
@@ -321,17 +321,31 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
     this.store.load();
   },
 
-  renderFolder: function(value, p, record){
-    var index = this.store.indexOf(record);
-    var txt = "<img src='" + this.emptyImg + "' width='" + 15 * index + "' height='1'/><img src='";
-    if (record.data.type == "folder") {
-      txt += this.folderImg;
-    } else {
-      txt += this.documentImg;
-    }
-    txt += "' heigth='10'/> ";
+  renderFolder: function(col, value, p, record){
+    var indent = {
+      ancestors: 0
+    };
+    this.store.each(function(it) {
+      if (it == record) {
+        return false;
+      }
+      if (it.get(col) != "") {
+        indent.ancestors++;
+      }
+    });
 
-    if (value == "") {
+    var txt = "<img src='" + this.emptyImg + "' width='" + 15 * indent.ancestors + "' height='1'/>";
+    if (value != "" || record.get('editable')) {
+      txt += "<img src='";
+      if (record.data.type == "folder") {
+        txt += this.folderImg;
+      } else {
+        txt += this.documentImg;
+      }
+      txt += "' heigth='10'/> ";
+    }
+
+    if (value == "" && record.get('editable')) {
       txt += "<font color='#ff0000'><i>" + this.resources['add-translation'] + "</i></font>";
     } else {
       txt += String.format("{0}", value);

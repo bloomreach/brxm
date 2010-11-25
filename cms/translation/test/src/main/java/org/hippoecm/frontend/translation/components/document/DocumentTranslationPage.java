@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.translation.components.document;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.ajax.WicketAjaxReference;
@@ -25,41 +24,17 @@ import org.apache.wicket.markup.html.WicketEventReference;
 import org.hippoecm.frontend.translation.components.TestLocaleProvider;
 import org.hippoecm.frontend.translation.components.TestStringCodecModel;
 
-public class DocumentTranslationPage extends WebPage {
+public abstract class DocumentTranslationPage extends WebPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     public DocumentTranslationPage() {
         add(JavascriptPackageResource.getHeaderContribution(WicketEventReference.INSTANCE));
         add(JavascriptPackageResource.getHeaderContribution(WicketAjaxReference.INSTANCE));
-        
-        List<FolderTranslation> fts = new LinkedList<FolderTranslation>();
-        
-        FolderTranslation top = new FolderTranslation("top");
-        top.setType("folder");
-        top.setName("Top");
-        top.setUrl("top");
-        top.setNamefr("Hoogste");
-        top.setUrlfr("hoogste");
-        top.setEditable(false);
-        fts.add(top);
 
-        FolderTranslation sub = new FolderTranslation("sub");
-        sub.setType("folder");
-        sub.setName("Sub");
-        sub.setUrl("sub");
-        sub.setNamefr("Onder");
-        sub.setUrlfr("onder");
-        sub.setEditable(true);
-        fts.add(sub);
-
-        FolderTranslation doc = new FolderTranslation("doc");
-        doc.setType("doc");
-        doc.setName("Document");
-        doc.setUrl("document");
-        doc.setEditable(true);
-        fts.add(doc);
-
-        add(new DocumentTranslationView("grid", fts, "en", "fr", new TestStringCodecModel(), new TestLocaleProvider()));
+        add(new DocumentTranslationView("grid", getFolderTranslations(), "en", "fr", new TestStringCodecModel(),
+                new TestLocaleProvider()));
     }
+
+    abstract protected List<FolderTranslation> getFolderTranslations();
 }

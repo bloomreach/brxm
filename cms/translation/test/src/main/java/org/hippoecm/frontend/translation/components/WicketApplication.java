@@ -17,7 +17,8 @@ package org.hippoecm.frontend.translation.components;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.hippoecm.frontend.translation.components.document.DocumentTranslationPage;
+import org.hippoecm.frontend.translation.components.document.DocumentMismatchingPage;
+import org.hippoecm.frontend.translation.components.document.DocumentRegularPage;
 import org.hippoecm.frontend.translation.components.folder.FolderTranslationPage;
 
 public class WicketApplication extends WebApplication {
@@ -32,7 +33,8 @@ public class WicketApplication extends WebApplication {
     @Override
     protected void init() {
         super.init();
-        mountBookmarkablePage("documents", DocumentTranslationPage.class);
+        mountBookmarkablePage("regular", DocumentRegularPage.class);
+        mountBookmarkablePage("mismatch", DocumentMismatchingPage.class);
         mountBookmarkablePage("folders", FolderTranslationPage.class);
     }
 }
