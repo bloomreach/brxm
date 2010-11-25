@@ -75,7 +75,7 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
                     log.warn("Docbase not found " + e.getMessage());
                     log.debug("Docbase not found ", e);
                 } catch (ItemNotFoundException e) {
-                    log.warn("Docbase not found " + e.getMessage());
+                    log.info("Docbase not found " + e.getMessage());
                     log.debug("Docbase not found ", e);
                 } catch (RepositoryException e) {
                     log.error("Invalid docbase " + e.getMessage(), e);

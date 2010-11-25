@@ -142,7 +142,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     log.warn("No compareTo.model configured, falling back to view mode");
                 }
             } else {
-                log.warn("No compareTo model reference for field plugin in editor cluster that implements compare mode");
+                log.warn("No compareTo model reference for field plugin in editor cluster that implements compare mode, field " + config.getString("field"));
             }
             if (compareTo == null) {
                 mode = IEditor.Mode.VIEW;

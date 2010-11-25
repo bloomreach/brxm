@@ -15,10 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -138,8 +135,10 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                 } catch (PathNotFoundException e) {
                     log.warn("Docbase not found " + e.getMessage());
                     log.debug("Docbase not found ", e);
+                } catch (ItemNotFoundException e) {
+                    log.info("Docbase " + e.getMessage() + " could not be dereferenced");
                 } catch (RepositoryException e) {
-                    log.error("Invalid docbase" + e.getMessage(), e);
+                    log.error("Invalid docbase " + e.getMessage(), e);
                 }
                 return getEmptyLinkText();
             }
