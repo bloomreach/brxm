@@ -212,7 +212,16 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
                     throw new StoreException("Type " + type + " is not editable");
                 }
             } else {
-                templateSetNode = typeNode.getNode(EditorNodeType.EDITOR_TEMPLATES);
+                if (typeNode.hasNode(EditorNodeType.EDITOR_TEMPLATES)) {
+                    templateSetNode = typeNode.getNode(EditorNodeType.EDITOR_TEMPLATES);
+                } else {
+                    if (create) {
+                        templateSetNode = typeNode.addNode(EditorNodeType.EDITOR_TEMPLATES, EditorNodeType.NT_TEMPLATESET);
+                        save = true;
+                    } else {
+                        throw new StoreException("No editor cluster found for type " + type + ", even though it was marked editable");
+                    }
+                }
             }
 
             // use the first available template
@@ -246,9 +255,8 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
             Node node = getTemplateNode(type, false);
             return new JcrClusterConfig(new JcrNodeModel(node));
         } catch (RepositoryException ex) {
-            log.error("Error while fetching template for type: " + type, ex);
+            throw new StoreException("Error while fetching template for type: " + type, ex);
         }
-        return null;
     }
 
     public void detach() {
