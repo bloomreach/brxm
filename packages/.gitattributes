@@ -1,6 +1,8 @@
 * text=auto !eol
 package-app-dependencies/pom.xml svneol=native#text/plain
 package-cms-dependencies/pom.xml svneol=native#text/plain
+package-cms-resources/pom.xml svneol=native#text/plain
+package-cms-resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 /pom.xml svneol=native#text/plain
 quickstart/bin/nbactions-netbeans.xml svneol=native#text/plain
 quickstart/bin/nbactions.xml svneol=native#text/plain
@@ -26,8 +28,6 @@ quickstart/war/src/main/resources/org/hippoecm/repository/query/lucene/indexing_
 quickstart/war/src/main/webapp/WEB-INF/sun-web.xml svneol=native#text/plain
 quickstart/war/src/main/webapp/WEB-INF/web.xml -text
 quickstart/war/src/test/resources/log4j.xml svneol=native#text/plain
-resources/pom.xml svneol=native#text/plain
-resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 test/pom.xml svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/test/BasicCmsSeleniumTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/test/CmsSeleniumTest.java svneol=native#text/plain
