@@ -24,7 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -184,6 +187,57 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         }
     }
 
+    private static class TranslatedFolder {
+        private final Node node;
+
+        TranslatedFolder(Node node) {
+            this.node = node;
+        }
+
+        TranslatedFolder getParent() throws RepositoryException {
+            Node ancestor = node;
+            do {
+                ancestor = ancestor.getParent();
+                if ("/content/documents".equals(ancestor.getPath())) {
+                    return null;
+                }
+            } while (!ancestor.isNodeType(HippoTranslationNodeType.NT_TRANSLATED));
+            return new TranslatedFolder(ancestor);
+        }
+
+        TranslatedFolder getSibling(String locale) throws RepositoryException {
+            NodeIterator siblings = node.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes();
+            while (siblings.hasNext()) {
+                HippoNode sibling = (HippoNode) siblings.nextNode();
+                if (locale.equals(sibling.getName())) {
+                    return new TranslatedFolder(sibling.getCanonicalNode());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof TranslatedFolder)) {
+                return false;
+            }
+            try {
+                return ((TranslatedFolder) obj).node.isSame(node);
+            } catch (RepositoryException e) {
+                throw new RuntimeException("could not determine whether nodes are equivalent", e);
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            try {
+                return node.getPath().hashCode();
+            } catch (RepositoryException e) {
+                throw new RuntimeException("could not determine path of node", e);
+            }
+        }
+    }
+
     private final class AddTranslationAction extends WorkflowAction {
         private final String language;
         private final IModel<String> languageModel;
@@ -210,40 +264,113 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 }
                 folders = new LinkedList<FolderTranslation>();
                 Node handle = docNode.getParent();
-                FolderTranslation docTranslation = JcrFolderTranslationFactory.createFolderTranslation(handle);
+                FolderTranslation docTranslation = JcrFolderTranslationFactory.createFolderTranslation(handle, null);
                 folders.add(docTranslation);
 
-                Node folder = handle;
-                boolean mutable = true;
-                // FIXME: OUCH!
-                while (!"/content/documents".equals(folder.getPath())) {
-                    if (folder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                        Node links = folder.getNode(HippoTranslationNodeType.TRANSLATIONS);
-                        FolderTranslation ft;
-                        if (links.hasNode(language)) {
-                            mutable = false;
-                            HippoNode translation = (HippoNode) links.getNode(language);
-                            ft = JcrFolderTranslationFactory.createFolderTranslation(folder, translation
-                                    .getCanonicalNode());
-                        } else {
-                            ft = JcrFolderTranslationFactory.createFolderTranslation(folder);
-                        }
-                        ft.setEditable(mutable);
-                        folders.add(ft);
-                    }
-                    folder = folder.getParent();
-                }
-                Collections.reverse(folders);
+                populateFolders(handle);
 
                 return new DocumentTranslationDialog(TranslationWorkflowPlugin.this, getPluginContext().getService(
                         ISettingsService.SERVICE_ID, ISettingsService.class), this, new StringResourceModel(
                         "translate-title", TranslationWorkflowPlugin.this, null), folders, languageModel.getObject(),
                         language, getLocaleProvider());
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                log.error("Error creating document translation dialog (" + e.getMessage() + ")", e);
                 error(e.getMessage());
             }
             return null;
+        }
+
+        private void populateFolders(Node handle) throws RepositoryException {
+            Node sourceFolder = handle;
+            try {
+                while (!sourceFolder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                    sourceFolder = sourceFolder.getParent();
+                }
+            } catch (ItemNotFoundException infe) {
+                log.warn("Parent folder of translatable document could not be found", infe);
+                return;
+            } catch (AccessDeniedException ade) {
+                log.warn("Parent folder of translatable document is not accessible", ade);
+                return;
+            }
+
+            TranslatedFolder sourceTranslatedFolder = new TranslatedFolder(sourceFolder);
+
+            // walk up the source tree until a translated ancestor is found
+            while (sourceTranslatedFolder.getSibling(language) == null) {
+                FolderTranslation ft = JcrFolderTranslationFactory.createFolderTranslation(sourceTranslatedFolder.node,
+                        null);
+                ft.setEditable(true);
+                folders.add(ft);
+
+                sourceTranslatedFolder = sourceTranslatedFolder.getParent();
+                if (sourceTranslatedFolder == null) {
+                    break;
+                }
+            }
+            if (sourceTranslatedFolder == null) {
+                log.error("Could not find a linked ancestor folder in language " + language);
+                return;
+            }
+
+            TranslatedFolder targetTranslatedFolder = sourceTranslatedFolder.getSibling(language);
+            assert targetTranslatedFolder != null;
+            while (sourceTranslatedFolder != null) {
+                {
+                    FolderTranslation ft = JcrFolderTranslationFactory.createFolderTranslation(
+                            sourceTranslatedFolder.node, targetTranslatedFolder.node);
+                    ft.setEditable(false);
+                    folders.add(ft);
+                }
+
+                // walk up the source tree until a translated ancestor is found
+                sourceTranslatedFolder = sourceTranslatedFolder.getParent();
+                if (sourceTranslatedFolder == null) {
+                    break;
+                }
+                TranslatedFolder sourceSibling = sourceTranslatedFolder.getSibling(language);
+                while (sourceSibling == null) {
+                    FolderTranslation ft = JcrFolderTranslationFactory.createFolderTranslation(
+                            sourceTranslatedFolder.node, null);
+                    ft.setEditable(false);
+                    folders.add(ft);
+
+                    sourceTranslatedFolder = sourceTranslatedFolder.getParent();
+                    if (sourceTranslatedFolder == null) {
+                        break;
+                    }
+                    sourceSibling = sourceTranslatedFolder.getSibling(language);
+                }
+                if (sourceTranslatedFolder == null) {
+                    break;
+                }
+                assert sourceSibling != null;
+
+                // walk up the target tree until a translated ancestor is found
+                targetTranslatedFolder = targetTranslatedFolder.getParent();
+                while (targetTranslatedFolder != null) {
+                    if (targetTranslatedFolder.equals(sourceSibling)) {
+                        break;
+                    }
+                    TranslatedFolder backLink = targetTranslatedFolder.getSibling(languageModel.getObject());
+                    if (backLink != null) {
+                        if (!targetTranslatedFolder.equals(sourceSibling)) {
+                            break;
+                        }
+                    }
+
+                    FolderTranslation ft = JcrFolderTranslationFactory.createFolderTranslation(null,
+                            targetTranslatedFolder.node);
+                    ft.setEditable(false);
+                    folders.add(ft);
+
+                    targetTranslatedFolder = targetTranslatedFolder.getParent();
+                }
+                if (targetTranslatedFolder == null || !targetTranslatedFolder.equals(sourceSibling)) {
+                    break;
+                }
+            }
+            Collections.reverse(folders);
         }
 
         private boolean saveFolder(FolderTranslation ft, javax.jcr.Session session) {

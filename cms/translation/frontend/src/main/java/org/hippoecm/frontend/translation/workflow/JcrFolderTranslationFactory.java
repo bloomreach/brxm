@@ -30,44 +30,41 @@ public final class JcrFolderTranslationFactory {
     }
 
     public static FolderTranslation createFolderTranslation(Node original, Node node) throws RepositoryException {
-        FolderTranslation ft = new FolderTranslation(node.getIdentifier());
-
-        ft.setUrl(original.getName());
-        if (original instanceof HippoNode) {
-            ft.setName(((HippoNode) original).getLocalizedName());
-        } else {
-            ft.setName(ft.getUrl());
+        if (original == null && node == null) {
+            throw new IllegalArgumentException("Both source and target folders are null");
         }
 
-        ft.setUrlfr(node.getName());
-        if (node instanceof HippoNode) {
-            ft.setNamefr(((HippoNode) node).getLocalizedName());
+        Node reference;
+        if (original == null) {
+            reference = node;
         } else {
-            ft.setNamefr(ft.getUrlfr());
+            reference = original;
+        }
+        FolderTranslation ft = new FolderTranslation(reference.getIdentifier());
+        if (reference.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            ft.setType("folder");
+        } else {
+            ft.setType("doc");
+        }
+
+        if (original != null) {
+            ft.setUrl(original.getName());
+            if (original instanceof HippoNode) {
+                ft.setName(((HippoNode) original).getLocalizedName());
+            } else {
+                ft.setName(ft.getUrl());
+            }
+        }
+
+        if (node != null) {
+            ft.setUrlfr(node.getName());
+            if (node instanceof HippoNode) {
+                ft.setNamefr(((HippoNode) node).getLocalizedName());
+            } else {
+                ft.setNamefr(ft.getUrlfr());
+            }
         }
         
-        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            ft.setType("folder");
-        } else {
-            ft.setType("doc");
-        }
-        return ft;
-    }
-
-    public static FolderTranslation createFolderTranslation(Node node) throws RepositoryException {
-        FolderTranslation ft = new FolderTranslation(node.getIdentifier());
-
-        ft.setUrl(node.getName());
-        if (node instanceof HippoNode) {
-            ft.setName(((HippoNode) node).getLocalizedName());
-        } else {
-            ft.setName(ft.getUrl());
-        }
-        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            ft.setType("folder");
-        } else {
-            ft.setType("doc");
-        }
         return ft;
     }
 
