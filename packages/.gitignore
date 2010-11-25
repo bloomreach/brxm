@@ -18,6 +18,10 @@ package-cms-resources/.classpath
 package-cms-resources/.project
 package-cms-resources/.settings
 package-cms-resources/target
+package-cms-test/.classpath
+package-cms-test/.project
+package-cms-test/.settings
+package-cms-test/target
 quickstart/.classpath
 quickstart/.pom.xml.swp
 quickstart/.project
@@ -46,10 +50,6 @@ quickstart/war/src/main/webapp/skin
 quickstart/war/src/main/webapp/xinha
 quickstart/war/target
 /target
-test/.classpath
-test/.project
-test/.settings
-test/target
 war/.classpath
 war/.project
 war/.settings
