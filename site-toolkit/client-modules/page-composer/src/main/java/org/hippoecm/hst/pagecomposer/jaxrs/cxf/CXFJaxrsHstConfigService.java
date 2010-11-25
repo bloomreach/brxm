@@ -79,6 +79,9 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 		
         try {
         	Session jcrSession = requestContext.getSession();
+        	// we explicitly call a refresh here. Normally, the sessionstateful jcr session is already refreshed. However, due to asychronous
+        	// jcr event dispatching, there might be changes in the repository, but not yet a jcr event was sent that triggers a jcr session refresh. Hence, here
+        	// we explicitly refresh the jcr session again. 
         	jcrSession.refresh(false);
         	node = jcrSession.getNodeByIdentifier(uuid);
         	resourceType = node.getPrimaryNodeType().getName();

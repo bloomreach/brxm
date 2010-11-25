@@ -100,7 +100,7 @@
             <list>
               <ref bean="securityValve" />
               <ref bean="subjectBasedSessionValve" />
-              <ref bean="jcrSessionConcurrencyValve" />
+              <ref bean="jcrSessionStatefulConcurrencyValve" />
               <ref bean="noCacheResponseHeadersValve" />
               <ref bean="jaxrsHstConfigServiceValve" />
             </list>
@@ -136,7 +136,7 @@
               <list>
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
-                <ref bean="jcrSessionConcurrencyValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve" />
                 <ref bean="noCacheResponseHeadersValve" />
                 <ref bean="composerBootstrap" />
               </list>

@@ -79,8 +79,8 @@ public class SubjectBasedSessionValve extends AbstractValve {
                 if (!isLive) {
                     try {
                         lazySession.logout();
-                    } catch (Exception ignore) {
-                        ;
+                    } catch (Exception e) {
+                        log.warn("Exception logging out lazySession", e);
                     } finally {
                         lazySession = null;
                     }
@@ -101,15 +101,6 @@ public class SubjectBasedSessionValve extends AbstractValve {
         if (sessionStateful) {
             valveContext.getServletRequest().getSession(true).setAttribute(SUBJECT_BASED_SESSION_ATTR_NAME, lazySession);
             
-            long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
-            
-            if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
-                try {
-                    lazySession.refresh(false);
-                } catch (RepositoryException e) {
-                    throw new ContainerException("Failed to refresh session.", e);
-                }
-            }
         } else {
             requestContext.setAttribute(SUBJECT_BASED_SESSION_ATTR_NAME, lazySession);
         }

@@ -17,9 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import java.util.List;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -35,25 +33,12 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 public class CleanupValve extends AbstractValve
 {
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
-    protected boolean refreshLazySession = true;
-    protected long maxRefreshIntervalOnLazySession;
-    protected boolean keepChangesOnRefreshLazySession;
+    
     
     public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
         this.resourceLifecycleManagements = resourceLifecycleManagements;
     }
     
-    public void setRefreshLazySession(boolean refreshLazySession) {
-        this.refreshLazySession = refreshLazySession;
-    }
-    
-    public void setMaxRefreshIntervalOnLazySession(long maxRefreshIntervalOnLazySession) {
-        this.maxRefreshIntervalOnLazySession = maxRefreshIntervalOnLazySession;
-    }
-    
-    public void setKeepChangesOnRefreshLazySession(boolean keepChangesOnRefreshLazySession) {
-        this.keepChangesOnRefreshLazySession = keepChangesOnRefreshLazySession;
-    }
     
     @Override
     public void invoke(ValveContext context) throws ContainerException
@@ -89,32 +74,19 @@ public class CleanupValve extends AbstractValve
         LazySession lazySession = null;
         
         if (sessionStateful) {
-            HttpSession httpSession = valveContext.getServletRequest().getSession(false);
-            lazySession = (httpSession != null ? (LazySession) httpSession.getAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME) : (LazySession) null);
-            
-            if (lazySession != null && refreshLazySession) {
-                try {
-                    if (maxRefreshIntervalOnLazySession > 0L) {
-                        if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
-                            lazySession.refresh(keepChangesOnRefreshLazySession);
-                        }
-                    } else {
-                        lazySession.refresh(keepChangesOnRefreshLazySession);
-                    }
-                } catch (RepositoryException e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Failed to refresh session.", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Failed to refresh session. " + e);
-                    }
-                }
-            }
+            /*
+             *  We do not log out or refresh session stateful jcr session: This is done by either:
+             *  1) The JCRSessionStatefulConcurrencyValve refreshes the jcr session when needed
+             *  2) When the HttpSession container the jcr session is invalidated (unbinded), the LazySession logs itself out in the finally part
+             */
         } else {
             lazySession = (LazySession) requestContext.getAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
             
             if (lazySession != null) {
                 try {
-                    lazySession.logout();
+                    if (lazySession.isLive()) {
+                        lazySession.logout();
+                    }
                 } catch (Exception e) {
                     if (log.isDebugEnabled()) {
                         log.warn("Failed to logout session.", e);
