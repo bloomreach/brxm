@@ -13,6 +13,7 @@ ear/.project
 ear/.settings
 ear/bin
 ear/target
+package-app-dependencies/target
 resources/.classpath
 resources/.project
 resources/.settings
