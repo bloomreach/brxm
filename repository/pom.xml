@@ -86,27 +86,6 @@
     <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</url>
   </scm>
 
-  <issueManagement>
-    <system>Jira</system>
-    <url>http://issues.onehippo.org/browse/HREPTWO</url>
-  </issueManagement>
-
-  <inceptionYear>2007</inceptionYear>
-
-  <mailingLists>
-   <mailingList>
-    <name>Hippo CMS 7 User Forums</name>
-    <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-    <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-    <!--<post>hippo-cms7-user@lists.onehippo.org</post>-->
-    <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-   </mailingList>
-   <mailingList>
-    <name>Hippo Repository 2 Dev List</name>
-    <archive>http://lists.onehippo.org/pipermail/hipporepos-dev/</archive>
-   </mailingList>
-  </mailingLists>
-
   <build>
     <plugins>
       <plugin>
