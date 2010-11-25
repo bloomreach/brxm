@@ -3,10 +3,6 @@
 /.project
 /.settings
 /bin
-dependencies/.classpath
-dependencies/.project
-dependencies/.settings
-dependencies/target
 ear/.classpath
 ear/.pom.xml.swp
 ear/.project
@@ -14,6 +10,10 @@ ear/.settings
 ear/bin
 ear/target
 package-app-dependencies/target
+package-cms-dependencies/.classpath
+package-cms-dependencies/.project
+package-cms-dependencies/.settings
+package-cms-dependencies/target
 quickstart/.classpath
 quickstart/.pom.xml.swp
 quickstart/.project
