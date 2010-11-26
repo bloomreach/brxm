@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2010 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,37 +13,31 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
-    <artifactId>hippo-package-cms</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-packages</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Dependencies Package CMS</name>
-  <description>Hippo Dependencies Package CMS</description>
-  <groupId>org.onehippo</groupId>
+  <name>Hippo Package CMS Dependencies</name>
+  <description>Hippo Package CMS Dependencies</description>
   <artifactId>hippo-package-cms-dependencies</artifactId>
   <packaging>pom</packaging>
 
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/dependencies</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/dependencies</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/dependencies</url>
-  </scm>
-
   <dependencies>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-xinha-integration</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-config</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -50,7 +45,7 @@
 
     <!-- Builtin workflow plugins -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-builtin</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -58,7 +53,7 @@
 
     <!-- Versioning addon -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-versioning</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -66,41 +61,41 @@
 
     <!-- Reusable frontend components -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
 
-    <!-- Reviewed actions workflow -->
+    <!-- Publication workflow -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-publication-workflow-common</artifactId>
-      <version>${reviewedactions.version}</version>
+      <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-publication-workflow-repository</artifactId>
-      <version>${reviewedactions.version}</version>
+      <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-publication-workflow-frontend</artifactId>
-      <version>${reviewedactions.version}</version>
+      <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
 
     <!-- Faceted date type -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-repository</artifactId>
       <version>${faceteddate.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-frontend</artifactId>
       <version>${faceteddate.version}</version>
       <type>jar</type>
@@ -108,19 +103,19 @@
 
     <!-- Template editor -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-common</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-repository</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-frontend</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -128,13 +123,13 @@
 
     <!-- Reporting addon -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-reporting</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-reporting</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -142,31 +137,31 @@
 
     <!-- CMS 7 addons-->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-rootpage</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-browse</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-dashboard</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-edit</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-admin</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -174,19 +169,19 @@
 
     <!-- image gallery addon -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-common</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-repository</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-frontend</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -194,19 +189,19 @@
 
     <!-- translation addon -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-common</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-repository</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-frontend</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -214,14 +209,14 @@
 
     <!-- search addon -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-search</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-workflowmenu</artifactId>
       <version>${cms.version}</version>
       <type>jar</type>
@@ -237,43 +232,46 @@
 	 compatibility).
       -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-dependencies</artifactId>
       <version>${repository.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-upgrade</artifactId>
       <version>${repository.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-servlets</artifactId>
       <version>${repository.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-engine</artifactId>
       <version>${cms.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-plugins</artifactId>
       <version>${cms.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
+      <version>${javax.jcr.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
+      <version>${javax.servlet.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
+      <version>${commons-lang.version}</version>
     </dependency>
   </dependencies>
 

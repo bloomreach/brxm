@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2008 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,64 +13,58 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-quickstart</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Quickstart CMS tests</name>
   <description>Hippo Quickstart CMS tests</description>
-  <groupId>org.onehippo</groupId>
   <artifactId>hippo-quickstart-test</artifactId>
   <packaging>jar</packaging>
 
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/test</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/test</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/test</url>
-  </scm>
-
   <dependencies>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
     </dependency>
 
-    <!-- Reviewed actions workflow -->
+    <!-- Publication workflow -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-publication-workflow-common</artifactId>
-      <version>${reviewedactions.version}</version>
+      <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-publication-workflow-repository</artifactId>
-      <version>${reviewedactions.version}</version>
+      <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-publication-workflow-frontend</artifactId>
-      <version>${reviewedactions.version}</version>
+      <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
 
     <!-- Faceted date type -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-repository</artifactId>
       <version>${faceteddate.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-frontend</artifactId>
       <version>${faceteddate.version}</version>
       <type>jar</type>
@@ -77,13 +72,13 @@
 
     <!-- default content addon -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-defaultcontent-frontend</artifactId>
       <version>${defaultcontent.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-defaultcontent-repository</artifactId>
       <version>${defaultcontent.version}</version>
       <type>jar</type>
@@ -91,35 +86,38 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
+      <version>${javax.jcr.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${repository.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${repository.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>${org.slf4j.version}</version>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-tools-testutils</artifactId>
       <version>${repository.version}</version>
       <scope>test</scope>
@@ -128,100 +126,101 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-upgrade</artifactId>
       <version>${repository.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
       <version>${repository.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
       <version>${repository.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-xinha-integration</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-engine</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-plugins</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-config</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-config</artifactId>
       <version>${repository.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gotolink</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-publication-workflow-repository</artifactId>
-      <version>${reviewedactions.version}</version>
+      <version>${publication-workflow.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-repository</artifactId>
       <version>${faceteddate.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-repository</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-reporting</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-repository</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-repository</artifactId>
       <version>${cms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-defaultcontent-repository</artifactId>
       <version>${defaultcontent.version}</version>
       <scope>test</scope>
@@ -230,32 +229,37 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl104-over-slf4j</artifactId>
-      <version>1.4.3</version>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
+      <version>${atomikos.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions</artifactId>
+      <version>${atomikos.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
+      <version>${atomikos.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>atomikos-util</artifactId>
+      <version>${atomikos.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <version>${org.apache.geronimo.specs.jta.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -284,17 +288,13 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>2.4</version>
         <configuration>
           <skip>true</skip>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>history.points</name>
-              <value>${history.points}</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <history.points>${history.points}</history.points>
+          </systemPropertyVariables>
         </configuration>
         <executions>
           <execution>
@@ -357,7 +357,7 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.onehippo</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-repository-engine</artifactId>
           <version>${repository.version}</version>
           <type>jar</type>
@@ -378,7 +378,7 @@
       <dependencyManagement>
         <dependencies>
           <dependency>
-            <groupId>org.onehippo</groupId>
+            <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-repository-engine</artifactId>
             <version>${repository.version}</version>
             <type>jar</type>

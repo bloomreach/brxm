@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2010 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,31 +13,25 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo</groupId>
-    <artifactId>hippo-package-cms</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-packages</artifactId>
     <version>2.17.02-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Resources Package CMS</name>
-  <description>Hippo Resources Package CMS</description>
-  <groupId>org.onehippo</groupId>
+  <name>Hippo Package CMS Resources</name>
+  <description>Hippo Package CMS Resources</description>
   <artifactId>hippo-package-cms-resources</artifactId>
   <packaging>war</packaging>
-
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/resources</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/resources</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/resources</url>
-  </scm>
 
   <dependencies>
     <!-- Xinha html editor (must be included before actual front-end application) -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-xinha-resources</artifactId>
       <version>${cms.version}</version>
       <type>war</type>
@@ -44,7 +39,7 @@
 
     <!-- Application skin (must be included before actual front-end application) -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-skin</artifactId>
       <version>${cms.version}</version>
       <type>war</type>
@@ -52,7 +47,7 @@
     
     <!-- Application layout (must be included before actual front-end application) -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-layout</artifactId>
       <version>${cms.version}</version>
       <type>war</type>
@@ -60,13 +55,13 @@
 
     <!-- End applications -->
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-resources</artifactId>
       <version>${repository.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-application</artifactId>
       <version>${cms.version}</version>
       <type>war</type>
@@ -110,7 +105,7 @@
           <overlays>
             <!-- repeat this overlay for all applications that use the skin -->
             <overlay>
-              <groupId>org.onehippo</groupId>
+              <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-skin</artifactId>
               <targetPath>skin</targetPath>
               <excludes>
@@ -119,7 +114,7 @@
               </excludes>
             </overlay>
             <overlay>
-              <groupId>org.onehippo</groupId>
+              <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-layout</artifactId>
               <targetPath>layout</targetPath>
               <excludes>
@@ -128,7 +123,7 @@
               </excludes>
             </overlay>
             <overlay>
-              <groupId>org.onehippo</groupId>
+              <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-xinha-resources</artifactId>
               <targetPath>xinha</targetPath>
               <excludes>
@@ -137,7 +132,7 @@
               </excludes>
             </overlay>
             <overlay>
-              <groupId>org.onehippo</groupId>
+              <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-application</artifactId>
               <excludes>
                 <exclude>WEB-INF/web.xml</exclude>
@@ -145,7 +140,7 @@
               </excludes>
             </overlay>
             <overlay>
-              <groupId>org.onehippo</groupId>
+              <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-repository-resources</artifactId>
               <excludes>
                 <exclude>WEB-INF/web.xml</exclude>
