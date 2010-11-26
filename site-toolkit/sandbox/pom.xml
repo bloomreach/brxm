@@ -22,7 +22,7 @@
   <name>Hippo Site Toolkit Sandbox for Experimental Components</name>
   <description>Hippo Site Toolkit Sandbox for Experimental Components (Not for production)</description>
   
-  <artifactId>hst-sandbox</artifactId>
+  <artifactId>sandbox</artifactId>
   <packaging>pom</packaging>
   <modules>
     <module>ocm</module>
