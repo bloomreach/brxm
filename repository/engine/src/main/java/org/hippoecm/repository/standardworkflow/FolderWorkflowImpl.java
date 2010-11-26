@@ -262,6 +262,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public String add(String category, String template, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String name = arguments.get("name");
+        userSession.save();
         QueryManager qmgr = userSession.getWorkspace().getQueryManager();
         Node foldertype = userSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
         if (!foldertype.hasNode(category)) {
@@ -284,33 +285,37 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             }
             populateRenames(renames, params, target, arguments);
         }
-        for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
-            Node prototypeNode = iter.nextNode();
-            if (prototypeNode.getName().equals("hipposysedit:prototype")) {
-                String documentType = prototypeNode.getPrimaryNodeType().getName();
-                if (documentType.equals(template)) {
-                    // create handle ourselves, if not already exists
-                    if(!target.hasNode(name) || !target.getNode(name).isNodeType(HippoNodeType.NT_HANDLE) ||
-                                                 target.getNode(name).hasNode(name)) {
-                        result = target.addNode(name, "hippo:handle");
-                        result.addMixin("hippo:hardhandle");
-                    } else {
-                        result = target.getNode(name);
+        try {
+            for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
+                Node prototypeNode = iter.nextNode();
+                if (prototypeNode.getName().equals("hipposysedit:prototype")) {
+                    String documentType = prototypeNode.getPrimaryNodeType().getName();
+                    if (documentType.equals(template)) {
+                        // create handle ourselves, if not already exists
+                        if (!target.hasNode(name) || !target.getNode(name).isNodeType(HippoNodeType.NT_HANDLE)
+                                || target.getNode(name).hasNode(name)) {
+                            result = target.addNode(name, "hippo:handle");
+                            result.addMixin("hippo:hardhandle");
+                        } else {
+                            result = target.getNode(name);
+                        }
+                        renames.put("./_name", new String[] {name});
+                        result = copy(prototypeNode, result, renames, ".");
+                        break;
                     }
-                    renames.put("./_name", new String[] { name });
-                    result = copy(prototypeNode, result, renames, ".");
+                } else if (prototypeNode.getName().equals(template)) {
+                    result = copy(prototypeNode, target, renames, ".");
                     break;
                 }
-            } else if (prototypeNode.getName().equals(template)) {
-                result = copy(prototypeNode, target, renames, ".");
-                break;
             }
-        }
-        if(result != null) {
-            userSession.save();
-            return result.getPath();
-        } else {
-            throw new WorkflowException("No template defined for add to folder");
+            if (result != null) {
+                userSession.save();
+                return result.getPath();
+            } else {
+                throw new WorkflowException("No template defined for add to folder");
+            }
+        } finally {
+            target.refresh(false);
         }
     }
 
