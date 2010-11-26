@@ -43,14 +43,11 @@ import org.apache.velocity.context.Context;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.security.PolicyContextWrapper;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
@@ -509,27 +506,11 @@ public class LoginServlet extends HttpServlet {
      * @return <code>true</code> when the global {@link VirtualHosts} is configured to have the contextPath in the URL 
      */
     protected boolean showContextPathInUrl(HttpServletRequest request) {
-        if(!HstServices.isAvailable()) {
-            return true;
-        }
-        HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        if(hstManager == null) {
-            return true;
-        }
-        try {
-            // first try to match the HOST:
-            VirtualHosts vhosts = hstManager.getVirtualHosts();
-            String hostName = HstRequestUtils.getFarthestRequestHost(request);
-            ResolvedVirtualHost resolvedVirtualHost = vhosts.matchVirtualHost(hostName);
-            if(resolvedVirtualHost != null) {
-               return resolvedVirtualHost.getVirtualHost().isContextPathInUrl();  
-            } 
-            return hstManager.getVirtualHosts().isContextPathInUrl();
-        } catch (RepositoryNotAvailableException e) {
-            log.warn("Error occured", e);
+        ResolvedVirtualHost host = (ResolvedVirtualHost)request.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
+        if(host != null) {
+           return host.getVirtualHost().isContextPathInUrl();
         }
         return false;
-        
     }
 }
 

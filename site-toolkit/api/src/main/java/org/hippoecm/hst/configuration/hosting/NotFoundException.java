@@ -20,7 +20,7 @@ package org.hippoecm.hst.configuration.hosting;
  * thrown. 
  * 
  */
-public class NotFoundException extends MatchException{
+public class NotFoundException extends MatchException {
 
     private static final long serialVersionUID = 1L;
     /**

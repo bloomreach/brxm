@@ -39,6 +39,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,8 +149,19 @@ public class HstLinkTag extends ParamContainerTag {
                         throw new JspException(e);
                    }
                        
-              }
-               writeOrSetVar(servletRequest.getContextPath() + path);
+               }
+               ResolvedVirtualHost host = (ResolvedVirtualHost)servletRequest.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
+               if(host != null) {
+                   if(host.getVirtualHost().isContextPathInUrl()) {
+                       writeOrSetVar(servletRequest.getContextPath() + path);
+                   } else {
+                       // skip the contextPath
+                       writeOrSetVar(path);
+                   }
+               } else {
+                   log.warn("There is no VirtualHost on the request. Link will include the contextPath as we cannot do a lookup in a virtual host whether the contextPath should be included or not.");
+                   writeOrSetVar(servletRequest.getContextPath() + path);
+               }
                cleanup();
                return EVAL_PAGE;
            }

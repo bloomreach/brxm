@@ -44,6 +44,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
@@ -248,9 +249,24 @@ public class HstFilter implements Filter {
             
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
+    		
+    		// we always want to have the virtualhost available, even when we do not have hst request processing:
+    		// We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
+    		// This info is on the virtual host.
+            String hostName = HstRequestUtils.getFarthestRequestHost(containerRequest);
+            ResolvedVirtualHost resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
+            // when resolvedVirtualHost = null, we cannot do anything else then fall through to the next filter
+            if(resolvedVirtualHost == null) {
+                logger.warn("hostName '{}' can not be matched. Skip HST Filter and request processing. ", hostName);
+                chain.doFilter(request, response);
+                return;
+            }
+            
+            request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
+    		
     		// when getPathSuffix() is not null, we have a REST url and never skip hst request processing
     		if(vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(containerRequest.getPathInfo()))) {
-    			chain.doFilter(request, response);
+    		    chain.doFilter(request, response);
     			return;
     		}
     		
@@ -268,20 +284,13 @@ public class HstFilter implements Filter {
     		
     		ResolvedMount mount = requestContext.getResolvedMount();
     		if (mount == null) {
-    			try {
-    				mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest), containerRequest.getContextPath() , containerRequest.getPathInfo());
-    				if(mount != null) {
-    					requestContext.setResolvedMount(mount);
-    				} 
-    				else {
-    					throw new MatchException("No matching Mount for '"+HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"'");
-    				}
-    			} 
-    			catch (MatchException e) {
-    				logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: {}" , e.getMessage());
-    				res.sendError(HttpServletResponse.SC_NOT_FOUND);
-    				return;
-    			} 
+				mount = vHosts.matchMount(hostName, containerRequest.getContextPath() , containerRequest.getPathInfo());
+				if(mount != null) {
+					requestContext.setResolvedMount(mount);
+				} 
+				else {
+					throw new MatchException("No matching Mount for '"+hostName+"' and '"+containerRequest.getRequestURI()+"'");
+				}
     		}
     		
     		// CRUCIAL :  now we set the HST equivalent of the servletPath, namely the Mount#getMountPath as servletPath on the containerRequest
@@ -304,7 +313,8 @@ public class HstFilter implements Filter {
 					resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
 					if(resolvedSiteMapItem == null) {
 						// should not be possible as when it would be null, an exception should have been thrown
-						logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
+					    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+						logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
 						res.sendError(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
@@ -316,7 +326,8 @@ public class HstFilter implements Filter {
     		}
     		else {
 				if(mount.getNamedPipeline() == null) {
-					logger.warn(HstRequestUtils.getFarthestRequestHost(containerRequest)+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
+					logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
+					req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 					res.sendError(HttpServletResponse.SC_NOT_FOUND);
 				}
 				else {
@@ -325,16 +336,34 @@ public class HstFilter implements Filter {
 				}
     		}
     	} 
-    	catch(RepositoryNotAvailableException e) {
-    		final String msg = "Fatal error encountered while processing request: " + e.toString();
-    		throw new ServletException(msg, e);
-    	} 
+    	catch (MatchException e) {
+    	    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            if(logger.isDebugEnabled()) {
+                logger.warn("MatchException for '"+req.getRequestURI()+"':" , e);
+            } else {
+                logger.warn("MatchException for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+            }
+            res.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        } catch (ContainerException e) {
+            req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            if(logger.isDebugEnabled()) {
+                logger.warn("MatchException for '"+req.getRequestURI()+"':" , e);
+            } else {
+                logger.warn("MatchException for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+            }
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        } 
     	catch (Exception e) {
-    		final String msg = "Fatal error encountered while processing request: " + e.toString();
-    		if (logger.isDebugEnabled()) {
-    			logger.error(msg, e);
-    		}
-    		throw new ServletException(msg, e);
+    	    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+    	    if(logger.isDebugEnabled()) {
+                logger.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
+            } else {
+                logger.warn("Fatal error encountered while processing request '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+            }
+    	    res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
     	}
     	finally {
     		if (logger != null && logger.isDebugEnabled()) {

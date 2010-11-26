@@ -77,11 +77,16 @@ public interface ContainerConstants {
      * Subject session attribute name
      */
     String SUBJECT_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject";
-   
+
     /**
      * attribute that has a value when the request URI is already decoded.
      */
     String IS_REQUEST_URI_DECODED = "org.hippoecm.hst.container.HstContainerRequest.requestURI.isDecoded";
+    
+    /**
+     * attribute that has a value when the request URI is already decoded.
+     */
+    String VIRTUALHOSTS_REQUEST_ATTR = "org.hippoecm.hst.configuration.hosting.VirtualHost.requestAttr";
     
     /**
      * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a container that doesn't support JACC.)

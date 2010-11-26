@@ -26,8 +26,8 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
@@ -79,6 +79,11 @@ public class VirtualHostsService implements VirtualHosts {
     private boolean contextPathInUrl;
     private String[] prefixExclusions;
     private String[] suffixExclusions;
+    
+    /*
+     * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be computed twice and overriden.
+     */
+    private Map<String, ResolvedVirtualHost> resolvedMapCache = new HashMap<String, ResolvedVirtualHost>();
     
     public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
         this.hstManager = hstManager;
@@ -218,23 +223,31 @@ public class VirtualHostsService implements VirtualHosts {
             throw new MatchException("No correct virtual hosts configured. Cannot continue request");
         }
         
+        // NOTE : the resolvedMapCache does not need synchronization. Theoretically it would need it as it is used concurrent. 
+        // In practice it won't happen ever. Trust me
+        ResolvedVirtualHost rvHost = resolvedMapCache.get(hostName);
+        if(rvHost != null) {
+            return rvHost;
+        }
+        
     	int portNumber = 0;
-        int offset = hostName.indexOf(':');
+        String portStrippedHostName = hostName;
+        int offset = portStrippedHostName.indexOf(':');
         if (offset != -1) {
         	try {
-        		portNumber = Integer.parseInt(hostName.substring(offset+1));
+        		portNumber = Integer.parseInt(portStrippedHostName.substring(offset+1));
         	}
         	catch (NumberFormatException nfe) {
-        		throw new MatchException("The hostName '"+hostName+"' contains an invalid portnumber");
+        		throw new MatchException("The hostName '"+portStrippedHostName+"' contains an invalid portnumber");
         	}
         	// strip off portNumber
-        	hostName = hostName.substring(0, offset);
+           portStrippedHostName = portStrippedHostName.substring(0, offset);
         }
-        ResolvedVirtualHost host = findMatchingVirtualHost(hostName, portNumber);
+        ResolvedVirtualHost host = findMatchingVirtualHost(portStrippedHostName, portNumber);
         
         // no host found. Let's try the default host, if there is one configured:
-        if(host == null && this.getDefaultHostName() != null && !this.getDefaultHostName().equals(hostName)) {
-            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", hostName, this.getDefaultHostName());
+        if(host == null && this.getDefaultHostName() != null && !this.getDefaultHostName().equals(portStrippedHostName)) {
+            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", portStrippedHostName, this.getDefaultHostName());
             if (portNumber != 0) {
                 host = matchVirtualHost(this.getDefaultHostName()+":"+Integer.toString(portNumber));
             }
@@ -243,9 +256,12 @@ public class VirtualHostsService implements VirtualHosts {
             }
         }
         if(host == null) {
-           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", hostName , this.getDefaultHostName());
+           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", portStrippedHostName , this.getDefaultHostName());
           
         }
+        // store in the resolvedMap
+        resolvedMapCache.put(hostName, host);
+        
         return host;
     }
     
