@@ -313,6 +313,7 @@ public class HstFilter implements Filter {
 					resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
 					if(resolvedSiteMapItem == null) {
 						// should not be possible as when it would be null, an exception should have been thrown
+					    // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
 					    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 						logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
 						res.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -327,6 +328,7 @@ public class HstFilter implements Filter {
     		else {
 				if(mount.getNamedPipeline() == null) {
 					logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
+					// on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
 					req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 					res.sendError(HttpServletResponse.SC_NOT_FOUND);
 				}
@@ -337,6 +339,7 @@ public class HstFilter implements Filter {
     		}
     	} 
     	catch (MatchException e) {
+    	    // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
     	    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             if(logger.isDebugEnabled()) {
                 logger.warn("MatchException for '"+req.getRequestURI()+"':" , e);
@@ -346,6 +349,7 @@ public class HstFilter implements Filter {
             res.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         } catch (ContainerException e) {
+           // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
             req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             if(logger.isDebugEnabled()) {
                 logger.warn("MatchException for '"+req.getRequestURI()+"':" , e);
@@ -356,6 +360,7 @@ public class HstFilter implements Filter {
             return;
         } 
     	catch (Exception e) {
+    	    // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
     	    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     	    if(logger.isDebugEnabled()) {
                 logger.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
