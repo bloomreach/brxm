@@ -39,13 +39,13 @@
     <!-- Publication workflow -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-publication-workflow-common</artifactId>
+      <artifactId>hippo-addon-publication-workflow-common</artifactId>
       <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-publication-workflow-repository</artifactId>
+      <artifactId>hippo-addon-publication-workflow-repository</artifactId>
       <version>${publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
