@@ -486,10 +486,18 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     
                     nodePath = node.getPath();
                     boolean matchedMount = false;
-                    if(!virtual && nodePath.startsWith(mount.getCanonicalContentPath())) {
+                    
+                    if(!virtual && nodePath.equals(mount.getCanonicalContentPath())) {
+                        // the root node of the site. Return the homepage
+                        return new HstLinkImpl(mount.getHomePage(), mount);
+                    }
+                    if(!virtual && nodePath.startsWith(mount.getCanonicalContentPath() + "/")) {
                         nodePath = nodePath.substring(mount.getCanonicalContentPath().length());
                         matchedMount = true;
-                    } else if (virtual && nodePath.startsWith(mount.getContentPath())) { 
+                    } else if (virtual && nodePath.equals(mount.getContentPath())) { 
+                        // the root node of the site. Return the homepage
+                        return new HstLinkImpl(mount.getHomePage(), mount);
+                    }  else if (virtual && nodePath.startsWith(mount.getContentPath()  + "/")) { 
                         nodePath = nodePath.substring(mount.getContentPath().length());
                         matchedMount = true;
                     } else if (isBinaryLocation(nodePath)) {
@@ -527,21 +535,26 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         
                         // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
                         // cross-domain linkrewrite to mounts that are not a Mount?
-                        for(Mount mount : mountsForHostGroup) {
-                           if(!mount.isMapped()) {
+                        for(Mount mountForHostGroup : mountsForHostGroup) {
+                           if(!mountForHostGroup.isMapped()) {
                                // not a mount for a HstSite
                                continue;
                            }
+                           if(nodePath.equals(mountForHostGroup.getCanonicalContentPath())) {
+                               // the nodePath is exactly the 'root' path of the current mountForHostGroup. Return homepage for this mount
+                               return new HstLinkImpl(mountForHostGroup.getHomePage(), mountForHostGroup);
+                           }
+                           
                            // (1)
-                           if(nodePath.startsWith(mount.getCanonicalContentPath())) {
+                           if(nodePath.startsWith(mountForHostGroup.getCanonicalContentPath() + "/")) {
                               // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
                               // (2)
-                              if(!Collections.disjoint(mount.getTypes(), mount.getTypes())) {
-                                  log.info("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  mount.getName(), mount.getAlias());
-                                  possibleSuitedMounts.add(mount);
+                              if(!Collections.disjoint(mountForHostGroup.getTypes(), mountForHostGroup.getTypes())) {
+                                  log.info("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  mountForHostGroup.getName(), mountForHostGroup.getAlias());
+                                  possibleSuitedMounts.add(mountForHostGroup);
                               } else {
                                   // The Mount did not have a type in common with the current Mount. Try another one.
-                                  log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  mount.getName(), mount.getAlias());
+                                  log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  mountForHostGroup.getName(), mountForHostGroup.getAlias());
                               }
                            }
                         }
