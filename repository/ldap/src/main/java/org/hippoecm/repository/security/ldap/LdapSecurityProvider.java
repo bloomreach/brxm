@@ -166,7 +166,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                         .getProviderPath(), context.getUsersPath());
 
                 userManager = new LdapUserManager();
-                ((LdapUserManager)userManager).initManager(userContext);
+                ((LdapUserManager)userManager).init(userContext);
             } else {
                 log.warn("No user manager found, using dummy manager");
                 userManager = new DummyUserManager();
