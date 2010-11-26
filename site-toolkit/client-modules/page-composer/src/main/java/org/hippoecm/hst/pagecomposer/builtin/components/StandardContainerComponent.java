@@ -36,7 +36,7 @@ public class StandardContainerComponent extends GenericHstComponent {
             } else if ("HST.vBox".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:vbox.ftl");
             } else {
-                response.setRenderPath("classpath:table.ftl");
+                response.setRenderPath("classpath:vbox.ftl");
             }
         }
         super.doBeforeRender(request, response);
