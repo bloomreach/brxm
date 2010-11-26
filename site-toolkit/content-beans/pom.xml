@@ -17,14 +17,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm</groupId>
+    <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
     <version>2.10.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Content Beans</name>
   <description>Hippo Site Toolkit Content Beans</description>
-  <groupId>org.onehippo.ecm.hst</groupId>
   <artifactId>hst-content-beans</artifactId>
   <packaging>jar</packaging>
 
@@ -56,31 +55,31 @@
     </dependency>
     
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>${hippo.cms.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
+      <version>${cms.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-api</artifactId>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-repository-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>${hippo.cms.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-publication-workflow-common</artifactId>
+      <version>${publication-workflow.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-api</artifactId>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-repository-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -119,24 +118,24 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <!-- Hst test dependencies -->
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-test</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
     </dependency>

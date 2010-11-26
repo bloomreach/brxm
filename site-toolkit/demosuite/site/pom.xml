@@ -18,14 +18,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm.hst</groupId>
+    <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>demosuite</artifactId>
     <version>2.10.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Demo Suite SITE Application</name>
   <description>Hippo Site Toolkit Demo Suite SITE Application</description>
-  <groupId>org.onehippo.ecm.hst.demosuite</groupId>
+  <groupId>org.onehippo.cms7.hst.demosuite</groupId>
   <artifactId>hst-demosuite-site</artifactId>
   <packaging>war</packaging>
   
@@ -164,13 +164,13 @@
     
     <!-- The New JAX-RS REST Component -->    
     <dependency>    
-      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-jaxrs</artifactId>
       <version>${project.version}</version>
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.client-modules</groupId>
+      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
       <artifactId>hst-page-composer</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -184,7 +184,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.18</version>
+        <version>${jetty.version}</version>
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <webAppConfig>
@@ -202,36 +202,28 @@
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>
-            <version>3.1.4</version>
+            <version>${atomikos.version}</version>
             <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
-            <version>3.1.4</version>
+            <version>${atomikos.version}</version>
             <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions</artifactId>
-            <version>3.1.4</version>
+            <version>${atomikos.version}</version>
             <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
-            <version>3.1.4</version>
+            <version>${atomikos.version}</version>
             <scope>runtime</scope>
           </dependency>
         </dependencies>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <target>1.5</target>
-          <source>1.5</source>
-        </configuration>
       </plugin>
     </plugins>
     
@@ -258,13 +250,13 @@
           <scope>compile</scope>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
           <artifactId>hst-shared-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
           <artifactId>hst-server-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
@@ -277,7 +269,7 @@
           </exclusions>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
           <artifactId>hst-client-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
@@ -293,13 +285,13 @@
           <artifactId>jcr</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
           <artifactId>hst-shared-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
           <artifactId>hst-server-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
@@ -312,7 +304,7 @@
           </exclusions>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
           <artifactId>hst-client-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
@@ -365,21 +357,21 @@
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
-                      <groupId>org.hippoecm</groupId>
-                      <artifactId>hippo-ecm-api</artifactId>
-                      <version>${hippo.cms.version}</version>
+                      <groupId>org.onehippo.cms7</groupId>
+                      <artifactId>hippo-repository-api</artifactId>
+                      <version>${cms.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
-                      <groupId>org.hippoecm</groupId>
-                      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-                      <version>${hippo.cms.version}</version>
+                      <groupId>org.onehippo.cms7</groupId>
+                      <artifactId>hippo-repository-builtin</artifactId>
+                      <version>${cms.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
-                      <groupId>org.hippoecm</groupId>
-                      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-                      <version>${hippo.cms.version}</version>
+                      <groupId>org.onehippo.cms7</groupId>
+                      <artifactId>hippo-addon-publication-workflow-common</artifactId>
+                      <version>${cms.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
@@ -389,13 +381,13 @@
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
-                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <groupId>org.onehippo.cms7.hst</groupId>
                       <artifactId>hst-api</artifactId>
                       <version>${project.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
-                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <groupId>org.onehippo.cms7.hst</groupId>
                       <artifactId>hst-commons</artifactId>
                       <version>${project.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
@@ -412,7 +404,7 @@
                 <configuration>
                   <artifactItems>
                     <artifactItem>
-                      <groupId>org.onehippo.ecm.hst.demosuite</groupId>
+                      <groupId>org.onehippo.cms7.hst.demosuite</groupId>
                       <artifactId>hst-demosuite-cms</artifactId>
                       <version>${project.version}</version>
                       <type>war</type>
@@ -422,16 +414,16 @@
                       <excludes>
                         WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
                         WEB-INF/lib/jcr-${javax.jcr.version}.jar,
-                        WEB-INF/lib/hippo-ecm-api-${hippo.cms.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippo.cms.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippo.cms.version}.jar,
+                        WEB-INF/lib/hippo-repository-api-${repository.version}.jar,
+                        WEB-INF/lib/hippo-repository-builtin-${repository.version}.jar,
+                        WEB-INF/lib/hippo-publication-workflow-common-${publication-workflow.version}.jar,
                         WEB-INF/lib/jdo2-api-${jdo.version}.jar,
                         WEB-INF/lib/hst-api-${project.version}.jar,
                         WEB-INF/lib/hst-commons-${project.version}.jar
                       </excludes>
                     </artifactItem>
                     <artifactItem>
-                      <groupId>org.onehippo.ecm.hst.demosuite</groupId>
+                      <groupId>org.onehippo.cms7.hst.demosuite</groupId>
                       <artifactId>hst-demosuite-site</artifactId>
                       <version>${project.version}</version>
                       <type>war</type>
@@ -441,9 +433,9 @@
                       <excludes>
                         WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
                         WEB-INF/lib/jcr-${javax.jcr.version}.jar,
-                        WEB-INF/lib/hippo-ecm-api-${hippo.cms.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippo.cms.version}.jar,
-                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippo.cms.version}.jar,
+                        WEB-INF/lib/hippo-repository-api-${repository.version}.jar,
+                        WEB-INF/lib/hippo-repository-builtin-${repository.version}.jar,
+                        WEB-INF/lib/hippo-publication-workflow-common-${publication-workflow.version}.jar,
                         WEB-INF/lib/jdo2-api-${jdo.version}.jar,
                         WEB-INF/lib/hst-api-${project.version}.jar,
                         WEB-INF/lib/hst-commons-${project.version}.jar
@@ -498,34 +490,34 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
         <artifactId>hst-shared-dependencies</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
         <artifactId>hst-client-dependencies</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-api</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${repository.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-publication-workflow-common</artifactId>
+        <version>${publication-workflow.version}</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

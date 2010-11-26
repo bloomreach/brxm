@@ -17,14 +17,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm.hst</groupId>
+    <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>components</artifactId>
     <version>2.10.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Security Component</name>
   <description>Hippo Site Toolkit Security Component</description>
-  <groupId>org.onehippo.ecm.hst.components</groupId>
+  <groupId>org.onehippo.cms7.hst.components</groupId>
   <artifactId>hst-security</artifactId>
   <packaging>jar</packaging>
   
@@ -49,8 +49,8 @@
     </dependency>
     
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
     
@@ -72,9 +72,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     
@@ -85,9 +85,9 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     
@@ -125,9 +125,9 @@
     
     <!-- Hst test dependencies -->
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-test</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
     </dependency>
@@ -139,24 +139,24 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
       <artifactId>hst-addon-cnd</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>   
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-repository</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>      
     </dependency>
     
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-unittestcontents</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>      
     </dependency>
     

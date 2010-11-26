@@ -16,6 +16,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7</artifactId>
+    <version>1-SNAPSHOT</version>
+  </parent>
+
   <name>Hippo Site Toolkit</name>
   <description>The Hippo Site Toolkit (HST) is an engine that serves content from the Hippo repository (2) on webpages, dynamically.
     The HST produces a complete, dynamic website for an organization, or several complete, dynamic websites for several suborganizations 
@@ -26,14 +32,14 @@
   </description>
   <url>http://www.onehippo.org/site-toolkit/</url>
 
-  <groupId>org.onehippo.ecm</groupId>
+  <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
   <version>2.10.02-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
     <system>Jira</system>
-    <url>http://issues.hippo.nl/browse/HSTTWO</url>
+    <url>http://issues.onehippo.com/browse/HSTTWO</url>
   </issueManagement>
 
   <properties>
@@ -47,8 +53,6 @@
     <product_name>Hippo HST</product_name>
     <product_abr>HST</product_abr>
 
-    <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
-
     <servlet-api.version>2.4</servlet-api.version>
     <jsp-api.version>2.0</jsp-api.version>
     <jstl.version>1.1.2</jstl.version>
@@ -61,7 +65,7 @@
     <geronimo-jta_1.1_spec.version>1.1</geronimo-jta_1.1_spec.version>
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
-    <slf4j.version>1.5.6</slf4j.version>
+    <slf4j.version>1.5.8</slf4j.version>
     <log4j.version>1.2.14</log4j.version>
 
     <junit.version>4.5</junit.version>
@@ -94,14 +98,19 @@
     <jackrabbit.version>2.1.2</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.17.01</hippo.cms.version>
+    <cms.version>2.17.02-SNAPSHOT</cms.version>
+    <repository.version>2.17.02-SNAPSHOT</repository.version>
+    <hippo-packages.version>2.17.02-SNAPSHOT</hippo-packages.version>
+    <publication-workflow.version>2.17.02-SNAPSHOT</publication-workflow.version>
+    <faceteddate.version>2.17.02-SNAPSHOT</faceteddate.version>
+    <gallerypicker.version>1.06.03</gallerypicker.version>
    
     <jdo.version>2.0</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
     <yui.sources.version>1.01.07</yui.sources.version>
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
-    <wicket.version>1.4.7</wicket.version>
+    <wicket.version>1.4.13</wicket.version>
     
     <jsr311.version>1.1</jsr311.version>
     <geronimo-stax-api_1.0_spec.version>1.0.1</geronimo-stax-api_1.0_spec.version>
@@ -109,9 +118,8 @@
     <cxf.version>2.3.0</cxf.version>
     <jackson.version>1.3.2</jackson.version>
     <mime4j.version>0.6</mime4j.version>
-
-    <!-- use UTF-8 encoding for filtered file copy -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jetty.version>6.1.18</jetty.version>
+    <atomikos.version>3.1.4</atomikos.version>
   </properties>
 
   <!--
@@ -119,95 +127,10 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
   -->
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-cms7/site-toolkit/trunk</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-cms7/site-toolkit/trunk</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-cms7/site-toolkit/trunk</url>
   </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <developers>
-    <developer>
-      <name>Woonsan Ko</name>
-      <id>wko</id>
-      <email>w.ko @ onehippo . com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Ard Schrijvers</name>
-      <id>aschrijvers</id>
-      <email>a.schrijvers @ onehippo . com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Bart van der Schans</name>
-      <id>bvdschans</id>
-      <email>schans @ onehippo . com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Project Lead</role>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Niels van Kampenhout</name>
-      <id>nvankampenhout</id>
-      <email>n.vankampenhout @ onehippo . com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Doctator</role>
-      </roles>
-      <timezone>-8</timezone>
-    </developer>
-    <developer>
-      <name>Auke van Scheltinga</name>
-      <id>avanscheltinga</id>
-      <email>a.vanscheltinga @ onehippo . com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Designer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Rita Bijlsma</name>
-      <id>rbijlsma</id>
-      <email>r.bijlsma @ onehippo . com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Doctator</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Jeroen Reijn</name>
-      <id>jreijn</id>
-      <email>j.reijn @ onehippo . com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
 
   <mailingLists>
     <mailingList>
@@ -219,40 +142,6 @@
   </mailingLists>
 
   <repositories>
-    <repository>
-      <id>repo2</id>
-      <url>http://repo2.maven.org/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <repository>
-      <id>hippoecm</id>
-      <name>Hippo ECM maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippoecm.legacy</id>
-      <name>Hippo ECM Maven 1 repository.</name>
-      <url>http://repository.hippocms.org/maven</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>legacy</layout>
-    </repository>
     <repository>
       <id>hippogallerypicker</id>
       <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
@@ -277,11 +166,6 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>hippo</id>
-      <name>Hippo Maven 2 Repository</name>
-      <url>http://repository.hippocms.org/maven2</url>
-    </pluginRepository>
-    <pluginRepository>
       <id>codehaus</id>
       <url>http://repository.codehaus.org/</url>
       <layout>default</layout>
@@ -294,11 +178,6 @@
     </pluginRepository>
   </pluginRepositories>
   
-  <organization>
-    <name>Hippo</name>
-    <url>http://www.onehippo.com</url>
-  </organization>
-
   <dependencyManagement>
   
     <dependencies>
@@ -328,7 +207,7 @@
         <scope>provided</scope>
       </dependency>
       
-      <!-- JCR API and Hippo ECM API dependency -->
+      <!-- JCR API and Hippo CMS7 API dependency -->
       
       <dependency>
         <groupId>javax.jcr</groupId>
@@ -337,9 +216,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-api</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${repository.version}</version>
       </dependency>
 
       <!-- Java Mail dependencies for site example -->
@@ -667,12 +546,12 @@
         <version>${freemarker.version}</version>
       </dependency>
       
-      <!-- Hippo ECM Depedencies -->
+      <!-- Hippo CMS7 Depedencies -->
     
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-connector</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-connector</artifactId>
+        <version>${repository.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
@@ -687,21 +566,21 @@
       </dependency>
       
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${repository.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-publication-workflow-common</artifactId>
+        <version>${publication-workflow.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-package-war</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-package-cms-war</artifactId>
+        <version>${hippo-packages.version}</version>
         <type>war</type>
       </dependency>
       
@@ -885,9 +764,9 @@
       
       <!--
       <dependency>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-repository-engine</artifactId>
-        <version>${hippo.cms.version}</version>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-engine</artifactId>
+        <version>${cms.version}</version>
         <scope>test</scope>
       </dependency>
       -->
@@ -898,66 +777,16 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-	<pluginManagement>
-	  <plugins>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-jar-plugin</artifactId>
-	    </plugin>
-	  </plugins>
-	</pluginManagement>
-	<extensions>
-	  <extension>
-	    <groupId>org.apache.maven.wagon</groupId>
-	    <artifactId>wagon-ftp</artifactId>
-	    <version>${wagon.ftp.version}</version>
-	  </extension>
-	</extensions>
     <plugins>
-      <plugin>
-        <inherited>true</inherited>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.8</version>
-        <configuration>
-          <downloadSources>false</downloadSources>
-          <downloadJavadocs>true</downloadJavadocs>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.0-beta-8</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <scmCommentPrefix>HSTTWO-1130:</scmCommentPrefix>
           <tag>Release-HSTTWO-v2_10_00</tag>
           <preparationGoals>clean</preparationGoals>
         </configuration>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

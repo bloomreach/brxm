@@ -19,14 +19,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm.hst</groupId>
+    <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>demosuite</artifactId>
     <version>2.10.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Demo Suite Content</name>
   <description>Hippo Site Toolkit Demo Suite Content</description>
-  <groupId>org.onehippo.ecm.hst.demosuite</groupId>
+  <groupId>org.onehippo.cms7.hst.demosuite</groupId>
   <artifactId>hst-demosuite-content</artifactId>
   <packaging>jar</packaging>
 

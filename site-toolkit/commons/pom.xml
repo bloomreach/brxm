@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
     Copyright (C) 2010 Hippo B.V.
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,20 +13,18 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm</groupId>
+    <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
     <version>2.10.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Commons</name>
   <description>Hippo Site Toolkit Commons</description>
-  <groupId>org.onehippo.ecm.hst</groupId>
   <artifactId>hst-commons</artifactId>
   <packaging>jar</packaging>
 
@@ -45,8 +43,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -57,7 +55,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
+      <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -98,7 +96,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2</version>
         <configuration>
           <manifest>
             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>

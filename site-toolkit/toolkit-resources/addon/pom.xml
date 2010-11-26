@@ -18,14 +18,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm.hst</groupId>
+    <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>toolkit-resources</artifactId>
     <version>2.10.02-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Addon Resources</name>
   <description>Hippo Site Toolkit Addon Resources</description>
-  <groupId>org.onehippo.ecm.hst.toolkit-resources</groupId>
+  <groupId>org.onehippo.cms7.hst.toolkit-resources</groupId>
   <artifactId>addon</artifactId>
   <packaging>pom</packaging>
 

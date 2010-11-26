@@ -15,11 +15,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<web-app id="hippo-ecm">
+<web-app id="hippo-cms">
 
     <!-- General configuration -->
-    <display-name>Hippo ECM WAR package</display-name>
-    <description>Hippo ECM WAR package</description>
+    <display-name>Hippo CMS WAR package</display-name>
+    <description>Hippo CMS WAR package</description>
 
     <context-param>
         <param-name>repository-address</param-name>
