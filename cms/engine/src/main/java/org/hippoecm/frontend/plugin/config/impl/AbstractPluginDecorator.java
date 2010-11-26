@@ -28,6 +28,9 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.util.string.StringValueConversionException;
+import org.apache.wicket.util.time.Duration;
+import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -270,6 +273,42 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
     public void stopObservation() {
         obContext.unregisterObserver(observer);
+    }
+
+    @Override
+    public double getDouble(String key) throws StringValueConversionException {
+        Object value = get(key);
+        if (value instanceof Double) {
+            return (Double) value;
+        }
+        return super.getDouble(key);
+    }
+
+    @Override
+    public double getDouble(String key, double defaultValue) throws StringValueConversionException {
+        Object value = get(key);
+        if (value instanceof Double) {
+            return (Double) value;
+        }
+        return super.getDouble(key, defaultValue);
+    }
+
+    @Override
+    public Duration getDuration(String key) throws StringValueConversionException {
+        Object value = get(key);
+        if (value instanceof Duration) {
+            return (Duration) value;
+        }
+        return super.getDuration(key);
+    }
+
+    @Override
+    public Time getTime(String key) throws StringValueConversionException {
+        Object value = get(key);
+        if (value instanceof Time) {
+            return (Time) value;
+        }
+        return super.getTime(key);
     }
 
 }

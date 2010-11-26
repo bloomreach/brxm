@@ -419,6 +419,8 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
             return Boolean.valueOf(value.getBoolean());
         case PropertyType.LONG:
             return Long.valueOf(value.getLong());
+        case PropertyType.DOUBLE:
+            return Double.valueOf(value.getDouble());
         case PropertyType.STRING:
         default:
             return value.getString();
