@@ -92,11 +92,11 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-          <configuration>
+        <configuration>
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmCommentPrefix>HREPTWO-4662:</scmCommentPrefix>
-          <tag>Tag-HREPTWO-v2_17_01</tag>
+          <scmCommentPrefix>HREPTWO-4763:</scmCommentPrefix>
+          <tag>Tag-HREPTWO-v2_17_02</tag>
         </configuration>
       </plugin>
       <plugin>
