@@ -17,22 +17,14 @@
 <!-- 
 EXAMPLE LDAP CONFIG FOR LOCALHOST
 
-Import this file in /hippo:configuration/hippo:security and adjust settings.
+Import this file in /hipposys:configuration/hippo:security and adjust settings.
  -->
-<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
-    xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-    xmlns:hippoldap="http://www.hippoecm.org/hippoldap/nt/1.3"
-    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-    xmlns:fn="http://www.w3.org/2005/xpath-functions"
-    xmlns:hippo="http://www.hippoecm.org/nt/1.3"
-    xmlns:jcr="http://www.jcp.org/jcr/1.0"
-    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" sv:name="ldap-localhost">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="ldap-localhost">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippoldap:securityprovider</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
-        <sv:value>org.hippoecm.repository.security.LdapSecurityProvider</sv:value>
+    <sv:property sv:name="hipposys:classname" sv:type="String">
+        <sv:value>org.hippoecm.repository.security.ldap.LdapSecurityProvider</sv:value>
     </sv:property>
     <sv:property sv:name="hippoldap:authentication" sv:type="String">
         <sv:value>simple</sv:value>
@@ -52,13 +44,13 @@ Import this file in /hippo:configuration/hippo:security and adjust settings.
     <sv:property sv:name="hippoldap:searchbase" sv:type="String">
         <sv:value>dc=onehippo,dc=org</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:userprovider">
+    <sv:node sv:name="hipposys:userprovider">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippoldap:userprovider</sv:value>
         </sv:property>
         <sv:node sv:name="hippoldap:search">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippoldap:search</sv:value>
+                <sv:value>hippoldap:usersearch</sv:value>
             </sv:property>
             <sv:property sv:name="hippoldap:basedn" sv:type="String">
                 <sv:value>ou=People,dc=onehippo,dc=org</sv:value>
@@ -114,13 +106,13 @@ Import this file in /hippo:configuration/hippo:security and adjust settings.
             </sv:property>
         </sv:node>
     </sv:node>
-    <sv:node sv:name="hippo:groupprovider">
+    <sv:node sv:name="hipposys:groupprovider">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippoldap:groupprovider</sv:value>
         </sv:property>
         <sv:node sv:name="hippoldap:search">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippoldap:search</sv:value>
+                <sv:value>hippoldap:groupsearch</sv:value>
             </sv:property>
             <sv:property sv:name="hippoldap:basedn" sv:type="String">
                 <sv:value>ou=Groups,dc=onehippo,dc=org</sv:value>
