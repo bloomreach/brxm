@@ -391,7 +391,7 @@ public class MountService implements Mount {
             log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), mount.getValueProvider().getPath());
             // for non Mounts, the contentPath is just the mountpoint
             this.contentPath = mountPoint;
-            // when not mapped, we assume the contentPath points to an physical location, hence canonicalContentPath = contentPath
+            // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
             this.canonicalContentPath = contentPath;
         } else {
              
