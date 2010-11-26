@@ -391,8 +391,7 @@ public class MountService implements Mount {
             log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), mount.getValueProvider().getPath());
             // for non Mounts, the contentPath is just the mountpoint
             this.contentPath = mountPoint;
-            // TODO HSTTWO- : the canonicalContentPath should be the canonical version of the contentPath in case it points to a virtual node.
-            // this should be done when the HstConfigModel is in place
+            // when not mapped, we assume the contentPath points to an physical location, hence canonicalContentPath = contentPath
             this.canonicalContentPath = contentPath;
         } else {
              
