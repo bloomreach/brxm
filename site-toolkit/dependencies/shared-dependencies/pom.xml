@@ -44,7 +44,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-publication-workflow-common</artifactId>
+      <artifactId>hippo-addon-publication-workflow-common</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>

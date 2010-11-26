@@ -74,7 +74,7 @@
     
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-publication-workflow-common</artifactId>
+      <artifactId>hippo-addon-publication-workflow-common</artifactId>
       <version>${publication-workflow.version}</version>
       <exclusions>
         <exclusion>

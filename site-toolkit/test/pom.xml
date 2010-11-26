@@ -105,7 +105,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-publication-workflow-repository</artifactId>
+      <artifactId>hippo-addon-publication-workflow-repository</artifactId>
       <version>${publication-workflow.version}</version>
     </dependency>
     <dependency>
