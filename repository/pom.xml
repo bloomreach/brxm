@@ -27,6 +27,21 @@
   <version>2.17.02-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+
   <modules>
     <module>api</module>
     <module>connector</module>
