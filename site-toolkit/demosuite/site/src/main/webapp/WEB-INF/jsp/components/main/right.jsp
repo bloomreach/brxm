@@ -17,10 +17,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
 <div class="yui-b">
-  <p>Available in these languages:</p>
+  <p><fmt:message key="key.available.languages"/>:</p>
   <br/>
   <c:forEach var="language" items="${crBean.availableTranslationsBean.translations}">
       <hst:link var="flag" path="/images/icons/flag-16_${language.name}.png"/>

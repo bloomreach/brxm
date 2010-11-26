@@ -1721,6 +1721,8 @@ demosuite/site/src/main/resources/META-INF/hst-assembly/overrides/customResource
 demosuite/site/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
 demosuite/site/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
 demosuite/site/src/main/resources/log4j.xml svneol=native#text/plain
+demosuite/site/src/main/resources/messages_en_US.properties -text svneol=unset#text/plain
+demosuite/site/src/main/resources/messages_fr_FR.properties -text svneol=unset#text/plain
 demosuite/site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions.properties -text
 demosuite/site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions_en.properties -text
 demosuite/site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.html -text

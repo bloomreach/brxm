@@ -62,7 +62,7 @@
     </sv:property>
     <!-- default locale -->
     <sv:property sv:name="hst:locale" sv:type="String">
-         <sv:value>en_UK</sv:value>
+         <sv:value>en_US</sv:value>
     </sv:property>
     <sv:node sv:name="dev-internal">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

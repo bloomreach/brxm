@@ -29,13 +29,13 @@
 <div id="yui-u">
     <c:choose>
       <c:when test="${isError}">
-        <h1>Page not found</h1>
-        <p>The page you were looking for cannot be found.</p>
+        <h1><fmt:message key="key.page.notfound"/></h1>
+        <p><fmt:message key="key.page.notfound.message"/></p>
         <hst:head-contribution keyHint="title"><title>Page not found</title></hst:head-contribution>
       </c:when>
       <c:otherwise>
        <h1>Search</h1>
-       <hst:head-contribution keyHint="title"><title>Search</title></hst:head-contribution>
+       <hst:head-contribution keyHint="title"><title><fmt:message key="key.search"/></title></hst:head-contribution>
       </c:otherwise>
     </c:choose>    
 

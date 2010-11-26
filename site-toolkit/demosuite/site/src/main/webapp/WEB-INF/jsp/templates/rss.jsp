@@ -22,6 +22,7 @@
 
 <hst:link var="feedlink" path="/rss.xml"/>
 <rss version="2.0">
+   <fmt:setLocale value="en-US"/>
    <channel>
       <title>HST Demo RSS Feed</title>
       <link>http://localhost:8085${feedlink}</link>

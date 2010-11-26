@@ -64,7 +64,7 @@
         <sv:value>Who we are. We are part of the French site</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:title" sv:type="String">
-        <sv:value>Sub About us</sv:value>
+        <sv:value>À propos</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
@@ -99,7 +99,7 @@
           <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>We are at a  French site of Hippo! Come and visit us at &lt;a
+          <sv:value>Nous sommes sur un site français d'Hippone! Venez nous rendre visite au &lt;a
                         href="http://www.onehippo.com" target="_blank" title="Hippo
                         website"&gt;www.onehippo.com&lt;/a&gt;!</sv:value>
         </sv:property>
@@ -143,10 +143,10 @@
         <sv:value>demosite-common-folder-home-page-id</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
-        <sv:value>This is the SUB home page of the generated HST website.</sv:value>
+        <sv:value>Ceci est la page d'accueil du site TVH généré français.</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:title" sv:type="String">
-        <sv:value>Sub Site Home Page</sv:value>
+        <sv:value>Page d'accueil française</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
@@ -184,9 +184,11 @@
           <sv:value>&lt;html&gt;
           &lt;body&gt;
           
-          &lt;p&gt;You are at the demo subsite. Here is an &lt;strong&gt;internal cross domain link&lt;/strong&gt; to the
-          &lt;strong&gt;&lt;a href="about-us"&gt;demosite About us page&lt;/a&gt;&lt;/strong&gt;...&lt;/p&gt;
-          
+          &lt;p&gt;Vous êtes à la sous-site de démonstration. Voici un &lt;strong&gt;lien interne entre domaines&lt;/strong&gt; à l'
+          &lt;strong&gt;&lt;a href="about-us"&gt;Qui sommes-nous en anglais page&lt;/a&gt;&lt;/strong&gt;...&lt;/p&gt;
+          &lt;p&gt;
+          ps ne me dérange pas mon français, je faisais de mon mieux
+          &lt;/p&gt;
           &lt;/body&gt;
           &lt;/html&gt;</sv:value>
         </sv:property>
