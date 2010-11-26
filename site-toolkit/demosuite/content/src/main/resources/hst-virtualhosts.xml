@@ -33,7 +33,7 @@
         <sv:value>home</sv:value>
     </sv:property>
     <sv:property sv:name="hst:pagenotfound" sv:type="String">
-        <sv:value>pagenotfound</sv:value>
+        <sv:value>error</sv:value>
     </sv:property>
     <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
         <sv:value>true</sv:value>
@@ -59,6 +59,10 @@
     </sv:property>
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
         <sv:value>127.0.0.1</sv:value>
+    </sv:property>
+    <!-- default locale -->
+    <sv:property sv:name="hst:locale" sv:type="String">
+         <sv:value>en_UK</sv:value>
     </sv:property>
     <sv:node sv:name="dev-internal">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -93,6 +97,15 @@
               </sv:property>
               <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:locale" sv:type="String">
+                  <sv:value>fr_FR</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:homepage" sv:type="String">
+                  <sv:value>accueil</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:pagenotfound" sv:type="String">
+                  <sv:value>erreur</sv:value>
               </sv:property>
             </sv:node>
             <sv:node sv:name="restapi">
@@ -219,6 +232,15 @@
                 </sv:property>
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:locale" sv:type="String">
+                  <sv:value>fr_FR</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:homepage" sv:type="String">
+                  <sv:value>accueil</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:pagenotfound" sv:type="String">
+                    <sv:value>erreur</sv:value>
                 </sv:property>
               </sv:node>
               <sv:node sv:name="restapi">
@@ -442,6 +464,15 @@
               <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
               </sv:property>
+              <sv:property sv:name="hst:locale" sv:type="String">
+                 <sv:value>fr_FR</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:homepage" sv:type="String">
+                  <sv:value>accueil</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:pagenotfound" sv:type="String">
+                  <sv:value>erreur</sv:value>
+              </sv:property>
             </sv:node>
             <sv:node sv:name="restapi">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -568,6 +599,15 @@
                 <sv:property sv:name="hst:showport" sv:type="Boolean">
                   <sv:value>true</sv:value>
                 </sv:property>
+                <sv:property sv:name="hst:locale" sv:type="String">
+                  <sv:value>fr_FR</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:homepage" sv:type="String">
+                  <sv:value>accueil</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:pagenotfound" sv:type="String">
+                  <sv:value>erreur</sv:value>
+              </sv:property>
               </sv:node>
               <sv:node sv:name="restapi">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">

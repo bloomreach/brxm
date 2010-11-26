@@ -62,11 +62,23 @@
     </div> 
     <div id="nav">
       <ul class="menu">
+        <hst:link var="flag" path="/images/icons/flag-16_${pageContext.request.locale.language}.png"/>
+        <li>
+            <img src="${flag}"/> ${pageContext.request.locale.displayCountry}
+        </li>
+        
+        <!-- BELOW WE SHOW EXAMPLES OF LINKS BY *REF-ID* AND SHOW I18N WITHOUT NEEDING TO SET THE LOCALE: THE LOCALE IS
+             RETRIEVED FROM THE BACKING SITEMAPITEM/MOUNT 
+        -->
         <hst:link var="home" siteMapItemRefId="home"/>
-        <li><a href="${home}">label.home</a></li>
+        <li>
+            <a href="${home}">label.home</a>
+        </li>
         <hst:link var="about" siteMapItemRefId="about"/>
-        <li><a href="${about}">label.aboutus</a></li>
-        (examples.of.links.by.refId)      
+        <li>
+            <a href="${about}">label.aboutus</a>
+        </li>
+        
       </ul>
     </div>  
   </div>
