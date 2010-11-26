@@ -82,29 +82,29 @@ public class DelegatingEventListener implements EventListener, EventListenersCon
             return;
         }
         
-        if (delegatees.size() == 1) {
-            delegatees.get(0).onEvent(events);
-        } else {
-            RewindableEventIterator rewindableEvents = new RewindableEventIterator(events, maxEvents, skipPaths);
-            Logger log = null;
-            
-            for (EventListener delegatee : delegatees) {
-                try {
-                    delegatee.onEvent(rewindableEvents);
-                } catch (Exception e) {
-                    if (log == null) {
-                        log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-                    }
-                    if (log.isDebugEnabled()) {
-                        log.warn("Exception during invoking delegatee event listener.", e);
-                    } else {
-                        log.warn("Exception during invoking delegatee event listener. {}", e.toString());
-                    }
-                } finally {
+        RewindableEventIterator rewindableEvents = new RewindableEventIterator(events, maxEvents, skipPaths);
+        Logger log = null;
+        
+        for (EventListener delegatee : delegatees) {
+            try {
+                delegatee.onEvent(rewindableEvents);
+            } catch (Exception e) {
+                if (log == null) {
+                    log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                }
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception during invoking delegatee event listener.", e);
+                } else {
+                    log.warn("Exception during invoking delegatee event listener. {}", e.toString());
+                }
+            } finally {
+                if(!(delegatees.get(delegatees.size()-1) == delegatee)) {
+                    // we only need rewinding as long as we are not at the last delegatee in the List
                     rewindableEvents.rewind();
                 }
             }
         }
+        
     }
     
     public void onEventListenersContainerStarted() {
