@@ -36,11 +36,11 @@
   </scm>
 
   <properties>
-    <repository.version>2.17.02-SNAPSHOT</repository.version>
-    <cms.version>2.17.02-SNAPSHOT</cms.version>
-    <publication-workflow.version>2.17.02-SNAPSHOT</publication-workflow.version>
-    <faceteddate.version>2.17.02-SNAPSHOT</faceteddate.version>
-    <defaultcontent.version>2.17.02-SNAPSHOT</defaultcontent.version>
+    <repository.version>2.17.02</repository.version>
+    <cms.version>2.17.02</cms.version>
+    <publication-workflow.version>2.17.02</publication-workflow.version>
+    <faceteddate.version>2.17.02</faceteddate.version>
+    <defaultcontent.version>2.17.02</defaultcontent.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <javax.servlet.version>2.4</javax.servlet.version>
     <commons-lang.version>2.1</commons-lang.version>
@@ -72,7 +72,7 @@
       <layout>default</layout>
     </repository>
   </repositories>
-
+  
   <modules>
     <module>package-app-dependencies</module>
     <module>package-cms-dependencies</module>
@@ -85,6 +85,18 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <scmCommentPrefix>HREPTWO-4767:</scmCommentPrefix>
+          <tag>Tag-HREPTWO-v2_17_02</tag>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
-
 </project>
