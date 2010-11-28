@@ -130,6 +130,21 @@
     </repository>
   </repositories>
 
+  <distributionManagement>
+    <site>
+      <id>repodocs.hippocms.org</id>
+      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
+    </site>
+    <repository>
+      <id>repository.hippocms.org</id>
+      <url>ftp://repository.hippocms.org/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>repository.hippocms.org</id>
+      <url>ftp://repository.hippocms.org/maven2</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <build>
     <extensions>
       <extension>
