@@ -18,6 +18,7 @@ package org.hippoecm.frontend.translation.workflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -113,6 +114,14 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             for (String language : getAvailableLanguages()) {
                 availableLocales.add(localeProvider.getLocale(language));
             }
+            Collections.sort(availableLocales, new Comparator<HippoLocale>() {
+
+                @Override
+                public int compare(HippoLocale o1, HippoLocale o2) {
+                    return o1.getDisplayName(getLocale()).compareTo(o2.getDisplayName(getLocale()));
+                }
+                
+            });
         }
 
         public Iterator<? extends HippoLocale> iterator(int first, int count) {
