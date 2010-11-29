@@ -193,7 +193,7 @@ public class EditPerspective extends Perspective {
                                     return locale.getIcon(iconSize, LocaleState.EXISTS);
                                 }
                             }
-                            log.warn("Locale '" + localeName + "' was not found in provider");
+                            log.info("Locale '" + localeName + "' was not found in provider");
                         } else {
                             if (log.isDebugEnabled()) {
                                 log.debug("Node " + node.getPath() + " is not translated");
