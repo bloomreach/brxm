@@ -510,7 +510,7 @@ public class LoginServlet extends HttpServlet {
         if(host != null) {
            return host.getVirtualHost().isContextPathInUrl();
         }
-        return false;
+        return true;
     }
 }
 
