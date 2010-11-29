@@ -268,6 +268,9 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 NodeIterator nodeIter = current.getNodes();
                 while (nodeIter.hasNext()) {
                     Node child = nodeIter.nextNode();
+                    if (child.getDefinition().isAutoCreated()) {
+                        continue;
+                    }
                     ((HippoSession) current.getSession()).copy(child, draft.getPath() + "/" + child.getName());
                 }
             }
