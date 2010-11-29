@@ -248,12 +248,10 @@ public class HstQueryImpl implements HstQuery {
             Query jcrQuery = jcrQueryManager.createQuery(query, "xpath");
             if(jcrQuery instanceof HippoQuery)  {
                 if(offset > -1){
-                   // TODO when RMI client is fixed, enable again
-                   // ((HippoQuery)jcrQuery).setOffset(offset);
+                    ((HippoQuery)jcrQuery).setOffset(offset);
                 }
                 if(limit > -1){
-                  // TODO when RMI client is fixed, enable again
-                  //  ((HippoQuery)jcrQuery).setLimit(limit);
+                    ((HippoQuery)jcrQuery).setLimit(limit);
                 }
             } else {
                 log.warn("Query not instanceof of HippoQuery: cannot set limit and offset");
