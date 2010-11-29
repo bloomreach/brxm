@@ -1,6 +1,6 @@
 /*
  * Menu: Connect projects from different sources
- * Script-Path: /hippo-ecm-tools-eclipse/monkey/convertDependencies.gm
+ * Script-Path: /hippo-cms-tools-eclipse/monkey/convertDependencies.gm
  * Kudos: Wander Grevink(onehippo.com)
  * License: Apache 2.0
  * Job: WorkspaceJob
@@ -20,7 +20,9 @@ def resultMap = new HashMap();
 def projectList = workspace.root.projects;
 def projectMap = new HashMap();
 projectList.each() {
-    projectMap.put(it.name, it);
+    if (it.isOpen()) {
+        projectMap.put(it.name, it);
+    }
 }
 
 projectList.each() {
