@@ -65,7 +65,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
     </sv:property>
   </sv:node>
-<sv:node sv:name="hippo:translation">
+  <sv:node sv:name="hippo:translation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:translation</sv:value>
     </sv:property>
@@ -122,6 +122,13 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
+			<sv:value>hippotranslation:translated</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:id" sv:type="String">
+            <sv:value>document-type-locale-id</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:locale" sv:type="String">
+            <sv:value>document-type-locale</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
