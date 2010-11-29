@@ -265,6 +265,12 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _setColsWidth : function(headers, headerWidth, cells, cellWidth) {
+                // TODO: when cellWidth < minimum (150px?), add horizontal scrollbar
+
+                if (cellWidth < 100) {
+                  cellWidth = 100;
+                }
+
                 var className = this.config.autoWidthClassName;
                 var h = Dom.getElementBy(function(node) { return Dom.hasClass(node, className); }, 'th', headers[0]);
                 Dom.setStyle(h, 'width', headerWidth + 'px');
