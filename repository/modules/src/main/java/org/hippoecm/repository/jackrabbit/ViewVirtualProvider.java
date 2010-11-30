@@ -29,6 +29,7 @@ import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
 import org.hippoecm.repository.dataprovider.IFilterNodeId;
 import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.hippoecm.repository.dataprovider.ViewNodeId;
@@ -64,6 +65,15 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         if (docbase[0].endsWith("babecafebabe")) {
             // one of the defined (and fixed, so string compare is fine) system areas
             return state;
+        }
+        HippoVirtualProvider provider = lookupProvider(state.getNodeTypeName());
+        if (provider != null) {
+            // the provider might be of a Faceted Navigation or FacetSearch node, or any provider that has a hippo:docbase. But, we only want to proceed
+            // when the provider is of MirrorVirtualProvider. Therefore this very important check
+            if (!(provider instanceof MirrorVirtualProvider)) {
+                log.debug("The provider for '{}' is not a mirror kind of provider. '{}' is already mirrored. We skip the derefencing of its docbase!");
+                return state;
+            }
         }
         NodeState dereference = null;
         try {

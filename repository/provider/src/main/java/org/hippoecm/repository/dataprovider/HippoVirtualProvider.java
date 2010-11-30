@@ -109,6 +109,10 @@ public abstract class HippoVirtualProvider implements DataProviderModule
     protected HippoVirtualProvider lookup(String providerName) {
         return stateMgr.lookupProvider(providerName);
     }
+    
+    public HippoVirtualProvider lookupProvider(Name nodeTypeName) {
+        return stateMgr.lookupProvider(nodeTypeName);
+    }
 
     public final Name resolveName(String name) throws IllegalNameException, NamespaceException {
         if (!nameCache.containsKey(name)) {
