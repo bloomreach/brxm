@@ -99,11 +99,12 @@
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <cms.version>2.17.02</cms.version>
-    <repository.version>2.17.02</repository.version>
+    <repository.version>2.17.03-SNAPSHOT</repository.version>
     <hippo-packages.version>2.17.02</hippo-packages.version>
     <publication-workflow.version>2.17.02</publication-workflow.version>
-    <faceteddate.version>2.17.02</faceteddate.version>
     <gallerypicker.version>1.06.03</gallerypicker.version>
+    <configeditor.version>1.04.03</configeditor.version>
+  
    
     <jdo.version>2.0</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>

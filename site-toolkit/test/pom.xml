@@ -110,11 +110,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-faceteddate-repository</artifactId>
-      <version>${faceteddate.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-repository</artifactId>
       <version>${cms.version}</version>
     </dependency>

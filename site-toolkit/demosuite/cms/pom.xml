@@ -51,14 +51,7 @@
       <artifactId>log4j</artifactId>
       <scope>runtime</scope>
     </dependency>
-  
-    <!-- Exclude commons-logging explicitly by a provided dependency. -->
-    <dependency> 
-      <groupId>commons-logging</groupId> 
-      <artifactId>commons-logging</artifactId> 
-      <scope>provided</scope> 
-    </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
@@ -93,15 +86,7 @@
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>
-    
-    <!-- workaround for HSTTWO-554 -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-gotolink</artifactId>
-      <type>jar</type>
-      <version>${cms.version}</version>
-    </dependency>     
-
+       
     <!--  Gallery picker dependency -->
     <dependency>
       <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
@@ -121,13 +106,13 @@
     <dependency>
       <groupId>org.onehippo.ecm</groupId>
       <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>
-      <version>1.04.02</version>
+      <version>${configeditor.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.ecm</groupId>
       <artifactId>hippo-addon-hst-configuration-editor-repository</artifactId>
-      <version>1.04.02</version>
+      <version>${configeditor.version}</version>
       <type>jar</type>
     </dependency>
     -->
