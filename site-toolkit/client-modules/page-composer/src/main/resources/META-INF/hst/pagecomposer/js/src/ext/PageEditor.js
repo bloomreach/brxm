@@ -57,7 +57,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                     disableMessaging: false,
                     tbar: [
                         {
-                            text: 'Page Composer',
+                            text: 'Template Composer',
                             iconCls: 'title-button',
                             id: 'pageComposerButton',
                             listeners: {
