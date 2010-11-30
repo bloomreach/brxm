@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -28,25 +29,37 @@ import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
 import org.hippoecm.frontend.plugins.yui.upload.MultiFileUploadDialog;
+import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
@@ -54,7 +67,7 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
+public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWorkflow> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -86,6 +99,20 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         super(context, config);
     }
 
+    @Override
+    public void onModelChanged() {
+        AbstractView<StdWorkflow> add;
+        addOrReplace(add = new AbstractView<StdWorkflow>("new", createListDataProvider()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(Item item) {
+                item.add((StdWorkflow) item.getModelObject());
+            }
+        });
+        add.populate();
+    }
+
     private void createGalleryItem(FileUpload upload) {
         try {
             String filename = upload.getClientFileName();
@@ -98,8 +125,8 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
             try {
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                         .getDefaultModel();
-                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
-                        .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
+                GalleryWorkflow workflow = (GalleryWorkflow) manager
+                        .getWorkflow((WorkflowDescriptor) workflowDescriptorModel.getObject());
                 String nodeName = getNodeNameCodec().encode(filename);
                 String localName = getLocalizeCodec().encode(filename);
                 Document document = workflow.createGalleryItem(nodeName, type);
@@ -145,6 +172,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                     GalleryWorkflowPlugin.log.error(ex.getMessage());
                     error(ex);
                 }
+                select(new JcrNodeModel(node));
             }
         } catch (IOException ex) {
             GalleryWorkflowPlugin.log.info("upload of image truncated");
@@ -163,8 +191,8 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         return new DefaultGalleryProcessor();
     }
 
-    @Override
-    protected IDataProvider createListDataProvider(List<StdWorkflow> list) {
+    protected IDataProvider<StdWorkflow> createListDataProvider() {
+        List<StdWorkflow> list = new LinkedList<StdWorkflow>();
         list.add(0, new WorkflowAction("add", new StringResourceModel(getPluginConfig()
                 .getString("option.label", "add"), this, null, "Add")) {
             private static final long serialVersionUID = 1L;
@@ -179,7 +207,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                 return createDialog();
             }
         });
-        return super.createListDataProvider(list);
+        return new ListDataProvider<StdWorkflow>(list);
     }
 
     private Dialog createDialog() {
@@ -188,8 +216,8 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
             WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                     .getDefaultModel();
-            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
-                    .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
+            GalleryWorkflow workflow = (GalleryWorkflow) manager
+                    .getWorkflow((WorkflowDescriptor) workflowDescriptorModel.getObject());
             if (workflow == null) {
                 GalleryWorkflowPlugin.log.error("No gallery workflow accessible");
             } else {
@@ -225,6 +253,45 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         UploadDialog dialog = new UploadDialog(fileExtensions);
         dialog.add(typeComponent);
         return dialog;
+    }
+
+    protected StringCodec getLocalizeCodec() {
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
+                ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.display");
+    }
+
+    protected StringCodec getNodeNameCodec() {
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
+                ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.node");
+    }
+
+    protected ILocaleProvider getLocaleProvider() {
+        return getPluginContext().getService(
+                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
+                ILocaleProvider.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void select(JcrNodeModel nodeModel) {
+        IBrowseService<JcrNodeModel> browser = getPluginContext().getService(
+                getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
+        if (browser != null) {
+            try {
+                if (nodeModel.getNode() != null
+                        && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode()
+                                .isNodeType(HippoNodeType.NT_HANDLE))) {
+                    if (browser != null) {
+                        browser.browse(nodeModel);
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            }
+        }
     }
 
 }

@@ -933,6 +933,7 @@ gallery/repository/pom.xml svneol=native#text/plain
 gallery/repository/src/main/java/org/hippoecm/repository/gallery/impl/GalleryWorkflowImpl.java -text
 gallery/repository/src/main/resources/gallery-namespace.xml -text
 gallery/repository/src/main/resources/gallery-processor.xml svneol=native#text/plain
+gallery/repository/src/main/resources/gallery-workflows.xml svneol=native#text/plain
 gallery/repository/src/main/resources/gallerytemplate-files.xml -text svneol=unset#text/plain
 gallery/repository/src/main/resources/gallerytemplate-image.xml svneol=native#text/plain
 gallery/repository/src/main/resources/gallerytemplate-images.xml -text svneol=unset#text/plain
