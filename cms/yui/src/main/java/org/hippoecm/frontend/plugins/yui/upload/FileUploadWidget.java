@@ -107,7 +107,8 @@ public class FileUploadWidget extends Panel {
     }
 
     protected void renderJavascriptUpload() {
-        replace(panel = new MultiFileUploadComponent(COMPONENT_ID));
+        int max = settings.isAutoUpload() ? 1 : settings.getMaxNumberOfFiles();
+        replace(panel = new MultiFileUploadComponent(COMPONENT_ID, max));
     }
 
     protected String getAjaxIndicatorId() {

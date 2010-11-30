@@ -65,6 +65,9 @@ function MultiSelector(eprefix, list_target, max, del_label) {
         this.max = -1;
     }
 
+    this.form = null;
+    this.submitAfterSelect = this.max == 1;
+
     this.delete_label = del_label;
     this.element_name_prefix = eprefix;
 
@@ -78,6 +81,17 @@ function MultiSelector(eprefix, list_target, max, del_label) {
         // Make sure it's a file input element
         if (element.tagName.toLowerCase() == 'input' && element.type.toLowerCase() == 'file') {
 
+            if(this.submitAfterSelect && this.form == null) {
+                var p = element.parentNode;
+                while(p != document.body) {
+                    if(p.tagName.toLowerCase() == 'form') {
+                        this.form = p;
+                        break;
+                    }
+                    p = p.parentNode;
+                }
+            }
+
             // Element name -- what number am I?
             element.name = this.element_name_prefix + "_mf_" + this.id++;
 
@@ -87,29 +101,32 @@ function MultiSelector(eprefix, list_target, max, del_label) {
             // What to do when a file is selected
             element.onchange = function() {
 
-                // New file input
-                var new_element = document.createElement('input');
-                new_element.type = 'file';
+                if (element.multi_selector.submitAfterSelect) {
+                    element.multi_selector.form.submit();
+                } else {
 
-                // Add new element
-                this.parentNode.insertBefore(new_element, this);
+                    // New file input
+                    var new_element = document.createElement('input');
+                    new_element.type = 'file';
 
-                // Apply 'update' to element
-                this.multi_selector.addElement(new_element);
+                    // Add new element
+                    this.parentNode.insertBefore(new_element, this);
 
-                // Update list
-                this.multi_selector.addListRow(this);
+                    // Apply 'update' to element
+                    this.multi_selector.addElement(new_element);
 
-                // Hide this: we can't use display:none because Safari doesn't like it
-                this.style.position = 'absolute';
-                this.style.left = '-3000px';
+                    // Update list
+                    this.multi_selector.addListRow(this);
 
+                    // Hide this: we can't use display:none because Safari doesn't like it
+                    this.style.position = 'absolute';
+                    this.style.left = '-3000px';
+                }
             };
             // If we've reached maximum number, disable input element
             if (this.max != -1 && this.count >= this.max) {
                 element.disabled = true;
             }
-            ;
 
             // File element counter
             this.count++;
@@ -120,7 +137,6 @@ function MultiSelector(eprefix, list_target, max, del_label) {
             // This can only be applied to file input elements!
             alert('Error: not a file input element');
         }
-        ;
 
     };
 
@@ -195,7 +211,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
             this.list_target.appendChild(this.list_container);
         }
         this.list_container.appendChild(row);
-    }
+    };
 
     this.parseFilename = function(filename) {
         if (YAHOO.env.ua.ie) {
@@ -209,6 +225,6 @@ function MultiSelector(eprefix, list_target, max, del_label) {
             filename = filename.substr(filename.length - this.maxLengthFilename, this.maxLengthFilename);
         }
         return filename;
-    }
+    };
 
 }

@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -73,7 +72,6 @@ public class ImageUploadPlugin extends RenderPlugin {
     private class FileUploadForm extends Form {
         private static final long serialVersionUID = 1L;
 
-        private FileUploadField fileUploadField;
         private FileUploadWidget widget;
 
         public FileUploadForm(String name, final IPluginContext context) {
@@ -97,9 +95,7 @@ public class ImageUploadPlugin extends RenderPlugin {
 
         @Override
         protected void onSubmit() {
-            final FileUpload upload = fileUploadField.getFileUpload();
-            if (upload != null) {
-            }
+            widget.handleNonFlashSubmit();
         }
     }
 

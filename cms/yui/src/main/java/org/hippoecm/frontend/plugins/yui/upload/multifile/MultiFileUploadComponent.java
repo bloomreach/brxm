@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.yui.upload.multifile;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.MultiFileUploadField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
@@ -36,12 +35,14 @@ public class MultiFileUploadComponent extends Panel {
 
     private final MultiFileUploadField uploadField;
 
-    public MultiFileUploadComponent(String id) {
+    public MultiFileUploadComponent(String id, int max) {
         super(id);
 
         setOutputMarkupId(true);
 
-        add(uploadField = new MultiFileUploadField("input", new Model(new LinkedList<FileUpload>())) {
+        Form form = new Form("uploadform");
+        add(form);
+        form.add(uploadField = new MultiFileUploadField("input", new Model(new LinkedList<FileUpload>()), max) {
             @Override
             public void renderHead(IHeaderResponse response) {
                 super.renderHead(response);
