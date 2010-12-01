@@ -377,11 +377,11 @@ editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PseudoTypeDescriptor.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor$EditorWrapper.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor.java -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/DefaultCmsEditor.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/EditorHelper.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/IEditorContext.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/IEditorFactory.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/ITemplateEngine.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/TemplateEngineException.java -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/TemplateTypeEditor.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/BuilderException.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.java -text svneol=unset#text/plain
@@ -411,9 +411,11 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/compare/ValueComparer
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorForm.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorPlugin.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/DefaultCmsEditor.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/EditableTypes.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/TemplateEngine.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/TemplateEngineFactory.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/TemplateTypeEditor.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/ILayoutControl.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/LayoutHelper.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/ListItemLayoutControl.java svneol=native#text/plain
@@ -566,6 +568,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/Remod
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/SelectLayoutStep.java svneol=native#text/plain
 editor/pom.xml -text
 editor/repository/pom.xml -text
+editor/repository/src/main/resources/default-editor-factory.xml svneol=native#text/plain
 editor/repository/src/main/resources/domain-templates-templateset.xml svneol=native#text/plain
 editor/repository/src/main/resources/editor-workflows.xml -text
 editor/repository/src/main/resources/editor.cnd -text
@@ -579,11 +582,11 @@ editor/repository/src/main/resources/org/hippoecm/editor/repository/impl/package
 editor/test/pom.xml svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/editor/NamespaceValidatorTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/editor/template/BuiltinTemplateStoreTest.java svneol=native#text/plain
-editor/test/src/test/java/org/hippoecm/frontend/editor/EditorFactoryTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/builder/TemplateBuilderTest.java -text
 editor/test/src/test/java/org/hippoecm/frontend/editor/compare/NodeComparerTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/compare/ValueComparerTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/field/FieldPluginTest.java svneol=native#text/plain
+editor/test/src/test/java/org/hippoecm/frontend/editor/impl/DefaultEditorFactoryTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/impl/JcrTemplateStoreTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/layout/Test.png -text svneol=unset#image/png
 editor/test/src/test/java/org/hippoecm/frontend/editor/layout/Test.properties svneol=native#text/plain

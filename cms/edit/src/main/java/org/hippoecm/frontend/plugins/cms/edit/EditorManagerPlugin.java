@@ -18,14 +18,15 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.EditorFactory;
 import org.hippoecm.frontend.editor.IEditorContext;
+import org.hippoecm.frontend.editor.IEditorFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -35,6 +36,7 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
 
     static final Logger log = LoggerFactory.getLogger(EditorManagerPlugin.class);
 
-    private EditorFactory editorFactory;
+    private IEditorFactory editorFactory;
     private BrowserObserver browser;
 
     private List<IEditor<Node>> editors;
@@ -66,8 +68,31 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         context.registerService(this, config.getString("editor.id"));
     }
 
-    protected EditorFactory createEditorFactory(IPluginContext context, IPluginConfig config) {
-        return new EditorFactory(context, config);
+    /**
+     * create an editor factory that delegates to registered factories.
+     * The returned editor factory behaves different from the interface: it will throw
+     * an exception when no editor can be created. 
+     */
+    private IEditorFactory createEditorFactory(final IPluginContext context, final IPluginConfig config) {
+        return new IEditorFactory() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public IEditor<Node> newEditor(IEditorContext manager, IModel<Node> nodeModel, Mode mode, IPluginConfig parameters)
+                    throws EditorException {
+                List<IEditorFactory> upstream = context.getServices(config.getString(IEditorFactory.SERVICE_ID,
+                        IEditorFactory.class.getName()), IEditorFactory.class);
+                for (ListIterator<IEditorFactory> iter = upstream.listIterator(upstream.size()); iter.hasPrevious();) {
+                    IEditorFactory factory = iter.previous();
+                    IEditor<Node> editor = factory.newEditor(manager, nodeModel, mode, parameters);
+                    if (editor != null) {
+                        return editor;
+                    }
+                }
+                throw new EditorException("Could not find factory willing to create an editor");
+            }
+
+        };
     }
 
     public void detach() {
@@ -127,8 +152,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         }
     }
 
-    protected IEditor<Node> createEditor(final IModel<Node> model, IEditor.Mode mode)
-            throws ServiceException {
+    protected IEditor<Node> createEditor(final IModel<Node> model, IEditor.Mode mode) throws ServiceException {
         try {
             IEditor<Node> editor = editorFactory.newEditor(new IEditorContext() {
 
@@ -143,8 +167,8 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
                 public void onFocus() {
                     EditorManagerPlugin.this.onFocus(model);
                 }
-                
-            }, model, mode);
+
+            }, model, mode, getPluginConfig().getPluginConfig("cluster.options"));
 
             editors.add(editor);
             editor.focus();

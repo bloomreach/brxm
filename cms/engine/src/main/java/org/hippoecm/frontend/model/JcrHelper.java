@@ -63,6 +63,21 @@ public class JcrHelper {
                 }
             }
         }
+        if (node.isNodeType("nt:version")) {
+            Node frozen = node.getNode("jcr:frozenNode");
+            String primary = frozen.getProperty("jcr:frozenPrimaryType").getString();
+            NodeTypeManager ntMgr = node.getSession().getWorkspace().getNodeTypeManager();
+            if (ntMgr.getNodeType(primary).isNodeType(type)) {
+                return true;
+            }
+            if (frozen.hasProperty("jcr:frozenMixinTypes")) {
+                for (Value values : frozen.getProperty("jcr:frozenMixinTypes").getValues()) {
+                    if (ntMgr.getNodeType(values.getString()).isNodeType(type)) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 

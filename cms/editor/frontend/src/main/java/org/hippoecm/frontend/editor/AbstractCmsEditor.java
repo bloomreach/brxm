@@ -130,7 +130,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     private IEditorContext editorContext;
     private IModel<T> model;
     private IPluginContext context;
-    private IPluginConfig config;
+    private IPluginConfig parameters;
 
     private IClusterControl cluster;
     private EditorWrapper renderer;
@@ -141,22 +141,16 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     private String wicketId;
     private Mode mode;
 
-    AbstractCmsEditor(IEditorContext editorContext, IPluginContext context, IPluginConfig config, IModel<T> model,
-                      Mode mode) throws EditorException {
+    public AbstractCmsEditor(IEditorContext editorContext, IPluginContext context, IPluginConfig parameters,
+            IModel<T> model, Mode mode) throws EditorException {
         this.editorContext = editorContext;
         this.model = model;
         this.context = context;
-        this.config = config;
+        this.parameters = parameters;
         this.mode = mode;
 
-        IPluginConfig previewConfig = config.getPluginConfig("cluster.preview.options");
-        IPluginConfig editConfig = config.getPluginConfig("cluster.edit.options");
-        if (!previewConfig.getString(RenderService.WICKET_ID).equals(editConfig.getString(RenderService.WICKET_ID))) {
-            throw new EditorException("preview and edit clusters have different wicket.id values");
-        }
-
         editorId = getClass().getName() + "." + (editorCount++);
-        wicketId = editConfig.getString(RenderService.WICKET_ID);
+        wicketId = parameters.getString(RenderService.WICKET_ID);
         JavaPluginConfig renderConfig = new JavaPluginConfig();
         renderConfig.put(RenderService.WICKET_ID, wicketId);
         renderConfig.put("editor", editorId);
@@ -216,7 +210,6 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         //INTENTIONALLY LEFT BLANK
     }
 
-
     /**
      * Default implementation that does nothing. Subclasses are expected to override this behaviour.
      *
@@ -225,7 +218,6 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     public void discard() throws EditorException {
         //INTENTIONALLY LEFT BLANK
     }
-
 
     public void close() throws EditorException {
         if (context.getReference(this) != null) {
@@ -244,13 +236,13 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
                 IEditorFilter.class);
         IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
-//        for (IEditorFilter filter : filters) {
-//            Object filterContext = filter.preClose();
-//            if (filterContext == null) {
-//                throw new EditorException("Close operation cancelled by filter");
-//            }
-//            filterContexts.put(filter, filterContext);
-//        }
+        //        for (IEditorFilter filter : filters) {
+        //            Object filterContext = filter.preClose();
+        //            if (filterContext == null) {
+        //                throw new EditorException("Close operation cancelled by filter");
+        //            }
+        //            filterContexts.put(filter, filterContext);
+        //        }
         return filterContexts;
     }
 
@@ -262,10 +254,6 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
 
     protected IPluginContext getPluginContext() {
         return context;
-    }
-
-    protected IPluginConfig getPluginConfig() {
-        return config;
     }
 
     protected IModel<T> getEditorModel() throws EditorException {
@@ -280,23 +268,19 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         return cluster.getClusterConfig();
     }
 
-    protected void start() throws EditorException {
+    public void start() throws EditorException {
         String clusterName;
-        IPluginConfig parameters;
         switch (mode) {
-            case EDIT:
-                clusterName = config.getString("cluster.edit.name", "cms-editor");
-                parameters = config.getPluginConfig("cluster.edit.options");
-                break;
-            case COMPARE:
-                clusterName = config.getString("cluster.compare.name", "cms-compare");
-                parameters = config.getPluginConfig("cluster.compare.options");
-                break;
-            case VIEW:
-            default:
-                clusterName = config.getString("cluster.preview.name", "cms-preview");
-                parameters = config.getPluginConfig("cluster.preview.options");
-                break;
+        case EDIT:
+            clusterName = "cms-editor";
+            break;
+        case COMPARE:
+            clusterName = "cms-compare";
+            break;
+        case VIEW:
+        default:
+            clusterName = "cms-preview";
+            break;
         }
         JavaPluginConfig editorConfig = new JavaPluginConfig(parameters);
         editorConfig.put("wicket.id", editorId);
@@ -354,7 +338,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         context.registerService(focusListener, renderId);
     }
 
-    protected void stop() {
+    public void stop() {
         String renderId = getRendererServiceId();
         context.unregisterService(focusListener, renderId);
         context.unregisterService(this, renderId);

@@ -13,13 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor;
+package org.hippoecm.frontend.editor.impl;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.editor.AbstractCmsEditor;
+import org.hippoecm.frontend.editor.IEditorContext;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -36,9 +38,9 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultCmsEditor.class);
 
-    DefaultCmsEditor(IEditorContext manager, IPluginContext context, IPluginConfig config, IModel<Node> model, Mode mode)
+    DefaultCmsEditor(IEditorContext manager, IPluginContext context, IPluginConfig parameters, IModel<Node> model, Mode mode)
             throws EditorException {
-        super(manager, context, config, model, mode);
+        super(manager, context, parameters, model, mode);
 
         Node node = model.getObject();
         if (node != null) {
@@ -52,6 +54,7 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected IModel<Node> getEditorModel() throws EditorException {
         IModel<Node> model = super.getEditorModel();
