@@ -49,7 +49,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
 
     submitForm:function () {
         this.getForm().submit({
-            url: '_pcapi/' + this.id + './parameters',
+            url: '_rp/' + this.id + './parameters',
             method: 'POST' ,
             waitMsg: 'Saving properties ...',
             success: function () {
@@ -117,7 +117,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             method: 'GET',
             root: 'properties',
             fields:['name', 'value', 'label', 'required', 'description', 'value', 'type' ],
-            url: '_pcapi/' + id + './parameters'
+            url: '_rp/' + id + './parameters'
         });
         store.on('load', this.loadProperties, this);
         store.on('exception', this.loadException, this);

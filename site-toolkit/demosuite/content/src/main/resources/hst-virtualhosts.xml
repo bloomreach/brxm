@@ -403,7 +403,7 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
               </sv:node>
-              <sv:node sv:name="_pcapi">
+              <sv:node sv:name="_rp">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:mount</sv:value>
                 </sv:property>
@@ -772,7 +772,7 @@
                   <sv:value>preview</sv:value>
                 </sv:property>
               </sv:node>
-              <sv:node sv:name="_pcapi">
+              <sv:node sv:name="_rp">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hst:mount</sv:value>
                 </sv:property>
