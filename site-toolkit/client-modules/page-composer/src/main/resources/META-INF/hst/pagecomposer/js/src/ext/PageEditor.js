@@ -149,7 +149,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     doLogout : function() {
         Ext.Ajax.request({
-            url: '_pcapi/' + this.ids.site + './logout',
+            url: '_rp/' + this.ids.site + './logout',
             success: function () {
                 location.reload(true);
             }
@@ -556,7 +556,7 @@ Hippo.App.ToolkitStore = Ext.extend(Hippo.App.RestStore, {
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : '_pcapi/' + config.toolkitId + './toolkit'
+                read     : '_rp/' + config.toolkitId + './toolkit'
                 ,create  : '#'
                 ,update  : '#'
                 ,destroy : '#'
@@ -581,10 +581,10 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : '_pcapi/' + config.pageId + './pagemodel'
-                ,create  : {url: '_pcapi/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
-                ,update  : {url: '_pcapi/PageModelService/update', method: 'POST'}
-                ,destroy : {url: '_pcapi/PageModelService/destroy', method: 'GET'}
+                read     : '_rp/' + config.pageId + './pagemodel'
+                ,create  : {url: '_rp/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
+                ,update  : {url: '_rp/PageModelService/update', method: 'POST'}
+                ,destroy : {url: '_rp/PageModelService/destroy', method: 'GET'}
             },
 
             listeners : {
@@ -593,15 +593,15 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: '_pcapi/' + parentId + './create/' + prototypeId , method: 'POST'});
+                            proxy.setApi(action, {url: '_rp/' + parentId + './create/' + prototypeId , method: 'POST'});
                         } else if (action == 'update') {
                             //Ext appends the item ID automatically
                             var id = rs.get('id');
-                            proxy.setApi(action, {url: '_pcapi/' + id + './update' , method: 'POST'});
+                            proxy.setApi(action, {url: '_rp/' + id + './update' , method: 'POST'});
                         } else if (action == 'destroy') {
                             //Ext appends the item ID automatically
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: '_pcapi/' + parentId + './delete' , method: 'GET'});
+                            proxy.setApi(action, {url: '_rp/' + parentId + './delete' , method: 'GET'});
                         }
                     }
                 }
