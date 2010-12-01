@@ -549,9 +549,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 if (that.getPlugin() == getPlugin()) {
                     String name = getName();
                     if (name != null) {
-                        return name.equals(((Configuration) o).getName());
+                        return name.equals(that.getName());
                     } else {
-                        return ((Configuration) o).getName() == null;
+                        return that.getName() == null;
                     }
                 }
             }
