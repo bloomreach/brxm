@@ -120,6 +120,12 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 console.error(e); //ignore for now..
                             },
                             scope: this
+                        },
+                        'resize' : {
+                            fn: function() {
+                                this.sendFrameMessage({}, 'resize');
+                            },
+                            scope: this
                         }
                     }
                 }

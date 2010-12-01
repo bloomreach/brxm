@@ -67,6 +67,11 @@ jQuery.noConflict();
                 return false;
             }, this, false, 'sharedata');
 
+            onhostmessage(function(msg) {
+                manager.requestSync();
+                manager.sync();
+                return false;
+            }, this, false, 'resize');
 
             this.manager = manager;
 
