@@ -83,7 +83,7 @@ public abstract class AbstractBrowserDialog<T extends DocumentLink> extends Abst
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=845,height=485");
+        return new ValueMap("width=855,height=485");
     }
 
     @Override

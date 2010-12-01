@@ -280,7 +280,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=845,height=525");
+        return new ValueMap("width=855,height=525");
     }
 
     protected GalleryProcessor getGalleryProcessor() {

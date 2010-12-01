@@ -355,26 +355,12 @@ body.hippo-root #doc3 {
   background: url("images/tab-active.png") no-repeat center center
 }
 
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-position: center center;
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a img {
+  margin: 10px 10px 10px 9px;
 }
 
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a {
-  display: block;
-  height: 100%;
-  width: 100%
-}
-
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a img {
-  margin: 10px;
-}
-
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a span {
-  display: none
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a span {
+  display: none;
 }
 
 /* TabsPlugin Document switcher */
@@ -868,8 +854,8 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 }
 
 .hippo-toolbar-section a.menu-action {
-  padding-top: 2px;
-  height: 16px;
+  padding-top: 0;
+  height: 18px;
 }
 
 /* Dropdown menu */
@@ -890,16 +876,17 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   display: block;
   height: 16px;
   padding-left: 4px;
-  padding-top: 3px;
-  border: 1px solid #e3e3e3;
-  background: url("images/hippo-toolbar-menu-item.png") no-repeat right -20px;
+  padding-top: 2px;
+  border: 1px solid #BDBDBD;
+  background: url("images/hippo-toolbar-menu-item.png") no-repeat right -21px;
   cursor: pointer;
   clear: left;
 }
 
 .hippo-toolbar-section-button:hover {
   border: 1px solid #000000;
-  color: black
+  color: black;
+  background-color: #FFF6E0;
 }
 
 /* background: url("images/hippo-toolbar-menu-item.png") no-repeat top right;  */
@@ -957,8 +944,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 .hippo-toolbar .hippo-toolbar-section li.menu-label-item {
   white-space: nowrap;
   padding-left: 4px;
-  padding-right: 0px;
-  padding-top: 2px;
+  padding-right: 0;
 }
 
 .hippo-toolbar-section li.icon-16 div {
@@ -970,7 +956,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   padding-right: 8px;
   padding-top: 4px;
   background-image: none;
-  border: 1px solid #e3e3e3;
+  border: 1px solid #BDBDBD;
   display: block;
   cursor: pointer;
   min-width: 100px;
@@ -988,16 +974,19 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 }
 
 .menu-action-text {
-  width: 90px;
-  height: 17px;
-  vertical-align: 6px;
-  padding-top: 0px;
-  margin-top: 0px;
+  display: block;
+  float: left;
+  height: 18px;
   margin-left: 4px;
+  padding-top: 2px;
 }
 
 .menu-action-icon {
-  padding-top: 0px;
+  display: block;
+  float: left;
+  height: 18px;
+  padding-top: 1px;
+  width: 16px;
 }
 
 .menu-label {
@@ -1276,7 +1265,7 @@ table.hippo-window-form {
 }
 
 .hippo-picker .hippo-window-form td input {
-  width: 200px
+  width: 200px;
 }
 
 /*
@@ -1292,7 +1281,7 @@ table.hippo-window-form {
 .hippo-picker-navigation {
   background: url("images/silver4.png") repeat-x;
   height: 20px;
-  width: 635px;
+  width: 645px;
   border-bottom: 1px solid #afafaf;
   margin-left: 194px;
   padding-top: 2px;
@@ -1561,7 +1550,7 @@ ents-small-folders h3 {
 }
 
 .hippo-browser-documents-small .hippo-browser-documents-small-files {
-  background: #ffffff url('images/document-list-back.png') repeat-x;
+  background: url("images/document-list-back.png") repeat-x top left;
 }
 
 /* toolbar requires some tweaks here */
@@ -1800,8 +1789,7 @@ ents-small-folders h3 {
 }
 
 .hippo-preview-document {
-  background: white url("images/hippo-shade.png");
-  border-bottom: 1px solid #afafaf;
+  background: #F5F5F5 url("images/hippo-shade.png");
   padding-top: 4px;
   padding-bottom: 20px;
   padding-left: 4px;
@@ -1828,7 +1816,6 @@ ents-small-folders h3 {
 
 /* override some editors styling in preview mode */
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield {
-  border: none;
   padding: 0px
 }
 
@@ -1838,20 +1825,28 @@ ents-small-folders h3 {
   font-family: arial, sans-serif, helvetica;
 }
 
-.hippo-preview-document .hippo-editor-field h3.hippo-editor-field-title span {
-  font-size: 11px;
-}
-
-.hippo-preview-document div.odd  .hippo-editor-field {
-  border-bottom: 1px dotted #afafaf
-}
-
-.hippo-preview-document div.even .hippo-editor-field {
-  border-bottom: 1px dotted #afafaf
-}
-
 .hippo-preview-document .hippo-editor-field-textarea, .hippo-preview-document .hippo-editor-field-html-preview {
-  min-height: 75px
+  min-height: 75px;
+  margin: 0;
+  padding: 0;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-html-preview {
+  font-family: Arial, sans-serif, Helvetica;
+  font-size: 12px;
+  color: #333;
+  line-height: 18px;
+}
+
+.hippo-preview-document .hippo-editor-field-html-preview {
+  font-family: Arial, sans-serif, Helvetica;
+  font-size: 12px;
+  line-height: 18px;
+  margin: 4px;
+}
+
+.hippo-preview-document .hippo-editor-field-textarea, .hippo-editor-template-editor .hippo-editor-field-textarea {
+  margin: 4px;
 }
 
 /* Wrap the content of pre elements in document preview mode */
@@ -1865,6 +1860,22 @@ ents-small-folders h3 {
 
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield {
   background-image: none
+}
+
+.hippo-preview-document .hippo-editor-field-subfield,
+.hippo-editor-template-editor .hippo-editor-field-subfield {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #D9D9D9;
+  min-height: 25px;
+  padding: 1px;
+}
+
+.hippo-preview-document .hippo-editor-field-subfield a,
+.hippo-preview-document .hippo-editor-field-subfield {
+  background-color: #FDFDFD;
+  color: #555;
 }
 
 .hippo-preview-document .hippo-editor-field {
@@ -1887,17 +1898,45 @@ ents-small-folders h3 {
 }
 
 .hippo-editor-top {
-  background: transparent url("images/editor-back.png") repeat-x
+  border-bottom: 1px solid #AFAFAF;
+  background: url("images/document-list-back.png") repeat-x top left;
 }
 
 .hippo-editor-top .hippo-toolbar {
   padding-left: 4px
 }
 
+ul.hippo-toolbar-section li.icon-16 {
+  padding-bottom: 0;
+}
+
+/* Template editor styling */
 .hippo-editor-template-editor {
   padding-top: 4px;
-  background: transparent url("images/hippo-shade.png");
+  background: #F5F5F5 url("images/hippo-shade.png");
   padding-left: 4px;
+}
+
+.hippo-editor-template-field-edit {
+  padding: 0;
+}
+
+.hippo-editor-template-editor .hippo-editor-template-field-edit .hippo-editor-field-title {
+  font-size: 11px;
+  font-weight: bold;
+  font-family: Tahoma, Arial, sans-serif, Helvetica;
+  font-style: normal;
+  color: #666;
+  margin: 7px 10px;
+}
+
+.hippo-editor-template-editor .hippo-editor-template-field-edit .hippo-editor-field-subfield {
+  border-bottom-radius: 0;
+  -moz-border-radius: 0;
+}
+
+.hippo-editor .template-type-wrapper .hippo-editor-field .hippo-editor-field-subfield {
+  margin: 7px 10px;
 }
 
 .column-wrapper {
@@ -1925,16 +1964,12 @@ ents-small-folders h3 {
   float: right;
 }
 
-.hippo-editor-template-editor .even .hippo-editor-field {
-  background: #f0f6ff
+.hippo-editor-template-editor .hippo-editor-field {
+  background: #F5F5F5
 }
 
 .hippo-editor-template-editor .even .invalid .hippo-editor-field {
   background: #f00000
-}
-
-.hippo-editor-template-editor .odd .hippo-editor-field {
-  background: #cee3f9
 }
 
 .hippo-editor-template-editor .odd .invalid .hippo-editor-field {
@@ -1985,6 +2020,70 @@ ents-small-folders h3 {
   margin-bottom: 8px;
 }
 
+.hippo-editor-template-editor .hippo-editor-field-subfield {
+  background-color: #FFFFFF;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-subfield:hover,
+.hippo-editor-template-editor .hippo-editor-field-subfield:hover .hippo-editor-field-subfield.dialog-link {
+  background-color: #FFF6E0;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-subfield .hippo-editor-field {
+  padding: 4px 8px;
+}
+
+/* title styling */
+.hippo-preview-document .hippo-editor-field-title,
+.hippo-editor-template-editor .hippo-editor-field-title,
+.hippo-preview-document .relateddocs-container .hippo-editor-field-title {
+  font-size: 15px;
+  font-weight: normal;
+  margin: 0 0 3px 8px;
+  font-family: Georgia, Trebuchet MS, Arial, sans-serif, Helvetica;
+  font-style: italic;
+}
+
+.hippo-preview-document .hippo-editor-field-title {
+  color: #999;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-title {
+  color: #666;
+}
+
+.hippo-preview-document .col30 .hippo-editor-field-title,
+.hippo-editor-template-editor .col30 .hippo-editor-field-title {
+  font-size: 12px;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-subfield .hippo-editor-field-title,
+.hippo-editor-template-editor .reladeddocs-suggestions-container .hippo-editor-field-title,
+.hippo-editor-template-editor .relateddocs-container .hippo-editor-field-title,
+.hippo-preview-document .hippo-editor-field-subfield .hippo-editor-field-title {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  font-family: Tahoma, Arial, sans-serif, Helvetica;
+  font-style: normal;
+}
+
+/* alternative styling */
+.rvds_title .hippo-editor-field input,
+.rvds_title .hippo-editor-field-subfield {
+  font-size: 17px;
+  font-family: georgia;
+  font-style: italic;
+}
+
+.rvds_title .hippo-editor-field-title {
+  display: none;
+}
+
+.rvds_title .hippo-editor-field {
+  margin-top: 4px;
+}
+
 /* Text Input elements */
 .hippo-window-form input,
 .hippo-picker-properties input,
@@ -2006,7 +2105,6 @@ ents-small-folders h3 {
 }
 
 .hippo-editor-field textarea {
-  margin: 0px;
   width: 100%;
   height: 150px;
 }
@@ -2119,11 +2217,113 @@ ents-small-folders h3 {
   width: 70px
 }
 
+/* related docs styling */
+/* correction because related docs is not contained within hippo-editor-field, top margin to emphasize missing field title */
+.hippo-editor-template-editor .relateddocs-container {
+  border-top: 1px solid #D9D9D9;
+  border-left: 1px solid #D9D9D9;
+  border-right: 1px solid #D9D9D9;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-radius-topleft: 5px;
+  -webkit-border-radius-topright: 5px;
+  background-color: #FFFFFF;
+  margin: 30px 8px 0 8px;
+  padding: 1px 1px 0;
+}
+
+/* correction because related docs is not contained within hippo-editor-field */
+.hippo-editor-template-editor .reladeddocs-suggestions-container {
+  border-bottom: 1px solid #D9D9D9;
+  border-left: 1px solid #D9D9D9;
+  border-right: 1px solid #D9D9D9;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-radius-bottomleft: 5px;
+  -webkit-border-radius-bottomright: 5px;
+  background-color: #FFFFFF;
+  margin: 0 8px 6px 8px;
+  padding: 0 1px 1px;
+}
+
+.hippo-preview-document .relateddocs-container {
+  border: none;
+}
+
+.hippo-preview-document .reladeddocs-suggestions-container {
+  border: none;
+}
+
+.hippo-preview-document .hippo-editor-field-relateddocs ul li,
+.hippo-editor-template-editor .hippo-editor-field-relateddocsuggest ul li,
+.hippo-editor-template-editor .hippo-editor-field-relateddocs ul li {
+  border-bottom: 1px dotted #BDBDBD;
+  margin-bottom: 0px;
+  padding: 2px;
+  font-size: 11px;
+}
+
+.hippo-preview-document .relateddocs-container .hippo-editor-field-subfield {
+  min-height: 24px;
+}
+
+.hippo-editor-template-editor .reladeddocs-suggestions-container h2 {
+  font-size: 11px;
+  font-family: Tahoma, Arial, sans-serif, Helvetica;
+  font-style: normal;
+  color: #999;
+  margin: 15px 0 4px 8px;
+}
+
+.hippo-preview-document .relateddocs-container .hippo-editor-field-textarea {
+  min-height: 20px;
+}
+
+/* misc styling */
+.hippo-preview-document .hippo-editor-field-subfield-item .hippo-editor-field-datepicker,
+.hippo-editor .hippo-editor-field-subfield-item .hippo-editor-field-value .hippo-editor-field-value-container {
+  padding: 5px 4px;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-subfield-item .hippo-editor-field-datepicker {
+  padding: 5px 0px;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-subfield .dialog-link {
+  border: none;
+  margin: 9px 0 0 5px;
+}
+
+.hippo-editor-template-editor .hippo-editor-field-subfield .dialog-link .linefill {
+  border: 1px solid #BDBDBD;
+  background: url("images/hippo-editor-top.png") repeat-x top left;
+  padding: 1px 3px 3px 3px;
+}
+
+.gallerypickerlinkspan a {
+  border: 1px solid #BDBDBD !important;
+  background: url("images/hippo-editor-top.png") repeat-x top left;
+  padding: 1px 3px 3px 3px !important;
+}
+
+.hippo-editor-field-subfield .hippo-editor-field-subfield-item table img {
+  margin: 3px;
+}
+
+.hippo-editor-field-subfield .hippo-editor-field-subfield-item .buttonImageContainer img {
+  margin: 0;
+}
+
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
 
 .hippo-editor-field-html {
   background: url("images/hippo-border.gif") repeat-x 0px 30px;
   padding: 0px;
+  height: 100%;
 }
 
 .hippo-editor-field-html .htmlarea {
@@ -2372,8 +2572,17 @@ div.wicket-modal div.wicket-tree {
   height: 20px;
   position: absolute;
   right: 0;
-  top: 0;
+  top: 3px;
   padding-top: 2px;
+  opacity: 0;
+  filter: alpha(opacity = 0);
+  -moz-opacity: 0;
+}
+
+.hippo-editor .hippo-editor-field-subfield:hover .hippo-editor-field-subfield-controls {
+  opacity: 1;
+  filter: alpha(opacity = 100);
+  -moz-opacity: 1;
 }
 
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .up-16 {
@@ -2405,21 +2614,12 @@ div.wicket-modal div.wicket-tree {
 .hippo-editor .hippo-editor-field .add-16 {
   display: block;
   padding: 10px;
-  background-color: white;
-  border: 1px solid white;
-  background-position: right center;
-  margin-top: 8px;
-}
-
-.hippo-editor .hippo-editor-field .add-16:hover {
-  border: 1px solid #EDF5FF;
-  background-color: white
+  background-position: left center;
+  margin-bottom: 8px;
 }
 
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield {
   margin-bottom: 4px;
-  background: white;
-  border: 1px solid #B2B2B2;
 }
 
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield {
@@ -2435,8 +2635,9 @@ div.wicket-modal div.wicket-tree {
 }
 
 .hippo-editor .hippo-editor-field-value .hippo-editor-field-value-container {
-  padding: 2px;
   margin: 0;
+  color: #333;
+  padding: 0 0 8px 7px;
 }
 
 .hippo-editor .hippo-editor-field-value .hippo-editor-field-value-container input {
@@ -2450,8 +2651,6 @@ div.wicket-modal div.wicket-tree {
 
 /* sub sub fields */
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield {
-  background-color: white;
-  border: none;
   width: auto;
   margin-bottom: 4px;
   position: relative;
@@ -3536,8 +3735,7 @@ body.hippo-root div.yui-log-container {
 /* Resource upload/properties */
 .resource-values {
   font-size: 12px;
-  padding: 10px;
-  padding-top: 5px;
+  padding: 5px;
 }
 
 .resource-values label {
@@ -3567,10 +3765,6 @@ body.hippo-root div.yui-log-container {
 
 .resource-values ul li > span {
   padding-right: 5px;
-}
-
-.hippo-preview-document .resource-values {
-  padding-left: 0px;
 }
 
 .resource-upload {
@@ -3925,4 +4119,13 @@ div.hippo-diff-removed div.resource-values, div.hippo-diff-added div.resource-va
   padding-right: 2px;
   position: static;
   padding-bottom: 3px;
+}
+
+.hippo-picker .hippo-picker-list-details .toggle-button {
+  padding-top: 1px;
+  padding-right: 1px;
+}
+
+.hippo-picker .hippo-picker-list-details .toggle-button > a > img {
+  height: 15px;
 }

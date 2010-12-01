@@ -1085,7 +1085,7 @@ skin/src/main/webapp/images/controls/folderdropdownicon.png -text
 skin/src/main/webapp/images/controls/up-control.gif -text
 skin/src/main/webapp/images/dashboard-goto-button.png -text svneol=unset#image/png
 skin/src/main/webapp/images/devider.png -text
-skin/src/main/webapp/images/document-list-back.png -text
+skin/src/main/webapp/images/document-list-back.png -text svneol=unset#image/png
 skin/src/main/webapp/images/documenttabs.png -text
 skin/src/main/webapp/images/documenttabsback.png -text
 skin/src/main/webapp/images/dropdownmenu-itemback.png -text
@@ -1107,6 +1107,7 @@ skin/src/main/webapp/images/hippo-editor-body-back.png -text
 skin/src/main/webapp/images/hippo-editor-default-back.png -text
 skin/src/main/webapp/images/hippo-editor-field-back-even.png -text
 skin/src/main/webapp/images/hippo-editor-field-back-odd.png -text
+skin/src/main/webapp/images/hippo-editor-top.png -text svneol=unset#image/png
 skin/src/main/webapp/images/hippo-gallery-folder.png -text
 skin/src/main/webapp/images/hippo-gallery-image-thumbnail-back.png -text
 skin/src/main/webapp/images/hippo-gallery-thumbnail-back.png -text
