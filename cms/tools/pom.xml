@@ -33,5 +33,7 @@
     <module>eclipse</module>
     <module>development-content</module>
     <module>upgrade</module>
+    <module>translation-runner</module>
   </modules>
+
 </project>
