@@ -132,7 +132,7 @@ public class FacetSelectTest extends TestCase {
     }
 
     @Test
-    public void testRequestsLast() throws Exception {
+    public void testRequestsNotFirst() throws Exception {
         final String[] data = new String[] {
             "/test", "nt:unstructured",
             "/test/docs", "hippo:testdocument",
