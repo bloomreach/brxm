@@ -76,7 +76,7 @@
   </modules>
 
   <properties>
-    <repository.version>2.17.02</repository.version>
+    <repository.version>2.18.00RC1</repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -133,8 +133,8 @@
           <configuration>
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmCommentPrefix>HREPTWO-4766:</scmCommentPrefix>
-          <tag>Tag-HREPTWO-v2_17_02</tag>
+          <scmCommentPrefix>HREPTWO-4795:</scmCommentPrefix>
+          <tag>hippo-cms-2.18.00RC1</tag>
           <!-- preparationGoals>clean</preparationGoals -->
         </configuration>
       </plugin>
