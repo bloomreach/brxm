@@ -473,10 +473,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         }
                     }
         
-                    if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            representsDocument = true;
-                        } else if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        representsDocument = true;
+                    }else if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                             node = node.getParent();
                             representsDocument = true;
                         } else if (node.getParent().isNodeType(HippoNodeType.NT_FACETRESULT)) {
