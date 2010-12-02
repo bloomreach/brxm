@@ -58,6 +58,15 @@ public class SiteResource extends AbstractConfigResource {
     }
 
     @GET
+    @Path("/keepalive/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response keepAlive(@Context HttpServletRequest servletRequest,
+                              @Context HttpServletResponse servletResponse){
+        HttpSession session = servletRequest.getSession(false);
+        return ok("Keepalive successful", null);
+    }
+
+    @GET
     @Path("/logout/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@Context HttpServletRequest servletRequest,
