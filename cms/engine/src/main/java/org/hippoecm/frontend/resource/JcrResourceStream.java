@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.resource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -62,7 +63,12 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
 
     public String getContentType() {
         try {
-            return getNode().getProperty("jcr:mimeType").getString();
+            Node node = getNode();
+            if (node != null) {
+                return node.getProperty("jcr:mimeType").getString();
+            } else {
+                return "unknown";
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -74,7 +80,12 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
             if (stream != null) {
                 stream.close();
             }
-            stream = getNode().getProperty("jcr:data").getStream();
+            Node node = getNode();
+            if (node != null) {
+                stream = node.getProperty("jcr:data").getStream();
+            } else {
+                stream = new ByteArrayInputStream(new byte[0]);
+            }
         } catch (RepositoryException ex) {
             throw new ResourceStreamNotFoundException(ex);
         } catch (IOException ex) {
@@ -91,7 +102,11 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
     public long length() {
         long length = -1;
         try {
-            length = getNode().getProperty("jcr:data").getLength();
+            Node node = getNode();
+            if (node == null) {
+                return 0;
+            }
+            length = node.getProperty("jcr:data").getLength();
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -104,7 +119,13 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
 
     public Time lastModifiedTime() {
         try {
-            Calendar date = getNode().getProperty("jcr:lastModified").getDate();
+            Node node = getNode();
+            Calendar date;
+            if (node != null) {
+                date = node.getProperty("jcr:lastModified").getDate();
+            } else {
+                date = Calendar.getInstance();
+            }
             return Time.valueOf(date.getTime());
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
