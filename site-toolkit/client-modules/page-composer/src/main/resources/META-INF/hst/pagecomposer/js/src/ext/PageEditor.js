@@ -305,9 +305,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             store: this.stores.toolkit,
                             cm: new Ext.grid.ColumnModel({
                                 columns: [
-                                    { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 40}},
-                                    { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
-                                    { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
+                                    { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 40}}
+//                                    { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
+//                                    { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
                                 ],
                                 defaults: {
                                     sortable: true,
