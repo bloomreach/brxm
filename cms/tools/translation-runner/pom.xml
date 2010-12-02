@@ -22,7 +22,7 @@
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>translation-runner</artifactId>
   <packaging>jar</packaging>
-  <version>2.18.00RC1</version>
+  <version>1.01.00</version>
 
   <properties>
     <javax.jcr.version>2.0</javax.jcr.version>
