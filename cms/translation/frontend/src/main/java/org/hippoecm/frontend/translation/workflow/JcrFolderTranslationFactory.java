@@ -18,8 +18,9 @@ package org.hippoecm.frontend.translation.workflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.translation.components.document.FolderTranslation;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public final class JcrFolderTranslationFactory {
@@ -49,22 +50,14 @@ public final class JcrFolderTranslationFactory {
 
         if (original != null) {
             ft.setUrl(original.getName());
-            if (original instanceof HippoNode) {
-                ft.setName(((HippoNode) original).getLocalizedName());
-            } else {
-                ft.setName(ft.getUrl());
-            }
+            ft.setName(new NodeTranslator(new JcrNodeModel(original)).getNodeName().getObject());
         }
 
         if (node != null) {
             ft.setUrlfr(node.getName());
-            if (node instanceof HippoNode) {
-                ft.setNamefr(((HippoNode) node).getLocalizedName());
-            } else {
-                ft.setNamefr(ft.getUrlfr());
-            }
+            ft.setNamefr(new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject());
         }
-        
+
         return ft;
     }
 

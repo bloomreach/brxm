@@ -329,7 +329,7 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
       if (it == record) {
         return false;
       }
-      if (it.get(col) != "") {
+      if ((it.get(col) != "") || it.get('editable')) {
         indent.ancestors++;
       }
     });
