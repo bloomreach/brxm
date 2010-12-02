@@ -83,7 +83,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
     // hard coded defaults
     private String uuidBehavior = "Create new uuids on import";
-    private String mergeBehavior = "Try to add, else skip same name nodes";
+    private String mergeBehavior = "Disable merging";
     private String derefBehavior = "Throw error when not found";
 
     MenuPlugin plugin;
