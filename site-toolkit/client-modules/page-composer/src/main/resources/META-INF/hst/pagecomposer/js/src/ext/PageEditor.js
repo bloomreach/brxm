@@ -60,6 +60,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             text: 'Template Composer',
                             iconCls: 'title-button',
                             id: 'pageComposerButton',
+                            width: 150,
                             listeners: {
                                 'click': {
                                     fn: this.toggleConfigWindow,

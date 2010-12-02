@@ -152,6 +152,7 @@ li.placeholdert {
   color: white;
 }
 
-.title-button {
+button.title-button {
     background-image: url(hippologo.png) !important;
+    width: 150px;
 }
