@@ -30,10 +30,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.editor.impl.DefaultEditorFactoryPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -95,20 +97,29 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                     "plugin.class", EditorManagerPlugin.class.getName(),
                     "wicket.model", "model",
                     "editor.id", "editor.manager",
-                    "cluster.edit.name", "preview",
-                    "cluster.preview.name", "preview",
-                    "cluster.compare.name", "preview",
-                    "/test/plugin/cluster.edit.options", "frontend:pluginconfig",
+                    "/test/plugin/cluster.options", "frontend:pluginconfig",
                         "wicket.id", RENDERERS,
-                    "/test/plugin/cluster.preview.options", "frontend:pluginconfig",
-                        "wicket.id", RENDERERS,
-                    "/test/plugin/cluster.compare.options", "frontend:pluginconfig",
-                        "wicket.id", RENDERERS,
-            "/config/test-app/preview", "frontend:plugincluster",
+            "/config/test-app/cms-editor", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:references", "editor.id",
                 "frontend:services", "wicket.id",
-                "/config/test-app/preview/plugin", "frontend:plugin",
+                "/config/test-app/cms-editor/plugin", "frontend:plugin",
+                    "plugin.class", Preview.class.getName(),
+                    "wicket.id", "${wicket.id}",
+                    "wicket.model", "${wicket.model}",
+            "/config/test-app/cms-preview", "frontend:plugincluster",
+                "frontend:references", "wicket.model",
+                "frontend:references", "editor.id",
+                "frontend:services", "wicket.id",
+                "/config/test-app/cms-preview/plugin", "frontend:plugin",
+                    "plugin.class", Preview.class.getName(),
+                    "wicket.id", "${wicket.id}",
+                    "wicket.model", "${wicket.model}",
+            "/config/test-app/cms-compare", "frontend:plugincluster",
+                "frontend:references", "wicket.model",
+                "frontend:references", "editor.id",
+                "frontend:services", "wicket.id",
+                "/config/test-app/cms-compare/plugin", "frontend:plugin",
                     "plugin.class", Preview.class.getName(),
                     "wicket.id", "${wicket.id}",
                     "wicket.model", "${wicket.model}",
@@ -134,6 +145,10 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         modelReference = new ModelReference("model", new JcrNodeModel((Node) null));
         modelReference.init(context);
 
+        JavaPluginConfig factoryConfig = new JavaPluginConfig("editorFactory");
+        factoryConfig.put("plugin.class", DefaultEditorFactoryPlugin.class.getName());
+        start(factoryConfig);
+        
         config = new JcrPluginConfig(new JcrNodeModel("/test/plugin"));
     }
 
