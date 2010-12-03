@@ -27,7 +27,7 @@ if (destination == null) destination = "";
 <hst:link var="loginPageUrl" path="/login/form" mount="site">
    <hst:param name="destination" value="<%=destination%>" />
 </hst:link>
-<meta http-equiv='refresh' content='1;${loginPageUrl}' />
+<meta http-equiv='refresh' content='1;url=${loginPageUrl}' />
 <title>Authentication Required</title>
 </head>
 <body>
