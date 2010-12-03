@@ -1656,7 +1656,6 @@ demosuite/content/src/main/resources/hstconfiguration/demosite_fr/sitemap.xml -t
 demosuite/content/src/main/resources/hstconfiguration/demosite_fr/sitemenus.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hstconfiguration/demosite_fr/templates.xml -text svneol=unset#text/plain
 demosuite/pom.xml svneol=native#text/plain
-demosuite/site/build.properties-sample -text
 demosuite/site/pom.xml svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/CommentBean.java svneol=native#text/plain

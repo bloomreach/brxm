@@ -8,10 +8,9 @@ How to test and build Hippo Site Toolkit
 
 2. Requirements --
 
-  (1) Java 1.5
-  (2) Maven 2.0.9 or higher
-  (3) [Optional] Tomcat 5.5 or 6.0 (if you want to deploy and run on Tomcat.)
-      -- Note shared lib folder path, depending on your Tomcat version, in your build.properties.
+  (1) Java 1.6
+  (2) Maven 2.2.1 or higher
+  (3) [Optional] Tomcat 6.0 or higher if you want to deploy and run on Tomcat.)
 
 3. Build
     
@@ -37,21 +36,13 @@ How to test and build Hippo Site Toolkit
   
     - Visit the page: http://127.0.0.1:8085/site/preview/
     
-  (2) With Tomcat
+  (2) Together within one Tomcat (note: default configuration uses rmi)
 
-    - Move to demosuite/site folder.
-    - Copy build.properties-sample to build.properties in the folder.
-    - Edit the tomcat directory path and shared lib folder path in build.properties.
-      For example,
-      
-        tomcat.server.home = /home/jdoe/tomcat-6.0.18
-        tomcat.hst.shared.lib = ${tomcat.server.home}/lib  # For tomcat 6.x. Use ${tomcat.server.home}/shared/lib for Tomcat 5.x.
-      
-    - Run the following to deploy applications in the folder.
-  
-      $ mvn -P tomcat clean install
-  
+    - Drop both build cms.war and site.war in tomcat webapps folder.
+
+    - Starting Tomcat (wait for both cms and site apps been deployed and running):
+    
     - Visit the preview pages by http://127.0.0.1:8080/site/preview/
-    - Visit the live pages by by http://127.0.0.1:8080/site/
-    - You can visit cms by http://127.0.0.1:8080/cms/
-      and console by http://127.0.0.1:8080/cms/console/
+      Visit the live pages by by http://127.0.0.1:8080/site/
+      Visit cms by http://127.0.0.1:8080/cms/
+      Visit cms console by http://127.0.0.1:8080/cms/console/

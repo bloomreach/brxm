@@ -34,11 +34,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    <!-- hippo-ecm-api should be moved to 'shared-dependencies' after fix of HREPTWO-2866. -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-content-beans</artifactId>

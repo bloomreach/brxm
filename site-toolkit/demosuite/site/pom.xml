@@ -34,6 +34,55 @@
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-package-app-dependencies</artifactId>
+      <version>${hippo-packages.version}</version>
+      <type>pom</type>
+    </dependency>
+
+    <!-- Overlay hippo-ecm-repository-resources war -->
+     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-resources</artifactId>
+      <version>${hippo-packages.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <!-- Main HST dependencies for standalone sites  -->
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-shared-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-server-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-client-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+
+    <!-- Additional (optional) HST dependencies -->    
+    <dependency>    
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+      <artifactId>hst-page-composer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Common and demosuite dependencies -->    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -65,18 +114,8 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xerces</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -114,12 +153,6 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <scope>runtime</scope>
-    </dependency>
-    <!-- Exclude commons-logging explicitly by a provided dependency. -->
-    <dependency> 
-      <groupId>commons-logging</groupId> 
-      <artifactId>commons-logging</artifactId> 
-      <scope>provided</scope> 
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -162,25 +195,27 @@
       <artifactId>wicket-extensions</artifactId>
     </dependency>
     
-    <!-- The New JAX-RS REST Component -->    
-    <dependency>    
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-jaxrs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-      <artifactId>hst-page-composer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
     <finalName>site</finalName>
+
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <overlays>
+            <overlay>
+              <groupId>org.onehippo.cms7</groupId>
+              <artifactId>hippo-repository-resources</artifactId>
+             </overlay>
+          </overlays>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
@@ -239,7 +274,7 @@
   <profiles>
     
     <profile>
-      <id>default</id>
+      <id>undefault</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>

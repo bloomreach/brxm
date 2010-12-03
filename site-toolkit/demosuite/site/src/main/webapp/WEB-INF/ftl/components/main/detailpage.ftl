@@ -122,7 +122,7 @@ ${document.title}
 
 </div>
 
-<@hst.resourceURL var="inlineEditingResourceURL" resourceId='/jsp/components/main/detailpage-ajaxresult.jsp' />
+<@hst.resourceURL var="inlineEditingResourceURL" resourceId='/WEB-INF/jsp/components/main/detailpage-ajaxresult.jsp' />
 <form id="editorForm" method="post" action="${inlineEditingResourceURL}">
   <div class="yui-skin-sam">
     <input type="hidden" name="nodepath" value="${document.path}"/>
