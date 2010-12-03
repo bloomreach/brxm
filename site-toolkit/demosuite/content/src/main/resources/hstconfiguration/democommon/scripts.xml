@@ -15,8 +15,7 @@
     limitations under the License.
 
 -->
-<sv:node sv:name="hst:scripts" xmlns:hst="http://www.hippoecm.org/hst/nt/2.0"
-  xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="hst:scripts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:scripts</sv:value>
   </sv:property>
