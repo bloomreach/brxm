@@ -125,7 +125,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             fn: function(frm) {
                                 //Safari && Chrome report a DOM ready event, but js is not yet fully loaded, resulting
                                 //in 'undefined' errors.
-                                if (Ext.isGecko) {
+                                if (Ext.isGecko || Ext.isIE) {
                                     this.onIframeDOMReady(frm);
                                 }
                             },
