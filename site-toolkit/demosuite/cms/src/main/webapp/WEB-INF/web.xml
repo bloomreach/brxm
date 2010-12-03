@@ -15,11 +15,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<web-app id="hippo-cms">
+<web-app id="hst-demosuite-cms">
 
     <!-- General configuration -->
-    <display-name>Hippo CMS WAR package</display-name>
-    <description>Hippo CMS WAR package</description>
+    <display-name>HST Demosuite CMS</display-name>
+    <description>HST Demosuite CMS</description>
 
     <context-param>
         <param-name>repository-address</param-name>
@@ -27,11 +27,23 @@
         <description>The address of the repository</description>
     </context-param>
 
-    <!--Default application-->
+    <!--No concurrent logins-->
     <filter>
         <filter-name>ConcurrentLogin</filter-name>
         <filter-class>org.hippoecm.frontend.plugins.login.ConcurrentLoginFilter</filter-class>
     </filter>
+
+    <!--Remap resources as anti-cache-->
+    <filter>
+        <filter-name>ResourceAntiCache</filter-name>
+        <filter-class>org.hippoecm.frontend.ResourceRewriteFilter</filter-class>
+        <!-- init-param>
+            <param-name>prefix</param-name>
+            <param-value>nocache</param-value>
+        </init-param -->
+    </filter>
+
+    <!--Default application-->
     <filter>
         <filter-name>CMS</filter-name>
         <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
@@ -79,6 +91,12 @@
         <filter-name>ConcurrentLogin</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>ResourceAntiCache</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>CMS</filter-name>
         <url-pattern>/*</url-pattern>
