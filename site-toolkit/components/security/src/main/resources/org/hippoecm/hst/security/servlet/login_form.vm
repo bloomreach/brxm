@@ -19,14 +19,14 @@
     <link rel="stylesheet" type="text/css" href="hst/security/skin/screen.css" />
   </head>
   <body class="hippo-root" onload="return document.signInForm.username.focus();">
-    <div>
+    <div class="hippo-body-back-hack">
       <div class="hippo-login-panel">
         <form class="hippo-login-panel-form" name="signInForm" method="post" action="..${request.ServletPath}/proxy">
           <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
               <tr>
-                <td width="50%"><label>${messages.getString("label.username")}&nbsp;</label></td>
+                <td width="30%"><label>${messages.getString("label.username")}&nbsp;</label></td>
                 <td><input class="hippo-form-text" type="text" value="${j_username}" name="username" id="username"/></td>
               </tr>
               <tr>

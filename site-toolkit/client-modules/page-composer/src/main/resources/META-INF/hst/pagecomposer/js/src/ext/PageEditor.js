@@ -535,9 +535,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             }
         } catch(e) {
             console.error(e);
+            throw e;
         }
     }
-
 });
 
 Hippo.App.RestStore = Ext.extend(Ext.data.Store, {

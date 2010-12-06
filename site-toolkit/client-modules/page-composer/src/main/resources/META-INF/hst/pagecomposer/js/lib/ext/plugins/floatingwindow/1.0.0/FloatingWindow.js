@@ -22,7 +22,17 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
 
     //TODO: handle horizontal position
     initComponent: function() {
-        var w = window.innerWidth;//(document.documentElement || document.body).scrollWidth;
+        var w = 0;
+        if (typeof( window.innerWidth ) == 'number') {
+            //Non-IE
+            w = window.innerWidth;
+        } else if (document.documentElement && document.documentElement.clientWidth) {
+            //IE 6+ in 'standards compliant mode'
+            w = document.documentElement.clientWidth;
+        } else if (document.body && document.body.clientWidth) {
+            //IE 4 compatible
+            w = document.body.clientWidth;
+        }
         //Ext.lib.Dom.getViewWidth(true);
         var t = Ext.getBody().getScroll().top;
 
