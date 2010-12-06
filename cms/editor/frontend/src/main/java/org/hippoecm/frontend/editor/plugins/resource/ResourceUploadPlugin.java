@@ -15,13 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
-import java.io.IOException;
-import java.util.Calendar;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -39,6 +34,16 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Plugin for uploading resources into the JCR repository.
+ * The plugin supports multi-file upload with instant or delayed upload.
+ * This plugin can be configured with specific types, so not all file types are allowed to be uploaded.
+ */
 public class ResourceUploadPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -51,7 +56,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
     private FileUploadForm form;
 
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config);        
 
         // if the types config is not set, all extensions are allowed
         String typesConfig = config.getString("types");
@@ -100,6 +105,12 @@ public class ResourceUploadPlugin extends RenderPlugin {
         }
     }
 
+
+    /**
+     * Handles the file upload from the form.
+     * 
+     * @param upload the {@link FileUpload} containing the upload information
+     */
     private void handleUpload(FileUpload upload) {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
@@ -122,9 +133,14 @@ public class ResourceUploadPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
             Node node = nodeModel.getNode();
             try {
-                node.setProperty("jcr:mimeType", mimeType);
-                node.setProperty("jcr:data", upload.getInputStream());
-                node.setProperty("jcr:lastModified", Calendar.getInstance());
+
+                ResourceHelper.setDefaultResourceProperties(node, mimeType, upload.getInputStream());
+
+                if(extension.toLowerCase().equals("pdf")){
+                    InputStream inputStream = node.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
+                    ResourceHelper.handlePdfAndSetHippoTextProperty(node, inputStream);
+                }
+
                 ResourceHelper.validateResource(node, fileName);
             } catch (RepositoryException ex) {
                 error(ex);
@@ -138,4 +154,5 @@ public class ResourceUploadPlugin extends RenderPlugin {
             }
         }
     }
+
 }
