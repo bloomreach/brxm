@@ -179,13 +179,14 @@ public class HstLinkTag extends ParamContainerTag {
        if(mountAlias != null) {
           mount = reqContext.getMount(mountAlias);
           if(mount == null) {
-              throw new JspException("Cannot resolve mount with alias '"+mountAlias+"' for current request. Cannot create a link for '"+path+"'");
+              log.warn("Cannot resolve mount with alias '{}' for current request. Cannot create a link for '{}'. Return page not found Link for current Mount", mountAlias, path);
+              this.link = reqContext.getHstLinkCreator().create(reqContext.getResolvedMount().getMount().getPageNotFound(), reqContext.getResolvedMount().getMount());
           }
        } else {
            mount = reqContext.getResolvedMount().getMount();
        }
        
-       if(this.hippoBean != null) {
+       if(this.link == null && this.hippoBean != null) {
             if(hippoBean.getNode() == null) {
                 log.warn("Cannot get a link for a detached node");
                 return EVAL_PAGE;
