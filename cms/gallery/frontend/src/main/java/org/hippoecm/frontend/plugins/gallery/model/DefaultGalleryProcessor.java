@@ -31,14 +31,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+import javax.jcr.*;
 import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.slf4j.Logger;
@@ -296,7 +292,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             throws RepositoryException {
         if (!node.hasNode(name)) {
             Node child = node.addNode(name);
-            child.setProperty(JcrConstants.JCR_DATA, ValueFactoryImpl.getInstance().createBinary(istream));
+            child.setProperty(JcrConstants.JCR_DATA, getValueFactory(node).createBinary(istream));
             child.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
             child.setProperty(JcrConstants.JCR_LASTMODIFIED, lastModified);
         }
@@ -306,9 +302,9 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             GalleryException {
         if (mimeType.startsWith("image")) {
             InputStream thumbNail = createThumbnail(resourceData, thumbnailSize, mimeType);
-            node.setProperty(JcrConstants.JCR_DATA, ValueFactoryImpl.getInstance().createBinary(thumbNail));
+            node.setProperty(JcrConstants.JCR_DATA, getValueFactory(node).createBinary(thumbNail));
         } else {
-            node.setProperty(JcrConstants.JCR_DATA, ValueFactoryImpl.getInstance().createBinary(resourceData));
+            node.setProperty(JcrConstants.JCR_DATA, getValueFactory(node).createBinary(resourceData));
         }
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
     }
@@ -324,7 +320,11 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
     public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
             throws GalleryException, RepositoryException {
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-        node.setProperty(JcrConstants.JCR_DATA, ValueFactoryImpl.getInstance().createBinary(data));
+        node.setProperty(JcrConstants.JCR_DATA, getValueFactory(node).createBinary(data));
         node.setProperty(JcrConstants.JCR_LASTMODIFIED, lastModified);
+    }
+
+    private ValueFactory getValueFactory(Node node) throws RepositoryException {
+        return ResourceHelper.getValueFactory(node);
     }
 }

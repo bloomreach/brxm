@@ -17,7 +17,6 @@ package org.hippoecm.frontend.editor.plugins.resource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.utils.ParseUtils;
@@ -30,6 +29,7 @@ import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
 /**
@@ -113,10 +113,9 @@ public class ResourceHelper {
      * @throws RepositoryException exception thrown when one of the properties or values could not be set
      */
     public static void setDefaultResourceProperties(Node node, String mimeType, InputStream inputStream) throws RepositoryException {
-        ValueFactory factory = ValueFactoryImpl.getInstance();
         try{
             node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-            node.setProperty(JcrConstants.JCR_DATA, factory.createBinary(inputStream));
+            node.setProperty(JcrConstants.JCR_DATA, getValueFactory(node).createBinary(inputStream));
             node.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
         } finally {
             IOUtils.closeQuietly(inputStream);
@@ -131,12 +130,11 @@ public class ResourceHelper {
      * @param inputStream data stream
      */
     public static void handlePdfAndSetHippoTextProperty(Node node, InputStream inputStream) {
-        ValueFactory factory = ValueFactoryImpl.getInstance();
         ByteArrayInputStream byteInputStream = null;
         try {
             String content = ParseUtils.getStringContent(inputStream, getTikaConfig(), MIME_TYPE_PDF);
             byteInputStream = new ByteArrayInputStream(content.getBytes());
-            node.setProperty(HippoNodeType.HIPPO_TEXT, factory.createBinary(byteInputStream));
+            node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(byteInputStream));
         } catch (IOException e) {
             log.warn("An exception has occurred while trying to create inputstream based on " +
                         "extracted text: {} ",e);
@@ -157,6 +155,19 @@ public class ResourceHelper {
      */
     private static TikaConfig getTikaConfig(){
         return TikaConfig.getDefaultConfig();
+    }
+
+    /**
+     * Gets the {@link ValueFactory} from the {@link Session}
+     * 
+     * @param node the {@link Node} from which to get the {@link Session}
+     *
+     * @return a {@link ValueFactory}
+     *
+     * @throws RepositoryException In case something goes wrong while trying to get the {@link Session} or {@link ValueFactory}
+     */
+    public static ValueFactory getValueFactory(Node node) throws RepositoryException {
+        return node.getSession().getValueFactory();
     }
 
 

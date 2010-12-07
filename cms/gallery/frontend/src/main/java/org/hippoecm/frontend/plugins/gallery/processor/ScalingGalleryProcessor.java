@@ -22,9 +22,8 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFactory;
 
-import org.apache.jackrabbit.value.ValueFactoryImpl;
+import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
@@ -111,7 +110,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             log.debug("Unknown image MIME type: {}, using raw data", mimeType);
         }
 
-        node.setProperty("jcr:data", ValueFactoryImpl.getInstance().createBinary(stored));
+        node.setProperty("jcr:data", ResourceHelper.getValueFactory(node).createBinary(stored));
         node.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, width);
         node.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, height);
     }
