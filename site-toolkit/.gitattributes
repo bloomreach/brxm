@@ -1793,6 +1793,7 @@ demosuite/site/src/main/webapp/images/rss.gif -text
 demosuite/site/src/main/webapp/images/volgende.gif -text
 demosuite/site/src/main/webapp/images/vorige.gif -text
 demosuite/site/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
+demosuite/site/src/main/webapp/javascript/simple-io.js -text
 dependencies/client-dependencies/pom.xml svneol=native#text/plain
 dependencies/pom.xml svneol=native#text/plain
 dependencies/server-dependencies-war/pom.xml svneol=native#text/plain

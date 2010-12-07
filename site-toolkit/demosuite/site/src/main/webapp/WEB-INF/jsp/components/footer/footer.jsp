@@ -17,11 +17,12 @@
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<hst:element name="script" var="yui3Elem">
+<hst:link var="simpleiopath" path="/javascript/simple-io.js"/>
+<hst:element name="script" var="simpleio">
   <hst:attribute name="type" value="text/javascript" />
-  <hst:attribute name="src" value="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js" />
+  <hst:attribute name="src" value="${simpleiopath}" />
 </hst:element>
-<hst:head-contribution keyHint="yui3" element="${yui3Elem}" />
+<hst:head-contribution keyHint="simpleio" element="${simpleio}" />
 
 <div id="ft">
   <p>
@@ -31,30 +32,18 @@
   </p>
 </div>
 
-<script language="javascript"> 
-YUI().use('io', 'node', 'async-queue',
-function(Y) {
-  var datetimePane = Y.one("#<hst:namespace/>datetime");
-  var asyncQueue = new Y.AsyncQueue();
-  var updateTimeout = 60000;
-
-  var onUpdateTimeComplete = function(id, o, args) {
-    datetimePane.set("innerHTML", o.responseText);
-    asyncQueue.add({fn: function() {}, timeout: updateTimeout}, updateTime);
-    asyncQueue.run();
-  };
-	  
-  var updateTime = function(e) {
-    var uri = '<hst:resourceURL/>';
-    var cfg = { 
-          on: { complete: onUpdateTimeComplete },
-          arguments: {},
-          method: "GET"
-    };
-    var request = Y.io(uri, cfg);
-  };
-  
-  asyncQueue.add({fn: function() {}, timeout: updateTimeout}, updateTime);
-  asyncQueue.run();
-});
+<script language="javascript">
+<!--
+function <hst:namespace/>mycb(req) {
+    var text = req.responseText;
+    if (text) {
+    	simpleio_objectbyid("<hst:namespace/>datetime").innerHTML = text;
+    }
+    window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
+}
+function <hst:namespace/>refreshDateTime() {
+	simpleio_sendrequest("<hst:resourceURL/>", <hst:namespace/>mycb, null);
+}
+window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
+//-->
 </script>
