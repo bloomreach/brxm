@@ -155,8 +155,19 @@ public class VirtualHostService implements VirtualHost {
         VirtualHostService attachPortMountToHost = this;
         
         if(nameSegments.length > 1) {
-            // if the fullName is for example www.hippoecm.org, then this items name is 'org', its child is hippoecm, and
-            // the last child is 'www'
+            // check whether the hostname is an ip adres as only ip adresses are allowed to contain a "." in their name. For example www.onehippo.org should be configured
+            // hierarchically
+            for(String segment : nameSegments){
+               try {
+                   Integer.parseInt(segment);
+               } catch (NumberFormatException e) {
+                   // one of the segments was not an integer. This is not a valid hostname
+                   throw new ServiceException("Node hst:virtualhost is not allowed to be '"+fullName+"'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
+               }
+            }
+            
+            // if the fullName is for example 127.0.0.1, then this items name is '1', its child is 0 which has a child 0, which has
+            // the last child is '127'
             this.name = nameSegments[nameSegments.length - 1];
             // add child host services
             int depth = nameSegments.length - 2;

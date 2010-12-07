@@ -341,9 +341,9 @@ public class HstFilter implements Filter {
     	    // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
     	    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             if(logger.isDebugEnabled()) {
-                logger.warn("MatchException for '"+req.getRequestURI()+"':" , e);
+                logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn("MatchException for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
             }
             res.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -351,9 +351,9 @@ public class HstFilter implements Filter {
            // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
             req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             if(logger.isDebugEnabled()) {
-                logger.warn("MatchException for '"+req.getRequestURI()+"':" , e);
+                logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn("MatchException for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
             }
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
