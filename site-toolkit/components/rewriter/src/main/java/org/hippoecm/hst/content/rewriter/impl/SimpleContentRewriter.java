@@ -80,10 +80,16 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         
         // strip off html & body tag
         String innerHTML = SimpleHtmlExtractor.getInnerHtml(html, "body", false);
-        if(innerHTML != null) {
-            html = innerHTML;
+        
+        if (innerHTML == null) {
+            return null;
         }
-        html = html.trim();
+        
+        html = innerHTML.trim();
+        
+        if ("".equals(html)) {
+            return "";
+        }
         
         int globalOffset = 0;
         while (html.indexOf(LINK_TAG, globalOffset) > -1) {

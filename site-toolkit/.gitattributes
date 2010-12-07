@@ -1509,6 +1509,7 @@ components/rewriter/pom.xml -text
 components/rewriter/src/main/java/org/hippoecm/hst/content/rewriter/impl/AbstractContentRewriter.java -text
 components/rewriter/src/main/java/org/hippoecm/hst/content/rewriter/impl/SimpleContentRewriter.java -text
 components/rewriter/src/main/java/org/hippoecm/hst/utils/SimpleHtmlExtractor.java -text
+components/rewriter/src/test/java/org/hippoecm/hst/content/rewriter/impl/TestSimpleContentRewriter.java -text
 components/rewriter/src/test/java/org/hippoecm/hst/utils/TestSimpleHtmlExtractor.java -text
 components/rewriter/src/test/resources/org/hippoecm/hst/utils/features.html -text
 components/security/pom.xml -text

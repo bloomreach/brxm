@@ -16,6 +16,7 @@
 package org.hippoecm.hst.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -37,6 +38,22 @@ public class TestSimpleHtmlExtractor {
         "</body>\n" + 
         "</html>";
     
+    private static final String EMPTY_BODY_HTML = 
+        "<html>\n" + 
+        "<head>\n" + 
+        "<title>Hello</title>\n" + 
+        "</head>\n" + 
+        "<body></body>\n" + 
+        "</html>";
+    
+    private static final String NULL_BODY_HTML = 
+        "<html>\n" + 
+        "<head>\n" + 
+        "<title>Hello</title>\n" + 
+        "</head>\n" + 
+        "<body/>\n" + 
+        "</html>";
+    
     @Test
     public void testInnerHtmlExtraction() throws Exception {
         String titleInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "title", false);
@@ -50,6 +67,11 @@ public class TestSimpleHtmlExtractor {
 
         bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "body", true);
         assertEquals("body content is not properly extracted: " + bodyInnerHtml.trim(), "<h1>Hello, World!</h1>", bodyInnerHtml.trim());
+        
+        bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(EMPTY_BODY_HTML, "body", false);
+        assertEquals("body content is not properly extracted: " + bodyInnerHtml, "", bodyInnerHtml);
+        bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(NULL_BODY_HTML, "body", false);
+        assertNull("body content is not properly extracted: " + bodyInnerHtml, bodyInnerHtml);
     }
     
     @Test
