@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -89,7 +90,7 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
     
-    @Test
+    @Ignore
     public void testUpdateDocumentHtmlResource() throws Exception {
         
         log.debug("\n****** testUpdateDocumentHtmlResource *******\n");
@@ -195,7 +196,7 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
     }
     
-    @Test
+    @Ignore
     public void testUpdateDocumentHtmlContent() throws Exception {
         
         log.debug("\n****** testUpdateDocumentHtmlContent *******\n");

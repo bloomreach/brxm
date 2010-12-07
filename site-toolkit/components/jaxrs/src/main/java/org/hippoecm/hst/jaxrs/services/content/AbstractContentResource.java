@@ -120,7 +120,7 @@ public abstract class AbstractContentResource extends AbstractResource {
             Mount targetMount = requestContext.getMount(targetMountAlias);
             
             String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetMount);
-            htmlRep.setContent(rewrittenHtml);
+            htmlRep.setContent(StringUtils.defaultString(rewrittenHtml));
             
             return htmlRep;
         } catch (Exception e) {
@@ -168,7 +168,7 @@ public abstract class AbstractContentResource extends AbstractResource {
                 public boolean bind(Object content, Node node) throws ContentNodeBindingException {
                     try {
                         Node htmlNode = node.getNode(htmlRelPath);
-                        htmlNode.setProperty("hippostd:content", html);
+                        htmlNode.setProperty("hippostd:content", StringUtils.defaultString(html));
                         return true;
                     } catch (RepositoryException e) {
                         throw new ContentNodeBindingException(e);
@@ -230,7 +230,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         Mount targetMount = requestContext.getMount(targetMountAlias);
         
         String rewrittenHtml = rewriter.rewrite(htmlBean.getContent(), htmlBean.getNode(), requestContext, targetMount);
-        return rewrittenHtml;
+        return StringUtils.defaultString(rewrittenHtml);
     }
     
     protected String updateHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String htmlContent) {
@@ -267,7 +267,7 @@ public abstract class AbstractContentResource extends AbstractResource {
                 public boolean bind(Object content, Node node) throws ContentNodeBindingException {
                     try {
                         Node htmlNode = node.getNode(htmlRelPath);
-                        htmlNode.setProperty("hippostd:content", html);
+                        htmlNode.setProperty("hippostd:content", StringUtils.defaultString(html));
                         return true;
                     } catch (RepositoryException e) {
                         throw new ContentNodeBindingException(e);
