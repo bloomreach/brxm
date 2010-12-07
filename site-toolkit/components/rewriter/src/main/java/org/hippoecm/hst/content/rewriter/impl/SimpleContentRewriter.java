@@ -17,6 +17,8 @@ package org.hippoecm.hst.content.rewriter.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
@@ -49,6 +51,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     protected static final String HREF_ATTR_NAME = "href=\"";
     protected static final String SRC_ATTR_NAME = "src=\"";
     protected static final String ATTR_END = "\"";
+    protected static final Pattern HTML_TAG_PATTERN = Pattern.compile("<html[\\s\\/>]", Pattern.CASE_INSENSITIVE);
+    protected static final Pattern BODY_TAG_PATTERN = Pattern.compile("<body[\\s\\/>]", Pattern.CASE_INSENSITIVE);
     
     public SimpleContentRewriter() {
         
@@ -82,6 +86,11 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         String innerHTML = SimpleHtmlExtractor.getInnerHtml(html, "body", false);
         
         if (innerHTML == null) {
+            // if the input html doesn't have html and body tag at all, return the input
+            if (html != null && !HTML_TAG_PATTERN.matcher(html).find() && !BODY_TAG_PATTERN.matcher(html).find()) {
+                return html;
+            }
+            
             return null;
         }
         
