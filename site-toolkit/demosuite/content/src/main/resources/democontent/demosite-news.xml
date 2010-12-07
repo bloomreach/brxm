@@ -422,7 +422,7 @@
          <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>demosite-new-2008-folder-id</sv:value>
+        <sv:value>demosite-new-2008-11-folder-id</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
