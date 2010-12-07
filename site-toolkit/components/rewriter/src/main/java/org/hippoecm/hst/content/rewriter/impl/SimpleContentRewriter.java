@@ -17,7 +17,6 @@ package org.hippoecm.hst.content.rewriter.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.jcr.InvalidItemStateException;
