@@ -159,6 +159,10 @@
       <sv:value>wicket.model</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
+    
+    <sv:property sv:name="frontend:properties" sv:type="String">
+      <sv:value>nodetypes</sv:value>
+    </sv:property>
 
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -275,6 +279,10 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.content</sv:value>
+        </sv:property>
+
+        <sv:property sv:name="nodetypes" sv:type="String">
+          <sv:value>${nodetypes}</sv:value>
         </sv:property>
 
         <!-- Wicket tree helper properties -->

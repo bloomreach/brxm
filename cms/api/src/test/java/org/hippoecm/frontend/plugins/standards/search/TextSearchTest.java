@@ -15,23 +15,22 @@
  */
 package org.hippoecm.frontend.plugins.standards.search;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
-import java.util.TreeSet;
+import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
+import org.junit.Test;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
+import java.util.Set;
+import java.util.TreeSet;
 
-import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TextSearchTest extends PluginTest {
     @SuppressWarnings("unused")
@@ -193,4 +192,41 @@ public class TextSearchTest extends PluginTest {
         assertTrue(paths.contains("/test/alternative/a/a"));
         assertTrue(paths.contains("/test/content/a/a"));
     }
+
+    @Test
+    public void queryWithNoConfiguredPrimaryType() throws Exception {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText("title");
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(., 'title')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
+
+    @Test
+    public void queryWithSingleConfiguredPrimaryType() throws Exception {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText("title");
+        tsb.setIncludePrimaryTypes(new String[]{"frontend:document"});
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//node()[@jcr:primaryType='frontend:document']" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(., 'title')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
+    @Test
+    public void queryWithMultipleConfiguredPrimaryType() throws Exception {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText("title");
+        tsb.setIncludePrimaryTypes(new String[]{"frontend:document", "backend:document"});
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//node()[@jcr:primaryType='frontend:document' or @jcr:primaryType='backend:document']" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(., 'title')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
 }

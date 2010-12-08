@@ -15,17 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.section;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.QueryResult;
-
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -58,6 +52,11 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.QueryResult;
 
 public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSection {
     @SuppressWarnings("unused")
@@ -108,20 +107,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         public boolean getDefaultFormProcessing() {
             return true;
         }
-
-//        @Override
-//        protected void onComponentTag(ComponentTag tag) {
-//            tag.put("onkeyup",
-//                    "Wicket.stopEvent(event);\n" +
-//                    "if (Wicket.Browser.isIE() || Wicket.Browser.isKHTML() || Wicket.Browser.isSafari()) {\n" +
-//                    "  if(wicketKeyCode(Wicket.fixEvent(event)) == 13) {\n" +
-//                    "    Wicket.$(" + getComponent().getMarkupId() + ").onchange();\n" +
-//                    "  }\n" +
-//                    "}\n" +
-//                    "return false;\n");
-//            tag.put("onchange", "Wicket.stopEvent(event); return false;");
-//            super.onComponentTag(tag);
-//        }
 
         public void onSubmit() {
         }
@@ -354,6 +339,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 sb.setScope(new String[] { scope });
                 sb.setWildcardSearch(true);
                 sb.setText(query);
+                sb.setIncludePrimaryTypes(getPluginConfig().getStringArray("nodetypes"));
                 collection.setSearchResult(sb.getResultModel());
             }
         }

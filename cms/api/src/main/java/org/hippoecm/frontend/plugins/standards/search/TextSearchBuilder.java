@@ -15,13 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.search;
 
-import java.util.StringTokenizer;
-
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.QueryResult;
-
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
@@ -29,6 +22,12 @@ import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.QueryResult;
+import java.util.StringTokenizer;
 
 public class TextSearchBuilder implements IClusterable {
     @SuppressWarnings("unused")
@@ -43,6 +42,7 @@ public class TextSearchBuilder implements IClusterable {
     private String text;
     private String[] scope;
 
+    private String[] includePrimaryTypes;
     private String[] excludedPrimaryTypes = {};
     private boolean wildcardSearch = false;
     private String ignoredChars = "*?";
@@ -59,6 +59,14 @@ public class TextSearchBuilder implements IClusterable {
     
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    /**
+     * Sets the JCR primary types to search for.
+     * @param includePrimaryTypes {@link String}[] of primary types
+     */
+    public void setIncludePrimaryTypes(final String[] includePrimaryTypes) {
+        this.includePrimaryTypes = includePrimaryTypes;
     }
 
     public void setExcludedPrimaryTypes(String[] excludedPrimaryTypes) {
@@ -83,8 +91,23 @@ public class TextSearchBuilder implements IClusterable {
             return null;
         }
 
+        StringBuilder querySb = getQueryStringBuilder();
+        if (querySb == null) return null;
+        
+        final String query = querySb.toString();
+        IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
+        return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel));
+    }
+
+    /**
+     * Makes the JCR Xpath query string
+     * @return StringBuilder that represents the JCR Xpath query
+     */
+    StringBuilder getQueryStringBuilder() {
+        String value = text.trim();
         boolean valid = false;
-        StringBuilder querySb = new StringBuilder("//element(*, hippo:harddocument)[");
+        StringBuilder querySb = new StringBuilder();
+        querySb.append(getIncludedPrimaryTypeFilter()).append('[');
         StringBuilder scope = getScope();
         boolean hasCriteria = (scope != null);
         if (scope != null) {
@@ -114,7 +137,7 @@ public class TextSearchBuilder implements IClusterable {
                 hasCriteria = true;
             }
             querySb.append("jcr:contains(., '");
-            querySb.append(tb.toString());
+            querySb.append(tb);
             valid = true;
             if (wildcardSearch) {
                 querySb.append('*');
@@ -126,10 +149,7 @@ public class TextSearchBuilder implements IClusterable {
         if (!valid) {
             return null;
         }
-        
-        final String query = querySb.toString();
-        IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
-        return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel));
+        return querySb;
     }
 
     private StringBuilder getScope() {
@@ -168,7 +188,7 @@ public class TextSearchBuilder implements IClusterable {
                     }
                     sb.append("hippo:paths = '").append(uuid).append('\'');
                 } else {
-                    log.info("Skipping non-referenceable node at path" + path);
+                    log.info("Skipping non-referenceable node at path {}", path);
                 }
             } catch (PathNotFoundException e) {
                 log.warn("Search path not found: " + path);
@@ -184,6 +204,32 @@ public class TextSearchBuilder implements IClusterable {
             return sb;
         }
         return null;
+    }
+
+    /**
+     * Translates the included primary type(s) to a filter for a JCR xpath query.
+     *
+     * @return xpath condition with configured document types or a clause that queries {@literal hippo:harddocument} and all its subtypes
+     *          if no document type filter is configured
+     */
+    private StringBuilder getIncludedPrimaryTypeFilter() {
+        StringBuilder sb = new StringBuilder();
+        if (includePrimaryTypes == null || includePrimaryTypes.length == 0) {
+            sb.append("//element(*, hippo:harddocument)");
+        } else {
+            sb.append("//node()[");
+
+            int i = 0, size = includePrimaryTypes.length;
+            while (i < size) {
+                if (i > 0) {
+                    sb.append(" or ");
+                }
+                sb.append("@jcr:primaryType='").append(includePrimaryTypes[i]).append('\'');
+                i++;
+            }
+            sb.append(']');
+        }
+        return sb;
     }
 
     public void setMinimalLength(int minimalLength) {

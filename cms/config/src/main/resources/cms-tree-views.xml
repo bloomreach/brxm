@@ -37,6 +37,7 @@
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
       <sv:value>workflow.enabled</sv:value>
+      <sv:value>nodetypes</sv:value>
     </sv:property>
 
     <sv:property sv:name="model.folder" sv:type="String">
@@ -74,6 +75,9 @@
       </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/documents</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodetypes" sv:type="String">
+          <sv:value>${nodetypes}</sv:value>
       </sv:property>
     </sv:node>
 
