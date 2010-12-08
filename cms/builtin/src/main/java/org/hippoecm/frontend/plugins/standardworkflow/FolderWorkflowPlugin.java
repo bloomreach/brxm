@@ -564,6 +564,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     uriModified = !uriModified;
                     if (!uriModified) {
                         uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(nameModel.getObject()));
+                    }else {
+                        target.focusComponent(uriComponent);
                     }
                     target.addComponent(AddDocumentDialog.this);
                 }
@@ -667,6 +669,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     if (!uriModified) {
                         uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
                                 nameModel.getObject()));
+                    } else {
+                        target.focusComponent(uriComponent);
                     }
                     target.addComponent(RenameDocumentDialog.this);
                 }

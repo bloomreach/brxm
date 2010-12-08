@@ -15,34 +15,50 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <p class="hippo-window-status" wicket:id="message">
-    </p>
+    <p class="hippo-window-status" wicket:id="message"></p>
     <table class="hippo-window-form">
-     <wicket:container wicket:id="name-url">
-       <tr>
-        <td><label><wicket:message key="name" /></label></td>
-		<td><input wicket:id="name"></input></td>
-       </tr>
-       <tr>
-        <td><label><wicket:message key="url" /></label></td>
-        <td><input wicket:id="url"></input><a wicket:id="uriAction"><span wicket:id="uriActionLabel">edit</span></a></td>
-       </tr>
+      <wicket:container wicket:id="name-url">
+      <tr>
+        <td>
+          <label><wicket:message key="name" /></label>
+        </td>
+		    <td>
+          <input wicket:id="name" class="hippo-form-input"/>
+        </td>
+      </tr>
+      <tr>
+        <td width="75">
+          <label><wicket:message key="url" /></label>
+        </td>
+        <td>
+          <input wicket:id="url" class="hippo-form-input"/>
+          <a wicket:id="uriAction" class="action">
+            <span wicket:id="uriActionLabel">edit</span>
+          </a>
+        </td>
+      </tr>
       </wicket:container>
       <tr wicket:id="prototype">
         <td>&nbsp;</td>
-		<td>
+        <td>
           <select class="hippo-form-select" wicket:id="select"></select>
         </td>
       </tr>
       <tr wicket:id="template">
-        <td><label><span wicket:id="typelabel"/></label></td>
+        <td>
+          <label><span wicket:id="typelabel"/></label>
+        </td>
         <td>
           <select class="hippo-form-select" wicket:id="select"></select>
         </td>
       </tr>
       <tr wicket:id="language">
-        <td><label><wicket:message key="language" /></label></td>
-        <td><select class="hippo-form-select" wicket:id="select"></select></td>
+        <td>
+          <label><wicket:message key="language" /></label>
+        </td>
+        <td>
+          <select class="hippo-form-select" wicket:id="select"></select>
+        </td>
       </tr>
     </table>
   </wicket:extend>

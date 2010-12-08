@@ -62,7 +62,7 @@ public class NameUriField extends WebMarkupContainer {
     }
     
     private Component createNameComponent(final PropertyModel<String> nameModel) {
-        FormComponent nameComponent = new TextField<String>("name", new IModel<String>() {
+        final FormComponent nameComponent = new TextField<String>("name", new IModel<String>() {
             private static final long serialVersionUID = 1L;
 
             public String getObject() {
@@ -122,6 +122,8 @@ public class NameUriField extends WebMarkupContainer {
                 if (!urlModified) {
                     urlModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
                             nameModel.getObject()));
+                } else {
+                    target.focusComponent(urlComponent);
                 }
                 target.addComponent(urlComponent);
             }
