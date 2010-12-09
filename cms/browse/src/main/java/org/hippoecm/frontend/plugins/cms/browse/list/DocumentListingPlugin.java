@@ -30,7 +30,7 @@ import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.slf4j.Logger;
@@ -85,7 +85,7 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
             ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), "icon");
             column.setComparator(new TypeComparator());
             column.setRenderer(new EmptyRenderer<Node>());
-            column.setAttributeModifier(new IconAttributeModifier());
+            column.setAttributeModifier(new DocumentTypeIconAttributeModifier());
             column.setCssClass("doclisting-icon");
             columns.add(column);
 

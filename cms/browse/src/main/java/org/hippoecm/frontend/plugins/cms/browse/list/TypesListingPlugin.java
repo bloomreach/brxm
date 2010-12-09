@@ -44,7 +44,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -118,7 +118,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
                 ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), "icon");
                 column.setComparator(new TypeComparator());
                 column.setRenderer(new EmptyRenderer<Node>());
-                column.setAttributeModifier(new IconAttributeModifier());
+                column.setAttributeModifier(new DocumentTypeIconAttributeModifier());
                 column.setCssClass("typeslisting-icon");
                 columns.add(column);
 

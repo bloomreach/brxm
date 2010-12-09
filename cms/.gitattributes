@@ -81,6 +81,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/Abstrac
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/AbstractNodeAttributeModifier.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/AbstractNodeRenderer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/CssClassAppender.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/DocumentTypeIconAttributeModifier.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/EmptyRenderer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/IListAttributeModifier.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/IListCellRenderer.java -text svneol=unset#text/plain

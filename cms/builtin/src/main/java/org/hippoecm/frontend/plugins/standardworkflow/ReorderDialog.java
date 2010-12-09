@@ -56,7 +56,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         private AttributeModifier cellModifier;
         private JcrNodeModel nodeModel;
 
-        ListItem(JcrNodeModel nodeModel, IconAttributeModifier attributeModifier) {
+        ListItem(JcrNodeModel nodeModel, DocumentTypeIconAttributeModifier attributeModifier) {
             this.nodeModel = nodeModel;
             try {
                 name = nodeModel.getNode().getName();
@@ -135,7 +135,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
 
         ReorderDataProvider(DocumentsProvider documents) {
             listItems = new LinkedList<ListItem>();
-            IconAttributeModifier attributeModifier = new IconAttributeModifier();
+            DocumentTypeIconAttributeModifier attributeModifier = new DocumentTypeIconAttributeModifier();
             Iterator<Node> it = documents.iterator(0, documents.size());
             while (it.hasNext()) {
                 IModel<Node> entry = documents.model(it.next());
@@ -203,7 +203,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             setOutputMarkupId(true);
 
             List<ListColumn<ListItem>> columns = new ArrayList<ListColumn<ListItem>>();
-            final IconAttributeModifier attributeModifier = new IconAttributeModifier();
+            final DocumentTypeIconAttributeModifier attributeModifier = new DocumentTypeIconAttributeModifier();
 
             ListColumn<ListItem> column = new ListColumn<ListItem>(new Model<String>(""), "icon");
             column.setRenderer(new EmptyRenderer<ListItem>());

@@ -25,6 +25,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.list.resolvers.TranslationRenderer;
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ public class TranslationsColumnProviderPlugin extends AbstractListColumnProvider
         //publication date
         column = new ListColumn<Node>(new ClassResourceModel("doclisting-translations", getClass()), "translations");
         column.setRenderer(new TranslationRenderer(getLocaleProvider()));
+        column.setAttributeModifier(new IconAttributeModifier());
         column.setCssClass("doclisting-translations");
         columns.add(column);
 
