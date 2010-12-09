@@ -20,12 +20,22 @@ if (Hippo.Translation.Queue == undefined) {
 
     Hippo.Translation.Queue = {
       tasks: [],
+      listeners: [],
 
       cleanup: function() {
         for (var i = 0; i < this.tasks.length;) {
           var handle = this.tasks[i];
           if (handle.completed) {
             this.tasks.splice(i, 1);
+          } else {
+            i++;
+          }
+        }
+
+        for (var i = 0; i < this.listeners.length;) {
+          var listener = this.listeners[i];
+          if (Ext.get(listener.id) == null) {
+            this.listeners.splice(i, 1);
           } else {
             i++;
           }
@@ -74,13 +84,25 @@ if (Hippo.Translation.Queue == undefined) {
             handle.completed = true;
           }
         }
+
+        for (var i = 0; i < this.listeners.length; i++) {
+          var listener = this.listeners[i];
+          var el = Ext.get(listener.id);
+          if (el != null) {
+            listener.callback.call(window);
+          }
+        }
+      },
+      
+      addListener: function(id, callback) {
+        this.listeners.push({ id: id, callback: callback });
       }
 
     };
 
   })();
   Wicket.Ajax.registerPreCallHandler(function() { 
-    Hippo.Translation.Queue.flush(); 
+    Hippo.Translation.Queue.flush();
   });
 }
 
@@ -94,6 +116,7 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
   constructor: function(config) {
     var self = this;
 
+    this.dirty = [];
     this.store = config.store;
     this.codecUrl = config.codecUrl;
 
@@ -116,13 +139,15 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
         } else if (window.ActiveXObject) {     // IE
             xhr = new ActiveXObject("Microsoft.XMLHTTP");
         }
-        xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), callback != undefined);
+        xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Wicket-Ajax', "true");
         xhr.onreadystatechange = function() {
           if (xhr.readyState == 4) {
             var obj = Ext.decode(xhr.responseText);
-            record.set('urlfr', obj.data);
+            if (!record.checked) {
+              record.set('urlfr', obj.data);
+            }
             if (callback != undefined) {
               callback.call(this);
             }
@@ -136,7 +161,7 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
       if (self.task == null) {
         self.task = Hippo.Translation.Queue.enqueue(function(callback) {
           self.task = null;
-          if (Ext.getCmp('urlfr').disabled) {
+          if (!rec.checked) {
             self.updateUrl(rec, field.getRawValue(), callback);
           } else {
             callback.call(this);
@@ -204,10 +229,7 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
           listeners: {
             rowselect: function(sm, row, rec) {
               if (rec != self.record) {
-                if (self.task != null) {
-                  Hippo.Translation.Queue.cancel(self.task);
-                  self.task = null;
-                }
+                self.task = null;
                 self.record = rec;
                 self.form.loadRecord(rec);
                 Ext.getCmp('url-edit').setDisabled(!self.record.get('editable'));
@@ -221,15 +243,12 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
         }),
         listeners: {
       		afteredit: function(e) {
-      			if (e.field == "namefr") {
-      			  if (self.task != null) {
-      			    Hippo.Translation.Queue.cancel(self.task);
-      			    self.task = null;
-      			  }
-              if (Ext.getCmp('urlfr').disabled) {
-                self.updateUrl(e.record, e.value);
-              }
-      			}
+      			if (e.field == "namefr" && self.task != null) {
+      			  // update url immediately with the current namefr value
+    			    Hippo.Translation.Queue.cancel(self.task);
+    			    self.task = null;
+    			    self.updateUrl(e.record, e.value);
+    			  }
       		}
       	}
       }, {
@@ -312,13 +331,37 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
   		cls: "x-panel-body"
 	  };
 
+    this.store.load();
+
+    this.saving = false;
     this.store.on('update', function(store, record, operation) {
       if (record == this.record) {
         Ext.getCmp('urlfr').setRawValue(record.get('urlfr'));
       }
+      if (this.saving && operation == Ext.data.Record.EDIT) {
+        if (this.dirty.indexOf(record) == -1) {
+          this.dirty.push(record);
+        }
+      }
     }.createDelegate(this));
-    
-    this.store.load();
+    this.store.on('beforewrite', function() {
+      this.saving = true;
+    }, this);
+    this.store.on('write', function() {
+      this.saving = false;
+    }, this);
+    this.on('render', function() {
+      var self = this;
+      Hippo.Translation.Queue.addListener(this.getEl().id, function() {
+        if (!self.saving) {
+          for (var i = 0; i < self.dirty.length; i++) {
+            self.dirty[i].markDirty();
+          }
+          self.dirty = [];
+          self.store.save();
+        }
+      });
+    }, this);
   },
 
   renderFolder: function(col, value, p, record){

@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
+import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
@@ -35,7 +36,11 @@ final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FolderTranslationStore.class);
-    
+
+    @SuppressWarnings("unused")
+    @ExtProperty
+    private boolean autoSave = false;
+
     private final List<FolderTranslation> translations;
 
     FolderTranslationStore(List<FolderTranslation> translations) {
