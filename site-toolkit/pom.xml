@@ -861,6 +861,7 @@
       </activation>
       <modules>
         <module>api</module>
+        <module>mock</module>
         <module>commons</module>
         <module>test</module>
         <module>content-beans</module>
