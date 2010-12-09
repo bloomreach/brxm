@@ -10,9 +10,9 @@
  */
 
 YAHOO.namespace('hippo');
+(function() {
+    if (!YAHOO.hippo.Widget) {
 
-if (!YAHOO.hippo.Widget) {
-    (function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
         YAHOO.hippo.WidgetManagerImpl = function() {
@@ -52,8 +52,6 @@ if (!YAHOO.hippo.Widget) {
                 }
                 if(!Lang.isUndefined(widget[this.NAME])) {
                    widget[this.NAME].update();
-                } else {
-                    //console.log('vaag')
                 }
             }
         };
@@ -62,40 +60,47 @@ if (!YAHOO.hippo.Widget) {
             this.id = id;
             this.config = config;
 
+            this.el = Dom.get(id);
+            this.unit = null;
+            this.helper = new YAHOO.hippo.DomHelper();
+
             if(Lang.isFunction(this.config.calculateWidthAndHeight)) {
                 this.calculateWidthAndHeight = this.config.calculateWidthAndHeight;
             }
 
-            this.helper = new YAHOO.hippo.DomHelper();
-
-            var el = Dom.get(id);
-            var me = this;
-            YAHOO.hippo.LayoutManager.registerResizeListener(el, this, function(sizes) {
-                me.resize(sizes);
+            var self = this;
+            YAHOO.hippo.LayoutManager.registerResizeListener(this.el, this, function(sizes) {
+                self.resize(sizes);
             }, false);
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(el, function() {
-                me.destroy();
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.el, function() {
+                self.destroy();
             }, this);
         };
 
         YAHOO.hippo.Widget.prototype = {
 
-        	  resize: function(sizes) {
+            resize: function(sizes) {
                 var dim = this.calculateWidthAndHeight(sizes);
                 this.performResize(dim);
-        	  },
+            },
 
             performResize : function(dim) {
-                var el = Dom.get(this.id);
-                Dom.setStyle(el, 'width', dim.width + 'px');
-                Dom.setStyle(el, 'height', dim.height + 'px');
+                this._setWidth(dim.width);
+                this._setHeight(dim.height);
+            },
+
+            _setWidth : function(w) {
+                Dom.setStyle(this.el, 'width', w + 'px');
+            },
+
+            _setHeight : function(h) {
+                Dom.setStyle(this.el, 'height', h + 'px');
             },
 
             render : function() {
-                var el = Dom.get(this.id);
-                var unit = YAHOO.hippo.LayoutManager.findLayoutUnit(el);
-                if(unit != null) {
-                    this.resize(unit.getSizes());
+                this.unit = YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
+                if(this.unit != null) {
+                    this.resize(this.unit.getSizes());
                 } else {
                     //We're not inside a layout unit to provide us with dimension details, thus the
                     //resize event will never be called. For providing an initial size, the first ancestor
@@ -111,22 +116,24 @@ if (!YAHOO.hippo.Widget) {
                 }
             },
 
-            update : function() {},
+            update : function() {
+                this.render();
+            },
 
             destroy : function() {
-                YAHOO.hippo.LayoutManager.unregisterResizeListener(Dom.get(this.id), this);
+                YAHOO.hippo.LayoutManager.unregisterResizeListener(this.el, this);
             },
 
             calculateWidthAndHeight : function(sizes) {
                 return {width: sizes.wrap.w, height: sizes.wrap.h};
             }
         }
-    })();
 
-    YAHOO.hippo.WidgetManager = new YAHOO.hippo.WidgetManagerImpl();
+        YAHOO.hippo.WidgetManager = new YAHOO.hippo.WidgetManagerImpl();
 
-    YAHOO.register("hippowidget", YAHOO.hippo.WidgetManager, {
-        version: "2.8.1", build: "19"
-    });
-}
+        YAHOO.register("hippowidget", YAHOO.hippo.WidgetManager, {
+            version: "2.8.1", build: "19"
+        });
+    }
+})();
 

@@ -29,6 +29,8 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
+import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
@@ -43,6 +45,8 @@ public class BrowserPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
 
     protected JcrTree tree;
+    private TreeWidgetBehavior treeBehavior;
+
     protected JcrTreeModel treeModel;
     protected IJcrTreeNode rootNode;
 
@@ -60,7 +64,7 @@ public class BrowserPlugin extends RenderPlugin {
     }
 
     protected JcrTree newTree(TreeModel treeModel) {
-        return new JcrTree("tree", treeModel) {
+        JcrTree tree = new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -71,6 +75,9 @@ public class BrowserPlugin extends RenderPlugin {
                 }
             }
         };
+
+        tree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
+        return tree;
     }
 
     protected void onSelect(final IJcrTreeNode treeNodeModel, AjaxRequestTarget target) {
@@ -81,6 +88,7 @@ public class BrowserPlugin extends RenderPlugin {
     public void render(PluginRequestTarget target) {
         super.render(target);
         tree.updateTree();
+        treeBehavior.render(target);
     }
 
     @Override
