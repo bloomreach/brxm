@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.mock;
+package org.hippoecm.hst.mock.content.beans.manager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,7 +51,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
  * based on its node type.
  * </P>
  * 
- * @version $Id$
+ * @version $Id: MockObjectBeanPersistenceManager.java 20882 2009-11-26 10:21:54Z aschrijvers $
  */
 public class MockObjectBeanPersistenceManager implements ObjectBeanPersistenceManager {
     

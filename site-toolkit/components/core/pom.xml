@@ -216,6 +216,13 @@
       <scope>test</scope>
     </dependency>
     
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-mock</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
     <!-- Hst test dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>

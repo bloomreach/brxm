@@ -33,7 +33,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.component.HstURLFactoryImpl;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.mock.MockHstComponentWindow;
+import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;

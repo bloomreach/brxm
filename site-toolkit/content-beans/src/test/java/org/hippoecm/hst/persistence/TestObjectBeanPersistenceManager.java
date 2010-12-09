@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
-import org.hippoecm.hst.mock.MockObjectBeanPersistenceManager;
+import org.hippoecm.hst.mock.content.beans.manager.MockObjectBeanPersistenceManager;
 import org.junit.Before;
 import org.junit.Test;
 

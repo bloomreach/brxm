@@ -1211,8 +1211,6 @@ client/src/test/java/org/hippoecm/hst/component/support/bean/ANewsArticleCompone
 client/src/test/java/org/hippoecm/hst/component/support/bean/ANewsArticleComponentParametersInfo.java -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/TestBaseHstComponent.java -text
 client/src/test/java/org/hippoecm/hst/component/support/spring/util/TestMetadataReaderClasspathResourceScanner.java -text
-client/src/test/java/org/hippoecm/hst/mock/MockHstRequest.java svneol=native#text/plain
-client/src/test/java/org/hippoecm/hst/mock/MockHstRequestContext.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/servlet/BinariesServletTest.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/test/AbstractClientSpringTestCase.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/utils/TestIsoLatin1AccentReplacer.java -text svneol=unset#text/plain
@@ -1412,7 +1410,6 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.jav
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValve.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
 components/core/src/test/java/org/hippoecm/hst/core/logging/TestLogEventBuffer.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/mock/MockHstComponentWindow.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigServlet.java svneol=native#text/plain
@@ -1614,8 +1611,6 @@ content-beans/src/test/java/org/hippoecm/hst/content/beans/query/TestHstFilters.
 content-beans/src/test/java/org/hippoecm/hst/content/beans/query/TestHstQuery.java -text svneol=unset#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/standard/HippoItemTest.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/standard/HippoResourceTest.java -text svneol=unset#text/plain
-content-beans/src/test/java/org/hippoecm/hst/content/beans/standard/MockHippoResource.java -text svneol=unset#text/plain
-content-beans/src/test/java/org/hippoecm/hst/mock/MockObjectBeanPersistenceManager.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/persistence/TestObjectBeanPersistenceManager.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/service/jcr/HippoStd.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/service/jcr/HippoStdImpl.java svneol=native#text/plain
@@ -1804,7 +1799,10 @@ dependencies/shared-dependencies/pom.xml svneol=native#text/plain
 dependencies/spring-dependencies/pom.xml svneol=native#text/plain
 mock/pom.xml -text
 mock/src/main/java/org/hippoecm/hst/mock/configuration/components/MockHstComponentConfiguration.java -text
+mock/src/main/java/org/hippoecm/hst/mock/content/beans/manager/MockObjectBeanPersistenceManager.java -text
+mock/src/main/java/org/hippoecm/hst/mock/content/beans/standard/MockHippoBean.java -text
 mock/src/main/java/org/hippoecm/hst/mock/content/beans/standard/MockHippoBeanIterator.java -text
+mock/src/main/java/org/hippoecm/hst/mock/content/beans/standard/MockHippoResourceBean.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/component/MockHstRequest.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/component/MockHstRequestBase.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/container/MockContainerConfiguration.java -text
