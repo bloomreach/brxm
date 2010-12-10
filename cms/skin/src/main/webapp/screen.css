@@ -883,6 +883,11 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   clear: left;
 }
 
+.hippo-toolbar a.hippo-toolbar-section-button .menu-action-icon,
+.hippo-toolbar a.hippo-toolbar-section-button .menu-action-text {
+  padding-top: 0;
+}
+
 .hippo-toolbar-section-button:hover {
   border: 1px solid #000000;
   color: black;
