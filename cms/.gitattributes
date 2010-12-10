@@ -92,6 +92,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/PathRen
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/PropertyRenderer.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/TypeRenderer.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/Perspective_it.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-128.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-24.png -text svneol=unset#image/png

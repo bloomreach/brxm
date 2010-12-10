@@ -93,7 +93,7 @@ public class LoginPlugin extends RenderPlugin {
         protected final DropDownChoice locale;
 
         // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
-        private List<String> locales = Arrays.asList(new String[] { "en", "fr", "nl" });
+        private List<String> locales = Arrays.asList(new String[] { "en", "fr", "nl", "it" });
 
         public String selectedLocale;
         protected final RequiredTextField usernameTextField;
