@@ -81,6 +81,20 @@
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>nouvo documento</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="simple">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -194,6 +208,20 @@
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>semplice</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 
   <sv:node sv:name="new-folder">
@@ -282,6 +310,34 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nouveau dossier</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>nouva cartella</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>nouva cartella</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -388,6 +444,20 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nouveau dossier</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:class" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>nouva cartella</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
