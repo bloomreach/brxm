@@ -34,24 +34,24 @@ import org.hippoecm.hst.mock.util.IteratorEnumeration;
 
 public class MockHstComponentWindow implements HstComponentWindow {
     
-    protected String name;
-    protected String referenceName;
-    protected String referenceNamespace;
-    protected HstComponent component;
-    protected String renderPath;
-    protected String namedRenderer;
-    protected String serveResourcePath;
-    protected String namedResourceServer;
-    protected String pageErrorHandlerClassName;
-    protected Map<String, String> parameters;
-    protected Map<String, String> localParameters;
-    protected HstComponentWindow parentWindow;
-    protected List<HstComponentException> componentExceptions = new LinkedList<HstComponentException>();
-    protected LinkedHashMap<String, HstComponentWindow> childWindowMap = new LinkedHashMap<String, HstComponentWindow>();
-    protected LinkedHashMap<String, HstComponentWindow> childWindowMapByReferenceName = new LinkedHashMap<String, HstComponentWindow>();
-    protected HstResponseState responseState;
-    protected HstComponentInfo componentInfo;
-    protected Map<String, Object> attributes;
+    private String name;
+    private String referenceName;
+    private String referenceNamespace;
+    private HstComponent component;
+    private String renderPath;
+    private String namedRenderer;
+    private String serveResourcePath;
+    private String namedResourceServer;
+    private String pageErrorHandlerClassName;
+    private Map<String, String> parameters;
+    private Map<String, String> localParameters;
+    private HstComponentWindow parentWindow;
+    private List<HstComponentException> componentExceptions = new LinkedList<HstComponentException>();
+    private LinkedHashMap<String, HstComponentWindow> childWindowMap = new LinkedHashMap<String, HstComponentWindow>();
+    private LinkedHashMap<String, HstComponentWindow> childWindowMapByReferenceName = new LinkedHashMap<String, HstComponentWindow>();
+    private HstResponseState responseState;
+    private HstComponentInfo componentInfo;
+    private Map<String, Object> attributes;
 
     public void addComponentExcpetion(HstComponentException e) {
         componentExceptions.add(e);

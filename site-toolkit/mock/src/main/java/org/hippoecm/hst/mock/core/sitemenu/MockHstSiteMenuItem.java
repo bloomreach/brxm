@@ -16,6 +16,9 @@
 package org.hippoecm.hst.mock.core.sitemenu;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +37,16 @@ public class MockHstSiteMenuItem implements HstSiteMenuItem {
 
     private String name;
     private boolean isExpanded;
+    private HstSiteMenuItem parentItem;
+    private HstSiteMenu hstSiteMenu;
+    private HstLink hstLink;
+    private String externalLink;
+    private boolean repositoryBased;
+    private int depth;
+    private boolean selected;
+    private Map<String, String> parameters = new LinkedHashMap<String, String>();
+    private Map<String, String> localParameters = new LinkedHashMap<String, String>();
+    private Map<String, Object> properties = new HashMap<String, Object>();
 
     public MockHstSiteMenuItem(String name) {
         this(name, false);
@@ -48,74 +61,130 @@ public class MockHstSiteMenuItem implements HstSiteMenuItem {
         return siteMenuItems;
     }
 
-    public HstSiteMenuItem getParentItem() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public HstSiteMenu getHstSiteMenu() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
     public String getName() {
         return name;
-    }
-
-    public HstLink getHstLink() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public String getExternalLink() {
-        throw new UnsupportedOperationException("Not implemented");
     }
 
     public ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public boolean isExpanded() {
-        return isExpanded;
-    }
-
     public Map<String, Object> getProperties() {
-        throw new UnsupportedOperationException("Not implemented");
+        return Collections.unmodifiableMap(properties);
     }
 
-    public boolean isRepositoryBased() {
-        throw new UnsupportedOperationException("Not implemented");
+    public void putAllProperties(Map<String, Object> properties) {
+        this.properties.clear();
+        this.properties.putAll(properties);
     }
-
-    public int getDepth() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public boolean isSelected() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    // Methods supporting org.hippoecm.hst.mock configuration
-
-    public MockHstSiteMenuItem addSiteMenuItem(String name) {
-        return addSiteMenuItem(new MockHstSiteMenuItem(name, false));
-    }
-
-    public MockHstSiteMenuItem addSiteMenuItem(HstSiteMenuItem siteMenuItem) {
+    
+    public HstSiteMenuItem addSiteMenuItem(HstSiteMenuItem siteMenuItem) {
         this.siteMenuItems.add(siteMenuItem);
         return this;
     }
 
-    public String getLocalParameter(String name) {
-        throw new UnsupportedOperationException("Not implemented");
+    public boolean isExpanded() {
+        return isExpanded;
     }
 
-    public Map<String, String> getLocalParameters() {
-        throw new UnsupportedOperationException("Not implemented");
+    public void setExpanded(boolean isExpanded) {
+        this.isExpanded = isExpanded;
+    }
+
+    public HstSiteMenuItem getParentItem() {
+        return parentItem;
+    }
+
+    public void setParentItem(HstSiteMenuItem parentItem) {
+        this.parentItem = parentItem;
+    }
+
+    public HstSiteMenu getHstSiteMenu() {
+        return hstSiteMenu;
+    }
+
+    public void setHstSiteMenu(HstSiteMenu hstSiteMenu) {
+        this.hstSiteMenu = hstSiteMenu;
+    }
+
+    public HstLink getHstLink() {
+        return hstLink;
+    }
+
+    public void setHstLink(HstLink hstLink) {
+        this.hstLink = hstLink;
+    }
+
+    public String getExternalLink() {
+        return externalLink;
+    }
+
+    public void setExternalLink(String externalLink) {
+        this.externalLink = externalLink;
+    }
+
+    public boolean isRepositoryBased() {
+        return repositoryBased;
+    }
+
+    public void setRepositoryBased(boolean repositoryBased) {
+        this.repositoryBased = repositoryBased;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public List<HstSiteMenuItem> getSiteMenuItems() {
+        return siteMenuItems;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getParameter(String name) {
-        throw new UnsupportedOperationException("Not implemented");
+        return parameters.get(name);
     }
 
     public Map<String, String> getParameters() {
-        throw new UnsupportedOperationException("Not implemented");
+        return Collections.unmodifiableMap(parameters);
     }
+
+    public void addParameter(String name, String value) {
+        parameters.put(name, value);
+    }
+    
+    public void removeParameter(String name) {
+        parameters.remove(name);
+    }
+    
+    public String getLocalParameter(String name) {
+        return localParameters.get(name);
+    }
+
+    public Map<String, String> getLocalParameters() {
+        return Collections.unmodifiableMap(localParameters);
+    }
+
+    public void addLocalParameter(String name, String value) {
+        localParameters.put(name, value);
+    }
+    
+    public void removeLocalParameter(String name) {
+        localParameters.remove(name);
+    }
+
 }

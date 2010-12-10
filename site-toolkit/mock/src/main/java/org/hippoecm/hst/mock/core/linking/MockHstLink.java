@@ -29,6 +29,9 @@ public class MockHstLink implements HstLink {
 
     private String path;
     private boolean notFound;
+    private boolean containerResource;
+    private Mount mount;
+    private String subPath;
 
     public MockHstLink() {
         this(null);
@@ -47,11 +50,11 @@ public class MockHstLink implements HstLink {
     }
 
     public boolean getContainerResource() {
-        throw new UnsupportedOperationException("Not implemented");
+        return containerResource;
     }
 
     public void setContainerResource(boolean containerResource) {
-        throw new UnsupportedOperationException("Not implemented");
+        this.containerResource = containerResource;
     }
 
     public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
@@ -67,7 +70,7 @@ public class MockHstLink implements HstLink {
     }
 
     public boolean isNotFound() {
-        return false;
+        return notFound;
     }
 
     public void setNotFound(boolean notFound) {
@@ -75,15 +78,19 @@ public class MockHstLink implements HstLink {
     }
 
     public Mount getMount() {
-        throw new UnsupportedOperationException("Not implemented");
+        return mount;
+    }
+    
+    public void setMount(Mount mount) {
+        this.mount = mount;
     }
 
     public String getSubPath() {
-        throw new UnsupportedOperationException("Not implemented");
+        return subPath;
     }
-
+    
     public void setSubPath(String subPath) {
-        throw new UnsupportedOperationException("Not implemented");
+        this.subPath = subPath;
     }
 
     public String toUrlForm(HstRequestContext requestContext, boolean external) {

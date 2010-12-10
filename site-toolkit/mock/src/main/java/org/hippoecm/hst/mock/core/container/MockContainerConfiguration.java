@@ -29,7 +29,7 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
  */
 public class MockContainerConfiguration implements ContainerConfiguration {
 
-    private final Map<Class<?>, Map<String, Object>> properties = new HashMap<Class<?>, Map<String, Object>>();
+    private Map<Class<?>, Map<String, Object>> properties = new HashMap<Class<?>, Map<String, Object>>();
 
     public boolean containsKey(String key) {
         for (Class<?> aClass : properties.keySet()) {

@@ -15,19 +15,21 @@
  */
 package org.hippoecm.hst.mock.core.sitemenu;
 
-import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 /**
  * Mock implementation of {@link org.hippoecm.hst.core.sitemenu.HstSiteMenus}.
  */
 public class MockHstSiteMenus implements HstSiteMenus {
 
-    private final Map<String, HstSiteMenu> menuNamesToSiteMenus = new HashMap<String, HstSiteMenu>();
+    private static final long serialVersionUID = 1L;
+    
+    private Map<String, HstSiteMenu> menuNamesToSiteMenus = new HashMap<String, HstSiteMenu>();
 
     public Map<String, HstSiteMenu> getSiteMenus() {
         return Collections.unmodifiableMap(menuNamesToSiteMenus);
@@ -37,9 +39,11 @@ public class MockHstSiteMenus implements HstSiteMenus {
         return menuNamesToSiteMenus.get(name);
     }
 
-    // Methods supporting org.hippoecm.hst.mock configuration
-
     public void addSiteMenu(String name, HstSiteMenu menu) {
         menuNamesToSiteMenus.put(name, menu);
+    }
+    
+    public void removeSiteMenu(String name) {
+        menuNamesToSiteMenus.remove(name);
     }
 }

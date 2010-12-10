@@ -17,6 +17,7 @@ package org.hippoecm.hst.mock.core.request;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -39,32 +40,40 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 public class MockHstRequestContext implements HstRequestContext {
     
-    protected Hashtable<String, Object> attributes = new Hashtable<String, Object>();
-    protected ServletContext servletContext;
-    protected Session session;
-    protected HstContainerURL baseURL;
-    protected String contextNamespace;
-    protected HstURLFactory urlFactory;
-    protected ResolvedMount resolvedMount;
-    protected ResolvedSiteMapItem resolvedSiteMapItem;
-    protected HstLinkCreator linkCreator;
-    protected HstSiteMapMatcher siteMapMatcher;
-    protected HstSiteMenus siteMenus;
-    protected HstQueryManagerFactory hstQueryManagerFactory;
-    protected Credentials defaultCredentials;
-    protected ContainerConfiguration containerConfiguration;
-    protected ContextCredentialsProvider contextCredentialsProvider;
-    protected Subject subject;
-    protected Locale preferredLocale;
-    protected List<Locale> locales;
-    protected String pathSuffix;
+    private Hashtable<String, Object> attributes = new Hashtable<String, Object>();
+    private ServletContext servletContext;
+    private Session session;
+    private HstContainerURL baseURL;
+    private String contextNamespace;
+    private HstURLFactory urlFactory;
+    private ResolvedMount resolvedMount;
+    private ResolvedSiteMapItem resolvedSiteMapItem;
+    private HstLinkCreator linkCreator;
+    private HstSiteMapMatcher siteMapMatcher;
+    private HstSiteMenus siteMenus;
+    private HstQueryManagerFactory hstQueryManagerFactory;
+    private Credentials defaultCredentials;
+    private ContainerConfiguration containerConfiguration;
+    private ContextCredentialsProvider contextCredentialsProvider;
+    private Subject subject;
+    private Locale preferredLocale;
+    private List<Locale> locales;
+    private String pathSuffix;
+    private VirtualHost virtualHost;
+    private boolean embeddedRequest;
+    private boolean portletRequest;
+    private String embeddingContextPath;
+    private ResolvedMount resolvedEmbeddingMount;
+    private String targetComponentPath;
+    private Map<String, Mount> aliasMountMap = new HashMap<String, Mount>();
+    private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
 
     public boolean isPreview() {
     	return this.resolvedMount.getMount().isPreview();
@@ -190,18 +199,28 @@ public class MockHstRequestContext implements HstRequestContext {
         this.containerConfiguration = containerConfiguration;
     }
 
-
     public VirtualHost getVirtualHost() {
-     
-        return null;
+        return virtualHost;
+    }
+    
+    public void setVirtualHost(VirtualHost virtualHost) {
+        this.virtualHost = virtualHost;
     }
 
     public boolean isEmbeddedRequest() {
-        return false;
+        return embeddedRequest;
+    }
+    
+    public void setEmbeddedRequest(boolean embeddedRequest) {
+        this.embeddedRequest = embeddedRequest;
     }
 
     public boolean isPortletContext() {
-        return false;
+        return portletRequest;
+    }
+    
+    public void setPortletContext(boolean portletRequest) {
+        this.portletRequest = portletRequest;
     }
     
     public ContextCredentialsProvider getContextCredentialsProvider() {
@@ -213,27 +232,51 @@ public class MockHstRequestContext implements HstRequestContext {
     }
 
     public String getEmbeddingContextPath() {
-    	return null;
+    	return embeddingContextPath;
+    }
+    
+    public void setEmbeddingContextPath(String embeddingContextPath) {
+        this.embeddingContextPath = embeddingContextPath;
     }
     
 	public ResolvedMount getResolvedEmbeddingMount() {
-		return null;
+		return resolvedEmbeddingMount;
 	}
+	
+    public void setResolvedEmbeddingMount(ResolvedMount resolvedEmbeddingMount) {
+        this.resolvedEmbeddingMount = resolvedEmbeddingMount;
+    }
 
 	public String getTargetComponentPath() {
-		return null;
+		return targetComponentPath;
+	}
+	
+	public void setTargetComponentPath(String targetComponentPath) {
+	    this.targetComponentPath = targetComponentPath;
 	}
 
     public Subject getSubject() {
         return subject;
     }
     
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+    
     public Locale getPreferredLocale() {
         return preferredLocale;
     }
     
+    public void setPreferredLocale(Locale preferredLocale) {
+        this.preferredLocale = preferredLocale;
+    }
+    
     public Enumeration<Locale> getLocales() {
         return Collections.enumeration(locales);
+    }
+    
+    public void setLocales(List<Locale> locales) {
+        this.locales = locales;
     }
     
     public void setPathSuffix(String pathSuffix) {
@@ -245,10 +288,39 @@ public class MockHstRequestContext implements HstRequestContext {
     }
 
     public Mount getMount(String alias) {
+        if (aliasMountMap.containsKey(alias)) {
+            return aliasMountMap.get(alias);
+        }
+        
         return null;
+    }
+    
+    public void addMount(String alias, Mount mount) {
+        aliasMountMap.put(alias, mount);
     }
 
+    public void removeMount(String alias) {
+        aliasMountMap.remove(alias);
+    }
+    
     public Mount getMount(String type, String alias) {
+        String key = alias + '\uFFFF' + type;
+        
+        if (typeAndAliasMountMap.containsKey(key)) {
+            return typeAndAliasMountMap.get(key);
+        }
+        
         return null;
     }
+    
+    public void addMount(String type, String alias, Mount mount) {
+        String key = alias + '\uFFFF' + type;
+        typeAndAliasMountMap.put(key, mount);
+    }
+
+    public void removeMount(String type, String alias) {
+        String key = alias + '\uFFFF' + type;
+        typeAndAliasMountMap.remove(key);
+    }
+    
 }

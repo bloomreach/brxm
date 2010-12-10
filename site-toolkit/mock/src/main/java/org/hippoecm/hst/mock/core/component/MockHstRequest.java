@@ -23,13 +23,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class MockHstRequest extends MockHstRequestBase implements HstRequest {
 
-    protected String referencePath;
-    protected Map<String, Map<String, Object>> attributeMap = new HashMap<String, Map<String, Object>>();
-    protected Map<String, Map<String, String []>> parameterMap = new HashMap<String, Map<String, String []>>();
-    protected HstRequestContext requestContext;
-    protected String resourceId;
-    protected String referenceNamespace;
-    protected String lifecyclePhase;
+    private String referencePath;
+    private Map<String, Map<String, Object>> attributeMap = new HashMap<String, Map<String, Object>>();
+    private Map<String, Map<String, String []>> parameterMap = new HashMap<String, Map<String, String []>>();
+    private HstRequestContext requestContext;
+    private String resourceId;
+    private String referenceNamespace;
+    private String lifecyclePhase;
     
     public void setReferencePath(String referencePath) {
         this.referencePath = referencePath;

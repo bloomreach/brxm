@@ -30,14 +30,35 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
  */
 public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
 
-    private final Map<String, String> parameters = new HashMap<String, String>();
+    private String relativeContentPath;
+    private String pathInfo;
+    private Map<String, String> parameters = new HashMap<String, String>();
+    private Map<String, String> localParameters = new HashMap<String, String>();
+    private HstSiteMapItem hstSiteMapItem;
+    private int statusCode;
+    private int errorCode;
+    private Set<String> roles;
+    private Set<String> users;
+    private boolean secured;
+    private HstComponentConfiguration hstComponentConfiguration;
+    private HstComponentConfiguration portletHstComponentConfiguration;
+    private String namedPipeline;
+    private ResolvedMount resolvedMount;
 
     public String getRelativeContentPath() {
-        throw new UnsupportedOperationException("Not implemented");
+        return relativeContentPath;
+    }
+    
+    public void setRelativeContentPath(String relativeContentPath) {
+        this.relativeContentPath = relativeContentPath;
     }
 
     public String getPathInfo() {
-        throw new UnsupportedOperationException("Not implemented");
+        return pathInfo;
+    }
+
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
     }
 
     public String getParameter(String name) {
@@ -45,60 +66,123 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
     }
 
     public Properties getParameters() {
-        throw new UnsupportedOperationException("Not implemented");
+        Properties props = new Properties();
+        
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            props.setProperty(entry.getKey(), entry.getValue());
+        }
+        
+        return props;
     }
-
-    public HstSiteMapItem getHstSiteMapItem() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public int getStatusCode() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public int getErrorCode() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public Set<String> getRoles() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public boolean isSecured() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public HstComponentConfiguration getHstComponentConfiguration() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public HstComponentConfiguration getPortletHstComponentConfiguration() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public String getLocalParameter(String arg0) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public Properties getLocalParameters() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    // Mock methods
 
     public void addParameter(String key, String value) {
         parameters.put(key, value);
     }
 
-    public String getNamedPipeline() {
-        throw new UnsupportedOperationException("Not implemented");
+    public void removeParameter(String key) {
+        parameters.remove(key);
+    }
+    
+    public String getLocalParameter(String name) {
+        return localParameters.get(name);
     }
 
-    public ResolvedMount getResolvedMount() {
-        throw new UnsupportedOperationException("Not implemented");
+    public Properties getLocalParameters() {
+        Properties props = new Properties();
+        
+        for (Map.Entry<String, String> entry : localParameters.entrySet()) {
+            props.setProperty(entry.getKey(), entry.getValue());
+        }
+        
+        return props;
+    }
+
+    public void addLocalParameter(String key, String value) {
+        localParameters.put(key, value);
+    }
+
+    public void removeLocalParameter(String key) {
+        localParameters.remove(key);
+    }
+    
+    public HstSiteMapItem getHstSiteMapItem() {
+        return hstSiteMapItem;
+    }
+
+    public void setHstSiteMapItem(HstSiteMapItem hstSiteMapItem) {
+        this.hstSiteMapItem = hstSiteMapItem;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     public Set<String> getUsers() {
-        throw new UnsupportedOperationException("Not implemented");
+        return users;
     }
+
+    public void setUsers(Set<String> users) {
+        this.users = users;
+    }
+
+    public boolean isSecured() {
+        return secured;
+    }
+
+    public void setSecured(boolean secured) {
+        this.secured = secured;
+    }
+
+    public HstComponentConfiguration getHstComponentConfiguration() {
+        return hstComponentConfiguration;
+    }
+
+    public void setHstComponentConfiguration(HstComponentConfiguration hstComponentConfiguration) {
+        this.hstComponentConfiguration = hstComponentConfiguration;
+    }
+
+    public HstComponentConfiguration getPortletHstComponentConfiguration() {
+        return portletHstComponentConfiguration;
+    }
+
+    public void setPortletHstComponentConfiguration(HstComponentConfiguration portletHstComponentConfiguration) {
+        this.portletHstComponentConfiguration = portletHstComponentConfiguration;
+    }
+
+    public String getNamedPipeline() {
+        return namedPipeline;
+    }
+
+    public void setNamedPipeline(String namedPipeline) {
+        this.namedPipeline = namedPipeline;
+    }
+
+    public ResolvedMount getResolvedMount() {
+        return resolvedMount;
+    }
+
+    public void setResolvedMount(ResolvedMount resolvedMount) {
+        this.resolvedMount = resolvedMount;
+    }
+    
 }

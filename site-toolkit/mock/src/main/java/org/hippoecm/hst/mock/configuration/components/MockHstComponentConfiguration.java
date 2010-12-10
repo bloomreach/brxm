@@ -30,43 +30,65 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 public class MockHstComponentConfiguration implements HstComponentConfiguration {
 
     private String id;
+    private String name;
     private SortedMap<String, HstComponentConfiguration> componentConfigs =
             new TreeMap<String, HstComponentConfiguration>();
     private Map<String,String> parameters = new HashMap<String,String>();
+    private Map<String,String> localParameters = new HashMap<String,String>();
+    private String canonicalStoredLocation;
+    private HstComponentConfiguration parent;
+    private String referenceName;
+    private String renderPath;
+    private String serveResourcePath;
+    private String componentClassName;
+    private String canonicalIdentifier;
+    private Type componentType;
+    private String namedRenderer;
+    private String namedResourceServer;
+    private String pageErrorHandlerClassName;
+    private String xType;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
     }
 
-    public HstComponentConfiguration getChildByName(String arg0) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public String getCanonicalStoredLocation() {
-        throw new UnsupportedOperationException("Not implemented");
+    public HstComponentConfiguration getChildByName(String name) {
+        return componentConfigs.get(name);
     }
 
     public SortedMap<String, HstComponentConfiguration> getChildren() {
         return componentConfigs;
     }
     
-    public MockHstComponentConfiguration addChild(MockHstComponentConfiguration config){
+    public HstComponentConfiguration addChild(HstComponentConfiguration config){
         componentConfigs.put(config.getId(), config);
         return config;
     }
     
-    public void addChildren(MockHstComponentConfiguration... config){
+    public void addChildren(MockHstComponentConfiguration ... config){
         for (MockHstComponentConfiguration mockHstComponentConfiguration : config) {
             addChild(mockHstComponentConfiguration);
         }
     }
 
-    public String getLocalParameter(String arg0) {
-        throw new UnsupportedOperationException("Not implemented");
+    public String getCanonicalStoredLocation() {
+        return canonicalStoredLocation;
+    }
+    
+    public void setCanonicalStoredLocation(String canonicalStoredLocation) {
+        this.canonicalStoredLocation = canonicalStoredLocation;
+    }
+
+    public String getLocalParameter(String name) {
+        return localParameters.get(name);
+    }
+    
+    public void setLocalParameter(String name, String value) {
+        localParameters.put(name, value);
     }
 
     public Map<String, String> getLocalParameters() {
-        throw new UnsupportedOperationException("Not implemented");
+        return localParameters;
     }
 
     public String getParameter(String name) {
@@ -78,27 +100,47 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     }
 
     public Map<String, String> getParameters() {
-        throw new UnsupportedOperationException("Not implemented");
+        return parameters;
     }
 
     public HstComponentConfiguration getParent() {
-        throw new UnsupportedOperationException("Not implemented");
+        return parent;
+    }
+    
+    public void setParent(HstComponentConfiguration parent) {
+        this.parent = parent;
     }
 
     public String getReferenceName() {
-        throw new UnsupportedOperationException("Not implemented");
+        return referenceName;
+    }
+    
+    public void setReferenceName(String referenceName) {
+        this.referenceName = referenceName;
     }
 
     public String getRenderPath() {
-        throw new UnsupportedOperationException("Not implemented");
+        return renderPath;
+    }
+    
+    public void setRenderPath(String renderPath) {
+        this.renderPath = renderPath;
     }
 
     public String getServeResourcePath() {
-        throw new UnsupportedOperationException("Not implemented");
+        return serveResourcePath;
+    }
+    
+    public void setServeResourcePath(String serveResourcePath) {
+        this.serveResourcePath = serveResourcePath;
     }
 
     public String getComponentClassName() {
-        throw new UnsupportedOperationException("Not implemented");
+        return componentClassName;
+    }
+    
+    public void setComponentClassName(String componentClassName) {
+        this.componentClassName = componentClassName;
     }
 
     public String getId() {
@@ -106,35 +148,62 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     }
     
     public void setId(String id){
-        this.id=id;
+        this.id = id;
     }
 
     public String getName() {
-        throw new UnsupportedOperationException("Not implemented");
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCanonicalIdentifier() {
-        throw new UnsupportedOperationException("Not implemented");
+        return canonicalIdentifier;
+    }
+
+    public void setCanonicalIdentifier(String canonicalIdentifier) {
+        this.canonicalIdentifier = canonicalIdentifier;
     }
 
     public Type getComponentType() {
-        throw new UnsupportedOperationException("Not implemented");
+        return componentType;
+    }
+    
+    public void setComponentType(Type componentType) {
+        this.componentType = componentType;
     }
 
     public String getNamedRenderer() {
-        throw new UnsupportedOperationException("Not implemented");
+        return namedRenderer;
+    }
+    
+    public void setNamedRenderer(String namedRenderer) {
+        this.namedRenderer = namedRenderer;
     }
 
     public String getNamedResourceServer() {
-        throw new UnsupportedOperationException("Not implemented");
+        return namedResourceServer;
+    }
+
+    public void setNamedResourceServer(String namedResourceServer) {
+        this.namedResourceServer = namedResourceServer;
     }
 
     public String getPageErrorHandlerClassName() {
-        throw new UnsupportedOperationException("Not implemented");
+        return pageErrorHandlerClassName;
+    }
+
+    public void setPageErrorHandlerClassName(String pageErrorHandlerClassName) {
+        this.pageErrorHandlerClassName = pageErrorHandlerClassName;
     }
 
     public String getXType() {
-        throw new UnsupportedOperationException("Not implemented");
+        return xType;
     }
     
+    public void setXType(String xType) {
+        this.xType = xType;
+    }
 }

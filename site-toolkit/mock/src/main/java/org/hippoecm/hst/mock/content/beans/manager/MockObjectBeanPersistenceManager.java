@@ -55,8 +55,8 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
  */
 public class MockObjectBeanPersistenceManager implements ObjectBeanPersistenceManager {
     
-    protected Map<String, Object> pathToObjectMap = new HashMap<String, Object>();
-    protected Map<Object, String> objectToPathMap = new HashMap<Object, String>();
+    private Map<String, Object> pathToObjectMap = new HashMap<String, Object>();
+    private Map<Object, String> objectToPathMap = new HashMap<Object, String>();
     
     public Object getObject(String absPath) throws ObjectBeanPersistenceException {
         Object object = pathToObjectMap.get(absPath);

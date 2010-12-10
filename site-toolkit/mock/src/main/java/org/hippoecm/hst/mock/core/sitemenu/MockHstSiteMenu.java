@@ -15,14 +15,14 @@
  */
 package org.hippoecm.hst.mock.core.sitemenu;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Mock implementation of {@link org.hippoecm.hst.core.sitemenu.HstSiteMenu}.
@@ -31,45 +31,75 @@ import java.util.List;
 public class MockHstSiteMenu implements HstSiteMenu {
 
     private List<HstSiteMenuItem> siteMenuItems = new ArrayList<HstSiteMenuItem>();
-
-    public HstSiteMenuItem getSelectSiteMenuItem() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
+    private HstSiteMenus hstSiteMenus;
+    private HstSiteMenuItem deepestExpandedItem;
+    private HstSiteMenuItem selectSiteMenuItem;
+    private EditableMenu editableMenu;
+    private String name;
+    private boolean expanded;
+    
     public List<HstSiteMenuItem> getSiteMenuItems() {
         return Collections.unmodifiableList(siteMenuItems);
     }
-
-    public HstSiteMenus getHstSiteMenus() {
-        throw new UnsupportedOperationException("Not implemented");
+    
+    public void setSiteMenuItems(List<HstSiteMenuItem> siteMenuItems) {
+        this.siteMenuItems = siteMenuItems;
     }
-
-    public HstSiteMenuItem getDeepestExpandedItem() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public EditableMenu getEditableMenu() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public String getName() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public boolean isExpanded() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public MockHstSiteMenu addSiteMenuItem(String name, boolean isExpanded) {
-        addSiteMenuItem(new MockHstSiteMenuItem(name, isExpanded));
-        return this;
-    }
-
-    public MockHstSiteMenu addSiteMenuItem(String name) {
-        return addSiteMenuItem(name, false);
-    }
-
+    
     public void addSiteMenuItem(HstSiteMenuItem siteMenuItem) {
-        this.siteMenuItems.add(siteMenuItem);
+        siteMenuItems.add(siteMenuItem);
     }
+    
+    public void clearSiteMenuItems() {
+        siteMenuItems.clear();
+    }
+    
+    public HstSiteMenus getHstSiteMenus() {
+        return hstSiteMenus;
+    }
+    
+    public void setHstSiteMenus(HstSiteMenus hstSiteMenus) {
+        this.hstSiteMenus = hstSiteMenus;
+    }
+    
+    public HstSiteMenuItem getDeepestExpandedItem() {
+        return deepestExpandedItem;
+    }
+    
+    public void setDeepestExpandedItem(HstSiteMenuItem deepestExpandedItem) {
+        this.deepestExpandedItem = deepestExpandedItem;
+    }
+    
+    public HstSiteMenuItem getSelectSiteMenuItem() {
+        return selectSiteMenuItem;
+    }
+    
+    public void setSelectSiteMenuItem(HstSiteMenuItem selectSiteMenuItem) {
+        this.selectSiteMenuItem = selectSiteMenuItem;
+    }
+    
+    public EditableMenu getEditableMenu() {
+        return editableMenu;
+    }
+    
+    public void setEditableMenu(EditableMenu editableMenu) {
+        this.editableMenu = editableMenu;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public boolean isExpanded() {
+        return expanded;
+    }
+    
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
+
 }
