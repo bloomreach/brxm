@@ -21,7 +21,8 @@ public class HippoResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        //resource = new MockHippoResource(1024);
+        //resource = new MockHippoResourceBean();
+        //resource.setLength(1024);
     }
 
     @Test
