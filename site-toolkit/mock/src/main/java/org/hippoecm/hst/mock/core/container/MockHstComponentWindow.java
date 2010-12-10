@@ -89,7 +89,7 @@ public class MockHstComponentWindow implements HstComponentWindow {
         return component;
     }
     
-    public void setCompnoent(HstComponent component) {
+    public void setComponent(HstComponent component) {
         this.component = component;
     }
 
@@ -99,6 +99,10 @@ public class MockHstComponentWindow implements HstComponentWindow {
 
     public String getName() {
         return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
 
     public HstComponentWindow getParentWindow() {

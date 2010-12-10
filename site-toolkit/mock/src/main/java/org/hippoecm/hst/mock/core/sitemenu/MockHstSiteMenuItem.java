@@ -47,7 +47,11 @@ public class MockHstSiteMenuItem implements HstSiteMenuItem {
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
     private Map<String, String> localParameters = new LinkedHashMap<String, String>();
     private Map<String, Object> properties = new HashMap<String, Object>();
-
+    
+    public MockHstSiteMenuItem() {
+        this(null);
+    }
+    
     public MockHstSiteMenuItem(String name) {
         this(name, false);
     }

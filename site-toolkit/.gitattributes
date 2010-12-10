@@ -1815,6 +1815,16 @@ mock/src/main/java/org/hippoecm/hst/mock/core/sitemenu/MockHstSiteMenu.java -tex
 mock/src/main/java/org/hippoecm/hst/mock/core/sitemenu/MockHstSiteMenuItem.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/sitemenu/MockHstSiteMenus.java -text
 mock/src/main/java/org/hippoecm/hst/mock/util/IteratorEnumeration.java -text
+mock/src/test/java/org/hippoecm/hst/mock/configuration/components/TestMockHstComponentConfiguration.java -text
+mock/src/test/java/org/hippoecm/hst/mock/core/container/TestMockHstComponentWindow.java -text
+mock/src/test/java/org/hippoecm/hst/mock/core/linking/TestMockHstLink.java -text
+mock/src/test/java/org/hippoecm/hst/mock/core/request/TestMockComponentConfiguration.java -text
+mock/src/test/java/org/hippoecm/hst/mock/core/request/TestMockHstRequestContext.java -text
+mock/src/test/java/org/hippoecm/hst/mock/core/request/TestMockResolvedSiteMapItem.java -text
+mock/src/test/java/org/hippoecm/hst/mock/core/sitemenu/TestMockHstSiteMenu.java -text
+mock/src/test/java/org/hippoecm/hst/mock/core/sitemenu/TestMockHstSiteMenuItem.java -text
+mock/src/test/java/org/hippoecm/hst/mock/util/MockBeanTestHelper.java -text
+mock/src/test/java/org/hippoecm/hst/mock/util/TestIteratorEnumeration.java -text
 /pom.xml -text
 sandbox/WARNINGS -text
 sandbox/ocm/pom.xml svneol=native#text/plain

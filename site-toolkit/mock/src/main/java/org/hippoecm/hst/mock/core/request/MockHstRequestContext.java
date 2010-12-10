@@ -103,8 +103,20 @@ public class MockHstRequestContext implements HstRequestContext {
         return this.baseURL;
     }
     
+    public void setBaseURL(HstContainerURL baseURL) {
+        this.baseURL = baseURL;
+    }
+    
     public String getContextNamespace() {
         return this.contextNamespace;
+    }
+    
+    public void setContextNamespace(String contextNamespace) {
+        this.contextNamespace = contextNamespace;
+    }
+    
+    public Credentials getDefaultCredentials() {
+        return defaultCredentials;
     }
     
     public void setDefaultCredentials(Credentials defaultCredentials) {
