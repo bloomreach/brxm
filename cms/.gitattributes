@@ -49,6 +49,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/image/JcrImage.java sv
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/AbstractListColumnProviderPlugin.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/AbstractListingPlugin.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/DocumentsProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/list/ExpandCollapseListingPlugin_fr.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/ExpandCollapseListingPlugin_it.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/IListColumnProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/ListCell.html -text svneol=unset#text/plain
