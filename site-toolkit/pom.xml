@@ -109,7 +109,7 @@
     <jdo.version>2.0</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
-    <yui.sources.version>1.01.07</yui.sources.version>
+    <yui.sources.version>1.01.09</yui.sources.version>
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
     <wicket.version>1.4.13</wicket.version>
     
