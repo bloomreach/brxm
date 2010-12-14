@@ -17,12 +17,14 @@ package org.hippoecm.frontend.editor.plugins;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.diff.TextDiffModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.diff.TextDiffModel;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -49,10 +51,23 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else if (IEditor.Mode.COMPARE == mode) {
-            final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
-                    IModelReference.class).getModel();
+            final IModel<?> baseModel = context.getService(config.getString("model.compareTo"), IModelReference.class)
+                    .getModel();
+            final IModel<String> stringBaseModel = new LoadableDetachableModel<String>() {
+                private static final long serialVersionUID = 1L;
 
-            add(new Label("value", new TextDiffModel(baseModel, stringModel)).setEscapeModelStrings(false));
+                @Override
+                protected String load() {
+                    return Strings.toString(baseModel.getObject());
+                }
+
+                @Override
+                public void detach() {
+                    super.detach();
+                    baseModel.detach();
+                }
+            };
+            add(new Label("value", new TextDiffModel(stringBaseModel, stringModel)).setEscapeModelStrings(false));
         } else {
             add(new Label("value", stringModel));
         }
