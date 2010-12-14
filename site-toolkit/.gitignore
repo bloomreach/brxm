@@ -84,10 +84,6 @@ demosuite/site/build.properties
 demosuite/site/target
 demosuite/target
 dependencies/client-dependencies/target
-dependencies/server-dependencies-war/.classpath
-dependencies/server-dependencies-war/.project
-dependencies/server-dependencies-war/.settings
-dependencies/server-dependencies-war/target
 dependencies/server-dependencies/target
 dependencies/shared-dependencies/target
 dependencies/spring-dependencies/target
