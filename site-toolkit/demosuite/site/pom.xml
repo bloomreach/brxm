@@ -34,7 +34,7 @@
   </properties>
 
   <dependencies>
-
+    
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-app-dependencies</artifactId>
@@ -50,25 +50,20 @@
       <type>war</type>
     </dependency>
 
-    <!-- Main HST dependencies for standalone sites  -->
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-shared-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-server-dependencies</artifactId>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-client-dependencies</artifactId>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
-
+    
     <!-- Additional (optional) HST dependencies -->    
     <dependency>    
       <groupId>org.onehippo.cms7.hst.components</groupId>
@@ -88,6 +83,7 @@
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>javax.portlet</groupId>
       <artifactId>portlet-api</artifactId>
@@ -271,306 +267,5 @@
     
   </build>
   
-  <profiles>
-    
-    <profile>
-      <id>undefault</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>javax.jcr</groupId>
-          <artifactId>jcr</artifactId>
-          <scope>compile</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-          <artifactId>hst-shared-dependencies</artifactId>
-          <version>${project.version}</version>
-          <type>pom</type>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-          <artifactId>hst-server-dependencies</artifactId>
-          <version>${project.version}</version>
-          <type>pom</type>
-          <exclusions>
-            <exclusion>
-              <!-- poi 3.0.2 pulling this in -->
-              <groupId>commons-logging</groupId>
-              <artifactId>commons-logging</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-          <artifactId>hst-client-dependencies</artifactId>
-          <version>${project.version}</version>
-          <type>pom</type>
-        </dependency>
-      </dependencies>
-    </profile>
-    
-    <profile>
-      <id>tomcat</id>
-      <dependencies>
-        <dependency>
-          <groupId>javax.jcr</groupId>
-          <artifactId>jcr</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-          <artifactId>hst-shared-dependencies</artifactId>
-          <version>${project.version}</version>
-          <type>pom</type>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-          <artifactId>hst-server-dependencies</artifactId>
-          <version>${project.version}</version>
-          <type>pom</type>
-          <exclusions>
-            <exclusion>
-              <!-- poi 3.0.2 pulling this in -->
-              <groupId>commons-logging</groupId>
-              <artifactId>commons-logging</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-          <artifactId>hst-client-dependencies</artifactId>
-          <version>${project.version}</version>
-          <type>pom</type>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>properties-maven-plugin</artifactId>
-            <version>1.0-alpha-1</version>
-            <executions>
-              <execution>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>read-project-properties</goal>
-                </goals>
-                <configuration>
-                  <quiet>true</quiet>
-                  <files>
-                    <file>${basedir}/build.properties</file>
-                  </files>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-shared-libs</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <!-- Copy shared libs -->
-                    <artifactItem>
-                      <groupId>org.apache.geronimo.specs</groupId>
-                      <artifactId>geronimo-jta_1.1_spec</artifactId>
-                      <version>${jta.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>javax.jcr</groupId>
-                      <artifactId>jcr</artifactId>
-                      <version>${javax.jcr.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.onehippo.cms7</groupId>
-                      <artifactId>hippo-repository-api</artifactId>
-                      <version>${cms.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.onehippo.cms7</groupId>
-                      <artifactId>hippo-repository-builtin</artifactId>
-                      <version>${cms.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.onehippo.cms7</groupId>
-                      <artifactId>hippo-addon-publication-workflow-common</artifactId>
-                      <version>${cms.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>javax.jdo</groupId>
-                      <artifactId>jdo2-api</artifactId>
-                      <version>${jdo.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.onehippo.cms7.hst</groupId>
-                      <artifactId>hst-api</artifactId>
-                      <version>${project.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.onehippo.cms7.hst</groupId>
-                      <artifactId>hst-commons</artifactId>
-                      <version>${project.version}</version>
-                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-              <execution>
-                <id>unpack-cms-and-site-app</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.onehippo.cms7.hst.demosuite</groupId>
-                      <artifactId>hst-demosuite-cms</artifactId>
-                      <version>${project.version}</version>
-                      <type>war</type>
-                      <overWrite>true</overWrite>
-                      <outputDirectory>${tomcat.hst.cms.webapp}</outputDirectory>
-                      <!-- Excludes shared libs -->
-                      <excludes>
-                        WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
-                        WEB-INF/lib/jcr-${javax.jcr.version}.jar,
-                        WEB-INF/lib/hippo-repository-api-${repository.version}.jar,
-                        WEB-INF/lib/hippo-repository-builtin-${repository.version}.jar,
-                        WEB-INF/lib/hippo-addon-publication-workflow-common-${publication-workflow.version}.jar,
-                        WEB-INF/lib/jdo2-api-${jdo.version}.jar,
-                        WEB-INF/lib/hst-api-${project.version}.jar,
-                        WEB-INF/lib/hst-commons-${project.version}.jar
-                      </excludes>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.onehippo.cms7.hst.demosuite</groupId>
-                      <artifactId>hst-demosuite-site</artifactId>
-                      <version>${project.version}</version>
-                      <type>war</type>
-                      <overWrite>true</overWrite>
-                      <outputDirectory>${tomcat.server.home}/webapps/${project.build.finalName}</outputDirectory>
-                      <!-- Excludes shared libs -->
-                      <excludes>
-                        WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
-                        WEB-INF/lib/jcr-${javax.jcr.version}.jar,
-                        WEB-INF/lib/hippo-repository-api-${repository.version}.jar,
-                        WEB-INF/lib/hippo-repository-builtin-${repository.version}.jar,
-                        WEB-INF/lib/hippo-addon-publication-workflow-common-${publication-workflow.version}.jar,
-                        WEB-INF/lib/jdo2-api-${jdo.version}.jar,
-                        WEB-INF/lib/hst-api-${project.version}.jar,
-                        WEB-INF/lib/hst-commons-${project.version}.jar
-                      </excludes>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.2</version>
-            <executions>
-              <execution>
-                <id>update hst-config</id>
-                <phase>install</phase>
-                <configuration>
-                  <tasks>
-                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties" match="^#\s*(\w+\.repository\.address\s*=\s*vm://)" replace="\1" byline="true" />
-                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties" match="^(\s*\w+\.repository\.address\s*=\s*rmi://)" replace="#\1" byline="true" />
-                  </tasks>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>ant</groupId>
-                <artifactId>ant-nodeps</artifactId>
-                <version>1.6.5</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  <profile>
-    <!-- a minimal profile to build a -min.war classified war usable for deployments side-by-side a portal/cms etc. -->
-    <id>minimal</id>
-    <properties>
-      <site.log.dir.name>${org.apache.portals.logdir}</site.log.dir.name>
-    </properties>
-    <dependencies>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-        <artifactId>hst-shared-dependencies</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-        <artifactId>hst-client-dependencies</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-api</artifactId>
-        <version>${repository.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-builtin</artifactId>
-        <version>${repository.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-publication-workflow-common</artifactId>
-        <version>${publication-workflow.version}</version>
-        <scope>provided</scope>
-      </dependency>
-    </dependencies>
-    <build>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <configuration>
-            <classifier>min</classifier>
-            <webappDirectory>${project.build.directory}/${project.build.finalName}-j2</webappDirectory>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
-  </profile>
-    
-  </profiles>
-
 
 </project>
