@@ -91,12 +91,20 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
         protected void handleUploadItem(FileUpload upload) {
             createGalleryItem(upload);
         }
+
+        @Override
+        protected void onOk() {
+            super.onOk();
+            afterUploadItems();
+        }
     }
 
     public String type;
+    private List<String> newItems;
 
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        newItems = new LinkedList<String>();
     }
 
     @Override
@@ -172,13 +180,25 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                     GalleryWorkflowPlugin.log.error(ex.getMessage());
                     error(ex);
                 }
-                select(new JcrNodeModel(node));
+                newItems.add(node.getPath());
             }
         } catch (IOException ex) {
             GalleryWorkflowPlugin.log.info("upload of image truncated");
             error((new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this, null).getString()));
+        } catch (RepositoryException e) {
+            GalleryWorkflowPlugin.log.error("upload of image failed", e);
+            error((new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this, null).getString()));
         }
+    }
 
+    private void afterUploadItems() {
+        int threshold = getPluginConfig().getAsInteger("select.after.create.threshold", 1);
+        if(newItems.size() <= threshold) {
+            for(String path : newItems){
+                select(new JcrNodeModel(path));
+            }
+        }
+        newItems.clear();
     }
 
     protected GalleryProcessor getGalleryProcessor() {
