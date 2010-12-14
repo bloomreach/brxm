@@ -29,6 +29,8 @@ How to test and build Hippo Site Toolkit
     - To run repository and cms, move to demosuite/cms folder and run the following:
       
       $ mvn jetty:run-war
+
+    - Hippo CMS is now running at: http://127.0.0.1:8080/cms
     
     - To run site web application, move to demosuite/site folder and run the following:
       
