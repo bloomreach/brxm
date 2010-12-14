@@ -92,6 +92,9 @@ dependencies/server-dependencies/target
 dependencies/shared-dependencies/target
 dependencies/spring-dependencies/target
 dependencies/target
+mock/.classpath
+mock/.project
+mock/.settings
 mock/target
 /repository
 sandbox/ocm/.classpath
