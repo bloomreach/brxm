@@ -8,7 +8,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/home</sv:value>
+            <sv:value>hst:pages/home</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>general/accueil</sv:value>
@@ -22,7 +22,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/detailpage</sv:value>
+            <sv:value>hst:pages/detailpage</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>general/a-propos</sv:value>
@@ -36,7 +36,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/errorpage</sv:value>
+            <sv:value>hst:pages/errorpage</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="_any_">
@@ -44,7 +44,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/errorpage</sv:value>
+            <sv:value>hst:pages/errorpage</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

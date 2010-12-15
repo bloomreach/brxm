@@ -62,7 +62,7 @@ public class HstNodeImpl implements HstNode {
     private boolean isInherited;
     
     public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws HstNodeException {
-        this(jcrNode, parent, loadChilds, false );
+        this(jcrNode, parent, loadChilds, false);
     }
     
     public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds, boolean inherited) throws HstNodeException {
@@ -91,7 +91,7 @@ public class HstNodeImpl implements HstNode {
                    // mark the loaded childs as inherited, hence 'true'
                    loadChilds(inheritNode, parent, loadChilds, true);
                 } catch (PathNotFoundException e) {
-                    throw new HstNodeException("Relative inherit path '"+jcrNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM).getString()+"' for node '"+provider.getPath()+"' can not be found. Fix this path.");
+                    log.error("Relative inherit path '"+jcrNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM).getString()+"' for node '"+provider.getPath()+"' can not be found. Fix this path.");
                 }
             }
         } catch (RepositoryException e) {
@@ -119,7 +119,8 @@ public class HstNodeImpl implements HstNode {
                     log.info("Duplicate configuration because of same names and inheritance for '{}' and '{}'. We keep the one that is not inherited. If both are inherited, an exception is thrown", existing.getValueProvider().getCanonicalPath(), childRepositoryNode.getValueProvider().getCanonicalPath());
                
                     if(existing.isInherited && childRepositoryNode.isInherited) {
-                        throw new HstNodeException("Not allowed to have two same name nodes through inheritance for node '"+provider.getPath()+"'. Delete one of the inherited nodes or remove the inheritance");
+                        log.warn("Not allowed to have two same name nodes through inheritance for node '{}'. Delete one of the inherited nodes or remove the inheritance. We'll keep one of them", provider.getPath());
+                        // do nothing...
                     } else if(existing.isInherited){
                         // The existing is inherited. Replace this one. 
                         children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
@@ -128,7 +129,7 @@ public class HstNodeImpl implements HstNode {
                         log.info("Ignoring node configuration at '{}' for '{}' because it already has a non-inherited version", provider.getPath(), childRepositoryNode.getValueProvider().getPath());
                     }
                 } else {
-                 // does not exist yet
+                    // does not exist yet
                     children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
                 }
             }

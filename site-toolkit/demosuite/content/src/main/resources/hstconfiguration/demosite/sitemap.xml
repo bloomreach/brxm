@@ -24,7 +24,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/home</sv:value>
+            <sv:value>hst:pages/home</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>common/home-page</sv:value>
@@ -38,7 +38,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/detailpage</sv:value>
+            <sv:value>hst:pages/detailpage</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>common/about-us</sv:value>
@@ -52,7 +52,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/newsarchive</sv:value>
+            <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
@@ -62,7 +62,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/newsarchive</sv:value>
+                <sv:value>hst:pages/newsarchive</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -73,7 +73,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/detailpage</sv:value>
+                <sv:value>hst:pages/detailpage</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -91,7 +91,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/newsarchive</sv:value>
+            <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
@@ -101,7 +101,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/newsarchive</sv:value>
+                <sv:value>hst:pages/newsarchive</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -112,7 +112,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/detailpage</sv:value>
+                <sv:value>hst:pages/detailpage</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -130,7 +130,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/newsarchive</sv:value>
+            <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
@@ -140,7 +140,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/newsarchive</sv:value>
+                <sv:value>hst:pages/newsarchive</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -151,7 +151,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/detailpage</sv:value>
+                <sv:value>hst:pages/detailpage</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
@@ -170,7 +170,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/newsarchive</sv:value>
+            <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
@@ -180,7 +180,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/newsarchive</sv:value>
+                <sv:value>hst:pages/newsarchive</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news</sv:value>
@@ -190,7 +190,7 @@
                     <sv:value>hst:sitemapitem</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>democommon/hst:pages/newsarchive</sv:value>
+                    <sv:value>hst:pages/newsarchive</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                     <sv:value>news</sv:value>
@@ -200,7 +200,7 @@
                         <sv:value>hst:sitemapitem</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>democommon/hst:pages/newsarchive</sv:value>
+                        <sv:value>hst:pages/newsarchive</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                         <sv:value>news/${3}</sv:value>
@@ -211,7 +211,7 @@
                         <sv:value>hst:sitemapitem</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>democommon/hst:pages/detailpage</sv:value>
+                        <sv:value>hst:pages/detailpage</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                         <sv:value>news/${3}</sv:value>
@@ -232,7 +232,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:components/rss</sv:value>
+            <sv:value>hst:components/rss</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>news</sv:value>
@@ -243,7 +243,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/searchpage</sv:value>
+            <sv:value>hst:pages/searchpage</sv:value>
         </sv:property>
     </sv:node>
    
@@ -252,7 +252,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/errorpage</sv:value>
+            <sv:value>hst:pages/errorpage</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="_any_">
@@ -260,7 +260,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/errorpage</sv:value>
+            <sv:value>hst:pages/errorpage</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="todo">
@@ -268,7 +268,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:components/bodyhome/bodymain/todolist</sv:value>
+            <sv:value>hst:components/bodyhome/bodymain/todolist</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="faceted">
@@ -276,7 +276,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/facetedaddproduct</sv:value>
+            <sv:value>hst:pages/facetedaddproduct</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>faceted</sv:value>
@@ -286,7 +286,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/faceted</sv:value>
+                <sv:value>hst:pages/faceted</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>faceted/${1}</sv:value>
@@ -297,7 +297,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/faceted_detailpage</sv:value>
+                <sv:value>hst:pages/faceted_detailpage</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>faceted/${1}</sv:value>
@@ -309,7 +309,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>democommon/hst:pages/productoverview</sv:value>
+            <sv:value>hst:pages/productoverview</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>products</sv:value>
@@ -319,7 +319,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>democommon/hst:pages/productpage</sv:value>
+                <sv:value>hst:pages/productpage</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>products/${1}</sv:value>
@@ -331,7 +331,7 @@
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>democommon/hst:pages/formpage</sv:value>
+      <sv:value>hst:pages/formpage</sv:value>
     </sv:property>
   </sv:node>
 
@@ -341,7 +341,7 @@
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid"
       sv:type="String">
-      <sv:value>democommon/hst:pages/contactspringpage</sv:value>
+      <sv:value>hst:pages/contactspringpage</sv:value>
     </sv:property>
     <sv:node sv:name="thankyou">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -349,7 +349,7 @@
       </sv:property>
       <sv:property sv:name="hst:componentconfigurationid"
         sv:type="String">
-        <sv:value>democommon/hst:pages/thankyou</sv:value>
+        <sv:value>hst:pages/thankyou</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -359,7 +359,7 @@
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>democommon/hst:pages/contactdispatchpage</sv:value>
+      <sv:value>hst:pages/contactdispatchpage</sv:value>
     </sv:property>
     <sv:node sv:name="thankyou">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -367,7 +367,7 @@
       </sv:property>
       <sv:property sv:name="hst:componentconfigurationid"
         sv:type="String">
-        <sv:value>democommon/hst:pages/thankyou</sv:value>
+        <sv:value>hst:pages/thankyou</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -377,7 +377,7 @@
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>democommon/hst:pages/contactspringmvcpage</sv:value>
+      <sv:value>hst:pages/contactspringmvcpage</sv:value>
     </sv:property>
     <sv:node sv:name="thankyou">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -385,7 +385,7 @@
       </sv:property>
       <sv:property sv:name="hst:componentconfigurationid"
         sv:type="String">
-        <sv:value>democommon/hst:pages/thankyou</sv:value>
+        <sv:value>hst:pages/thankyou</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

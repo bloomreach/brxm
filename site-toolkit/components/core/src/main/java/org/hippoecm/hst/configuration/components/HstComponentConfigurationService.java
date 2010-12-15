@@ -83,8 +83,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String pageErrorHandlerClassName;
 
-    private String configurationRootNodePath;
-    
     private ArrayList<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
 
@@ -101,18 +99,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
-            String hstConfigurationsNodePath) throws ServiceException {
-        this(node, parent, hstConfigurationsNodePath, true);
+            String rootNodeName) throws ServiceException {
+        this(node, parent, rootNodeName, true);
     }
 
+    /*
+     * rootNodeName is either hst:components or hst:pages.
+     */
     public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
-            String hstConfigurationsNodePath, boolean traverseDescendants) throws ServiceException {
+            String rootNodeName, boolean traverseDescendants) throws ServiceException {
     
-        if (!node.getValueProvider().getPath().startsWith(hstConfigurationsNodePath)) {
-            throw new ServiceException(
-                    "Node path of the component cannot start without the global components path. Skip Component");
-        }
-
         this.canonicalStoredLocation = node.getValueProvider().getCanonicalPath();
         this.canonicalIdentifier = node.getValueProvider().getIdentifier();
        
@@ -129,10 +125,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         
         this.parent = parent;
 
-        this.configurationRootNodePath = hstConfigurationsNodePath;
-        // id is the relative path wrt configuration components path
-        this.id = node.getValueProvider().getPath().substring(hstConfigurationsNodePath.length() + 1);
-
+        if(parent == null) {
+            this.id = rootNodeName + "/" + node.getValueProvider().getName();   
+        } else {
+            this.id = parent.getId() + "/" + node.getValueProvider().getName();   
+        }
+        
         this.name = node.getValueProvider().getName();
         this.referenceName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
         this.componentClassName = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
@@ -186,7 +184,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 try {
                     HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(
-                            child, this, hstConfigurationsNodePath, true);
+                            child, this, rootNodeName, true);
                     componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
 
                     // we also need an ordered list
@@ -337,7 +335,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.parent = parent;
         copy.componentClassName = child.componentClassName;
-        copy.configurationRootNodePath = child.configurationRootNodePath;
         copy.name = child.name;
         copy.referenceName = child.referenceName;
         copy.hstTemplate = child.hstTemplate;
@@ -394,9 +391,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 // get all properties that are null from the referenced component:
                 if (!this.hasClassNameConfigured) {
                     this.componentClassName = referencedComp.componentClassName;
-                }
-                if (this.configurationRootNodePath == null) {
-                    this.configurationRootNodePath = referencedComp.configurationRootNodePath;
                 }
                 if (this.name == null) {
                     this.name = referencedComp.name;
@@ -493,9 +487,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         
         if (!this.hasClassNameConfigured) {
             this.componentClassName = childToMerge.componentClassName;
-        }
-        if (this.configurationRootNodePath == null) {
-            this.configurationRootNodePath = childToMerge.configurationRootNodePath;
         }
         if (this.hstTemplate == null) {
             this.hstTemplate = childToMerge.hstTemplate;

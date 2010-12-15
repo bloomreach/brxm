@@ -81,7 +81,7 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+			<sv:value>hst:components/general_threecolumnlayout</sv:value>
 		</sv:property>
 		<sv:node sv:name="content">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -100,7 +100,7 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+			<sv:value>hst:components/general_threecolumnlayout</sv:value>
 		</sv:property>
 		<sv:node sv:name="content">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -119,7 +119,7 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+            <sv:value>hst:components/general_threecolumnlayout</sv:value>
         </sv:property>
 		<sv:node sv:name="leftmenu">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -254,7 +254,7 @@
 		<sv:property sv:name="hst:parameternames" sv:type="String"/>
 		<sv:property sv:name="hst:parametervalues" sv:type="String"/>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+			<sv:value>hst:components/general_threecolumnlayout</sv:value>
 		</sv:property>
 		<sv:node sv:name="content">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -275,7 +275,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+            <sv:value>hst:components/general_threecolumnlayout</sv:value>
         </sv:property>
         <sv:node sv:name="content">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -294,7 +294,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+            <sv:value>hst:components/general_threecolumnlayout</sv:value>
         </sv:property>
         <sv:node sv:name="content">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -324,7 +324,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+            <sv:value>hst:components/general_threecolumnlayout</sv:value>
         </sv:property>
         <sv:node sv:name="content">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -354,7 +354,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+            <sv:value>hst:components/general_threecolumnlayout</sv:value>
         </sv:property>
         <sv:node sv:name="content">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -373,7 +373,7 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+			<sv:value>hst:components/general_threecolumnlayout</sv:value>
 		</sv:property>
 		<sv:node sv:name="content">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -392,7 +392,7 @@
       <sv:value>hst:component</sv:value>
     </sv:property>
     <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+      <sv:value>hst:components/general_threecolumnlayout</sv:value>
     </sv:property>
     <sv:node sv:name="content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -411,7 +411,7 @@
 			<sv:value>hst:component</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+			<sv:value>hst:components/general_threecolumnlayout</sv:value>
 		</sv:property>
 		<sv:node sv:name="content">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -449,7 +449,7 @@
       <sv:value>hst:component</sv:value>
     </sv:property>
     <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+      <sv:value>hst:components/general_threecolumnlayout</sv:value>
     </sv:property>
     <sv:node sv:name="content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -474,7 +474,7 @@
       <sv:value>hst:component</sv:value>
     </sv:property>
     <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+      <sv:value>hst:components/general_threecolumnlayout</sv:value>
     </sv:property>
     <sv:node sv:name="content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -496,7 +496,7 @@
       <sv:value>hst:component</sv:value>
     </sv:property>
     <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+      <sv:value>hst:components/general_threecolumnlayout</sv:value>
     </sv:property>
     <sv:node sv:name="content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -521,7 +521,7 @@
       <sv:value>hst:component</sv:value>
     </sv:property>
     <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>democommon/hst:components/general_threecolumnlayout</sv:value>
+      <sv:value>hst:components/general_threecolumnlayout</sv:value>
     </sv:property>
     <sv:node sv:name="content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
