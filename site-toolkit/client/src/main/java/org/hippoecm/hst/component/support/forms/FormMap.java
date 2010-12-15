@@ -61,14 +61,14 @@ public class FormMap {
         formMap.putAll(paramMap);
     }
 
-    public void addFormField(String fieldName, FormField field) {
-        formMap.put(fieldName, field);
+    public void addFormField(FormField field) {
+        formMap.put(field.getName(), field);
     }
 
     public void addMessage(String name, String value) {
         FormField field = formMap.get(name);
         if (field == null) {
-            field = new FormField();
+            field = new FormField(name);
             formMap.put(name, field);
         }
         field.addMessage(value);

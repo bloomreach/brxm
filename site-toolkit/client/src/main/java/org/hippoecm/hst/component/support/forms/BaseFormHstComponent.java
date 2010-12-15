@@ -106,7 +106,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
                             // create field (even if we do not have values)
                             String fieldName = fieldNode.getProperty(HST_FORM_FIELD_NAME).getString();
                             FormField field = new FormField(fieldName);
-                            formMap.addFormField(fieldName, field);
+                            formMap.addFormField(field);
                             if(fieldNode.hasProperty(HST_FORM_FIELD_DATA)){
                                 Value[] values = fieldNode.getProperty(HST_FORM_FIELD_DATA).getValues();
                                 for (Value value : values) {

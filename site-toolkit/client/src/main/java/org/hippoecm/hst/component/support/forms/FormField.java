@@ -18,19 +18,22 @@ public class FormField {
     @SuppressWarnings({"UnusedDeclaration"})
     private static Logger log = LoggerFactory.getLogger(FormField.class);
 
-    public FormField() {
-    }
-
-    public FormField(final String name) {
-        this.name = name;
-    }
-
     // field name
     private String name;
     // stored values
     private Map<String,String> values;
     // error messages
     private List<String> messages;
+
+
+    public FormField(final String name) {
+        if(name==null || name.trim().length()==0){
+            throw new IllegalArgumentException("FormField name was null or empty");
+        }
+        this.name = name;
+    }
+
+
 
 
     public String getName() {
