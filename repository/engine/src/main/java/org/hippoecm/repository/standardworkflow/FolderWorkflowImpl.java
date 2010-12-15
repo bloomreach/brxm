@@ -641,7 +641,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     }
                 }
                 if (!isProtected) {
-                    if(renames.containsKey(path+"/"+prop.getName())) {
+                    if(renames.containsKey(path+"/"+prop.getName()) && renames.get(path+"/"+prop.getName()) != null) {
                         target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType()));
                     } else {
                         target.setProperty(prop.getName(), prop.getValues());
@@ -663,8 +663,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     }
                 }
                 if (!isProtected) {
-                    if(renames.containsKey(path+"/"+prop.getName())) {
-                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType())[0]);
+                    if(renames.containsKey(path+"/"+prop.getName()) && renames.get(path+"/"+prop.getName()) != null) {
+                        Value[] newValues = expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType());
+                        if(newValues.length >= 1) {
+                            target.setProperty(prop.getName(), newValues[0]);
+                        } else {
+                            target.setProperty(prop.getName(), (String)null);
+                        }
                     } else {
                         target.setProperty(prop.getName(), prop.getValue());
                     }
@@ -679,6 +684,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Vector<Value> newValues = new Vector<Value>();
         for(int i=0; i<values.length; i++) {
             String value = values[i];
+            if(value == null) {
+                continue;
+            }
             if(value.startsWith("${") && value.endsWith("}")) {
                 value = value.substring(2,value.length()-1);
                 Property p = source.getProperty(value);
