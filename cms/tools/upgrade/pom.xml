@@ -87,6 +87,7 @@
           <cleanupDeamonThreads>false</cleanupDeamonThreads>
         </configuration>
       </plugin>
+      <!-- HREPTWO-4770 FIXME comment out this appassembler plugin just before a mvn deploy -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>appassembler-maven-plugin</artifactId>
