@@ -34,6 +34,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+@Deprecated
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

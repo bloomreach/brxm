@@ -1,0 +1,29 @@
+.hippo-list-details tr th.image-gallery-icon,
+.hippo-list-details tr td.image-gallery-icon {
+  width: 16px;
+}
+
+.hippo-list-details tr th.gallery-width,
+.hippo-list-details tr td.gallery-width {
+  width: 65px;
+}
+
+.hippo-list-details tr th.gallery-height,
+.hippo-list-details tr td.gallery-height {
+  width: 65px;
+}
+
+.hippo-list-details tr th.gallery-mimetype,
+.hippo-list-details tr td.gallery-mimetype {
+  width: 80px;
+}
+
+.hippo-list-details tr th.gallery-size,
+.hippo-list-details tr td.gallery-size {
+  width: 80px;
+}
+
+.hippo-list-details tr th.gallery-lastmodified,
+.hippo-list-details tr td.gallery-lastmodified {
+  width: 120px;
+}

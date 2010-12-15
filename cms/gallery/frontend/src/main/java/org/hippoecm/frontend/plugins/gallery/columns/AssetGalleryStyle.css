@@ -1,0 +1,20 @@
+.hippo-list-details tr th.assetgallery-type,
+.hippo-list-details tr td.assetgallery-type {
+  width: 16px;
+}
+
+.hippo-list-details tr th.assetgallery-mimetype,
+.hippo-list-details tr td.assetgallery-mimetype {
+  width: 80px;
+  white-space: nowrap;
+}
+
+.hippo-list-details tr th.assetgallery-size,
+.hippo-list-details tr td.assetgallery-size {
+  width: 80px;
+}
+
+.hippo-list-details tr th.assetgallery-lastmodified,
+.hippo-list-details tr td.assetgallery-lastmodified {
+  width: 120px;
+}

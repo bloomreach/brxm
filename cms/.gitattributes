@@ -894,6 +894,27 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/mod
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/MimeTypeAttributeModifier.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/SizeRenderer.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/ThumbnailRenderer.java -text svneol=unset#text/plain
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-audio-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-binary-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-doc-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-docx-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-image-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-odp-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-ods-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-odt-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-pdf-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-ppt-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-pptx-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-rtf-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-swf-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-sxc-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-sxi-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-sxw-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-text-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-video-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-xls-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-xlsx-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-zip-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_fr.properties -text

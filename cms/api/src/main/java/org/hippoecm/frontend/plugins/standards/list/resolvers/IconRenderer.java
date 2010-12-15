@@ -52,45 +52,49 @@ public class IconRenderer implements IListCellRenderer<Node> {
         Node node = nodeModel.getObject();
         if (node != null) {
             try {
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    return BrowserStyle.getIcon("document", IconSize.TINY);
-                } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    if (node instanceof HippoNode) {
-                        Node canonical;
-                        try {
-                            canonical = ((HippoNode) node).getCanonicalNode();
-                            if (canonical == null) {
-                                return BrowserStyle.getIcon("folder-virtual", IconSize.TINY);
-                            }
-                        } catch (ItemNotFoundException ex) {
-                            return BrowserStyle.getIcon("alert", IconSize.TINY);
-                        }
-                        Node parent = canonical.getParent();
-                        if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            if (!canonical.isSame(node)) {
-                                return BrowserStyle.getIcon("document-virtual", IconSize.TINY);
-                            } else {
-                                return BrowserStyle.getIcon("document", IconSize.TINY);
-                            }
-                        }
-                    } else {
-                        Node parent = node.getParent();
-                        if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            return BrowserStyle.getIcon("document", IconSize.TINY);
-                        }
-                    }
-                }
-
-                String type = node.getPrimaryNodeType().getName();
-                if (type.equals("hipposysedit:templatetype")) {
-                    return BrowserStyle.getIcon("document", IconSize.TINY);
-                }
-                return BrowserStyle.getIcon("folder", IconSize.TINY);
+                return getResourceReference(node);
             } catch (RepositoryException ex) {
                 log.error("Unable to determine icon for document", ex);
             }
         }
         return null;
+    }
+
+    protected ResourceReference getResourceReference(Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return BrowserStyle.getIcon("document", IconSize.TINY);
+        } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            if (node instanceof HippoNode) {
+                Node canonical;
+                try {
+                    canonical = ((HippoNode) node).getCanonicalNode();
+                    if (canonical == null) {
+                        return BrowserStyle.getIcon("folder-virtual", IconSize.TINY);
+                    }
+                } catch (ItemNotFoundException ex) {
+                    return BrowserStyle.getIcon("alert", IconSize.TINY);
+                }
+                Node parent = canonical.getParent();
+                if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (!canonical.isSame(node)) {
+                        return BrowserStyle.getIcon("document-virtual", IconSize.TINY);
+                    } else {
+                        return BrowserStyle.getIcon("document", IconSize.TINY);
+                    }
+                }
+            } else {
+                Node parent = node.getParent();
+                if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    return BrowserStyle.getIcon("document", IconSize.TINY);
+                }
+            }
+        }
+
+        String type = node.getPrimaryNodeType().getName();
+        if (type.equals("hipposysedit:templatetype")) {
+            return BrowserStyle.getIcon("document", IconSize.TINY);
+        }
+        return BrowserStyle.getIcon("folder", IconSize.TINY);
     }
 
     private static class IconContainer extends Panel {

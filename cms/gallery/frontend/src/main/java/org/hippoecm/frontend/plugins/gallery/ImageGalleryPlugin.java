@@ -19,6 +19,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -26,6 +27,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -42,7 +44,10 @@ import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
+import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 import org.hippoecm.frontend.widgets.LabelWithTitle;
@@ -61,7 +66,7 @@ import java.util.Iterator;
 import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.LIST;
 import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.THUMBNAILS;
 
-public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> implements IHeaderContributor {
+public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -87,6 +92,15 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> implem
 
     public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
         super(context, config);
+
+        add(new AbstractYuiBehavior() {
+
+            @Override
+            public void addHeaderContribution(IYuiContext context) {
+                context.addModule(HippoNamespace.NS, "accordionmanager");
+            }
+        });
+
 
         this.setClassName("hippo-gallery-images");
         getSettings().setAutoWidthClassName("gallery-name");
@@ -133,9 +147,12 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> implem
         toggleLink.replace(toggleImage);
     }
 
-    public void renderHead(IHeaderResponse response) {
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        super.renderHead(container);
+
         ResourceReference cssResourceReference = new ResourceReference(ImageGalleryPlugin.class, IMAGE_GALLERY_CSS);
-        response.renderCSSReference(cssResourceReference);
+        container.getHeaderResponse().renderCSSReference(cssResourceReference);
     }
 
     @Override

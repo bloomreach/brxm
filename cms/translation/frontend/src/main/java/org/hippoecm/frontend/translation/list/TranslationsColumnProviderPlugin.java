@@ -20,6 +20,8 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.IHeaderContributor;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -41,6 +43,12 @@ public class TranslationsColumnProviderPlugin extends AbstractListColumnProvider
 
     public TranslationsColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    @Override
+    public IHeaderContributor getHeaderContributor() {
+        return CSSPackageResource.getHeaderContribution(TranslationsColumnProviderPlugin.class,
+                "TranslationColumns.css");
     }
 
     @Override

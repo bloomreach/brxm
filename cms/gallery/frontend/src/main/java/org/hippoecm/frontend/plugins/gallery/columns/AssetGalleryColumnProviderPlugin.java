@@ -1,5 +1,8 @@
 package org.hippoecm.frontend.plugins.gallery.columns;
 
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.CalendarComparator;
@@ -7,6 +10,7 @@ import org.hippoecm.frontend.plugins.gallery.columns.compare.MimeTypeComparator;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.SizeComparator;
 import org.hippoecm.frontend.plugins.gallery.columns.modify.MimeTypeAttributeModifier;
 import org.hippoecm.frontend.plugins.gallery.columns.render.DatePropertyRenderer;
+import org.hippoecm.frontend.plugins.gallery.columns.render.MimeTypeIconRenderer;
 import org.hippoecm.frontend.plugins.gallery.columns.render.SizeRenderer;
 import org.hippoecm.frontend.plugins.gallery.columns.render.StringPropertyRenderer;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -14,6 +18,7 @@ import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPl
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 
 import javax.jcr.Node;
 import java.util.ArrayList;
@@ -34,13 +39,19 @@ public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProvider
     }
 
     @Override
+    public IHeaderContributor getHeaderContributor() {
+        return CSSPackageResource.getHeaderContribution(AssetGalleryColumnProviderPlugin.class,
+                "AssetGalleryStyle.css");
+    }
+
+
+    @Override
     public List<ListColumn<Node>> getColumns() {
         List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
 
-        ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("assetgallery-type", Translations.class),
-                "type");
-        column.setRenderer(new EmptyRenderer<Node>());
-        column.setAttributeModifier(new MimeTypeAttributeModifier());
+        ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), null);
+        column.setRenderer(new MimeTypeIconRenderer());
+        column.setAttributeModifier(new IconAttributeModifier());
         column.setComparator(new MimeTypeComparator("jcr:mimeType", primaryItemName));
         column.setCssClass("assetgallery-type");
         columns.add(column);

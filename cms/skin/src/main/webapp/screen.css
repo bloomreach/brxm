@@ -540,6 +540,7 @@ body.hippo-root #doc3 {
   padding-left: 3px;
   padding-right: 3px;
   display: block;
+  white-space: nowrap;
 }
 
 .hippo-list-details tr td {
@@ -3680,10 +3681,12 @@ table.hippo-list-details > tbody {
 .navigator-center-body table.hippo-list-documents,
 .navigator-center-body table.hippo-gallery-images,
 .navigator-center-body table.hippo-gallery-assets,
+.navigator-center-body table.asset-gallery-plugin,
 .navigator-center-body table.hippo-typeslist,
 .hippo-dialog-picker table.hippo-list-documents,
 .hippo-dialog-picker table.hippo-gallery-images,
-.hippo-dialog-picker table.hippo-gallery-assets {
+.hippo-dialog-picker table.hippo-gallery-assets,
+.hippo-dialog-picker table.asset-gallery-plugin {
   border-collapse: inherit;
   background-color: #fff;
 }
@@ -4124,6 +4127,10 @@ div.hippo-diff-removed div.resource-values, div.hippo-diff-added div.resource-va
   padding-right: 2px;
   position: static;
   padding-bottom: 3px;
+}
+
+.toggle-button > a > img {
+  vertical-align: bottom;
 }
 
 .hippo-picker .hippo-picker-list-details .toggle-button {

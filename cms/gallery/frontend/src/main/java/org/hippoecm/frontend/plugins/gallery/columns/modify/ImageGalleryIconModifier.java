@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+@Deprecated
 public class ImageGalleryIconModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

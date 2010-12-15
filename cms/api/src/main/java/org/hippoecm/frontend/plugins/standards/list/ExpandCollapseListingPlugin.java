@@ -21,8 +21,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -151,6 +153,18 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     public DataTableSettings getSettings() {
         return settings;
     }
+
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        IHeaderResponse response = container.getHeaderResponse();
+        for (IListColumnProvider provider : getListColumnProviders()) {
+            IHeaderContributor providerHeader = provider.getHeaderContributor();
+            if (providerHeader != null) {
+                providerHeader.renderHead(response);
+            }
+        }
+    }
+
 
     protected List<IListColumnProvider> getListColumnProviders() {
         IPluginConfig config = getPluginConfig();
