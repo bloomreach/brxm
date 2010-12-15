@@ -298,7 +298,7 @@
       <sv:value>hippo:initializefolder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>v16a</sv:value>
+      <sv:value>v18a</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
