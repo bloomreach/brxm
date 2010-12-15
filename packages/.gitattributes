@@ -2,6 +2,7 @@
 package-app-dependencies/pom.xml svneol=native#text/plain
 package-cms-dependencies/pom.xml svneol=native#text/plain
 package-cms-resources/pom.xml svneol=native#text/plain
+package-cms-resources/src/main/resources/log4j.xml svneol=native#text/plain
 package-cms-resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 package-cms-test/pom.xml svneol=native#text/plain
 package-cms-test/src/test/java/org/hippoecm/repository/test/BasicCmsSeleniumTest.java svneol=native#text/plain

@@ -36,11 +36,11 @@
   </scm>
 
   <properties>
-    <repository.version>2.18.00RC1</repository.version>
-    <cms.version>2.18.00RC1</cms.version>
-    <publication-workflow.version>2.18.00RC1</publication-workflow.version>
-    <faceteddate.version>2.18.00RC1</faceteddate.version>
-    <defaultcontent.version>2.18.00RC1</defaultcontent.version>
+    <repository.version>2.19.00-SNAPSHOT</repository.version>
+    <cms.version>2.19.00-SNAPSHOT</cms.version>
+    <publication-workflow.version>2.19.00-SNAPSHOT</publication-workflow.version>
+    <faceteddate.version>2.19.00-SNAPSHOT</faceteddate.version>
+    <defaultcontent.version>2.19.00-SNAPSHOT</defaultcontent.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <javax.servlet.version>2.4</javax.servlet.version>
     <commons-lang.version>2.1</commons-lang.version>
@@ -74,7 +74,6 @@
   </repositories>
   
   <modules>
-    <module>package-app-dependencies</module>
     <module>package-cms-dependencies</module>
     <module>package-cms-ear</module>
     <module>package-cms-resources</module>
@@ -94,7 +93,7 @@
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <scmCommentPrefix>HREPTWO-4795:</scmCommentPrefix>
-          <tag>hippo-packages-2.18.00RC1</tag>
+          <tag>hippo-packages-2.19.00-SNAPSHOT</tag>
         </configuration>
       </plugin>
     </plugins>
