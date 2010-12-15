@@ -52,14 +52,6 @@
       <version>${project.version}</version>
       <type>war</type>
     </dependency>
-
-    <!-- End applications -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-application</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-    </dependency>
   </dependencies>
 
   <build>
@@ -120,14 +112,6 @@
               <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-layout</artifactId>
               <targetPath>layout</targetPath>
-              <excludes>
-                <exclude>WEB-INF/web.xml</exclude>
-                <exclude>WEB-INF/lib/*.jar</exclude>
-              </excludes>
-            </overlay>
-            <overlay>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-application</artifactId>
               <excludes>
                 <exclude>WEB-INF/web.xml</exclude>
                 <exclude>WEB-INF/lib/*.jar</exclude>
