@@ -223,6 +223,10 @@ reporting/.classpath
 reporting/.project
 reporting/.settings
 reporting/target
+resources/.classpath
+resources/.project
+resources/.settings
+resources/target
 rootpage/.classpath
 rootpage/.project
 rootpage/.settings

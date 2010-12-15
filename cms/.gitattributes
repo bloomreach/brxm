@@ -1056,6 +1056,8 @@ reporting/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 reporting/src/main/resources/reporting.cnd -text
 reporting/src/site/apt/index.apt -text
 reporting/src/site/site.xml svneol=native#text/plain
+resources/pom.xml svneol=native#text/plain
+resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/BrowserSpecificStylesheetsBehavior.java -text svneol=unset#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.java -text svneol=unset#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text

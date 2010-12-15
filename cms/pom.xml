@@ -69,10 +69,11 @@
     <module>editor</module>
     <module>translation</module>
     <module>gallery</module>
-    <module>tools</module>
     <module>layout</module>
     <module>config</module>
     <module>skin</module>
+    <module>resources</module>
+    <module>tools</module>
   </modules>
 
   <properties>
