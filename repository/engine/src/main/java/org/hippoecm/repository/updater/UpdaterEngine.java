@@ -1050,7 +1050,11 @@ public class UpdaterEngine {
         void initialize() throws NamespaceException {
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
             newURI = mapping.getURI(namespace);
-            newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');
+            if (oldURI != null && oldURI.equals(newURI)) {
+                newPrefix = oldPrefix = namespace;
+            } else {
+                newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');
+            }
         }
 
         @Override
