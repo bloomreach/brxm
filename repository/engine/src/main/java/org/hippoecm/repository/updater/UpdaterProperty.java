@@ -275,9 +275,8 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
         register();
     }
 
-    @Deprecated
     public void setValue(InputStream value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        throw new UpdaterException("illegal method");
+        setValue(valueFactory.createValue(value));
     }
 
     public void setValue(long value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
@@ -320,7 +319,7 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
 
     @Deprecated
     public InputStream getStream() throws ValueFormatException, RepositoryException {
-        throw new UpdaterException("illegal method");
+        return getValue().getStream();
     }
 
     public long getLong() throws ValueFormatException, RepositoryException {
