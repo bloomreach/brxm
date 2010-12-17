@@ -104,13 +104,13 @@
     <!-- HST Configuration Editor Dependencies for testing purpose. By default, these should be commented out. -->
     <!--
     <dependency>
-      <groupId>org.onehippo.ecm</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>
       <version>${configeditor.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.ecm</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-hst-configuration-editor-repository</artifactId>
       <version>${configeditor.version}</version>
       <type>jar</type>
