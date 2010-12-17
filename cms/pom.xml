@@ -72,6 +72,7 @@
     <module>layout</module>
     <module>config</module>
     <module>skin</module>
+    <module>upgrade</module>
     <module>resources</module>
     <module>tools</module>
   </modules>
