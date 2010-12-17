@@ -121,7 +121,7 @@
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>rest</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:secured" sv:type="Boolean">
+              <sv:property sv:name="hst:authenticated" sv:type="Boolean">
                 <sv:value>false</sv:value>
               </sv:property>
               <sv:property sv:name="hst:roles" sv:type="String">
@@ -265,7 +265,7 @@
                 <sv:property sv:name="hst:isSite" sv:type="Boolean">
                    <sv:value>false</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:secured" sv:type="Boolean">
+                <sv:property sv:name="hst:authenticated" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:roles" sv:type="String">
@@ -368,7 +368,7 @@
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>preview</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:secured" sv:type="Boolean">
+              <sv:property sv:name="hst:authenticated" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
               <sv:property sv:name="hst:roles" sv:type="String">
@@ -487,7 +487,7 @@
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>rest</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:secured" sv:type="Boolean">
+              <sv:property sv:name="hst:authenticated" sv:type="Boolean">
                 <sv:value>false</sv:value>
               </sv:property>
               <sv:property sv:name="hst:roles" sv:type="String">
@@ -631,7 +631,7 @@
                 <sv:property sv:name="hst:isSite" sv:type="Boolean">
                    <sv:value>false</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:secured" sv:type="Boolean">
+                <sv:property sv:name="hst:authenticated" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:roles" sv:type="String">
@@ -734,7 +734,7 @@
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>preview</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:secured" sv:type="Boolean">
+              <sv:property sv:name="hst:authenticated" sv:type="Boolean">
                 <sv:value>true</sv:value>
               </sv:property>
               <sv:property sv:name="hst:roles" sv:type="String">

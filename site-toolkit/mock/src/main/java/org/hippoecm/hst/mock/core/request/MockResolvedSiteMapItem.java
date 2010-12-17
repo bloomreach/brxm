@@ -39,7 +39,7 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
     private int errorCode;
     private Set<String> roles;
     private Set<String> users;
-    private boolean secured;
+    private boolean authenticated;
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
     private String namedPipeline;
@@ -145,12 +145,12 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
         this.users = users;
     }
 
-    public boolean isSecured() {
-        return secured;
+    public boolean isAuthenticated() {
+        return authenticated;
     }
 
-    public void setSecured(boolean secured) {
-        this.secured = secured;
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
     }
 
     public HstComponentConfiguration getHstComponentConfiguration() {

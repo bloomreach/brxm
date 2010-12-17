@@ -173,24 +173,24 @@ public class SecurityValve extends AbstractValve {
         Set<String> roles = null;
         Set<String> users = null;
 
-        boolean secured = (resolvedSiteMapItem != null && resolvedSiteMapItem.isSecured());
+        boolean authenticated = (resolvedSiteMapItem != null && resolvedSiteMapItem.isAuthenticated());
 
-        if (secured) {
+        if (authenticated) {
             roles = resolvedSiteMapItem.getRoles();
             users = resolvedSiteMapItem.getUsers();
         } else {
             ResolvedMount mount = requestContext.getResolvedMount();
-            secured = (mount != null && mount.isSecured());
+            authenticated = (mount != null && mount.isAuthenticated());
             
-            if (secured) {
+            if (authenticated) {
                 roles = mount.getRoles();
                 users = mount.getUsers();
             }
         }
         
-        if (!secured) {
+        if (!authenticated) {
             if (log.isDebugEnabled()) {
-                log.debug("The sitemap item or site mount is non-secured.");
+                log.debug("The sitemap item or site mount is non-authenticated.");
             }
             
             return;
@@ -211,7 +211,7 @@ public class SecurityValve extends AbstractValve {
                 log.debug("The roles or users are not configured.");
             }
             
-            throw new ContainerSecurityException("No role or user is not configured for the secured content.");
+            throw new ContainerSecurityException("No role or user is not configured for the auth-required content.");
         }
         
         if (!users.isEmpty()) {

@@ -109,7 +109,7 @@
 - hst:statuscode (long)
 - hst:errorcode (long)
 - hst:excludedforlinkrewriting (boolean)
-- hst:secured (boolean)
+- hst:authenticated (boolean)
 - hst:roles (string) multiple
 // refId must be unique within a single sitemap item tree. The property is optional
 - hst:refId (string)
@@ -199,7 +199,7 @@
 - hst:versioninpreviewheader (boolean)
 // when true, links get a ./ appended automatically
 - hst:isSite (boolean)
-- hst:secured (boolean)
+- hst:authenticated (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
 // the alias of this mount. If not present, the alias is the current name

@@ -153,8 +153,8 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         return hstSiteMapItem.getNamedPipeline();
     }
 
-    public boolean isSecured() {
-        return hstSiteMapItem.isSecured();
+    public boolean isAuthenticated() {
+        return hstSiteMapItem.isAuthenticated();
     }
 
     public Set<String> getRoles() {

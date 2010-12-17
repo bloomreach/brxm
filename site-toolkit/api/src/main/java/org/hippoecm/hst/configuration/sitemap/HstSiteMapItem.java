@@ -106,17 +106,17 @@ public interface HstSiteMapItem {
      * If this method returns true, then only if the user is explicitly allowed or <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
      * sitemap item is accessible for the request. 
      * 
-     * If a sitemap item does not have a configuration for isSecure, the value from the parent item is taken. The root sitemap items 
-     * return by default <code>false</code> for {@link #isSecured()} when no configuration is set for isSecure.
+     * If a sitemap item does not have a configuration for authenticated, the value from the parent item is taken. The root sitemap items 
+     * return by default <code>false</code> for {@link #isAuthenticated()} when no configuration is set for authenticated.
      * 
-     * @return <code>true</code> if the sitemap item is secured. 
+     * @return <code>true</code> if the sitemap item is authenticated. 
      */
-    boolean isSecured();
+    boolean isAuthenticated();
     
     /**
-     * Returns the roles that are allowed to access this sitemap item when {@link isSecure()} is true. If the sitemap items does not have any roles defined by itself, it
+     * Returns the roles that are allowed to access this sitemap item when {@link #isAuthenticated()} is true. If the sitemap items does not have any roles defined by itself, it
      * inherits them from the parent. If it defines roles, the roles from any ancestor are ignored. An empty set of roles
-     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * in combination with {@link #isAuthenticated()} return <code>true</code> means nobody has access to the item
      * 
      * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
      * should return an unmodifiable set. 
@@ -127,9 +127,9 @@ public interface HstSiteMapItem {
     Set<String> getRoles();  
     
     /**
-     * Returns the users that are allowed to access this sitemap item when {@link isSecure()} is true. If the sitemap items does not have any users defined by itself, it
+     * Returns the users that are allowed to access this sitemap item when {@link #isAuthenticated()} is true. If the sitemap items does not have any users defined by itself, it
      * inherits them from the parent. If it defines users, the users from any ancestor are ignored. An empty set of users
-     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * in combination with {@link #isAuthenticated()} return <code>true</code> means nobody has access to the item
      * 
      * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
      * should return an unmodifiable set. 

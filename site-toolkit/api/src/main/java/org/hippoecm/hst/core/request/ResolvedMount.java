@@ -63,16 +63,16 @@ public interface ResolvedMount {
      * If this method returns true, then only if the user is explicitly allowed or <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
      * Mount is accessible for the request. 
      * 
-     * If a Mount does not have a configuration for isSecure, the value from the parent item is taken.
+     * If a Mount does not have a configuration for authenticated, the value from the parent item is taken.
      * 
-     * @return <code>true</code> if the Mount is secured. 
+     * @return <code>true</code> if the Mount is authenticated. 
      */
-    boolean isSecured();
+    boolean isAuthenticated();
     
     /**
-     * Returns the roles that are allowed to access this Mount when {@link isSecure()} is true. If the Mount does not have any roles defined by itself, it
+     * Returns the roles that are allowed to access this Mount when {@link #isAuthenticated()} is true. If the Mount does not have any roles defined by itself, it
      * inherits them from the parent. If it defines roles, the roles from any ancestor are ignored. An empty set of roles
-     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * in combination with {@link #isAuthenticated()} return <code>true</code> means nobody has access to the item
      * 
      * @return The set of roles that are allowed to access this Mount. When no roles defined, the roles from the parent item are inherited. If none of the 
      * parent items have a role defined, an empty set is returned
@@ -80,9 +80,9 @@ public interface ResolvedMount {
     Set<String> getRoles();  
     
     /**
-     * Returns the users that are allowed to access this Mount when {@link isSecure()} is true. If the Mount does not have any users defined by itself, it
+     * Returns the users that are allowed to access this Mount when {@link #isAuthenticated()} is true. If the Mount does not have any users defined by itself, it
      * inherits them from the parent. If it defines users, the users from any ancestor are ignored. An empty set of users
-     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * in combination with {@link #isAuthenticated()} return <code>true</code> means nobody has access to the item
      * 
      * @return The set of users that are allowed to access this Mount. When no users defined, the users from the parent item are inherited. If none of the 
      * parent items have a user defined, an empty set is returned
@@ -103,7 +103,7 @@ public interface ResolvedMount {
     
     /**
      * Returns FORM Login Page
-     * @return <code>true</code> if the Mount is secured. 
+     * @return <code>true</code> if the Mount is authenticated. 
      */
     String getFormLoginPage();
     

@@ -76,13 +76,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
     private String portletComponentConfigurationId;
   
-    private boolean secured = false;
+    private boolean authenticated;
     
     private Set<String> roles;
     
     private Set<String> users;
     
-    private boolean isExcludedForLinkRewriting = false;
+    private boolean isExcludedForLinkRewriting;
 
     private boolean isWildCard;
     
@@ -94,7 +94,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
      * Internal only: used for linkrewriting: when true, it indicates, that this HstSiteMapItem can only be used in linkrewriting
      * when the current context helps to resolve some wildcards
      */
-    private boolean useableInRightContextOnly = false;
+    private boolean useableInRightContextOnly;
     /*
      * Internal only: needed for context aware linkrewriting
      */
@@ -242,10 +242,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.locale = hstSiteMap.getSite().getMount().getLocale();
         }
         
-        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
-            this.secured = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED);
+        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED)) {
+            this.authenticated = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED);
         } else if(this.parentItem != null){
-            this.secured = parentItem.isSecured();
+            this.authenticated = parentItem.isAuthenticated();
         } 
         
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
@@ -363,8 +363,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         return this.errorCode;
     }
 
-    public boolean isSecured() {
-        return this.secured;
+    public boolean isAuthenticated() {
+        return this.authenticated;
     }
 
     public Set<String> getRoles() {

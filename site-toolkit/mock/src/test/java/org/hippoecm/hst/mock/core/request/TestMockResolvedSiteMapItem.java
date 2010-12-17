@@ -47,7 +47,7 @@ public class TestMockResolvedSiteMapItem {
         Set<String> users = new HashSet<String>(Arrays.asList(new String [] { "jane", "john" }));
         MockBeanTestHelper.verifyReadWriteProperty(bean, "users", users);
 
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "secured", true);
+        MockBeanTestHelper.verifyReadWriteProperty(bean, "authenticated", true);
 
         HstComponentConfiguration hstComponentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         MockBeanTestHelper.verifyReadWriteProperty(bean, "hstComponentConfiguration", hstComponentConfiguration);

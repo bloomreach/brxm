@@ -74,9 +74,9 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
     }
     
     @Test
-    public void testGetSecuredTextPageResource() throws Exception {
+    public void testGetProtectedTextPageResource() throws Exception {
         
-        log.debug("\n****** testGetSecuredTextPageResource *******\n");
+        log.debug("\n****** testGetProtectedTextPageResource *******\n");
         
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("HTTP/1.1");
@@ -85,10 +85,10 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
         request.setServerPort(8085);
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./secured/");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./protected/");
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
-        request.setPathInfo("/Products/HippoCMS./secured/");
+        request.setPathInfo("/Products/HippoCMS./protected/");
         request.setContent(new byte[0]);
         
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -132,10 +132,10 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
         request.setServerPort(8085);
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./secured/");
+        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./protected/");
         request.setContextPath("/testapp");
         request.setServletPath("/preview/services");
-        request.setPathInfo("/Products/HippoCMS./secured/");
+        request.setPathInfo("/Products/HippoCMS./protected/");
         request.setContent(new byte[0]);
         
         response = new MockHttpServletResponse();

@@ -54,9 +54,9 @@ public class TestSecurityValve {
     }
     
     @Test
-    public void testCheckAuthorizedForNonSecured() throws Exception {
+    public void testCheckAuthorizedForNonAuthenticated() throws Exception {
         ResolvedSiteMapItem resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
-        expect(resolvedSiteMapItem.isSecured()).andReturn(false).anyTimes();
+        expect(resolvedSiteMapItem.isAuthenticated()).andReturn(false).anyTimes();
         
         HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
@@ -80,7 +80,7 @@ public class TestSecurityValve {
         Set<String> users = new HashSet<String>();
         
         ResolvedSiteMapItem resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
-        expect(resolvedSiteMapItem.isSecured()).andReturn(true).anyTimes();
+        expect(resolvedSiteMapItem.isAuthenticated()).andReturn(true).anyTimes();
         expect(resolvedSiteMapItem.getRoles()).andReturn(roles).anyTimes();
         expect(resolvedSiteMapItem.getUsers()).andReturn(users).anyTimes();
         
@@ -108,7 +108,7 @@ public class TestSecurityValve {
         Set<String> users = new HashSet<String>();
         
         ResolvedSiteMapItem resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
-        expect(resolvedSiteMapItem.isSecured()).andReturn(true).anyTimes();
+        expect(resolvedSiteMapItem.isAuthenticated()).andReturn(true).anyTimes();
         expect(resolvedSiteMapItem.getRoles()).andReturn(roles).anyTimes();
         expect(resolvedSiteMapItem.getUsers()).andReturn(users).anyTimes();
         
@@ -155,10 +155,10 @@ public class TestSecurityValve {
         Set<String> users = new HashSet<String>();
         
         ResolvedSiteMapItem resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
-        expect(resolvedSiteMapItem.isSecured()).andReturn(false).anyTimes();
+        expect(resolvedSiteMapItem.isAuthenticated()).andReturn(false).anyTimes();
         
         ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
-        expect(resolvedMount.isSecured()).andReturn(true).anyTimes();
+        expect(resolvedMount.isAuthenticated()).andReturn(true).anyTimes();
         
         expect(resolvedMount.getRoles()).andReturn(roles).anyTimes();
         expect(resolvedMount.getUsers()).andReturn(users).anyTimes();
@@ -208,7 +208,7 @@ public class TestSecurityValve {
         CollectionUtils.addAll(users, StringUtils.split("alpha bravo"));
         
         ResolvedSiteMapItem resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
-        expect(resolvedSiteMapItem.isSecured()).andReturn(true).anyTimes();
+        expect(resolvedSiteMapItem.isAuthenticated()).andReturn(true).anyTimes();
         expect(resolvedSiteMapItem.getRoles()).andReturn(roles).anyTimes();
         expect(resolvedSiteMapItem.getUsers()).andReturn(users).anyTimes();
         

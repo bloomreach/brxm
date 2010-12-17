@@ -114,7 +114,7 @@ public interface ResolvedSiteMapItem {
     /**
      * @return <code>true</code> if {@link #getRoles} should be applied to this ResolvedSiteMap item
      */
-    boolean isSecured();
+    boolean isAuthenticated();
     
     /**
      * @return the roles that are allowed to proceed the request with this resolved sitemap item. If no roles present, and empty list is returned

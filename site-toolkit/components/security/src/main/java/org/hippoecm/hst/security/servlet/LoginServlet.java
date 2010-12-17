@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * The LoginServlet is able to processes form-based at the four different stage:
  * <UL>
  * <LI><EM>Login::Proxy</EM> - An html form submits to this servlet with login info, 
- * and then this servlet redirects to a secured resource, Login::Resource, which is configured in web.xml as security-constraint.
+ * and then this servlet redirects to a protected resource, Login::Resource, which is configured in web.xml as security-constraint.
  * As the Login::Resource is requested, the servlet container will invoke the configured form-based login servlet path,
  * which is also configured in web.xml as login-config.
  * In this stage, this servlet stores the user's login information to be used later. 

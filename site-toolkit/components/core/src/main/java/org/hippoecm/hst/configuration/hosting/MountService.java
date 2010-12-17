@@ -153,7 +153,7 @@ public class MountService implements Mount {
      */
     private String locale;
     
-    private boolean secured;
+    private boolean authenticated;
     
     private Set<String> roles;
     
@@ -337,10 +337,10 @@ public class MountService implements Mount {
             }
         }
         
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SECURED)) {
-            this.secured = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SECURED);
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED)) {
+            this.authenticated = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED);
         } else if (parent != null){
-            this.secured = parent.isSecured();
+            this.authenticated = parent.isAuthenticated();
         } 
         
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ROLES)) {
@@ -559,8 +559,8 @@ public class MountService implements Mount {
         return embeddedMountPath;
     }
 
-    public boolean isSecured() {
-        return secured;
+    public boolean isAuthenticated() {
+        return authenticated;
     }
     
     public Set<String> getRoles() {

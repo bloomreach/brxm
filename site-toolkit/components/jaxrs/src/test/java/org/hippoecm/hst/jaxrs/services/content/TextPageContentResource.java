@@ -66,8 +66,8 @@ public class TextPageContentResource extends AbstractContentResource {
     
     @RolesAllowed(value={"manager"})
     @GET
-    @Path("/secured/")
-    public TextPageRepresentation getSecuredTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+    @Path("/protected/")
+    public TextPageRepresentation getProtectedTextPageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         return getTextPageResource(servletRequest, servletResponse, uriInfo);
     }
     

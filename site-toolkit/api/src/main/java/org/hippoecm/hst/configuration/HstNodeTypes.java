@@ -70,7 +70,7 @@ public interface HstNodeTypes {
     
     public final static String SITEMAPITEM_PROPERTY_REF_ID = "hst:refId";
     public final static String SITEMAPITEM_PROPERTY_VALUE =  "hst:value";
-    public final static String SITEMAPITEM_PROPERTY_SECURED =  "hst:secured";
+    public final static String SITEMAPITEM_PROPERTY_AUTHENTICATED =  "hst:authenticated";
     public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMAPITEM_PROPERTY_USERS =  "hst:users";
     public final static String SITEMAPITEM_PROPERTY_STATUSCODE =  "hst:statuscode";
@@ -113,7 +113,7 @@ public interface HstNodeTypes {
     public final static String MOUNT_PROPERTY_TYPE = "hst:type";
     public final static String MOUNT_PROPERTY_TYPES = "hst:types";
     public final static String MOUNT_PROPERTY_EMBEDDEDMOUNTPATH = "hst:embeddedmountpath";
-    public final static String MOUNT_PROPERTY_SECURED =  "hst:secured";
+    public final static String MOUNT_PROPERTY_AUTHENTICATED =  "hst:authenticated";
     public final static String MOUNT_PROPERTY_ROLES =  "hst:roles";
     public final static String MOUNT_PROPERTY_USERS =  "hst:users";
     public final static String MOUNT_PROPERTY_SUBJECTBASEDSESSION =  "hst:subjectbasedsession";

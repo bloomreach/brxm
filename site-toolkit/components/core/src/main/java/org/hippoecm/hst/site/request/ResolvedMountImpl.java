@@ -98,8 +98,8 @@ public class ResolvedMountImpl implements ResolvedMount{
         return item; 
     }
     
-    public boolean isSecured() {
-        return mount.isSecured();
+    public boolean isAuthenticated() {
+        return mount.isAuthenticated();
     }
     
     public Set<String> getRoles() {
