@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.editor.editor;
 
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.editor.resources.EditorResources;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -31,6 +32,8 @@ public class EditorPlugin extends RenderPlugin {
 
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        add(EditorResources.getCss());
     }
 
     @Override

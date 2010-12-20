@@ -1,0 +1,101 @@
+
+/* Microsoft mimetypes */
+.mimetype-application-vnd-ms-excel-16,
+.mimetype-application-excel-16,
+.mimetype-application-x-excel-16,
+.mimetype-application-vndms-excel-16,
+.mimetype-application-x-msexcel-16 {
+  background-image: url("images/icons/mimetypes/mimetype-xls-16.png")
+}
+
+.mimetype-application-vnd-ms-powerpoint-16,
+.mimetype-application-vndms-powerpoint-16,
+.mimetype-application-mspowerpoint-16,
+.mimetype-application-powerpoint-16,
+.mimetype-application-x-mspowerpoint-16 {
+  background-image: url("icons/mimetype-ppt-16.png")
+}
+
+.mimetype-application-msword-16 {
+  background-image: url("icons/mimetype-doc-16.png")
+}
+
+/* Microsoft Open XML mimetypes */
+.mimetype-application-vnd-openxmlformats-officedocument-wordprocessingml-document-16 {
+  background-image: url("icons/mimetype-docx-16.png")
+}
+
+.mimetype-application-vnd-openxmlformats-officedocument-spreadsheetml-sheet-16 {
+  background-image: url("icons/mimetype-xlsx-16.png")
+}
+
+.mimetype-application-vnd-openxmlformats-officedocument-presentationml-presentation-16 {
+  background-image: url("icons/mimetype-pptx-16.png")
+}
+
+/* OpenOffice 1 mimetypes */
+.mimetype-application-vnd-sun-xml-writer-16 {
+  background-image: url("icons/mimetype-sxw-16.png")
+}
+
+.mimetype-application-vnd-sun-xml-calc-16 {
+  background-image: url("icons/mimetype-sxc-16.png")
+}
+
+.mimetype-application-vnd-sun-xml-impress-16 {
+  background-image: url("icons/mimetype-sxi-16.png")
+}
+
+/* OpenOffice 2 mimetypes */
+.mimetype-application-opendocument-16,
+.mimetype-application-vnd-oasis-opendocument-text-16 {
+  background-image: url("icons/mimetype-odt-16.png")
+}
+
+.mimetype-application-vnd-oasis-opendocument-spreadsheet-16 {
+  background-image: url("icons/mimetype-ods-16.png")
+}
+
+.mimetype-application-vnd-oasis-opendocument-presentation-16 {
+  background-image: url("icons/mimetype-odp-16.png")
+}
+
+/* General mimetypes */
+.mimetype-image-16 {
+  background-image: url("icons/mimetype-image-16.png")
+}
+
+.mimetype-audio-16 {
+  background-image: url("icons/mimetype-audio-16.png")
+}
+
+.mimetype-video-16 {
+  background-image: url("icons/mimetype-video-16.png")
+}
+
+.mimetype-application-pdf-16 {
+  background-image: url("icons/mimetype-pdf-16.png")
+}
+
+.mimetype-application-x-shockwave-flash-16 {
+  background-image: url("icons/mimetype-swf-16.png")
+}
+
+.mimetype-application-zip-16,
+.mimetype-application-x-zip-compressed-16,
+.mimetype-application-x-compressed-16,
+.mimetype-multipart-x-zip-16 {
+  background-image: url("icons/mimetype-zip-16.png")
+}
+
+.mimetype-application-rtf-16 {
+  background-image: url("icons/mimetype-rtf-16.png")
+}
+
+.mimetype-text-16 {
+  background-image: url("icons/mimetype-text-16.png")
+}
+
+.mimetype-application-octet-stream-16 {
+  background-image: url("icons/mimetype-binary-16.png")
+}

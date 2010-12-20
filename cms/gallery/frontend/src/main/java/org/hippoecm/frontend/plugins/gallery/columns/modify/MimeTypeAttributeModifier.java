@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.gallery.columns.modify;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -42,7 +44,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
 
     static final Logger log = LoggerFactory.getLogger(MimeTypeAttributeModifier.class);
 
-    static class MimeTypeAttributeModel extends LoadableDetachableModel implements IObservable {
+    static class MimeTypeAttributeModel extends LoadableDetachableModel<String> implements IObservable {
         private static final long serialVersionUID = 1L;
 
         private JcrNodeModel nodeModel;
@@ -61,7 +63,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
         }
 
         @Override
-        protected Object load() {
+        protected String load() {
             Node node = nodeModel.getNode();
             observable.setTarget(null);
             if (node != null) {
@@ -87,8 +89,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                                 }
                                 return "mimetype-" + cssClass + "-16";
                             } else {
-                                log.warn("primary item of image set must be of type "
-                                        + HippoNodeType.NT_RESOURCE);
+                                log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                             }
                         } catch (ItemNotFoundException e) {
                             log.warn("ImageSet must have a primary item. " + node.getPath()
@@ -121,7 +122,15 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
 
     @Override
     public AttributeModifier getCellAttributeModifier(Node node) {
-        return new CssClassAppender(new MimeTypeAttributeModel(new JcrNodeModel(node)));
+        return new CssClassAppender(new MimeTypeAttributeModel(new JcrNodeModel(node))) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void bind(Component hostComponent) {
+                hostComponent.add(CSSPackageResource.getHeaderContribution(MimeTypeAttributeModifier.class,
+                        "mimetypes.css"));
+            }
+        };
     }
 
     @Override

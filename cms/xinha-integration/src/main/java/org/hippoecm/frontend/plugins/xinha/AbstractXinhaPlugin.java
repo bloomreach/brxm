@@ -110,6 +110,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         // dialog functionality for plugins
         add(JavascriptPackageResource.getHeaderContribution(XINHA_MODAL_JS));
+
+        add(CSSPackageResource.getHeaderContribution(AbstractXinhaPlugin.class, "xinha.css"));
     }
 
     @Override

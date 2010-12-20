@@ -7,6 +7,11 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCru
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbBar.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbPanel.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/IAdminParticipant.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-back.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-breacrumbs-arrow.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-en.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-nl.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-panels-headerback.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_fr.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_it.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
@@ -496,6 +501,14 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/Reso
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_nl.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/document-list-back.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-editor-top.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-shade.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-down-16.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-up-16.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/workflow-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/HtmlValidator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/IFeedbackLogger.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/ValidationFeedback.java svneol=native#text/plain
@@ -892,6 +905,27 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/com
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/compare/SizeComparator.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/ImageGalleryIconModifier.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/MimeTypeAttributeModifier.java -text svneol=unset#text/plain
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-audio-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-binary-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-doc-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-docx-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-image-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-odp-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-ods-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-odt-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-pdf-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-ppt-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-pptx-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-rtf-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-swf-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-sxc-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-sxi-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-sxw-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-text-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-video-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-xls-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-xlsx-16.png -text svneol=unset#image/png
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/modify/icons/mimetype-zip-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/SizeRenderer.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/ThumbnailRenderer.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-audio-16.png -text svneol=unset#image/png
@@ -969,6 +1003,7 @@ gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/
 gallery/repository/src/main/resources/hippogallery.cnd svneol=native#text/plain
 gotolink/pom.xml svneol=native#text/plain
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_it.properties -text
+gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/images/dashboard-goto-button.png -text svneol=unset#image/png
 gotolink/src/main/resources/cms-dashshortcuts-gotolink.xml -text svneol=unset#text/plain
 gotolink/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 layout/pom.xml -text svneol=unset#text/plain
@@ -1113,7 +1148,6 @@ skin/src/main/webapp/images/controls/folder-background-selected.png -text svneol
 skin/src/main/webapp/images/controls/folder-workflow-icon.png -text svneol=unset#image/png
 skin/src/main/webapp/images/controls/folderdropdownicon.png -text
 skin/src/main/webapp/images/controls/up-control.gif -text
-skin/src/main/webapp/images/dashboard-goto-button.png -text svneol=unset#image/png
 skin/src/main/webapp/images/devider.png -text
 skin/src/main/webapp/images/document-list-back.png -text svneol=unset#image/png
 skin/src/main/webapp/images/documenttabs.png -text
@@ -1126,18 +1160,12 @@ skin/src/main/webapp/images/editor-tabpanel-back.png -text
 skin/src/main/webapp/images/editortoolbarback.png -text
 skin/src/main/webapp/images/gallery/imagewizard.gif -text
 skin/src/main/webapp/images/headerBack.png -text
-skin/src/main/webapp/images/hippo-border.gif -text
 skin/src/main/webapp/images/hippo-cms.ico -text
 skin/src/main/webapp/images/hippo-console.ico -text
-skin/src/main/webapp/images/hippo-controlpanel-back.png -text svneol=unset#image/png
-skin/src/main/webapp/images/hippo-controlpanel-breacrumbs-arrow.png -text svneol=unset#image/png
-skin/src/main/webapp/images/hippo-controlpanel-help-permissions-en.png -text svneol=unset#image/png
-skin/src/main/webapp/images/hippo-controlpanel-help-permissions-nl.png -text svneol=unset#image/png
 skin/src/main/webapp/images/hippo-editor-body-back.png -text
 skin/src/main/webapp/images/hippo-editor-default-back.png -text
 skin/src/main/webapp/images/hippo-editor-field-back-even.png -text
 skin/src/main/webapp/images/hippo-editor-field-back-odd.png -text
-skin/src/main/webapp/images/hippo-editor-top.png -text svneol=unset#image/png
 skin/src/main/webapp/images/hippo-gallery-folder.png -text
 skin/src/main/webapp/images/hippo-gallery-image-thumbnail-back.png -text
 skin/src/main/webapp/images/hippo-gallery-thumbnail-back.png -text
@@ -1154,7 +1182,6 @@ skin/src/main/webapp/images/hippo-picker-navigation-buttons-back.png -text
 skin/src/main/webapp/images/hippo-picker-navigation-end.png -text
 skin/src/main/webapp/images/hippo-picker-navigation-firstlast.png -text
 skin/src/main/webapp/images/hippo-picker-navigation-start.png -text
-skin/src/main/webapp/images/hippo-shade.png -text
 skin/src/main/webapp/images/hippo-tab-close.png -text
 skin/src/main/webapp/images/hippo-toolbar-menu-item.png -text
 skin/src/main/webapp/images/hippo-window-buttons-back.png -text
@@ -1297,39 +1324,6 @@ skin/src/main/webapp/images/icons/mail-128.png -text
 skin/src/main/webapp/images/icons/mail-16.png -text
 skin/src/main/webapp/images/icons/mail-32.png -text
 skin/src/main/webapp/images/icons/mail-48.png -text
-skin/src/main/webapp/images/icons/mimetype-audio-16.png -text
-skin/src/main/webapp/images/icons/mimetype-binary-16.png -text
-skin/src/main/webapp/images/icons/mimetype-excel-16.png -text
-skin/src/main/webapp/images/icons/mimetype-image-16.png -text
-skin/src/main/webapp/images/icons/mimetype-opendocument-16.png -text
-skin/src/main/webapp/images/icons/mimetype-pdf-16.png -text
-skin/src/main/webapp/images/icons/mimetype-powerpoint-16.png -text
-skin/src/main/webapp/images/icons/mimetype-rtf-16.png -text
-skin/src/main/webapp/images/icons/mimetype-text-16.png -text
-skin/src/main/webapp/images/icons/mimetype-video-16.png -text
-skin/src/main/webapp/images/icons/mimetype-word-16.png -text
-skin/src/main/webapp/images/icons/mimetype-zip-16.png -text
-skin/src/main/webapp/images/icons/mimetypes/mimetype-audio-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-binary-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-doc-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-docx-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-image-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-odp-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-ods-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-odt-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-pdf-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-ppt-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-pptx-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-rtf-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-swf-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-sxc-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-sxi-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-sxw-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-text-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-video-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-xls-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-xlsx-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/mimetypes/mimetype-zip-16.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/move-16.png -text
 skin/src/main/webapp/images/icons/move-up-1.gif -text
 skin/src/main/webapp/images/icons/panel-toggle-version-128.png -text
@@ -1890,6 +1884,7 @@ xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffmin.gif -text
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffplus.gif -text
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffunderline.gif -text
+xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/images/hippo-border.gif -text
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager-debug.js svneol=native#text/plain
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager.js svneol=native#text/plain
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/json/JsonParser.java svneol=native#text/plain

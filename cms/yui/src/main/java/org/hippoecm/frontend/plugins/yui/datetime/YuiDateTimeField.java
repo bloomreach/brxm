@@ -28,6 +28,7 @@ import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
@@ -136,6 +137,8 @@ public class YuiDateTimeField extends DateTimeField {
                 }
             });
         }
+
+        add(CSSPackageResource.getHeaderContribution(YuiDateTimeField.class, "yuidatetime.css"));
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates

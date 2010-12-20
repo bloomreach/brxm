@@ -1,0 +1,63 @@
+
+.yui-date-time-field-input {
+  height: 24px;
+  float: left;
+}
+
+.yui-date-time-field-reset {
+  height: 24px;
+  float: left;
+}
+
+.yui-date-time-field input {
+  border: 1px solid #e3e3e3;
+  padding: 2px;
+  height: 14px;
+  float: left;
+}
+
+.yui-date-time-field input.date {
+  width: 45px;
+}
+
+.yui-date-time-field input.time {
+  width: 17px;
+}
+
+.yui-date-time-field span.time-separator {
+  float: left;
+  margin-top: 4px;
+}
+
+.yui-date-time-field div.yui-skin-sam {
+  height: 20px;
+  margin-right: 10px;
+  float: left;
+  padding-top: 4px;
+}
+
+.yui-date-time-field input.today {
+  border: 1px solid #e3e3e3;
+  width: auto;
+  padding: 2px;
+  margin: 0px;
+}
+
+.yui-date-time-field a.today-link {
+  margin-left: 5px;
+  display: block;
+  float: left;
+  color: #107EC0;
+  height: 21px;
+  padding-top: 1px;
+}
+
+.yui-date-time-field a.today-link img {
+  position: relative;
+  top: 4px;
+  margin-right: 5px;
+}
+
+.yui-date-time-field select {
+  width: 70px
+}

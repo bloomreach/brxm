@@ -1,0 +1,24 @@
+
+/* Shortcuts to places */
+/* ================================================ */
+.hippo-gotolinks li.documents-32 a {
+  background: url("images/dashboard-goto-button.png") no-repeat;
+}
+
+.hippo-gotolinks li a {
+  display: block;
+  height: 52px;
+  padding-left: 75px;
+  width: 192px;
+  padding-top: 25px;
+  font-weight: bold;
+  font-size: 11px
+}
+
+.hippo-gotolinks li a:hover {
+  background-position: -267px 0px
+}
+
+.hippo-gotolinks li.documents-32 {
+  background-image: none
+}

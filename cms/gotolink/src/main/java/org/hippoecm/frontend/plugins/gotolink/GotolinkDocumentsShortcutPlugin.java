@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.gotolink;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -29,9 +30,9 @@ import org.slf4j.LoggerFactory;
 public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     static final Logger log = LoggerFactory.getLogger(GotolinkDocumentsShortcutPlugin.class);
-    
+
     private static final long serialVersionUID = 1L;
 
     public GotolinkDocumentsShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -45,7 +46,7 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
                 String browserId = config.getString("browser.id");
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
                 if (browseService != null) {
-                    browseService.browse(new JcrNodeModel(config.getString("option.location","/content")));
+                    browseService.browse(new JcrNodeModel(config.getString("option.location", "/content")));
                 } else {
                     log.warn("no browser service found");
                 }
@@ -58,5 +59,7 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
             }
         };
         add(link);
+
+        add(CSSPackageResource.getHeaderContribution(GotolinkDocumentsShortcutPlugin.class, "gotolink.css"));
     }
 }

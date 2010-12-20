@@ -31,6 +31,7 @@ import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IDetachable;
@@ -343,6 +344,8 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             name = "";
         }
         add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
+
+        add(CSSPackageResource.getHeaderContribution(ReorderDialog.class, "reorder.css"));
     }
 
     @Override

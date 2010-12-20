@@ -19,6 +19,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
+import org.hippoecm.frontend.editor.resources.EditorResources;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -54,6 +55,8 @@ public class ComparePlugin extends RenderPlugin {
         engineId = context.getReference(factory).getServiceId();
 
         addExtensionPoint("template");
+
+        add(EditorResources.getCss());
     }
 
     @Override

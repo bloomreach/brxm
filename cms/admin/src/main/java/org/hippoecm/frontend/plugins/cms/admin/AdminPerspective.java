@@ -19,6 +19,7 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -65,6 +66,8 @@ public class AdminPerspective extends Perspective {
         });
 
         add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+
+        add(CSSPackageResource.getHeaderContribution(AdminPerspective.class, "admin.css"));
     }
 
     @Override
