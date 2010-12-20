@@ -370,9 +370,13 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
 
         session.save();
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-
         Long count1 = node.getNode("range").getNode("this week").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-        Long count2 = node.getNode("range").getNode("this week").getNode("range").getNode("this month").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        Long count2;
+        if (node.hasNode("range/this week/range")) {
+            count2 = node.getNode("range").getNode("this week").getNode("range").getNode("this month").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        } else {
+            count2 = 0L;
+        }
         // when this week constraint is already chosen, then this month can contain at most as many items (in the beginning of a month, the current 
         // week can contain more items then the month)
         assertTrue(count1 >= count2);
