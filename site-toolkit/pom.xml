@@ -103,7 +103,7 @@
     <hippo-packages.version>2.18.00RC1</hippo-packages.version>
     <publication-workflow.version>2.18.00RC1</publication-workflow.version>
     <gallerypicker.version>1.06.03</gallerypicker.version>
-    <configeditor.version>1.05.00RC1</configeditor.version>
+    <configeditor.version>1.05.00RC2</configeditor.version>
   
    
     <jdo.version>2.0</jdo.version>
