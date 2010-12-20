@@ -60,22 +60,22 @@ public class HstManagerImpl implements HstManager {
     /**
      * The root of the virtual hosts node. There should always be exactly one.
      */
-    HstNode virtualHostsNode; 
+    private HstNode virtualHostsNode; 
     
     /**
      * The common catalog node and <code>null</code> if there is no common catalog (hst:configurations/hst:catalog)
      */
-    HstNode commonCatalog;
+    private HstNode commonCatalog;
 
     /**
      * The map of all configurationRootNodes where the key is the path to the configuration
      */
-    Map<String, HstNode> configurationRootNodes = new HashMap<String, HstNode>();
+    private Map<String, HstNode> configurationRootNodes = new HashMap<String, HstNode>();
 
     /**
      * The map of all site nodes where the key is the path
      */
-    Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
+    private Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
     
     /**
      * Request path suffix delimiter
@@ -177,8 +177,16 @@ public class HstManagerImpl implements HstManager {
                 
                 while(configurationRootJcrNodes.hasNext()) {
                     Node configurationRootNode = configurationRootJcrNodes.nextNode();
-                    HstNode hstNode = new HstNodeImpl(configurationRootNode, null, true);
-                    configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
+                    if(configurationRootNode.getName().equals("hstdefault")) {
+                        // the hstdefault is only meant for 'implicit inheriting'. We can skip it here
+                    } else {
+                        if(configurationRootNodes.containsKey(configurationRootNode.getPath())) {
+                            // already loaded, for example because inherited configs can already be loaded through HstSiteConfigurationRootNodeImpl
+                            continue;
+                        }
+                        HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
+                        configurationRootNodes.put(configurationRootNode.getPath(), hstNode);
+                    }
                 }
             }
             
