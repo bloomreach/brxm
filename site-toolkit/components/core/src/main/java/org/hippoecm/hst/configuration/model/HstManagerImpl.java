@@ -177,7 +177,7 @@ public class HstManagerImpl implements HstManager {
                 
                 while(configurationRootJcrNodes.hasNext()) {
                     Node configurationRootNode = configurationRootJcrNodes.nextNode();
-                    if(configurationRootNode.getName().equals("hstdefault")) {
+                    if(configurationRootNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
                         // the hstdefault is only meant for 'implicit inheriting'. We can skip it here
                     } else {
                         if(configurationRootNodes.containsKey(configurationRootNode.getPath())) {

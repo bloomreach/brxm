@@ -42,15 +42,15 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
                            } else {
                                HstSiteConfigurationRootNodeImpl inheritedConfig = (HstSiteConfigurationRootNodeImpl)hstManagerImpl.getConfigurationRootNodes().get(inheritNode.getPath());
                                if(inheritedConfig == null) {
-                                   // not yet loaded, load now, then merge
-                                   try {
-                                       inheritedConfig = new HstSiteConfigurationRootNodeImpl(inheritNode, null, hstManagerImpl);
-                                       // store the loaded inherited config, otherwise it will be reloaded over and over
-                                       hstManagerImpl.getConfigurationRootNodes().put(inheritNode.getPath(), inheritedConfig);
-                                   } catch (HstNodeException e) {
-                                       log.error("Incorrect configured inherited configuration at '{}'. Cannot load inherited config", inheritNode.getPath());
-                                   }
-                                                       }
+                               // not yet loaded, load now, then merge
+                               try {
+                                   inheritedConfig = new HstSiteConfigurationRootNodeImpl(inheritNode, null, hstManagerImpl);
+                                   // store the loaded inherited config, otherwise it will be reloaded over and over
+                                   hstManagerImpl.getConfigurationRootNodes().put(inheritNode.getPath(), inheritedConfig);
+                               } catch (HstNodeException e) {
+                                   log.error("Incorrect configured inherited configuration at '{}'. Cannot load inherited config", inheritNode.getPath());
+                               }
+                                                   }
                                if(inheritedConfig != null) {
                                    merge(inheritedConfig);
                                } else {
@@ -66,12 +66,36 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
                 } else {
                     log.info("Found the property '{}' on node '{}' but the property only inherits when configured on nodes of type 'hst:configuration'", HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, jcrNode.getPath());
                 }
+                
+                // Load the implicitly inherited hst:configuration nodes: When there is a hst:configuration node that is called 'hst:default' then we need to merge this.
+                HstSiteConfigurationRootNodeImpl hstDefaultConfig = (HstSiteConfigurationRootNodeImpl)hstManagerImpl.getConfigurationRootNodes().get(HstNodeTypes.NODENAME_HST_HSTDEFAULT);
+                if(hstDefaultConfig == null) {
+                    // not yet loaded, load now, then merge
+                    if(jcrNode.getParent().hasNode(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
+                        Node hstDefaultNode = jcrNode.getParent().getNode(HstNodeTypes.NODENAME_HST_HSTDEFAULT);
+                        try {
+                            hstDefaultConfig = new HstSiteConfigurationRootNodeImpl(hstDefaultNode, null, hstManagerImpl);
+                        } 
+                        catch (HstNodeException e) {
+                            log.error("Incorrect configured hst default configuration at '{}'. Cannot load hstdefault config", hstDefaultNode.getPath());
+                        }
+                        // store the loaded inherited config, otherwise it will be reloaded over and over
+                        hstManagerImpl.getConfigurationRootNodes().put(hstDefaultNode.getPath(), hstDefaultConfig);
+                    } else {
+                        log.info("There is no default configuration node at '{}'. Skip hstdefault configuration", jcrNode.getParent().getPath() + "/"+ HstNodeTypes.NODENAME_HST_HSTDEFAULT);
+                    }
+                }
+                if(hstDefaultConfig != null) {
+                    merge(hstDefaultConfig);
+                } else {
+                    log.info("There is no hstDefaultConfig to merge");
+                }
             }
         } catch (RepositoryException e) {
             throw new HstNodeException(e);
         }
         
-        // Load the implicitly inherited hst:configuration nodes: When there is a hst:configuration node that is called 'hstdefault' then we need to merge this. 
+        
     }
 
     private void merge(HstSiteConfigurationRootNodeImpl inheritedConfig) {

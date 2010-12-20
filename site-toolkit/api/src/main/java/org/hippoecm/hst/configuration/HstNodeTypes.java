@@ -134,6 +134,7 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_TEMPLATES = "hst:templates";
     public static final String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     public final static String NODENAME_HST_SCRIPTS = "hst:scripts";
+    public final static String NODENAME_HST_HSTDEFAULT = "hst:default";
     
     
 }
