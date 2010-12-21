@@ -269,6 +269,13 @@
             <version>${atomikos.version}</version>
             <scope>runtime</scope>
           </dependency>
+          <dependency>
+            <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+            <artifactId>hst-shared-dependencies</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>runtime</scope>
+          </dependency>
         </dependencies>
       </plugin>
     </plugins>
