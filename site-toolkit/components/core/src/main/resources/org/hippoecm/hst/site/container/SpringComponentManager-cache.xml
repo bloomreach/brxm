@@ -31,8 +31,10 @@
     <property name="maxElementsOnDisk" value="0" />
     <property name="eternal" value="false" />
     <property name="overflowToDisk" value="false" />
-    <property name="timeToLive" value="120" />
-    <property name="timeToIdle" value="120" />
+    <!-- time to live in seconds. default 1 day -->
+    <property name="timeToLive" value="86400" />
+    <!-- time to idle in seconds. default 1 day -->
+    <property name="timeToIdle" value="86400" />
     <property name="diskPersistent" value="false" />
     <property name="diskExpiryThreadIntervalSeconds" value="120" />
   </bean>
@@ -47,7 +49,8 @@
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="binariesCache" />
-        <property name="timeToLive" value="5184000" />
+        <!-- time to idle in seconds. default 1 day -->
+        <property name="timeToLive" value="86400" />
         <property name="blocking" value="true" />
       </bean>
     </constructor-arg>
