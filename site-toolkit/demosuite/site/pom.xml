@@ -49,7 +49,14 @@
       <version>${hippo-packages.version}</version>
       <type>war</type>
     </dependency>
-
+    
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-shared-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-server-dependencies</artifactId>
@@ -60,6 +67,13 @@
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-client-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-spring-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
     </dependency>
@@ -89,91 +103,91 @@
       <artifactId>portlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>org.apache.portals.bridges</groupId>
       <artifactId>portals-bridges-common</artifactId>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-annotation_1.1_spec</artifactId>
       <scope>compile</scope>
     </dependency>
+    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <scope>runtime</scope>
     </dependency>
+    
     <dependency>
       <groupId>taglibs</groupId>
       <artifactId>standard</artifactId>
       <scope>runtime</scope>
     </dependency>
+    
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
       <scope>runtime</scope>
     </dependency>
+    
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
       <scope>runtime</scope>
     </dependency>
+    
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>runtime</scope>
     </dependency>
+    
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <scope>runtime</scope>
     </dependency>
+    
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-    </dependency>
+    
     <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>org.springframework.js</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.onehippo.yui</groupId>
       <artifactId>yui-2.xx-sources</artifactId>
     </dependency>
+    
     <!-- Freemarker -->
     <dependency>
       <groupId>org.freemarker</groupId>
@@ -186,6 +200,7 @@
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-extensions</artifactId>

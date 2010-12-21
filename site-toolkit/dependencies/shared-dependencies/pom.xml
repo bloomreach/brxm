@@ -30,6 +30,7 @@
   <packaging>pom</packaging>
   
   <dependencies>
+    
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
@@ -38,18 +39,18 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <!-- TODO Should be provided I think (Ard), but, for some reason, provided dependencies through pom dependencies do not get propagated -->
-      <scope>compile</scope>
     </dependency>
     
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-common</artifactId>
@@ -60,11 +61,13 @@
       <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
   </dependencies>
   
 </project>
