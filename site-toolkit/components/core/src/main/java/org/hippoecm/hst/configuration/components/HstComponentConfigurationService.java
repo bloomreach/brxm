@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -569,7 +570,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             
             if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
                 templateRenderPath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-            } else if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
+            }
+            
+            if (StringUtils.isBlank(templateRenderPath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
                 templateRenderPath = "jcr:" + valueProvider.getPath();
             }
             
@@ -592,7 +595,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             
             if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
                 templateServeResourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-            } else if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
+            }
+            
+            if (StringUtils.isBlank(templateServeResourcePath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
                 templateServeResourcePath = "jcr:" + valueProvider.getPath();
             }
             
