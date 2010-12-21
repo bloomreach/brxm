@@ -40,10 +40,8 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_MOUNT = "hst:mount";
     public final static String NODETYPE_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     public final static String NODETYPE_HST_SITEMAPITEMHANDLER = "hst:sitemapitemhandler";
-    public final static String NODETYPE_HST_SCRIPTS = "hst:scripts";
-    public final static String NODETYPE_HST_SCRIPT = "hst:script";
     public final static String NODETYPE_HST_CONTENTMOUNT = "hst:contentmount";
-
+    public final static String NODETYPE_HST_TEMPLATE = "hst:template";
     
     public final static String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     public final static String GENERAL_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
@@ -66,7 +64,8 @@ public interface HstNodeTypes {
 
     public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
     public final static String TEMPLATE_PROPERTY_IS_NAMED =  "hst:isnamed";
-    public final static String SCRIPT_PROPERTY_TEMPLATE =  "hst:template";
+    public final static String TEMPLATE_PROPERTY_SCRIPT = "hst:script";
+    public final static String TEMPLATE_PROPERTY_LANGUAGE = "hst:language";
     
     public final static String SITEMAPITEM_PROPERTY_REF_ID = "hst:refId";
     public final static String SITEMAPITEM_PROPERTY_VALUE =  "hst:value";
@@ -133,7 +132,6 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_PAGES = "hst:pages";
     public final static String NODENAME_HST_TEMPLATES = "hst:templates";
     public static final String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
-    public final static String NODENAME_HST_SCRIPTS = "hst:scripts";
     public final static String NODENAME_HST_HSTDEFAULT = "hst:default";
     
     

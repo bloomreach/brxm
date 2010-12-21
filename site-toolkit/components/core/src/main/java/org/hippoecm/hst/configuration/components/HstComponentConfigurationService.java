@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
@@ -562,9 +563,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     protected void setRenderPath(Map<String, HstNode> templateResourceMap) {
         String templateRenderPath = null;
         HstNode template = templateResourceMap.get(getHstTemplate());
+        
         if (template != null) {
-            templateRenderPath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-            this.isNamedRenderer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+            ValueProvider valueProvider = template.getValueProvider();
+            
+            if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
+                templateRenderPath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+            } else if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
+                templateRenderPath = "jcr:" + valueProvider.getPath();
+            }
+            
+            this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
         }
         
         this.renderPath = templateRenderPath;
@@ -577,12 +586,21 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     protected void setServeResourcePath(Map<String, HstNode> templateResourceMap) {
         String templateServeResourcePath = null;
         HstNode template = templateResourceMap.get(getHstResourceTemplate());
+        
         if (template != null) {
-            templateServeResourcePath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+            ValueProvider valueProvider = template.getValueProvider();
+            
+            if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
+                templateServeResourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+            } else if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
+                templateServeResourcePath = "jcr:" + valueProvider.getPath();
+            }
+            
             this.isNamedResourceServer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
         }
         
         this.serveResourcePath = templateServeResourcePath;
+        
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setServeResourcePath(templateResourceMap);
         }

@@ -118,7 +118,7 @@ public class RepositoryTemplateLoader implements TemplateLoader {
              obMgr = observerSession.getWorkspace().getObservationManager();
              EventListener listener = new TemplateChangeListener();
              // TODO : only catch event from hst:script nodetype
-             String[] nodeTypes = {HstNodeTypes.NODETYPE_HST_SCRIPT};
+             String[] nodeTypes = { HstNodeTypes.NODETYPE_HST_TEMPLATE };
              obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED
                      | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true, null, nodeTypes, true);
         } catch (RepositoryException e) {
@@ -134,7 +134,7 @@ public class RepositoryTemplateLoader implements TemplateLoader {
             if(session.itemExists(absPath)) {
                 Item item = session.getItem(absPath);
                 if(item.isNode()) {
-                    template = ((Node)item).getProperty(HstNodeTypes.SCRIPT_PROPERTY_TEMPLATE).getValue().getString();
+                    template = ((Node)item).getProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT).getValue().getString();
                 } else {
                     template = ((Property)item).getValue().getString();
                 }

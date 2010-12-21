@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.site;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -35,6 +36,7 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
+import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,18 +84,31 @@ public class HstSiteService implements HstSite {
        
        // templates
        HstNode hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
+       
        if(hstTemplates == null) {
            throw new ServiceException("There are no '"+HstNodeTypes.NODENAME_HST_TEMPLATES+"' present for the configuration at '"+configurationNode.getValueProvider().getPath()+"'");
        }
+       
        for(HstNode template : hstTemplates.getNodes()) {
-           if(!template.getValueProvider().hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH) ) {
-               log.warn("Skipping template '{}' because missing '{}' property", template.getValueProvider().getPath(), HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+           ValueProvider valueProvider = template.getValueProvider();
+           boolean renderPathExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+           boolean scriptExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT);
+           
+           if (!renderPathExisting && !scriptExisting) {
+               log.warn("Skipping template '{}' because missing property, either hst:renderpath or hst:script.", valueProvider.getPath());
                continue;
            }
-           String resourcePath = template.getValueProvider().getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-           if(resourcePath != null && ! "".equals(resourcePath)) {
-               templateResourceMap.put(template.getValueProvider().getName(), template);
+           
+           if (renderPathExisting && !scriptExisting) {
+               String resourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+               
+               if (StringUtils.isBlank(resourcePath)) {
+                   log.warn("Skipping template '{}' because of invalid hst:renderpath value.", valueProvider.getPath());
+                   continue;
+               }
            }
+           
+           templateResourceMap.put(valueProvider.getName(), template);
        }
        
        // component configuration

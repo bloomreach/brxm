@@ -105,8 +105,6 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_PAGES);
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_COMPONENTS);
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_TEMPLATES);
-        // TODO below can be removed after we removed the hst:scripts concept
-        merge(inheritedConfig, HstNodeTypes.NODENAME_HST_SCRIPTS);
     }
 
     /*

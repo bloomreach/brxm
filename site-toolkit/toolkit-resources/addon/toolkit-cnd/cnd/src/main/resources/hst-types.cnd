@@ -27,6 +27,9 @@
 - hst:renderpath (string)
 - hst:isnamed (boolean)
 - hst:containers (string) multiple
+- hst:script (string)
+- hst:language (string)
+- * (string)
 
 [hst:templates] > nt:base, mix:referenceable orderable
 + * (hst:template)
@@ -83,14 +86,6 @@
 [hst:sitemapitemhandlers] >  nt:base, mix:referenceable orderable
 + * (hst:sitemapitemhandler)
 
-[hst:script] > nt:base, mix:referenceable
-- hst:template (string) mandatory
-- hst:language (string)
-- * (string)
-
-[hst:scripts] > nt:base, mix:referenceable orderable
-+ * (hst:script)
-
 [hst:sitemapitem] > nt:base, mix:referenceable
 - hst:value
 - hst:relativecontentpath (string)
@@ -143,7 +138,6 @@
 + hst:templates (hst:templates) = hst:templates
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
 + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
-+ hst:scripts (hst:scripts) = hst:scripts
 + hst:catalog (hst:catalog) = hst:catalog
 
 [hst:configurations] > nt:base, mix:referenceable, mix:versionable
