@@ -135,7 +135,7 @@ public class HstNodeImpl implements HstNode {
         return child;
     }
     
-    public void setNode(String name, HstNode hstNode)  {
+    public void addNode(String name, HstNode hstNode)  {
         children.put(name, hstNode);
     }
 

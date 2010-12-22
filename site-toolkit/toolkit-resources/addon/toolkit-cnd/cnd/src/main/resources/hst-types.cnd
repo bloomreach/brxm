@@ -131,7 +131,7 @@
 
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
-- hst:inheritsfrom (string)
+- hst:inheritsfrom (string) multiple
 + hst:components (hst:components) = hst:components
 + hst:pages (hst:pages) = hst:pages
 + hst:sitemap (hst:sitemap) = hst:sitemap

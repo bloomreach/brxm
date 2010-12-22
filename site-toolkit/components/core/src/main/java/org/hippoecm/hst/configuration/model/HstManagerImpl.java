@@ -184,8 +184,13 @@ public class HstManagerImpl implements HstManager {
                             // already loaded, for example because inherited configs can already be loaded through HstSiteConfigurationRootNodeImpl
                             continue;
                         }
-                        HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
-                        configurationRootNodes.put(configurationRootNode.getPath(), hstNode);
+                        try {
+                            HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
+                            configurationRootNodes.put(configurationRootNode.getPath(), hstNode);
+                        } catch (HstNodeException e) {
+                            log.error("Exception while creating Hst configuration for '{}'. Fix configuration", configurationRootNode.getPath() ,e);
+                        }
+                        
                     }
                 }
             }
