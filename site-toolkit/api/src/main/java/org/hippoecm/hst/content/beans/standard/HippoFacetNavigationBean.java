@@ -27,6 +27,18 @@ public interface HippoFacetNavigationBean extends HippoFolderBean {
     Long getCount();
     
     /**
+     * Return all the hippo:count values of all child HippoFacetNavigationBean combined. This count can be different from the getCount() of this
+     * {@link HippoFacetNavigationBean} because of two reasons:
+     * <ol>
+     *   <li>A document in the resultset can belong to multiple child {@link HippoFacetNavigationBean}'s</li>
+     *   <li>A document in the resultset can belong to zero child {@link HippoFacetNavigationBean}'s: this happens for example when 
+     *   the document has a property, say 'my:date' , but its date does not belong to any of the ranges that the child {@link HippoFacetNavigationBean} represent</li>
+     * </ol>
+     * @return Return all the hippo:count values of all child HippoFacetNavigationBean combined.  
+     */
+    Long getChildCountsCombined();
+    
+    /**
      * 
      * @return the result set below this faceted navigation item
      */

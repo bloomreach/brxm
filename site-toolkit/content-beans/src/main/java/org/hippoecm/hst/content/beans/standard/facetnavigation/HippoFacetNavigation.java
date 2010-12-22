@@ -53,6 +53,15 @@ public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavig
         return this.hippoFolders;
     }
     
+    public Long getChildCountsCombined() {
+        List<HippoFolderBean> folders = getFolders(false);
+        Long combinedCount = 0L;
+        for(HippoFolderBean folder : folders) {
+            combinedCount += folder.getValueProvider().getLong(HippoNodeType.HIPPO_COUNT);
+        }
+        return combinedCount;
+    }
+    
     public Long getCount() {
         return this.getProperty(HippoNodeType.HIPPO_COUNT);
     }
