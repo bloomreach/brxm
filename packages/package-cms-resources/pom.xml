@@ -77,25 +77,6 @@
               <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
           </archive>
-          <overlays>
-            <!-- repeat this overlay for all applications that use the skin -->
-            <overlay>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-resources</artifactId>
-              <excludes>
-                <exclude>WEB-INF/web.xml</exclude>
-                <exclude>WEB-INF/lib/*.jar</exclude>
-              </excludes>
-            </overlay>
-            <overlay>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-repository-resources</artifactId>
-              <excludes>
-                <exclude>WEB-INF/web.xml</exclude>
-                <exclude>WEB-INF/lib/*.jar</exclude>
-              </excludes>
-            </overlay>
-          </overlays>
         </configuration>
       </plugin>
     </plugins>

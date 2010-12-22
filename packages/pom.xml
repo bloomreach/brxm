@@ -74,6 +74,7 @@
   </repositories>
   
   <modules>
+    <module>package-app-dependencies</module>
     <module>package-cms-dependencies</module>
     <module>package-cms-ear</module>
     <module>package-cms-resources</module>

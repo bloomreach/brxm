@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <!--
-  * Copyright 2007 Hippo
+  * Copyright 2010 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<web-app id="hippo-ecm">
+<web-app id="hippo-cms">
 
     <!-- General configuration -->
-    <display-name>Hippo ECM WAR package</display-name>
-    <description>Hippo ECM WAR package</description>
+    <display-name>Hippo CMS</display-name>
+    <description>Hippo CMS</description>
 
     <context-param>
         <param-name>repository-address</param-name>
