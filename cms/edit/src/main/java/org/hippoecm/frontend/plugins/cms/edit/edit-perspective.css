@@ -1,0 +1,43 @@
+.hippo-editor-top {
+  border-bottom: 1px solid #AFAFAF;
+  background: url("images/document-list-back.png") repeat-x top left;
+}
+
+.hippo-editor-top .hippo-toolbar {
+  padding-left: 4px;
+  height: 25px;
+}
+
+/* feedback styling */
+.hippo-editor-feedback {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  float: left;
+  clear: left;
+  height: 49px;
+  overflow-y: auto;
+}
+
+.hippo-editor-feedback ul {
+  margin: 0;
+  padding: 15px 8px 14px 0px;
+  border: none;
+  background-color: white;
+}
+
+.hippo-editor-feedback li {
+  display: list-item;
+  height: 20px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.hippo-editor-feedback .feedbackPanelERROR .feedbackPanelERROR {
+  padding: 15px 10px 16px 33px;
+  font-size: 14px;
+  background: url("images/warning.png") no-repeat 13px center !important;
+  color: #ff1500;
+}
+  

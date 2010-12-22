@@ -346,6 +346,9 @@ edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-128.png -text
 edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-16.png -text svneol=unset#image/png
 edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-32.png -text svneol=unset#image/png
 edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
+edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/edit-perspective.css svneol=native#text/plain
+edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
+edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
 edit/src/test/java/org/hippoecm/frontend/plugins/cms/edit/EditorManagerTest.java svneol=native#text/plain
 edit/src/test/resources/cmstest.cnd -text
 edit/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
@@ -501,7 +504,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/Reso
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_nl.properties -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/document-list-back.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-editor-top.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-shade.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-down-16.png -text svneol=unset#image/png

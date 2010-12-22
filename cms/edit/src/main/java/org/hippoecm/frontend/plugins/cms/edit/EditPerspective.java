@@ -29,6 +29,7 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -116,6 +117,8 @@ public class EditPerspective extends Perspective {
         UnitSettings topSettings = wfSettings.getUnit("top");
         topHeight = topSettings.getHeight();
         add(new WireframeBehavior(wfSettings));
+
+        add(CSSPackageResource.getHeaderContribution(EditPerspective.class, "edit-perspective.css"));
     }
 
     @Override

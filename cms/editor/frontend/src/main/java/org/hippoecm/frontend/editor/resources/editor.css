@@ -100,15 +100,6 @@
   overflow: auto;
 }
 
-.hippo-editor-top {
-  border-bottom: 1px solid #AFAFAF;
-  background: url("images/document-list-back.png") repeat-x top left;
-}
-
-.hippo-editor-top .hippo-toolbar {
-  padding-left: 4px
-}
-
 /* Template editor styling */
 .hippo-editor-template-editor {
   padding-top: 4px;
@@ -137,39 +128,13 @@
   margin: 7px 10px;
 }
 
-.hippo-editor .even .invalid .hippo-editor-field {
-  background: #f00000;
+.hippo-editor .invalid .hippo-editor-field-subfield {
+  background-color: #ffc399;
+  border: 1px solid #ff5500;
 }
 
-.hippo-editor .odd .invalid .hippo-editor-field {
-  background: #f00000;
-}
-
-/* feedback styling */
-.hippo-editor-feedback {
-  width: 70%;
-  margin: 0px 10px 0px 0px;
-  padding: 0px 5px;
-  float: left;
-  clear: left;
-}
-
-.hippo-editor-feedback ul {
-  margin-bottom: 5px;
-  -bottom: 5px;
-  background-color: #ffdfdf;
-  border: 2px solid #ff5050;
-}
-
-.hippo-editor-feedback li {
-  height: 20px;
-  padding: 5px 40px;
-}
-
-.hippo-editor-feedback .feedbackPanelERROR {
-  display: list-item;
-  background-color: #c00;
-  color: #e3e3e3;
+.hippo-editor .invalid .hippo-editor-field-title {
+  color: #ff3c00;
 }
 
 /* field styling */
