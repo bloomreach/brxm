@@ -115,6 +115,8 @@ public class BinariesServlet extends HttpServlet {
     private static final String CACHE_NAME_INIT_PARAM = "cache-name";
     
     private static final String CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM = "cache-max-object-size-bytes";
+    
+    private static final String CACHE_EXPIRES_SECONDS = "cache-expires-seconds";
 
     private static final String SET_EXPIRES_HEADERS_INIT_PARAM = "set-expires-headers";
 
@@ -344,7 +346,7 @@ public class BinariesServlet extends HttpServlet {
         page.setStatus(HttpServletResponse.SC_OK);
         page.setMimeType(resourceNode.getProperty(binaryMimeTypePropName).getString());
         page.setLastModified(ResourceUtils.getLastModifiedDate(resourceNode, binaryLastModifiedPropName));
-        page.setExpirationTime(System.currentTimeMillis() + binariesCache.getTTLMillis());
+        page.setExpirationTime(System.currentTimeMillis() + binariesCache.getExpiresMillis());
         page.setFileName(ResourceUtils.getFileName(resourceNode, contentDispositionFilenamePropertyNames));
         page.setLength(ResourceUtils.getDataLength(resourceNode, binaryDataPropName));
 
@@ -483,6 +485,8 @@ public class BinariesServlet extends HttpServlet {
         binariesCache = new BinariesCache(cache);
         binariesCache.setMaxObjectSizeBytes(getLongInitParameter(CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM,
                 BinariesCache.DEFAULT_MAX_OBJECT_SIZE_BYTES));
+        binariesCache.setExpiresMillis(getLongInitParameter(CACHE_EXPIRES_SECONDS,
+                BinariesCache.DEFAULT_EXPIRES_MILLIS / 1000 ));
     }
 
     private String getInitParameter(String paramName, String defaultValue) {

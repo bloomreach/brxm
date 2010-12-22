@@ -27,19 +27,31 @@ import org.slf4j.LoggerFactory;
 public class BinariesCache {
 
     private static final Logger log = LoggerFactory.getLogger(BinariesCache.class);
-    
+
     public static final long DEFAULT_MAX_OBJECT_SIZE_BYTES = 256L * 1024L;
     
-    private HstCache cache;
+    /**
+     * Default expires set to 3 minutes
+     */
+    public static final long DEFAULT_EXPIRES_MILLIS = 1000L * 60 * 3; 
     
+    private HstCache cache;
+
     private long maxObjectSizeBytes = DEFAULT_MAX_OBJECT_SIZE_BYTES;
+    
+
+    private long expiresMillis = DEFAULT_EXPIRES_MILLIS;
     
     public BinariesCache(HstCache cache) {
         this.cache = cache;
     }
     
-    public long getTTLMillis() {
-        return 1000L * (long) cache.getTimeToLiveSeconds();
+    public long getExpiresMillis() {
+        return expiresMillis;
+    }
+    
+    public void setExpiresMillis(long expiresSeconds) {
+        expiresMillis = 1000L * expiresSeconds;
     }
     
     public long getMaxObjectSizeBytes() {
