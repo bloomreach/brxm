@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
@@ -110,14 +111,15 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
     }
 
     protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-                                                   ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, final boolean triState,
-                                                   ListPagingDefinition pagingDefinition) {
+            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener,
+            final boolean triState, ListPagingDefinition pagingDefinition) {
         return newListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
-    protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition, ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
-        return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState,
-                pagingDefinition);
+    protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
+            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
+            ListPagingDefinition pagingDefinition) {
+        return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
     private ISortableDataProvider<Node> getDataProvider() {
@@ -178,8 +180,8 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
                     IModelReference.class);
             if (documentService != null) {
                 documentService.setModel(model);
-                if (model != dataTable.getDefaultModel() && (model == null || !model.equals(
-                        dataTable.getDefaultModel()))) {
+                if (model != dataTable.getDefaultModel()
+                        && (model == null || !model.equals(dataTable.getDefaultModel()))) {
                     log.info("Did not receive model change notification for model.document ({})", config
                             .getString("model.document"));
                     updateSelection(model);
@@ -207,12 +209,25 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
             return;
         }
 
+        ISortState sortState = provider.getSortState();
+
         dataTable.destroy();
         dumpDataProvider();
         dumpTableDefinition();
 
-        dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, isOrderable(),
-                pagingDefinition);
+        TableDefinition<Node> tableDefinition = getTableDefinition();
+        ISortableDataProvider<Node> dataProvider = getDataProvider();
+
+        ISortState newSortState = dataProvider.getSortState();
+        for (ListColumn column : tableDefinition.getColumns()) {
+            String sortProperty = column.getSortProperty();
+            int propertySortOrder = sortState.getPropertySortOrder(sortProperty);
+            if (propertySortOrder != newSortState.getPropertySortOrder(sortProperty)) {
+                newSortState.setPropertySortOrder(sortProperty, propertySortOrder);
+            }
+        }
+
+        dataTable = getListDataTable("table", tableDefinition, dataProvider, this, isOrderable(), pagingDefinition);
         replace(dataTable);
         dataTable.init(getPluginContext());
 

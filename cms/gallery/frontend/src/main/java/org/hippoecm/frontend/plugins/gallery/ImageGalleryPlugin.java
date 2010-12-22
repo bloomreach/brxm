@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -182,12 +183,12 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         protected Iterator<IModel<Node>> getItemModels() {
             ArrayList<IModel<Node>> nodeModels = new ArrayList<IModel<Node>>();
 
-            Node document = ImageGalleryPlugin.this.getModelObject();
-            if (document != null) {
+            IDataProvider<Node> dataProvider = ImageGalleryPlugin.this.dataTable.getDataProvider();
+            if (dataProvider != null) {
                 try {
-                    NodeIterator iterator = document.getNodes();
+                    Iterator<? extends Node> iterator = dataProvider.iterator(0, dataProvider.size());
                     while (iterator.hasNext()) {
-                        javax.jcr.Node node = iterator.nextNode();
+                        javax.jcr.Node node = iterator.next();
                         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                             if (node.hasNode(node.getName())) {
                                 javax.jcr.Node imageSet = node.getNode(node.getName());
