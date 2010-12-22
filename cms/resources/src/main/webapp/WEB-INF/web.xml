@@ -15,7 +15,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<web-app id="hippo-ecm">
+<web-app id="hippo-cms">
 
     <!-- General configuration -->
     <display-name>Hippo CMS</display-name>
