@@ -166,34 +166,6 @@
   </servlet>
 
   <servlet>
-    <servlet-name>StaticResourceServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.servlet.StaticResourceServlet</servlet-class>
-    <init-param>
-      <param-name>forbiddenStaticResourcePathPrefixes</param-name>
-      <param-value>
-        /WEB-INF/, /META-INF/
-      </param-value>
-    </init-param>
-    <init-param>
-      <param-name>forbiddenStaticResourcePathPostfixes</param-name>
-      <param-value>
-        .jsp, .ftl, .vm
-      </param-value>
-    </init-param>
-    <init-param>
-      <param-name>allowedStaticResourcePathPrefixes</param-name>
-      <param-value>
-      </param-value>
-    </init-param>
-    <init-param>
-      <param-name>allowedStaticResourcePathPostfixes</param-name>
-      <param-value>
-        .gif, .jpg, .jpeg, .png, .ico, .js, .css
-      </param-value>
-    </init-param>
-  </servlet>
-  
-  <servlet>
     <servlet-name>HstDispatcherServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</servlet-class>
     <init-param>
@@ -276,11 +248,6 @@
     <url-pattern>/binaries/*</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>StaticResourceServlet</servlet-name>
-    <url-pattern>/staticresource/*</url-pattern>
-  </servlet-mapping>
-  
   <servlet-mapping>
     <servlet-name>HstDispatcherServlet</servlet-name>
     <url-pattern>*.do</url-pattern>
