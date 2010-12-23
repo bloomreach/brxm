@@ -79,22 +79,22 @@ public class BinariesCacheTest {
     
     @Test
     public void testExpired() {
-        page.setExpirationTime(System.currentTimeMillis() - 5000L);
-        assertTrue(bc.hasPageExpired(page));
+        page.setNextValidityCheckTime(System.currentTimeMillis() - 5000L);
+        assertTrue(bc.mustCheckValidity(page));
     }
 
     @Test
     public void testNotExpired() {
-        page.setExpirationTime(System.currentTimeMillis() + 5000L);
-        assertFalse(bc.hasPageExpired(page));
+        page.setNextValidityCheckTime(System.currentTimeMillis() + 5000L);
+        assertFalse(bc.mustCheckValidity(page));
     }
     
     @Test
     public void testUpdateExpired() {
-        page.setExpirationTime(System.currentTimeMillis() - 5000L);
-        assertTrue(bc.hasPageExpired(page));
-        bc.updateExpirationTime(page);
-        assertFalse(bc.hasPageExpired(page));
+        page.setNextValidityCheckTime(System.currentTimeMillis() - 5000L);
+        assertTrue(bc.mustCheckValidity(page));
+        bc.updateNextValidityCheckTime(page);
+        assertFalse(bc.mustCheckValidity(page));
     }
 
     @Test

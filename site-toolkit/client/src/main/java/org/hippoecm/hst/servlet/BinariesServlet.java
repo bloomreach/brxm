@@ -116,7 +116,7 @@ public class BinariesServlet extends HttpServlet {
     
     private static final String CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM = "cache-max-object-size-bytes";
     
-    private static final String CACHE_EXPIRES_SECONDS = "cache-expires-seconds";
+    private static final String VALIDITY_CHECK_INTERVAL_SECONDS = "validity-check-interval-seconds";
 
     private static final String SET_EXPIRES_HEADERS_INIT_PARAM = "set-expires-headers";
 
@@ -270,14 +270,14 @@ public class BinariesServlet extends HttpServlet {
     }
 
     private void validatePageInCache(HttpServletRequest request, BinaryPage page) {
-        if (HeaderUtils.isForcedCheck(request) || binariesCache.hasPageExpired(page)) {
+        if (HeaderUtils.isForcedCheck(request) || binariesCache.mustCheckValidity(page)) {
             long lastModified = getLastModifiedFromResource(request, page.getResourcePath());
             if (binariesCache.isPageStale(page, lastModified)) {
                 binariesCache.removePage(page);
                 page = getPage(request, page.getResourcePath());
                 binariesCache.putPage(page);
             } else {
-                binariesCache.updateExpirationTime(page);
+                binariesCache.updateNextValidityCheckTime(page);
             }
         }
     }
@@ -346,7 +346,7 @@ public class BinariesServlet extends HttpServlet {
         page.setStatus(HttpServletResponse.SC_OK);
         page.setMimeType(resourceNode.getProperty(binaryMimeTypePropName).getString());
         page.setLastModified(ResourceUtils.getLastModifiedDate(resourceNode, binaryLastModifiedPropName));
-        page.setExpirationTime(System.currentTimeMillis() + binariesCache.getExpiresMillis());
+        page.setNextValidityCheckTime(System.currentTimeMillis() + binariesCache.getValidityCheckIntervalMillis());
         page.setFileName(ResourceUtils.getFileName(resourceNode, contentDispositionFilenamePropertyNames));
         page.setLength(ResourceUtils.getDataLength(resourceNode, binaryDataPropName));
 
@@ -485,8 +485,8 @@ public class BinariesServlet extends HttpServlet {
         binariesCache = new BinariesCache(cache);
         binariesCache.setMaxObjectSizeBytes(getLongInitParameter(CACHE_MAX_OBJECT_SIZE_BYTES_INIT_PARAM,
                 BinariesCache.DEFAULT_MAX_OBJECT_SIZE_BYTES));
-        binariesCache.setExpiresMillis(getLongInitParameter(CACHE_EXPIRES_SECONDS,
-                BinariesCache.DEFAULT_EXPIRES_MILLIS / 1000 ));
+        binariesCache.setValidityCheckIntervalMillis(getLongInitParameter(VALIDITY_CHECK_INTERVAL_SECONDS,
+                BinariesCache.DEFAULT_VALIDITY_CHECK_INTERVAL_MILLIS/ 1000 ));
     }
 
     private String getInitParameter(String paramName, String defaultValue) {

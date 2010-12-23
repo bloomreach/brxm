@@ -38,7 +38,7 @@ public class BinaryPage implements Serializable {
     private String mimeType = null;
     private String fileName = null;
     private long lastModified = -1L;
-    private long expirationTime = -1L;
+    private long nextValidityCheckTimeStamp = -1L;
     private long creationTime;
     private long length;
     private byte[] data = {};
@@ -113,11 +113,11 @@ public class BinaryPage implements Serializable {
     }
 
     /**
-     * Get the expiration time in milliseconds since epoch.
-     * @return the expiration time
+     * Get the next Validity Check TimeStamp (millis since epoch)
+     * @return the nextValidityCheckTimeStamp time
      */
-    public long getExpirationTime() {
-        return expirationTime;
+    public long getNextValidityCheckTimeStamp() {
+        return nextValidityCheckTimeStamp;
     }
 
     /**
@@ -187,11 +187,11 @@ public class BinaryPage implements Serializable {
     }
 
     /**
-     * Set the expiration time in milliseconds since epoch.
-     * @param expirationTime
+     * Set the next validity check timestamp since epoch.
+     * @param nextValidityCheckTimeStamp
      */
-    public void setExpirationTime(long expirationTime) {
-        this.expirationTime = expirationTime;
+    public void setNextValidityCheckTime(long nextValidityCheckTimeStamp) {
+        this.nextValidityCheckTimeStamp = nextValidityCheckTimeStamp;
     }
 
     /**

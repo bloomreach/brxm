@@ -31,27 +31,27 @@ public class BinariesCache {
     public static final long DEFAULT_MAX_OBJECT_SIZE_BYTES = 256L * 1024L;
     
     /**
-     * Default expires set to 3 minutes
+     * Default validity check interval set to 3 minutes
      */
-    public static final long DEFAULT_EXPIRES_MILLIS = 1000L * 60 * 3; 
+    public static final long DEFAULT_VALIDITY_CHECK_INTERVAL_MILLIS = 1000L * 60 * 3; 
     
     private HstCache cache;
 
     private long maxObjectSizeBytes = DEFAULT_MAX_OBJECT_SIZE_BYTES;
     
 
-    private long expiresMillis = DEFAULT_EXPIRES_MILLIS;
+    private long validityCheckIntervalMillis = DEFAULT_VALIDITY_CHECK_INTERVAL_MILLIS;
     
     public BinariesCache(HstCache cache) {
         this.cache = cache;
     }
     
-    public long getExpiresMillis() {
-        return expiresMillis;
+    public long getValidityCheckIntervalMillis() {
+        return validityCheckIntervalMillis;
     }
     
-    public void setExpiresMillis(long expiresSeconds) {
-        expiresMillis = 1000L * expiresSeconds;
+    public void setValidityCheckIntervalMillis(long validityCheckIntervalSeconds) {
+        validityCheckIntervalMillis = 1000L * validityCheckIntervalSeconds;
     }
     
     public long getMaxObjectSizeBytes() {
@@ -88,12 +88,12 @@ public class BinariesCache {
         }
     }
 
-    public void updateExpirationTime(BinaryPage page) {
+    public void updateNextValidityCheckTime(BinaryPage page) {
         if (log.isDebugEnabled()) {
-            log.debug("Update expiration for {}", page.getResourcePath());
+            log.debug("Update next validity check time for {}", page.getResourcePath());
         }
-        long ttlMillis = 1000L * (long) cache.getTimeToLiveSeconds();
-        page.setExpirationTime(System.currentTimeMillis() + ttlMillis);
+        long nextValidityCheckTimeStamp = System.currentTimeMillis() + getValidityCheckIntervalMillis();
+        page.setNextValidityCheckTime(nextValidityCheckTimeStamp);
         putPage(page);
     }
 
@@ -139,10 +139,10 @@ public class BinariesCache {
         }
     }
 
-    public boolean hasPageExpired(BinaryPage page) {
-        if (System.currentTimeMillis() > page.getExpirationTime()) {
+    public boolean mustCheckValidity(BinaryPage page) {
+        if (System.currentTimeMillis() > page.getNextValidityCheckTimeStamp()) {
             if (log.isDebugEnabled()) {
-                log.debug("Page has expired for {}", page.getResourcePath());
+                log.debug("Page validity must be checked for {}", page.getResourcePath());
             }
             return true;
         } else {

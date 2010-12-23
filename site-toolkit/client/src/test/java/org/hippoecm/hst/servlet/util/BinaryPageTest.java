@@ -51,7 +51,7 @@ public class BinaryPageTest {
         assertNull(p.getMimeType());
         assertNull(p.getFileName());
         assertEquals(-1L, p.getLastModified());
-        assertEquals(-1L, p.getExpirationTime());
+        assertEquals(-1L, p.getNextValidityCheckTimeStamp());
         assertEquals(0L, p.getLength());
         assertFalse(p.containsData());
         assertTrue(p.getCreationTime() <= System.currentTimeMillis());
