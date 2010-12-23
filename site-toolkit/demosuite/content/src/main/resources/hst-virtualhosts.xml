@@ -24,7 +24,6 @@
     </sv:property>
     <sv:property sv:name="hst:prefixexclusions" sv:type="String">
         <sv:value>/binaries/</sv:value>
-        <sv:value>/staticresource/</sv:value>
         <sv:value>/images/</sv:value>
         <sv:value>/login/</sv:value>
         <sv:value>/examples/</sv:value>
