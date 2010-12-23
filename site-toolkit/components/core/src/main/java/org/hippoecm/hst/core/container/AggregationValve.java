@@ -304,9 +304,7 @@ public class AggregationValve extends AbstractValve {
             if(session != null && "true".equals(session.getAttribute(ContainerConstants.COMPOSERMODE_ATTR_NAME)) && mount.isOfType(ContainerConstants.COMPOSERMODE)) {
              // we are in composer mode. Add the wrapper elements that are needed for the composer around all components
                 if(window == rootWindow) {
-                    // the root window does *not* have a wrapper element but sets some needed javascript files as head elements
                     
-                    addHeadElements(request, response, mount);
                     HstComponentConfiguration rootCompConfig = ((HstComponentConfiguration)window.getComponentInfo());
                   
                     Element el = response.createElement("script");
@@ -325,6 +323,9 @@ public class AggregationValve extends AbstractValve {
                    // Text scriptValue = el.getOwnerDocument().createTextNode("rootComponentUuid = '"+uuid+"';");
                     el.appendChild(scriptValue);
                     response.addHeadElement(el, rootCompConfig.getCanonicalIdentifier());
+                    
+                    // the root window does *not* have a wrapper element but sets some needed javascript files as head elements
+                    addHeadElements(request, response, mount);
                 } else {
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
                     Element el = response.createElement("div");
@@ -366,7 +367,7 @@ public class AggregationValve extends AbstractValve {
         el.setAttribute("media", "screen");
         HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
         el.setAttribute("href", creator.create(href, mount, true).toUrlForm(request.getRequestContext(), false));
-        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer"); 
+        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposerCss"); 
         response.addHeadElement(el, href);
     }
 
@@ -375,7 +376,7 @@ public class AggregationValve extends AbstractValve {
         el.setAttribute("type", "text/javascript");
         HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
         el.setAttribute("src", creator.create(src, mount, true).toUrlForm(request.getRequestContext(), false));
-        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposer"); 
+        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "hippoPagecomposer"); 
         response.addHeadElement(el, src);
     }
     
