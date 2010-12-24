@@ -341,6 +341,7 @@ translation/test/tm.out.1
 translation/test/tm.out.lck
 translation/test/tmlog.lck
 translation/test/wdbp-error-log.txt
+upgrade/target
 versioning/.classpath
 versioning/.project
 versioning/.settings
