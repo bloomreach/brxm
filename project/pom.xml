@@ -126,6 +126,7 @@
     <developer>
       <name>Ate Douma</name>
       <id>adouma</id>
+      <email>a.douma @ onehippo . com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Chief Architect</role>
@@ -209,6 +210,24 @@
     <developer>
       <name>Jeroen Tietema</name>
       <id>jtietema</id>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>Junaid K Sheriff</name>
+      <id>jshreriff</id>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Tester</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>Minos Chatzidakis</name>
+      <id>mchatzidakis</id>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
