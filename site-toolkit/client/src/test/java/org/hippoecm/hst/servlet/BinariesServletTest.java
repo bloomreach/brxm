@@ -54,6 +54,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionFilenameProperty"))
                 .andReturn(expectedFilenameProperty);
         expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(expectedBasePath);
+        expect(servletConfig.getInitParameter("binaryResourceNodeType")).andReturn("hippo:resource");
         expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn("my:data");
         expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn("my:type");
         expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn("my:lastmod");
@@ -78,6 +79,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionContentTypes")).andReturn(null);
         expect(servletConfig.getInitParameter("contentDispositionFilenameProperty")).andReturn(null);
         expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(null);
+        expect(servletConfig.getInitParameter("binaryResourceNodeType")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
         expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);

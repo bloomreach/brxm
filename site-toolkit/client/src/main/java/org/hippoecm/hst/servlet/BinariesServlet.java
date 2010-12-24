@@ -432,7 +432,7 @@ public class BinariesServlet extends HttpServlet {
 
     private void initBinariesConfig() {
         baseBinariesContentPath = getInitParameter(BASE_BINARIES_CONTENT_PATH_INIT_PARAM, baseBinariesContentPath);
-
+        binaryResourceNodeType = getInitParameter(BINARY_RESOURCE_NODE_TYPE_INIT_PARAM, binaryResourceNodeType);
         binaryDataPropName = getInitParameter(BINARY_DATA_PROP_NAME_INIT_PARAM, binaryDataPropName);
         binaryMimeTypePropName = getInitParameter(BINARY_MIME_TYPE_PROP_NAME_INIT_PARAM, binaryMimeTypePropName);
         binaryLastModifiedPropName = getInitParameter(BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM,
