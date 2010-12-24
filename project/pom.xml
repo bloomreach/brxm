@@ -18,11 +18,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-cms7</artifactId>
-  <version>2-SNAPSHOT</version>
+  <artifactId>hippo-cms7-project</artifactId>
+  <version>1-SNAPSHOT</version>
 
-  <name>Hippo CMS7</name>
-  <description>Hippo CMS7 Product suite</description>
+  <name>Hippo CMS7 Project POM</name>
+  <description>Hippo CMS7 Project POM</description>
   <packaging>pom</packaging>
 
   <url>http://www.onehippo.org/cms7/</url>
