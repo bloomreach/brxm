@@ -98,10 +98,10 @@
     <jackrabbit.version>2.1.2</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <cms.version>2.18.00RC1</cms.version>
-    <repository.version>2.18.00RC1</repository.version>
-    <hippo-packages.version>2.18.00RC1</hippo-packages.version>
-    <publication-workflow.version>2.18.00RC1</publication-workflow.version>
+    <cms.version>2.18.00RC2</cms.version>
+    <repository.version>2.18.00RC2</repository.version>
+    <hippo-packages.version>2.18.00RC2</hippo-packages.version>
+    <publication-workflow.version>2.18.00RC2</publication-workflow.version>
     <gallerypicker.version>1.06.03</gallerypicker.version>
     <configeditor.version>1.05.00RC2</configeditor.version>
   
