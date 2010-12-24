@@ -18,11 +18,8 @@ package org.hippoecm.hst.configuration.components;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstComponent;
-
-import com.sun.org.apache.bcel.internal.classfile.Code;
 
 /**
  * A <code>HstComponentConfigurations</code> contains a map of (root) <code>HstComponentConfiguration</code> objects which themselves might 
