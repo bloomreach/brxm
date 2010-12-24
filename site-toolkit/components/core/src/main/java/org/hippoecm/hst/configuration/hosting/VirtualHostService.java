@@ -196,23 +196,35 @@ public class VirtualHostService implements VirtualHost {
             // a portmount service with portnumber 0, which means any port
             HstNode mountNode = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
-                Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, 0);
-                 
-                PortMount portMount = new PortMountService(mount, this);
-                attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
+                try {
+                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, 0);
+                    PortMount portMount = new PortMountService(mount, this);
+                    attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
+                } catch (ServiceException e) {
+                    log.error("Skipping incorrect mount or port mount for mount node '"+mountNode.getValueProvider().getPath()+"'" ,e);
+                }
             } else {
-                // TODO : log error / throw exeption?
+                log.error("Expected a node of type '{}' at '{}' but was of type '"+mountNode.getNodeTypeName()+"'", HstNodeTypes.NODETYPE_HST_MOUNT, mountNode.getValueProvider().getPath());
             }
         }
         
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
-                VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, hstManager);
-                attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
+                try {
+                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, hstManager);
+                    attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
+                } catch (ServiceException e) {
+                    log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
+                }
+                
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
+                try {
                 PortMount portMount = new PortMountService(child, attachPortMountToHost, hstManager);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
-            }
+                } catch (ServiceException e) {
+                    log.error("Skipping incorrect port mount for node '"+child.getValueProvider().getPath()+"'" ,e);
+                }
+            } 
         }
        
     }

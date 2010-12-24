@@ -188,7 +188,7 @@ public class HstManagerImpl implements HstManager {
                             HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
                             configurationRootNodes.put(configurationRootNode.getPath(), hstNode);
                         } catch (HstNodeException e) {
-                            log.error("Exception while creating Hst configuration for '{}'. Fix configuration", configurationRootNode.getPath() ,e);
+                            log.error("Exception while creating Hst configuration for '"+configurationRootNode.getPath()+"'. Fix configuration" ,e);
                         }
                         
                     }

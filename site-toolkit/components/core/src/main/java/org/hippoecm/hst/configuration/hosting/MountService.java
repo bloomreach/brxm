@@ -412,10 +412,14 @@ public class MountService implements Mount {
         
         for(HstNode childMount : mount.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
-                MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
-                MountService prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
-                if(prevValue != null) {
-                    log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
+                try {
+                    MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
+                    MountService prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
+                    if(prevValue != null) {
+                        log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
+                    }
+                } catch (ServiceException e) {
+                    log.error("Skipping incorrect configured child mount for '"+childMount.getParent()+"'", e);
                 }
             }
         }

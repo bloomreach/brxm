@@ -74,7 +74,7 @@ public class HstSiteMapService implements HstSiteMap {
                     if (log.isDebugEnabled()) {
                         log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath(), e);
                     } else if (log.isWarnEnabled()) {
-                        log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath());
+                        log.warn("Skipping root sitemap '{}' : '{}'", child.getValueProvider().getPath(), e.getMessage());
                     }
                 }
             } else {

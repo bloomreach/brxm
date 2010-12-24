@@ -120,7 +120,7 @@ public class VirtualHostsService implements VirtualHosts {
                     VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hostGroupNode.getValueProvider().getName() ,hstManager);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ServiceException e) {
-                    log.error("Unable to add virtualhost with name '{}'. Fix the configuration. This virtualhost will be skipped.", virtualHostNode.getValueProvider().getName(), e);
+                    log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
                     // continue to next virtualHost
                 } catch (IllegalArgumentException e) {    
                     log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"

@@ -38,7 +38,7 @@ public class PortMountService implements PortMount {
             try {
                 rootMount = new MountService(mount, null, virtualHost, hstManager, portNumber);
             } catch (ServiceException e) {
-                log.warn("The host '{}' for port '"+portNumber+"' contains an incorrect configured Mount. The host with port cannot be used for hst request processing: {}", virtualHost.getHostName(), e.getMessage());
+                log.error("The host '"+virtualHost.getHostName()+"' for port '"+portNumber+"' contains an incorrect configured Mount. The host with port cannot be used for hst request processing", e);
             } 
         }
         

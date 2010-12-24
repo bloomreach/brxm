@@ -122,10 +122,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.hstSiteMap = hstSiteMap; 
         this.depth = depth;
         String nodePath = node.getValueProvider().getPath();
-        if(!node.getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
-            throw new ServiceException("Node path of the sitemap item '"+nodePath+"' cannot start without the global sitemap root path. Skip SiteMapItem");
-        }
-        
+      
         this.qualifiedId = nodePath;
         
         // path & id are the same
