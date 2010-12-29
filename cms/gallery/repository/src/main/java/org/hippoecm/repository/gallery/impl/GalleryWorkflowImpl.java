@@ -24,9 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -77,10 +79,32 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
         node = document = node.addNode(name, type);
         node.addMixin("hippo:harddocument");
         node.setProperty("hippo:availability", new String[] { "live", "preview" });
-        node = (Node) node.getPrimaryItem();
-        node.setProperty("jcr:data", "");
-        node.setProperty("jcr:mimeType", "text/plain");
-        node.setProperty("jcr:lastModified", timestamp);
+
+        NodeType primaryType = node.getPrimaryNodeType();
+        String primaryItemName = primaryType.getPrimaryItemName();
+        while (primaryItemName == null && !"nt:base".equals(primaryType.getName())) {
+            for (NodeType nt : primaryType.getSupertypes()) {
+                if (nt.getPrimaryItemName() != null) {
+                    primaryItemName = nt.getPrimaryItemName();
+                    break;
+                }
+                if (nt.isNodeType("nt:base")) {
+                    primaryType = nt;
+                }
+            }
+        }
+        if (primaryItemName != null) {
+            if (!node.hasNode(primaryItemName)) {
+                node = node.addNode(primaryItemName);
+            } else {
+                node = node.getNode(primaryItemName);
+            }
+            node.setProperty("jcr:data", "");
+            node.setProperty("jcr:mimeType", "text/plain");
+            node.setProperty("jcr:lastModified", timestamp);
+        } else {
+            throw new ItemNotFoundException("No primary item definition found");
+        }
         folder.save();
         return new Document(document.getUUID());
     }

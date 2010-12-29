@@ -3,6 +3,7 @@ package org.hippoecm.frontend.plugins.gallery.columns;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.columns.modify.MimeTypeAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -71,7 +72,7 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
                 Node n1 = getCanonicalNode(nodeModel1);
                 if (n1.isNodeType(HippoNodeType.NT_HANDLE) && n1.hasNode(n1.getName())) {
                     Node imageSet = n1.getNode(n1.getName());
-                    Item primItem = imageSet.getPrimaryItem();
+                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                         mimeType1 = ((Node) primItem).getProperty("jcr:mimeType").getString();
                     }
@@ -81,7 +82,7 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
                 Node n2 = getCanonicalNode(nodeModel2);
                 if (n2.isNodeType(HippoNodeType.NT_HANDLE) && n2.hasNode(n2.getName())) {
                     Node imageSet = n2.getNode(n2.getName());
-                    Item primItem = imageSet.getPrimaryItem();
+                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                         mimeType2 = ((Node) primItem).getProperty("jcr:mimeType").getString();
                     }
@@ -102,7 +103,7 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
             if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
                 Node imageSet = node.getNode(node.getName());
                 try {
-                    Item primItem = imageSet.getPrimaryItem();
+                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                         long length = ((Node) primItem).getProperty("jcr:data").getLength();
                         return new Label(id, formatter.format(length));
@@ -128,7 +129,7 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
                 Node n1 = getCanonicalNode(nodeModel1);
                 if (n1.isNodeType(HippoNodeType.NT_HANDLE) && n1.hasNode(n1.getName())) {
                     Node imageSet = n1.getNode(n1.getName());
-                    Item primItem = imageSet.getPrimaryItem();
+                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                         size1 = ((Node) primItem).getProperty("jcr:data").getLength();
                     }
@@ -138,7 +139,7 @@ public class FallbackAssetGalleryListColumnProvider implements IListColumnProvid
                 Node n2 = getCanonicalNode(nodeModel2);
                 if (n2.isNodeType(HippoNodeType.NT_HANDLE) && n2.hasNode(n2.getName())) {
                     Node imageSet = n2.getNode(n2.getName());
-                    Item primItem = imageSet.getPrimaryItem();
+                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                         size2 = ((Node) primItem).getProperty("jcr:data").getLength();
                     }

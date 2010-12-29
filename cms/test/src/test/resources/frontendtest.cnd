@@ -42,6 +42,11 @@
 - frontendtest:property (string) multiple
 + frontendtest:childnode (nt:unstructured) multiple
 
+[frontendtest:baseprimary]
+- frontendtest:primary (string) primary
+
+[frontendtest:subprimary] > frontendtest:baseprimary
+
 [frontendtest:document] > hippo:document
 - *
 + *

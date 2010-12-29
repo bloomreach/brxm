@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.gallery.columns.render;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -52,7 +53,7 @@ public class ThumbnailRenderer extends AbstractNodeRenderer {
             if (node.hasNode(node.getName())) {
                 Node imageSet = node.getNode(node.getName());
                 try {
-                    Item primItem = imageSet.getPrimaryItem();
+                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode()) {
                         if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                             return new ImageContainer(id, new JcrNodeModel((Node) primItem), pluginContext,

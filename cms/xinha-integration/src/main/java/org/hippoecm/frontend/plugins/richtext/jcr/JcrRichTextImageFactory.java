@@ -28,6 +28,7 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
@@ -176,7 +177,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         try {
             if (node.isNodeType("hippo:handle")) {
                 Node doc = node.getNode(node.getName());
-                Item primary = doc.getPrimaryItem();
+                Item primary = JcrHelper.getPrimaryItem(doc);
                 return (primary.isNode() && ((Node) primary).isNodeType("hippo:resource"));
             }
         } catch (RepositoryException e) {
@@ -194,7 +195,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         try {
             if (node.isNodeType("hippo:handle")) {
                 node = node.getNode(node.getName());
-                Item primary = node.getPrimaryItem();
+                Item primary = JcrHelper.getPrimaryItem(node);
                 for (NodeIterator children = node.getNodes(); children.hasNext();) {
                     Node child = children.nextNode();
                     if (primary.isSame(child)) {
@@ -232,7 +233,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
             }
 
             List<String> resourceDefinitions = new LinkedList<String>();
-            Item primary = node.getPrimaryItem();
+            Item primary = JcrHelper.getPrimaryItem(node);
             if (!primary.isNode() || !((Node) primary).isNodeType("hippo:resource")) {
                 throw new RichTextException("Invalid image document");
             }

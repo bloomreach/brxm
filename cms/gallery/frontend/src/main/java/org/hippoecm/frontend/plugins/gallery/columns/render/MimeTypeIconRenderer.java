@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.gallery.columns.render;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -131,7 +132,7 @@ public class MimeTypeIconRenderer extends IconRenderer {
             if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
                 Node imageSet = node.getNode(node.getName());
                 try {
-                    Item primItem = imageSet.getPrimaryItem();
+                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                         if (!((Node) primItem).hasProperty("jcr:mimeType")) {
                             log.warn("Unset mime type of document");

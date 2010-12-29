@@ -21,6 +21,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -72,7 +73,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                     if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
                         Node imageSet = node.getNode(node.getName());
                         try {
-                            Item primItem = imageSet.getPrimaryItem();
+                            Item primItem = JcrHelper.getPrimaryItem(imageSet);
                             if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                                 observable.setTarget(new JcrNodeModel((Node) primItem));
                                 if (!((Node) primItem).hasProperty("jcr:mimeType")) {

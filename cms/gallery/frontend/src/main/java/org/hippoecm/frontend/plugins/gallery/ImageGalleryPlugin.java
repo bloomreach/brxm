@@ -37,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -193,7 +194,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                             if (node.hasNode(node.getName())) {
                                 javax.jcr.Node imageSet = node.getNode(node.getName());
                                 try {
-                                    Item primItem = imageSet.getPrimaryItem();
+                                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
                                     if (primItem.isNode()) {
                                         if (((javax.jcr.Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                                             nodeModels.add(new JcrNodeModel(node));
@@ -243,7 +244,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                     if (node.hasNode(node.getName())) {
                         Node imageSet = node.getNode(node.getName());
                         try {
-                            Item primItem = imageSet.getPrimaryItem();
+                            Item primItem = JcrHelper.getPrimaryItem(imageSet);
                             if (primItem.isNode()) {
                                 if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                                     AjaxLink itemLink = new AjaxLink("itemLink") {

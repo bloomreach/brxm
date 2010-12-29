@@ -17,6 +17,7 @@ package org.hippoecm.frontend.model;
 
 import java.util.Calendar;
 
+import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -124,6 +125,35 @@ public class JcrHelper {
             return best;
         }
         throw new ItemNotFoundException();
+    }
+
+    /**
+     * Retrieve the primary item of a node, according to the primary node type hierarchy.
+     * Plain JackRabbit only checks the declared items of a type, not the inherited ones.
+     * 
+     * @param node
+     * @return primary item
+     * @throws ItemNotFoundException
+     * @throws RepositoryException
+     */
+    public static Item getPrimaryItem(Node node) throws ItemNotFoundException, RepositoryException {
+        NodeType primaryType = node.getPrimaryNodeType();
+        String primaryItemName = primaryType.getPrimaryItemName();
+        while (primaryItemName == null && !"nt:base".equals(primaryType.getName())) {
+            for (NodeType nt : primaryType.getSupertypes()) {
+                if (nt.getPrimaryItemName() != null) {
+                    primaryItemName = nt.getPrimaryItemName();
+                    break;
+                }
+                if (nt.isNodeType("nt:base")) {
+                    primaryType = nt;
+                }
+            }
+        }
+        if (primaryItemName == null) {
+            throw new ItemNotFoundException("No primary item definition found in type hierarchy");
+        }
+        return node.getSession().getItem(node.getPath() + "/" + primaryItemName);
     }
 
 }

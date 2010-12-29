@@ -53,6 +53,7 @@ import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.string.StringValueConversionException;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
@@ -190,7 +191,7 @@ public class Main extends WebApplication {
                         log.info("no binary found at " + path);
                     } else {
                         if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            node = (Node) node.getPrimaryItem();
+                            node = (Node) JcrHelper.getPrimaryItem(node);
                         }
                         return new JcrResourceRequestTarget(node);
                     }

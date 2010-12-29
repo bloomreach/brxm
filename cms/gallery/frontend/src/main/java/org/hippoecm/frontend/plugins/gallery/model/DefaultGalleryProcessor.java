@@ -35,6 +35,7 @@ import javax.jcr.*;
 import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.slf4j.Logger;
@@ -260,7 +261,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             RepositoryException {
         Node primaryChild = null;
         try {
-            Item item = node.getPrimaryItem();
+            Item item = JcrHelper.getPrimaryItem(node);
             if (!item.isNode()) {
                 throw new GalleryException("Primary item is not a node");
             }

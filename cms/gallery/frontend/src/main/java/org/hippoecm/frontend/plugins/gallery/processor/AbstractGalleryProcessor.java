@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
@@ -88,7 +89,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
     protected Node getPrimaryChild(Node node) throws RepositoryException, GalleryException {
         Item result = null;
         try {
-            result = node.getPrimaryItem();
+            result = JcrHelper.getPrimaryItem(node);
         } catch (ItemNotFoundException ignored) {
             // ignore
         }
