@@ -597,8 +597,14 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
             },
 
             listeners : {
+                beforeload: {
+                    fn: function (store, options) {
+                        Ext.Msg.wait("Loading page ...") ;
+                    }
+                },
                 beforewrite : {
                     fn : function(proxy, action, rs, params) {
+                        Ext.Msg.wait("Updating configuration ... ");
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');
@@ -613,7 +619,19 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
                             proxy.setApi(action, {url: '_rp/' + parentId + './delete' , method: 'GET'});
                         }
                     }
+                },
+                write :{
+                     fn: function(store, action, result, res,  rs ) {
+                         Ext.Msg.hide();
+                     }
+                },
+                load : {
+                    fn: function (store, records, options){
+                        Ext.Msg.hide();
+                    }
                 }
+
+
             }
         });
         var cfg = {
