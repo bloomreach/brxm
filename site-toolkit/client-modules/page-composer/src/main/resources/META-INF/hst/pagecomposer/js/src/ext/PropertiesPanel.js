@@ -53,6 +53,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             method: 'POST' ,
             waitMsg: 'Saving properties ...',
             success: function () {
+				Ext.Msg.wait('Refreshing page ...');
                 var iframe = Ext.getCmp('Iframe');
                 iframe.setSrc(iframe.getFrameDocument().location.href);
             }

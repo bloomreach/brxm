@@ -146,6 +146,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     refreshIframe : function() {
+				Ext.Msg.wait('Reloading page ...');
         var iframe = Ext.getCmp('Iframe');
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
@@ -162,6 +163,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     onIframeDOMReady : function(frm) {
         //send init call to iframe app
         frm.execScript('Hippo.PageComposer.Main.init(' + this.debug + ')', true);
+				Ext.Msg.hide();
     },
 
     onIframeAppLoaded : function(data) {
@@ -244,7 +246,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 this.isReloading = true;
                             }
                         }
-                    },
+											},
                     scope: this
                 },
                 load :{
@@ -393,6 +395,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     handleOnClick : function(element) {
+
         var id = element.getAttribute('hst:id');
         var recordIndex = this.stores.pageModel.findExact('id', id);
 
@@ -528,7 +531,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             }
         } catch(e) {
             console.error(e);
-            throw e;
+            // throw e;
         }
     }
 });
