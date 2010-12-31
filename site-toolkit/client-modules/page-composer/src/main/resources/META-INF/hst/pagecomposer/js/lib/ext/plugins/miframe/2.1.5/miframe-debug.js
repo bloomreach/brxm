@@ -3276,7 +3276,7 @@
 	                    case 'load' : // Gecko, Opera, IE
 	                    case 'complete' :
                             var frame = this;
-	                        this._frameAction && setTimeout( function(){frame._onDocLoaded(rstatus); }, .01);
+														setTimeout( function(){frame._onDocLoaded(rstatus); }, .01);
                             this._frameAction = false;
 	                        break;
 	                    case 'error':
@@ -4560,7 +4560,7 @@
                  */
                 createStyleSheet : function(cssText, id) {
                     var ss;
-                    if (!doc)return;
+                    if (!doc) return;
                     var head = doc.getElementsByTagName("head")[0];
                     var rules = doc.createElement("style");
                     rules.setAttribute("type", "text/css");
