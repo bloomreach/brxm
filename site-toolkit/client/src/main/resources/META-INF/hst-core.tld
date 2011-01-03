@@ -243,9 +243,9 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.Boolean</type>
-            <description>Deprecated: use navigationStateful instead.</description>
-            <description>If the link should be created for the virtual location of the jcr node behind the bean, use this attr with value true. When having canonical='true', this 
-            attribute is ignored.</description>
+            <description>Deprecated: use navigationStateful instead.
+                If the link should be created for the virtual location of the jcr node behind the bean, 
+                use this attr with value true. When having canonical='true', this attribute is ignored.</description>
         </attribute>
         <attribute>
             <name>navigationStateful</name>

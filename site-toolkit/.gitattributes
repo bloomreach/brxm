@@ -1204,7 +1204,6 @@ client/src/main/java/org/hippoecm/hst/tag/SetWrapperElementTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SiteMapItemTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/BeanUtils.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/EncodingUtils.java svneol=native#text/plain
-client/src/main/java/org/hippoecm/hst/utils/PageContextPropertyUtils.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/ParameterUtils.java -text
 client/src/main/resources/META-INF/hst-core.tld svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/component/support/bean/AColorPropertyEditor.java -text
