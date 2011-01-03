@@ -24,19 +24,19 @@
   <@hst.attribute name="type" value="text/javascript" />
   <@hst.attribute name="src" value="${yuiLoaderSrc}" />
 </@hst.element>
-<@hst.headContribution keyHint="yuiLoader" elementByBeanPath="yuiLoader" category="jsExternal"/>
+<@hst.headContribution keyHint="yuiLoader" element=yuiLoader category="jsExternal"/>
 
 <@hst.element var="inlineEditing" name="script">
   <@hst.attribute name="id" value="inlineEditing" />
   <@hst.attribute name="type" value="text/javascript" />
   <@hst.attribute name="src" value="${inlineEditingSrc}" />
 </@hst.element>
-<@hst.headContribution keyHint="inlineEditing" elementByBeanPath="inlineEditing"  category="jsExternal"/>
+<@hst.headContribution keyHint="inlineEditing" element=inlineEditing  category="jsExternal"/>
 
 <@hst.element var="documentTitle" name="title">
 ${document.title}
 </@hst.element>
-<@hst.headContribution keyHint="documentTitle" elementByBeanPath="documentTitle" />
+<@hst.headContribution keyHint="documentTitle" element=documentTitle />
 
 <#if "${goBackLink!}" != "">
 <@hst.link var="goBackLink2" path="${goBackLink}"/>
@@ -49,9 +49,9 @@ ${document.title}
 </#if>
 
 <div class="yui-u">
-  <@hst.surfandeditlink var="surfandedit" hippobeanByBeanPath="document"/>
+  <@hst.surfandeditlink var="surfandedit" hippobean=document/>
   <#if "${surfandedit!}" != "">
-  	<a href="<@hst.surfandeditlink hippobeanByBeanPath="document"/>">[surf&amp;edit]</a>
+  	<a href="<@hst.surfandeditlink hippobean=document/>">[surf&amp;edit]</a>
   </#if>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
@@ -64,22 +64,22 @@ ${document.title}
     </p>
     <p>
         <#if isPreview>
-            <span class="editable inline" id="demosite:body"><@hst.html hippohtmlByBeanPath="document.html"/></span>
+            <span class="editable inline" id="demosite:body"><@hst.html hippohtml=document.html/></span>
         <#else>
-            <@hst.html hippohtmlByBeanPath="document.html"/>
+            <@hst.html hippohtml=document.html/>
         </#if>
     </p>
   </div>
 
   
-  <@hst.link var="resource" hippobeanByBeanPath="document.resource" />
+  <@hst.link var="resource" hippobean=document.resource />
   <#if "${resource!}" != "">
       <h2>resource link:</h2>
       <a href="${resource}">${document.resource.name}</a>
       <br/><br/>
   </#if>
   
-  <@hst.link var="documentImageLink" hippobeanByBeanPath="document.image.picture"/>
+  <@hst.link var="documentImageLink" hippobean=document.image.picture/>
   <#if "${documentImageLink!}" != "">
     <img src="${documentImageLink}"/>
   </#if>
@@ -93,7 +93,7 @@ ${document.title}
          <div style="border:1px solid black; padding:15px;">
              <b>${comment.title}</b>
              <br/>
-             <@hst.html hippohtmlByBeanPath="comments[${comment_index}].html"/>
+             <@hst.html hippohtml=comments[${comment_index}].html/>
          </div>
       </#list>
   </div>

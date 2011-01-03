@@ -94,9 +94,9 @@
             hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
             &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
             &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html
-            hippohtmlByBeanPath="document.html"/&gt; &lt;p&gt; &lt;/p&gt;
+            hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;
             &lt;@hst.link var="resource"
-            hippobeanByBeanPath="document.resource" /&gt; &lt;#if
+            hippobean=document.resource /&gt; &lt;#if
             "${resource!}" != ""&gt; &lt;a
             href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
             &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
@@ -104,11 +104,11 @@
             ref="banners"/&gt; &lt;/div&gt; &lt;div class="bannersHome"&gt;
             &lt;@hst.include ref="morebanners"/&gt; &lt;/div&gt; &lt;hr/&gt;
             &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
-            var="imageset" hippobeanByBeanPath="image"
+            var="imageset" hippobean=image
             mount="restapi-gallery" /&gt; &lt;@hst.link var="picture"
-            hippobeanByBeanPath="image" subPath="picture"
+            hippobean=image subPath="picture"
             mount="restapi-gallery"/&gt; &lt;@hst.link var="thumbnail"
-            hippobeanByBeanPath="image" subPath="thumbnail"
+            hippobean=image subPath="thumbnail"
             mount="restapi-gallery"/&gt; &lt;p&gt; ImageSet : &lt;a
             target="_blank"
             href="${imageset}"&gt;${imageset}&lt;/a&gt;&lt;/p&gt; &lt;p&gt;

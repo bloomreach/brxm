@@ -18,11 +18,11 @@
 <div class="yui-u">
   <h1>${document.title}</h1>
   <p>${document.summary}</p>
-  <@hst.html hippohtmlByBeanPath="document.html"/>
+  <@hst.html hippohtml=document.html/>
   
   <p> </p>
   
-  <@hst.link var="resource" hippobeanByBeanPath="document.resource" />
+  <@hst.link var="resource" hippobean=document.resource />
   <#if "${resource!}" != "">
     <a href="${resource}">${document.resource.name}</a>
   </#if>
@@ -40,9 +40,9 @@
 
   <hr/>
   <p>Dummy Example REST links </p>
-  <@hst.link var="imageset" hippobeanByBeanPath="image" mount="restapi-gallery" />
-  <@hst.link var="picture" hippobeanByBeanPath="image" subPath="picture" mount="restapi-gallery"/>
-  <@hst.link var="thumbnail" hippobeanByBeanPath="image" subPath="thumbnail" mount="restapi-gallery"/>
+  <@hst.link var="imageset" hippobean=image mount="restapi-gallery" />
+  <@hst.link var="picture" hippobean=image subPath="picture" mount="restapi-gallery"/>
+  <@hst.link var="thumbnail" hippobean=image subPath="thumbnail" mount="restapi-gallery"/>
   <p> ImageSet : <a target="_blank" href="${imageset}">${imageset}</a></p>
   <p> Thumbnail : <a target="_blank" href="${thumbnail}">${thumbnail}</a></p>
   <p> Picture : <a target="_blank" href="${picture}">${picture}</a></p>
