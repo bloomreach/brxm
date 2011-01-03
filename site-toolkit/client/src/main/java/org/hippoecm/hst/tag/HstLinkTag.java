@@ -125,13 +125,20 @@ public class HstLinkTag extends ParamContainerTag {
             cleanup();
             return EVAL_PAGE;
         }
+
+        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+        
         if(this.link == null && this.path == null && this.hippoBean == null && siteMapItemRefId == null) {
-            log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set");
+            String dispatcher = (String)servletRequest.getAttribute("javax.servlet.include.servlet_path");
+            if(dispatcher == null) {
+                log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
+            } else {
+                log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link in template '"+dispatcher+"'");  
+            }
             cleanup();
             return EVAL_PAGE;
         }
         
-       HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
        HstRequestContext reqContext = getHstRequestContext(servletRequest);
        
        if(reqContext == null) {
