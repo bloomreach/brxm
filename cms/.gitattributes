@@ -365,12 +365,15 @@ editor/frontend/src/main/java/org/hippoecm/editor/prototype/IPrototypeStore.java
 editor/frontend/src/main/java/org/hippoecm/editor/prototype/JcrPrototypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/EditmodelWorkflowImpl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/EditmodelWorkflowImpl_fr.properties svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/EditmodelWorkflowImpl_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/EditmodelWorkflowImpl_nl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/NamespaceWorkflowImpl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/NamespaceWorkflowImpl_fr.properties svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/NamespaceWorkflowImpl_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/NamespaceWorkflowImpl_nl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/TemplateEditorWorkflowImpl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/TemplateEditorWorkflowImpl_fr.properties svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/TemplateEditorWorkflowImpl_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/TemplateEditorWorkflowImpl_nl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/template/BuiltinTemplateConfig.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/template/BuiltinTemplateStore.java -text
@@ -398,6 +401,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.h
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ILayoutAware.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ListViewPluginEditorPlugin.java svneol=native#text/plain
@@ -409,6 +413,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListP
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin_fr.properties svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin_nl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeEditorPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeEditorPlugin.java -text
@@ -436,6 +441,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn.layo
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn.png -text svneol=unset#unset
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn_fr.properties svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn_nl.properties svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/no-layout.png -text svneol=unset#unset
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/list/resolvers/TemplateTypeIconAttributeModifier.java svneol=native#text/plain
@@ -466,6 +472,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPl
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin$PropertyEditor.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginHelper.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ITemplateFactory.java svneol=native#text/plain
@@ -482,6 +489,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/Li
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/LinkPickerDialog.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/LinkPickerDialog.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/LinkPickerDialog_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/LinkPickerDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/LinkPickerDialog_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/LinkPickerPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/linkpicker/LinkPickerPlugin.java -text
@@ -491,11 +499,13 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/mixin/MixinPl
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/mixin/MixinPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/mixin/MixinPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/mixin/MixinPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/mixin/MixinPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/mixin/MixinPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin.properties -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin_fr.properties -text svneol=unset#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin_nl.properties -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.java svneol=native#text/plain
@@ -503,6 +513,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/Reso
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-editor-top.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-shade.png -text svneol=unset#image/png
@@ -514,6 +525,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icon
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/HtmlValidator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/IFeedbackLogger.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/ValidationFeedback.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/ValidationFeedback_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/ValidationPlugin.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.java svneol=native#text/plain
@@ -522,31 +534,38 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ViewerPlugin.j
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin$CopyModelDialog.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin$CopyModelDialog.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin$CopyModelDialog_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin$CopyModelDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin$CopyModelDialog_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/EditmodelWorkflowPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin$NamespaceDialog.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin$NamespaceDialog.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin$NamespaceDialog_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin$NamespaceDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin$NamespaceDialog_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflowPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/RemodelWorkflowPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/RemodelWorkflowPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/RemodelWorkflowPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/RemodelWorkflowPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/RemodelWorkflowPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin$OnCloseDialog.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin$OnCloseDialog.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin$OnCloseDialog_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin$OnCloseDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin$OnCloseDialog_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEditingWorkflowPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/action/Action.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/action/NewCompoundTypeAction.java svneol=native#text/plain
@@ -556,31 +575,38 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/Cance
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateCompoundTypeDialog.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateCompoundTypeDialog.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateCompoundTypeDialog_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateCompoundTypeDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateCompoundTypeDialog_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateDocumentTypeDialog$TypeDetailStep.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateDocumentTypeDialog.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateDocumentTypeDialog.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateDocumentTypeDialog_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateDocumentTypeDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateDocumentTypeDialog_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateTypeDialog.html svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateTypeDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/FinishLink.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/NextLink.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelDialog.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelDialog.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelDialog.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelDialog_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelDialog_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelDialog_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$ButtonBar.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$ButtonBar.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$ButtonBar_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$ButtonBar_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$ButtonBar_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step1.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step1.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step1_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step1_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step1_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step2.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step2.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step2_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step2_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step2_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/SelectLayoutStep.java svneol=native#text/plain
@@ -1059,6 +1085,7 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/Content
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog.properties -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog_fr.properties -text svneol=unset#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog_it.properties -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/DownloadExportLink.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/copy/CopyDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/copy/CopyDialog.java svneol=native#text/plain
@@ -1489,8 +1516,12 @@ test/src/test/resources/hippoecm-extension.xml -text
 tools/development-content/README.txt svneol=native#text/plain
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard.properties -text svneol=unset#text/plain
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard_fr.properties -text svneol=unset#text/plain
+tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard_it.properties -text
+tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin_it.properties -text
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/CreateFoldersShortcutPlugin$Dialog$CreateFoldersWizard.properties -text svneol=unset#text/plain
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/CreateFoldersShortcutPlugin$Dialog$CreateFoldersWizard_fr.properties -text svneol=unset#text/plain
+tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/CreateFoldersShortcutPlugin$Dialog$CreateFoldersWizard_it.properties -text
+tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/CreateFoldersShortcutPlugin_it.properties -text
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java -text
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/NamesFactory.java -text
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/dist-all-last.properties -text
