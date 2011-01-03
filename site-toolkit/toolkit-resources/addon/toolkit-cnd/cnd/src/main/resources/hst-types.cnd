@@ -28,7 +28,6 @@
 - hst:isnamed (boolean)
 - hst:containers (string) multiple
 - hst:script (string)
-- hst:language (string)
 - * (string)
 
 [hst:templates] > nt:base, mix:referenceable orderable
