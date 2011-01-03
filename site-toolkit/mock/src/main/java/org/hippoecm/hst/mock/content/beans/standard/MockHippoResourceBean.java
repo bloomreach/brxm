@@ -16,6 +16,7 @@
 package org.hippoecm.hst.mock.content.beans.standard;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 
@@ -26,6 +27,7 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
 
     private String mimeType;
     private long length;
+    private Calendar cal;
     
     // 8 * 1024 = 8192
     private static final BigDecimal DIVISOR_K_BYTE = new BigDecimal(8192);
@@ -70,6 +72,13 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
     
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public Calendar getLastModified() {
+        return cal;
+    }
+    public Calendar setLastModified(Calendar cal) {
+        return cal;
     }
 
 }

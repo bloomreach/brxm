@@ -93,13 +93,14 @@
           <sv:value>&lt;#assign
             hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
             &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
-            &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html
+            &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html 
             hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;
+            &lt;#if "${document.resource!}" != ""&gt;
             &lt;@hst.link var="resource"
             hippobean=document.resource /&gt; &lt;#if
             "${resource!}" != ""&gt; &lt;a
             href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
-            &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
+            &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
             &lt;/div&gt; &lt;div class="bannersHome"&gt; &lt;@hst.include
             ref="banners"/&gt; &lt;/div&gt; &lt;div class="bannersHome"&gt;
             &lt;@hst.include ref="morebanners"/&gt; &lt;/div&gt; &lt;hr/&gt;
@@ -120,9 +121,7 @@
             &lt;br/&gt;
             &lt;div style="color:red"&gt;Note: this page is loaded by a repository freemarker template, see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &lt;/div&gt;
             &lt;p
-            style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;
-            
-            </sv:value>
+            style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
         </sv:property>
 	</sv:node>
 	<sv:node sv:name="homelayout">

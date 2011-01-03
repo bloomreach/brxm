@@ -23,8 +23,8 @@ import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,11 +80,11 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     }
     
     /**
-     * to be overridden by beans having an image. By having it in the basebean as well, 
+     * to be overridden by beans having an gallery image. By having it in the basebean as well, 
      * the jsp el can always try a var.image without getting an expression language exception
      * @return
      */
-    public HippoImage getImage(){
+    public HippoGalleryImageSetBean getImage(){
         return null;
     }
     

@@ -18,12 +18,12 @@ package org.hippoecm.hst.demo.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoImage;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 @Node(jcrType="demosite:newsdocument")
 public class NewsBean extends TextBean{
 
-    private HippoImage imageBean;
+    private HippoGalleryImageSetBean imageBean;
     private boolean imagesLoaded = false;
     
     @Override
@@ -37,12 +37,12 @@ public class NewsBean extends TextBean{
      *
      * @return the image of the newspage
      */
-    public HippoImage getImage() {
+    public HippoGalleryImageSetBean getImage() {
         if(imagesLoaded) {
             return this.imageBean;
         }
         imagesLoaded = true;
-        this.imageBean = this.getLinkedBean("demosite:image", HippoImage.class);
+        this.imageBean = this.getLinkedBean("demosite:image", HippoGalleryImageSetBean.class);
         return imageBean;
     }
  

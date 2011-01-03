@@ -40,6 +40,8 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImage;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoImage;
 import org.hippoecm.hst.content.beans.standard.HippoMirror;
@@ -78,6 +80,8 @@ public class ObjectConverterUtils {
         HippoStdPubWfRequest.class,
         HippoAsset.class,
         HippoImage.class,
+        HippoGalleryImageSet.class,
+        HippoGalleryImage.class,
         HippoTranslation.class,
         // facet navigation parts:
         HippoFacetSearch.class,
@@ -93,6 +97,7 @@ public class ObjectConverterUtils {
         "hippo:mirror",
         "hippostd:directory",
         "hippostd:folder",
+        "hippogallery:image",
         "hippo:resource",
         "hippo:request",
         "hippostd:html",

@@ -79,7 +79,7 @@ ${document.title}
       <br/><br/>
   </#if>
   
-  <@hst.link var="documentImageLink" hippobean=document.image.picture/>
+  <@hst.link var="documentImageLink" hippobean=document.image.original/>
   <#if "${documentImageLink!}" != "">
     <img src="${documentImageLink}"/>
   </#if>

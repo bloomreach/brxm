@@ -28,16 +28,15 @@ import org.hippoecm.hst.core.linking.AbstractResourceContainer;
  * 
  * The default mapping (where value="") is like this: 
  * 
- * <entry key="hippogallery:picture" value=""/>
+ * <entry key="hippogallery:original" value=""/>
  * 
  * and the url becomes just /content/gallery/..../handle_nodeName
  *
  */
-public class HippoGalleryImageSet extends AbstractResourceContainer {
+public class HippoGalleryImageSetContainer extends AbstractResourceContainer {
 
     public String getNodeType() {
-        return "hippogallery:exampleImageSet";
+        return "hippogallery:imageset";
     }
-    
     
 }

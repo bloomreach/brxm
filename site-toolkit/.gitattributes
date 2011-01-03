@@ -78,6 +78,8 @@ api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoDocumentIterator.
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoFacetChildNavigationBean.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoFacetNavigationBean.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoFolderBean.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoGalleryImageBean.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoGalleryImageSetBean.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoHtmlBean.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoImageBean.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoMirrorBean.java svneol=native#text/plain
@@ -1341,7 +1343,8 @@ components/core/src/main/java/org/hippoecm/hst/core/linking/ResolvedLocationMapT
 components/core/src/main/java/org/hippoecm/hst/core/linking/ResolvedLocationMapTreeItemImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/containers/DefaultResourceContainer.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/containers/HippoGalleryAssetSet.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/linking/containers/HippoGalleryImageSet.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/linking/containers/HippoGalleryExampleImageSetContainer.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/linking/containers/HippoGalleryImageSetContainer.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/resolvers/HippoResourceLocationResolver.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/logging/CircularFIFOLogEventBuffer.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/logging/HstComponentInvokerProfiler.java svneol=native#text/plain
@@ -1578,6 +1581,8 @@ content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoDocumen
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoFacetSelect.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoFixedDirectory.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoFolder.java svneol=native#text/plain
+content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoGalleryImage.java -text svneol=unset#text/plain
+content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoGalleryImageSet.java -text svneol=unset#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoHtml.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoImage.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoItem.java svneol=native#text/plain

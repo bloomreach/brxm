@@ -16,12 +16,13 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 /**
  * This is a base interface for all beans that represent a hippo resource should implement. 
  */
 
-public interface HippoResourceBean extends HippoBean{
+public interface HippoResourceBean extends HippoBean {
     
     /**
      * Get the mime type of this resource.
@@ -41,13 +42,17 @@ public interface HippoResourceBean extends HippoBean{
       *
       * @return kilobytes
       */
-     public BigDecimal getLengthKB();
+     BigDecimal getLengthKB();
      
      /**
       * Return size in kilobytes
       *
       * @return megabytes
       */
-     public BigDecimal getLengthMB();
-
+     BigDecimal getLengthMB();
+     
+     /**
+      * @return the last modified date of this resource and <code>null</code> if there is no last modified (should never happen though)
+      */
+     Calendar getLastModified();
 }

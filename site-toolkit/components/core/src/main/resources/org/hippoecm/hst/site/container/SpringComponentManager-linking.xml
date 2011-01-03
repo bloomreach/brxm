@@ -76,11 +76,22 @@
         <constructor-arg>
           <list>
             <ref bean="customResourceContainers"/>
-            
             <bean class="org.springframework.beans.factory.config.ListFactoryBean">
               <property name="sourceList">
                 <list>
-                   <bean class="org.hippoecm.hst.core.linking.containers.HippoGalleryImageSet">
+                   <bean class="org.hippoecm.hst.core.linking.containers.HippoGalleryImageSetContainer">
+                      <property name="primaryItem" value="hippogallery:original"/>
+                      <property name="mappings">
+                        <bean class="org.springframework.beans.factory.config.MapFactoryBean">
+                          <property name="sourceMap">
+                            <map key-type="java.lang.String" value-type="java.lang.String">
+                              <entry key="hippogallery:thumbnail" value="thumbnail"/>
+                            </map>
+                          </property>
+                        </bean>
+                      </property>
+                   </bean>
+                   <bean class="org.hippoecm.hst.core.linking.containers.HippoGalleryExampleImageSetContainer">
                       <property name="primaryItem" value="hippogallery:picture"/>
                       <property name="mappings">
                         <bean class="org.springframework.beans.factory.config.MapFactoryBean">

@@ -16,12 +16,12 @@
 package org.hippoecm.hst.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoImage;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 @Node(jcrType="demosite:productdocument")
 public class ProductBean extends TextBean{
     
-    private HippoImage imageBean;
+    private HippoGalleryImageSetBean imageBean;
     private boolean imagesLoaded = false;
     
     public String getTitle() {
@@ -53,12 +53,12 @@ public class ProductBean extends TextBean{
         return this.getProperty("hippostd:tags");
     }
     
-    public HippoImage getImage() {
+    public HippoGalleryImageSetBean getImage() {
         if(imagesLoaded) {
             return this.imageBean;
         }
         imagesLoaded = true;
-        this.imageBean = this.getLinkedBean("demosite:image", HippoImage.class);
+        this.imageBean = this.getLinkedBean("demosite:image", HippoGalleryImageSetBean.class);
         return imageBean;
     }
     

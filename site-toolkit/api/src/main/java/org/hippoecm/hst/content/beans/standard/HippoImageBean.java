@@ -18,9 +18,11 @@ package org.hippoecm.hst.content.beans.standard;
 /**
  * This is a base interface for possible beans containing an imageset. A custom imageset might not have thumbnail or picture. This is more meant as an example api for the
  * default image set as delivered by the hippo ecm. You might have an image set with many more variants, like get100By100Picture(). 
+ *
+ * @deprecated since 7.5 : Use {@link HippoGalleryImageSetBean} instead
  */
-
-public interface HippoImageBean extends HippoBean{
+@Deprecated
+public interface HippoImageBean extends HippoBean {
     
     /**
      * Get the thumbnail version of the image.

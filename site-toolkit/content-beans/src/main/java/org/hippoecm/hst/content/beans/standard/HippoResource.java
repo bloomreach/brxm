@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 import javax.jcr.RepositoryException;
 
@@ -32,8 +33,6 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
 
     private static Logger log = LoggerFactory.getLogger(HippoResource.class);
 
-    private static final BigDecimal DIVISOR_K_BIT = new BigDecimal(1000);
-    private static final BigDecimal DIVISOR_M_BIT = new BigDecimal(1000000);
     // 8 * 1024 = 8192
     private static final BigDecimal DIVISOR_K_BYTE = new BigDecimal(8192);
     // 8 * 1024 * 1024 = 8388608
@@ -81,6 +80,16 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
             log.warn("Error while fetching binary data length.", e);
         }
         return 0;
+    }
+
+    @Override
+    public Calendar getLastModified() {
+        try {
+            return this.getNode().getProperty("jcr:lastModified").getDate();
+        } catch (RepositoryException e) {
+            log.error("Error during fetching mandatory property jcr:lastModified from '{}'. Return null", getValueProvider().getPath());
+            return null;
+        }
     }
 
 }

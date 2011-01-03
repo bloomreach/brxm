@@ -22,9 +22,11 @@
   
   <p> </p>
   
-  <@hst.link var="resource" hippobean=document.resource />
-  <#if "${resource!}" != "">
-    <a href="${resource}">${document.resource.name}</a>
+  <#if "${document.resource!}" != "">
+      <@hst.link var="resource" hippobean=document.resource />
+      <#if "${resource!}" != "">
+        <a href="${resource}">${document.resource.name}</a>
+      </#if>
   </#if>
   
   <div>
