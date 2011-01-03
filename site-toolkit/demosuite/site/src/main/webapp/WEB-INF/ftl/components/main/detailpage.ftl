@@ -93,7 +93,7 @@ ${document.title}
          <div style="border:1px solid black; padding:15px;">
              <b>${comment.title}</b>
              <br/>
-             <@hst.html hippohtml=comments[${comment_index}].html/>
+             <@hst.html hippohtml=comment.html/>
          </div>
       </#list>
   </div>
