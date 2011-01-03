@@ -195,15 +195,17 @@ public class BinariesServlet extends HttpServlet {
             // nothing left to do
             return;
         }
-
+        
+        boolean setExpiresNeeded = setExpires;
+        
         if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes)) {
-            setExpires = false;
+            setExpiresNeeded = false;
             ContentDispositionUtils.addContentDispositionHeader(request, response, page.getFileName(),
                     contentDispositionFileNameEncoding);
         }
 
         HeaderUtils.setLastModifiedHeaders(response, page);
-        if (setExpires) {
+        if (setExpiresNeeded) {
             HeaderUtils.setExpiresHeaders(response, page);
         }
 
