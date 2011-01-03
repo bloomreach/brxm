@@ -65,12 +65,8 @@
 
   <inceptionYear>2007</inceptionYear>
 
-  <!-- Where to publish the project data, especially the documentation site -->
+  <!-- Where to publish the project data -->
   <distributionManagement>
-    <site>
-      <id>repodocs.hippocms.org</id>
-      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
-    </site>
     <repository>
       <id>repository.hippocms.org</id>
       <url>ftp://repository.hippocms.org/maven2</url>
@@ -441,6 +437,10 @@
                  parameter skipTests=true is set
             -->
             <preparationGoals>clean install</preparationGoals>
+            <!-- Default release:perform goals are "deploy site-deploy", but we don't do
+                 site deployment (anymore), which is why this is overridden to execute only "deploy"
+            -->
+            <goals>deploy</goals>
             <arguments>-DskipTests=true</arguments>
           </configuration>
         </plugin>
