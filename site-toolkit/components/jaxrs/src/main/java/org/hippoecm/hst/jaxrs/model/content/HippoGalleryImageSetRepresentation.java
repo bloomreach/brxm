@@ -26,16 +26,36 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 @XmlRootElement(name = "imageset")
 public class HippoGalleryImageSetRepresentation extends NodeRepresentation {
     
-    HippoGalleryImageRepresentation thumbnail;
-    HippoGalleryImageRepresentation original;
+    private String fileName;
+    private String description;
+    private HippoGalleryImageRepresentation thumbnail;
+    private HippoGalleryImageRepresentation original;
     
     public HippoGalleryImageSetRepresentation represent(HippoGalleryImageSetBean bean) throws RepositoryException {
         super.represent(bean);
+        fileName = bean.getFileName();
+        description = bean.getDescription();
         thumbnail = new HippoGalleryImageRepresentation().represent(bean.getThumbnail());
         original = new HippoGalleryImageRepresentation().represent(bean.getOriginal());
         return this;
     }
     
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public HippoGalleryImageRepresentation getThumbnail(){
         return thumbnail;
     }
@@ -44,12 +64,12 @@ public class HippoGalleryImageSetRepresentation extends NodeRepresentation {
       this.thumbnail = thumbnail;   
     }
     
-    public HippoGalleryImageRepresentation getPicture(){
+    public HippoGalleryImageRepresentation getOriginal(){
         return original;
     }
     
-    public void setPicture(HippoGalleryImageRepresentation picture) {
-      this.original = picture;   
+    public void setOriginal(HippoGalleryImageRepresentation original) {
+      this.original = original;   
     }
     
 }
