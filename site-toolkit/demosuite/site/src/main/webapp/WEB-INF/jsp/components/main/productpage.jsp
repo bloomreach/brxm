@@ -73,7 +73,7 @@
     Image:
     <br/>
     <c:if test="${not empty document.image}">
-      <img id="productImg" src="<hst:link hippobean="${document.image.picture}"/>"/>
+      <img id="productImg" src="<hst:link hippobean="${document.image.original}"/>"/>
     </c:if>
     <br/>
     <c:if test="${isPreview and empty(hstRequest.userPrincipal)}">
@@ -220,7 +220,7 @@ function(Y) {
           }
     };
     
-    var uri = '<hst:link hippobean="${document.image}" mount="restapi-gallery" subPath="picture/content" />';
+    var uri = '<hst:link hippobean="${document.image}" mount="restapi-gallery" subPath="original/content" />';
     var request = Y.io(uri, cfg);
 
     // Because YUI3 doesn't fire io:complete event handler properly with io-upload-iframe,

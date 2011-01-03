@@ -1458,8 +1458,9 @@ components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoFacetNa
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoFacetResultSetRepresentation.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoFolderRepresentation.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoFolderRepresentationDataset.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoGalleryImageRepresentation.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoGalleryImageSetRepresentation.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoHtmlRepresentation.java -text
-components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoImageRepresentation.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoResourceRepresentation.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/Link.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/NodeProperty.java svneol=native#text/plain
@@ -1469,7 +1470,6 @@ components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/PropertyValu
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/AbstractResource.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/AbstractContentResource.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/BaseImageSetContentResource.java -text
-components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/ExampleImageSetContentResource.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoDirectoryContentResource.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoDocumentContentResource.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFacetNavigationContentResource.java -text
@@ -1477,6 +1477,7 @@ components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFace
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFacetsAvailableNavigationContentResource.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFixedDirectoryContentResource.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFolderContentResource.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/ImageSetContentResource.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/util/AnnotatedContentBeanClassesScanner.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/util/NodePropertyUtils.java -text
 components/jaxrs/src/main/resources/META-INF/cxf/org.apache.cxf.Logger -text

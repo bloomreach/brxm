@@ -83,7 +83,7 @@
   </c:if>
   
   <c:if test="${not empty document.image}">
-    <img src="<hst:link hippobean="${document.image.picture}"/>"/>
+    <img src="<hst:link hippobean="${document.image.original}"/>"/>
   </c:if>
     
   <hst:actionURL var="addURL">

@@ -42,11 +42,12 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.hippoecm.hst.cache.HstCache;
-import org.hippoecm.hst.content.beans.standard.HippoImageBean;
-import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.jaxrs.model.content.HippoImageRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageSetRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoResourceRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.slf4j.Logger;
@@ -72,13 +73,13 @@ public class BaseImageSetContentResource extends AbstractContentResource {
 
     @GET
     @Path("/")
-    public HippoImageRepresentation getImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+    public HippoGalleryImageSetRepresentation getImageSetResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            HippoImageBean imageBean = (HippoImageBean) getRequestContentBean(requestContext);
-            HippoImageRepresentation imageRep = new HippoImageRepresentation().represent(imageBean);
-            imageRep.addLink(getMountLink(requestContext, imageBean, MOUNT_ALIAS_GALLERY, null));
-            imageRep.addLink(getSiteLink(requestContext, imageBean));
+            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
+            HippoGalleryImageSetRepresentation imageRep = new HippoGalleryImageSetRepresentation().represent(imageSetBean);
+            imageRep.addLink(getMountLink(requestContext, imageSetBean, MOUNT_ALIAS_GALLERY, null));
+            imageRep.addLink(getSiteLink(requestContext, imageSetBean));
             return imageRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -92,31 +93,31 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     }
     
     @GET
-    @Path("/resource/{childResourceName}/")
-    public HippoResourceRepresentation getChildResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @PathParam("childResourceName") String childResourceName,
+    @Path("/image/{imageName}/")
+    public HippoGalleryImageRepresentation getImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("imageName") String imageName,
             @MatrixParam("subpath") String subPath) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoImageBean imageBean = (HippoImageBean) getRequestContentBean(requestContext);
-            HippoResourceBean childResourceBean = (HippoResourceBean) imageBean.getBean(childResourceName);
+            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
+            HippoGalleryImageBean childImageBean = (HippoGalleryImageBean) imageSetBean.getBean(imageName);
             
-            if (childResourceBean == null) {
+            if (childImageBean == null) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
             
-            HippoResourceRepresentation childResourceRep = new HippoResourceRepresentation().represent(childResourceBean);
+            HippoGalleryImageRepresentation childImageRep = new HippoGalleryImageRepresentation().represent(childImageBean);
             
             if (subPath == null) {
-                subPath = "resource/" + childResourceName;
+                subPath = "image/" + imageName;
             }
             
-            childResourceRep.addLink(getMountLink(requestContext, imageBean, MOUNT_ALIAS_GALLERY, subPath));
-            Link ownerLink = getMountLink(requestContext, imageBean, MOUNT_ALIAS_GALLERY, null);
+            childImageRep.addLink(getMountLink(requestContext, imageSetBean, MOUNT_ALIAS_GALLERY, subPath));
+            Link ownerLink = getMountLink(requestContext, imageSetBean, MOUNT_ALIAS_GALLERY, null);
             ownerLink.setRel("owner");
-            childResourceRep.addLink(ownerLink);
+            childImageRep.addLink(ownerLink);
 
-            return childResourceRep;
+            return childImageRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -129,25 +130,25 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     }
     
     @GET
-    @Path("/resource/{childResourceName}/content")
-    public Response getChildResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @PathParam("childResourceName") String childResourceName) {
+    @Path("/image/{imageName}/content")
+    public Response getImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("imageName") String imageName) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoImageBean imageBean = (HippoImageBean) getRequestContentBean(requestContext);
-            HippoResourceBean childResourceBean = (HippoResourceBean) imageBean.getBean(childResourceName);
+            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
+            HippoGalleryImageBean childImageBean = (HippoGalleryImageBean) imageSetBean.getBean(imageName);
             
-            if (childResourceBean == null) {
+            if (childImageBean == null) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
             
-            final String mimeType = childResourceBean.getMimeType();
+            final String mimeType = childImageBean.getMimeType();
             
-            if (!childResourceBean.getNode().hasProperty("jcr:data")) {
+            if (!childImageBean.getNode().hasProperty("jcr:data")) {
                 return Response.ok(new byte[0], MediaType.valueOf(mimeType)).build();
             }
             
-            final InputStream dataInputStream = childResourceBean.getNode().getProperty("jcr:data").getStream();
+            final InputStream dataInputStream = childImageBean.getNode().getProperty("jcr:data").getStream();
             
             StreamingOutput output = new StreamingOutput() {
                 public void write(OutputStream output) throws IOException, WebApplicationException {
@@ -173,22 +174,22 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     }
     
     @PUT
-    @Path("/resource/{childResourceName}/content")
-    public void updateChildResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @PathParam("childResourceName") String childResourceName,
+    @Path("/image/{imageName}/content")
+    public void updateImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("imageName") String imageName,
             @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
             InputStream childResourceContentStream) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoImageBean imageBean = (HippoImageBean) getRequestContentBean(requestContext);
-            HippoResourceBean childResourceBean = (HippoResourceBean) imageBean.getBean(childResourceName);
+            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
+            HippoGalleryImageBean childImageBean = (HippoGalleryImageBean) imageSetBean.getBean(imageName);
             
-            if (childResourceBean == null) {
+            if (childImageBean == null) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
             
             try {
-                Node childResourceNode = childResourceBean.getNode();
+                Node childResourceNode = childImageBean.getNode();
                 Property mimeTypeProp = childResourceNode.getProperty("jcr:mimeType");
                 mimeTypeProp.setValue(mimeType);
                 Property dataProp = childResourceNode.getProperty("jcr:data");
@@ -197,7 +198,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 childResourceNode.save();
                 
                 if (binariesCache != null) {
-                    HstLink hstLink = requestContext.getHstLinkCreator().create(imageBean, requestContext);
+                    HstLink hstLink = requestContext.getHstLinkCreator().create(imageSetBean, requestContext);
                     String contentPath = hstLink.getMount().getMountPoint() + "/" + hstLink.getPath();
                     binariesCache.remove(contentPath);
                 }
@@ -216,10 +217,10 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     }
     
     @POST
-    @Path("/resource/{childResourceName}/content")
+    @Path("/image/{imageName}/content")
     @Consumes("multipart/form-data")
-    public void updateChildResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @PathParam("childResourceName") String childResourceName,
+    public void updateImageResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("imageName") String imageName,
             @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
             List<Attachment> attachments) {
         if (attachments == null || attachments.isEmpty()) {
@@ -237,7 +238,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
         
         try {
             attachmentStream = attachment.getDataHandler().getInputStream();
-            updateChildResourceContent(servletRequest, servletResponse, uriInfo, childResourceName, attachmentMimeType, attachmentStream);
+            updateImageResourceContent(servletRequest, servletResponse, uriInfo, imageName, attachmentMimeType, attachmentStream);
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content stream.", e);

@@ -32,24 +32,24 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.hippoecm.hst.jaxrs.model.content.HippoResourceRepresentation;
+import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageRepresentation;
 
 /**
  * @version $Id$
  */
-@Path("/hippogallery:exampleImageSet/")
-public class ExampleImageSetContentResource extends BaseImageSetContentResource {
+@Path("/hippogallery:imageset/")
+public class ImageSetContentResource extends BaseImageSetContentResource {
     
     @GET
     @Path("/thumbnail/")
-    public HippoResourceRepresentation getThumbnailImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
-        return super.getChildResource(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail", "thumbnail/");
+    public HippoGalleryImageRepresentation getThumbnailImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        return super.getImageResource(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail", "thumbnail/");
     }
     
     @GET
     @Path("/thumbnail/content/")
     public Response getThumbnailImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
-        return super.getChildResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail");
+        return super.getImageResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail");
     }
     
     @PUT
@@ -57,35 +57,35 @@ public class ExampleImageSetContentResource extends BaseImageSetContentResource 
     public void updateThumbnailImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
             InputStream thumbnailResourceStream) {
-        super.updateChildResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail", mimeType, thumbnailResourceStream);
+        super.updateImageResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail", mimeType, thumbnailResourceStream);
     }
     
     @GET
-    @Path("/picture/")
-    public HippoResourceRepresentation getPictureImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
-        return super.getChildResource(servletRequest, servletResponse, uriInfo, "hippogallery:picture", "picture/");
+    @Path("/original/")
+    public HippoGalleryImageRepresentation getOriginalImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        return super.getImageResource(servletRequest, servletResponse, uriInfo, "hippogallery:original", "original/");
     }
     
     @GET
-    @Path("/picture/content/")
-    public Response getPictureImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
-        return super.getChildResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:picture");
+    @Path("/original/content/")
+    public Response getOriginalImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        return super.getImageResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:original");
     }
     
     @PUT
-    @Path("/picture/content/")
-    public void updatePictureImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+    @Path("/original/content/")
+    public void updateOriginalImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
-            InputStream pictureResourceStream) {
-        super.updateChildResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:picture", mimeType, pictureResourceStream);
+            InputStream originalResourceStream) {
+        super.updateImageResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:original", mimeType, originalResourceStream);
     }
     
     @POST
-    @Path("/picture/content/")
+    @Path("/original/content/")
     @Consumes("multipart/form-data")
-    public void updatePictureImageResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+    public void updateOriginalImageResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
             List<Attachment> attachments) {
-        super.updateChildResourceContentByAttachments(servletRequest, servletResponse, uriInfo, "hippogallery:picture", mimeType, attachments);
+        super.updateImageResourceContentByAttachments(servletRequest, servletResponse, uriInfo, "hippogallery:original", mimeType, attachments);
     }
 }

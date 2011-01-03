@@ -39,11 +39,11 @@
   
   <hst:link var="imageset" hippobean="${image}"  mount="restapi-gallery"/>
   <hst:link var="thumbnail" hippobean="${image}" mount="restapi-gallery" subPath="thumbnail" />
-  <hst:link var="picture" hippobean="${image}"  mount="restapi-gallery"  subPath="picture"/>
+  <hst:link var="original" hippobean="${image}"  mount="restapi-gallery"  subPath="original"/>
   
   <p> ImageSet : <a target="_blank" href="${imageset}">${imageset}</a></p>
   <p> Thumbnail : <a target="_blank" href="${thumbnail}">${thumbnail}</a></p>
-  <p> Picture : <a target="_blank" href="${picture}">${picture}</a></p>
+  <p> Original : <a target="_blank" href="${original}">${original}</a></p>
   <p style="height: 30em;">  </p>
   
   <p style="height: 30em;">  </p>

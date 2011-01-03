@@ -18,38 +18,38 @@ package org.hippoecm.hst.jaxrs.model.content;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hippoecm.hst.content.beans.standard.HippoImageBean;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 /**
  * @version $Id$
  */
-@XmlRootElement(name = "image")
-public class HippoImageRepresentation extends NodeRepresentation {
+@XmlRootElement(name = "imageset")
+public class HippoGalleryImageSetRepresentation extends NodeRepresentation {
     
-    HippoResourceRepresentation thumbnail;
-    HippoResourceRepresentation picture;
+    HippoGalleryImageRepresentation thumbnail;
+    HippoGalleryImageRepresentation original;
     
-    public HippoImageRepresentation represent(HippoImageBean bean) throws RepositoryException {
+    public HippoGalleryImageSetRepresentation represent(HippoGalleryImageSetBean bean) throws RepositoryException {
         super.represent(bean);
-        thumbnail = new HippoResourceRepresentation().represent(bean.getThumbnail());
-        picture = new HippoResourceRepresentation().represent(bean.getPicture());
+        thumbnail = new HippoGalleryImageRepresentation().represent(bean.getThumbnail());
+        original = new HippoGalleryImageRepresentation().represent(bean.getOriginal());
         return this;
     }
     
-    public HippoResourceRepresentation getThumbnail(){
+    public HippoGalleryImageRepresentation getThumbnail(){
         return thumbnail;
     }
     
-    public void setThumbnail(HippoResourceRepresentation thumbnail) {
+    public void setThumbnail(HippoGalleryImageRepresentation thumbnail) {
       this.thumbnail = thumbnail;   
     }
     
-    public HippoResourceRepresentation getPicture(){
-        return picture;
+    public HippoGalleryImageRepresentation getPicture(){
+        return original;
     }
     
-    public void setPicture(HippoResourceRepresentation picture) {
-      this.picture = picture;   
+    public void setPicture(HippoGalleryImageRepresentation picture) {
+      this.original = picture;   
     }
     
 }

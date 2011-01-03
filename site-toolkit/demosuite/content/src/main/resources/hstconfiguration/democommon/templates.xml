@@ -106,8 +106,8 @@
             &lt;@hst.include ref="morebanners"/&gt; &lt;/div&gt; &lt;hr/&gt;
             &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
             var="imageset" hippobean=image
-            mount="restapi-gallery" /&gt; &lt;@hst.link var="picture"
-            hippobean=image subPath="picture"
+            mount="restapi-gallery" /&gt; &lt;@hst.link var="original"
+            hippobean=image subPath="original"
             mount="restapi-gallery"/&gt; &lt;@hst.link var="thumbnail"
             hippobean=image subPath="thumbnail"
             mount="restapi-gallery"/&gt; &lt;p&gt; ImageSet : &lt;a
@@ -115,8 +115,8 @@
             href="${imageset}"&gt;${imageset}&lt;/a&gt;&lt;/p&gt; &lt;p&gt;
             Thumbnail : &lt;a target="_blank"
             href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&lt;/p&gt;
-            &lt;p&gt; Picture : &lt;a target="_blank"
-            href="${picture}"&gt;${picture}&lt;/a&gt;&lt;/p&gt;
+            &lt;p&gt; Original : &lt;a target="_blank"
+            href="${original}"&gt;${original}&lt;/a&gt;&lt;/p&gt;
             &lt;br/&gt;
             &lt;br/&gt;
             &lt;div style="color:red"&gt;Note: this page is loaded by a repository freemarker template, see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &lt;/div&gt;
