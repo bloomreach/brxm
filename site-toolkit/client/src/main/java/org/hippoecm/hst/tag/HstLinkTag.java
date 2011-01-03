@@ -40,7 +40,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
-import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -382,10 +381,6 @@ public class HstLinkTag extends ParamContainerTag {
         this.link = hstLink;
     }
     
-    public void setLinkByBeanPath(String beanPath) {
-        this.link = (HstLink) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-    }
-    
     public void setExternal(boolean external) {
         this.external = external;
     }
@@ -428,14 +423,6 @@ public class HstLinkTag extends ParamContainerTag {
     
     public String getMount(){
         return mountAlias;
-    }
-    
-    public void setHippobeanByBeanPath(String beanPath) {
-        this.hippoBean = (HippoBean) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-        if(this.hippoBean == null) {
-            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
-            skipTag = true;
-        }
     }
     
     /**

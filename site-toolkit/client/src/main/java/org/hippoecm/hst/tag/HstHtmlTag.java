@@ -33,7 +33,6 @@ import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,22 +201,9 @@ public class HstHtmlTag extends TagSupport {
         this.hippoHtml = hippoHtml;
     }
     
-    public void setHippohtmlByBeanPath(String beanPath) {
-        this.hippoHtml = (HippoHtml) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-        if(this.hippoHtml == null) {
-            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
-            this.skipTag = true;
-        }
-    }
-    
     public void setContentRewriter(ContentRewriter<String> contentRewriter) {
         this.contentRewriter = contentRewriter;
     }
-    
-    public void setContentRewriterByBeanPath(String beanPath) {
-        contentRewriter = (ContentRewriter<String>) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-    }
-    
     
     /* -------------------------------------------------------------------*/
         

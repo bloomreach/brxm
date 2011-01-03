@@ -25,7 +25,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -88,10 +87,6 @@ public class SetWrapperElementTag extends BodyTagSupport {
     
     public void setElement(Element element) {
         this.element = element;
-    }
-    
-    public void setElementByBeanPath(String beanPath) {
-        this.element = (Element) PageContextPropertyUtils.getProperty(pageContext, beanPath);
     }
     
     public Element getElement() {

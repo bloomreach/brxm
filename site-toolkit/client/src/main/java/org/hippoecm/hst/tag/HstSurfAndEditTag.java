@@ -38,7 +38,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.EncodingUtils;
-import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -239,14 +238,6 @@ public class HstSurfAndEditTag extends TagSupport {
      
     public void setHippobean(HippoBean hippoBean) {
         this.hippoBean = hippoBean;
-    }
-    
-    public void setHippobeanByBeanPath(String beanPath) {
-        this.hippoBean = (HippoBean) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-        if(this.hippoBean == null) {
-            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
-            skipTag = true;
-        }
     }
     
     /**

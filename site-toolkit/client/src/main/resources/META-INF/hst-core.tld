@@ -191,17 +191,6 @@
             <description>A HstLink object, containing a already rewritten object</description>
         </attribute>
         <attribute>
-            <name>linkByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean path of HstLink object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
-                    JSP developers could ignore this attribute and use 'link' attribute instead directly with object property value.
-            </description>
-        </attribute>
-        <attribute>
             <name>path</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
@@ -222,17 +211,6 @@
             <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
             <description>A HippoBean object. This is typically one of your bean mapped
             objects</description>
-        </attribute>
-        <attribute>
-            <name>hippobeanByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean path of HippoBean object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
-                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
-            </description>
         </attribute>
         <attribute>
             <name>siteMapItemRefId</name>
@@ -338,7 +316,7 @@
         <tag-class>org.hippoecm.hst.tag.SiteMapItemTag</tag-class>
         <body-content>JSP</body-content>
         <description>This sitemapitem tag can nested into a hst link tag to provide a preferred sitemap item to create the link for. You can define the 
-        preferred sitemap item by choosing one (no more) of these attributes: preferItem, preferItemId, preferItemPath or preferItemByPath. Optionally 
+        preferred sitemap item by choosing one (no more) of these attributes: preferItem, preferItemId, or preferPath. Optionally 
         add a fallback attr which is a boolean true or false. Default fallback is true</description>
         <attribute>
             <name>preferItem</name>
@@ -363,17 +341,6 @@
             <type>java.lang.String</type>
             <description>
               The path of the preferred sitemap item to use for linkrewriting. If the path starts with a /, the / is removed and ignored.
-            </description>
-        </attribute>
-        <attribute>
-            <name>preferItemByPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean path of HstSiteMapItem object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
-                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
             </description>
         </attribute>
         <attribute>
@@ -412,17 +379,6 @@
             which you for example want to remove one facet-value combi.</description>
         </attribute>
         <attribute>
-            <name>currentByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean path of a HippoFacetSubNavigation object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
-                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
-            </description>
-        </attribute>
-        <attribute>
             <name>remove</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
@@ -430,33 +386,11 @@
             <description>A HippoFacetSubNavigation object.</description>
         </attribute>
         <attribute>
-            <name>removeByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean path of a HippoFacetSubNavigation object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
-                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
-            </description>
-        </attribute>
-        <attribute>
             <name>removeList</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.util.List</type>
             <description>The List of HippoFacetSubNavigation's to be removed.</description>
-        </attribute>
-        <attribute>
-            <name>removeListByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean path of a HippoFacetSubNavigation object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
-                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
-            </description>
         </attribute>
     </tag>
 
@@ -482,17 +416,6 @@
             <description>A HippoBean object. This is typically one of your bean mapped
             objects</description>
         </attribute>
-        <attribute>
-            <name>hippobeanByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean path of HippoBean object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
-                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
-            </description>
-        </attribute>
     </tag>
 
     <tag>
@@ -517,33 +440,11 @@
             objects</description>
         </attribute>
         <attribute>
-            <name>hippohtmlByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean name of HippoHtml object which can be retrieved from pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
-                    JSP developers could ignore this attribute and use 'hippohtml' attribute instead directly with object property value.
-            </description>
-        </attribute>
-        <attribute>
             <name>contentRewriter</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>org.hippoecm.hst.content.rewriter.ContentRewriter</type>
             <description>A ContentRewriter object.</description>
-        </attribute>
-        <attribute>
-            <name>contentRewriterByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean name of ContentRewriter object which can be retrieved from pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
-                    JSP developers could ignore this attribute and use 'contentRewriter' attribute instead directly with object property value.
-            </description>
         </attribute>
         <example><![CDATA[
           <div>
@@ -629,14 +530,6 @@
             </description>
         </attribute>
         <attribute>
-            <name>elementByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>Tag is Deprecated: use headContribution instead.
-            </description>
-        </attribute>
-        <attribute>
             <name>category</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
@@ -676,17 +569,6 @@
                 setting a DOM element by element attribute. If this attribute is set, then the
                 head-contribution tag will not try to parse the body content to create a DOM
                 element. Instead, it will use the passed DOM element by this attribute.
-            </description>
-        </attribute>
-        <attribute>
-            <name>elementByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean name of Element object which can be retrieved from pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
-                    JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
             </description>
         </attribute>
         <attribute>
@@ -879,17 +761,6 @@
                 setting a DOM element by element attribute. If this attribute is set, then
                 this tag will not try to parse the body content to create a DOM
                 element. Instead, it will use the passed DOM element by this attribute.
-            </description>
-        </attribute>
-        <attribute>
-            <name>elementByBeanPath</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>
-              A bean name of Element object which can be retrieved from pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
-                    JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
             </description>
         </attribute>
         <example><![CDATA[

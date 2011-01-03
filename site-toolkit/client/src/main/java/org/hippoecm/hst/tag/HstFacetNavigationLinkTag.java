@@ -37,7 +37,6 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,25 +180,12 @@ public class HstFacetNavigationLinkTag extends TagSupport {
         this.current = current;
     }
     
-    public void setCurrentByBeanPath(String beanPath) {
-        this.current = (HippoFacetSubNavigation) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-        if(this.current == null) {
-            log.debug("No bean for '{}'. ", beanPath);
-        }
-    }
-    
     public HippoFacetSubNavigation getRemove(){
         return this.remove;
     }
     
     public void setRemove(HippoFacetSubNavigation remove) {
         this.remove = remove;
-    }
-    public void setRemoveByBeanPath(String beanPath) {
-        this.remove = (HippoFacetSubNavigation) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-        if(this.remove == null) {
-            log.debug("No bean for '{}'.", beanPath);
-        }
     }
     
     public List<HippoFacetSubNavigation> getRemoveList(){
@@ -209,13 +195,6 @@ public class HstFacetNavigationLinkTag extends TagSupport {
     public void setRemoveList(List<HippoFacetSubNavigation> removeList) {
         this.removeList = removeList;
     }
-    public void setRemoveListByBeanPath(String beanPath) {
-        this.removeList = (List<HippoFacetSubNavigation>) PageContextPropertyUtils.getProperty(pageContext, beanPath);
-        if(this.removeList == null) {
-            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
-        }
-    }
-    
    
     /**
      * Sets the var property.

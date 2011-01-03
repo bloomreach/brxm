@@ -22,10 +22,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,14 +138,6 @@ public class SiteMapItemTag extends TagSupport {
      */
     public void setPreferItem(HstSiteMapItem siteMapItem) {
         this.siteMapItem = siteMapItem;
-    }
-    
-    public void setPreferItemByPath(String preferItemByPath) {
-        this.siteMapItem = (HstSiteMapItem)PageContextPropertyUtils.getProperty(pageContext, preferItemByPath);
-        if(this.siteMapItem == null) {
-            log.debug("No hstSiteMapItem for '{}'. The tag will be skipped.", preferItemByPath);
-            skipTag = true;
-        }
     }
     
     public void setPreferItemId(String preferItemId) {

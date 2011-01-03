@@ -71,17 +71,18 @@ ${document.title}
     </p>
   </div>
 
-  
-  <@hst.link var="resource" hippobean=document.resource />
-  <#if "${resource!}" != "">
-      <h2>resource link:</h2>
-      <a href="${resource}">${document.resource.name}</a>
-      <br/><br/>
+  <#if document.resource??>
+    <@hst.link var="resource" hippobean=document.resource />
+    <h2>resource link:</h2>
+    <a href="${resource}">${document.resource.name}</a>
+    <br/><br/>
   </#if>
   
-  <@hst.link var="documentImageLink" hippobean=document.image.original/>
-  <#if "${documentImageLink!}" != "">
-    <img src="${documentImageLink}"/>
+  <#if document.image??>
+    <@hst.link var="documentImageLink" hippobean=document.image.original/>
+    <#if "${documentImageLink!}" != "">
+      <img src="${documentImageLink}"/>
+    </#if>
   </#if>
 
   <@hst.actionURL var="addURL">
