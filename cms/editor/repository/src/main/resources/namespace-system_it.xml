@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010 Hippo
+  Copyright 2007-2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,60 +16,88 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
     xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
-    sv:name="localeProviderService">
+    sv:name="system">
 
-  <sv:node sv:name="en" h:merge="combine">
+  <sv:node sv:name="String" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Anglais</sv:value>
+        <sv:value>Breve testo</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="fr" h:merge="combine">
+  <sv:node sv:name="Text" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Français</sv:value>
+        <sv:value>Testo</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="nl" h:merge="combine">
+  <sv:node sv:name="Boolean" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Néerlandais</sv:value>
+        <sv:value>Boolean</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="it" h:merge="combine">
+  <sv:node sv:name="Date" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Italien</sv:value>
+        <sv:value>Dato</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="Long" h:merge="combine">
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Numero lungo</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="Double" h:merge="combine">
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Numero decimale</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

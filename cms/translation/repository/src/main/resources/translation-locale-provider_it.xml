@@ -24,10 +24,10 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Anglais</sv:value>
+        <sv:value>Ingleze</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -38,10 +38,10 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Français</sv:value>
+        <sv:value>Francese</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -52,10 +52,10 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Néerlandais</sv:value>
+        <sv:value>Olandese</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -66,10 +66,10 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Italien</sv:value>
+        <sv:value>Italiano</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

@@ -308,6 +308,7 @@ config/src/main/resources/cms-reports.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-search-views.xml svneol=native#text/plain
 config/src/main/resources/cms-services.xml svneol=native#text/plain
 config/src/main/resources/cms-static.xml -text svneol=unset#text/plain
+config/src/main/resources/cms-static_it.xml -text
 config/src/main/resources/cms.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-defaultread-reporting.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow-frontend.xml svneol=native#text/plain
@@ -619,9 +620,15 @@ editor/repository/src/main/resources/editor.cnd -text
 editor/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-frontend.xml svneol=native#text/plain
 editor/repository/src/main/resources/namespace-hippo.xml svneol=native#text/plain
+editor/repository/src/main/resources/namespace-hippo_it.xml -text
+editor/repository/src/main/resources/namespace-hippostd_it.xml -text
+editor/repository/src/main/resources/namespace-hipposysedit_it.xml -text
 editor/repository/src/main/resources/namespace-system.xml svneol=native#text/plain
+editor/repository/src/main/resources/namespace-system_it.xml -text
 editor/repository/src/main/resources/new-namespace.xml -text
+editor/repository/src/main/resources/new-namespace_it.xml -text
 editor/repository/src/main/resources/new-type.xml -text
+editor/repository/src/main/resources/new-type_it.xml -text
 editor/repository/src/main/resources/org/hippoecm/editor/repository/impl/package.jdo -text
 editor/test/pom.xml svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/editor/NamespaceValidatorTest.java svneol=native#text/plain
@@ -1022,11 +1029,15 @@ gallery/repository/pom.xml svneol=native#text/plain
 gallery/repository/src/main/java/org/hippoecm/repository/gallery/impl/GalleryWorkflowImpl.java -text
 gallery/repository/src/main/java/org/hippoecm/repository/gallery/upgrade/GalleryUpgrader18a.java svneol=native#text/plain
 gallery/repository/src/main/resources/gallery-namespace.xml -text
+gallery/repository/src/main/resources/gallery-namespace_it.xml -text
 gallery/repository/src/main/resources/gallery-processor.xml svneol=native#text/plain
 gallery/repository/src/main/resources/gallery-workflows.xml svneol=native#text/plain
 gallery/repository/src/main/resources/gallerytemplate-files.xml -text svneol=unset#text/plain
+gallery/repository/src/main/resources/gallerytemplate-files_it.xml -text
 gallery/repository/src/main/resources/gallerytemplate-image.xml svneol=native#text/plain
+gallery/repository/src/main/resources/gallerytemplate-image_it.xml -text
 gallery/repository/src/main/resources/gallerytemplate-images.xml -text svneol=unset#text/plain
+gallery/repository/src/main/resources/gallerytemplate-images_it.xml -text
 gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 gallery/repository/src/main/resources/hippogallery.cnd svneol=native#text/plain
 gotolink/pom.xml svneol=native#text/plain
@@ -1824,8 +1835,10 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/workflow/tr
 translation/frontend/src/main/java/org/hippoecm/repository/translation/impl/TranslationWorkflowImpl_it.properties -text
 translation/repository/src/main/resources/cms.xml svneol=native#text/plain
 translation/repository/src/main/resources/hippostd-queries-translation.xml svneol=native#text/plain
+translation/repository/src/main/resources/hippostd-queries-translation_it.xml -text
 translation/repository/src/main/resources/hippotranslation.cnd -text
 translation/repository/src/main/resources/translation-hide-translations-folder.xml svneol=native#text/plain
+translation/repository/src/main/resources/translation-locale-provider_it.xml -text
 translation/repository/src/main/resources/translation-treenode-icon-service.xml svneol=native#text/plain
 translation/test/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentMismatchingPage.java svneol=native#text/plain
 translation/test/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentRegularPage.java svneol=native#text/plain
@@ -1932,7 +1945,9 @@ xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/services/lin
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/services/links/XinhaLinkService.java svneol=native#text/plain
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/xinha/xinha_init.js -text svneol=unset#text/plain
 xinha-integration/src/main/resources/hippohtmlcleaner.cnd -text
+xinha-integration/src/main/resources/hippostd-html-template_it.xml -text
 xinha-integration/src/main/resources/html-cleaner-service.xml -text
+xinha-integration/src/main/resources/system-html-template_it.xml -text
 xinha-integration/src/site/apt/index.apt -text
 xinha-integration/src/site/site.xml svneol=native#text/plain
 xinha-integration/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextProcessorTest.java svneol=native#text/plain

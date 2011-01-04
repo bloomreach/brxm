@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010 Hippo
+  Copyright 2007-2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,60 +16,60 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
     xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
-    sv:name="localeProviderService">
+    sv:name="hippo">
 
-  <sv:node sv:name="en" h:merge="combine">
+  <sv:node sv:name="query" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Anglais</sv:value>
+        <sv:value>Query</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="fr" h:merge="combine">
+  <sv:node sv:name="resource" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Français</sv:value>
+        <sv:value>Risorsa</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="nl" h:merge="combine">
+  <sv:node sv:name="facetselect" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Néerlandais</sv:value>
+        <sv:value>Facet Link</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="it" h:merge="combine">
+  <sv:node sv:name="mirror" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+        <sv:value>hippo:translation</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>fr</sv:value>
+        <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Italien</sv:value>
+        <sv:value>Link</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
