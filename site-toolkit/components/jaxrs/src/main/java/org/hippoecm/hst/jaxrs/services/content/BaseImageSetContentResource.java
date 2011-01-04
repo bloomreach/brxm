@@ -48,7 +48,6 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageSetRepresentation;
-import org.hippoecm.hst.jaxrs.model.content.HippoResourceRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

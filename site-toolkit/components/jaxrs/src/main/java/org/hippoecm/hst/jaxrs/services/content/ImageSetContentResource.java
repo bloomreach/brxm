@@ -60,6 +60,15 @@ public class ImageSetContentResource extends BaseImageSetContentResource {
         super.updateImageResourceContent(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail", mimeType, thumbnailResourceStream);
     }
     
+    @POST
+    @Path("/thumbnail/content/")
+    @Consumes("multipart/form-data")
+    public void updateThumbnailImageResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
+            List<Attachment> attachments) {
+        super.updateImageResourceContentByAttachments(servletRequest, servletResponse, uriInfo, "hippogallery:thumbnail", mimeType, attachments);
+    }
+    
     @GET
     @Path("/original/")
     public HippoGalleryImageRepresentation getOriginalImageResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
