@@ -50,6 +50,8 @@ public class SecurityValve extends AbstractValve {
     
     public static final String DESTINATION_ATTR_NAME = "org.hippoecm.hst.security.servlet.destination";
     
+    public static final String SECURITY_EXCEPTION_ATTR_NAME = "org.hippoecm.hst.security.servlet.exception";
+    
     protected AuthenticationProvider authProvider;
     
     public void setAuthenticationProvider(AuthenticationProvider authProvider) {
@@ -65,16 +67,18 @@ public class SecurityValve extends AbstractValve {
         
         boolean accessAllowed = false;
         boolean authenticationRequired = false;
-        String securityExceptionMessage = null;
+        ContainerSecurityException securityException = null;
         
         try {
             checkAccess(servletRequest);
             accessAllowed = true;
         } catch (ContainerSecurityNotAuthenticatedException e) {
             authenticationRequired = true;
-            securityExceptionMessage = e.getLocalizedMessage();
+            securityException = e;
+        } catch (ContainerSecurityNotAuthorizedException e) {
+            securityException = e;
         } catch (ContainerSecurityException e) {
-            securityExceptionMessage = e.getLocalizedMessage();
+            securityException = e;
         }
         
         if (!accessAllowed) {
@@ -112,6 +116,7 @@ public class SecurityValve extends AbstractValve {
                     try {
                         HttpSession httpSession = servletRequest.getSession(true);
                         httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, false));
+                        httpSession.setAttribute(SECURITY_EXCEPTION_ATTR_NAME, securityException);
                         servletResponse.sendRedirect(servletResponse.encodeURL(servletRequest.getContextPath() + formLoginPage));
                         return;
                     } catch (IOException ioe) {
@@ -129,9 +134,10 @@ public class SecurityValve extends AbstractValve {
                 
                 if (httpSession != null) {
                     httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, false));
+                    httpSession.setAttribute(SECURITY_EXCEPTION_ATTR_NAME, securityException);
                 }
                 
-                servletResponse.sendError(403, securityExceptionMessage);
+                servletResponse.sendError(403, (securityException != null ? securityException.getLocalizedMessage() : null));
                 return;
             } catch (IOException ioe) {
                 if (log.isDebugEnabled()) {
@@ -210,8 +216,6 @@ public class SecurityValve extends AbstractValve {
             if (log.isDebugEnabled()) {
                 log.debug("The roles or users are not configured.");
             }
-            
-            throw new ContainerSecurityException("No role or user is not configured for the auth-required content.");
         }
         
         if (!users.isEmpty()) {
@@ -236,7 +240,7 @@ public class SecurityValve extends AbstractValve {
             }
         }
         
-        throw new ContainerSecurityException("Not authorized.");
+        throw new ContainerSecurityNotAuthorizedException("Not authorized.");
     }
     
     protected Subject getSubject(HttpServletRequest request) {

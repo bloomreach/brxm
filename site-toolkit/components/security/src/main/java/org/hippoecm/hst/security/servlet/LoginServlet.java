@@ -249,7 +249,7 @@ public class LoginServlet extends HttpServlet {
         }
         
         String resourcePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginResourcePath", defaultLoginResourcePath);
-        if(showContextPathInUrl(request)) {
+        if(isContextPathInUrl(request)) {
             response.sendRedirect(response.encodeURL(request.getContextPath() + resourcePath));
         } else {
             response.sendRedirect(response.encodeURL(resourcePath));
@@ -336,7 +336,7 @@ public class LoginServlet extends HttpServlet {
     
     protected String normalizeDestination(String destination, HttpServletRequest request) {
         if (destination == null || "".equals(destination.trim())) {
-            if(showContextPathInUrl(request)) {
+            if(isContextPathInUrl(request)) {
                 destination = request.getContextPath() + "/";
             } else {
                 destination = "/";
@@ -505,11 +505,13 @@ public class LoginServlet extends HttpServlet {
      * @param request 
      * @return <code>true</code> when the global {@link VirtualHosts} is configured to have the contextPath in the URL 
      */
-    protected boolean showContextPathInUrl(HttpServletRequest request) {
-        ResolvedVirtualHost host = (ResolvedVirtualHost)request.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
+    protected boolean isContextPathInUrl(HttpServletRequest request) {
+        ResolvedVirtualHost host = (ResolvedVirtualHost) request.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
+        
         if(host != null) {
            return host.getVirtualHost().isContextPathInUrl();
         }
+        
         return true;
     }
 }

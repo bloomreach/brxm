@@ -13,6 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License. --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page import="org.hippoecm.hst.core.container.ContainerSecurityException" %>
+<%@ page import="org.hippoecm.hst.core.container.ContainerSecurityNotAuthenticatedException" %>
+<%@ page import="org.hippoecm.hst.core.container.ContainerSecurityNotAuthorizedException" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
@@ -20,6 +23,18 @@
 <%
 String destination = (String) session.getAttribute("org.hippoecm.hst.security.servlet.destination");
 if (destination == null) destination = "";
+
+String title = "Authentication Required";
+String description = "Authentication Required: You need to sign in to access " + destination + " on this server";
+
+ContainerSecurityException securityException = (ContainerSecurityException) session.getAttribute("org.hippoecm.hst.security.servlet.exception");
+
+if (securityException instanceof ContainerSecurityNotAuthorizedException) {
+    title = "Forbidden";
+    description = "Forbidden: You don't have permission to access " + destination + " on this server.";
+}
+
+session.invalidate();
 %>
 <html>
 <head>
@@ -28,11 +43,12 @@ if (destination == null) destination = "";
    <hst:param name="destination" value="<%=destination%>" />
 </hst:link>
 <meta http-equiv='refresh' content='1;url=${loginPageUrl}' />
-<title>Authentication Required</title>
+<title><%=title%></title>
 </head>
 <body>
-<H2>Authentication Required.</H2>
+<H2><%=title%></H2>
 <hr/>
+<H4><%=description%></H4>
 <P>Page will be automatically redirected to the login page.</P>
 </body>
 </html>

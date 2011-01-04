@@ -113,6 +113,7 @@ api/src/main/java/org/hippoecm/hst/core/container/ContainerException.java svneol
 api/src/main/java/org/hippoecm/hst/core/container/ContainerNotFoundException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ContainerSecurityException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ContainerSecurityNotAuthenticatedException.java -text
+api/src/main/java/org/hippoecm/hst/core/container/ContainerSecurityNotAuthorizedException.java -text
 api/src/main/java/org/hippoecm/hst/core/container/HstComponentFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstComponentInvoker.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstComponentRegistry.java svneol=native#text/plain
