@@ -40,7 +40,7 @@ public interface HippoFacetNavigationBean extends HippoFolderBean {
     
     /**
      * 
-     * @return the result set below this faceted navigation item
+     * @return the result set below this faceted navigation item and <code>null</code> is there is no resultset node, for example when the count is 0
      */
     HippoResultSetBean getResultSet();
     
