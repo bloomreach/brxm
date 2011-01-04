@@ -32,12 +32,14 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             buttons:[
                 {
                     text: "Save",
+                    hidden: true,
                     handler: this.submitForm,
                     scope: this
                 },
                 {
                     text: "Reset",
                     scope: this,
+                    hidden: true,
                     handler: function () {
                         this.reload(this.id);
                     }
@@ -71,11 +73,14 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         var length = records.length;
         if (length == 0) {
             this.add({
-                html: "No Properties Found for this component",
-                xtype: "panel"
+                html: "<div style='padding:5px' align='center'>No editable properties found for this component</div>",
+                xtype: "panel",
+                autoWidth: true,
+                layout: 'fit'
             });
+            this.buttons[0].hide();
+            this.buttons[1].hide();
         } else {
-
             for (var i = 0; i < length; ++i) {
                 var property = records[i];
                 this.add({
@@ -86,6 +91,8 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                     name: property.get('name')
                 });
             }
+            this.buttons[0].show();
+            this.buttons[1].show();
         }
 
         this.doLayout(false, true);
