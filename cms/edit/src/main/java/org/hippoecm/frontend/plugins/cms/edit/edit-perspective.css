@@ -15,8 +15,15 @@
   padding: 0;
   float: left;
   clear: left;
-  height: 49px;
   overflow-y: auto;
+}
+
+.hippo-editor-feedback.hippo-hidden {
+  height: 0px;
+}
+
+.hippo-editor-feedback.hippo-shown {
+  height: 49px;
 }
 
 .hippo-editor-feedback ul {

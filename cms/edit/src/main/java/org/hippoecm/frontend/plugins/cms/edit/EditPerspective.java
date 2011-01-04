@@ -39,6 +39,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
@@ -88,6 +89,18 @@ public class EditPerspective extends Perspective {
                 return false;
             }
         });
+        feedback.add(new CssClassAppender(new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                if (feedback.anyMessage()) {
+                    return "hippo-shown";
+                } else {
+                    return "hippo-hidden";
+                }
+            }
+        }));
         feedback.setOutputMarkupId(true);
         add(feedback);
         feedbackShown = false;
@@ -178,7 +191,6 @@ public class EditPerspective extends Perspective {
 
         };
     }
-
 
     @Override
     public ResourceReference getIcon(IconSize iconSize) {
