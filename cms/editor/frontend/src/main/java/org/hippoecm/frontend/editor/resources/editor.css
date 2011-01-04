@@ -10,10 +10,6 @@
   padding-right: 20px;
 }
 
-.hippo-editor .hippo-preview-document {
-  background: white url("images/hippo-shade.png");
-}
-
 .hippo-preview-document ol {
   list-style-type: decimal;
   list-style-position: inside
@@ -60,9 +56,14 @@
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  border: 1px solid #D9D9D9;
   min-height: 25px;
   padding: 1px;
+}
+.hippo-editor .hippo-editor-field-subfield {
+  border: 1px solid #D9D9D9;
+}
+.hippo-preview-document .hippo-editor-field-subfield {
+  border: 1px dashed #D9D9D9;
 }
 
 .hippo-editor .hippo-editor-field-subfield a,
@@ -123,7 +124,7 @@
 }
 
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield {
-  background-color: #fcfcfc;
+  background-color: #f5f5f5;
 }
 
 .hippo-editor .hippo-editor-field-subfield:hover,
@@ -133,7 +134,7 @@
 
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield:hover,
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield:hover .hippo-editor-field-subfield.dialog-link {
-  background-color: #fcfcfc;
+  background-color: #f5f5f5;
 }
 
 .hippo-editor-template-editor .hippo-editor-field-subfield .hippo-editor-field {

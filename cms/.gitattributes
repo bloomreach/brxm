@@ -517,7 +517,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/Reso
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-editor-top.png -text svneol=unset#image/png
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-shade.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-down-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
