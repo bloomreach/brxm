@@ -18,6 +18,8 @@ package org.hippoecm.repository.gallery.upgrade;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -52,11 +54,29 @@ public class GalleryUpgrader18a implements UpdaterModule {
         reloadNamespace(context);
         visitImagetSets(context);
         visitImageGalleries(context);
+        visitHtmlContent(context);
     }
 
     private void reloadNamespace(final UpdaterContext context) {
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", getClass()
                 .getClassLoader().getResourceAsStream("hippogallery.cnd")));
+    }
+
+    private void visitHtmlContent(final UpdaterContext context) {
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostd:html") {
+            Pattern pattern = Pattern.compile("(<img[^>]*src=\"[^\"]*)/hippogallery:picture", Pattern.MULTILINE);
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                Property htmlProperty = node.getProperty("hippostd:content");
+                Matcher matcher = pattern.matcher(htmlProperty.getString());
+                StringBuffer sb = new StringBuffer();
+                while(matcher.find()) {
+                    matcher.appendReplacement(sb, "$1/hippogallery:original");
+                }
+                matcher.appendTail(sb);
+                htmlProperty.setValue(new String(sb));
+              }
+        });
     }
 
     private void visitImageGalleries(final UpdaterContext context) {
