@@ -80,8 +80,27 @@ x
   background: white;
 }
 
+.hippo-editor-field-html-preview {
+  min-height: 75px;
+  margin: 0;
+  padding: 0px 4px;
+  font-family: Arial, sans-serif, Helvetica;
+  font-size: 12px;
+  color: #333;
+  line-height: 18px;
+}
+
 .hippo-editor-field-html-preview a {
   text-decoration: underline;
+}
+
+/* Wrap the content of pre elements in document preview mode */
+.hippo-editor-field-html-preview pre {
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
 /* Xinha preview style, taken form http://www.w3.org/TR/CSS2/sample.html */
@@ -237,11 +256,11 @@ x
 
 div.rte-preview-area {
   cursor: pointer;
-  padding: 5px;
+  padding: 0px;
   background-color: transparent;
 }
 
-div.rte-preview-area:hover {
+.hippo-editor div.rte-preview-area:hover {
   background-color: #FFF6E0;
   color: #333;
 }

@@ -170,5 +170,4 @@ public class ResourceHelper {
         return node.getSession().getValueFactory();
     }
 
-
 }

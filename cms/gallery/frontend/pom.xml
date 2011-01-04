@@ -90,6 +90,12 @@
       <artifactId>hippo-cms-yui</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr-commons</artifactId>
+      <version>${jackrabbit.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>

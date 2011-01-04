@@ -265,6 +265,7 @@ tools/eclipse/.project
 tools/eclipse/.settings
 tools/eclipse/target
 tools/target
+tools/translation-runner/target
 tools/upgrade/*.tmp
 tools/upgrade/.classpath
 tools/upgrade/.pom.xml.swp

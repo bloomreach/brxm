@@ -22,6 +22,8 @@ public class WidgetSettings implements IClusterable {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    private JsFunction calculateWidthAndHeight;
+
     public JsFunction getCalculateWidthAndHeight() {
         return calculateWidthAndHeight;
     }
@@ -29,6 +31,4 @@ public class WidgetSettings implements IClusterable {
     public void setCalculateWidthAndHeight(JsFunction calculateWidthAndHeight) {
         this.calculateWidthAndHeight = calculateWidthAndHeight;
     }
-
-    private JsFunction calculateWidthAndHeight;
 }

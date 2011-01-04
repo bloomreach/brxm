@@ -15,6 +15,13 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.form.Form;
@@ -33,11 +40,6 @@ import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Plugin for uploading resources into the JCR repository.
@@ -105,10 +107,9 @@ public class ResourceUploadPlugin extends RenderPlugin {
         }
     }
 
-
     /**
      * Handles the file upload from the form.
-     * 
+     *
      * @param upload the {@link FileUpload} containing the upload information
      */
     private void handleUpload(FileUpload upload) {
@@ -133,7 +134,6 @@ public class ResourceUploadPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
             Node node = nodeModel.getNode();
             try {
-
                 ResourceHelper.setDefaultResourceProperties(node, mimeType, upload.getInputStream());
 
                 if(extension.toLowerCase().equals("pdf")){

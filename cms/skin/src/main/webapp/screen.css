@@ -908,7 +908,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 
 .hippo-toolbar-menu-item-button-icon {
   display: block;
-  float: left;
+   float: left;
   margin-right: 11px;
 }
 
