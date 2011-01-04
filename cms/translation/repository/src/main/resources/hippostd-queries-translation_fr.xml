@@ -15,8 +15,8 @@
   limitations under the License.
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-    xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
-    sv:name="hippo:templates">
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
+         sv:name="hippo:templates">
 
   <sv:node sv:name="new-translated-folder" h:merge="combine">
     <sv:node sv:name="hippo:translation">
@@ -27,7 +27,7 @@
         <sv:value>fr</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>[TODO: new translated folder]</sv:value>
+        <sv:value>Nouveau dossier traduit</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
