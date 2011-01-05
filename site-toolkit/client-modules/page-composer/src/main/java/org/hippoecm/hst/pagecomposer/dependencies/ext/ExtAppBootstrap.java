@@ -47,7 +47,7 @@ public class ExtAppBootstrap extends JsScriptDependency {
         sb.append("Ext.onReady(function() {");
         sb.append("\n\t var config = {");
         sb.append("\n\t\t debug: ").append(debug).append(",");
-        sb.append("\n\t\t iframeUrl: '").append(editableUrl).append("',");
+        sb.append("\n\t\t iframeUrl: '").append(editableUrl).append("' ");
         sb.append("\n\t };");
         sb.append("\n\t Ext.namespace('Hippo.App');");
         sb.append("\n\t Hippo.App.Main = new Hippo.App.PageEditor(config);");
