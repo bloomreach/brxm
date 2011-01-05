@@ -51,6 +51,7 @@ public class BrowserPerspective extends Perspective {
 
     private final WireframeBehavior wireframe;
     private boolean clientOverride = false;
+    private boolean drawn = false;
 
     public BrowserPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -70,7 +71,7 @@ public class BrowserPerspective extends Perspective {
 
                 if (listing == null || !listing.isSupported()) {
                     wireframe.collapseAll();
-                } else {
+                } else if (drawn) {
                     checkExpandDefault();
                 }
             }
@@ -122,7 +123,7 @@ public class BrowserPerspective extends Perspective {
                             if (service != null) {
                                 if (!service.getModel().equals(NULL_MODEL)) {
                                     wireframe.collapseAll();
-                                } else {
+                                } else if (drawn) {
                                     checkExpandDefault();
                                 }
                             }
@@ -200,6 +201,7 @@ public class BrowserPerspective extends Perspective {
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
+        drawn = true;
         checkExpandDefault();
     }
 
