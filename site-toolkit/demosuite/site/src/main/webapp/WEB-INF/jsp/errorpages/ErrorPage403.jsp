@@ -30,11 +30,14 @@ if (destination == null) destination = "";
 String title = "Authentication Required";
 String description = "Authentication Required: You need to sign in to access " + destination + " on this server";
 
+int autoRedirectSeconds = 2;
+
 ContainerSecurityException securityException = (ContainerSecurityException) session.getAttribute("org.hippoecm.hst.security.servlet.exception");
 
 if (securityException instanceof ContainerSecurityNotAuthorizedException) {
     title = "Forbidden";
     description = "Forbidden: You don't have permission to access " + destination + " on this server.";
+    autoRedirectSeconds = 5;
 }
 
 session.invalidate();
@@ -50,7 +53,7 @@ session.invalidate();
 <html>
   <head>
     <title><%=title%></title>
-    <meta http-equiv='refresh' content='3;url=${loginFormUrl}' />
+    <meta http-equiv='refresh' content='<%=autoRedirectSeconds%>;url=${loginFormUrl}' />
     <link rel="stylesheet" type="text/css" href="<hst:link path='/login/hst/security/skin/screen.css' mount='site'/>" />
   </head>
   <body class="hippo-root">
@@ -71,7 +74,7 @@ session.invalidate();
                     <a href="${loginFormUrl}"><fmt:message key="message.try.again"/></a>
                     <br/><br/>
                     <fmt:message key="message.page.auto.redirect.in.seconds">
-                      <fmt:param value="3" />
+                      <fmt:param value="<%=autoRedirectSeconds%>" />
                     </fmt:message>
                   </p>
                 </td>
