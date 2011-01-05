@@ -17,8 +17,8 @@ package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -31,11 +31,11 @@ class MenuItem extends Panel {
     public MenuItem(String id, final ActionDescription wf) {
         super(id);
 
-        AjaxLink link = new AjaxLink("link") {
+        MenuLink link = new MenuLink("link") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick() {
                 wf.run();
             }
         };

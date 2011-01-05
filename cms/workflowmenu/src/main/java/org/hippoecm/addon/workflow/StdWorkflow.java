@@ -52,22 +52,10 @@ public abstract class StdWorkflow extends ActionDescription {
         add(new ActionDisplay("text") {
             @Override
             protected void initialize() {
-                MenuLink link;
-                add(link = new MenuLink("text") {
-                    @Override
-                    public void onClick() {
-                        invoke();
-                    }
-
-                    @Override
-                    public boolean isEnabled() {
-                        return StdWorkflow.this.isEnabled();
-                    }
-                });
                 IModel<String> title = getTitle();
-                Label titleLabel = new Label("label", title);
+                Label titleLabel = new Label("text", title);
                 titleLabel.add(new AttributeModifier("title", true, title));
-                link.add(titleLabel);
+                add(titleLabel);
             }
         });
 

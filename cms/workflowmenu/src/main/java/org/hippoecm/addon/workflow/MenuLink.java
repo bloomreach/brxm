@@ -15,40 +15,73 @@
  */
 package org.hippoecm.addon.workflow;
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.link.Link;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
-abstract class MenuLink extends AjaxLink {
+abstract class MenuLink extends Link {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public MenuLink(String id) {
+    public MenuLink(final String id) {
         super(id);
-    }
 
-    public MenuLink(String id, StringResourceModel model) {
-        super(id, model);
+        add(new AjaxEventBehavior("onclick") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                IContextMenu parent = findParent(IContextMenu.class);
+                if (parent != null) {
+                    parent.collapse(target);
+                }
+                onClick();
+            }
+
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
+            }
+
+            @Override
+            protected CharSequence getPreconditionScript() {
+                return "return true;";
+            }
+
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                // add the onclick handler only if link is enabled
+                if (isLinkEnabled()) {
+                    super.onComponentTag(tag);
+                }
+            }
+        });
     }
 
     @Override
-    protected IAjaxCallDecorator getAjaxCallDecorator() {
-        return new EventStoppingDecorator(super.getAjaxCallDecorator());
-    }
+    protected void onComponentTag(ComponentTag tag) {
+        super.onComponentTag(tag);
 
-    @Override
-    public void onClick(AjaxRequestTarget target) {
-        IContextMenu parent = ((IContextMenu)findParent(IContextMenu.class));
-        if(parent != null) {
-            parent.collapse(target);
+        if (isLinkEnabled()) {
+            // disable any href attr in markup
+            if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("link")
+                    || tag.getName().equalsIgnoreCase("area")) {
+                tag.put("href", "#");
+            }
+        } else {
+            disableLink(tag);
         }
-        onClick();
     }
 
-    public abstract void onClick();
+    protected IAjaxCallDecorator getAjaxCallDecorator() {
+        return new EventStoppingDecorator(null);
+    }
+
 }
