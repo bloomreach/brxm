@@ -18,6 +18,7 @@
 <%@ page import="org.hippoecm.hst.core.container.ContainerSecurityNotAuthorizedException" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix="hst"%>
 
 <fmt:setBundle basename="org.hippoecm.hst.security.servlet.LoginServlet" />
 
@@ -38,15 +39,24 @@ if (securityException instanceof ContainerSecurityNotAuthorizedException) {
 
 session.invalidate();
 %>
+
+<hst:link var="loginFormUrl" path="/login/form" mount="site">
+  <hst:param name="destination" value="<%=destination%>" />
+</hst:link>
+<hst:link var="loginProxyUrl" path="/login/proxy" mount="site">
+  <hst:param name="destination" value="<%=destination%>" />
+</hst:link>
+
 <html>
   <head>
     <title><%=title%></title>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/login/hst/security/skin/screen.css'/>" />
+    <meta http-equiv='refresh' content='3;url=${loginFormUrl}' />
+    <link rel="stylesheet" type="text/css" href="<hst:link path='/login/hst/security/skin/screen.css' mount='site'/>" />
   </head>
   <body class="hippo-root">
     <div>
       <div class="hippo-login-panel">
-        <form class="hippo-login-panel-form" name="signInForm" method="post" action="<c:url value='/login/proxy'/>">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="${loginProxyUrl}">
           <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
@@ -57,7 +67,13 @@ session.invalidate();
               </tr>
               <tr>
                 <td>
-                  <p><a href="<c:url value='/login/form'/>"><fmt:message key="message.try.again"/></a></p>
+                  <p>
+                    <a href="${loginFormUrl}"><fmt:message key="message.try.again"/></a>
+                    <br/><br/>
+                    <fmt:message key="message.page.auto.redirect.in.seconds">
+                      <fmt:param value="3" />
+                    </fmt:message>
+                  </p>
                 </td>
               </tr>
             </table>
