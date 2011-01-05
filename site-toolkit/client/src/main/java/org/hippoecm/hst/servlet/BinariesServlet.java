@@ -263,7 +263,7 @@ public class BinariesServlet extends HttpServlet {
         String resourcePath = ResourceUtils.getResourcePath(request, baseBinariesContentPath);
         BinaryPage page = binariesCache.getPageFromBlockingCache(resourcePath);
         if (page != null) {
-            page = validatePageInCache(request, page);
+            page = getValidatedPageFromCache(request, page);
         } else {
             page = getPage(request, resourcePath);
             binariesCache.putPage(page);
