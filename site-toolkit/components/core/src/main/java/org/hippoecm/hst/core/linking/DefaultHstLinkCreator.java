@@ -533,20 +533,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                          */
                         List<Mount> possibleSuitedMounts = new ArrayList<Mount>();
                         
-                        // TODO currently, we only do cross-domain link rewriting for Mounts that have mount.isSiteMount() == true. Should we also 
-                        // cross-domain linkrewrite to mounts that are not a Mount?
                         for(Mount mountForHostGroup : mountsForHostGroup) {
                            if(!mountForHostGroup.isMapped()) {
                                // not a mount for a HstSite
                                continue;
                            }
-                           if(nodePath.equals(mountForHostGroup.getCanonicalContentPath())) {
-                               // the nodePath is exactly the 'root' path of the current mountForHostGroup. Return homepage for this mount
-                               return new HstLinkImpl(mountForHostGroup.getHomePage(), mountForHostGroup);
-                           }
-                           
+                         
                            // (1)
-                           if(nodePath.startsWith(mountForHostGroup.getCanonicalContentPath() + "/")) {
+                           if(nodePath.startsWith(mountForHostGroup.getCanonicalContentPath() + "/") || nodePath.equals(mountForHostGroup.getCanonicalContentPath())) {
                               // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
                               // (2)
                               if(!Collections.disjoint(mountForHostGroup.getTypes(), mountForHostGroup.getTypes())) {
@@ -574,6 +568,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         
                         // we know for sure the the nodePath starts with the canonical path now
                         nodePath = nodePath.substring(mount.getCanonicalContentPath().length());
+                   
+                        if(nodePath.equals("")) {
+                            // the root node of the found mount. Return the homepage for this mount
+                            return new HstLinkImpl(mount.getHomePage(), mount);
+                        }
                         matchedMount = true;
                         
                         if(preferredItem != null) {
