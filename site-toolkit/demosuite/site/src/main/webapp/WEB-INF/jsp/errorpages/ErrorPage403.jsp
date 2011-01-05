@@ -27,21 +27,19 @@
 String destination = (String) session.getAttribute("org.hippoecm.hst.security.servlet.destination");
 if (destination == null) destination = "";
 
-String title = "Authentication Required";
-String description = "Authentication Required: You need to sign in to access " + destination + " on this server";
-
 int autoRedirectSeconds = 2;
 
 ContainerSecurityException securityException = (ContainerSecurityException) session.getAttribute("org.hippoecm.hst.security.servlet.exception");
+boolean accessForbidden = (securityException instanceof ContainerSecurityNotAuthorizedException);
 
-if (securityException instanceof ContainerSecurityNotAuthorizedException) {
-    title = "Forbidden";
-    description = "Forbidden: You don't have permission to access " + destination + " on this server.";
+if (accessForbidden) {
     autoRedirectSeconds = 5;
 }
 
 session.invalidate();
 %>
+
+<c:set var="accessForbidden" value="<%=accessForbidden%>" />
 
 <hst:link var="loginFormUrl" path="/login/form" mount="site">
   <hst:param name="destination" value="<%=destination%>" />
@@ -52,7 +50,16 @@ session.invalidate();
 
 <html>
   <head>
-    <title><%=title%></title>
+    <title>
+      <c:choose>
+        <c:when test="${accessForbidden}">
+          <fmt:message key="label.access.forbidden" />
+        </c:when>
+        <c:otherwise>
+          <fmt:message key="label.authen.required" />
+        </c:otherwise>
+      </c:choose>
+    </title>
     <meta http-equiv='refresh' content='<%=autoRedirectSeconds%>;url=${loginFormUrl}' />
     <link rel="stylesheet" type="text/css" href="<hst:link path='/login/hst/security/skin/screen.css' mount='site'/>" />
   </head>
@@ -65,7 +72,20 @@ session.invalidate();
             <table>
               <tr>
                 <td>
-                  <p><%=description%></p>
+                  <p>
+                    <c:choose>
+                      <c:when test="${accessForbidden}">
+                        <fmt:message key="message.access.forbidden">
+                          <fmt:param value="<%=destination%>" />
+                        </fmt:message>
+                      </c:when>
+                      <c:otherwise>
+                        <fmt:message key="message.authen.required">
+                          <fmt:param value="<%=destination%>" />
+                        </fmt:message>
+                      </c:otherwise>
+                    </c:choose>
+                  </p>
                 </td>
               </tr>
               <tr>
