@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -22,6 +24,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
@@ -56,6 +59,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.decorating.DecoratorFactory;
+import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +105,22 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                 rootSession.logout();
             }
             rootSession = null;
+        }
+    }
+
+    public void postMountEnabled(boolean enabled) {
+        ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)workspace).getItemStateManager()).setEnabled(enabled);
+    }
+
+    @Override
+    public void importXML(String parentAbsPath, InputStream in, int uuidBehaviour) throws IOException,
+            PathNotFoundException, ItemExistsException, ConstraintViolationException, InvalidSerializedDataException,
+            LockException, RepositoryException {
+        try {
+            postMountEnabled(false);
+            workspace.importXML(parentAbsPath, in, uuidBehaviour);
+        } finally {
+            postMountEnabled(true);
         }
     }
 

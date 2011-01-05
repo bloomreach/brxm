@@ -184,7 +184,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             postMountEnabled(false);
             super.save();
         } finally {
-             postMountEnabled(true);
+            postMountEnabled(true);
         }
     }
 
@@ -203,18 +203,29 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
 
-        if (session instanceof XASession) {
-            ((XASessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
-        } else {
-            ((SessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
+        try {
+            postMountEnabled(false);
+            if (session instanceof XASession) {
+                ((XASessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
+            } else {
+                ((SessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
+            }
+            // run derived data engine
+            derivedEngine.save();
+            //session.save();
+        } finally {
+            postMountEnabled(true);
         }
-        // run derived data engine
-        derivedEngine.save();
-        //session.save();
     }
 
+    @Override
     public void importXML(String parentAbsPath, InputStream in, int uuidBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
-        importDereferencedXML(parentAbsPath, in, uuidBehavior, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_DISABLE);
+        try {
+            postMountEnabled(false);
+            importDereferencedXML(parentAbsPath, in, uuidBehavior, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_DISABLE);
+        } finally {
+            postMountEnabled(true);
+        }
     }
 
     public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
