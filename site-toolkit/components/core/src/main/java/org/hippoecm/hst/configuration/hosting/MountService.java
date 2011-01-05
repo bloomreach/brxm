@@ -401,7 +401,7 @@ public class MountService implements Mount {
             if(hstSiteNodeForMount == null) {
                 throw new ServiceException("mountPoint '" + mountPoint
                         + "' does not point to a hst:site node for Mount '" + mount.getValueProvider().getPath()
-                        + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:issitemount=false'");
+                        + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' if this mount is not meant to have a mount point");
             }
             
             this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
