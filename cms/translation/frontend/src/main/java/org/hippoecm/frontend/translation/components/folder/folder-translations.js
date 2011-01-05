@@ -60,7 +60,7 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
           id: 'folder-path',
           xtype: 'displayfield',
           height: 37,
-          value: this.pathRenderer.renderPath(self.folder['path']),
+          value: this.pathRenderer.renderPath(self.folder['path'])
         }]
       }]
     });
@@ -91,7 +91,7 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
 
     this.translationsfield = Ext.create({
       xtype: 'fieldset',
-      title: self.resources['translation-folders'],
+      title: self.resources['translation-folders']
     });
     this.translationsfield.add(this.panel);
     config.items.push(this.translationsfield);
@@ -168,7 +168,7 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
         this.fireEvent('select-folder', t9Id);
       }.createDelegate(this));
     }
-  },
+  }
 
 }); 
 

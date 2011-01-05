@@ -72,7 +72,7 @@ Hippo.Translation.ImageService = function(imageServiceUrl) {
 Hippo.Translation.ImageService.prototype = {
   getImage: function(lang) {
     return this.service + "&lang=" + lang;
-  },
+  }
 };
 
 Hippo.Translation.SiblingLocator = Ext.extend(Ext.util.Observable, {

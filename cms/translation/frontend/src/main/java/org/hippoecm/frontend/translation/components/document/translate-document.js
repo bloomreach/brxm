@@ -187,14 +187,14 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
       defaults: {
         sortable: false, // columns are not sortable by default
         orderable: false,
-        menuDisabled: true,
+        menuDisabled: true
       },
       columns: [{
         id: 'name',
         header: "<img src='" + self.imgLeft + "' style='vertical-align: top;' /> " + self.resources['folder-name'],
         dataIndex: 'name',
         width: 323,
-        renderer: self.renderFolder.createDelegate(self, ['url'], 0),
+        renderer: self.renderFolder.createDelegate(self, ['url'], 0)
         // use shorthand alias defined above
       }, {
         id: 'namefr',
@@ -247,8 +247,8 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
                 Ext.getCmp('urlfr').setDisabled(!checked);
                 Ext.getCmp('url-edit').setValue(checked);
               }
-            },
-          },
+            }
+          }
         }),
         listeners: {
       		afteredit: function(e) {
@@ -271,35 +271,35 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
           xtype: 'fieldset',
           title: this.resources['url-name'],
           height: 60,
+          width: 310,
           items: [{
             xtype: 'compositefield',
-            width: 297,
             hideLabel: true,
             frame: true,
             items: [{
               xtype: 'displayfield',
               value: '<img src="' + this.imgLeft + '" style="vertical-align: top;" />',
-              width: 25,
+              width: 25
             }, {
               xtype: 'displayfield',
               name: 'url',
               height: 60,
-              width: 225,
+              width: 225
             }]
           }]
         }, {
           xtype: 'fieldset',
           title: this.resources['url-name'],
           height: 60,
+          width: 344,
           items: [{
             xtype: 'compositefield',
-            width: 312,
             hideLabel: true,
             frame: true,
             items: [{
               xtype: 'displayfield',
               value: '<img src="' + this.imgRight + '" style="vertical-align: top;" />',
-              width: 25,
+              width: 25
             }, {
               xtype: 'textfield',
               disabled: true,
@@ -403,6 +403,6 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
       txt += String.format("{0}", value);
     }
     return txt;
-  },
+  }
 
 });
