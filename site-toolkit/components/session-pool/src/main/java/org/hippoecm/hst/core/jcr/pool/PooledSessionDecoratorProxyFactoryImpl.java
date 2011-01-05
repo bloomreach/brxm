@@ -113,7 +113,13 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 if (this.passivated) {
                     throw new IllegalStateException("Invalid session which is already returned to the pool!");
                 } else {
-                    if ("logout".equals(methodName)) {
+                    if ("isLive".equals(methodName)) {
+                        if (poolingRepository.isActive()) {
+                            ret = invocation.proceed();
+                        } else {
+                            ret = Boolean.FALSE;
+                        }
+                    } else if ("logout".equals(methodName)) {
                         /*
                          * When logout(), it actually returns the session to the pool.
                          * If this session is already returned, it should not do anything
@@ -154,6 +160,10 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                             }
                         }
                     } else {
+                        if (!poolingRepository.isActive()) {
+                            throw new IllegalStateException("Invalid session of which repository is already closed!");
+                        }
+                        
                         ret = invocation.proceed();
                     }
                 }

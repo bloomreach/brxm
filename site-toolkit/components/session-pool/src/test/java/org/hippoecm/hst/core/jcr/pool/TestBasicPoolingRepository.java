@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -360,6 +361,38 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
         assertEquals(0L, counter.getNumSessionsReturned());
         assertEquals(0L, counter.getNumSessionsPassivated());
         assertEquals(0L, counter.getNumSessionsDestroyed());
+    }
+    
+    @Ignore
+    public void testSessionValidity() throws Exception {
+        Session session = poolingRepository.login();
+        session.logout();
+        
+        try {
+            Node root = session.getRootNode();
+            fail("Must fail because the session has been already logged out.");
+        } catch (IllegalStateException e) {
+            log.debug("Proper illegal state: " + e);
+        } catch (Exception e) {
+            fail("Unexpected exception on invalid session: " + e);
+        }
+        
+        session = poolingRepository.login();
+        
+        poolingRepository.close();
+        
+        try {
+            Node root = session.getRootNode();
+            fail("Must fail because the repository has been already closed.");
+        } catch (IllegalStateException e) {
+            log.debug("Proper illegal state: " + e);
+        } catch (RepositoryException e) {
+            fail("Unexpected repository exception on invalid session from closed repository: " + e);
+            e.printStackTrace();
+        } catch (Exception e) {
+            fail("Unexpected exception on invalid session from closed repository: " + e);
+            e.printStackTrace();
+        }
     }
     
     @Ignore

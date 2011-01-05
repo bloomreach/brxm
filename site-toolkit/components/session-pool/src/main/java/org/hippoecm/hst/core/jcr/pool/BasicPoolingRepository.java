@@ -45,6 +45,8 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     
     private Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
     
+    private volatile boolean active;
+    
     private Repository repository;
     private Credentials defaultCredentials;           // credentials provided by the configuration or the user
     private Credentials internalDefaultCredentials;   // credentials used for real JCR API invocations.
@@ -285,8 +287,8 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
      * @return a read-only session
      */
     public Session login() throws LoginException, RepositoryException {
-        if (sessionPool == null) {
-            throw new RepositoryException("The session pool of the pooling repository has not been initialized yet.");
+        if (sessionPool == null || !isActive()) {
+            throw new RepositoryException("The session pool of the pooling repository has not been initialized or closed.");
         }
         
         Session session = null;
@@ -486,9 +488,14 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
      */
     protected String validationQuery = null;
     
+    public synchronized boolean isActive() {
+        return active;
+    }
+    
     public synchronized void initialize() throws RepositoryException {
         doClose();
         doInitialize();
+        active = true;
     }
     
     private void doInitialize() throws RepositoryException {
@@ -573,6 +580,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
      * @throws Exception 
      */
     public synchronized void close() {
+        active = false;
         doClose();
     }
     

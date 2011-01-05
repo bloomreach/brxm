@@ -81,4 +81,11 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
      */
     PoolingCounter getPoolingCounter();
     
+    /**
+     * Returns true if pooling repository is initialized to be available and not closed.
+     * 
+     * @return
+     */
+    boolean isActive();
+    
 }
