@@ -78,7 +78,7 @@
   </modules>
 
   <properties>
-    <repository.version>2.18.00RC2</repository.version>
+    <repository.version>2.18.00</repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
