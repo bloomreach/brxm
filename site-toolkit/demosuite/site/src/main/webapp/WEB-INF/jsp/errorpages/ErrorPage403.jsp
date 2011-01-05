@@ -17,7 +17,9 @@
 <%@ page import="org.hippoecm.hst.core.container.ContainerSecurityNotAuthenticatedException" %>
 <%@ page import="org.hippoecm.hst.core.container.ContainerSecurityNotAuthorizedException" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<fmt:setBundle basename="org.hippoecm.hst.security.servlet.LoginServlet" />
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
@@ -37,18 +39,34 @@ if (securityException instanceof ContainerSecurityNotAuthorizedException) {
 session.invalidate();
 %>
 <html>
-<head>
-<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-<hst:link var="loginPageUrl" path="/login/form" mount="site">
-   <hst:param name="destination" value="<%=destination%>" />
-</hst:link>
-<meta http-equiv='refresh' content='1;url=${loginPageUrl}' />
-<title><%=title%></title>
-</head>
-<body>
-<H2><%=title%></H2>
-<hr/>
-<H4><%=description%></H4>
-<P>Page will be automatically redirected to the login page.</P>
-</body>
+  <head>
+    <title><%=title%></title>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/login/hst/security/skin/screen.css'/>" />
+  </head>
+  <body class="hippo-root">
+    <div>
+      <div class="hippo-login-panel">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="<c:url value='/login/proxy'/>">
+          <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
+          <div class="hippo-login-form-container">
+            <table>
+              <tr>
+                <td>
+                  <p><%=description%></p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p><a href="<c:url value='/login/form'/>"><fmt:message key="message.try.again"/></a></p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </form>
+        <div class="hippo-login-panel-copyright">
+          &copy; 1999-2010 Hippo B.V.
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
