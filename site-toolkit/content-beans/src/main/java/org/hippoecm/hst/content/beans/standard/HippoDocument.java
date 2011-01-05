@@ -81,17 +81,15 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
             return null;
         }
         try {
-            javax.jcr.Node handle = this.getNode().getParent();
-            javax.jcr.Node canonicalNode;
-            if (handle.hasProperty(HippoNodeType.HIPPO_UUID)) {
-                canonicalHandleUUID =  handle.getProperty(HippoNodeType.HIPPO_UUID).getString();
-            } else if (handle.isNodeType("mix:referenceable")) {
-                canonicalHandleUUID =  handle.getIdentifier();
-            } else if( (canonicalNode = ((HippoNode)handle).getCanonicalNode()) != null) {
-                canonicalHandleUUID = canonicalNode.getIdentifier();
-            } else {
-                log.warn("Cannot get uuid of handle for '{}'", this.getPath());
+            // first get the canonical handle. Because we can have a document in a faceted resultset, we first need to get the 
+            // canonical node of the document, and then fetch the parent
+            javax.jcr.Node canonical = ((HippoNode)getNode()).getCanonicalNode();
+            if(canonical == null) {
+                log.error("We cannot get the canonical handle uuid for a document that does not have a canonical version. Node '{}'. Return null", getNode().getPath());
+                return null;
             }
+            javax.jcr.Node handle = canonical.getParent();
+            canonicalHandleUUID =  handle.getIdentifier();
         } catch (RepositoryException e) {
             log.error("Cannot get handle uuid for node '"+this.getPath()+"'", e);
         }
