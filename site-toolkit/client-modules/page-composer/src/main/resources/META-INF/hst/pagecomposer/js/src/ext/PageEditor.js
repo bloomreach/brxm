@@ -446,7 +446,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     showProperties : function(record) {
-        Ext.getCmp('componentPropertiesPanel').reload(record.get('id'), record.get('name'), record.get('path'));
+        Ext.getCmp('componentPropertiesPanel').reload(this.ids.site, record.get('id'), record.get('name'), record.get('path'));
     },
 
     hideProperties : function() {

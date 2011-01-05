@@ -55,7 +55,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             method: 'POST' ,
             waitMsg: 'Saving properties ...',
             success: function () {
-				Ext.Msg.wait('Refreshing page ...');
+                Ext.Msg.wait('Refreshing page ...');
                 var iframe = Ext.getCmp('Iframe');
                 iframe.setSrc(iframe.getFrameDocument().location.href);
             }
@@ -83,13 +83,36 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         } else {
             for (var i = 0; i < length; ++i) {
                 var property = records[i];
-                this.add({
-                    fieldLabel: property.get('label'),
-                    xtype: property.get('type'),
-                    value: property.get('value'),
-                    allowBlank: !property.get('required'),
-                    name: property.get('name')
-                });
+                if (property.get('type') == 'combo') {
+                    var comboStore = new Ext.data.JsonStore({
+                        root: 'data',
+                        url: '_rp/' + this.siteId + './documents/' + property.get('docType'),
+                        fields:['path']
+                    });
+
+                    this.add({
+                        fieldLabel: property.get('label'),
+                        xtype: property.get('type'),
+                        allowBlank: !property.get('required'),
+                        name: property.get('name'),
+                        value: property.get('value'),
+                        store: comboStore,
+                        forceSelection: true,
+                        triggerAction: 'all',
+                        displayField: 'path',
+                        valueField: 'path'
+                    });
+                } else {
+                    this.add({
+                        fieldLabel: property.get('label'),
+                        xtype: property.get('type'),
+                        value: property.get('value'),
+                        allowBlank: !property.get('required'),
+                        name: property.get('name')
+                    });
+                }
+
+
             }
             this.buttons[0].show();
             this.buttons[1].show();
@@ -118,13 +141,14 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
         this.doLayout(false, true);
     },
 
-    reload:function(id, name, path) {
+    reload:function(siteId, id, name, path) {
+        this.siteId = siteId;
         this.id = id;
         var store = new Ext.data.JsonStore({
             autoLoad: true,
             method: 'GET',
             root: 'properties',
-            fields:['name', 'value', 'label', 'required', 'description', 'value', 'type' ],
+            fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type' ],
             url: '_rp/' + id + './parameters'
         });
         store.on('load', this.loadProperties, this);

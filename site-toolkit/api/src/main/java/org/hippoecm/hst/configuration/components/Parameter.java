@@ -38,5 +38,7 @@ public @interface Parameter {
     Class<? extends PropertyEditor> customEditor() default EmptyPropertyEditor.class;
 
     String typeHint() default "";
+
+    String docType() default ""; //Document type is only used when a DOCUMENT type is used.
     
 }

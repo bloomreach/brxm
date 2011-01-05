@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.Document;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -76,7 +78,7 @@ public class SiteResource extends AbstractConfigResource {
      * @param docType the docType the found documents must be of. The documents can also be a subType of docType
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
      */
-    @GET
+    @POST
     @Path("/documents/{docType}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDocumentsByType(@Context HttpServletRequest servletRequest,
@@ -85,7 +87,7 @@ public class SiteResource extends AbstractConfigResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
         
-        List<String> documentLocations = new ArrayList<String>();
+        List<Document> documentLocations = new ArrayList<Document>();
         String canonicalContentPath = parentMount.getCanonicalContentPath();
         try {
             Session session = requestContext.getSession();
@@ -108,7 +110,7 @@ public class SiteResource extends AbstractConfigResource {
                     log.error("Unexpected document path '{}'", docPath);
                     continue;
                 }
-                documentLocations.add(docPath.substring(canonicalContentPath.length() + 1));
+                documentLocations.add(new Document(docPath.substring(canonicalContentPath.length() + 1)));
             }
         } catch (RepositoryException e) {
             log.error("Exception happened while trying to fetch documents of type '"+docType+"'", e);

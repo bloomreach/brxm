@@ -81,6 +81,7 @@ public class ComponentWrapper {
                         prop.setDefaultValue(propAnnotation.defaultValue());
                         prop.setDescription(propAnnotation.description());
                         prop.setType(propAnnotation.typeHint());
+                        prop.setDocType(propAnnotation.docType());
                         prop.setRequired(propAnnotation.required());
                         if (propAnnotation.displayName().equals("")) {
                             prop.setLabel(propAnnotation.name());
@@ -90,7 +91,6 @@ public class ComponentWrapper {
                         if (hstParameters != null && hstParameters.get(propAnnotation.name()) != null) {
                             prop.setValue(hstParameters.get(propAnnotation.name()));
                         }
-
                         properties.add(prop);
                     }
                 }
@@ -124,6 +124,7 @@ public class ComponentWrapper {
         private String defaultValue;
         private String description;
         private boolean required;
+        private String docType;
 
         Property() {
             name = "";
@@ -133,6 +134,7 @@ public class ComponentWrapper {
             defaultValue = "";
             description = "";
             required = false;
+            docType = "";
         }
 
         Property(String name, String value, String type, String label, String defaultValue, String description) {
@@ -170,6 +172,8 @@ public class ComponentWrapper {
                 this.type = "checkbox";
             } else if (type.equals(ParameterType.NUMBER)) {
                 this.type = "numberfield";
+            } else if (type.equals(ParameterType.DOCUMENT)) {
+                this.type = "combo";
             } else if (type.equals(ParameterType.COLOR)) {
                 this.type = "colorfield";
             } else {
@@ -208,6 +212,14 @@ public class ComponentWrapper {
         public void setRequired(boolean required) {
             this.required = required;
         }
+
+        public void setDocType(final String docType) {
+            this.docType = docType;
+        }
+
+        public String getDocType() {
+            return this.docType;
+        }
     }
 
     /**
@@ -220,5 +232,6 @@ public class ComponentWrapper {
         String BOOLEAN = "BOOLEAN";
         String DATE = "DATE";
         String COLOR = "COLOR";
+        String DOCUMENT = "DOCUMENT";
     }
 }
