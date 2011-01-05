@@ -204,10 +204,8 @@ public class MountService implements Mount {
         // is the port number visible in the url
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT)) {
             this.showPort = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT);
-        } else {
-            if(parent != null) {
-                this.showPort = parent.isPortInUrl();
-            }
+        } else if(parent != null) {
+            this.showPort = parent.isPortInUrl();
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
@@ -292,12 +290,16 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPE)) {
             this.type = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_TYPE);
-        } 
+        } else if(parent != null) {
+            this.type = parent.getType();
+        }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPES)) {
             String[] typesProperty = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_TYPES);
             this.types = Arrays.asList(typesProperty);
-        } 
+        } else if(parent != null) {
+            this.types = parent.getTypes();
+        }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED)) {
             this.isMapped = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED);
