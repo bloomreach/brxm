@@ -69,7 +69,7 @@ public class HstEmbeddedPortletContainerURLWriter {
                     if(contextPath != null) {
                         path.append(contextPath);
                     } 
-                    else if (requestContext.getVirtualHost().isContextPathInUrl()) {
+                    else if (requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
                         path.append(containerURL.getContextPath());
                     }
                 }
@@ -92,7 +92,7 @@ public class HstEmbeddedPortletContainerURLWriter {
                         if(contextPath != null) {
                             path.append(contextPath);
                         } 
-                        else if (requestContext.getVirtualHost().isContextPathInUrl()) {
+                        else if (requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
                             path.append(containerURL.getContextPath());
                         }
                         path.append(containerURL.getResolvedMountPath());

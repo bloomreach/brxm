@@ -109,6 +109,7 @@ public abstract class AbstractSpringTestCase
         
         expect(resolvedMount.getResolvedMountPath()).andReturn("").anyTimes();
         expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.isContextPathInUrl()).andReturn(true).anyTimes();
         expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
         expect(virtualHost.isContextPathInUrl()).andReturn(true).anyTimes();
 

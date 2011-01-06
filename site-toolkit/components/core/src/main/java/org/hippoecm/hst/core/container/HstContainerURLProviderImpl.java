@@ -501,7 +501,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         StringBuilder urlBuilder = new StringBuilder(100);
         if(contextPath != null) {
             urlBuilder.append(contextPath);
-        } else if (requestContext.getVirtualHost().isContextPathInUrl()) {
+        } else if (requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
             urlBuilder.append(containerURL.getContextPath());
         }
         

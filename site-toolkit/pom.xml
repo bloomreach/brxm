@@ -100,7 +100,7 @@
 
     <cms.version>2.18.00</cms.version>
     <repository.version>2.18.00</repository.version>
-    <hippo-packages.version>2.18.00</hippo-packages.version>
+    <hippo-packages.version>2.18.00RC2</hippo-packages.version>
     <publication-workflow.version>2.18.00</publication-workflow.version>
     <gallerypicker.version>1.06.03</gallerypicker.version>
     <configeditor.version>1.05.00RC2</configeditor.version>
