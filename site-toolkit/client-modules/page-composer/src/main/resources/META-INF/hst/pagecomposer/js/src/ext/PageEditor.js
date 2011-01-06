@@ -43,13 +43,13 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     //Keeps the session alive every minute
     keepAlive : function() {
-        if(this.ids.site != null){ //Ping only if the site id is not null
+        if (this.ids.site != null) { //Ping only if the site id is not null
             Ext.Ajax.request({
-               url: '_rp/' + this.ids.site + './keepalive',
-               success: function () {
-                   //Do nothing
-               }
-           });
+                url: '_rp/' + this.ids.site + './keepalive',
+                success: function () {
+                    //Do nothing
+                }
+            });
         }
 
     },
@@ -146,7 +146,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     refreshIframe : function() {
-				Ext.Msg.wait('Reloading page ...');
+        Ext.Msg.wait('Reloading page ...');
         var iframe = Ext.getCmp('Iframe');
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
@@ -163,7 +163,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     onIframeDOMReady : function(frm) {
         //send init call to iframe app
         frm.execScript('Hippo.PageComposer.Main.init(' + this.debug + ')', true);
-				Ext.Msg.hide();
+        Ext.Msg.hide();
     },
 
     onIframeAppLoaded : function(data) {
@@ -246,7 +246,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 this.isReloading = true;
                             }
                         }
-											},
+                    },
                     scope: this
                 },
                 load :{
@@ -602,7 +602,7 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
             listeners : {
                 beforeload: {
                     fn: function (store, options) {
-                        Ext.Msg.wait("Loading page ...") ;
+                        Ext.Msg.wait("Loading page ...");
                     }
                 },
                 beforewrite : {
@@ -624,12 +624,15 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
                     }
                 },
                 write :{
-                     fn: function(store, action, result, res,  rs ) {
-                         Ext.Msg.hide();
-                     }
+                    fn: function(store, action, result, res, rs) {
+                        Ext.Msg.hide();
+                        Ext.Msg.wait('Refreshing page ...');
+                        var iframe = Ext.getCmp('Iframe');
+                        iframe.setSrc(iframe.getFrameDocument().location.href);
+                    }
                 },
                 load : {
-                    fn: function (store, records, options){
+                    fn: function (store, records, options) {
                         Ext.Msg.hide();
                     }
                 }
