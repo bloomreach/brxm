@@ -26,7 +26,8 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             labelWidth: 100,
             labelSeparator: '',
             defaults:{
-                width: 170
+                width: 170,
+                anchor: '100%'
             },
 
             buttons:[
