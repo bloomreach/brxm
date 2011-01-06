@@ -32,8 +32,8 @@
 
   <properties>
     <javax.jcr.version>2.0</javax.jcr.version>
-    <repository.api.version>2.18.00RC1</repository.api.version>
-    <translation.version>2.18.00RC1</translation.version>
+    <repository.api.version>2.18.00</repository.api.version>
+    <translation.version>2.18.00</translation.version>
     <org.slf4j.version>1.5.8</org.slf4j.version>
   </properties>
 
