@@ -75,9 +75,9 @@ public class HippoFacetNavigationContentResource extends HippoFolderContentResou
                 HippoFacetResultSetRepresentation resultSetRep = new HippoFacetResultSetRepresentation().represent(resultSetBean);
                 resultSetRep.addLink(getNodeLink(requestContext, resultSetBean));
                 resultSetRep.addLink(getSiteLink(requestContext, resultSetBean));
-                Link ownerLink = getNodeLink(requestContext, hippoFacetNavBean);
-                ownerLink.setRel("owner");
-                resultSetRep.addLink(ownerLink);
+                Link parentLink = getNodeLink(requestContext, hippoFacetNavBean);
+                parentLink.setRel(getHstQualifiedLinkRel("parent"));
+                resultSetRep.addLink(parentLink);
                 return resultSetRep;
             }
         } catch (Exception e) {

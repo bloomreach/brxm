@@ -111,9 +111,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
         HippoFolderRepresentationDataset dataset = new HippoFolderRepresentationDataset();
         dataset.setNodeRepresentations(folderNodes);
         
-        Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
-        ownerLink.setRel("owner");
-        dataset.addLink(ownerLink);
+        Link parentLink = getNodeLink(requestContext, hippoFolderBean);
+        parentLink.setRel(getHstQualifiedLinkRel("parent"));
+        dataset.addLink(parentLink);
         
         try {
             List<HippoFolderBean> hippoFolderBeans = hippoFolderBean.getFolders(sorted);
@@ -168,9 +168,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
             HippoFolderRepresentation childFolderRep = new HippoFolderRepresentation().represent(childFolderBean);
             childFolderRep.addLink(getNodeLink(requestContext, childFolderBean));
             childFolderRep.addLink(getSiteLink(requestContext, childFolderBean));
-            Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
-            ownerLink.setRel("owner");
-            childFolderRep.addLink(ownerLink);
+            Link parentLink = getNodeLink(requestContext, hippoFolderBean);
+            parentLink.setRel(getHstQualifiedLinkRel("parent"));
+            childFolderRep.addLink(parentLink);
             return childFolderRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -234,9 +234,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
         HippoDocumentRepresentationDataset dataset = new HippoDocumentRepresentationDataset();
         dataset.setNodeRepresentations(documentNodes);
         
-        Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
-        ownerLink.setRel("owner");
-        dataset.addLink(ownerLink);
+        Link parentLink = getNodeLink(requestContext, hippoFolderBean);
+        parentLink.setRel(getHstQualifiedLinkRel("parent"));
+        dataset.addLink(parentLink);
         
         try {
             List<HippoDocumentBean> hippoDocumentBeans = hippoFolderBean.getDocuments(sorted);
@@ -291,9 +291,9 @@ public class HippoFolderContentResource extends AbstractContentResource {
             HippoDocumentRepresentation docRep = new HippoDocumentRepresentation().represent(childDocumentBean);
             docRep.addLink(getNodeLink(requestContext, childDocumentBean));
             docRep.addLink(getSiteLink(requestContext, childDocumentBean));
-            Link ownerLink = getNodeLink(requestContext, hippoFolderBean);
-            ownerLink.setRel("owner");
-            docRep.addLink(ownerLink);
+            Link parentLink = getNodeLink(requestContext, hippoFolderBean);
+            parentLink.setRel(getHstQualifiedLinkRel("parent"));
+            docRep.addLink(parentLink);
             return docRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -427,6 +427,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
                     
                     if (nodeRep != null) {
                         nodeRep.addLink(getNodeLink(requestContext, hippoBean));
+                        nodeRep.addLink(getSiteLink(requestContext, hippoBean));
                         nodeReps.add(nodeRep);
                         count++;
                     }

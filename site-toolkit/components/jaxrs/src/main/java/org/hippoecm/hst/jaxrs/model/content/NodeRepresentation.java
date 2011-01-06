@@ -70,6 +70,7 @@ public abstract class NodeRepresentation {
     	this.localizedName = localizedName;
     }
     
+    @XmlElement(name="path")
     public String getPath() {
         return path;
     }
@@ -82,6 +83,7 @@ public abstract class NodeRepresentation {
         this.primaryNodeTypeName = primaryNodeTypeName;
     }
     
+    @XmlElement(name="leaf")
     public boolean isLeaf() {
     	return leaf;
     }

@@ -104,9 +104,9 @@ public abstract class AbstractContentResource extends AbstractResource {
         
         try {
             HippoHtmlRepresentation htmlRep = new HippoHtmlRepresentation().represent(htmlBean);
-            Link ownerLink = getNodeLink(requestContext, hippoBean);
-            ownerLink.setRel("owner");
-            htmlRep.addLink(ownerLink);
+            Link parentLink = getNodeLink(requestContext, hippoBean);
+            parentLink.setRel(getHstQualifiedLinkRel("parent"));
+            htmlRep.addLink(parentLink);
             
             ContentRewriter<String> rewriter = getContentRewriter();
             if (rewriter == null) {

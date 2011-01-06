@@ -112,9 +112,9 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             }
             
             childImageRep.addLink(getMountLink(requestContext, imageSetBean, MOUNT_ALIAS_GALLERY, subPath));
-            Link ownerLink = getMountLink(requestContext, imageSetBean, MOUNT_ALIAS_GALLERY, null);
-            ownerLink.setRel("owner");
-            childImageRep.addLink(ownerLink);
+            Link parentLink = getMountLink(requestContext, imageSetBean, MOUNT_ALIAS_GALLERY, null);
+            parentLink.setRel(getHstQualifiedLinkRel("parent"));
+            childImageRep.addLink(parentLink);
 
             return childImageRep;
         } catch (Exception e) {

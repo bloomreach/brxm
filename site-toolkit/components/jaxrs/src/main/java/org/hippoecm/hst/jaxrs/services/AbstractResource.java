@@ -56,7 +56,10 @@ public abstract class AbstractResource {
     public static final String MOUNT_ALIAS_SITE = ContainerConstants.MOUNT_ALIAS_SITE;
     public static final String MOUNT_ALIAS_GALLERY = ContainerConstants.MOUNT_ALIAS_GALLERY;
     public static final String MOUNT_ALIAS_ASSETS = ContainerConstants.MOUNT_ALIAS_ASSETS;
+    public static final String HST_REST_RELATIONS_BASE_URI = "http://www.onehippo.org/cms7/hst/rest/relations";
+    public static final String HST_MOUNT_REL_PREFIX = "mount:";
     
+    private String restRelationsBaseUri = HST_REST_RELATIONS_BASE_URI;
     private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;
@@ -118,6 +121,14 @@ public abstract class AbstractResource {
     	this.hstQueryManager = hstQueryManager;
     }
     
+    public String getRestRelationsBaseUri() {
+    	return restRelationsBaseUri;
+    }
+    
+    public void setRestRelationsBaseUri(String restRelationsBaseUri) {
+    	this.restRelationsBaseUri = restRelationsBaseUri;
+    }
+    
     public boolean isPageLinksExternal() {
         return pageLinksExternal;
     }
@@ -162,6 +173,28 @@ public abstract class AbstractResource {
         return null;
     }
     
+    protected String getQualifiedLinkRel(String iri, String simpleRel) {
+    	if (iri != null) {
+    		if (iri.endsWith("/")) {
+    			return iri + simpleRel;
+    		}
+    		return iri + "/" + simpleRel;
+    	}
+    	return simpleRel;
+    }
+    
+    protected String getQualifiedLinkRel(String simpleRel) {
+    	return getQualifiedLinkRel(getRestRelationsBaseUri(), simpleRel);
+    }
+    
+    protected String getHstQualifiedLinkRel(String simpleRel) {
+    	return getQualifiedLinkRel(HST_REST_RELATIONS_BASE_URI,simpleRel);
+    }
+    
+    protected String getLinkMountRelation(String mountName) {
+    	return getHstQualifiedLinkRel(HST_MOUNT_REL_PREFIX+mountName);
+    }
+    
     protected Link getNodeLink(HstRequestContext requestContext, HippoBean hippoBean) {
         return getRestLink(requestContext, hippoBean, null);
     }
@@ -180,7 +213,7 @@ public abstract class AbstractResource {
         try {
             String usedMountAliasName = (mountAliasName == null ? MOUNT_ALIAS_SITE : mountAliasName);
             Mount mappedMount = requestContext.getMount(usedMountAliasName);
-            nodeLink.setRel(usedMountAliasName);
+            nodeLink.setRel(getLinkMountRelation(usedMountAliasName));
             
             HstLink link = null;
             
@@ -195,7 +228,7 @@ public abstract class AbstractResource {
                     link.setSubPath(subPath);
                 }
                 
-                String href = link.toUrlForm(requestContext, isPageLinksExternal());
+                String href = link.toUrlForm(requestContext, true);
                 nodeLink.setHref(href);
                 nodeLink.setTitle(hippoBean.getName());
                 
