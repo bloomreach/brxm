@@ -221,6 +221,12 @@
       <version>${cms.version}</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-upgrade</artifactId>
+      <version>${cms.version}</version>
+      <type>jar</type>
+    </dependency>
 
     <!-- Repository, which explicitly comes without upgrade module to allow
          specific upgrades and upgrades that come post-release cycle.
