@@ -302,7 +302,8 @@ public class MountService implements Mount {
             String[] typesProperty = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_TYPES);
             this.types = Arrays.asList(typesProperty);
         } else if(parent != null) {
-            this.types = parent.getTypes();
+            // because the parent.getTypes also includes the primary type, below we CANNOT use parent.getTypes() !!
+            this.types = ((MountService)parent).types;
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED)) {

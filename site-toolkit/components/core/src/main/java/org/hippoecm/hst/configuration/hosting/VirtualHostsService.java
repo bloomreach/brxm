@@ -193,12 +193,11 @@ public class VirtualHostsService implements VirtualHosts {
                 aliasTypeMap.put(getAliasTypeKey(mount.getAlias(), type), mount);
             } catch (IllegalArgumentException e) {
                 log.error("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
-                		". Failed for mount '{}'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount within a single hostgroup. The mount '{}' cannot be used for lookup. Change alias for it.", mount.getName(), mount.getName());
+                		". Failed for mount '{}' in hostgroup '"+mount.getVirtualHost().getHostGroupName()+"' for host '"+mount.getVirtualHost().getHostName()+"'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount within a single hostgroup. The mount '{}' cannot be used for lookup. Change alias for it.", mount.getName(), mount.getName());
             }
         }
 
     }
-
     
     public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException {
             
