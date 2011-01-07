@@ -101,6 +101,12 @@ public interface VirtualHosts {
     boolean isContextPathInUrl();
     
     /**
+     * This is the global setting for every {@link VirtualHost} / {@link Mount} whether the port number should be in the URL or not
+     * @return <code>true</code> when the created url should have the port number in it
+     */
+    boolean isPortInUrl();
+    
+    /**
      * @return the locale of this VirtualHosts object or <code>null</code> if no locale is configured
      */
     String getLocale();

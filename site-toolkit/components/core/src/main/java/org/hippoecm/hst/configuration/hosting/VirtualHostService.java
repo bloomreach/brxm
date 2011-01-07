@@ -72,6 +72,7 @@ public class VirtualHostService implements VirtualHost {
     private Map<Integer, PortMount> portMounts = new HashMap<Integer, PortMount>();
     
     private boolean contextPathInUrl;
+    private boolean showPort;
     private String scheme;
 
     public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, HstManagerImpl hstManager) throws ServiceException {        
@@ -79,6 +80,7 @@ public class VirtualHostService implements VirtualHost {
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
         this.hostGroupName = hostGroupName;
+        
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
         } else {
@@ -87,6 +89,17 @@ public class VirtualHostService implements VirtualHost {
                 this.contextPathInUrl = parentHost.contextPathInUrl;
             } else {
                 this.contextPathInUrl = virtualHosts.isContextPathInUrl();
+            }
+        }
+        
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT)) {
+            this.showPort = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT);
+        } else {
+            // try to get the one from the parent
+            if(parentHost != null) {
+                this.showPort = parentHost.showPort;
+            } else {
+                this.showPort = virtualHosts.isPortInUrl();
             }
         }
         
@@ -239,6 +252,7 @@ public class VirtualHostService implements VirtualHost {
         this.pageNotFound = parent.pageNotFound;
         this.versionInPreviewHeader = parent.versionInPreviewHeader;
         this.contextPathInUrl = parent.contextPathInUrl;
+        this.showPort = parent.showPort;
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
@@ -263,6 +277,10 @@ public class VirtualHostService implements VirtualHost {
 
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
+    }
+    
+    public boolean isPortInUrl() {
+        return showPort;
     }
     
     public String getScheme(){

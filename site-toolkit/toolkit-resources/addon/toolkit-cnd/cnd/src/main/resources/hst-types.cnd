@@ -207,6 +207,8 @@
 + * (hst:portmount)
 + hst:root (hst:mount)
 - hst:showcontextpath (boolean)
+// whether the port should be visible in the created urls
+- hst:showport (boolean)
 - hst:scheme (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
@@ -220,6 +222,8 @@
 
 [hst:virtualhosts] > nt:base, mix:referenceable, mix:versionable
 - hst:showcontextpath (boolean)
+// whether the port should be visible in the created urls
+- hst:showport (boolean)
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
 - hst:scheme (string)

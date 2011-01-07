@@ -76,7 +76,8 @@ public class VirtualHostsService implements VirtualHosts {
     
     private boolean virtualHostsConfigured;
     private String scheme;
-    private boolean contextPathInUrl;
+    private boolean contextPathInUrl = true;
+    private boolean showPort = true;
     private String[] prefixExclusions;
     private String[] suffixExclusions;
     
@@ -89,6 +90,7 @@ public class VirtualHostsService implements VirtualHosts {
         this.hstManager = hstManager;
         this.virtualHostsConfigured = true;
         this.contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
+        this.showPort = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
         this.prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
         this.scheme = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
@@ -324,6 +326,10 @@ public class VirtualHostsService implements VirtualHosts {
 
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
+    }
+
+    public boolean isPortInUrl() {
+        return showPort;
     }
 
     public String getScheme(){

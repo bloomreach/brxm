@@ -92,10 +92,12 @@ public interface HstNodeTypes {
     public final static String VIRTUALHOSTS_PROPERTY_SCHEME = "hst:scheme";
     public final static String VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME = "hst:defaulthostname";
     public final static String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+    public final static String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
 
     public final static String VIRTUALHOST_PROPERTY_SCHEME = "hst:scheme";
     public final static String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
     public final static String VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+    public final static String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";
     
     public final static String MOUNT_HST_ROOTNAME = "hst:root";
     public final static String MOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";

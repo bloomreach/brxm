@@ -84,6 +84,11 @@ public interface VirtualHost {
     boolean isContextPathInUrl();
     
     /**
+     * @return <code>true</code> when the created url should have the port in it
+     */
+    boolean isPortInUrl();
+    
+    /**
      * @return the scheme to use for creating external urls, for example http / https
      */
     String getScheme();

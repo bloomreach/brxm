@@ -131,9 +131,9 @@ public class MountService implements Mount {
     private boolean isSite = true;
     
     /**
-     * whether the port number should be in the url. Default true
+     * whether the port number should be in the url.
      */
-    private boolean showPort = true;
+    private boolean showPort;
     
     /**
      * default port is 0, which means, the {@link Mount} is port agnostic
@@ -204,8 +204,12 @@ public class MountService implements Mount {
         // is the port number visible in the url
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT)) {
             this.showPort = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT);
-        } else if(parent != null) {
-            this.showPort = parent.isPortInUrl();
+        } else {
+            if(parent != null) {
+                this.showPort = parent.isPortInUrl();
+            } else {
+                this.showPort = virtualHost.isPortInUrl();
+            }
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
