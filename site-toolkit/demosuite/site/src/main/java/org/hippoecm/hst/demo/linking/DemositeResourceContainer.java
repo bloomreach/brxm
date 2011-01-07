@@ -55,11 +55,7 @@ public class DemositeResourceContainer extends AbstractResourceContainer {
         return super.resolveToPathInfo(resourceContainerNode, resourceNode, mount);
     }
 
-    public Node resolveToResourceNode(Session session, String pathInfo) {
-        if(! (pathInfo.startsWith("/preview") || pathInfo.startsWith("/live"))) {
-            // this resource container is meant for inline resources fetched via live or preview
-            return null;
-        }
+    public Node resolveToResourceNode(Session session, String pathInfo) {    
         String actualPath = pathInfo;
         String[] elems = actualPath.split("/");
         int index = -1;
