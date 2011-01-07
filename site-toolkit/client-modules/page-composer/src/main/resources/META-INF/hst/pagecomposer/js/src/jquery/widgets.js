@@ -285,7 +285,7 @@ jQuery.noConflict();
                     this.overlay.addClass(this.cls.emptyContainer);
                     var tmpCls = this.cls.item;
                     this.cls.item = this.cls.emptyItem;
-                    var item = this.createItemElement($('<div class="empty-container-placeholder">Empty container</div>')[0]);
+                    var item = this.createItemElement($('<div class="empty-container-placeholder">Drop Component Here</div>')[0]);
                     this.appendItem(item);
                     this.cls.item = tmpCls;
                 }
