@@ -354,11 +354,11 @@ public class AggregationValve extends AbstractValve {
         addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/lib/jquery/plugins/jquery.namespace.js");
 
         addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/globals.js");
-        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/util.js");
-        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/factory.js");
-        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/manager.js");
-        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/widgets.js");
-        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/main.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/util.min.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/factory.min.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/manager.min.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/widgets.min.js");
+        addScriptHeadElement(request, response, mount, "/hst/pagecomposer/sources/js/src/jquery/main.min.js");
     }
     
     private void addCssHeadElement(HstRequest request, HstResponse response, Mount mount, String href) {
