@@ -237,6 +237,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ExceptionResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/SiteResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/css/PageEditor.css -text svneol=unset#text/plain
+client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/css/hippo-cms.ico -text
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/css/hippologo.png -text
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/lib/ext/core/3.3.0/adapter/ext/ext-base-debug.js -text svneol=unset#text/plain
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/lib/ext/core/3.3.0/adapter/ext/ext-base.js -text svneol=unset#text/plain
@@ -1520,6 +1521,7 @@ components/security/src/main/java/org/hippoecm/hst/security/impl/HippoAuthentica
 components/security/src/main/java/org/hippoecm/hst/security/impl/JcrAuthenticationProvider.java -text
 components/security/src/main/java/org/hippoecm/hst/security/impl/PassiveCallbackHandler.java -text
 components/security/src/main/java/org/hippoecm/hst/security/servlet/LoginServlet.java -text
+components/security/src/main/resources/META-INF/hst/security/skin/images/hippo-cms.ico -text
 components/security/src/main/resources/META-INF/hst/security/skin/images/loginback.png -text
 components/security/src/main/resources/META-INF/hst/security/skin/images/loginbottom.png -text
 components/security/src/main/resources/META-INF/hst/security/skin/images/loginhead.png -text

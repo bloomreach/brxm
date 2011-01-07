@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.dependencies.ext;
 
 import org.hippoecm.hst.pagecomposer.dependencies.CssDependency;
+import org.hippoecm.hst.pagecomposer.dependencies.Dependency;
 import org.hippoecm.hst.pagecomposer.dependencies.JsDependency;
 import org.hippoecm.hst.pagecomposer.dependencies.PathDependency;
 import org.hippoecm.hst.pagecomposer.dependencies.ext.plugins.ExtBaseApp;
@@ -50,7 +51,13 @@ public class ExtApp extends PathDependency {
                 )
         ));
         addDependency(new PathDependency("css",
-                new CssDependency("PageEditor.css")
+                new CssDependency("PageEditor.css"),
+                new Dependency("hippo-cms.ico") {
+                    @Override
+                    public String asString(final String path) {
+                        return "<link rel=\"shortcut icon\" href=\""+path+"\" type=\"image/x-icon\"/>";
+                    }
+                }
         ));
     }
 }

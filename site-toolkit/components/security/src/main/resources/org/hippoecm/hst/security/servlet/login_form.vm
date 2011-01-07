@@ -16,6 +16,7 @@
 <html>
   <head>
     <title>Login</title>
+    <link rel="shortcut icon" href="hst/security/skin/images/hippo-cms.ico" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="hst/security/skin/screen.css" />
   </head>
   <body class="hippo-root" onload="return document.signInForm.username.focus();">
