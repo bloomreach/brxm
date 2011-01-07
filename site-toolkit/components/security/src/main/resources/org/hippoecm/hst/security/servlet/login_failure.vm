@@ -19,7 +19,7 @@
     <link rel="shortcut icon" href="hst/security/skin/images/hippo-cms.ico" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="hst/security/skin/screen.css" />
   </head>
-  <body class="hippo-root">
+  <body class="hippo-root" style="text-align:center">
     <div>
       <div class="hippo-login-panel">
         <form class="hippo-login-panel-form" name="signInForm" method="post" action="..${request.ServletPath}/proxy">
