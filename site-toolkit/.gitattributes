@@ -1154,9 +1154,13 @@ client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/lib
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/lib/jquery/ui/1.8.5/custom/jquery.ui.sortable.js -text svneol=unset#text/plain
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/lib/jquery/ui/1.8.5/jquery-ui-1.8.5.min.js -text svneol=unset#text/plain
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/ext/PageEditor-debug.js -text svneol=unset#text/plain
+client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/ext/PageEditor.js -text
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/ext/PageModel-debug.js -text svneol=unset#text/plain
+client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/ext/PageModel.js -text
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/ext/PropertiesPanel-debug.js -text svneol=unset#text/plain
+client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/ext/PropertiesPanel.js -text
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/globals-debug.js -text svneol=unset#text/plain
+client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/globals.js -text
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/jquery/factory.js -text svneol=unset#text/plain
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/jquery/factory.min.js -text
 client-modules/page-composer/src/main/resources/META-INF/hst/pagecomposer/js/src/jquery/main.js -text svneol=unset#text/plain

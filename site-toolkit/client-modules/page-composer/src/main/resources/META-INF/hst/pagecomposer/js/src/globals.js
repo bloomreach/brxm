@@ -1,0 +1,1 @@
+(function(){if(typeof window.console==="undefined"){window.console={log:function(){},dir:function(){},warn:function(){},error:function(){}}}HST={COMPONENT:"COMPONENT",CONTAINER:"CONTAINER_COMPONENT",CONTAINERITEM:"CONTAINER_ITEM_COMPONENT",ATTR:{ID:"hst:id"},DIR:{VERTICAL:1,HORIZONTAL:1}}})();
