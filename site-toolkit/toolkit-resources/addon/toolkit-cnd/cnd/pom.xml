@@ -28,7 +28,20 @@
   <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
   <artifactId>hst-addon-cnd</artifactId>
   <packaging>jar</packaging>
-
+  <dependencies>
+     <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>
     <plugins>
@@ -41,6 +54,13 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <!-- 
+                TODO When a new Upgrader is added because of new hst namespace, the Upgrader2_20_A MUST be removed below because it does not 
+                contain a start tag.  
+            -->
+            <manifestEntries>
+              <Hippo-Modules>org.hippoecm.hst.upgrade.Upgrader2_20_A</Hippo-Modules>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin> 
