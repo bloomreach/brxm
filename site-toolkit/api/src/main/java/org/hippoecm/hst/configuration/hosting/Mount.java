@@ -224,7 +224,7 @@ public interface Mount {
     boolean isPortInUrl();
     
     /**
-     * When this method returns <code>true</code>, then {@link HstLink} will always have the {@link HstLink#PATH_SUBPATH_DELIMITER} included, even if the {@link HstLink}
+     * When this method returns <code>false</code>, then {@link HstLink} will always have the {@link HstLink#PATH_SUBPATH_DELIMITER} included, even if the {@link HstLink}
      * does have an empty or <code>null</code> {@link HstLink#getSubPath()}
      * @return true when the {@link Mount} is meant to be a site (false in case of for example being used for REST calls)
      */
