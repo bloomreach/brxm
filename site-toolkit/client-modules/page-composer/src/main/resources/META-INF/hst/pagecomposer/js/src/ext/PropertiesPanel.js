@@ -42,7 +42,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                     scope: this,
                     hidden: true,
                     handler: function () {
-                        this.reload(this.id);
+                        this.reload(this.siteId, this.id);
                     }
                 }
             ]
