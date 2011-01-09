@@ -270,11 +270,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-editor-common</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-editor-frontend</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
