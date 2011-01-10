@@ -102,7 +102,6 @@
     <repository.version>2.18.00</repository.version>
     <hippo-packages.version>2.18.00</hippo-packages.version>
     <publication-workflow.version>2.18.00</publication-workflow.version>
-    <gallerypicker.version>1.07.00</gallerypicker.version>
     <configeditor.version>1.05.00</configeditor.version>
   
    
@@ -121,6 +120,7 @@
     <mime4j.version>0.6</mime4j.version>
     <jetty.version>6.1.18</jetty.version>
     <atomikos.version>3.1.4</atomikos.version>
+    <forge.gallerypicker.version>1.07.00</forge.gallerypicker.version>    
   </properties>
 
   <!--
@@ -151,6 +151,10 @@
     <repository>
       <id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
+    </repository>
+    <repository>
+      <id>hippogallerypicker</id>
+      <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
     </repository>
   </repositories>
 
@@ -736,6 +740,11 @@
         </exclusions>
       </dependency>
       
+      <dependency>
+        <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
+        <artifactId>gallerypicker</artifactId>
+        <version>${forge.gallerypicker.version}</version>
+      </dependency>
       <!-- Test dependencies -->
     
       <dependency>
@@ -751,15 +760,6 @@
         <version>${easymock.version}</version>
         <scope>test</scope>
       </dependency>
-      
-      <!--
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-engine</artifactId>
-        <version>${cms.version}</version>
-        <scope>test</scope>
-      </dependency>
-      -->
       
     </dependencies>
     
