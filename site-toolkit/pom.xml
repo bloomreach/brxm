@@ -147,33 +147,10 @@
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>http://repository.hippocms.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippogallerypicker</id>
-      <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
     </repository>
     <repository>
       <id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
     </repository>
   </repositories>
 
