@@ -104,103 +104,116 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
 
         private IObservationContext<NodeNameModel> obContext;
         private Set<IObserver<JcrNodeModel>> observers = new HashSet<IObserver<JcrNodeModel>>();
-        private transient Set<JcrNodeModel> accessed;
+        private Set<JcrNodeModel> accessed;
 
         @Override
         protected String load() {
+            if (obContext != null) {
+                stopObservation();
+            }
             accessed = new HashSet<JcrNodeModel>();
             accessed.add(nodeModel.getParentModel());
 
-            Node node = nodeModel.getObject();
-            String name = "node name";
-            if (node != null) {
-                try {
-                    // return the name specified by the hippo:translated mixin,
-                    // falling back to the decoded node name itself.
-                    name = NodeNameCodec.decode(node.getName());
-                    accessed.add(new JcrNodeModel(node));
-                    if (!node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.isNodeType(HippoNodeType.NT_DOCUMENT)
-                            && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)
-                            && node.getParent().isNodeType(HippoNodeType.NT_TRANSLATED)) {
-                        node = node.getParent();
-                    }
-                    if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-                        Locale locale = Session.get().getLocale();
-                        NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
-                        while (nodes.hasNext()) {
-                            Node child = nodes.nextNode();
-                            accessed.add(new JcrNodeModel(child));
-                            if (child.isNodeType(HippoNodeType.NT_TRANSLATION)
-                                    && !child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
-                                String language = child.getProperty("hippo:language").getString();
-                                if (locale.getLanguage().equals(language)) {
-                                    return child.getProperty("hippo:message").getString();
-                                }
-                                if (language.equals("")) {
-                                    name = child.getProperty("hippo:message").getString();
-                                }
-                            }
+            try {
+                Node node = nodeModel.getObject();
+                String name = "node name";
+                if (node != null) {
+                    try {
+                        // return the name specified by the hippo:translated mixin,
+                        // falling back to the decoded node name itself.
+                        name = NodeNameCodec.decode(node.getName());
+                        accessed.add(new JcrNodeModel(node));
+                        if (!node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.isNodeType(HippoNodeType.NT_DOCUMENT)
+                                && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)
+                                && node.getParent().isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                            node = node.getParent();
                         }
-                    }
-
-                    // when the node is not translated, return the decoded name at
-                    // the time of version creation.  Fall back to handle name if necessary.
-                    if (node.isNodeType("nt:frozenNode") && (node.getParent() instanceof Version)) {
-                        try {
-                            String historyUuid = ((Version) node.getParent()).getContainingHistory().getUUID();
-                            Version parentVersion = JcrHelper.getVersionParent((Version) node.getParent());
-                            // locate child.  Only direct children are found.
-                            NodeIterator children = parentVersion.getNode("jcr:frozenNode").getNodes();
-                            while (children.hasNext()) {
-                                Node child = children.nextNode();
-                                if (child.isNodeType("nt:versionedChild")) {
-                                    String ref = child.getProperty("jcr:childVersionHistory").getString();
-                                    if (ref.equals(historyUuid)) {
-                                        return NodeNameCodec.decode(child.getName());
+                        if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                            Locale locale = Session.get().getLocale();
+                            NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
+                            while (nodes.hasNext()) {
+                                Node child = nodes.nextNode();
+                                accessed.add(new JcrNodeModel(child));
+                                if (child.isNodeType(HippoNodeType.NT_TRANSLATION)
+                                        && !child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
+                                    String language = child.getProperty("hippo:language").getString();
+                                    if (locale.getLanguage().equals(language)) {
+                                        return child.getProperty("hippo:message").getString();
+                                    }
+                                    if (language.equals("")) {
+                                        name = child.getProperty("hippo:message").getString();
                                     }
                                 }
                             }
-                            Node parent = node.getSession().getNodeByUUID(
-                                    parentVersion.getContainingHistory().getVersionableUUID());
-                            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                return NodeNameCodec.decode(parent.getName());
-                            }
-                        } catch (ItemNotFoundException ex) {
-                            // ignore, use name of node itself
                         }
 
-                        // unable to resolve parent
-                        String uuid = node.getProperty("jcr:frozenUuid").getString();
-                        try {
-                            Node docNode = node.getSession().getNodeByUUID(uuid);
-                            return NodeNameCodec.decode(docNode.getName());
-                        } catch (ItemNotFoundException ex) {
-                            // ignore
+                        // when the node is not translated, return the decoded name at
+                        // the time of version creation.  Fall back to handle name if necessary.
+                        if (node.isNodeType("nt:frozenNode") && (node.getParent() instanceof Version)) {
+                            try {
+                                String historyUuid = ((Version) node.getParent()).getContainingHistory().getUUID();
+                                Version parentVersion = JcrHelper.getVersionParent((Version) node.getParent());
+                                // locate child.  Only direct children are found.
+                                NodeIterator children = parentVersion.getNode("jcr:frozenNode").getNodes();
+                                while (children.hasNext()) {
+                                    Node child = children.nextNode();
+                                    if (child.isNodeType("nt:versionedChild")) {
+                                        String ref = child.getProperty("jcr:childVersionHistory").getString();
+                                        if (ref.equals(historyUuid)) {
+                                            return NodeNameCodec.decode(child.getName());
+                                        }
+                                    }
+                                }
+                                Node parent = node.getSession().getNodeByUUID(
+                                        parentVersion.getContainingHistory().getVersionableUUID());
+                                if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                    return NodeNameCodec.decode(parent.getName());
+                                }
+                            } catch (ItemNotFoundException ex) {
+                                // ignore, use name of node itself
+                            }
+
+                            // unable to resolve parent
+                            String uuid = node.getProperty("jcr:frozenUuid").getString();
+                            try {
+                                Node docNode = node.getSession().getNodeByUUID(uuid);
+                                return NodeNameCodec.decode(docNode.getName());
+                            } catch (ItemNotFoundException ex) {
+                                // ignore
+                            }
                         }
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
                     }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+                } else {
+                    String path = nodeModel.getItemModel().getPath();
+                    if (path != null) {
+                        name = path.substring(path.lastIndexOf('/') + 1);
+                        if (name.indexOf('[') > 0) {
+                            name = name.substring(0, name.indexOf('['));
+                        }
+                        name = NodeNameCodec.decode(name);
+                    }
                 }
-            } else {
-                String path = nodeModel.getItemModel().getPath();
-                if (path != null) {
-                    name = path.substring(path.lastIndexOf('/') + 1);
-                    if (name.indexOf('[') > 0) {
-                        name = name.substring(0, name.indexOf('['));
-                    }
-                    name = NodeNameCodec.decode(name);
+                return name;
+            } finally {
+                if (obContext != null) {
+                    startObservation();
                 }
             }
-            return name;
         }
 
         void innerDetach() {
-            super.onDetach();
+            super.detach();
         }
 
         @Override
-        public void onDetach() {
-            accessed = null;
+        public void detach() {
+            if (accessed != null) {
+                for (JcrNodeModel model : accessed) {
+                    model.detach();
+                }
+            }
             NodeTranslator.this.detach();
         }
 
