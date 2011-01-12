@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -230,16 +230,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         newValue = parentProperty.getValue().getString();
                     }
                 }
+            } else if (newValue.startsWith("$uuid")) {
+                newValue = UUID.randomUUID().toString();
             } else if (newValue.startsWith("$")) {
                 String key = newValue.substring(1);
                 if (arguments.containsKey(key)) {
                     newValue = arguments.get(key);
-                } else {
-                    if (key.equals("uuid")) {
-                        newValue = UUID.randomUUID().toString();
-                    } else {
-                        throw new WorkflowException("No value specified for parameter " + key);
-                    }
                 }
             }
             if (renames.containsKey(values[i])) {
