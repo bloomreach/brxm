@@ -125,7 +125,7 @@ public abstract class TestCase
                 istream.close();
                 fixtureStream.close();
             } catch (IOException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage()); // BERRY
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 try {
                     if (fixtureStream != null) {
                         fixtureStream.close();
