@@ -453,12 +453,22 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-publication-workflow-common</artifactId>
+        <version>${hippo.addon-publication-workflow.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-publication-workflow-frontend</artifactId>
         <version>${hippo.addon-publication-workflow.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-publication-workflow-repository</artifactId>
+        <version>${hippo.addon-publication-workflow.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-publication-workflow-test</artifactId>
         <version>${hippo.addon-publication-workflow.version}</version>
       </dependency>
       <dependency>
