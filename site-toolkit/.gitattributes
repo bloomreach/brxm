@@ -1419,6 +1419,7 @@ components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.jav
 components/core/src/test/java/org/hippoecm/hst/core/container/TestContainerURLProvider.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestDefaultPipeline.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestGenericResponseHeadersValve.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/TestHstContainerURL.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstNavigationalStateCodec.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValve.java -text

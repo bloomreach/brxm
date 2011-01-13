@@ -139,8 +139,20 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
                 this.parameterMap.clear();
             }
         } else {
+            String [] paramValues = null;
+            String [] clonedParamValues = null;
+            
             for (Map.Entry<String, String []> entry : parameters.entrySet()) {
-                setParameter(entry.getKey(), entry.getValue());
+                paramValues = entry.getValue();
+                
+                if (paramValues == null) {
+                    clonedParamValues = null;
+                } else {
+                    clonedParamValues = new String[paramValues.length];
+                    System.arraycopy(paramValues, 0, clonedParamValues, 0, paramValues.length);
+                }
+                
+                setParameter(entry.getKey(), clonedParamValues);
             }
         }
     }
@@ -166,8 +178,26 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
     }
 
     public void setActionParameters(Map<String, String[]> parameters) {
-        for (Map.Entry<String, String []> entry : parameters.entrySet()) {
-            setActionParameter(entry.getKey(), entry.getValue());
+        if (parameters == null) {
+            if (this.actionParameterMap != null) {
+                this.actionParameterMap.clear();
+            }
+        } else {
+            String [] paramValues = null;
+            String [] clonedParamValues = null;
+            
+            for (Map.Entry<String, String []> entry : parameters.entrySet()) {
+                paramValues = entry.getValue();
+                
+                if (paramValues == null) {
+                    clonedParamValues = null;
+                } else {
+                    clonedParamValues = new String[paramValues.length];
+                    System.arraycopy(paramValues, 0, clonedParamValues, 0, paramValues.length);
+                }
+                
+                setActionParameter(entry.getKey(), clonedParamValues);
+            }
         }
     }
     
@@ -193,6 +223,14 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         cloned.actionWindowReferenceNamespace = this.actionWindowReferenceNamespace;
         cloned.resourceWindowReferenceNamespace = this.resourceWindowReferenceNamespace;
         cloned.resourceId = this.resourceId;
+        
+        cloned.actionParameterMap = null;
+        
+        if (this.actionParameterMap != null) {
+            cloned.setActionParameters(this.actionParameterMap);
+        }
+        
+        cloned.parameterMap = null;
         
         if (this.parameterMap != null) {
             cloned.setParameters(this.parameterMap);
