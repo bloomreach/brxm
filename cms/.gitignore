@@ -281,6 +281,7 @@ tools/upgrade/tm.out.1
 tools/upgrade/tm.out.lck
 tools/upgrade/tmlog.lck
 tools/upgrade/wdbp-error-log.txt
+translate/target
 translation/common/*.tmp
 translation/common/.classpath
 translation/common/.pom.xml.swp

@@ -68,6 +68,7 @@
     <module>xinha-resources</module>
     <module>editor</module>
     <module>translation</module>
+    <module>translate</module>
     <module>gallery</module>
     <module>layout</module>
     <module>config</module>

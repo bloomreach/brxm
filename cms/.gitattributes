@@ -1547,6 +1547,9 @@ tools/development-content/src/main/resources/cms-dashshortcuts-create-folders.xm
 tools/development-content/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 tools/eclipse/monkey/convertDependencies.gm -text
 tools/eclipse/monkey/prepareProjects.gm -text
+translate/pom.xml svneol=native#text/plain
+translate/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+translate/src/main/resources/translate-workflows.xml svneol=native#text/plain
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/PathRenderer.java svneol=native#text/plain
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/TreeNodeIconPlugin.java svneol=native#text/plain
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentTranslationView.java svneol=native#text/plain
