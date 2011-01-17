@@ -338,6 +338,7 @@ dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlu
 dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTargetTest.java svneol=native#text/plain
 dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel.properties svneol=native#text/plain
 dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest.java svneol=native#text/plain
+dependencies/pom.xml svneol=native#text/plain
 edit/pom.xml svneol=native#text/plain
 edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/AutoEditPlugin.java -text
 edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserver.java svneol=native#text/plain

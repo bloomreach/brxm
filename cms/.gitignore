@@ -51,6 +51,7 @@ dashboard/.classpath
 dashboard/.project
 dashboard/.settings
 dashboard/target
+dependencies/target
 edit/.classpath
 edit/.project
 edit/.settings

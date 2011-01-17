@@ -75,6 +75,7 @@
     <module>skin</module>
     <module>upgrade</module>
     <module>resources</module>
+    <module>dependencies</module>
     <module>tools</module>
   </modules>
 
