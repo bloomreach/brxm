@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -47,8 +48,11 @@ import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.editor.type.JcrTypeStore;
+import org.hippoecm.editor.type.PseudoTypeDescriptor;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -59,6 +63,9 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.frontend.translation.components.document.FolderTranslation;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -71,6 +78,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
+import org.onehippo.translate.TranslateWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -410,6 +418,26 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             return false;
         }
 
+        private void collectFields(javax.jcr.Session session, String relPath, String nodeType, Set<String> fields) throws StoreException {
+            try {
+                JcrTypeStore jcrTypeStore = new JcrTypeStore();
+                ITypeDescriptor type = jcrTypeStore.load(nodeType);
+                for (Map.Entry<String, IFieldDescriptor> field : type.getFields().entrySet()) {
+                    IFieldDescriptor fieldDescriptor = field.getValue();
+                    ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
+                    if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
+                        fields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
+                    } else if (fieldType.getName().equals("Text")) {
+                        fields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
+                    } else if (fieldType.isNode()) {
+                        collectFields(session, (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(), fieldType.getType(), fields);
+                    }
+                }
+            } catch(StoreException ex) {
+                // ignore nt:base
+            }
+        }
+
         @Override
         protected String execute(Workflow wf) throws Exception {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
@@ -430,18 +458,27 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
             TranslationWorkflow workflow = (TranslationWorkflow) wf;
             Document translation = workflow.addTranslation(language, url);
-            WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translation);
-            if (name != null && !url.equals(name)) {
-                String localized = getLocalizeCodec().encode(name);
-                defaultWorkflow.localizeName(localized);
-            }
-            IBrowseService<JcrNodeModel> browser = getBrowserService();
-            if (browser != null) {
-                browser.browse(new JcrNodeModel(session.getNodeByUUID(translation.getIdentity())));
-            } else {
-                log.warn("Cannot open newly created document - configured browser.id "
-                        + getPluginConfig().getString("browser.id") + " is invalid.");
+            try {
+                WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+                Workflow translateWorkflow = manager.getWorkflow("translate", translation);
+                if (translateWorkflow instanceof TranslateWorkflow) {
+                    Set<String> fields = new TreeSet<String>();
+                    collectFields(session, null, session.getNodeByIdentifier(translation.getIdentity()).getPrimaryNodeType().getName(), fields);
+                    ((TranslateWorkflow)translateWorkflow).translate(language, fields);
+                }
+                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translation);
+                if (name != null && !url.equals(name)) {
+                    String localized = getLocalizeCodec().encode(name);
+                    defaultWorkflow.localizeName(localized);
+                }
+            } finally {
+                IBrowseService<JcrNodeModel> browser = getBrowserService();
+                if (browser != null) {
+                    browser.browse(new JcrNodeModel(session.getNodeByUUID(translation.getIdentity())));
+                } else {
+                    log.warn("Cannot open newly created document - configured browser.id "
+                            + getPluginConfig().getString("browser.id") + " is invalid.");
+                }
             }
             return null;
         }
@@ -590,4 +627,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         return stringCodecFactory.getStringCodec("encoding.display");
     }
 
+
+        static void collectFields() {
+
+        }
 }
