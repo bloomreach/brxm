@@ -15,21 +15,32 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.jaxrs.JAXRSService;
-import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.jaxrs.JAXRSService;
+import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.util.ObjectConverterUtils;
 
 /**
  * @version $Id$
  */
 
 public class AbstractConfigResource {
+    private ObjectConverter objectConverter;
+    private List<Class<? extends HippoBean>> annotatedClasses;
+    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
+
 
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
@@ -63,6 +74,28 @@ public class AbstractConfigResource {
         entity.setMessage(msg);
         entity.setSuccess(false);
         return Response.serverError().entity(entity).build();
+    }
+
+    protected List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
+        if (annotatedClasses == null) {
+            String annoClassPathResourcePath = "";
+
+            if (StringUtils.isBlank(annoClassPathResourcePath)) {
+                annoClassPathResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
+            }
+
+            annotatedClasses = AnnotatedContentBeanClassesScanner.scanAnnotatedContentBeanClasses(requestContext, annoClassPathResourcePath);
+        }
+        return annotatedClasses;
+    }
+
+
+    protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
+        if (objectConverter == null) {
+            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
+            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+        }
+        return objectConverter;
     }
 
 }
