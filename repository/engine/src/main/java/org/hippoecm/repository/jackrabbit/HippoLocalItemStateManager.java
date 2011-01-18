@@ -106,7 +106,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     private Map<NodeId,ItemState> virtualNodes = new HashMap<NodeId,ItemState>();
     Map<ItemId,Object> deletedExternals = new WeakHashMap<ItemId,Object>();
     private NodeId rootNodeId;
-    private boolean virtualLayerEnabled = false;
+    private final boolean virtualLayerEnabled;
     private int virtualLayerEnabledCount = 0;
     private boolean virtualLayerRefreshing = true;
     private boolean parameterizedView = false;
@@ -240,6 +240,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     protected void update(ChangeLog changeLog) throws ReferentialIntegrityException, StaleItemStateException,
                                                       ItemStateException {
         filteredChangeLog = new FilteredChangeLog(changeLog);
+
         virtualStates.clear();
         virtualNodes.clear();
         filteredChangeLog.invalidate();
@@ -517,6 +518,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
         void invalidate() {
             if (!virtualLayerRefreshing) {
+                for (ItemState state : upstream.modifiedStates()) {
+                    if ((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                        forceUpdate((NodeState)state);
+                    }
+                }
                 return;
             }
             Set<ItemId> changedParents = new HashSet<ItemId>();
