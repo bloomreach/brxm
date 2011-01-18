@@ -161,6 +161,7 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
         if (callback == undefined) {
           if (xhr.status == 200) {
             handleResponse();
+            self.store.save();
           }
         }
     },
@@ -364,11 +365,15 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
     this.on('render', function() {
       var self = this;
       Hippo.Translation.Queue.addListener(this.getEl().id, function() {
+          var update = (!self.saving && self.store.getModifiedRecords().length);
           for (var i = 0; i < self.dirty.length; i++) {
             self.dirty[i].markDirty();
+            update = true;
           }
-          self.dirty = [];
-          self.store.save();
+          if (update) {
+            self.dirty = [];
+            self.store.save();
+          }
       });
     }, this);
   },

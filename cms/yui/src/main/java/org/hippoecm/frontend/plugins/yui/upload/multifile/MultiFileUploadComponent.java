@@ -23,7 +23,11 @@ import org.apache.wicket.markup.html.form.upload.MultiFileUploadField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.IMultipartWebRequest;
+import org.apache.wicket.util.convert.ConversionException;
+import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -43,12 +47,28 @@ public class MultiFileUploadComponent extends Panel {
         Form form = new Form("uploadform");
         add(form);
         form.add(uploadField = new MultiFileUploadField("input", new Model(new LinkedList<FileUpload>()), max) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void renderHead(IHeaderResponse response) {
                 super.renderHead(response);
 
                 response.renderJavascriptReference(new ResourceReference(MultiFileUploadComponent.class,
                         MULTI_FILE_UPLOAD_CUSTOM_JS));
+            }
+
+            @Override
+            protected Collection<FileUpload> convertValue(String[] value) throws ConversionException {
+                Collection<FileUpload> uploads = null;
+                final String[] filenames = getInputAsArray();
+                if (filenames != null) {
+                    final IMultipartWebRequest request = (IMultipartWebRequest) getRequest();
+                    uploads = new ArrayList<FileUpload>(filenames.length);
+                    for (String filename : filenames) {
+                        uploads.add(new FileUpload(new MagicMimeTypeFileItem(request.getFile(filename))));
+                    }
+                }
+                return uploads;
             }
         });
     }
