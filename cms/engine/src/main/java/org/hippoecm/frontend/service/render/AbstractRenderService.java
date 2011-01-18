@@ -419,7 +419,9 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
             m.update(wicketServiceId.getBytes(), 0, wicketServiceId.length());
-            return new BigInteger(1, m.digest()).toString(16);
+            // use 'id' prefix to be compliant with w3c identifier specification
+            return "id" + new BigInteger(1, m.digest()).toString(16);
+
         } catch (NoSuchAlgorithmException ex) {
             throw new RuntimeException(ex);
         }
