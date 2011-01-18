@@ -98,7 +98,7 @@ public class SiteResource extends AbstractConfigResource {
         try {
             WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
                     getObjectConverter(requestContext));
-            workflowPersistenceManager.create(canonicalContentPath + "/" + params.getFirst("path"), params.getFirst("docType"), params.getFirst("name"), true);
+            workflowPersistenceManager.create(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
 
         } catch (RepositoryException e) {
             log.error("Exception happened while trying to create the document " + e, e);
