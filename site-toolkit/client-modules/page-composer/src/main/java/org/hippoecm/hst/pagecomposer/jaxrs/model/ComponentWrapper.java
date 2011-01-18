@@ -88,6 +88,9 @@ public class ComponentWrapper {
                         } else {
                             prop.setLabel(propAnnotation.displayName());
                         }
+                        prop.setDocLocation(propAnnotation.docLocation());
+                        prop.setAllowCreation(propAnnotation.allowCreation());
+
                         if (hstParameters != null && hstParameters.get(propAnnotation.name()) != null) {
                             prop.setValue(hstParameters.get(propAnnotation.name()));
                         }
@@ -125,6 +128,8 @@ public class ComponentWrapper {
         private String description;
         private boolean required;
         private String docType;
+        private boolean allowCreation;
+        private String docLocation;
 
         Property() {
             name = "";
@@ -135,14 +140,8 @@ public class ComponentWrapper {
             description = "";
             required = false;
             docType = "";
-        }
-
-        Property(String name, String value, String type, String label, String defaultValue, String description) {
-            this.name = name;
-            this.value = value;
-            this.type = type;
-            this.label = label;
-            this.defaultValue = defaultValue;
+            allowCreation = false;
+            docLocation = "";
         }
 
         public String getName() {
@@ -220,6 +219,23 @@ public class ComponentWrapper {
         public String getDocType() {
             return this.docType;
         }
+
+        public boolean isAllowCreation() {
+            return allowCreation;
+        }
+
+        public void setAllowCreation(boolean allowCreation) {
+            this.allowCreation = allowCreation;
+        }
+
+        public String getDocLocation() {
+            return docLocation;
+        }
+
+        public void setDocLocation(String docLocation) {
+            this.docLocation = docLocation;
+        }
+
     }
 
     /**

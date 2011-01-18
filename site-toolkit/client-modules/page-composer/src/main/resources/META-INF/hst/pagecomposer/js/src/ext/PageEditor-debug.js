@@ -18,7 +18,7 @@ Ext.namespace('Hippo.App');
 
 Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
-    loadMessage: 'Initializing application',
+    loadMessage: 'Initializing Template Composer ... ',
 
     init : function() {
         if (this.debug) {

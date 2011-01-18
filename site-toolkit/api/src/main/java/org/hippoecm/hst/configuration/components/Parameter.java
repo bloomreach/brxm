@@ -39,6 +39,20 @@ public @interface Parameter {
 
     String typeHint() default "";
 
+    /**
+     * Specifies the node type of the document to be searched for.
+     * @return the document type String
+     */
     String docType() default ""; //Document type is only used when a DOCUMENT type is used.
+
+    /**
+     * @return  specifies whether to show a link to create a new document of the type as specified by the docType
+     */
+    boolean allowCreation() default false;
+
+    /**
+     * @return the relative path of the folder where the document is created
+     */
+    String docLocation() default "";
     
 }
