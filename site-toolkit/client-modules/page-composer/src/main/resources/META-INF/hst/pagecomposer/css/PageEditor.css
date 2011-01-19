@@ -156,3 +156,20 @@ button.title-button {
     background-image: url(hippologo.png) !important;
     width: 150px;
 }
+
+/*Create Document link Under the Document Selector Combobox*/
+.create-document-link {
+     text-align: right;
+     font-size: 1.2em;
+}
+
+.create-document-link a, a:visited {
+    text-decoration: none;
+    color:#39f;
+}
+
+.create-document-link a:hover {
+    color: white;
+    background-color:#39f; 
+}
+

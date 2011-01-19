@@ -69,36 +69,70 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     },
 
     createDocument: function (ev, target, options) {
-	    options.docName = "Simple Document";
-	    var createUrl =  '_rp/' + this.siteId + './create';
-	    var createDocumentWindow = new Ext.Window({
-		    title: "Create a document",
-		    height: 200,
-		    width: 300,
-		    modal: true,
-		    buttons:[
-	                {
-			    text: 'Create Document',
-			    handler:function (){
-				createDocumentWindow.hide();
-				Ext.Msg.wait("Creating Document ... ");
-				Ext.Ajax.request({
-				   url: createUrl,
-				    params: options,
-				    success: function () {
-					     var iframe = Ext.getCmp('Iframe');
-					     iframe.setSrc(iframe.getFrameDocument().location.href);
-					     Ext.Msg.hide();
-				       }
-				});
+	  
+        var createUrl = '_rp/' + this.siteId + './create';
+        var createDocumentWindow = new Ext.Window({
+            title: "Create a new document",
+            height: 150,
+            width: 400,
+            modal: true,
+            items:[{
+                    xtype: 'form',
+                    height: 150,
+                    padding: 10,
+                    labelWidth: 120,
+		    id: 'createDocumentForm',
+                    defaults:{
+                        labelSeparator: '',
+                        anchor: '100%'
+                    },
+                    items:[
+                        {
+                            xtype: 'textfield',
+                            fieldLabel:'Document Name',
+                            allowBlank: false
+                        },
+                        {
+			    xtype: 'textfield',
+                            disabled: true,
+                            fieldLabel:'Document Location',
+                            value: options.docLocation
+                        }
+                    ]
+                }],
+            layout: 'fit',
+            buttons:[
+                {
+                    text: 'Create Document',
+                    handler:function () {
+			var createDocForm = Ext.getCmp('createDocumentForm').getForm()
+			createDocForm.submit();
+			options.docName = createDocForm.items.get(0).getValue();
+		
+			if(options.docName == '') return;
+		        createDocumentWindow.hide();
+
+                        Ext.Msg.wait("Creating Document ... ");
+                        Ext.Ajax.request({
+                            url: createUrl,
+                            params: options,
+                            success: function () {
+                                Ext.Msg.hide();
+				Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
+				Ext.Msg.wait("Refreshing page ... ");
+                                var iframe = Ext.getCmp('Iframe');
+                                iframe.setSrc(iframe.getFrameDocument().location.href);
 			    }
-			},{
-			    text: 'Cancel',
-			    handler: function(){ createDocumentWindow.hide();}
-			}]
-		});
-	    createDocumentWindow.show();
-	    
+                        });
+			
+                    }
+                }]
+        });
+	createDocumentWindow.addButton({text: 'Cancel'},function(){this.hide();},createDocumentWindow);
+	
+
+        createDocumentWindow.show();
+
     },
 
     loadProperties:function(store, records, options) {
@@ -124,7 +158,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                         fields:['path']
                     });
 
-                    this.add({
+                    var field = this.add({
                         fieldLabel: property.get('label'),
                         xtype: property.get('type'),
                         allowBlank: !property.get('required'),
@@ -139,11 +173,21 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
 
                     if (property.get('allowCreation')) {
                         this.add({
-                            html: 'Or <a href="#" id="combo" >Create Document</a>'
+                            bodyCfg: {
+                                tag: 'div',
+                                cls: 'create-document-link',
+                                html: 'Or <a href="#" id="combo' + i  +'" >&nbsp;Create Document&nbsp;</a>&nbsp;'
+                            },
+                            border: false
+
                         });
 
                         this.doLayout(false, true); //Layout the form otherwise we can't use the link in the panel.
-                        Ext.get("combo").on("click", this.createDocument, this, {docType: property.get('docType'), docLocation: property.get('docLocation')});
+                        Ext.get("combo" + i).on("click", this.createDocument, this, 
+					    {      docType: property.get('docType'), 
+						    docLocation: property.get('docLocation'),
+						    comboId: field.id
+					     });
                     }
 
                 } else {
@@ -164,8 +208,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
 
         this.doLayout(false, true);
         this.getForm().clearInvalid();
-    }
-    ,
+    },
 
     loadException:function(proxy, type, actions, options, response) {
         console.dir(arguments);
