@@ -255,7 +255,15 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
             }
             try {
                 StringBuilder sb = new StringBuilder();
-                Reader responseReader = new InputStreamReader(connection.getInputStream());
+                String contentType = connection.getHeaderField("Content-Type");
+                String charset = "UTF-8";
+                for (String param : contentType.replace(" ", "").split(";")) {
+                    if (param.startsWith("charset=")) {
+                        charset = param.split("=", 2)[1];
+                        break;
+                    }
+                }
+                Reader responseReader = new InputStreamReader(connection.getInputStream(), charset);
                 char[] buffer = new char[1024];
                 int len;
                 do {
@@ -282,7 +290,7 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
                 } else {
                     JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("translations");
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        String translatedText = jsonArray.getJSONObject(i).getString("translated_text");
+                        String translatedText = jsonArray.getJSONObject(i).getString("translatedText");
                         if (log.isDebugEnabled()) {
                             log.debug("translated \"{}\" to \"{}\"", texts.get(i), translatedText);
                         }
