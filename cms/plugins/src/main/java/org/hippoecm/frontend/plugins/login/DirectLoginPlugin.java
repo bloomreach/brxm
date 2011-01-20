@@ -70,7 +70,6 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
     private static final String LOCALE_COOKIE = "loc";
 
     protected final DropDownChoice locale;
-    private List<String> locales = Arrays.asList(new String[] { "nl", "en" });
     public String selectedLocale;
     private Label userLabel;
     private Map<String,String[]> parameters;
@@ -84,6 +83,12 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
         }
 
         parameters = RequestCycle.get().getRequest().getParameterMap();
+
+        String[] localeArray = getPluginConfig().getStringArray("locales");
+        if (localeArray == null) {
+            localeArray = LoginPlugin.LOCALES;
+        }
+        List<String> locales = Arrays.asList(localeArray);
 
         // by default, use the user's browser settings for the locale
         selectedLocale = "en";

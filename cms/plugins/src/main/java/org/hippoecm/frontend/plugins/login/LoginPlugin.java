@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.login;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,6 +65,9 @@ public class LoginPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
 
+    // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
+    public final static String[] LOCALES = { "en", "fr", "nl", "it" };
+
     private static final long serialVersionUID = 1L;
 
     private static final String LOCALE_COOKIE = "loc";
@@ -92,9 +96,6 @@ public class LoginPlugin extends RenderPlugin {
 
         protected final DropDownChoice locale;
 
-        // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
-        private List<String> locales = Arrays.asList(new String[] { "en", "fr", "nl", "it" });
-
         public String selectedLocale;
         protected final RequiredTextField usernameTextField;
         protected final PasswordTextField passwordTextField;
@@ -105,6 +106,12 @@ public class LoginPlugin extends RenderPlugin {
             super(id);
 
             parameters = RequestCycle.get().getRequest().getParameterMap();
+
+            String[] localeArray = getPluginConfig().getStringArray("locales");
+            if (localeArray == null) {
+                localeArray = LOCALES;
+            }
+            List<String> locales = Arrays.asList(localeArray);
 
             // by default, use the user's browser settings for the locale
             selectedLocale = "en";

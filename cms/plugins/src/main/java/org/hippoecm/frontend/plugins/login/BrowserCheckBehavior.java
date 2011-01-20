@@ -220,7 +220,7 @@ public class BrowserCheckBehavior extends AbstractBehavior {
         }
 
         public boolean isChrome() {
-            return info.getProperties().isBrowserSafari() && info.getUserAgent().indexOf(CHROME) > -1;
+            return info.getProperties().isBrowserChrome();
         }
 
         public boolean isFirefox() {
