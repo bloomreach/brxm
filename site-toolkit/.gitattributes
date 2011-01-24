@@ -1494,6 +1494,7 @@ components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/ImageSetC
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/util/AnnotatedContentBeanClassesScanner.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/util/NodePropertyUtils.java -text
 components/jaxrs/src/main/resources/META-INF/cxf/org.apache.cxf.Logger -text
+components/jaxrs/src/main/resources/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/beans/GeneralPage.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/beans/TextPage.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/content/TextPageRepresentation.java -text
@@ -1705,6 +1706,7 @@ demosuite/site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/BaseDocumentCo
 demosuite/site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/NewsDocumentContentResource.java -text
 demosuite/site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/ProductContentResource.java -text
 demosuite/site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/TextDocumentContentResource.java -text
+demosuite/site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/TopProductsResource.java -text
 demosuite/site/src/main/java/org/hippoecm/hst/demo/linking/DemositeResourceContainer.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/linking/ExampleHstLinkProcessor.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/servlet/DateTimeServlet.java -text

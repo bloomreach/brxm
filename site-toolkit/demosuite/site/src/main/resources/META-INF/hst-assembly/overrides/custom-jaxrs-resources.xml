@@ -25,9 +25,23 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-jackson.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-content-pipeline.xml" />
   
-  <!-- Custom JAX-RS REST Resource Providers to be overriden. -->
+  <!-- Custom JAX-RS REST Plain Resource Providers to be overriden. -->
+  <bean id="customRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.TopProductsResource" />
+          </constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- Custom JAX-RS REST Content Resource Providers to be overriden. -->
   <bean id="customRestContentResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
