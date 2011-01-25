@@ -30,6 +30,11 @@ jQuery.noConflict();
 
             var manager = new Hippo.PageComposer.UI.Manager();
 
+           onhostmessage(function(msg){
+             manager.getOverlay().toggle();
+             return false;
+           }, this, false, 'toggle');
+
             //register to listen to iframe-messages
             onhostmessage(function(msg) {
                 manager.select(msg.data.element);
@@ -86,7 +91,7 @@ jQuery.noConflict();
             return this.debug;
         },
 
-        die: function(msg) {
+       die: function(msg) {
             if(Hippo.PageComposer.Main.isDebug()) {//global reference for scope simplicity
                 console.error(msg);
             } else {

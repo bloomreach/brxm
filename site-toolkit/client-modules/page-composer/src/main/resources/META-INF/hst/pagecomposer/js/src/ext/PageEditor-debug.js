@@ -73,6 +73,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                             text: 'Template Composer',
                             iconCls: 'title-button',
                             id: 'pageComposerButton',
+                            enableToggle: true,
+                            pressed: true,
                             width: 150,
                             listeners: {
                                 'click': {
@@ -81,6 +83,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 }
                             }
                         },
+                        
                         '->',
                         {
                             text: 'Logout',
@@ -138,15 +141,19 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     toggleConfigWindow: function () {
+        var iframe = Ext.getCmp('Iframe');
+        iframe.sendMessage({}, 'toggle');
         if (!this.mainWindow.isVisible()) {
             this.mainWindow.show('pageComposerButton');
+          
+          
         } else {
             this.mainWindow.hide('pageComposerButton');
         }
     },
 
-    refreshIframe : function() {
-        Ext.Msg.wait('Reloading page ...');
+   refreshIframe : function() {
+	Ext.Msg.wait('Reloading page ...');
         var iframe = Ext.getCmp('Iframe');
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
