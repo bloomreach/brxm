@@ -28,7 +28,7 @@ jQuery.noConflict();
 
             this.parent = null;
 
-            this.noHover = false;
+            this.noHover = true;
 
             //selector shortcuts
             this.sel = {
@@ -648,10 +648,10 @@ jQuery.noConflict();
         },
 
         onRender : function() {
-            var background = $('<div/>').addClass('hst-overlay-background');
-            this.overlay.append(background);
+            //var background = $('<div/>').addClass('hst-overlay-background');
+            //this.overlay.append(background);
 
-            this.menu = $('<div/>').addClass('hst-overlay-menu').appendTo(document.body);
+            this.menu = $('<div/>').addClass('hst-overlay-menu'); //.appendTo(document.body);
 
             var data = {element: this.element};
             var deleteButton = $('<div/>').addClass('hst-overlay-menu-button').html('X');
@@ -666,7 +666,9 @@ jQuery.noConflict();
             this.nameLabel = nameLabel;
 
             this.renderLabelContents();
-        },
+          
+            this.overlay.append(this.menu);
+         },
 
         sync: function() {
             this._super();
