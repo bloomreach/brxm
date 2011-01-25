@@ -496,7 +496,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     removeByRecord: function(record) {
         var store = this.stores.pageModel;
-        Ext.Msg.confirm('Confirm delete', 'Are your sure you want to delete ' + record.get('name') + '?', function(btn, text) {
+        Ext.Msg.confirm('Confirm delete', 'Are you sure you want to delete ' + record.get('name') + '?', function(btn, text) {
             if (btn == 'yes') {
                 store.remove(record);
             }
