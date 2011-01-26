@@ -292,18 +292,6 @@
       <layout>default</layout>
     </repository>
     <repository>
-      <id>hippo.legacy</id>
-      <name>Hippo Maven 1 repository.</name>
-      <url>http://repository.hippocms.org/maven/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>legacy</layout>
-    </repository>
-    <repository>
       <id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
       <snapshots>
@@ -312,18 +300,6 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-    </repository>
-    <repository>
-      <id>jpox.legacy</id>
-      <name>JPOX Maven 1 repository.</name>
-      <url>http://www.jpox.org/downloads/maven/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>legacy</layout>
     </repository>
     <repository>
       <id>glassfish</id>
