@@ -5,10 +5,11 @@
     <groupId>org.onehippo.cms7</groupId>
     <version>2.19.00-SNAPSHOT</version>
   </parent>
+  
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-export</artifactId>
-  <name>Hippo Repository Export</name>
-  <description>Configuration export daemon module</description>
+  <name>Repository Export</name>
+  <description>Repository configuration export daemon module</description>
   
   <dependencies>
     <dependency>
