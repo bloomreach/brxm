@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>2</version>
+    <version>3-SNAPSHOT</version>
   </parent>
   
   <artifactId>hippo-cms7-release</artifactId>
@@ -785,15 +785,6 @@
         <groupId>org.onehippo.forge</groupId>
         <artifactId>tcmp-component</artifactId>
         <version>${forge.tcmp.version}</version>
-      </dependency>
-
-      <!-- External (non-Hippo) dependencies which are needed on a specific (minimum) version -->
-      
-      <!-- temporary fix for HREPTWO-4861 -->
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.4</version>
       </dependency>
 
     </dependencies>
