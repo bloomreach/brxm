@@ -60,6 +60,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-export</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
       <scope>test</scope>
@@ -72,6 +78,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -176,6 +187,10 @@
             <property>
               <name>history.points</name>
               <value>${history.points}</value>
+            </property>
+            <property>
+              <name>rep.home</name>
+              <value>${project.build.directory}</value>
             </property>
           </systemProperties>
           <excludes>
