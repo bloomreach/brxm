@@ -37,13 +37,13 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.18.01-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.18.01-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-defaultcontent.version>2.18.00</hippo.addon-defaultcontent.version>
-    <hippo.addon-faceteddate.version>2.18.00</hippo.addon-faceteddate.version>
-    <hippo.addon-publication-workflow.version>2.18.01-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.repository.version>2.18.01</hippo.repository.version>
+    <hippo.cms.version>2.18.01</hippo.cms.version>
+    <hippo.addon-defaultcontent.version>2.18.01</hippo.addon-defaultcontent.version>
+    <hippo.addon-faceteddate.version>2.18.01</hippo.addon-faceteddate.version>
+    <hippo.addon-publication-workflow.version>2.18.01</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.05.00</hippo.addon-hst-configuration-editor.version>
-    <hippo.packages.version>2.18.01-SNAPSHOT</hippo.packages.version>
+    <hippo.packages.version>2.18.01</hippo.packages.version>
     <hippo.hst.version>2.20.00</hippo.hst.version>
     
     <forge.dashboard-document-wizard.version>1.02.00</forge.dashboard-document-wizard.version>
@@ -65,7 +65,7 @@
     <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
+      <url>http://maven.onehippo.com/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
