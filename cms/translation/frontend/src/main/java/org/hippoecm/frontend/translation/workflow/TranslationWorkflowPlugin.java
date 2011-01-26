@@ -429,7 +429,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                     ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
                     if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
                         richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
-                    } else if (fieldType.getName().equals("Text") || fieldType.getName().equals("Label") || fieldType.getName().equals("Html")) {
+                    } else if (fieldType.getName().equals("Text") || fieldType.getName().equals("Label")) {
                         plainTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
                     } else if (fieldType.getName().equals("Html")) {
                         richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
