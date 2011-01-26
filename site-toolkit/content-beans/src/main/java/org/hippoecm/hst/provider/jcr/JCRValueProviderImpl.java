@@ -216,7 +216,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         try {
             boolean bool =  jcrNode.hasProperty(propertyName);
             if(bool) {
-                this.propertyMap.addAvailableProperty(propertyName);
+                Property prop = jcrNode.getProperty(propertyName);
+                PropertyDefinition propDef = prop.getDefinition();
+                loadProperty(prop, propDef, propertyName);
             } else {
                 this.propertyMap.addUnAvailableProperty(propertyName);
             }
