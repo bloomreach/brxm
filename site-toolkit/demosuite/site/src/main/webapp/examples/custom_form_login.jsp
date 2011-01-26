@@ -73,7 +73,7 @@ pageContext.setAttribute("destination", response.encodeURL(destination));
           </div>
         </form>
         <div class="hippo-login-panel-copyright">
-          &copy; 1999-2010 Hippo B.V.
+          &copy; 1999-2011 Hippo B.V.
         </div>
       </div>
     </div>
