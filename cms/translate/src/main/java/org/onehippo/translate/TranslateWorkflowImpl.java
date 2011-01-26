@@ -214,7 +214,7 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
             StringBuilder urlSpec;
             if (!useGoogleSecond) {
                 urlSpec = new StringBuilder(googleTranslateURL1);
-                parameters.append("v=1.0&format=text");
+                parameters.append("v=1.0&format=html");
                 if (!useAlwaysDetect && sourceLanguage != null && !sourceLanguage.trim().equals("")) {
                     parameters.append("&langpair=").append(sourceLanguage).append("%7C").append(targetLanguage);
                 } else {
@@ -222,12 +222,11 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
                 }
             } else {
                 urlSpec = new StringBuilder(googleTranslateURL2);
-                parameters.append("prettyprint=false&format=text&key=").append(googleKey);
+                parameters.append("prettyprint=false&format=html&key=").append(googleKey);
                 if (sourceLanguage != null && !sourceLanguage.trim().equals("")) {
                     parameters.append("&source=").append(sourceLanguage);
                 }
                 parameters.append("&target=").append(targetLanguage);
-                parameters.append("&format=html");
             }
             for (String text : texts) {
                 parameters.append("&q=").append(URLEncoder.encode(text, "UTF-8"));
@@ -277,14 +276,24 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
                 }
                 JSONObject jsonObject = new JSONObject(sb.toString());
                 if (!useGoogleSecond) {
-                    JSONArray jsonArray = jsonObject.getJSONArray("responseData");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        if (jsonArray.getJSONObject(i).getString("responseStatus").equals("200")) {
-                            String translatedText = jsonArray.getJSONObject(i).getJSONObject("responseData").getString("translatedText");
-                            if (log.isDebugEnabled()) {
-                                log.debug("translated \"{}\" to \"{}\"", texts.get(i), translatedText);
+                    JSONArray jsonArray = jsonObject.optJSONArray("responseData");
+                    if (jsonArray != null) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            if (jsonArray.getJSONObject(i).getString("responseStatus").equals("200")) {
+                                String translatedText = jsonArray.getJSONObject(i).getJSONObject("responseData").getString("translatedText");
+                                if (log.isDebugEnabled()) {
+                                    log.debug("translated \"{}\" to \"{}\"", texts.get(i), translatedText);
+                                }
+                                texts.set(i, translatedText);
                             }
-                            texts.set(i, translatedText);
+                        }
+                    } else if (jsonObject.optJSONObject("responseData") != null) {
+                        if (jsonObject.getString("responseStatus").equals("200")) {
+                            String translatedText = jsonObject.getJSONObject("responseData").getString("translatedText");
+                            if (log.isDebugEnabled()) {
+                                log.debug("translated \"{}\" to \"{}\"", texts.get(0), translatedText);
+                            }
+                            texts.set(0, translatedText);
                         }
                     }
                 } else {

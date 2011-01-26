@@ -30,6 +30,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -55,6 +56,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.IconSize;
@@ -418,7 +420,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             return false;
         }
 
-        private void collectFields(javax.jcr.Session session, String relPath, String nodeType, Set<String> fields) throws StoreException {
+        private void collectFields(javax.jcr.Session session, String relPath, String nodeType, Set<String> plainTextFields, Set<String> richTextFields) throws StoreException {
             try {
                 JcrTypeStore jcrTypeStore = new JcrTypeStore();
                 ITypeDescriptor type = jcrTypeStore.load(nodeType);
@@ -426,11 +428,13 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                     IFieldDescriptor fieldDescriptor = field.getValue();
                     ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
                     if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
-                        fields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
+                        richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
                     } else if (fieldType.getName().equals("Text") || fieldType.getName().equals("Label") || fieldType.getName().equals("Html")) {
-                        fields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
+                        plainTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
+                    } else if (fieldType.getName().equals("Html")) {
+                        richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
                     } else if (fieldType.isNode()) {
-                        collectFields(session, (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(), fieldType.getType(), fields);
+                        collectFields(session, (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(), fieldType.getType(), plainTextFields, richTextFields);
                     }
                 }
             } catch(StoreException ex) {
@@ -462,9 +466,31 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow translateWorkflow = manager.getWorkflow("translate", translation);
                 if (translateWorkflow instanceof TranslateWorkflow) {
-                    Set<String> fields = new TreeSet<String>();
-                    collectFields(session, null, session.getNodeByIdentifier(translation.getIdentity()).getPrimaryNodeType().getName(), fields);
-                    ((TranslateWorkflow)translateWorkflow).translate(language, fields);
+                    Set<String> plainTextFields = new TreeSet<String>();
+                    Set<String> richTextFields = new TreeSet<String>();
+                    Set<String> allTextFields = new TreeSet<String>();
+                    collectFields(session, null, session.getNodeByIdentifier(translation.getIdentity()).getPrimaryNodeType().getName(), plainTextFields, richTextFields);
+                    allTextFields.addAll(plainTextFields);
+                    allTextFields.addAll(richTextFields);
+                    ((TranslateWorkflow)translateWorkflow).translate(language, allTextFields);
+                    try {
+                        // FIXME: the validation or automatic correction of content ought to be a repository/workflow action.  But the configration
+                        // needed for htmlcleaner isn't available cleanly outside of the cms.  Additionally the infrastructure for repository-side
+                        // validation has been scoped out or abandoned.
+                        IHtmlCleanerService cmsSpecificCleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(), IHtmlCleanerService.class);
+                        if (cmsSpecificCleaner != null && false == true) {
+                            Node node = session.getNodeByIdentifier(translation.getIdentity());
+                            node.refresh(false);
+                            for (String field : richTextFields) {
+                                Property property = node.getProperty(field);
+                                property.setValue(cmsSpecificCleaner.clean(property.getString()));
+                            }
+                            node.save();
+                        }
+                    } catch (Exception ex) {
+                        // we're skipping any exception here deliberately, because the htmlcleaner throws
+                        // undeclared exceptions and we do not want any feedback on this.
+                    }
                 }
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translation);
                 if (name != null && !url.equals(name)) {
