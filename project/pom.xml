@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>4-SNAPSHOT</version>
+  <version>3-SNAPSHOT</version>
 
   <name>Hippo CMS7 Project POM</name>
   <description>Hippo CMS7 Project POM</description>
@@ -68,12 +68,16 @@
   <!-- Where to publish the project data -->
   <distributionManagement>
     <repository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
+      <name>Hippo Maven 2 Repository</name>
+      <id>hippo-maven2</id>
+      <url>https://maven.onehippo.com/content/repositories/releases/</url>
+      <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
-      <id>repository.hippocms.org</id>
-      <url>ftp://repository.hippocms.org/maven2</url>
+      <id>hippo-maven2-snapshots</id>
+      <name>Hippo Maven 2 Snapshots Repository</name>
+      <url>https://maven.onehippo.com/content/repositories/snapshots/</url>
+      <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
 
@@ -281,7 +285,7 @@
   <repositories>
     <repository>
       <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
+      <name>Hippo Maven 2</name>
       <url>http://maven.onehippo.com/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
@@ -289,7 +293,6 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-      <layout>default</layout>
     </repository>
     <repository>
       <id>codehaus</id>
