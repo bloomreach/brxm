@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 unico.
+ *  Copyright 2011 Hippo (www.hippo.nl).
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,9 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
-
 package org.hippoecm.repository.export;
 
 import java.io.File;
@@ -35,6 +33,7 @@ import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
+import javax.jcr.observation.ObservationManager;
 
 import org.dom4j.DocumentException;
 import org.hippoecm.repository.ext.DaemonModule;
@@ -110,9 +109,11 @@ public class ExportModule implements DaemonModule {
 
         // install event listener
         ExportEventListener listener = new ExportEventListener(m_project, session);
-        int eventTypes = Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED;// | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
+        int eventTypes = Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED
+        		| Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
         try {
-            session.getWorkspace().getObservationManager().addEventListener(listener, eventTypes, "/", true, null, null, false);
+        	ObservationManager manager = session.getWorkspace().getObservationManager();
+            manager.addEventListener(listener, eventTypes, "/", true, null, null, false);
         } catch (RepositoryException ex) {
             log.error("Failed to set up export. Automatic export will not be available.", ex);
         }
@@ -230,6 +231,7 @@ public class ExportModule implements DaemonModule {
                     	else {
                     		log.debug("No instruction to update. This change will be lost.");
                     	}
+                    	break;
                     }
                     case Event.PROPERTY_ADDED : {
                     	log.debug("Property added on " + path);
@@ -237,6 +239,7 @@ public class ExportModule implements DaemonModule {
                         	log.debug("Found instruction " + instruction);
                         	instruction.propertyAdded(path);
                         }
+                        break;
                     }
                     case Event.PROPERTY_CHANGED : {
                     	log.debug("Property changed on " + path);
@@ -244,6 +247,7 @@ public class ExportModule implements DaemonModule {
                         	log.debug("Found instruction " + instruction);
                         	instruction.propertyChanged(path);
                         }
+                        break;
                     }
                     case Event.PROPERTY_REMOVED : {
                     	log.debug("Property removed on " + path);
@@ -251,6 +255,7 @@ public class ExportModule implements DaemonModule {
                         	log.debug("Found instruction " + instruction);
                         	instruction.propertyRemoved(path);
                         }
+                        break;
                     }
                     }
                 } catch (RepositoryException ex) {
