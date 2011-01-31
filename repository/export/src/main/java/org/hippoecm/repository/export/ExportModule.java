@@ -28,6 +28,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
@@ -266,7 +267,8 @@ public class ExportModule implements DaemonModule {
             // now check if the namespace registry has changed
             try {
             	Set<String> uris = new HashSet<String>(m_uris.size()+2);
-				Collections.addAll(uris, m_session.getWorkspace().getNamespaceRegistry().getURIs());
+            	NamespaceRegistry registry = m_session.getWorkspace().getNamespaceRegistry();
+				Collections.addAll(uris, registry.getURIs());
 				// Were any namespaces added?
 				for (String uri : uris) {
 					if (!m_uris.contains(uri)) {
@@ -277,7 +279,7 @@ public class ExportModule implements DaemonModule {
 							log.debug("Removing instruction " + instruction);
 							m_project.m_extension.removeInstruction(instruction);
 						}
-						instruction = m_project.m_extension.createNamespaceInstruction(uri);
+						instruction = m_project.m_extension.createNamespaceInstruction(uri, registry.getPrefix(uri));
                         log.debug("Adding instruction " + instruction);
                     	m_project.m_extension.addInstruction(instruction);
 						m_uris.add(uri);

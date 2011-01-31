@@ -21,13 +21,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -79,8 +80,7 @@ class Extension {
         } else {
             SAXReader reader = new SAXReader();
             m_document = reader.read(m_file);
-            Element root = m_document.getRootElement();
-            parseExtension(root);
+            parseExtension(m_document.getRootElement());
         }
     }
         
@@ -114,7 +114,7 @@ class Extension {
     		: findContentResourceInstruction(path);
     }
     
-    private ResourceInstruction findNodetypesInstruction(String path) {
+    private NodetypesResourceInstruction findNodetypesInstruction(String path) {
     	// Parse the path:
     	// path = /jcr:system/jcr:nodeTypes/example_1_1:doctype/jcr:propertyDefinition
 		// relPath = example_1_1:doctype/jcr:propertyDefinition
@@ -129,18 +129,18 @@ class Extension {
 		for (Instruction instruction : m_instructions) {
             if (instruction instanceof NodetypesResourceInstruction) {
                 if (((NodetypesResourceInstruction) instruction).matchesPrefix(prefix)) {
-                    return (ResourceInstruction) instruction;
+                    return (NodetypesResourceInstruction) instruction;
                 }
             }
         }
 		return null;
     }
     
-    private ResourceInstruction findContentResourceInstruction(String path) {
+    private ContentResourceInstruction findContentResourceInstruction(String path) {
         for (Instruction instruction : m_instructions) {
-            if (instruction instanceof ResourceInstruction) {
-                if (path.startsWith(((ResourceInstruction) instruction).m_context)) {
-                    return (ResourceInstruction) instruction;
+            if (instruction instanceof ContentResourceInstruction) {
+                if (((ContentResourceInstruction) instruction).matchesPath(path)) {
+                    return (ContentResourceInstruction) instruction;
                 }
             }
         }
@@ -163,26 +163,22 @@ class Extension {
     	return cnd ? createNodetypesResourceInstruction(path) : createContentResourceInstruction(path);
     }
     
-    NamespaceInstruction createNamespaceInstruction(String namespace) throws IOException {
-    	// if namespace = http://example.org/example/1.0
-    	// then name = example-org-example-1.0
-    	URL url = new URL(namespace);
-    	String path = url.getPath();
-    	String host = url.getHost();
-    	String name = host.replace('.','-') + path.replace('/', '-');
-    	return new NamespaceInstruction(name, 3000.0, namespace);
+    NamespaceInstruction createNamespaceInstruction(String uri, String prefix) throws IOException {
+    	int indexOfUnderscore = prefix.indexOf('_');
+    	prefix = (indexOfUnderscore == -1) ? prefix : prefix.substring(0, indexOfUnderscore);
+    	return new NamespaceInstruction(prefix, 3000.0, uri);
     }
 
     private ContentResourceInstruction createContentResourceInstruction(String path) {
     	// path = /hippo:namespaces/example
-    	// name = example
+    	// name = example-content
     	// root = /hippo:namespaces
         int lastIndexOfPathSeparator = path.lastIndexOf('/');
-        String name = path.substring(lastIndexOfPathSeparator+1);
+        String name = path.substring(lastIndexOfPathSeparator+1) + "-content";
         String root = path.substring(0, lastIndexOfPathSeparator);
         if (root.equals("")) root = "/";
         File file = new File(m_file.getParent(), name.replace(':', '$') + ".xml");
-        return new ContentResourceInstruction(name, 3000.3, file, root);
+        return new ContentResourceInstruction(name, 3000.3, file, root, path, true);
     }
     
     private NodetypesResourceInstruction createNodetypesResourceInstruction(String path) {
@@ -301,7 +297,21 @@ class Extension {
         }
         if (contentresource != null) {
             File file = new File(m_file.getParent(), contentresource);
-            instruction = new ContentResourceInstruction(name, sequence, file, contentroot);
+            // context must be read from file, it is the contentroot plus
+            // name of the root node in the content xml file
+            SAXReader reader = new SAXReader();
+            Document document;
+			try {
+				document = reader.read(file);
+	            String context = contentroot + "/" + document.getRootElement().attributeValue(NAME_QNAME);
+	            // if contentresource file uses delta xml (h:merge) semantics, then disable export
+	            // we don't deal with that (yet)
+	            String mergeValue = document.getRootElement().attributeValue("merge");
+	            boolean enabled = !(mergeValue != null && !mergeValue.equals(""));
+	            instruction = new ContentResourceInstruction(name, sequence, file, contentroot, context, enabled);
+			} catch (DocumentException e) {
+				log.error("Failed to read contentresource file as xml. Can't create instruction.", e);
+			}
         }
         else if (nodetypesresource != null) {
         	File file = new File(m_file.getParent(), nodetypesresource);
@@ -364,7 +374,6 @@ class Extension {
     static abstract class ResourceInstruction extends Instruction {
     	
     	final File m_file;
-        String m_context;
         boolean m_changed = false;
     	
     	ResourceInstruction(String name, Double sequence, File file) {
@@ -388,7 +397,7 @@ class Extension {
         
         boolean nodeRemoved(String path) {
         	m_changed = true;
-        	return m_context.equals(path);
+        	return false;
         }
         
         void propertyAdded(String path) {
@@ -408,21 +417,25 @@ class Extension {
     static class ContentResourceInstruction extends ResourceInstruction {
         
         private final String m_root;
+        private final String m_context;
+        private final boolean m_enabled;
         
-        ContentResourceInstruction(String name, Double sequence, File file, String root) {
+        ContentResourceInstruction(String name, Double sequence, File file, String root, String context, boolean enabled) {
             super(name, sequence, file);
             m_root = root;
-            m_context = m_root.equals("/") ? m_root + m_name : m_root + "/" + m_name;
+            m_context = context;
             if (!m_file.exists()) {
             	m_changed = true;
             }
-            else {
-            	parseContent();
-            }
+            m_enabled = enabled;
         }
         
         @Override
         synchronized void export(Session session) {
+        	if (!m_enabled) {
+        		log.info("Export in this context is disabled due to merge semantics. Changes will be lost.");
+        		return;
+        	}
         	log.debug("Exporting " + m_file.getName());
         	try {
             	if (!m_file.exists()) m_file.createNewFile();
@@ -437,12 +450,17 @@ class Extension {
                 }
         	}
         	catch (IOException e) {
-        		log.error("Exporting " + m_file.getName() + " failed.");
+        		log.error("Exporting " + m_file.getName() + " failed.", e);
         	}
         	catch (RepositoryException e) {
-        		log.error("Exporting " + m_file.getName() + " failed.");
+        		log.error("Exporting " + m_file.getName() + " failed.", e);
         	}
             m_changed = false;
+        }
+        
+        boolean nodeRemoved(String path) {
+        	m_changed = true;
+        	return path.equals(m_context);
         }
         
         @Override
@@ -475,53 +493,15 @@ class Extension {
             return element;
         }
         
+        boolean matchesPath(String path) {
+        	return path.startsWith(m_context);
+        }
+        
         @Override
         public String toString() {
         	return "ResourceContentInstruction[context=" + m_context + "]";
         }
         
-        private void parseContent() {}
-    }
-    
-    static class NamespaceInstruction extends Instruction {
-
-    	private final String m_namespace;
-    	private final String m_namespaceroot;
-    	
-    	NamespaceInstruction(String name, Double sequence, String namespace) {
-    		super(name, sequence);
-    		m_namespace = namespace;
-    		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
-    		m_namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
-    	}
-    	
-		@Override
-		Element createInstructionElement() {
-            Element element = createBaseInstructionElement();
-            // create element:
-            // <sv:property sv:name="hippo:namespace" sv:type="String">
-            //   <sv:value>{this.m_namespace}</sv:value>
-            // </sv:property>
-            Element namespaceProperty = DocumentFactory.getInstance().createElement(PROPERTY_QNAME);
-            namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, NAME_QNAME, "hippo:namespace"));
-            namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, TYPE_QNAME, "String"));
-            Element namespacePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-            namespacePropertyValue.setText(m_namespace);
-            namespaceProperty.add(namespacePropertyValue);
-            element.add(namespaceProperty);
-            return element;
-		}
-		
-		boolean matchesNamespace(String namespace) {
-			int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
-			String namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
-			return namespaceroot.equals(m_namespaceroot);
-		}
-    			
-		@Override
-		public String toString() {
-			return "NamespaceInstruction[namespace=" + m_namespace + "]"; 
-		}
     }
     
     static class NodetypesResourceInstruction extends ResourceInstruction {
@@ -533,7 +513,6 @@ class Extension {
     	NodetypesResourceInstruction(String name, Double sequence, File file, String namespace, String internalPrefix) {
     		super(name, sequence, file);
     		m_namespace = namespace;
-    		m_context = "/jcr:system/jcr:nodeTypes/" + m_name;
     		if (!m_file.exists()) {
     			m_changed = true;
     		}
@@ -549,11 +528,23 @@ class Extension {
 				if (!m_file.exists()) m_file.createNewFile();
 				Writer out = new FileWriter(m_file);
 				try {
-					String cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(),m_internalPrefix);
-					// HACK: we only get events for /jcr:system/jcr:nodeTypes/example_1_1 instead
-					// of for /jcr:system/jcr:nodeTypes/example
-					// here we fix that prefix
-					cnd = cnd.replaceAll(m_internalPrefix, m_prefix);
+					String cnd = null;
+					try {
+						log.debug("Trying to export cnd for internal prefix " + m_internalPrefix);
+						cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), m_internalPrefix);
+						// HACK: we only get events for /jcr:system/jcr:nodeTypes/example_1_1 instead
+						// of for /jcr:system/jcr:nodeTypes/example
+						// here we fix that prefix
+						cnd = cnd.replaceAll(m_internalPrefix, m_prefix);
+					} 
+					catch (NamespaceException e) {
+						log.debug("Failed. Now trying regular prefix " + m_prefix);
+						// update all content was already finished, we can use regular prefix
+						// but we need to first get a fresh session because the old session
+						// does not seem to pick up the last step in update all content
+						session = ((HippoSession) session).impersonate(new SimpleCredentials("system", new char[]{}));
+						cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), m_prefix);
+					}
 					out.write(cnd);
 					out.flush();
 				}
@@ -565,10 +556,10 @@ class Extension {
 				}
 			}
 			catch (IOException e) {
-        		log.error("Exporting " + m_file.getName() + " failed.");
+        		log.error("Exporting " + m_file.getName() + " failed.", e);
 			}
 			catch (RepositoryException e) {
-        		log.error("Exporting " + m_file.getName() + " failed.");
+        		log.error("Exporting " + m_file.getName() + " failed.", e);
 			}
 			m_changed = false;
 		}
@@ -614,7 +605,8 @@ class Extension {
         boolean nodeRemoved(String path) {
         	setInternalPrefixFromPath(path);
         	m_changed = true;
-        	return m_context.equals(path);
+        	// TODO: should determine whether or not context was removed
+        	return false;
         }
         
         // Don't think this can happen on a node type node
@@ -657,9 +649,49 @@ class Extension {
 		
 		@Override
 		public String toString() {
-			return "NodetypesResourceInstruction[context=" + m_context + "]"; 
+			return "NodetypesResourceInstruction[prefix=" + m_prefix + "]"; 
 		}
     }
 
+    static class NamespaceInstruction extends Instruction {
+
+    	private final String m_namespace;
+    	private final String m_namespaceroot;
+    	
+    	NamespaceInstruction(String name, Double sequence, String namespace) {
+    		super(name, sequence);
+    		m_namespace = namespace;
+    		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
+    		m_namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+    	}
+    	
+		@Override
+		Element createInstructionElement() {
+            Element element = createBaseInstructionElement();
+            // create element:
+            // <sv:property sv:name="hippo:namespace" sv:type="String">
+            //   <sv:value>{this.m_namespace}</sv:value>
+            // </sv:property>
+            Element namespaceProperty = DocumentFactory.getInstance().createElement(PROPERTY_QNAME);
+            namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, NAME_QNAME, "hippo:namespace"));
+            namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, TYPE_QNAME, "String"));
+            Element namespacePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
+            namespacePropertyValue.setText(m_namespace);
+            namespaceProperty.add(namespacePropertyValue);
+            element.add(namespaceProperty);
+            return element;
+		}
+		
+		boolean matchesNamespace(String namespace) {
+			int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
+			String namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+			return namespaceroot.equals(m_namespaceroot);
+		}
+    			
+		@Override
+		public String toString() {
+			return "NamespaceInstruction[namespace=" + m_namespace + "]"; 
+		}
+    }
 }
 
