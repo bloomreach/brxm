@@ -50,6 +50,11 @@ limitations under the License.
       <artifactId>hippo-repository-utilities</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
   
   <build>

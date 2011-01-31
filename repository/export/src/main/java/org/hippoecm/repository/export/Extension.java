@@ -29,6 +29,12 @@ import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -40,9 +46,14 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 
 
 class Extension {
@@ -442,8 +453,17 @@ class Extension {
                 OutputStream out = null;
                 try {
                     out = new FileOutputStream(m_file);
-                    ((HippoSession) session).exportDereferencedView(m_context, out, true, false);
-                } finally {
+                    SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+                    TransformerHandler handler = stf.newTransformerHandler();
+                    Transformer transformer = handler.getTransformer();
+                    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+                    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
+                    handler.setResult(new StreamResult(out));
+                    ContentHandler filter = new FilterNamespaceDeclarationsHandler(handler);
+                    ((SessionDecorator) session).exportDereferencedView(m_context, filter, true, false);
+				} finally {
                     try {
                         out.close();
                     } catch (IOException ex) {}
@@ -454,7 +474,13 @@ class Extension {
         	}
         	catch (RepositoryException e) {
         		log.error("Exporting " + m_file.getName() + " failed.", e);
-        	}
+	        } 
+        	catch (TransformerConfigurationException e) {
+        		log.error("Exporting " + m_file.getName() + " failed.", e);
+			} 
+        	catch (SAXException e) {
+        		log.error("Exporting " + m_file.getName() + " failed.", e);
+	        }
             m_changed = false;
         }
         
@@ -500,6 +526,79 @@ class Extension {
         @Override
         public String toString() {
         	return "ResourceContentInstruction[context=" + m_context + "]";
+        }
+        
+        // filter out all namespace declarations except {http://www.jcp.org/jcr/sv/1.0}sv
+        private static class FilterNamespaceDeclarationsHandler implements ContentHandler {
+
+        	private final ContentHandler m_handler;
+
+        	private String m_svprefix;
+        	
+        	private FilterNamespaceDeclarationsHandler(ContentHandler handler) {
+        		m_handler = handler;
+        	}
+        	
+			@Override
+			public void setDocumentLocator(Locator locator) {
+				m_handler.setDocumentLocator(locator);
+			}
+
+			@Override
+			public void startDocument() throws SAXException {
+				m_handler.startDocument();
+			}
+
+			@Override
+			public void endDocument() throws SAXException {
+				m_handler.endDocument();
+			}
+
+			@Override
+			public void startPrefixMapping(String prefix, String uri) throws SAXException {
+				// only forward prefix mappings in the jcr/sv namespace
+				if (uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+					m_svprefix = prefix;
+					m_handler.startPrefixMapping(prefix, uri);
+				}
+			}
+
+			@Override
+			public void endPrefixMapping(String prefix) throws SAXException {
+				if (prefix.equals(m_svprefix)) {
+					m_handler.endPrefixMapping(prefix);
+				}
+			}
+
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+				m_handler.startElement(uri, localName, qName, atts);
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				m_handler.endElement(uri, localName, qName);
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				m_handler.characters(ch, start, length);
+			}
+
+			@Override
+			public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+				m_handler.ignorableWhitespace(ch, start, length);
+			}
+
+			@Override
+			public void processingInstruction(String target, String data) throws SAXException {
+				m_handler.processingInstruction(target, data);
+			}
+
+			@Override
+			public void skippedEntity(String name) throws SAXException {
+				m_handler.skippedEntity(name);
+			}
         }
         
     }
