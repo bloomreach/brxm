@@ -23,6 +23,7 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -124,13 +125,24 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                     if(isExternal(documentPath)) {
                         sb.append(documentPath);
                     } else {
+                        String queryString = StringUtils.substringAfter(documentPath, "?");
+                        boolean hasQueryString = !StringUtils.isEmpty(queryString); 
+                        if (hasQueryString) {
+                            documentPath = StringUtils.substringBefore(documentPath, "?");
+                        }
+                        
                         HstLink href = getDocumentLink(documentPath,node, requestContext, targetMount);
                         if(href != null && href.getPath() != null) {
                             sb.append(href.toUrlForm(requestContext, false));
                         } else {
                            log.warn("Skip href because url is null"); 
                         }
+                        
+                        if (hasQueryString) {
+                            sb.append('?').append(queryString);
+                        }
                     }
+                    
                     sb.append(html.substring(hrefIndexEnd, endTag));
                     appended = true;
                 }
