@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
  * Otherwise changes to the repository will be merged into the existing files and new files
  * will be created when necessary.
  * <p>
- * 
- * @author unico
  */
 public class ExportModule implements DaemonModule {
 
@@ -63,7 +61,8 @@ public class ExportModule implements DaemonModule {
     
     // ---------- Member variables
     
-    private Project m_project;
+    private Session m_session;
+    private Extension m_extension;
     private Future<?> m_future;
     
     
@@ -76,6 +75,8 @@ public class ExportModule implements DaemonModule {
 
     @Override
     public void initialize(Session session) throws RepositoryException {
+    	
+    	m_session = session;
     	
     	// this module is enabled if system property 'hippo.config.dir' is set
     	String configDir = System.getProperty("hippo.config.dir");
@@ -97,7 +98,7 @@ public class ExportModule implements DaemonModule {
         // create export project
         File extension = new File(configDirectory, "hippoecm-extension.xml");
         try {
-            m_project = new Project(extension, session);
+            m_extension = new Extension(extension);
         } catch (IOException ex) {
             log.error("Cannot create project for export. "
                     + "Automatic export will not be available.", ex);
@@ -109,7 +110,7 @@ public class ExportModule implements DaemonModule {
         }
 
         // install event listener
-        ExportEventListener listener = new ExportEventListener(m_project, session);
+        ExportEventListener listener = new ExportEventListener(m_extension, session);
         int eventTypes = Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED
         		| Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
         try {
@@ -121,7 +122,7 @@ public class ExportModule implements DaemonModule {
 
         // schedule export task
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        Runnable task = new Runnable() { @Override public void run() { m_project.export(); } };
+        Runnable task = new Runnable() { @Override public void run() { m_extension.export(m_session); } };
         m_future = executor.scheduleAtFixedRate(task , 1, 1, TimeUnit.SECONDS);
 
     }
@@ -137,7 +138,8 @@ public class ExportModule implements DaemonModule {
     // ---------- Implementation
     
     /**
-     * JCR EventListener. 
+     * JCR EventListener. Listens to jcr change events on relevant nodes; checks if an appropriate instruction
+     * exists for the event, creates one if none was found; decides what to do in order to persist the changes.
      */
     private static class ExportEventListener implements EventListener {
 
@@ -153,12 +155,12 @@ public class ExportModule implements DaemonModule {
             ignored.add("/content/documents/tags");
         }
         
-        private final Project m_project;
+        private final Extension m_extension;
         private final Session m_session;
         private final Set<String> m_uris;
 
-        private ExportEventListener(Project project, Session session) throws RepositoryException {
-            m_project = project;
+        private ExportEventListener(Extension extension, Session session) throws RepositoryException {
+            m_extension = extension;
             m_session = session;
             String[] uris = m_session.getWorkspace().getNamespaceRegistry().getURIs();
             m_uris = new HashSet<String>(uris.length+10);
@@ -175,7 +177,7 @@ public class ExportModule implements DaemonModule {
                     	log.debug("Ignoring event on " + path);
                     	continue;
                     }
-                    Extension.ResourceInstruction instruction = m_project.m_extension.findResourceInstruction(path);
+                    ResourceInstruction instruction = m_extension.findResourceInstruction(path);
                     switch (event.getType()) {
                     case Event.NODE_ADDED : {
                         log.debug("Node added on " + path);
@@ -184,9 +186,9 @@ public class ExportModule implements DaemonModule {
                         	instruction.nodeAdded(path);
                         }
                         else {
-                        	instruction = m_project.m_extension.createResourceInstruction(path);
+                        	instruction = m_extension.createResourceInstruction(path);
                             log.debug("Adding instruction " + instruction);
-                        	m_project.m_extension.addInstruction(instruction);
+                        	m_extension.addInstruction(instruction);
                         }
                         break;
                     }
@@ -196,7 +198,7 @@ public class ExportModule implements DaemonModule {
                     		log.debug("Found instruction " + instruction);
                     		if (instruction.nodeRemoved(path)) {
                 				// the context node was removed, remove the instruction
-                				m_project.m_extension.removeInstruction(instruction);
+                				m_extension.removeInstruction(instruction);
                     		}
                     	}
                     	else {
@@ -215,18 +217,18 @@ public class ExportModule implements DaemonModule {
                     		instruction.nodeAdded(path);
                     	}
                     	else {
-                        	instruction = m_project.m_extension.createResourceInstruction(path);
+                        	instruction = m_extension.createResourceInstruction(path);
                             log.debug("Adding instruction " + instruction);
-                        	m_project.m_extension.addInstruction(instruction);
+                        	m_extension.addInstruction(instruction);
                     	}
                     	
                     	// srcPath was removed
-                    	instruction = m_project.m_extension.findResourceInstruction(srcPath);
+                    	instruction = m_extension.findResourceInstruction(srcPath);
                     	if (instruction != null) {
                     		log.debug("Found instruction " + instruction);
                     		if (instruction.nodeRemoved(srcPath)) {
                     			// the context node was removed, remove instruction
-                				m_project.m_extension.removeInstruction(instruction);
+                				m_extension.removeInstruction(instruction);
                     		}
                     	}
                     	else {
@@ -273,15 +275,15 @@ public class ExportModule implements DaemonModule {
 				for (String uri : uris) {
 					if (!m_uris.contains(uri)) {
 						log.debug("New namespace detected.");
-						Extension.NamespaceInstruction instruction = m_project.m_extension.findNamespaceInstruction(uri);
+						NamespaceInstruction instruction = m_extension.findNamespaceInstruction(uri);
 						if (instruction != null) {
 							// remove the outdated namespace instruction
 							log.debug("Removing instruction " + instruction);
-							m_project.m_extension.removeInstruction(instruction);
+							m_extension.removeInstruction(instruction);
 						}
-						instruction = m_project.m_extension.createNamespaceInstruction(uri, registry.getPrefix(uri));
+						instruction = m_extension.createNamespaceInstruction(uri, registry.getPrefix(uri));
                         log.debug("Adding instruction " + instruction);
-                    	m_project.m_extension.addInstruction(instruction);
+                    	m_extension.addInstruction(instruction);
 						m_uris.add(uri);
 					}
 				}
@@ -348,31 +350,6 @@ public class ExportModule implements DaemonModule {
 					|| event.getType() == Event.NODE_MOVED 
 					|| event.getType() == Event.NODE_REMOVED;
 			}
-        }
-    }
-
-    // TODO: do we really need this class?
-    private static class Project {
-
-        private final Extension m_extension;
-        private final Session m_session;
-
-        private Project(File extension, Session session) throws IOException, DocumentException {
-            m_extension = new Extension(extension);
-            m_session = session;
-        }
-
-        private void export() {
-            if (m_extension.hasChanged()) {
-                m_extension.export();
-            }
-            for (Extension.Instruction instruction : m_extension.getInstructions()) {
-                if (instruction instanceof Extension.ResourceInstruction) {
-                	if (((Extension.ResourceInstruction) instruction).hasChanged()) {
-                		((Extension.ResourceInstruction)instruction).export(m_session);                		
-                	}
-                }
-            }
         }
     }
 

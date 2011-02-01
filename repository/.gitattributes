@@ -190,8 +190,14 @@ engine/src/test/resources/repository-testsuperns.cnd -text
 engine/src/test/resources/repository-testsuperns2.cnd -text
 engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
 export/pom.xml -text
+export/src/main/java/org/hippoecm/repository/export/Constants.java -text
+export/src/main/java/org/hippoecm/repository/export/ContentResourceInstruction.java -text
 export/src/main/java/org/hippoecm/repository/export/ExportModule.java -text
 export/src/main/java/org/hippoecm/repository/export/Extension.java -text
+export/src/main/java/org/hippoecm/repository/export/Instruction.java -text
+export/src/main/java/org/hippoecm/repository/export/NamespaceInstruction.java -text
+export/src/main/java/org/hippoecm/repository/export/NodetypesResourceInstruction.java -text
+export/src/main/java/org/hippoecm/repository/export/ResourceInstruction.java -text
 /jackrabbit.patch -text
 jca/pom.xml svneol=native#text/plain
 jca/src/main/rar/META-INF/ra.xml svneol=native#text/plain
