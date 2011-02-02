@@ -15,7 +15,7 @@
  *  under the License.
  */
 
-package org.hippoecm.repository;
+package org.hippoecm.repository.export;
 
 import static org.custommonkey.xmlunit.DifferenceConstants.ATTR_SEQUENCE_ID;
 import static org.custommonkey.xmlunit.DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID;
@@ -26,9 +26,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.NamespaceException;
@@ -38,43 +41,58 @@ import javax.jcr.NodeIterator;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.ElementQualifier;
+import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 
 /**
  * Test for org.hippoecm.repository.export.ExportModule
- * 
- * @author unico
  */
 public class ExportTest extends TestCase {
 
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
 	
-    private final static String EXTENSIONHOME;
-    private final static String CONFIGHOME;
+    private final static String BUILD_HOME;
+    private final static String EXTENSION_HOME;
+    private final static String CONFIG_HOME;
+    private final static String CONTENT_HOME;
 
     static {
     	// Where are we?
     	File basedir = new File(System.getProperty("user.dir"));
     	if (basedir.getName().equals("target")) {
-    		EXTENSIONHOME = basedir.getParent() + "/src/test/extensions";
-    		CONFIGHOME = basedir.getPath() + "/config";
+    		BUILD_HOME = basedir.getPath();
+    		EXTENSION_HOME = basedir.getParent() + "/src/test/extensions";
+    		CONFIG_HOME = basedir.getPath() + "/config";
+    		CONTENT_HOME = basedir.getParent() + "/src/test/content";
     	}
     	else {
-    		EXTENSIONHOME = basedir.getPath() + "/src/test/extensions";
-    		CONFIGHOME = basedir.getPath() + "/target/config";
+    		BUILD_HOME = basedir.getPath() + "/target";
+    		EXTENSION_HOME = basedir.getPath() + "/src/test/extensions";
+    		CONFIG_HOME = basedir.getPath() + "/target/config";
+    		CONTENT_HOME = basedir.getPath() + "/src/test/content";
     	}
     	
     }
@@ -88,14 +106,14 @@ public class ExportTest extends TestCase {
     	// remove results from previous invocation
     	// if we do this on teardown we can't inspect
     	// results manually
-    	File configHome = new File(CONFIGHOME);
+    	File configHome = new File(CONFIG_HOME);
     	if (configHome.exists()) {
     		for (File file : configHome.listFiles()) {
     			file.delete();
     		}
     		configHome.delete();
     	}
-        System.setProperty("hippo.config.dir", CONFIGHOME);
+        System.setProperty("hippo.config.dir", CONFIG_HOME);
         // startup the repository
         super.setUp();
         // remove imported nodes
@@ -231,9 +249,55 @@ public class ExportTest extends TestCase {
 //    	compare("nodetypes");
 //    }
 
-    @Test public void testWorkflowMumboJumbo() throws Exception {
-    	
-    }
+//    @Test public void testFilterContentHandler() throws Exception {
+//    	File contentFile = new File(CONTENT_HOME, "exporttest-content.xml");
+//    	FileReader contentFileReader = new FileReader(contentFile);
+//    	InputSource contentFileSource = new InputSource(contentFileReader);
+//    	
+//    	File resultFile = new File(BUILD_HOME, "exporttest-content-result.xml");
+//    	FileWriter resultFileWriter = new FileWriter(resultFile);
+//    	
+//        SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+//        TransformerHandler handler = stf.newTransformerHandler();
+//        Transformer transformer = handler.getTransformer();
+//        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+//        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+//        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
+//        handler.setResult(new StreamResult(resultFileWriter));
+//    	
+//        List<String> excluded = Arrays.asList("/test/basedocument");
+//    	ContentResourceInstruction.FilterContentHandler filter = new ContentResourceInstruction.FilterContentHandler(handler, excluded);
+//    	
+//    	XMLReader reader = XMLReaderFactory.createXMLReader();
+//    	reader.setContentHandler(filter);
+//    	reader.parse(contentFileSource);
+//    }
+
+//    @Test public void testFilterContentHandler2() throws Exception {
+//    	File contentFile = new File(CONTENT_HOME, "nested-content.xml");
+//    	FileReader contentFileReader = new FileReader(contentFile);
+//    	InputSource contentFileSource = new InputSource(contentFileReader);
+//    	
+//    	File resultFile = new File(BUILD_HOME, "nested-content-result.xml");
+//    	FileWriter resultFileWriter = new FileWriter(resultFile);
+//    	
+//        SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+//        TransformerHandler handler = stf.newTransformerHandler();
+//        Transformer transformer = handler.getTransformer();
+//        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+//        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+//        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
+//        handler.setResult(new StreamResult(resultFileWriter));
+//    	        
+//        List<String> excluded = Arrays.asList("/0/0.1");
+//    	ContentResourceInstruction.FilterContentHandler filter = new ContentResourceInstruction.FilterContentHandler(handler, excluded);
+//    	
+//    	XMLReader reader = XMLReaderFactory.createXMLReader();
+//    	reader.setContentHandler(filter);
+//    	reader.parse(contentFileSource);
+//    }
 
     @After
     @Override
@@ -243,8 +307,8 @@ public class ExportTest extends TestCase {
 
     private void compare(String testCase) throws Exception {
         Thread.sleep(2*1000); // allow export to do its work
-        Map<String,Reader> changes = loadFiles(new File(CONFIGHOME));
-        Map<String,Reader> expected = loadFiles(new File(EXTENSIONHOME, testCase));
+        Map<String,Reader> changes = loadFiles(new File(CONFIG_HOME));
+        Map<String,Reader> expected = loadFiles(new File(EXTENSION_HOME, testCase));
         assertEquals(changes, expected);
     }
 
@@ -252,9 +316,11 @@ public class ExportTest extends TestCase {
         Map<String,Reader> result = new HashMap<String,Reader>();
         File[] files = directory.listFiles();
         for (File file : files) {
-            Reader r = new FileReader(file);
-            String name = file.getName();
-            result.put(name, r);
+        	if (!file.isDirectory()) {
+                Reader r = new FileReader(file);
+                String name = file.getName();
+                result.put(name, r);
+        	}
         }
         return result;
     }

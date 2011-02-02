@@ -255,6 +255,8 @@ src/site/site.xml svneol=native#text/plain
 test/pom.xml svneol=native#text/plain
 test/src/main/resources/org/hippoecm/repository/test/package.jdo -text
 test/src/main/resources/package.jdo -text
+test/src/test/content/exporttest-content.xml -text
+test/src/test/content/nested-content.xml -text
 test/src/test/extensions/namespace/hippoecm-extension.xml -text
 test/src/test/extensions/nodetype/et.cnd -text
 test/src/test/extensions/nodetype/hippoecm-extension.xml -text
@@ -264,7 +266,6 @@ test/src/test/extensions/simple/et$simple.xml -text
 test/src/test/extensions/simple/hippoecm-extension.xml -text
 test/src/test/java/org/hippoecm/repository/CheckoutNodeTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/ConfigurationTest.java -text
-test/src/test/java/org/hippoecm/repository/ExportTest.java -text
 test/src/test/java/org/hippoecm/repository/FacetedAuthorizationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationChildNameTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationNamespaceTest.java svneol=native#text/plain
@@ -276,6 +277,7 @@ test/src/test/java/org/hippoecm/repository/decorating/FacetedReferenceTest.java 
 test/src/test/java/org/hippoecm/repository/decorating/MirrorCombiFacetSelectTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/decorating/MirrorTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/SingledViewFacetSelectTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/export/ExportTest.java -text
 test/src/test/java/org/hippoecm/repository/facetnavigation/AbstractDateFacetNavigationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/AbstractRangesFacetNavigationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationDateBrowsingTest.java svneol=native#text/plain
