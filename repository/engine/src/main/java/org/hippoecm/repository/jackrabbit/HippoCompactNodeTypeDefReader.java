@@ -46,7 +46,7 @@ public class HippoCompactNodeTypeDefReader<T,N> extends CompactNodeTypeDefReader
     }
 
     private static class HippoNamespaceMapping<N> extends NamespaceMapping {
-        static Set<String> autoCompatibleNamespaces = new TreeSet<String>(Arrays.asList(new String[] {"hippo", "hipposys"}));
+        static Set<String> autoCompatibleNamespaces = new TreeSet<String>(Arrays.asList(new String[] {"hippo", "hipposys", "hipposysedit", "hippofacnav"}));
         private NamespaceRegistry registry;
 
         HippoNamespaceMapping(NamespaceRegistry registry) {
