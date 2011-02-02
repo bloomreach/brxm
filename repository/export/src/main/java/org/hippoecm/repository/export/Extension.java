@@ -101,6 +101,10 @@ class Extension {
     	return m_instructions;
     }
     
+    void setChanged() {
+    	m_changed = true;
+    }
+    
     ResourceInstruction findResourceInstruction(String path) {
     	return path.startsWith("/jcr:system/jcr:nodeTypes/")
     		? findNodetypesInstruction(path)
@@ -164,7 +168,7 @@ class Extension {
     NamespaceInstruction createNamespaceInstruction(String uri, String prefix) throws IOException {
     	int indexOfUnderscore = prefix.indexOf('_');
     	prefix = (indexOfUnderscore == -1) ? prefix : prefix.substring(0, indexOfUnderscore);
-    	return new NamespaceInstruction(prefix, 3000.0, uri);
+    	return new NamespaceInstructionImpl(prefix, 3000.0, uri);
     }
 
     private ContentResourceInstruction createContentResourceInstruction(String path) {
@@ -207,7 +211,7 @@ class Extension {
 		List nodes = m_document.getRootElement().elements();
     	for (Iterator iter = nodes.iterator(); iter.hasNext();) {
     		Element node = (Element)iter.next();
-    		if (node.attributeValue("name").equals(instruction.m_name)) {
+    		if (node.attributeValue("name").equals(instruction.getName())) {
     			m_document.getRootElement().remove(node);
     			break;
     		}
@@ -320,7 +324,7 @@ class Extension {
         	instruction = new NodetypesResourceInstruction(name, sequence, file, namespace, prefix);
         }
         else if (namespace != null) {
-        	instruction = new NamespaceInstruction(name, sequence, namespace);
+        	instruction = new NamespaceInstructionImpl(name, sequence, namespace);
         }
         return instruction;
     }

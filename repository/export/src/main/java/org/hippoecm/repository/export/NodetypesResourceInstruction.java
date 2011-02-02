@@ -33,21 +33,30 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 
 
-class NodetypesResourceInstruction extends ResourceInstruction {
+class NodetypesResourceInstruction extends ResourceInstruction implements NamespaceInstruction {
 	
 	private String m_internalPrefix;
 	private final String m_prefix;
-	private final String m_namespace;
+	private String m_namespace;
+	private final String m_namespaceroot;
 	
 	NodetypesResourceInstruction(String name, Double sequence, File file, String namespace, String internalPrefix) {
 		super(name, sequence, file);
-		m_namespace = namespace;
 		if (!m_file.exists()) {
 			m_changed = true;
 		}
 		m_internalPrefix = internalPrefix;
 		int indexOfUnderscore = internalPrefix.indexOf('_');
 		m_prefix = (indexOfUnderscore == -1) ? internalPrefix : internalPrefix.substring(0, indexOfUnderscore);
+		if (namespace != null) {
+			m_namespace = namespace;
+			int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
+			m_namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+		}
+		else {
+			m_namespace = null;
+			m_namespaceroot = null;
+		}
 	}
 
 	@Override
@@ -94,7 +103,7 @@ class NodetypesResourceInstruction extends ResourceInstruction {
 	}
 
 	@Override
-	Element createInstructionElement() {
+	public Element createInstructionElement() {
         Element element = createBaseInstructionElement();
         // create element:
         // <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
@@ -183,5 +192,17 @@ class NodetypesResourceInstruction extends ResourceInstruction {
 	@Override
 	public String toString() {
 		return "NodetypesResourceInstruction[prefix=" + m_prefix + "]"; 
+	}
+
+	@Override
+	public boolean matchesNamespace(String namespace) {
+		if (m_namespace == null) return false;
+		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
+		String namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+		return namespaceroot.equals(m_namespaceroot);
+	}
+	
+	public void updateNamespace(String namespace) {
+		m_namespace = namespace;
 	}
 }

@@ -63,6 +63,7 @@ public class ExportModule implements DaemonModule {
     
     private Session m_session;
     private Extension m_extension;
+    private ScheduledExecutorService m_executor;
     private Future<?> m_future;
     
     
@@ -121,9 +122,9 @@ public class ExportModule implements DaemonModule {
         }
 
         // schedule export task
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        m_executor = Executors.newSingleThreadScheduledExecutor();
         Runnable task = new Runnable() { @Override public void run() { m_extension.export(m_session); } };
-        m_future = executor.scheduleAtFixedRate(task , 1, 1, TimeUnit.SECONDS);
+        m_future = m_executor.scheduleAtFixedRate(task , 1, 1, TimeUnit.SECONDS);
 
     }
 
@@ -131,6 +132,9 @@ public class ExportModule implements DaemonModule {
     public void shutdown() {
     	if (m_future != null) {
         	m_future.cancel(false);
+    	}
+    	if (m_executor != null) {
+    		m_executor.shutdown();
     	}
     }
 
@@ -153,6 +157,7 @@ public class ExportModule implements DaemonModule {
             ignored.add("/preview");
             ignored.add("/content/documents/state");
             ignored.add("/content/documents/tags");
+            ignored.add("/content/attic");
         }
         
         private final Extension m_extension;
@@ -277,13 +282,15 @@ public class ExportModule implements DaemonModule {
 						log.debug("New namespace detected.");
 						NamespaceInstruction instruction = m_extension.findNamespaceInstruction(uri);
 						if (instruction != null) {
-							// remove the outdated namespace instruction
-							log.debug("Removing instruction " + instruction);
-							m_extension.removeInstruction(instruction);
+							log.debug("Updating instruction " + instruction);
+							instruction.updateNamespace(uri);
+							m_extension.setChanged();
 						}
-						instruction = m_extension.createNamespaceInstruction(uri, registry.getPrefix(uri));
-                        log.debug("Adding instruction " + instruction);
-                    	m_extension.addInstruction(instruction);
+						else {
+							instruction = m_extension.createNamespaceInstruction(uri, registry.getPrefix(uri));
+	                        log.debug("Adding instruction " + instruction);
+	                    	m_extension.addInstruction(instruction);
+						}
 						m_uris.add(uri);
 					}
 				}

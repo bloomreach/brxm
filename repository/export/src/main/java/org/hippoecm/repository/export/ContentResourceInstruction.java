@@ -88,7 +88,9 @@ class ContentResourceInstruction extends ResourceInstruction {
                 	if (instruction instanceof ContentResourceInstruction) {
                 		String context = ((ContentResourceInstruction) instruction).m_context;
                 		if (!context.equals(m_context) && context.startsWith(m_context)) {
-                			excluded.add(context.substring(m_context.length()));
+                			String subcontext = context.substring(m_root.length());
+//                			log.debug("filtering subcontext " + subcontext);
+                			excluded.add(subcontext);
                 		}
                 	}
                 }
@@ -122,7 +124,7 @@ class ContentResourceInstruction extends ResourceInstruction {
     }
     
     @Override
-    Element createInstructionElement() {
+    public Element createInstructionElement() {
         Element element = createBaseInstructionElement();
         // create element:
         // <sv:property sv:name="hippo:contentresource" sv:type="String">
@@ -161,18 +163,22 @@ class ContentResourceInstruction extends ResourceInstruction {
     }
     
     /** 
-     * Filters out all namespace declarations except {http://www.jcp.org/jcr/sv/1.0} 
-     * and excludes all declared subcontexts from export
+     * Filters out all namespace declarations except {http://www.jcp.org/jcr/sv/1.0}; 
+     * excludes all declared subcontexts from export; and strips version strings from
+     * namespace prefixes
      */
-    private static class FilterContentHandler implements ContentHandler {
+    static class FilterContentHandler implements ContentHandler {
 
     	private final ContentHandler m_handler;
     	private final List<String> m_excluded;
     	private final Path m_path;
 
     	private String m_svprefix;
+    	private boolean m_skip = false;
+    	private boolean m_insideTypeProperty = false;
+    	private boolean m_modifyvalue = false;
     	
-    	private FilterContentHandler(ContentHandler handler, List<String> excluded) {
+    	FilterContentHandler(ContentHandler handler, List<String> excluded) {
     		m_handler = handler;
     		m_excluded = excluded;
     		m_path = new Path();
@@ -215,12 +221,28 @@ class ContentResourceInstruction extends ResourceInstruction {
 				String name = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
 				m_path.push(name);
 				String path = m_path.toString();
+//				log.debug("exclude " + path + "?");
 				for (String exclude : m_excluded) {
 					if (path.startsWith(exclude)) {
+//						log.debug("yes");
+						m_skip = true;
 						// don't propagate event
 						return;
 					}
 				}
+			}
+			else if (m_skip) {
+				return;
+			}
+			else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+				String propName = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
+				if (propName.equals("type") || propName.equals("hipposysedit:supertype")
+						|| propName.equals("hipposysedit:prototype")) {
+					m_insideTypeProperty = true;
+				}
+			}
+			else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+				m_modifyvalue = m_insideTypeProperty;
 			}
 			m_handler.startElement(uri, localName, qName, atts);
 		}
@@ -232,22 +254,49 @@ class ContentResourceInstruction extends ResourceInstruction {
 				for (String exclude : m_excluded) {
 					if (path.startsWith(exclude)) {
 						m_path.pop();
+						m_skip = false;
 						// don't propagate event
 						return;
 					}
 				}
 				m_path.pop();
 			}
+			else if (m_skip) {
+				return;
+			}
+			else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+				m_insideTypeProperty = false;
+			}
+			else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+				m_modifyvalue = false;
+			}
 			m_handler.endElement(uri, localName, qName);
 		}
 
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
+			if (m_skip) return;
+			if (m_modifyvalue) {
+				// strip the prefix of version data
+				// e.g. example_1_1:basedocument becomes example:basedocument
+				String value = new String(ch, start, length);
+				int indexOfColon = value.indexOf(':');
+				if (indexOfColon != -1) {
+					String prefix = value.substring(0, indexOfColon);
+					String rest = value.substring(indexOfColon);
+					int indexOfUnderscore = prefix.indexOf('_');
+					prefix = indexOfUnderscore == -1 ? prefix : prefix.substring(0, indexOfUnderscore);
+					ch = (prefix + rest).toCharArray();
+					start = 0;
+					length = ch.length;
+				}
+			}
 			m_handler.characters(ch, start, length);
 		}
 
 		@Override
 		public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+			if (m_skip) return;
 			m_handler.ignorableWhitespace(ch, start, length);
 		}
 
@@ -277,7 +326,7 @@ class ContentResourceInstruction extends ResourceInstruction {
 			public String toString() {
 				StringBuilder sb = new StringBuilder();
 				for (String element : m_stack) {
-					sb.insert(0, "/" + element);
+					sb.append("/" + element);
 				}
 				return sb.toString();
 			}

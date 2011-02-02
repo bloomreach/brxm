@@ -19,7 +19,7 @@ import java.io.File;
 
 import javax.jcr.Session;
 
-abstract class ResourceInstruction extends Instruction {
+abstract class ResourceInstruction extends AbstractInstruction {
 	
 	/** the resource */
 	final File m_file;
