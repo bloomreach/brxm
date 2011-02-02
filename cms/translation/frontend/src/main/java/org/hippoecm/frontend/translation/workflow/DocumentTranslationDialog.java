@@ -17,6 +17,7 @@ package org.hippoecm.frontend.translation.workflow;
 
 import java.util.List;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -27,6 +28,7 @@ import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
 import org.hippoecm.frontend.translation.components.document.FolderTranslation;
+import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 
@@ -46,7 +48,7 @@ public class DocumentTranslationDialog extends WorkflowAction.WorkflowDialog {
     private ISettingsService settingsService;
 
     public DocumentTranslationDialog(TranslationWorkflowPlugin translationWorkflowPlugin, ISettingsService settings,
-            WorkflowAction action, IModel<String> title, List<FolderTranslation> folders,
+            WorkflowAction action, IModel<String> title, List<FolderTranslation> folders, IModel<Boolean> autoTranslateContent,
             String sourceLanguage, String targetLanguage,
             ILocaleProvider provider) {
         action.super();
@@ -68,6 +70,11 @@ public class DocumentTranslationDialog extends WorkflowAction.WorkflowDialog {
                 }, provider);
         dtv.setFrame(false);
         add(dtv);
+        if(autoTranslateContent != null) {
+            add(new BooleanFieldWidget("translate", autoTranslateContent));
+        } else {
+            add(new Label("translate").setVisible(false));
+        }
     }
 
     public IModel getTitle() {
@@ -76,6 +83,6 @@ public class DocumentTranslationDialog extends WorkflowAction.WorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=675,height=378").makeImmutable();
+        return new ValueMap("width=675,height=405").makeImmutable();
     }
 }

@@ -17,6 +17,7 @@ package org.hippoecm.frontend.translation.workflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
@@ -263,6 +265,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         private static final long serialVersionUID = 1L;
         public String name;
         public String url;
+        boolean autoTranslateContent;
         public List<FolderTranslation> folders;
 
         private AddTranslationAction(String id, String name, ResourceReference iconModel, String language,
@@ -288,10 +291,23 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
                 populateFolders(handle);
 
+                IModel<Boolean> autoTranslateModel = null;
+                autoTranslateContent = false;
+                WorkflowManager manager = ((HippoWorkspace)docNode.getSession().getWorkspace()).getWorkflowManager();
+                WorkflowDescriptor translateWorkflow = manager.getWorkflowDescriptor("translate", docNode);
+                if (translateWorkflow != null) {
+                    for (Class<Workflow> workflowInterface : translateWorkflow.getInterfaces()) {
+                        if (TranslateWorkflow.class.isAssignableFrom(workflowInterface)) {
+                            autoTranslateModel = new PropertyModel<Boolean>(AddTranslationAction.this, "autoTranslateContent");
+                            autoTranslateContent = false; // defaulkt when translation is available
+                        }
+                    }
+                }
+
                 return new DocumentTranslationDialog(TranslationWorkflowPlugin.this, getPluginContext().getService(
-                        ISettingsService.SERVICE_ID, ISettingsService.class), this, new StringResourceModel(
-                        "translate-title", TranslationWorkflowPlugin.this, null), folders, languageModel.getObject(),
-                        language, getLocaleProvider());
+                    ISettingsService.SERVICE_ID, ISettingsService.class), this, new StringResourceModel(
+                    "translate-title", TranslationWorkflowPlugin.this, null), folders, autoTranslateModel, languageModel.getObject(),
+                    language, getLocaleProvider());
             } catch (Exception e) {
                 log.error("Error creating document translation dialog (" + e.getMessage() + ")", e);
                 error(e.getMessage());
@@ -464,32 +480,34 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             Document translation = workflow.addTranslation(language, url);
             try {
                 WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                Workflow translateWorkflow = manager.getWorkflow("translate", translation);
-                if (translateWorkflow instanceof TranslateWorkflow) {
-                    Set<String> plainTextFields = new TreeSet<String>();
-                    Set<String> richTextFields = new TreeSet<String>();
-                    Set<String> allTextFields = new TreeSet<String>();
-                    collectFields(session, null, session.getNodeByIdentifier(translation.getIdentity()).getPrimaryNodeType().getName(), plainTextFields, richTextFields);
-                    allTextFields.addAll(plainTextFields);
-                    allTextFields.addAll(richTextFields);
-                    ((TranslateWorkflow)translateWorkflow).translate(language, allTextFields);
-                    try {
-                        // FIXME: the validation or automatic correction of content ought to be a repository/workflow action.  But the configration
-                        // needed for htmlcleaner isn't available cleanly outside of the cms.  Additionally the infrastructure for repository-side
-                        // validation has been scoped out or abandoned.
-                        IHtmlCleanerService cmsSpecificCleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(), IHtmlCleanerService.class);
-                        if (cmsSpecificCleaner != null && false == true) {
-                            Node node = session.getNodeByIdentifier(translation.getIdentity());
-                            node.refresh(false);
-                            for (String field : richTextFields) {
-                                Property property = node.getProperty(field);
-                                property.setValue(cmsSpecificCleaner.clean(property.getString()));
+                if (autoTranslateContent) {
+                    Workflow translateWorkflow = manager.getWorkflow("translate", translation);
+                    if (translateWorkflow instanceof TranslateWorkflow) {
+                        Set<String> plainTextFields = new TreeSet<String>();
+                        Set<String> richTextFields = new TreeSet<String>();
+                        Set<String> allTextFields = new TreeSet<String>();
+                        collectFields(session, null, session.getNodeByIdentifier(translation.getIdentity()).getPrimaryNodeType().getName(), plainTextFields, richTextFields);
+                        allTextFields.addAll(plainTextFields);
+                        allTextFields.addAll(richTextFields);
+                        ((TranslateWorkflow)translateWorkflow).translate(language, allTextFields);
+                        try {
+                            // FIXME: the validation or automatic correction of content ought to be a repository/workflow action.  But the configration
+                            // needed for htmlcleaner isn't available cleanly outside of the cms.  Additionally the infrastructure for repository-side
+                            // validation has been scoped out or abandoned.
+                            IHtmlCleanerService cmsSpecificCleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(), IHtmlCleanerService.class);
+                            if (cmsSpecificCleaner != null && false == true) {
+                                Node node = session.getNodeByIdentifier(translation.getIdentity());
+                                node.refresh(false);
+                                for (String field : richTextFields) {
+                                    Property property = node.getProperty(field);
+                                    property.setValue(cmsSpecificCleaner.clean(property.getString()));
+                                }
+                                node.save();
                             }
-                            node.save();
+                        } catch (Exception ex) {
+                            // we're skipping any exception here deliberately, because the htmlcleaner throws
+                            // undeclared exceptions and we do not want any feedback on this.
                         }
-                    } catch (Exception ex) {
-                        // we're skipping any exception here deliberately, because the htmlcleaner throws
-                        // undeclared exceptions and we do not want any feedback on this.
                     }
                 }
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", translation);

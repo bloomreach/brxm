@@ -12,3 +12,7 @@
   border-color: #ccc;
   border-top-color: #ccc;
 }
+.hippo-root .belowrightbox {
+    margin-left: 325px;
+    margin-top: 5px;
+}
