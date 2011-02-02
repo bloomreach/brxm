@@ -55,7 +55,7 @@ public final class WorkflowPlugin extends AbstractWorkflowPlugin {
                     }
 
                     public void onEvent(Iterator<? extends IEvent<IModelReference>> event) {
-                        updateModel(modelReference.getModel());
+//                        updateModel(modelReference.getModel());
                     }
                 }, IObserver.class.getName());
             }
@@ -73,6 +73,27 @@ public final class WorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
+        if (getDefaultModel() instanceof JcrNodeModel) {
+            Node node = ((JcrNodeModel) getDefaultModel()).getNode();
+            if (node != null) {
+                try {
+                    // FIXME workaround when editing a document a save on the nodes takes place; this fix makes it impossible
+                    // for usages of this workflow container class to update the state of the document.  This could
+                    // occur for instance when publishing a document from within an edit screen, but would be applicable
+                    // to other usages as well (viewing a request, for instance).  However these cases do not exist at this time.
+                    if (oldModel != null && oldModel instanceof JcrNodeModel
+                            && node.isSame(((JcrNodeModel) oldModel).getNode())) {
+                        return;
+                    }
+                    oldModel = getDefaultModel();
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage(), ex);
+                    oldModel = null;
+                }
+            }
+        } else if (!(oldModel instanceof JcrNodeModel)) {
+            return;
+        }
         redraw();
     }
 
@@ -83,21 +104,7 @@ public final class WorkflowPlugin extends AbstractWorkflowPlugin {
             if (getDefaultModel() instanceof JcrNodeModel) {
                 Node node = ((JcrNodeModel) getDefaultModel()).getNode();
                 if (node != null) {
-                    try {
-                        // FIXME workaround when editing a document a save on the nodes takes place; this fix makes it impossible
-                        // for usages of this workflow container class to update the state of the document.  This could
-                        // occur for instance when publishing a document from within an edit screen, but would be applicable
-                        // to other usages as well (viewing a request, for instance).  However these cases do not exist at this time.
-                        if (oldModel != null && oldModel instanceof JcrNodeModel
-                                && node.isSame(((JcrNodeModel) oldModel).getNode())) {
-                            return;
-                        }
-                        nodeSet.add(node);
-                        oldModel = getDefaultModel();
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getMessage(), ex);
-                        oldModel = null;
-                    }
+                    nodeSet.add(node);
                 }
             }
             MenuHierarchy menu = buildMenu(nodeSet);
