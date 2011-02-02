@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,9 +34,12 @@ import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
@@ -94,7 +98,17 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * Workflow callback handler
      */
     protected WorkflowCallbackHandler workflowCallbackHandler;
-    
+
+    /**
+     * The codec which is used for the node names
+     */
+    protected StringCodec uriEncoding = new StringCodecFactory.UriEncoding();
+
+    /**
+     * The workflow category name to localize the new document
+     */
+    protected String defaultWorkflowCategory = "core";
+
     /**
      * Constructor
      * @param session the session for this manager context
@@ -228,10 +242,12 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     category = folderAdditionWorkflowCategory;
                 }
 
-                String added = fwf.add(category, nodeTypeName, name);
-                if (added == null) {
-                    throw new ObjectBeanPersistenceException("Failed to add document/folder for type '" + nodeTypeName
-                            + "'. Make sure there is a prototype.");
+                String nodeName = uriEncoding.encode(name);
+                String added = fwf.add(category, nodeTypeName, nodeName);
+                Item addedDocumentVariant = folderNode.getSession().getItem(added);
+                if (addedDocumentVariant instanceof Node && !nodeName.equals(name)) {
+                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow(defaultWorkflowCategory, (Node)addedDocumentVariant);
+                    defaultWorkflow.localizeName(name);
                 }
             } else {
                 throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for "
@@ -244,9 +260,8 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         } catch (WorkflowException e) {
             throw new ObjectBeanPersistenceException(e);
         }
-
     }
-    
+
     /**
      * Updates the content node which is mapped to the object.
      * <P>
@@ -413,8 +428,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     }
 
     /**
-     * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.  
-     * @param keepChanges
+     * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.
      * @throws ObjectBeanPersistenceException
      */
     public void refresh() throws ObjectBeanPersistenceException {

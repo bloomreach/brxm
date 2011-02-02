@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
@@ -193,7 +194,80 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
         } finally {
             if (session != null) session.logout();
         }
-        
+    }
+
+    @Test
+    public void testCreateLocalizedName() throws Exception {
+        Session session = null;
+        try {
+            ObjectConverter objectConverter = getObjectConverter();
+            session = this.getSession();
+            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+            HippoFolderBean newFolder = null;
+            try {
+                String folderName = "Test Folder1";
+                String expectedNodeName = "test-folder1";
+
+                // create a document with type and name
+                wpm.create(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
+
+                // retrieves the document created just before
+                newFolder = (HippoFolderBean) wpm.getObject(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/"+expectedNodeName);
+
+                // test localized name
+                assert !newFolder.getLocalizedName().equals(newFolder.getName());
+                assert newFolder.getLocalizedName().equals(folderName);
+                assert expectedNodeName.equals(newFolder.getName());
+
+                // test jcr low level
+                Item item = session.getItem(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/"+expectedNodeName);
+                assert expectedNodeName.equals(item.getName());
+                assert item instanceof Node;
+                assert ((Node)item).hasNode("hippo:translation");
+                assert ((Node)item).getNode("hippo:translation").getProperty("hippo:message").getString().equals(folderName);
+            } finally {
+                if (newFolder != null) {
+                    wpm.remove(newFolder);
+                }
+            }
+            wpm.save();
+        } finally {
+            if (session != null) session.logout();
+        }
+    }
+
+    @Test
+    public void testCreateNoLocalizedName() throws Exception {
+        Session session = null;
+        try {
+            ObjectConverter objectConverter = getObjectConverter();
+            session = this.getSession();
+            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+            HippoFolderBean newFolder = null;
+            try {
+                String folderName = "test-folder2";
+
+                // create a document with type and name
+                wpm.create(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
+
+                // retrieves the document created just before
+                newFolder = (HippoFolderBean) wpm.getObject(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/"+folderName);
+                assert folderName.equals(newFolder.getName());
+
+                // the created node shouldn't have a translation child, the passed node name should be sufficient
+                Item item = session.getItem(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/"+folderName);
+                assert folderName.equals(item.getName());
+                assert item instanceof Node;
+                assert !((Node)item).hasNode("hippo:translation");
+            } finally {
+                if (newFolder != null) {
+                    wpm.remove(newFolder);
+                }
+            }
+            wpm.save();
+        } finally {
+            if (session != null) session.logout();
+        }
     }
     
     private class PersistableTextPageBinder implements ContentNodeBinder {
