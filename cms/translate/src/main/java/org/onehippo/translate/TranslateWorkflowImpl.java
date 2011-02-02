@@ -268,7 +268,7 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
                 do {
                     len = responseReader.read(buffer);
                     if (len > 0) {
-                        sb.append(buffer);
+                        sb.append(buffer, 0, len);
                     }
                 } while (len >= 0);
                 if (log.isDebugEnabled()) {
