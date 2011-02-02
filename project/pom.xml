@@ -60,7 +60,7 @@
 
   <issueManagement>
     <system>Jira</system>
-    <url>http://issues.onehippo.org/browse/HREPTWO</url>
+    <url>http://issues.onehippo.org/browse/CMS7</url>
   </issueManagement>
 
   <inceptionYear>2007</inceptionYear>
@@ -80,15 +80,6 @@
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
-
-  <!-- Where issues (bugs reports and improvement requests) are handled. 
-       Used in the documentation at target/site/issue-tracking.html 
-       TODO: create a CMS7 JIRA project or rename HREPTWO?
-  <issueManagement>
-    <system>Jira</system>
-    <url>http://issues.onehippo.org/browse/CMS7</url>
-  </issueManagement>
-  -->
 
   <ciManagement>
     <system>Hudson</system>
