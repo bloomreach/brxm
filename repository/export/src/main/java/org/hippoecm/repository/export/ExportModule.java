@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -61,11 +60,10 @@ public class ExportModule implements DaemonModule {
     
     // ---------- Member variables
     
-    private Session m_session;
     private Extension m_extension;
     private ScheduledExecutorService m_executor;
-    private Future<?> m_future;
-    
+    private EventListener m_listener;
+    private ObservationManager m_manager;
     
     // ---------- Constructor
     
@@ -77,10 +75,8 @@ public class ExportModule implements DaemonModule {
     @Override
     public void initialize(Session session) throws RepositoryException {
     	
-    	m_session = session;
-    	
     	// this module is enabled if system property 'hippo.config.dir' is set
-    	String configDir = System.getProperty("hippo.config.dir");
+    	String configDir = System.getProperty("hippoecm.export.dir");
         File configDirectory = null;
         if (configDir != null) {
             configDirectory = new File(configDir);
@@ -110,28 +106,27 @@ public class ExportModule implements DaemonModule {
             return;
         }
 
+        m_executor = Executors.newSingleThreadScheduledExecutor();
+        
         // install event listener
-        ExportEventListener listener = new ExportEventListener(m_extension, session);
+        m_listener = new ExportEventListener(m_extension, session, m_executor);
         int eventTypes = Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED
         		| Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
         try {
-        	ObservationManager manager = session.getWorkspace().getObservationManager();
-            manager.addEventListener(listener, eventTypes, "/", true, null, null, false);
+        	m_manager = session.getWorkspace().getObservationManager();
+            m_manager.addEventListener(m_listener, eventTypes, "/", true, null, null, false);
         } catch (RepositoryException ex) {
             log.error("Failed to set up export. Automatic export will not be available.", ex);
         }
-
-        // schedule export task
-        m_executor = Executors.newSingleThreadScheduledExecutor();
-        Runnable task = new Runnable() { @Override public void run() { m_extension.export(m_session); } };
-        m_future = m_executor.scheduleAtFixedRate(task , 1, 1, TimeUnit.SECONDS);
 
     }
 
     @Override
     public void shutdown() {
-    	if (m_future != null) {
-        	m_future.cancel(false);
+    	if (m_manager != null) {
+        	try {
+    			m_manager.removeEventListener(m_listener);
+    		} catch (RepositoryException e) {}
     	}
     	if (m_executor != null) {
     		m_executor.shutdown();
@@ -158,18 +153,21 @@ public class ExportModule implements DaemonModule {
             ignored.add("/content/documents/state");
             ignored.add("/content/documents/tags");
             ignored.add("/content/attic");
+            ignored.add("/hst:hst/hst:configuration/hst:default");
         }
         
         private final Extension m_extension;
         private final Session m_session;
         private final Set<String> m_uris;
+        private final ScheduledExecutorService m_executor;
 
-        private ExportEventListener(Extension extension, Session session) throws RepositoryException {
+        private ExportEventListener(Extension extension, Session session, ScheduledExecutorService executor) throws RepositoryException {
             m_extension = extension;
             m_session = session;
             String[] uris = m_session.getWorkspace().getNamespaceRegistry().getURIs();
             m_uris = new HashSet<String>(uris.length+10);
             Collections.addAll(m_uris, uris);
+            m_executor = executor;
         }
 
         @Override
@@ -213,6 +211,11 @@ public class ExportModule implements DaemonModule {
                     	}
                     	break;
                     }
+                    /* NOTE: node moved event is redundant: we get individual node added and node 
+                     * removed events for destination and source node respectively.
+                     * Also, event.getIdentifier should give us the location of the source node
+                     * according to the spec, but it seems it doesn't
+                     * 
                     case Event.NODE_MOVED : {
                     	String srcPath = m_session.getNodeByIdentifier(event.getIdentifier()).getPath();
                     	log.debug("Node moved from " + srcPath + " to " + path);
@@ -241,6 +244,7 @@ public class ExportModule implements DaemonModule {
                     	}
                     	break;
                     }
+                    */
                     case Event.PROPERTY_ADDED : {
                     	log.debug("Property added on " + path);
                         if (instruction != null) {
@@ -301,6 +305,10 @@ public class ExportModule implements DaemonModule {
 			} catch (IOException e) {
 				log.error("Failed to update namespace instructions.", e);
 			}
+			
+			// schedule export task on a separate thread
+	        Runnable task = new Runnable() { @Override public void run() { m_extension.export(m_session); } };
+	        m_executor.schedule(task, 1, TimeUnit.SECONDS);
         }
 
         private boolean ignore(String path) {
@@ -313,7 +321,7 @@ public class ExportModule implements DaemonModule {
         }
                 
         private List<Event> sortEvents(EventIterator events) {
-        	List<Event> list = new ArrayList<Event>(20);
+        	List<Event> list = new ArrayList<Event>(40);
         	while (events.hasNext()) {
         		list.add(events.nextEvent());
         	}

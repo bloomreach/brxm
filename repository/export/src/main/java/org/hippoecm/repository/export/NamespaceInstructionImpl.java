@@ -12,6 +12,7 @@ class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceI
 
 	private String m_namespace;
 	private final String m_namespaceroot;
+	private Element m_namespacePropertyValue;
 	
 	NamespaceInstructionImpl(String name, Double sequence, String namespace) {
 		super(name, sequence);
@@ -33,6 +34,7 @@ class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceI
         Element namespacePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
         namespacePropertyValue.setText(m_namespace);
         namespaceProperty.add(namespacePropertyValue);
+        m_namespacePropertyValue = namespacePropertyValue;
         element.add(namespaceProperty);
         return element;
 	}
@@ -45,6 +47,7 @@ class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceI
 	
 	public void updateNamespace(String namespace) {
 		m_namespace = namespace;
+		m_namespacePropertyValue.setText(namespace);
 	}
 	
 	@Override

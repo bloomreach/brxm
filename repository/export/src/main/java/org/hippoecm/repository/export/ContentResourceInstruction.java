@@ -237,7 +237,7 @@ class ContentResourceInstruction extends ResourceInstruction {
 			else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
 				String propName = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
 				if (propName.equals("type") || propName.equals("hipposysedit:supertype")
-						|| propName.equals("hipposysedit:prototype")) {
+						|| propName.equals("jcr:primaryType")) {
 					m_insideTypeProperty = true;
 				}
 			}

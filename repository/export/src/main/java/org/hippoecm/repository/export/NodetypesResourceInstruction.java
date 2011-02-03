@@ -39,6 +39,7 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 	private final String m_prefix;
 	private String m_namespace;
 	private final String m_namespaceroot;
+	private Element m_namespacePropertyValue;
 	
 	NodetypesResourceInstruction(String name, Double sequence, File file, String namespace, String internalPrefix) {
 		super(name, sequence, file);
@@ -128,6 +129,7 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
             Element namespacePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
             namespacePropertyValue.setText(m_namespace);
             namespaceProperty.add(namespacePropertyValue);
+            m_namespacePropertyValue = namespacePropertyValue;
             element.add(namespaceProperty);
         }
         
@@ -204,5 +206,6 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 	
 	public void updateNamespace(String namespace) {
 		m_namespace = namespace;
+		m_namespacePropertyValue.setText(namespace);
 	}
 }
