@@ -41,7 +41,7 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 	private final String m_namespaceroot;
 	private Element m_namespacePropertyValue;
 	
-	NodetypesResourceInstruction(String name, Double sequence, File file, String namespace, String internalPrefix) {
+	NodetypesResourceInstruction(String name, Double sequence, File file, String namespace, Element namespacePropertyValue, String internalPrefix) {
 		super(name, sequence, file);
 		if (!m_file.exists()) {
 			m_changed = true;
@@ -58,11 +58,12 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 			m_namespace = null;
 			m_namespaceroot = null;
 		}
+		m_namespacePropertyValue = namespacePropertyValue;
 	}
 
 	@Override
 	synchronized void export(Session session) {
-		log.debug("Exporting to " + m_file.getName());
+		log.info("Exporting to " + m_file.getName());
 		try {
 			if (!m_file.exists()) m_file.createNewFile();
 			Writer out = new FileWriter(m_file);

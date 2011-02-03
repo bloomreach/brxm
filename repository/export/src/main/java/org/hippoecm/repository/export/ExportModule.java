@@ -283,7 +283,7 @@ public class ExportModule implements DaemonModule {
 				// Were any namespaces added?
 				for (String uri : uris) {
 					if (!m_uris.contains(uri)) {
-						log.debug("New namespace detected.");
+						log.debug("New namespace detected: " + uri);
 						NamespaceInstruction instruction = m_extension.findNamespaceInstruction(uri);
 						if (instruction != null) {
 							log.debug("Updating instruction " + instruction);
@@ -307,7 +307,8 @@ public class ExportModule implements DaemonModule {
 			}
 			
 			// schedule export task on a separate thread
-	        Runnable task = new Runnable() { @Override public void run() { m_extension.export(m_session); } };
+	        Runnable task = new Runnable() { 
+	        	@Override public void run() { m_extension.export(m_session); }};
 	        m_executor.schedule(task, 1, TimeUnit.SECONDS);
         }
 

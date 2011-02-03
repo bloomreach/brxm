@@ -14,9 +14,10 @@ class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceI
 	private final String m_namespaceroot;
 	private Element m_namespacePropertyValue;
 	
-	NamespaceInstructionImpl(String name, Double sequence, String namespace) {
+	NamespaceInstructionImpl(String name, Double sequence, String namespace, Element namespacePropertyValue) {
 		super(name, sequence);
 		m_namespace = namespace;
+		m_namespacePropertyValue = namespacePropertyValue;
 		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
 		m_namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
 	}

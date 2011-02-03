@@ -69,7 +69,7 @@ class ContentResourceInstruction extends ResourceInstruction {
     		log.info("Export in this context is disabled. Changes will be lost.");
     		return;
     	}
-    	log.debug("Exporting " + m_file.getName());
+    	log.info("Exporting " + m_file.getName());
     	try {
         	if (!m_file.exists()) m_file.createNewFile();
             OutputStream out = null;

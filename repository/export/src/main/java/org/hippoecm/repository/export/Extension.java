@@ -77,10 +77,12 @@ class Extension {
 
     synchronized void export(Session session) {
         if (m_changed) {
-        	log.debug("Exporting " + m_file.getName());
+        	log.info("Exporting " + m_file.getName());
             XMLWriter writer;
     		try {
-    			writer = new XMLWriter(new FileWriter(m_file), new OutputFormat("  ", true, "UTF-8"));
+    	        OutputFormat format = OutputFormat.createPrettyPrint();
+    	        format.setNewLineAfterDeclaration(false);
+    			writer = new XMLWriter(new FileWriter(m_file), format);
     	        writer.write(m_document);
     	        writer.flush();
     		} catch (IOException e) {
@@ -91,7 +93,7 @@ class Extension {
         for (Instruction instruction : m_instructions) {
             if (instruction instanceof ResourceInstruction) {
             	if (((ResourceInstruction) instruction).hasChanged()) {
-            		((ResourceInstruction)instruction).export(session);                		
+            		((ResourceInstruction)instruction).export(session);
             	}
             }
         }
@@ -168,7 +170,7 @@ class Extension {
     NamespaceInstruction createNamespaceInstruction(String uri, String prefix) throws IOException {
     	int indexOfUnderscore = prefix.indexOf('_');
     	prefix = (indexOfUnderscore == -1) ? prefix : prefix.substring(0, indexOfUnderscore);
-    	return new NamespaceInstructionImpl(prefix, 3000.0, uri);
+    	return new NamespaceInstructionImpl(prefix, 3000.0, uri, null);
     }
 
     private ContentResourceInstruction createContentResourceInstruction(String path) {
@@ -196,7 +198,7 @@ class Extension {
         File file = new File(m_file.getParent(), name + ".cnd");
         // ALERT: we use a convention for the node name of a node types resource instruction
         // It is the node type prefix + -nodetypes
-    	return new NodetypesResourceInstruction(name + "-nodetypes", 3000.1, file, null, prefix);
+    	return new NodetypesResourceInstruction(name + "-nodetypes", 3000.1, file, null, null, prefix);
     }
     
     void addInstruction(Instruction instruction) {
@@ -274,6 +276,7 @@ class Extension {
         String contentresource = null;
         String contentroot = "";
         String namespace = null;
+        Element namespacePropertyValue = null;
         String nodetypesresource = null;
         Double sequence = 0.0;
         List properties = element.elements();
@@ -290,7 +293,8 @@ class Extension {
                 sequence = Double.parseDouble(property.element(VALUE_QNAME).getText());
             }
             else if (propName.equals("hippo:namespace")) {
-            	namespace = property.element(VALUE_QNAME).getText();
+            	namespacePropertyValue = property.element(VALUE_QNAME);
+            	namespace = namespacePropertyValue.getText();
             }
             else if (propName.equals("hippo:nodetypesresource")) {
             	nodetypesresource = property.element(VALUE_QNAME).getText();
@@ -310,6 +314,7 @@ class Extension {
 	            // we don't deal with that (yet)
 	            String mergeValue = document.getRootElement().attributeValue("merge");
 	            boolean enabled = !(mergeValue != null && !mergeValue.equals(""));
+	            
 	            instruction = new ContentResourceInstruction(name, sequence, file, contentroot, context, enabled, this);
 			} catch (DocumentException e) {
 				log.error("Failed to read contentresource file as xml. Can't create instruction.", e);
@@ -321,10 +326,10 @@ class Extension {
         	// prefix = example
         	int indexOfDash = name.indexOf("-nodetypes");
         	String prefix = (indexOfDash == -1) ? name : name.substring(0, indexOfDash);
-        	instruction = new NodetypesResourceInstruction(name, sequence, file, namespace, prefix);
+        	instruction = new NodetypesResourceInstruction(name, sequence, file, namespace, namespacePropertyValue, prefix);
         }
         else if (namespace != null) {
-        	instruction = new NamespaceInstructionImpl(name, sequence, namespace);
+        	instruction = new NamespaceInstructionImpl(name, sequence, namespace, namespacePropertyValue);
         }
         return instruction;
     }
