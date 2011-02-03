@@ -1,0 +1,14 @@
+* text=auto !eol
+/.hgignore -text
+frontend/pom.xml eol=lf
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.java eol=lf
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.propeties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
+/pom.xml eol=lf
+repository/pom.xml eol=lf
+repository/src/main/resources/channel-manager-perspective.xml eol=lf
+repository/src/main/resources/hippoecm-extension.xml eol=lf
