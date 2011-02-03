@@ -262,7 +262,7 @@ test/src/test/extensions/nodetype/et.cnd -text
 test/src/test/extensions/nodetype/hippoecm-extension.xml -text
 test/src/test/extensions/nodetypes/et.cnd -text
 test/src/test/extensions/nodetypes/hippoecm-extension.xml -text
-test/src/test/extensions/simple/et$simple.xml -text
+test/src/test/extensions/simple/et$simple-content.xml -text
 test/src/test/extensions/simple/hippoecm-extension.xml -text
 test/src/test/java/org/hippoecm/repository/CheckoutNodeTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/ConfigurationTest.java -text
