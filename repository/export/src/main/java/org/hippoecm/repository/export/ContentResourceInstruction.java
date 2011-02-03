@@ -96,7 +96,7 @@ class ContentResourceInstruction extends ResourceInstruction {
                 }
                 ContentHandler filter = new FilterContentHandler(handler, excluded);
                 session = ((HippoSession) session).impersonate(new SimpleCredentials("system", new char[]{}));
-                ((SessionDecorator) session).exportDereferencedView(m_context, filter, true, false);
+                ((SessionDecorator) session).exportDereferencedView(m_context, filter, false, false);
 			} finally {
                 try {
                     out.close();
