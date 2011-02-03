@@ -29,4 +29,6 @@ table.toolbarRow {
   width: 42%;
 }
  
-.hippo-window-form td input { padding-top: 0; }
+.hippo-window-form td input { line-height: 15px; }
+
+.hippo-window-form td a.action { position: relative; bottom: 5px; }
