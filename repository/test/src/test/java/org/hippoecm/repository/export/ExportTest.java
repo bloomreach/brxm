@@ -113,7 +113,7 @@ public class ExportTest extends TestCase {
     		}
     		configHome.delete();
     	}
-        System.setProperty("hippo.config.dir", CONFIG_HOME);
+        System.setProperty("hippoecm.export.dir", CONFIG_HOME);
         // startup the repository
         super.setUp();
         // remove imported nodes
