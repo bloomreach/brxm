@@ -16,15 +16,16 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,9 +97,20 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         return canonicalHandleUUID;
     }
     
-
+    public String getLocaleString() {
+        return getProperty("hippotranslation:locale");
+    }
     
-
+    public Locale getLocale() {
+        String localeString = getLocaleString();
+        
+        if (localeString != null) {
+            return LocaleUtils.toLocale(localeString);
+        }
+        
+        return null; 
+    }
+    
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass) {
         if(!availableTranslationsBeanMappingClassInitialized) {
             availableTranslationsBeanMappingClassInitialized = true;

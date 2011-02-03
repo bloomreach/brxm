@@ -22,7 +22,7 @@ import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.No
  * does not extend the standard HippoDocument bean, they should implement this interface. This ensures that linkrewriting
  * works correctly for extensions like .html or .xml etc etc
  */
-public interface HippoDocumentBean extends HippoBean {
+public interface HippoDocumentBean extends HippoBean, HippoTranslated {
 
     /**
      * 

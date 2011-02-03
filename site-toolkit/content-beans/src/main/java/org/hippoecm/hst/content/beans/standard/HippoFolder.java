@@ -18,11 +18,13 @@ package org.hippoecm.hst.content.beans.standard;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -34,6 +36,20 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
     protected ArrayList<HippoFolderBean> hippoFolders;
     protected ArrayList<HippoDocumentBean> hippoDocuments;
+
+    public String getLocaleString() {
+        return getProperty("hippotranslation:locale");
+    }
+    
+    public Locale getLocale() {
+        String localeString = getLocaleString();
+        
+        if (localeString != null) {
+            return LocaleUtils.toLocale(localeString);
+        }
+        
+        return null; 
+    }
 
     public List<HippoFolderBean> getFolders(){
          return this.getFolders(false);
