@@ -57,6 +57,7 @@ import org.custommonkey.xmlunit.ElementQualifier;
 import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 /**
  * Test for org.hippoecm.repository.export.ExportModule
  */
+@Ignore
 public class ExportTest extends TestCase {
 
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
