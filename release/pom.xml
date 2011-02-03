@@ -38,11 +38,11 @@
 
   <properties>
     <hippo.repository.version>2.18.01</hippo.repository.version>
-    <hippo.cms.version>2.18.01</hippo.cms.version>
+    <hippo.cms.version>2.18.02</hippo.cms.version>
     <hippo.addon-defaultcontent.version>2.18.01</hippo.addon-defaultcontent.version>
     <hippo.addon-faceteddate.version>2.18.01</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.18.01</hippo.addon-publication-workflow.version>
-    <hippo.addon-hst-configuration-editor.version>1.05.00</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-hst-configuration-editor.version>1.05.01</hippo.addon-hst-configuration-editor.version>
     <hippo.packages.version>2.18.01</hippo.packages.version>
     <hippo.hst.version>2.20.01</hippo.hst.version>
 
