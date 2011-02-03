@@ -2365,10 +2365,33 @@ body.hippo-root div.yui-log-container {
   height: 150px;
 }
 
-/* Xinha dialo styling */
+/* Xinha dialog styling */
+
+.xinha_dialog_background_modal_greyout {
+    background-color: #000 !important;
+    opacity: 0.5 !important;
+}
+
+.hippo-root .dialog .icon, .hippo-root .dialog .closeButton span, .hippo-root .dialog .resizeHandle { 
+  display: none; 
+}
+
+.hippo-root .dialog, .hippo-root .dialog button, .hippo-root .dialog input, .hippo-root .dialog select, .hippo-root .dialog textarea, .hippo-root .dialog table {
+  font: tahoma,arial,sans-serif,helvetica;
+}
+
 .hippo-root > .dialog {
   text-align: left;
-  background-color: buttonface;
+  background-color: #999;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  color: #000;
+  border: none;
+  position: relative;
 }
 
 .hippo-root > .dialog table, .hippo-root > .dialog td, .hippo-root > .dialog tr {
@@ -2376,18 +2399,44 @@ body.hippo-root div.yui-log-container {
 }
 
 .hippo-root > .dialog > h1 {
-  padding: 3px 22px;
+  padding: 10px 22px;
   margin-bottom: 10px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background: #999;
+  border: none;
+  font-size: 11px;
 }
 
+.hippo-root > .dialog .closeButton {
+  background: url(images/box-grey.png) -154px -48px transparent;
+  height: 18px;
+  width: 44px;
+  border: none;
+  top: 8px;
+}
+
+.hippo-root > .dialog .closeButton:hover {
+  background-position: -154px -66px;
+}
+
+.hippo-root > .dialog form {
+  background-color: #F4F4F4;
+  margin-top: 0 !important;
+  padding-top: 5px;
+  margin: 0 7px;
+}
+  
 .hippo-root > .dialog fieldset {
   border: 2px groove #F0F0F0;
   padding: 0.2em 0.5em;
-  margin: 0px 2px 0px 2px;
+  margin: 0px 2px 10px 2px;
 }
 
 .hippo-root > .dialog div.buttons {
   text-align: right;
+  background: #999;
 }
 
 .hippo-root > .dialog div.space {
@@ -2398,7 +2447,7 @@ body.hippo-root div.yui-log-container {
   float: left;
   padding: 2px 5px;
   text-align: right;
-  width: 4em;
+  width: auto;
 }
 
 .hippo-root > .dialog div.fr {
@@ -2407,6 +2456,7 @@ body.hippo-root div.yui-log-container {
   text-align: right;
   width: 7em;
 }
+
 
 /* Toggle button class is used in multiple plugin, to avoid clashes define it here */
 .toggle-button {
