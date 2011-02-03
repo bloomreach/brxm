@@ -1,5 +1,4 @@
 * text=auto !eol
-/.hgignore -text
 frontend/pom.xml eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.java eol=lf
