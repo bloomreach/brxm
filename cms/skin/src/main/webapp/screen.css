@@ -2390,7 +2390,7 @@ body.hippo-root div.yui-log-container {
   -webkit-box-shadow: none;
   box-shadow: none;
   color: #000;
-  border: none;
+  border: 1px solid #bbb;
   position: relative;
 }
 
@@ -2434,6 +2434,24 @@ body.hippo-root div.yui-log-container {
   margin: 0px 2px 10px 2px;
 }
 
+.hippo-root > .dialog table {
+  margin-left: 5px !important
+}
+
+.hippo-root > .dialog table td {
+  text-align: left !important;
+  width: auto !important;
+  padding-left: 5px;
+}
+
+.hippo-root > .dialog #Dialog8 { 
+  float: right; 
+}
+
+.hippo-root > .dialog select { 
+  padding-right: 5px; 
+}
+
 .hippo-root > .dialog div.buttons {
   text-align: right;
   background: #999;
@@ -2445,15 +2463,15 @@ body.hippo-root div.yui-log-container {
 
 .hippo-root > .dialog div.fl {
   float: left;
-  padding: 2px 5px;
-  text-align: right;
+  padding: 2px 5px 2px 0;
+  text-align: left;
   width: auto;
 }
 
 .hippo-root > .dialog div.fr {
   float: left;
-  padding: 2px 5px;
-  text-align: right;
+  padding: 2px 5px 2px 0;
+  text-align: left;
   width: 7em;
 }
 
