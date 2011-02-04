@@ -137,14 +137,17 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * On the other hand, a sophisticated implementation can regard the path as an input for 
      * a workflow-enabled document/folder path. 
      * </P>
-     * 
+     *
+     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
+     * to get the absolute path of the created node.
+     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @throws ObjectBeanPersistenceException
      */
     public void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException {
-        create(absPath, nodeTypeName, name, false);
+        createAndReturn(absPath, nodeTypeName, name, false);
     }
     
     /**
@@ -158,7 +161,10 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * <P>
      * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
      * </P>
-     * 
+     *
+     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
+     * to get the absolute path of the created node.
+     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
@@ -166,44 +172,72 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * @throws ObjectBeanPersistenceException
      */
     public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException {
+        createAndReturn(absPath, nodeTypeName, name, autoCreateFolders);
+    }
+
+     /**
+     * Creates content node(s) with the specified node type at the specified absolute path.
+     * <P>
+     * The absolute path could be regarded differently according to physical implementations.
+     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
+     * On the other hand, a sophisticated implementation can regard the path as an input for
+     * a workflow-enabled document/folder path.
+     * </P>
+     * <P>
+     * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
+     * </P>
+     *
+     * @param absPath the absolute node path
+     * @param nodeTypeName the node type name of the content object
+     * @param name the content node name
+     * @param autoCreateFolders the flag to create folders
+     * @return the absolute path of the created node
+     * @throws ObjectBeanPersistenceException
+     */
+    public String createAndReturn(final String absPath, final String nodeTypeName, final String name, final boolean autoCreateFolders) throws ObjectBeanPersistenceException {
         try {
+            final Node parentFolderNode;
             if (!session.itemExists(absPath)) {
                 if (!autoCreateFolders) {
-                    throw new ObjectBeanPersistenceException("The folder node not found on the path: " + absPath);
+                    throw new ObjectBeanPersistenceException("The folder node is not found on the path: " + absPath);
                 } else {
-                    createMissingFolders(absPath);
+                    parentFolderNode = createMissingFolders(absPath);
                 }
+            } else {
+                parentFolderNode = session.getNode(absPath);
             }
-            
-            createNodeByWorkflow((Node) session.getItem(absPath), nodeTypeName, name);
+
+            return createNodeByWorkflow(parentFolderNode, nodeTypeName, name);
         } catch (ObjectBeanPersistenceException e) {
             throw e;
         } catch (Exception e) {
             throw new ObjectBeanPersistenceException(e);
         }
     }
-    
-    protected void createMissingFolders(String absPath) throws ObjectBeanPersistenceException {
+
+    protected Node createMissingFolders(String absPath) throws ObjectBeanPersistenceException {
         try {
             String [] folderNames = absPath.split("/");
-            
+
             Node rootNode = session.getRootNode();
             Node curNode = rootNode;
             String folderNodePath = null;
             
             for (String folderName : folderNames) {
-                if (!"".equals(folderName)) {
+                String folderNodeName = uriEncoding.encode(folderName);
+
+                if (!"".equals(folderNodeName)) {
                     if (curNode == rootNode) {
-                        folderNodePath = "/" + folderName;
+                        folderNodePath = "/" + folderNodeName;
                     } else {
-                        folderNodePath = curNode.getPath() + "/" + folderName;
+                        folderNodePath = curNode.getPath() + "/" + folderNodeName;
                     }
                     
                     if (!session.itemExists(folderNodePath)) {
-                        createNodeByWorkflow(curNode, folderNodeTypeName, folderName);
+                        curNode = session.getNode(createNodeByWorkflow(curNode, folderNodeTypeName, folderName));
+                    } else {
+                        curNode = curNode.getNode(folderNodeName);
                     }
-                    
-                    curNode = curNode.getNode(folderName);
 
                     if (curNode.isNodeType(HippoNodeType.NT_FACETSELECT) || curNode.isNodeType(HippoNodeType.NT_MIRROR )) {
                         String docbaseUuid = curNode.getProperty("hippo:docbase").getString();
@@ -220,6 +254,8 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     }
                 }
             }
+
+            return curNode;
         } catch (ObjectBeanPersistenceException e) {
             throw e;
         } catch (Exception e) {
@@ -227,7 +263,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         }
     }
     
-    protected void createNodeByWorkflow(Node folderNode, String nodeTypeName, String name)
+    protected String createNodeByWorkflow(Node folderNode, String nodeTypeName, String name)
             throws ObjectBeanPersistenceException {
         try {
             folderNode = NodeUtils.getCanonicalNode(folderNode, folderNode);
@@ -244,11 +280,16 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
                 String nodeName = uriEncoding.encode(name);
                 String added = fwf.add(category, nodeTypeName, nodeName);
+                if (added == null) {
+                    throw new ObjectBeanPersistenceException("Failed to add document/folder for type '" + nodeTypeName
+                            + "'. Make sure there is a prototype.");
+                }
                 Item addedDocumentVariant = folderNode.getSession().getItem(added);
                 if (addedDocumentVariant instanceof Node && !nodeName.equals(name)) {
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow(defaultWorkflowCategory, (Node)addedDocumentVariant);
                     defaultWorkflow.localizeName(name);
                 }
+                return added;
             } else {
                 throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for "
                         + folderNode.getPath() + ": " + wf);

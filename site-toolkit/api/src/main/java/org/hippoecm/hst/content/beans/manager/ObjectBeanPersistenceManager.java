@@ -52,7 +52,9 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
      * On the other hand, a sophisticated implementation can regard the path as an input for 
      * a workflow-enabled document/folder path. 
      * </P>
-     * 
+     *
+     * @deprecated use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
+     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
@@ -71,7 +73,9 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
      * <P>
      * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
      * </P>
-     * 
+     *
+     * @deprecated use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
+     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
@@ -79,7 +83,28 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
      * @throws ObjectBeanPersistenceException
      */
     void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException;
-    
+
+    /**
+     * Creates content node(s) with the specified node type at the specified absolute path.
+     * <P>
+     * The absolute path could be regarded differently according to physical implementations.
+     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
+     * On the other hand, a sophisticated implementation can regard the path as an input for
+     * a workflow-enabled document/folder path.
+     * </P>
+     * <P>
+     * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
+     * </P>
+     *
+     * @param absPath the absolute node path
+     * @param nodeTypeName the node type name of the content object
+     * @param name the content node name
+     * @param autoCreateFolders the flag to create folders
+     * @return the absolute path of the created node
+     * @throws ObjectBeanPersistenceException
+     */
+    String createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException;
+
     /**
      * Updates the content node which is mapped to the object.
      * <P>
@@ -123,8 +148,7 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
     void save() throws ObjectBeanPersistenceException;
     
     /**
-     * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.  
-     * @param keepChanges
+     * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.
      * @throws ObjectBeanPersistenceException
      */
     void refresh() throws ObjectBeanPersistenceException;

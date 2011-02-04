@@ -94,11 +94,16 @@ public class MockObjectBeanPersistenceManager implements ObjectBeanPersistenceMa
     }
     
     public void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException {
-        create(absPath, nodeTypeName, name, false);
+        createAndReturn(absPath, nodeTypeName, name, false);
     }
 
     public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException {
+        createAndReturn(absPath, nodeTypeName, name, autoCreateFolders);
+    }
+
+    public String createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException {
         // do nothing... use setObject for mocking.
+        return null;
     }
     
     public synchronized void update(Object content) throws ObjectBeanPersistenceException {
