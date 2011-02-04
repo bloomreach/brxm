@@ -24,14 +24,14 @@ import java.util.Locale;
 public interface HippoTranslated {
     
     /**
-     * Return string expression of the locale for content bean.
-     * @return
+     * Return string expression of the locale for content bean. If there is no locale found, <code>null</code> is returned
+     * @return the string expression of the locale  for content bean and <code>null</code> when missing
      */
     String getLocaleString();
     
     /**
-     * Returns locale for content bean.
-     * @return
+     * Returns the {@link Locale} for content bean. If there is no {@link Locale} found, <code>null</code> is returned
+     * @return the {@link Locale} for content bean and <code>null</code> when missing
      */
     Locale getLocale();
     
