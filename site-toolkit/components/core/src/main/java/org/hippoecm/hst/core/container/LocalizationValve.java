@@ -38,9 +38,6 @@ public class LocalizationValve extends AbstractValve {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(LocalizationValve.class);
     
-    private static final char HYPHEN = '-';
-    private static final char UNDERSCORE = '_';
-
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         
