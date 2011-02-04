@@ -23,6 +23,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -88,7 +89,7 @@ public class LocalizationValve extends AbstractValve {
         if(requestContext.getResolvedSiteMapItem() != null) {
             HstSiteMapItem siteMapItem =  requestContext.getResolvedSiteMapItem().getHstSiteMapItem();
             if(siteMapItem.getLocale() != null) {
-                Locale locale = parseLocale(siteMapItem.getLocale());
+                Locale locale = LocaleUtils.toLocale(siteMapItem.getLocale());
                 log.debug("Preferred locale for request is set to '{}' by sitemap item '{}'", siteMapItem.getLocale(), siteMapItem.getId());
                 return locale;
             }
@@ -97,7 +98,7 @@ public class LocalizationValve extends AbstractValve {
         if(requestContext.getResolvedMount() != null) {
             Mount mount = requestContext.getResolvedMount().getMount();
             if(mount.getLocale() != null) {
-                Locale locale = parseLocale(mount.getLocale());
+                Locale locale = LocaleUtils.toLocale(mount.getLocale());
                 log.debug("Preferred locale for request is set to '{}' by Mount '{}'", mount.getLocale(), mount.getName());
                 return locale;
             }
@@ -105,65 +106,6 @@ public class LocalizationValve extends AbstractValve {
         
         // no locale found
         return null;
-    }
-    
-    /**
-     * See parseLocale(String, String) for details.
-     */
-    public static Locale parseLocale(String locale) {
-    return parseLocale(locale, null);
-    }
-
-    /**
-     * Parses the given locale string into its language and (optionally)
-     * country components, and returns the corresponding
-     * <tt>java.util.Locale</tt> object.
-     *
-     * If the given locale string is null or empty, the runtime's default
-     * locale is returned.
-     *
-     * @param locale the locale string to parse
-     * @param variant the variant
-     *
-     * @return <tt>java.util.Locale</tt> object corresponding to the given
-     * locale string, or the runtime's default locale if the locale string is
-     * null or empty
-     *
-     * @throws IllegalArgumentException if the given locale does not have a
-     * language component or has an empty country component
-     */
-    public static Locale parseLocale(String locale, String variant) {
-
-    Locale ret = null;
-    String language = locale;
-    String country = null;
-    int index = -1;
-
-    if (((index = locale.indexOf(HYPHEN)) > -1)
-            || ((index = locale.indexOf(UNDERSCORE)) > -1)) {
-        language = locale.substring(0, index);
-        country = locale.substring(index+1);
-    }
-
-    if ((language == null) || (language.length() == 0)) {
-        throw new IllegalArgumentException("LOCALE_NO_LANGUAGE");
-    }
-
-    if (country == null) {
-        if (variant != null)
-        ret = new Locale(language, "", variant);
-        else
-        ret = new Locale(language, "");
-    } else if (country.length() > 0) {
-        if (variant != null)
-        ret = new Locale(language, country, variant);
-        else
-        ret = new Locale(language, country);
-    } else {
-       throw new IllegalArgumentException("LOCALE_EMPTY_COUNTRY");
-    }
-
-    return ret;
     }
 
 }
