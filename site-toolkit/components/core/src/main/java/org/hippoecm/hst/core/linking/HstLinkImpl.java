@@ -27,7 +27,7 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstLinkImpl implements HstLink{
+public class HstLinkImpl implements HstLink {
 
     private final static Logger log = LoggerFactory.getLogger(HstLinkImpl.class);
 
@@ -121,23 +121,28 @@ public class HstLinkImpl implements HstLink{
             return null;
         }
         
-        String combinedPath = path;
-        if(subPath != null) {
-            // subPath is allowed to be empty ""
-            combinedPath += PATH_SUBPATH_DELIMITER + subPath;
-        } else if (mount != null && !mount.isSite()) {
-            // mount is configured to support subPath: Always include the PATH_SUBPATH_DELIMITER
-            combinedPath += PATH_SUBPATH_DELIMITER;
-        }
-        
         String urlString = null;
         
         if (this.containerResource) {
             HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext);
-            hstUrl.setResourceID(combinedPath);
+            hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
         } else {
-            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(mount, requestContext.getBaseURL() , combinedPath);
+            
+            if(subPath != null) {
+                // subPath is allowed to be empty ""
+                path += PATH_SUBPATH_DELIMITER + subPath;
+            } else if (mount != null && !mount.isSite()) {
+                // mount is configured to support subPath: Include the PATH_SUBPATH_DELIMITER for locations that that would be exclused by virtualhosts configuration
+                // like resources ending on .jpg or .pdf etc 
+                if(mount.getVirtualHost().getVirtualHosts().isExcluded(path)) {
+                    // path should not be excluded for hst request processing because for example it is a REST call for a binary. Add the PATH_SUBPATH_DELIMITER
+                    // to avoid this
+                    path += PATH_SUBPATH_DELIMITER;
+                }
+            }
+            
+            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(mount, requestContext.getBaseURL() , path);
             urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext).toString();
         }
         
@@ -189,6 +194,5 @@ public class HstLinkImpl implements HstLink{
     public void setNotFound(boolean notFound) {
         this.notFound = notFound;
     }
-
 
 }
