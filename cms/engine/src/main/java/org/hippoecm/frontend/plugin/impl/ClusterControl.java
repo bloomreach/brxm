@@ -181,7 +181,7 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
                 extensions.remove(serviceId);
             }
         } else {
-            log.error("unknown extension " + serviceId);
+            log.error("Unknown extension " + serviceId + " of service " + service);
         }
     }
 
