@@ -17,11 +17,11 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WicketEventReference;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
@@ -104,9 +104,10 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         };
         context.registerTracker(tracker, serviceId);
 
-        add(menuBehavior = new ContextMenuBehavior());
-
+        add(HeaderContributor.forJavaScript(WicketEventReference.INSTANCE));
         add(HeaderContributor.forJavaScript(WicketAjaxReference.INSTANCE));
+        
+        add(menuBehavior = new ContextMenuBehavior());
 
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
         IClusterControl clusterControl = context.newCluster(pluginCluster, null);
