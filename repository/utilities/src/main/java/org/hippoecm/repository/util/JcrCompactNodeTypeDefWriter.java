@@ -80,9 +80,9 @@ public class JcrCompactNodeTypeDefWriter {
         }
         NodeType[] returnValue = result.toArray(new NodeType[result.size()]);
         Arrays.sort(returnValue, new Comparator<NodeType>() {
-    		@Override public int compare(NodeType nt1, NodeType nt2) {
-    			return nt1.getName().compareTo(nt2.getName());
-    		}
+            @Override public int compare(NodeType nt1, NodeType nt2) {
+                return nt1.getName().compareTo(nt2.getName());
+            }
         });
         result = null;
         visited = null;
