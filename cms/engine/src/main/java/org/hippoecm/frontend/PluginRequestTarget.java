@@ -15,17 +15,25 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.internal.HeaderResponse;
+import org.apache.wicket.response.StringResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +49,9 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
 
     private Set<Component> updates;
     private List<IListener> listeners;
+
+    private final List<String> appendJavascripts = new ArrayList<String>();
+    private final List<String> domReadyJavascripts = new ArrayList<String>();
 
     public PluginRequestTarget(Page page) {
         super(page);
@@ -92,6 +103,7 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
             }
         }
 
+        TreeMap<String, Component> toUpdate = new TreeMap<String, Component>();
         Iterator<Component> components = updates.iterator();
         while (components.hasNext()) {
             Component component = components.next();
@@ -102,7 +114,7 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
             MarkupContainer parent = component.getParent();
             while (parent != null) {
                 if (parent instanceof Page) {
-                    super.addComponent(component);
+                    toUpdate.put(component.getPath(), component);
                     break;
                 } else if (updates.contains(parent)) {
                     break;
@@ -110,15 +122,99 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
                 parent = parent.getParent();
             }
         }
+        for (Component component : toUpdate.values()) {
+            super.addComponent(component);
+        }
     }
 
     public void onAfterRespond(Map map, IJavascriptResponse response) {
         if (listeners != null) {
-            Iterator it = listeners.iterator();
+            Iterator<IListener> it = listeners.iterator();
             while (it.hasNext()) {
-                ((IListener) it.next()).onAfterRespond(map, response);
+                it.next().onAfterRespond(map, response);
             }
         }
+
+        // execute the dom ready javascripts as first javascripts
+        // after component replacement
+        Response webResponse = RequestCycle.get().getResponse();
+        Iterator<String> it = domReadyJavascripts.iterator();
+        while (it.hasNext()) {
+            String js = it.next();
+            respondInvocation(webResponse, js);
+        }
+        it = appendJavascripts.iterator();
+        while (it.hasNext()) {
+            String js = it.next();
+            respondInvocation(webResponse, js);
+        }
+    }
+
+    private void respondInvocation(final Response response, final String js) {
+        boolean encoded = false;
+        String javascript = js;
+
+        // encode the response if needed
+        if (needsEncoding(js)) {
+            encoded = true;
+            javascript = encode(js);
+        }
+
+        response.write("<evaluate");
+        if (encoded) {
+            response.write(" encoding=\"");
+            response.write(getEncodingName());
+            response.write("\"");
+        }
+        response.write(">");
+        response.write("<![CDATA[");
+        response.write(javascript);
+        response.write("]]>");
+        response.write("</evaluate>");
+    }
+
+    @Override
+    public IHeaderResponse getHeaderResponse() {
+        return new HeaderResponse() {
+            private final StringResponse bufferedResponse = new StringResponse();
+
+            @Override
+            public void close() {
+                super.close();
+
+                Response realResponse = RequestCycle.get().getResponse();
+                CharSequence output = bufferedResponse.getBuffer();
+                if (output.length() > 0) {
+                    realResponse.write(output);
+                }
+                bufferedResponse.reset();
+            }
+
+            @Override
+            public void renderOnDomReadyJavascript(String javascript) {
+                List<String> token = Arrays
+                        .asList(new String[] { "javascript-event", "window", "domready", javascript });
+                if (wasRendered(token) == false) {
+                    domReadyJavascripts.add(javascript);
+                    markRendered(token);
+                }
+            }
+
+            @Override
+            public void renderOnLoadJavascript(String javascript) {
+                List<String> token = Arrays.asList(new String[] { "javascript-event", "window", "load", javascript });
+                if (wasRendered(token) == false) {
+                    // execute the javascript after all other scripts are executed
+                    appendJavascripts.add(javascript);
+                    markRendered(token);
+                }
+            }
+
+            @Override
+            protected Response getRealResponse() {
+                return bufferedResponse;
+            }
+        };
     }
 
     @Override
