@@ -71,5 +71,10 @@ public class Pinger extends Label {
         protected void onTimer(AjaxRequestTarget target) {
             target.addComponent(getComponent());
         }
+
+        @Override
+        protected String getChannelName() {
+            return "pinger|d";
+        }
     }
 }
