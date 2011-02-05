@@ -40,7 +40,7 @@ public class AccordionSectionBehavior extends AbstractBehavior {
     @Override
     public void renderHead(IHeaderResponse response) {
         if (c.isVisible()) {
-            response.renderOnLoadJavascript("YAHOO.hippo.AccordionManager.render('" + parentId + "', '"
+            response.renderOnDomReadyJavascript("YAHOO.hippo.AccordionManager.render('" + parentId + "', '"
                     + c.getMarkupId() + "')");
         }
     };

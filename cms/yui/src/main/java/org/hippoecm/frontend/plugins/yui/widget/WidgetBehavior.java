@@ -65,7 +65,7 @@ public class WidgetBehavior extends AbstractYuiBehavior{
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "hippowidget");
         context.addTemplate(template);
-        context.addOnWinLoad("YAHOO.hippo.WidgetManager.render();");
+        context.addOnDomLoad("YAHOO.hippo.WidgetManager.render();");
     }
 
     public String getMarkupId() {
