@@ -138,14 +138,14 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * a workflow-enabled document/folder path. 
      * </P>
      *
-     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
-     * to get the absolute path of the created node.
-     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @throws ObjectBeanPersistenceException
+     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
+     * to get the absolute path of the created node.
      */
+    @Deprecated
     public void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException {
         createAndReturn(absPath, nodeTypeName, name, false);
     }
@@ -162,15 +162,15 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
      * </P>
      *
-     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
-     * to get the absolute path of the created node.
-     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @param autoCreateFolders the flag to create folders
      * @throws ObjectBeanPersistenceException
+     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
+     * to get the absolute path of the created node.
      */
+    @Deprecated
     public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException {
         createAndReturn(absPath, nodeTypeName, name, autoCreateFolders);
     }

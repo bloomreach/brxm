@@ -53,13 +53,13 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
      * a workflow-enabled document/folder path. 
      * </P>
      *
-     * @deprecated use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
-     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @throws ObjectBeanPersistenceException
+     * @deprecated use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
      */
+    @Deprecated
     void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException;
     
     /**
@@ -74,14 +74,14 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
      * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
      * </P>
      *
-     * @deprecated use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
-     *
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @param autoCreateFolders the flag to create folders
      * @throws ObjectBeanPersistenceException
+     * @deprecated use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
      */
+    @Deprecated
     void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException;
 
     /**
