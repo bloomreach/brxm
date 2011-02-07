@@ -17,10 +17,10 @@ package org.hippoecm.repository.util;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -55,7 +55,7 @@ public class JcrCompactNodeTypeDefWriter {
         this.nsReg = nsReg;
     }
 
-    private List<NodeType> result;
+    private LinkedHashSet<NodeType> result;
 
     private Set<String> visited;
 
@@ -66,29 +66,28 @@ public class JcrCompactNodeTypeDefWriter {
     
     synchronized NodeType[] getNodeTypes(String namespacePrefix) throws RepositoryException {
         NodeTypeIterator it = ntMgr.getAllNodeTypes();
-        List<NodeType> types = new ArrayList<NodeType>();
+        Set<NodeType> types = new TreeSet<NodeType>(new Comparator<NodeType>() {
+            @Override public int compare(NodeType nt0, NodeType nt1) {
+                return nt0.getName().compareTo(nt1.getName());
+            }
+        });
         while (it.hasNext()) {
             NodeType nt = it.nextNodeType();
             if (nt.getName().startsWith(namespacePrefix)) {
                 types.add(nt);
             }
         }
-        result = new ArrayList<NodeType>();
+        result = new LinkedHashSet<NodeType>();
         visited = new HashSet<String>();
         for (NodeType type : types) {
             visit(namespacePrefix, type);
         }
         NodeType[] returnValue = result.toArray(new NodeType[result.size()]);
-        Arrays.sort(returnValue, new Comparator<NodeType>() {
-            @Override public int compare(NodeType nt1, NodeType nt2) {
-                return nt1.getName().compareTo(nt2.getName());
-            }
-        });
         result = null;
         visited = null;
         return returnValue;
     }
-    
+
     private void visit(String namespacePrefix, NodeType nt) {
         if (visited.contains(nt.getName())) {
             return;
