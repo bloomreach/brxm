@@ -162,11 +162,11 @@ public class RepositoryServlet extends HttpServlet {
             try {
                 registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
                 registry.rebind(url.getName(), rmiRepository); // connection exception happens here
-                log.warn("Using existing rmi server on " + url.getHost() + ":" + url.getPort());
+                log.info("Using existing rmi server on " + url.getHost() + ":" + url.getPort());
             } catch (ConnectException e) {
                 registry = LocateRegistry.createRegistry(url.getPort());
                 registry.rebind(url.getName(), rmiRepository);
-                log.warn("Started an RMI registry on port " + url.getPort());
+                log.info("Started an RMI registry on port " + url.getPort());
                 registryIsEmbedded = true;
             }
         } catch (MalformedURLException ex) {
@@ -186,20 +186,20 @@ public class RepositoryServlet extends HttpServlet {
     @Override
     public void destroy() {
         // close repository
-        log.warn("Closing repository.");
+        log.info("Closing repository.");
         if (repository != null) {
             repository.close();
             repository = null;
         }
 
         // done
-        log.warn("Repository closed.");
+        log.info("Repository closed.");
 
         // unbinding from registry
         String name = null;
         try {
             name = new RepositoryUrl(bindingAddress).getName();
-            log.warn("Unbinding '"+name+"' from registry.");
+            log.info("Unbinding '"+name+"' from registry.");
             registry.unbind(name);
         } catch (RemoteException e) {
             log.error("Error during unbinding '" + name + "': " + e.getMessage());
@@ -211,7 +211,7 @@ public class RepositoryServlet extends HttpServlet {
 
         // unexporting from registry
         try {
-            log.warn("Unexporting rmi repository: " + bindingAddress);
+            log.info("Unexporting rmi repository: " + bindingAddress);
             UnicastRemoteObject.unexportObject(rmiRepository, true);
         } catch (NoSuchObjectException e) {
             log.error("Error during rmi shutdown for address: " + bindingAddress, e);
@@ -220,7 +220,7 @@ public class RepositoryServlet extends HttpServlet {
         // shutdown registry
         if (registryIsEmbedded) {
             try {
-                log.warn("Closing rmiregistry: " + bindingAddress);
+                log.info("Closing rmiregistry: " + bindingAddress);
                 UnicastRemoteObject.unexportObject(registry, true);
             } catch (NoSuchObjectException e) {
                 log.error("Error during rmi shutdown for address: " + bindingAddress, e);
