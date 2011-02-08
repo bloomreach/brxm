@@ -35,6 +35,7 @@ import javax.jcr.*;
 import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
@@ -74,7 +75,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
      * width, then the height of the scaled image will be equal to max size. The same
      * goes for the original width: if it is greater than the original height, the width of
      * the scaled image is equal to maxsize.
-     * @param imageData the original image data
+     * @param imageData the original image data; the input stream is closed by this method.
      * @param maxSize the maximum height or width of the scaled image
      * @param mimeType the mime type of the image
      * @return the scaled image stream
@@ -144,6 +145,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             if (writer != null) {
                 writer.dispose();
             }
+            IOUtils.closeQuietly(imageData);
         }
     }
 
