@@ -18,12 +18,18 @@ package org.hippoecm.repository.export;
 import org.dom4j.Element;
 
 /**
- * Represents an instruction element inside hippoecm-extension.xml file.
+ * Represents an instruction element (a hippo:initializeitem) inside hippoecm-extension.xml file.
  */
 interface Instruction {
 	
+    /**
+     * @return  The name of this instruction
+     */
 	String getName();
 	
+	/**
+	 * @return  xml representation of this instruction.
+	 */
     Element createInstructionElement();
     
 }

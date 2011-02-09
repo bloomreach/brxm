@@ -40,10 +40,11 @@ import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Represents a hippoecm-extension.xml file.
  */
-class Extension {
+final class Extension {
 
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     
@@ -60,22 +61,22 @@ class Extension {
     
     Extension(File file) throws DocumentException, IOException {
         m_file = file;
-        m_instructions = new ArrayList<Instruction>(10);
         if (!m_file.exists()) {
             m_file.createNewFile();
             createDocument();
+            m_instructions = new ArrayList<Instruction>();
             m_changed = true;
         } else {
             SAXReader reader = new SAXReader();
             m_document = reader.read(m_file);
-            parseExtension(m_document.getRootElement());
+            m_instructions = parseExtension(m_document.getRootElement());
         }
     }
         
     
     // ---------- API
 
-    synchronized void export(Session session) {
+    void export(Session session) {
         if (m_changed) {
         	log.info("Exporting " + m_file.getName());
             XMLWriter writer;
@@ -254,16 +255,18 @@ class Extension {
      * Parse hippoecm-extension.xml file
      */
     @SuppressWarnings("rawtypes")
-    private void parseExtension(Element root) throws DocumentException {
+    private List<Instruction> parseExtension(Element root) throws DocumentException {
 		List elements = root.elements(NODE_QNAME);
+		List<Instruction> instructions = new ArrayList<Instruction>(elements.size());
         for (Iterator iter = elements.iterator(); iter.hasNext();) {
             Element element = (Element) iter.next();
             Instruction instruction;
             instruction = parseInstruction(element);
             if (instruction != null) {
-                m_instructions.add(instruction);
+                instructions.add(instruction);
             }
         }
+        return new ArrayList<Instruction>(instructions);
     }
     
     /*

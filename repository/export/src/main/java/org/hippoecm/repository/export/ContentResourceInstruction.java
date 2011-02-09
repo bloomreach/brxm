@@ -64,7 +64,7 @@ class ContentResourceInstruction extends ResourceInstruction {
     }
     
     @Override
-    synchronized void export(Session session) {
+    void export(Session session) {
     	if (!m_enabled) {
     		log.info("Export in this context is disabled. Changes will be lost.");
     		return;

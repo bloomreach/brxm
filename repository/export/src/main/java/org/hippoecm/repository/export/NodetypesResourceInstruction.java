@@ -62,7 +62,7 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 	}
 
 	@Override
-	synchronized void export(Session session) {
+	void export(Session session) {
 		log.info("Exporting to " + m_file.getName());
 		try {
 			if (!m_file.exists()) m_file.createNewFile();
