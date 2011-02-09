@@ -71,7 +71,7 @@ public class TemplateFactory implements IClusterable {
                 root.put("item", "${cluster.id}.field");
             }
         } catch (ClassNotFoundException ex) {
-            log.warn("Unable to load layout class");
+            log.warn("Unable to load layout class " + ex.getClass());
         }
 
         // set variant
