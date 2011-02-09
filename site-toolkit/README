@@ -13,7 +13,7 @@ How to test and build Hippo Site Toolkit
   (3) [Optional] Tomcat 6.0 or higher if you want to deploy and run on Tomcat.)
 
 3. Build
-    
+     
     (1) Build with testing
     
       $ mvn clean install
