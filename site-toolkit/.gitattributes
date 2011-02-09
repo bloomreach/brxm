@@ -1398,6 +1398,7 @@ components/core/src/main/java/org/hippoecm/hst/site/request/ResolvedSiteMapItemI
 components/core/src/main/java/org/hippoecm/hst/site/request/ResolvedVirtualHostImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/SiteMapItemHandlerConfigurationImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/SiteNameDecoratedContextCredentialsProvider.java svneol=native#text/plain
+components/core/src/main/resources/ehcache.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-container.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
