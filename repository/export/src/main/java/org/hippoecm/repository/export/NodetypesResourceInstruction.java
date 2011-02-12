@@ -83,7 +83,12 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 					// but we need to first get a fresh session because the old session
 					// does not seem to pick up the last step in update all content
 					session = ((HippoSession) session).impersonate(new SimpleCredentials("system", new char[]{}));
-					cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), m_prefix);
+					try {
+						cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), m_prefix);
+					}
+					finally {
+						session.logout();
+					}
 				}
 				out.write(cnd);
 				out.flush();
