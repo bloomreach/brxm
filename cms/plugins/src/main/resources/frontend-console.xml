@@ -216,10 +216,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>View Workflow</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -227,10 +227,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>View Permissions</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.permissions.PermissionsDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -238,10 +238,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>View References</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.refs.ReferencesDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -249,10 +249,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>XML Import</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -260,10 +260,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>XML Export</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -271,10 +271,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>Check In/Out</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.check.CheckInOutDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -282,10 +282,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>Add Namespace</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.namespace.NamespaceDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -293,10 +293,10 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>CND Import</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog</sv:value>
           </sv:property>
         </sv:node>
@@ -304,12 +304,27 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-	  <sv:property sv:name="label" sv:type="String">
+	      <sv:property sv:name="label" sv:type="String">
             <sv:value>CND Export</sv:value>
           </sv:property>
-	  <sv:property sv:name="class" sv:type="String">
+	      <sv:property sv:name="class" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog</sv:value>
           </sv:property>
+        </sv:node>
+        <sv:node sv:name="autoexport">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+	      <sv:property sv:name="label" sv:type="String">
+            <sv:value>Auto Export</sv:value>
+          </sv:property>
+	      <sv:property sv:name="class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.console.menu.export.AutoExportDialog</sv:value>
+          </sv:property>
+          <sv:property sv:name="enabled" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <!-- <sv:property sv:name="excluded" sv:type="String"/>  -->
         </sv:node>
       </sv:node>
     </sv:node>
