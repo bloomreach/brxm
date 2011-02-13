@@ -23,9 +23,14 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
@@ -54,13 +59,19 @@ public final class ExportModule implements DaemonModule {
 	// ---------- Static variables
 	
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
+    private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:frontend/console/console/menu/items/autoexport";
 
     
     // ---------- Member variables
     
     private Extension m_extension;
+    private Session m_session;
+    
+    // we keep the listener and the manager as members here
+    // so we can shutdown properly
     private EventListener m_listener;
     private ObservationManager m_manager;
+    private ScheduledExecutorService m_executor;
     
     // ---------- Constructor
     
@@ -72,7 +83,9 @@ public final class ExportModule implements DaemonModule {
     @Override
     public void initialize(Session session) throws RepositoryException {
     	
-    	// this module is enabled if system property 'hippo.config.dir' is set
+    	m_session = session;
+    	
+    	// read 'hippoecm.export.dir' system property
     	String configDir = System.getProperty("hippoecm.export.dir");
         File configDirectory = null;
         if (configDir != null) {
@@ -87,42 +100,68 @@ public final class ExportModule implements DaemonModule {
             configDirectory.mkdirs();
         }
         
+        // set export location property in the repository
+        try {
+            Node node = session.getNode(CONFIG_NODE_PATH);
+            node.setProperty("location", configDirectory.getPath());
+            session.save();	
+        }
+        catch (RepositoryException e) {
+        	log.warn("Cannot set export location property: " + e.getMessage());
+        }
+        
         log.info("Automatically exporting changes to directory " + configDirectory.getPath());
 
-        // create export project
+        // create extension
         File extension = new File(configDirectory, "hippoecm-extension.xml");
         try {
             m_extension = new Extension(extension);
         } catch (IOException ex) {
-            log.error("Cannot create project for export. "
+            log.error("Failed to initialize export. "
                     + "Automatic export will not be available.", ex);
             return;
         } catch (DocumentException ex) {
-            log.error("Cannot create project for export. "
+            log.error("Failed to initialize export. "
                     + "Automatic export will not be available", ex);
             return;
         }
         
+        m_executor = Executors.newSingleThreadScheduledExecutor();
+        
         // install event listener
-        m_listener = new ExportEventListener(m_extension, session);
+        m_listener = new ExportEventListener(m_extension, session, m_executor);
         int eventTypes = Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED
         		| Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
         try {
         	m_manager = session.getWorkspace().getObservationManager();
             m_manager.addEventListener(m_listener, eventTypes, "/", true, null, null, false);
-        } catch (RepositoryException ex) {
-            log.error("Failed to set up export. Automatic export will not be available.", ex);
+        } catch (RepositoryException e) {
+            log.error("Failed to initialize export. Automatic export will not be available.", e);
         }
 
     }
 
     @Override
     public void shutdown() {
+    	// remove event listener
     	if (m_manager != null) {
         	try {
     			m_manager.removeEventListener(m_listener);
     		} catch (RepositoryException e) {}
     	}
+    	// shutdown executor
+    	if (m_executor != null) {
+    		m_executor.shutdown();
+    	}
+    	// remove location property
+    	try {
+			m_session.getNode(CONFIG_NODE_PATH).getProperty("location").remove();
+			m_session.save();
+		} catch(PathNotFoundException e) {
+			// ignore
+		} catch (RepositoryException e) {
+			log.error("Error removing location property from repository. ", e);
+		}
     }
 
     
@@ -136,7 +175,6 @@ public final class ExportModule implements DaemonModule {
         
         private static final List<String> ignored = new ArrayList<String>(10);
 
-        // TODO: add more ignored paths
         static {
             ignored.add("/jcr:system/jcr:versionStorage");
             ignored.add("/hippo:log");
@@ -150,12 +188,23 @@ public final class ExportModule implements DaemonModule {
         
         private final Extension m_extension;
         private final Session m_session;
+        private final ScheduledExecutorService m_executor;
         private final Set<String> m_uris;
+        private final Runnable m_task = new Runnable() {
+			@Override public synchronized void run() {
+				processEvents();
+				m_events.clear();
+			}
+        };
+        private final Set<Event> m_events = new HashSet<Event>(100);
+        private ScheduledFuture<?> m_future;
         
-        private ExportEventListener(Extension extension, Session session) throws RepositoryException {
+        private ExportEventListener(Extension extension, Session session, ScheduledExecutorService executor) throws RepositoryException {
             m_extension = extension;
             m_session = session;
-
+            m_executor = executor;
+            
+            // cache the registered namespace uris so we can detect when any were added 
             String[] uris = m_session.getWorkspace().getNamespaceRegistry().getURIs();
             m_uris = new HashSet<String>(uris.length+10);
             Collections.addAll(m_uris, uris);
@@ -164,97 +213,127 @@ public final class ExportModule implements DaemonModule {
         @Override
         public synchronized void onEvent(EventIterator iter) {
             
+        	if (!isExportEnabled()) {
+        		log.info("Automatic export disabled from Console. Changes will be lost.");
+        		return;
+        	}
+        	
+        	// The following synchronized block will block if m_task is already running.
+        	// Once the lock is acquired m_task.run() itself will block, 
+        	// thereby making it possible to cancel it here
+        	synchronized(m_task) {
+        		if (m_future != null) {
+        			// try to cancel
+        			m_future.cancel(true);
+        		}
+        		// add events to the set to be processed
+        		while (iter.hasNext()) {
+        			Event event = iter.nextEvent();
+                    String path;
+					try {
+						path = event.getPath();
+	                    if (ignore(path)) {
+	                        if (log.isDebugEnabled()) {
+	                            log.debug("Ignoring event on " + path);
+	                        }
+	                    	continue;
+	                    }
+					} catch (RepositoryException e) {
+						log.error("Error occurred getting path from event.", e);
+					}
+        			m_events.add(event);
+        		}
+        		if (m_events.size() > 0) {
+            		// Schedule events to be processed 2 seconds in the future.
+            		// If other events arrive during this period the task will
+            		// be cancelled and a new task is scheduled.
+            		// This allows us to process events in bigger batches,
+            		// thus preventing multiple calls to processEvents() where a single
+            		// call suffices.
+            		m_future = m_executor.schedule(m_task, 2, TimeUnit.SECONDS);
+        		}
+        	}
+        }
+
+        private void processEvents() {
             long startTime = System.nanoTime();
             
-        	List<Event> events = sortEvents(iter);
+            // sort the events (see EventComparator)
+        	List<Event> events = new ArrayList<Event>(m_events);
+        	Collections.sort(events, new EventComparator());
+
+        	// process the events
             for(Event event : events) {
                 try {
                     String path = event.getPath();
-                    if (ignore(path)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Ignoring event on " + path);
-                        }
-                    	continue;
+                    if (log.isDebugEnabled()) {
+                        log.debug(eventString(event) + " on " + path);
                     }
                     ResourceInstruction instruction = m_extension.findResourceInstruction(path);
-                    switch (event.getType()) {
-                    case Event.NODE_ADDED : {
+                    if (instruction != null) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Node added on " + path);
+                            log.debug("Found instruction " + instruction);
                         }
+                    }
+                    switch (event.getType()) {
+                    case Event.NODE_ADDED :
                         if (instruction != null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found instruction " + instruction);
-                            }
                         	instruction.nodeAdded(path);
                         }
                         else {
                         	instruction = m_extension.createResourceInstruction(path);
-                        	if (log.isDebugEnabled()) {
-                                log.debug("Adding instruction " + instruction);
-                        	}
+	                        if (log.isDebugEnabled()) {
+	                            log.debug("Adding instruction " + instruction);
+	                        }
                         	m_extension.addInstruction(instruction);
                         }
                         break;
-                    }
-                    case Event.NODE_REMOVED : {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Node removed on " + path);
-                        }
+                    case Event.NODE_REMOVED :
                     	if (instruction != null) {
-                    	    if (log.isDebugEnabled()) {
-                                log.debug("Found instruction " + instruction);
-                    	    }
                     		if (instruction.nodeRemoved(path)) {
-                				// the context node was removed, remove the instruction
+    	                        if (log.isDebugEnabled()) {
+    	                            log.debug("Removing instruction " + instruction);
+    	                        }
+                				// the root node of this instruction was removed, remove the instruction
                 				m_extension.removeInstruction(instruction);
                     		}
                     	}
                     	else {
-                    		// this use case seems not to be covered by the import functionality 
-                    		// anymore now that contentdelete is deprecated
-                    	    if (log.isDebugEnabled()) {
-                                log.debug("No instruction to update. This change will be lost.");
-                    	    }
+                        	log.warn("Change not handled by export. " +
+                        			"Node removed on " + path + ". " +
+                        			"You need to do this manually.");
                     	}
                     	break;
-                    }
-                    case Event.PROPERTY_ADDED : {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Property added on " + path);
-                        }
+                    case Event.PROPERTY_ADDED :
                         if (instruction != null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found instruction " + instruction);
-                            }
                         	instruction.propertyAdded(path);
                         }
-                        break;
-                    }
-                    case Event.PROPERTY_CHANGED : {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Property changed on " + path);
+                        else {
+                        	log.warn("Change not handled by export. " +
+                        			"Property added on " + path + ". " +
+                        			"You need to do this manually.");
                         }
+                        break;
+                    case Event.PROPERTY_CHANGED :
                         if (instruction != null) {
-                        	if (log.isDebugEnabled()) {
-                                log.debug("Found instruction " + instruction);
-                        	}
                         	instruction.propertyChanged(path);
                         }
-                        break;
-                    }
-                    case Event.PROPERTY_REMOVED : {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Property removed on " + path);
+                        else {
+                        	log.warn("Change not handled by export. " +
+                        			"Property changed on " + path + ". " +
+                        			"You need to do this manually.");
                         }
+                        break;
+                    case Event.PROPERTY_REMOVED :
                         if (instruction != null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found instruction " + instruction);
-                            }
                         	instruction.propertyRemoved(path);
                         }
+                        else {
+                        	log.warn("Change not handled by export. " +
+                        			"Property removed on " + path + ". " +
+                        			"You need to do this manually.");
+                        }
                         break;
-                    }
                     }
                 } catch (RepositoryException ex) {
                     log.error("Failed to process repository event.", ex);
@@ -288,8 +367,7 @@ public final class ExportModule implements DaemonModule {
 						m_uris.add(uri);
 					}
 				}
-				// NOTE: no need for checking removal of namespaces.
-				// Jackrabbit doesn't support that
+				// No need to check removal of namespaces. Jackrabbit doesn't support that
 			} catch (RepositoryException e) {
 				log.error("Failed to update namespace instructions.", e);
 			} catch (IOException e) {
@@ -301,8 +379,9 @@ public final class ExportModule implements DaemonModule {
 	        
 	        if (log.isDebugEnabled()) {
 	            long estimatedTime = System.nanoTime() - startTime;
-	            System.out.println("onEvent took " + TimeUnit.MILLISECONDS.convert(estimatedTime, TimeUnit.NANOSECONDS) + " ms.");
+	            log.debug("onEvent took " + TimeUnit.MILLISECONDS.convert(estimatedTime, TimeUnit.NANOSECONDS) + " ms.");
 	        }
+
         }
 
         private boolean ignore(String path) {
@@ -313,14 +392,30 @@ public final class ExportModule implements DaemonModule {
             }
             return false;
         }
-                
-        private List<Event> sortEvents(EventIterator events) {
-        	List<Event> list = new ArrayList<Event>(40);
-        	while (events.hasNext()) {
-        		list.add(events.nextEvent());
+        
+        private boolean isExportEnabled() {
+        	boolean enabled = true;
+        	try {
+				Node node = m_session.getNode(CONFIG_NODE_PATH);
+				enabled = node.getProperty("enabled").getBoolean();
+			} catch (PathNotFoundException e) {
+				log.debug("No such item: " + CONFIG_NODE_PATH + "/enabled");
+			} catch (RepositoryException e) {
+				log.error("Exception while reading export enabled flag.", e);
+			}
+			return enabled;
+        }
+        
+        private static String eventString(Event event) {
+        	switch(event.getType()) {
+        	case Event.NODE_ADDED : return "Node added";
+        	case Event.NODE_MOVED : return "Node moved";
+        	case Event.NODE_REMOVED : return "Node removed";
+        	case Event.PROPERTY_ADDED : return "Property added";
+        	case Event.PROPERTY_CHANGED : return "Property changed";
+        	case Event.PROPERTY_REMOVED : return "Property removed";
         	}
-        	Collections.sort(list, new EventComparator());
-        	return list;
+        	return null;
         }
         
         /**

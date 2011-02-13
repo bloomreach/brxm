@@ -52,9 +52,10 @@ final class Extension {
     
 	private final File m_file;
     private final List<Instruction> m_instructions;
+    private final Document m_document;
+    
+    private volatile boolean m_changed = false;
 
-    private boolean m_changed = false;
-    private Document m_document;
 
     
     // ---------- Constructor
@@ -63,7 +64,7 @@ final class Extension {
         m_file = file;
         if (!m_file.exists()) {
             m_file.createNewFile();
-            createDocument();
+            m_document = createDocument();
             m_instructions = new ArrayList<Instruction>();
             m_changed = true;
         } else {
@@ -237,8 +238,8 @@ final class Extension {
      *   </sv:property>
      * </sv:node>
      */
-    private void createDocument() {
-        m_document = DocumentFactory.getInstance().createDocument();
+    private Document createDocument() {
+        Document document = DocumentFactory.getInstance().createDocument();
         Element root = DocumentFactory.getInstance().createElement(NODE_QNAME);
         root.add(DocumentFactory.getInstance().createAttribute(root, NAME_QNAME, "hippo:initialize"));
         Element property = DocumentFactory.getInstance().createElement(PROPERTY_QNAME);
@@ -248,7 +249,8 @@ final class Extension {
         value.setText("hippo:initializefolder");
         property.add(value);
         root.add(property);
-        m_document.setRootElement(root);
+        document.setRootElement(root);
+        return document;
     }
     
     /*

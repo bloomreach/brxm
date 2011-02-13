@@ -25,7 +25,7 @@ abstract class ResourceInstruction extends AbstractInstruction {
 	final File m_file;
 	
 	/** dirty flag */
-    boolean m_changed = false;
+    volatile boolean m_changed = false;
 	
 	ResourceInstruction(String name, Double sequence, File file) {
 		super(name, sequence);
