@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,6 +43,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -50,6 +52,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextArea;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerSettings;
@@ -184,7 +187,12 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     }
 
     protected Fragment createEditablePreview(String fragmentId) {
-        add(startEditorBehavior = new AjaxEventBehavior("onfocus") {
+        String event = "onfocus";
+        WebClientInfo info = (WebClientInfo) RequestCycle.get().getClientInfo();
+        if (info.getProperties().isBrowserInternetExplorer()) {
+            event = "onactivate";
+        }
+        add(startEditorBehavior = new AjaxEventBehavior(event) {
             private static final long serialVersionUID = 1L;
 
             @Override
