@@ -450,7 +450,6 @@ public final class ExportModule implements DaemonModule {
 			
 			private static boolean isNodeEventType(Event event) {
 				return event.getType() == Event.NODE_ADDED 
-					|| event.getType() == Event.NODE_MOVED 
 					|| event.getType() == Event.NODE_REMOVED;
 			}
         }
