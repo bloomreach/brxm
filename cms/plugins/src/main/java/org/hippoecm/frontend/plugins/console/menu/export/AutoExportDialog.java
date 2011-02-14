@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -48,7 +49,7 @@ public class AutoExportDialog extends AbstractDialog<Void> {
 			@Override public String getObject() {
 				if (location == null) {
 					return "Export location is not set, automatic export is unavailable. To make export available, " +
-							"startup the CMS with system property 'hippoecm.config.dir' pointing to the location " +
+							"start up the CMS with system property 'hippoecm.config.dir' pointing to the location " +
 							"where you would like export to read and write hippoecm-extension.xml and related files.";
 				}
 				return isExportEnabled() ? "Export enabled, writing changes to " + location : "Export disabled";
@@ -118,14 +119,13 @@ public class AutoExportDialog extends AbstractDialog<Void> {
 	private void setExportEnabled(boolean enabled) {
 		Session session = getJcrSession();
 		try {
-			// FIXME: we need to get a separate session from the one provided
-			// otherwise other changes to the console will be persisted
-			// upon save() as well
-			//session = session.impersonate(new SimpleCredentials(?,?));
+			// we use a separate session in order that other changes made in the console
+			// don't get persisted upon save() here
+			session = session.impersonate(new SimpleCredentials(session.getUserID(),new char[] {}));
 			Node node = session.getNode(NODE_PATH);
 			node.setProperty("enabled", enabled);
 			session.save();
-			// session.logout();
+			session.logout();
 		} catch (PathNotFoundException e) {
 			log.warn("No such item: " + NODE_PATH + "/enabled");
 		} catch (RepositoryException e) {
