@@ -130,7 +130,7 @@ public final class ExportModule implements DaemonModule {
         
         // install event listener
         m_listener = new ExportEventListener(m_extension, session, m_executor);
-        int eventTypes = Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED
+        int eventTypes = Event.NODE_ADDED | Event.NODE_REMOVED
         		| Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
         try {
         	m_manager = session.getWorkspace().getObservationManager();
@@ -409,7 +409,6 @@ public final class ExportModule implements DaemonModule {
         private static String eventString(Event event) {
         	switch(event.getType()) {
         	case Event.NODE_ADDED : return "Node added";
-        	case Event.NODE_MOVED : return "Node moved";
         	case Event.NODE_REMOVED : return "Node removed";
         	case Event.PROPERTY_ADDED : return "Property added";
         	case Event.PROPERTY_CHANGED : return "Property changed";
