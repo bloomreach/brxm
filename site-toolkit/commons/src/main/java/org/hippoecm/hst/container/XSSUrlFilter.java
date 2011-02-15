@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Simple XXS Url attack protection blocking access whenever the request url contains a &lt; or &gt; character.
- * @version $Id: XXSUrlAttackFilter.java 516448 2007-03-09 16:25:47Z ate $
+ * Simple XSS Url attack protection blocking access whenever the request url contains a &lt; or &gt; character.
+ * @version $Id: XSSUrlFilter.java 516448 2007-03-09 16:25:47Z ate $
  */
-public class XXSUrlAttackFilter implements Filter {
+public class XSSUrlFilter implements Filter {
 
     public void init(FilterConfig config) throws ServletException {
     }

@@ -61,8 +61,8 @@
   </context-param>
 
   <filter>
-    <filter-name>XXSUrlAttackFilter</filter-name>
-    <filter-class>org.hippoecm.hst.container.XXSUrlAttackFilter</filter-class>
+    <filter-name>XSSUrlFilter</filter-name>
+    <filter-class>org.hippoecm.hst.container.XSSUrlFilter</filter-class>
   </filter>
   
   <filter>
@@ -131,7 +131,7 @@
   </filter>
   
   <filter-mapping>
-    <filter-name>XXSUrlAttackFilter</filter-name>
+    <filter-name>XSSUrlFilter</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
