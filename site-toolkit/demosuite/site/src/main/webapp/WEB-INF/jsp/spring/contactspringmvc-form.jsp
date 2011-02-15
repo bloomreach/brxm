@@ -36,7 +36,7 @@
 	        <td>Name</td>
 	        <td>
 	           <spring:bind path="contactMessage.name">
-    	           <input type="text" name="${status.expression}" value="${status.value}" />
+    	           <input type="text" name="${status.expression}" value="<c:out value='${status.value}'/>" />
     	       </spring:bind>
 	        </td>
 	    </tr>
@@ -44,7 +44,7 @@
 	        <td>Email</td>
             <td>
                <spring:bind path="contactMessage.email">
-                   <input type="text" name="${status.expression}" value="${status.value}" />
+                   <input type="text" name="${status.expression}" value="<c:out value='${status.value}'/>" />
                </spring:bind>
             </td>
 	    </tr>
@@ -52,7 +52,7 @@
 	        <td>Text</td>
             <td>
                <spring:bind path="contactMessage.message">
-                   <textarea name="${status.expression}">${status.value}</textarea>
+                   <textarea name="${status.expression}"><c:out value='${status.value}'/></textarea>
                </spring:bind>
             </td>
 	    </tr>

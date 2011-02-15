@@ -367,6 +367,12 @@ function save(editorFormName) {
 }
 
 function showFeedback(message) {
+	var arr = message.split(/\s/);
+	message = "";
+	for (var i = 0; i < arr.length; i++) {
+		message += encodeURIComponent(arr[i]) + " ";
+	}
+	
     // Put the message in three parent divs, so that the content can be vertically aligned through a css hack
 	message = '<div class="vert-align1"><div class="vert-align2"><div class="vert-align3">' + message + '</div></div></div>';
 	feedbackPanel.setBody(message);

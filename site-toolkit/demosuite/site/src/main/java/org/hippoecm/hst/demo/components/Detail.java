@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.beans.CommentBean;
 import org.hippoecm.hst.utils.BeanUtils;
+import org.hippoecm.hst.utils.SimpleHtmlExtractor;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,9 +154,9 @@ public class Detail extends BaseHstComponent {
                     if (commentBean == null) {
                         throw new HstComponentException("Failed to add Comment");
                     }
-                    commentBean.setTitle(title);
+                    commentBean.setTitle(SimpleHtmlExtractor.getText(title));
 
-                    commentBean.setHtml(comment);
+                    commentBean.setHtml(SimpleHtmlExtractor.getText(comment));
 
                     commentBean.setDate(currentDate);
 
@@ -224,7 +225,7 @@ public class Detail extends BaseHstComponent {
                     String content = request.getParameter("editor");
 
                     if ("demosite:summary".equals(field)) {
-                        page.setSummary(content);
+                        page.setSummary(SimpleHtmlExtractor.getText(content));
                     } else if ("demosite:body".equals(field)) {
                         page.setHtml(content);
                     }

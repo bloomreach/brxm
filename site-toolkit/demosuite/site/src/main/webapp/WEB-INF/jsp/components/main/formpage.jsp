@@ -45,17 +45,17 @@
             <tr>
 
                 <td>Name</td>
-                <td><input type="text" name="name" value="${form.value['name'].value}"/></td>
+                <td><input type="text" name="name" value="<c:out value="${form.value['name'].value}"/>"/></td>
                 <td class="form_error">${form.message['name']}</td>
             </tr>
             <tr>
                 <td>Email</td>
-                <td><input type="text" name="email" value="${form.value['email'].value}"/></td>
+                <td><input type="text" name="email" value="<c:out value="${form.value['email'].value}"/>"/></td>
                 <td class="form_error">${form.message['email']}</td>
             </tr>
             <tr>
                 <td>Text</td>
-                <td><textarea name="textarea" rows="4" cols="40">${form.value['textarea'].value}</textarea></td>
+                <td><textarea name="textarea" rows="4" cols="40"><c:out value="${form.value['textarea'].value}"/></textarea></td>
                 <td class="form_error">${form.message['textarea']}</td>
             </tr>
             <tr>

@@ -53,11 +53,11 @@
   </p>
   <p>
     Tags : 
-      <span id="<hst:namespace/>tagsLabel">${fn:join(document.tags, ', ')}</span>
+      <span id="<hst:namespace/>tagsLabel">${fn:escapeXml(fn:join(document.tags, ', '))}</span>
       <input id="<hst:namespace/>tagsText" 
              type="text" size="20" style="DISPLAY: none"
              title="Please enter comma separated tags here." 
-             value="${fn:join(document.tags, ', ')}"/>
+             value="${fn:escapeXml(fn:join(document.tags, ', '))}"/>
       &nbsp;
       <a id="<hst:namespace/>tagsEdit" href="#" style="DISPLAY: none">Edit</a>
       <a id="<hst:namespace/>tagsSave" href="#" style="DISPLAY: none">Save</a>
@@ -134,7 +134,7 @@ function(Y) {
       if (!tags) {
         tagsLabel.set("innerHTML", "");
       } else {
-        tagsLabel.set("innerHTML", tags.join(", "));
+        tagsLabel.set("innerHTML", encodeURIComponent(tags.join(", ")));
       } 
     } catch (e) {
       Y.log("Error: " + e.message);

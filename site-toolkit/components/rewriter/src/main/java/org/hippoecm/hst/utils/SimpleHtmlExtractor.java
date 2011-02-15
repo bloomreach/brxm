@@ -119,6 +119,24 @@ public class SimpleHtmlExtractor {
         return innerText;
     }
     
+    /**
+     * Extracts text of the html mark ups.
+     * @param html
+     * @return
+     */
+    public static String getText(String html) {
+        if (html == null) {
+            return null;
+        }
+        
+        try {
+            TagNode rootNode = getHtmlCleaner().clean(html);
+            return rootNode.getText().toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     private static String getInnerHtmlSimply(String html, String tagName) {
         if (tagName == null || "".equals(tagName)) {
             tagName = "html";

@@ -16,7 +16,9 @@
 package org.hippoecm.hst.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -53,6 +55,8 @@ public class TestSimpleHtmlExtractor {
         "</head>\n" + 
         "<body/>\n" + 
         "</html>";
+    
+    private static final String A_VULNERABLE_INPUT = "\"><script>alert(1)</script>"; 
     
     @Test
     public void testInnerHtmlExtraction() throws Exception {
@@ -115,6 +119,19 @@ public class TestSimpleHtmlExtractor {
         }
 
         t2 = System.currentTimeMillis();
+    }
+    
+    @Test
+    public void testExtractingTextFromHtml() throws Exception {
+        String simpleText = SimpleHtmlExtractor.getText(SIMPLE_HTML);
+        assertTrue(simpleText.contains("Hello"));
+        assertFalse(simpleText.contains("<title>Hello</title>"));
+        assertTrue(simpleText.contains("Hello, World!"));
+        assertFalse(simpleText.contains("<h1>Hello, World!</h1>"));
+        
+        String textFromVulnerableInput = SimpleHtmlExtractor.getText(A_VULNERABLE_INPUT);
+        assertTrue(textFromVulnerableInput.contains("alert(1)"));
+        assertFalse(textFromVulnerableInput.contains("<script>alert(1)</script>"));
     }
     
     private String readFeaturesHtml() throws Exception {

@@ -134,17 +134,17 @@ if (HstRequest.ACTION_PHASE.equals(hstRequestLifecyclePhase)) {
         <tr>
 
             <td>Name</td>
-            <td><input type="text" name="name" value="${form.value['name'].value}" /></td>
+            <td><input type="text" name="name" value="<c:out value="${form.value['name'].value}"/>" /></td>
             <td><font style="color:red">${form.message['name']}</font></td>
         </tr>
         <tr>
             <td>Email</td>
-            <td><input type="text" name="email" value="${form.value['email'].value}"/></td>
+            <td><input type="text" name="email" value="<c:out value="${form.value['email'].value}"/>" /></td>
             <td><font style="color:red">${form.message['email']}</font></td>
         </tr>
         <tr>
             <td>Text</td>
-            <td><textarea name="textarea">${form.value['textarea'].value}</textarea></td>
+            <td><textarea name="textarea"><c:out value="${form.value['textarea'].value}"/></textarea></td>
             <td><font style="color:red">${form.message['textarea']}</font></td>
         </tr>
         <tr>
