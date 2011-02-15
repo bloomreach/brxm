@@ -28,7 +28,7 @@
             <table>
               <tr>
                 <td>
-                  <p>${messages.getString("message.auth.failed")} ${j_username}.</p>
+                  <p>${messages.getString("message.auth.failed")} ${StringEscapeUtils.escapeHtml($j_username)}.</p>
                 </td>
               </tr>
               <tr>

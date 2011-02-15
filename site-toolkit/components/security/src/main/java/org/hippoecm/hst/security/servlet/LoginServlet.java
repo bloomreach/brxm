@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -478,6 +479,9 @@ public class LoginServlet extends HttpServlet {
         }
         
         context.put("request", request);
+        
+        // add utilities
+        context.put("StringEscapeUtils", StringEscapeUtils.class);
         
         Velocity.evaluate(context, out, templateResourcePath, templateContent);
         

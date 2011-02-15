@@ -28,7 +28,7 @@
             <table>
               <tr>
                 <td width="30%"><label>${messages.getString("label.username")}&nbsp;</label></td>
-                <td><input class="hippo-form-text" type="text" value="${j_username}" name="username" id="username"/></td>
+                <td><input class="hippo-form-text" type="text" value="${StringEscapeUtils.escapeHtml($j_username)}" name="username" id="username"/></td>
               </tr>
               <tr>
                 <td><label>${messages.getString("label.password")}&nbsp;</label></td>
@@ -37,9 +37,9 @@
               <tr>
                 <td>&nbsp;</td>
                 <td class="hippo-global-alignright">
-                  <input type="hidden" name="destination" value="${destination}" />
+                  <input type="hidden" name="destination" value="${StringEscapeUtils.escapeHtml($destination)}" />
                   <input class="hippo-form-submit" type="submit" value="${messages.getString("label.login")}"/>
-                  <input class="hippo-form-submit" type="button" value="${messages.getString("label.cancel")}" onclick="if ('${destination}') location.href = '${destination}'; return false;" />
+                  <input class="hippo-form-submit" type="button" value="${messages.getString("label.cancel")}" onclick="if ('${StringEscapeUtils.escapeHtml($destination)}') location.href = '${StringEscapeUtils.escapeHtml($destination)}'; return false;" />
                 </td>
               </tr>
             </table>
