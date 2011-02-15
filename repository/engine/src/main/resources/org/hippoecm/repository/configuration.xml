@@ -301,5 +301,23 @@
       <sv:value>v18a</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="hippo:modules">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:modulefolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="autoexport">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:module</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:moduleconfig">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposys:autoexport</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposys:enabled" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
 </sv:node>
 

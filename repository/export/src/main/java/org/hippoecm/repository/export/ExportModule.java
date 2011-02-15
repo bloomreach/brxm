@@ -59,7 +59,7 @@ public final class ExportModule implements DaemonModule {
 	// ---------- Static variables
 	
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
-    private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:frontend/console/console/menu/items/autoexport";
+    private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
 
     
     // ---------- Member variables
@@ -103,7 +103,7 @@ public final class ExportModule implements DaemonModule {
         // set export location property in the repository
         try {
             Node node = session.getNode(CONFIG_NODE_PATH);
-            node.setProperty("location", configDirectory.getPath());
+            node.setProperty("hipposys:location", configDirectory.getPath());
             session.save();	
         }
         catch (RepositoryException e) {
@@ -397,9 +397,9 @@ public final class ExportModule implements DaemonModule {
         	boolean enabled = true;
         	try {
 				Node node = m_session.getNode(CONFIG_NODE_PATH);
-				enabled = node.getProperty("enabled").getBoolean();
+				enabled = node.getProperty("hipposys:enabled").getBoolean();
 			} catch (PathNotFoundException e) {
-				log.debug("No such item: " + CONFIG_NODE_PATH + "/enabled");
+				log.debug("No such item: " + CONFIG_NODE_PATH + "/hipposys:enabled");
 			} catch (RepositoryException e) {
 				log.error("Exception while reading export enabled flag.", e);
 			}

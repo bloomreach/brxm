@@ -220,6 +220,17 @@
 + hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager
 + * (hipposys:securityprovider) = hipposys:securityprovider
 
+[hipposys:module] > nt:base
++ hippo:moduleconfig
+
+[hipposys:modulefolder] > nt:base
++ * (hipposys:module) = hipposys:module
+
+[hipposys:autoexport] > nt:base
+- hipposys:enabled (boolean) = 'true' mandatory autocreated
+- hipposys:excluded (string) multiple
+- hipposys:location (string)
+
 // REPOSITORY: CONFIGURATION ROOT
 
 [hipposys:configuration] > nt:base
@@ -235,3 +246,4 @@
 + hippo:frontend (hipposys:applicationfolder) = hipposys:applicationfolder
 + hippo:queries (hipposys:queryfolder) = hipposys:queryfolder mandatory autocreated
 + hippo:security (hipposys:securityfolder) = hipposys:securityfolder
++ hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
