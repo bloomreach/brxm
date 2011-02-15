@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class AutoExportDialog extends AbstractDialog<Void> {
 
 	private static final long serialVersionUID = 1L;
-	private static final String NODE_PATH = "/hippo:configuration/hippo:frontend/console/console/menu/items/autoexport";
+	private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
 	private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
 	
 	public AutoExportDialog(MenuPlugin plugin) {
@@ -106,10 +106,10 @@ public class AutoExportDialog extends AbstractDialog<Void> {
 	private boolean isExportEnabled() {
 		boolean enabled = true;
 		try {
-			Node node = getJcrSession().getNode(NODE_PATH);
-			enabled = node.getProperty("enabled").getValue().getBoolean();
+			Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
+			enabled = node.getProperty("hipposys:enabled").getValue().getBoolean();
 		} catch (PathNotFoundException e) {
-			log.warn("No such item: " + NODE_PATH + "/enabled");
+			log.warn("No such item: " + CONFIG_NODE_PATH + "/hipposys:enabled");
 		} catch (RepositoryException e) {
 			log.error("An error occurred reading export enabled flag", e);
 		}
@@ -122,12 +122,12 @@ public class AutoExportDialog extends AbstractDialog<Void> {
 			// we use a separate session in order that other changes made in the console
 			// don't get persisted upon save() here
 			session = session.impersonate(new SimpleCredentials(session.getUserID(),new char[] {}));
-			Node node = session.getNode(NODE_PATH);
-			node.setProperty("enabled", enabled);
+			Node node = session.getNode(CONFIG_NODE_PATH);
+			node.setProperty("hipposys:enabled", enabled);
 			session.save();
 			session.logout();
 		} catch (PathNotFoundException e) {
-			log.warn("No such item: " + NODE_PATH + "/enabled");
+			log.warn("No such item: " + CONFIG_NODE_PATH + "/hipposys:enabled");
 		} catch (RepositoryException e) {
 			log.error("An error occurred trying to set export enabled flag", e);
 		}
@@ -136,10 +136,10 @@ public class AutoExportDialog extends AbstractDialog<Void> {
 	private String getExportLocation() {
 		String location = null;
 		try {
-			Node node = getJcrSession().getNode(NODE_PATH);
-			location = node.getProperty("location").getString();
+			Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
+			location = node.getProperty("hipposys:location").getString();
 		} catch (PathNotFoundException e) {
-			log.debug("No such item: " + NODE_PATH + "/location");
+			log.debug("No such item: " + CONFIG_NODE_PATH + "/hipposys:location");
 		} catch (RepositoryException e) {
 			log.error("An error occurred looking up export location", e);
 		}
