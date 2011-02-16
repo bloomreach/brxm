@@ -30,6 +30,7 @@
   <packaging>war</packaging>
   
   <properties>
+    <jetty.port>8085</jetty.port>
     <site.log.dir.name>${site.webapp.root}/WEB-INF/logs</site.log.dir.name>
   </properties>
 
@@ -239,7 +240,7 @@
           </webAppConfig>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>8085</port>
+              <port>${jetty.port}</port>
             </connector>
           </connectors>
         </configuration>
