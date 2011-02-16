@@ -49,7 +49,7 @@ public class AutoExportDialog extends AbstractDialog<Void> {
 			@Override public String getObject() {
 				if (location == null) {
 					return "Export location is not set, automatic export is unavailable. To make export available, " +
-							"start up the CMS with system property 'hippoecm.config.dir' pointing to the location " +
+							"start up the CMS with system property 'hippoecm.export.dir' pointing to the location " +
 							"where you would like export to read and write hippoecm-extension.xml and related files.";
 				}
 				return isExportEnabled() ? "Export enabled, writing changes to " + location : "Export disabled";
