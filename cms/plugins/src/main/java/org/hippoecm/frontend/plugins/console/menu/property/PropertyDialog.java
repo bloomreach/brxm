@@ -16,21 +16,36 @@
 package org.hippoecm.frontend.plugins.console.menu.property;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutocompleteTextField;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -40,32 +55,134 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PropertyDialog extends AbstractDialog<Node> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
+    private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
+    private static final List<String> ALL_TYPES = new ArrayList<String>(8);
+    static {
+        ALL_TYPES.add(PropertyType.TYPENAME_BOOLEAN);
+        ALL_TYPES.add(PropertyType.TYPENAME_DATE);
+        ALL_TYPES.add(PropertyType.TYPENAME_DOUBLE);
+        ALL_TYPES.add(PropertyType.TYPENAME_LONG);
+        ALL_TYPES.add(PropertyType.TYPENAME_NAME);
+        ALL_TYPES.add(PropertyType.TYPENAME_PATH);
+        ALL_TYPES.add(PropertyType.TYPENAME_REFERENCE);
+        ALL_TYPES.add(PropertyType.TYPENAME_STRING);
+        ALL_TYPES.add(PropertyType.TYPENAME_DECIMAL);
+        ALL_TYPES.add(PropertyType.TYPENAME_URI);
+        ALL_TYPES.add(PropertyType.TYPENAME_WEAKREFERENCE);
 
-    static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
+    }
 
     private String name;
     private String value;
     private Boolean isMultiple = Boolean.FALSE;
-    private String type;
+    private String type = PropertyType.TYPENAME_STRING;
     private MenuPlugin plugin;
 
     public PropertyDialog(MenuPlugin plugin) {
         this.plugin = plugin;
 
-        add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")));
+        // list defined properties for automatic completion
+        final Map<String, PropertyDefinition> choices = new HashMap<String, PropertyDefinition>();
+        Node node = ((JcrNodeModel) plugin.getDefaultModel()).getNode();
+        try {
+            NodeType pnt = node.getPrimaryNodeType();
+            for (PropertyDefinition pd : pnt.getPropertyDefinitions()) {
+                choices.put(pd.getName(), pd);
+            }
+            for (NodeType nt : node.getMixinNodeTypes()) {
+                for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
+                    choices.put(pd.getName(), pd);
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn("Unable to populate autocomplete list for property names", e);
+        }
 
-        type = PropertyType.TYPENAME_STRING;
+        // checkbox for property ismultiple
+        final CheckBox checkBox = new CheckBox("isMultiple", new PropertyModel<Boolean>(this, "isMultiple") {
+            private static final long serialVersionUID = 1L;
 
-        DropDownChoice ddChoice = new DropDownChoice("types", new PropertyModel(this, "propertyType"), getTypes());
+            @Override
+            public Boolean getObject() {
+                if (PropertyDialog.this.name != null) {
+                    PropertyDefinition pd = choices.get(PropertyDialog.this.name);
+                    if (pd != null) {
+                        // somehow need to set isMultiple here, otherwise it doesn't get picked up...
+                        PropertyDialog.this.isMultiple = pd.isMultiple();
+                        return pd.isMultiple();
+                    }
+                }
+                return super.getObject();
+            }
+        });
+        checkBox.setOutputMarkupId(true);
+        add(checkBox);
+
+        // dropdown for property type
+        final DropDownChoice<String> ddChoice = new DropDownChoice<String>("types", new PropertyModel<String>(this, "propertyType"), 
+                new AbstractReadOnlyModel<List<? extends String>>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<? extends String> getObject() {
+                if (PropertyDialog.this.name != null) {
+                    PropertyDefinition pd = choices.get(PropertyDialog.this.name);
+                    if (pd != null) {
+                        List<String> result = new ArrayList<String>(1);
+                        result.add(PropertyType.nameFromValue(pd.getRequiredType()));
+                        return result;
+                    }
+                }
+                return ALL_TYPES;
+            }
+        });
         ddChoice.setRequired(true);
+        ddChoice.setOutputMarkupId(true);
         add(ddChoice);
 
-        add(setFocus(new TextField("name", new PropertyModel(this, "name"))));
-        add(new TextArea("value", new PropertyModel(this, "value")));
+        // text field for property name
+        AutoCompleteSettings settings = new AutoCompleteSettings();
+        settings.setAdjustInputWidth(false);
+        settings.setUseSmartPositioning(true);
+        settings.setShowCompleteListOnFocusGain(true);
+
+        final AutoCompleteTextField<String> nameField = new AutoCompleteTextField<String>("name",
+                new PropertyModel<String>(this, "name"), settings) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Iterator<String> getChoices(String input) {
+                if (Strings.isEmpty(input)) {
+                    return Collections.EMPTY_LIST.iterator();
+                }
+                List<String> result = new ArrayList<String>();
+                for (String propName : choices.keySet()) {
+                    if (propName.startsWith(input)) {
+                        result.add(propName);
+                    }
+                }
+                return result.iterator();
+            }
+        };
+        nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class,
+                "DefaultCssAutocompleteTextField.css"));
+
+        // dynamic update of related components when name is updated
+        nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(ddChoice);
+                target.addComponent(checkBox);
+            }
+        });
+
+        add(setFocus(nameField));
+        add(new TextArea<String>("value", new PropertyModel<String>(this, "value")));
     }
 
     @Override
@@ -77,8 +194,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             Value jcrValue = getJcrValue();
             if (isMultiple.booleanValue()) {
                 if (jcrValue == null || value == null || value.equals("")) {
-                    jcrValue = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("...",
-                            PropertyType.STRING);
+                    jcrValue = getValueFactory().createValue("...", PropertyType.STRING);
                 }
                 node.setProperty(name, new Value[] { jcrValue });
             } else {
@@ -88,12 +204,12 @@ public class PropertyDialog extends AbstractDialog<Node> {
             JcrNodeModel newNodeModel = new JcrNodeModel(node);
             plugin.setDefaultModel(newNodeModel);
         } catch (RepositoryException ex) {
-            error(ex.getMessage());
+            error(ex.toString());
         }
     }
 
-    public IModel getTitle() {
-        return new Model("Add a new Property");
+    public IModel<String> getTitle() {
+        return new Model<String>("Add a new Property");
     }
 
     public String getName() {
@@ -128,54 +244,19 @@ public class PropertyDialog extends AbstractDialog<Node> {
         return type;
     }
 
-    private static List<String> getTypes() {
-        List<String> types = new ArrayList<String>(8);
-        types.add(PropertyType.TYPENAME_BOOLEAN);
-        types.add(PropertyType.TYPENAME_DATE);
-        types.add(PropertyType.TYPENAME_DOUBLE);
-        types.add(PropertyType.TYPENAME_LONG);
-        types.add(PropertyType.TYPENAME_NAME);
-        types.add(PropertyType.TYPENAME_PATH);
-        types.add(PropertyType.TYPENAME_REFERENCE);
-        types.add(PropertyType.TYPENAME_STRING);
-        return types;
-    }
-
     private Value getJcrValue() {
         try {
-            if (type.equals(PropertyType.TYPENAME_BOOLEAN)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.BOOLEAN);
-            } else if (type.equals(PropertyType.TYPENAME_DATE)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.DATE);
-            } else if (type.equals(PropertyType.TYPENAME_DOUBLE)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.DOUBLE);
-            } else if (type.equals(PropertyType.TYPENAME_LONG)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.LONG);
-            } else if (type.equals(PropertyType.TYPENAME_NAME)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.NAME);
-            } else if (type.equals(PropertyType.TYPENAME_PATH)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.PATH);
-            } else if (type.equals(PropertyType.TYPENAME_REFERENCE)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.REFERENCE);
-            } else if (type.equals(PropertyType.TYPENAME_STRING)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
-                        PropertyType.STRING);
-            }
-            log.info("Unsupported type " + type);
-            return null;
+            return getValueFactory().createValue(value, PropertyType.valueFromName(type));
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());
         }
         return null;
     }
-    
+
+    private ValueFactory getValueFactory() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return ((UserSession) Session.get()).getJcrSession().getValueFactory();
+    }
+
     @Override
     public IValueMap getProperties() {
         return SMALL;
