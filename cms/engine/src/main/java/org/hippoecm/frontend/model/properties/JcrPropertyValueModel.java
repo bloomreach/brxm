@@ -141,10 +141,12 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
             // try to determine real value
             if (def != null) {
                 type = def.getRequiredType();
+                if (type == PropertyType.UNDEFINED && value != null) {
+                    type = value.getType();
+                }
             } else if (value != null) {
                 type = value.getType();
-            }
-            else {
+            } else {
                 type = PropertyType.UNDEFINED;
             }
         }

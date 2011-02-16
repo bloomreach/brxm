@@ -171,13 +171,17 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                 map.putAll((Map) value);
             } else {
                 if (value instanceof Boolean) {
-                    node.setProperty(key, (Boolean) value);
+                    node.setProperty(key, ((Boolean) value).booleanValue());
                 } else if (value instanceof String) {
                     node.setProperty(key, (String) value);
                 } else if (value instanceof String[]) {
                     node.setProperty(key, (String[]) value);
                 } else if (value instanceof Double) {
-                    node.setProperty(key, (Double) value);
+                    node.setProperty(key, ((Double) value).doubleValue());
+                } else if (value instanceof Long) {
+                    node.setProperty(key, ((Long) value).longValue());
+                } else if (value instanceof Integer) {
+                    node.setProperty(key, ((Integer) value).intValue());
                 } else if (value == null) {
                     if (node.hasProperty(key)) {
                         node.getProperty(key).remove();
