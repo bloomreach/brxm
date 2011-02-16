@@ -86,6 +86,7 @@ engine/tm.out.1
 engine/tm.out.lck
 engine/tmlog.lck
 engine/wdbp-error-log.txt
+export/.settings
 export/target
 jca/*.tmp
 jca/.classpath
