@@ -48,40 +48,44 @@ class ReferenceEditor extends Panel {
 
     ReferenceEditor(String id, JcrPropertyModel propertyModel, JcrPropertyValueModel valueModel) {
         super(id);
-        String asString = "";
+        String stringValue = "";
+        boolean isProtected = false;
         try {
-            boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
+            stringValue = valueModel.getValue().getString();
+            isProtected = propertyModel.getProperty().getDefinition().isProtected();
             Session session = ((UserSession) getSession()).getJcrSession();
-            asString = valueModel.getValue().getString();
-            Node targetNode = session.getNodeByUUID(asString);
-            if (targetNode instanceof HippoNode) {
-                AjaxLink link = new AjaxLink("reference-link", new JcrNodeModel(targetNode)) {
-                    private static final long serialVersionUID = 1L;
+            Node targetNode = session.getNodeByIdentifier(stringValue);
 
-                    @Override
-                    public void onClick(AjaxRequestTarget requestTarget) {
-                        EditorPlugin plugin = (EditorPlugin) findParent(EditorPlugin.class);
-                        plugin.setDefaultModel((JcrNodeModel) getModel());
-                    }
-                };
-                add(link);
-                link.add(new Label("reference-link-text", new Model(targetNode.getPath())));
+            // link to referenced node
+            AjaxLink link = new AjaxLink("reference-link", new JcrNodeModel(targetNode)) {
+                private static final long serialVersionUID = 1L;
 
-                if (isProtected) {
-                    add(new Label("reference-edit", asString));
-                } else {
-                    TextFieldWidget editor = new TextFieldWidget("reference-edit", new Model(asString));
-                    editor.setSize("40");
-                    add(editor);
+                @Override
+                public void onClick(AjaxRequestTarget requestTarget) {
+                    EditorPlugin plugin = (EditorPlugin) findParent(EditorPlugin.class);
+                    plugin.setDefaultModel((JcrNodeModel) getModel());
                 }
+            };
+            add(link);
+            link.add(new Label("reference-link-text", new Model(targetNode.getPath())));
+
+            // input field
+            if (isProtected) {
+                add(new Label("reference-edit", stringValue));
             } else {
-                add(new Label("reference-edit", asString));
-                add(new DisabledLink("reference-link", new Model(targetNode.getPath())));
+                TextFieldWidget editor = new TextFieldWidget("reference-edit", valueModel);
+                editor.setSize("40");
+                add(editor);
             }
+
         } catch (ItemNotFoundException e) {
-            TextFieldWidget editor = new TextFieldWidget("reference-edit", new Model(asString));
-            editor.setSize("40");
-            add(editor);
+            if (isProtected) {
+                add(new Label("reference-edit", stringValue));
+            } else {
+                TextFieldWidget editor = new TextFieldWidget("reference-edit", valueModel);
+                editor.setSize("40");
+                add(editor);
+            }
 
             DisabledLink link = new DisabledLink("reference-link", new Model("(Broken reference)"));
             link.add(new AttributeAppender("style", new Model("color:red"), " "));
