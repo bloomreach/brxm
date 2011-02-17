@@ -27,6 +27,9 @@ cleanupSharedResources()
 cleanupTestResourcesInDependencies('hippo-quickstart-war')
 cleanupTestResourcesInDependencies('hippo-repository-application')
 cleanupTestResourcesInDependencies('hippo-cms-application')
+cleanupTestResourcesInDependencies('hippo-cms-browse')
+cleanupTestResourcesInDependencies('hippo-cms-edit')
+cleanupTestResourcesInDependencies('hippo-cms-dashboard')
 
 convertResourcesToAny('hippo-repository-upgrade', 'src/main/resources')
 
