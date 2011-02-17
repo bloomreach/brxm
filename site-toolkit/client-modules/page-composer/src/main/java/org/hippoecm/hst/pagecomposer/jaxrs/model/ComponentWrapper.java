@@ -72,7 +72,7 @@ public class ComponentWrapper {
             Class componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
                 ParametersInfo parameterInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
-                Method[] methods = parameterInfo.type().getDeclaredMethods();
+                Method[] methods = parameterInfo.type().getMethods();
                 for (Method method : methods) {
                     if (method.isAnnotationPresent(Parameter.class)) {
                         Parameter propAnnotation = method.getAnnotation(Parameter.class);
