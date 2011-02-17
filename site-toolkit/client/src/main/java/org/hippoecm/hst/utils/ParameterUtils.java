@@ -107,6 +107,14 @@ public class ParameterUtils {
                         parameterValue = panno.defaultValue();
                     }
                     
+                    if ("".equals(parameterValue) && !(returnType.equals(String.class))) {
+                        /*
+                         *  if the returnType is not of type String, but the parameterValue is "". we need to return the default value as well.
+                         *  For example, an integer should get its defaultValue returned when "".  
+                         */
+                        parameterValue = panno.defaultValue();
+                    }
+                    
                     if (parameterValue == null) {
                         return null;
                     }
