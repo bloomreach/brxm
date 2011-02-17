@@ -50,3 +50,14 @@
 [frontendtest:document] > hippo:document
 - *
 + *
+
+[frontendtest:relaxed]
+- * (undefined)
+- * (undefined) multiple
+
+[frontendtest:mixed]
+- frontendtest:bool (boolean)
+- frontendtest:multibool (boolean) multiple
+- * (undefined)
+- * (undefined) multiple
+

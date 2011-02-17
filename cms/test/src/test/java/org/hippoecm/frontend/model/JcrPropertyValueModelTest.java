@@ -18,6 +18,7 @@ package org.hippoecm.frontend.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 
@@ -142,6 +143,21 @@ public class JcrPropertyValueModelTest extends PluginTest {
         JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:invalid");
         JcrPropertyValueModel valueModel = new JcrPropertyValueModel(propModel);
         valueModel.setObject(Boolean.TRUE);
+        valueModel.detach();
+        assertEquals(null, valueModel.getObject());
+    }
+
+    @Test
+    public void testNamedPropertyInMixedNodeTypeHasCorrectType() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:mixed");
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:bool");
+        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(propModel);
+        try {
+            valueModel.setObject("aap");
+            fail("Should not be able to set boolean property to string value, even in a mixed type");
+        } catch (ClassCastException ex) {
+            // OK
+        }
         valueModel.detach();
         assertEquals(null, valueModel.getObject());
     }

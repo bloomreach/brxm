@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.model.properties;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -63,21 +64,27 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     // dynamically reload value
     private transient boolean loaded = false;
     private transient List<T> object = null;
+    private transient PropertyDefinition propertyDefinition;
 
-    private final JcrItemModel<Property> itemModel;
+    private final JcrPropertyModel<T> propertyModel;
     private int type = NO_TYPE;
 
     // Constructor
     public JcrMultiPropertyValueModel(JcrItemModel<Property> itemModel) {
-        this.itemModel = itemModel;
+        this.propertyModel = new JcrPropertyModel<T>(itemModel);
+    }
+
+    public JcrMultiPropertyValueModel(JcrPropertyModel<T> propertyModel) {
+        this.propertyModel = propertyModel;
     }
 
     public Property getProperty() {
-        return itemModel.getObject();
+        return propertyModel.getObject();
     }
 
+    @SuppressWarnings("unchecked")
     public JcrItemModel<Property> getItemModel() {
-        return itemModel;
+        return propertyModel.getItemModel();
     }
 
     public List<T> getObject() {
@@ -91,7 +98,8 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     public void detach() {
         loaded = false;
         object = null;
-        itemModel.detach();
+        propertyDefinition = null;
+        propertyModel.detach();
     }
 
     public void setObject(final List<T> objects) {
@@ -109,17 +117,39 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
                     case PropertyType.BOOLEAN:
                         values.add(factory.createValue((Boolean) objects.get(i)));
                         break;
-                    case PropertyType.DATE:
+                    case PropertyType.DATE: {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime((Date) objects.get(i));
                         values.add(factory.createValue(calendar));
                         break;
+                    }
                     case PropertyType.DOUBLE:
                         values.add(factory.createValue((Double) objects.get(i)));
                         break;
                     case PropertyType.LONG:
                         values.add(factory.createValue((Long) objects.get(i)));
                         break;
+                    case PropertyType.UNDEFINED: {
+                        Object object = objects.get(i);
+                        if (object instanceof Boolean) {
+                            values.add(factory.createValue((Boolean) object));
+                        } else if (object instanceof Long) {
+                            values.add(factory.createValue((Long) object));
+                        } else if (object instanceof Double) {
+                            values.add(factory.createValue((Double) object));
+                        } else if (object instanceof Date) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime((Date) objects.get(i));
+                            values.add(factory.createValue(calendar));
+                        } else if (object instanceof BigDecimal) {
+                            values.add(factory.createValue((BigDecimal) object));
+                        } else if (object instanceof String) {
+                            values.add(factory.createValue((String) object));
+                        } else {
+                            throw new RuntimeException("Could not determine value type of " + object);
+                        }
+                        break;
+                    }
                     default:
                         // skip empty string as it cannot be an id in a list UI
                         if (!objects.get(i).toString().equals("")) {
@@ -141,23 +171,7 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
         try {
             List<Value> values = getValues();
 
-            if (type == NO_TYPE) {
-                if (values.size() > 0) {
-                    type = values.get(0).getType();
-                } else {
-                    Property property = getProperty();
-                    if (property != null) {
-                        PropertyDefinition def = property.getDefinition();
-                        if (def != null) {
-                            type = def.getRequiredType();
-                        } else {
-                            type = PropertyType.UNDEFINED;
-                        }
-                    } else {
-                        type = PropertyType.UNDEFINED;
-                    }
-                }
-            }
+            int type = getType(values);
 
             switch (type) {
             case PropertyType.BOOLEAN:
@@ -200,17 +214,64 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
         return null;
     }
 
+    private int getType(List<Value> values) throws RepositoryException {
+        if (type == NO_TYPE) {
+            PropertyDefinition def = getPropertyDefinition();
+            // try to determine real value
+            if (def != null) {
+                type = def.getRequiredType();
+            } else if (values.size() > 0) {
+                type = values.get(0).getType();
+            } else {
+                type = PropertyType.UNDEFINED;
+            }
+        }
+        return type;
+    }
+
+    private PropertyDefinition getPropertyDefinition() {
+        if (propertyDefinition == null) {
+            // property doesn't exist, try to find pdef in the node definition
+            propertyDefinition = propertyModel.getDefinition(type, false);
+            if (propertyDefinition == null) {
+                propertyDefinition = propertyModel.getDefinition(type, true);
+
+                if (propertyDefinition == null && propertyModel.getItemModel().exists()) {
+                    try {
+                        propertyDefinition = propertyModel.getProperty().getDefinition();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException("Unable to determine property definition for " + propertyModel, e);
+                    }
+                }
+            }
+        }
+        return propertyDefinition;
+    }
+
     private void setValues(List<Value> values) {
         try {
             Value[] jcrValues = values.toArray(new Value[values.size()]);
+            JcrItemModel<Property> itemModel = getItemModel();
             if (itemModel.exists()) {
                 Property prop = getProperty();
-                if (!prop.getDefinition().isMultiple()) {
-                    throw new IllegalStateException("definition of property " + prop.getName() + " is not multiple");
+
+                JcrPropertyModel propModel = new JcrPropertyModel(prop);
+                PropertyDefinition definition = propModel.getDefinition(prop.getType(), true);
+                if (definition == null) {
+                    throw new IllegalStateException("no multi-valued definition found for property " + prop.getName());
                 }
 
                 // set new values
-                prop.setValue(jcrValues);
+                if (!prop.isMultiple()) {
+                    log.debug("Replacing property " + prop.getName() + " as it is not multi-valued");
+                    Node node = prop.getParent();
+                    String name = prop.getName();
+                    prop.remove();
+                    propertyModel.detach();
+                    node.setProperty(name, jcrValues);
+                } else {
+                    prop.setValue(jcrValues);
+                }
             } else {
                 // create new property and set new values
                 Node node = itemModel.getParentModel().getObject();
@@ -224,14 +285,11 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     }
 
     private List<Value> getValues() {
-        if (itemModel.exists()) {
+        if (propertyModel.getItemModel().exists()) {
             try {
                 Property prop = getProperty();
-                if (prop.getDefinition() == null) {
-                    throw new IllegalStateException("property " + prop.getName() + " has no definition");
-                }
                 if (!prop.getDefinition().isMultiple()) {
-                    throw new IllegalStateException("definition of property " + prop.getName() + " is not multiple");
+                    return Arrays.asList(new Value[] { prop.getValue() });
                 }
 
                 return Arrays.asList(prop.getValues());
@@ -246,8 +304,8 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("property", itemModel.getPath())
-                .append("values", object).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("property",
+                propertyModel.getItemModel().getPath()).append("values", object).toString();
     }
 
     @SuppressWarnings("unchecked")
@@ -260,11 +318,11 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
             return true;
         }
         JcrMultiPropertyValueModel valueModel = (JcrMultiPropertyValueModel) object;
-        return new EqualsBuilder().append(itemModel, valueModel.itemModel).isEquals();
+        return new EqualsBuilder().append(propertyModel, valueModel.propertyModel).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(33, 114).append(itemModel).toHashCode();
+        return new HashCodeBuilder(33, 114).append(propertyModel).toHashCode();
     }
 }

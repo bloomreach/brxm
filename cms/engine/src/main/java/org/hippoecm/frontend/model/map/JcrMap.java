@@ -261,6 +261,9 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
         String strKey = (String) key;
         try {
             Node node = getNode();
+            if (node == null) {
+                return null;
+            }
             if (node.hasProperty(strKey)) {
                 Property property = node.getProperty(strKey);
                 int type = property.getDefinition().getRequiredType();

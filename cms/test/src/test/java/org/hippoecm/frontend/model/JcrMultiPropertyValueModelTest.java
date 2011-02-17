@@ -59,7 +59,7 @@ public class JcrMultiPropertyValueModelTest extends PluginTest {
         List<String> list = valueModel.getObject();
         list.add("y");
         valueModel.setObject(list);
-
+        
         Value[] values = prop.getValues();
         assertEquals(2, values.length);
         assertEquals("y", values[1].getString());
@@ -79,6 +79,24 @@ public class JcrMultiPropertyValueModelTest extends PluginTest {
         Value[] values = prop.getValues();
         assertEquals(1, values.length);
         assertEquals("y", values[0].getString());
+    }
+
+    @Test
+    public void testSingleValuedValueInRelaxedType() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:relaxed");
+        test.setProperty("test", "aap");
+
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/test");
+        JcrMultiPropertyValueModel<String> valueModel = new JcrMultiPropertyValueModel<String>(propModel.getItemModel());
+        List<String> values = valueModel.getObject();
+        assertEquals(1, values.size());
+        assertEquals("aap", values.get(0));
+        values.add("noot");
+        valueModel.setObject(values);
+
+        Property property = test.getProperty("test");
+        assertTrue(property.isMultiple());
+        assertEquals(2, property.getValues().length);
     }
 
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {

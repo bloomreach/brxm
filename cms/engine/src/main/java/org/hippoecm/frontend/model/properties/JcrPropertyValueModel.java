@@ -102,7 +102,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
             this.type = value.getType();
         }
         if (index != NO_INDEX) {
-            setIndex(index);
+            this.index = index;
         }
     }
 
@@ -112,17 +112,13 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
      */
     private PropertyDefinition getPropertyDefinition() {
         if (propertyDefinition == null) {
-            if (propertyModel.getItemModel().exists()) {
+            // property doesn't exist, try to find pdef in the node definition
+            propertyDefinition = propertyModel.getDefinition(type, index != NO_INDEX);
+            if (propertyDefinition == null && propertyModel.getItemModel().exists()) {
                 try {
                     propertyDefinition = propertyModel.getProperty().getDefinition();
                 } catch (RepositoryException e) {
-                    log.warn("Unable to determine property definition for {}", propertyModel, e);
-                }
-            } else {
-                // property doesn't exist, try to find pdef in the node definition
-                propertyDefinition = propertyModel.getDefinition(type, false);
-                if (propertyDefinition == null) {
-                    propertyDefinition = propertyModel.getDefinition(type, true);
+                    log.warn("Unable to determine property definition for " + propertyModel, e);
                 }
             }
         }
@@ -190,12 +186,27 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
                                 newValues[i] = oldValues[i];
                             }
                         }
-                        prop.setValue(newValues);
+                        if (prop.isMultiple()) {
+                            prop.setValue(newValues);
+                        } else {
+                            String name = prop.getName();
+                            Node node = prop.getParent();
+                            prop.remove();
+                            propertyModel.detach();
+                            node.setProperty(name, newValues);
+                        }
                     } else {
                         if (value == null && propDef.isMandatory()) {
-                            prop.setValue(createNullValue());
-                        } else {
+                            value = createNullValue();
+                        }
+                        if (!prop.isMultiple()) {
                             prop.setValue(value);
+                        } else {
+                            String name = prop.getName();
+                            Node node = prop.getParent();
+                            prop.remove();
+                            propertyModel.detach();
+                            node.setProperty(name, value);
                         }
                     }
                 } else if (value != null) {
