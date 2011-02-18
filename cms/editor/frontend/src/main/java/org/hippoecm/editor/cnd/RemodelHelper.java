@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,9 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.workflow;
+package org.hippoecm.editor.cnd;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,90 +25,19 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
-import org.hippoecm.addon.workflow.StdWorkflow;
-import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.editor.cnd.CndSerializer;
-import org.hippoecm.editor.repository.NamespaceWorkflow;
-import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.editor.layout.ILayoutProvider;
-import org.hippoecm.frontend.editor.workflow.action.NewCompoundTypeAction;
-import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
-import org.hippoecm.frontend.editor.workflow.dialog.RemodelDialog;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.standardworkflow.Change;
 import org.hippoecm.repository.standardworkflow.ChangeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<NamespaceWorkflow> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+public final class RemodelHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(RemodelWorkflowPlugin.class);
-
-    private static final long serialVersionUID = 1L;
-
-    public RemodelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-
-        final ILayoutProvider layouts = context.getService(ILayoutProvider.class.getName(), ILayoutProvider.class);
-        add(new NewDocumentTypeAction(this, "new-document-type", new StringResourceModel("new-document-type", this, null), layouts));
-        add(new NewCompoundTypeAction(this, layouts));
-
-        add(new WorkflowAction("remodel", new StringResourceModel("update-model", this, null)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Dialog createRequestDialog() {
-                return new RemodelDialog(this, (WorkflowDescriptorModel) RemodelWorkflowPlugin.this.getDefaultModel());
-            }
-
-            @Override
-            protected String execute(NamespaceWorkflow workflow) throws Exception {
-                try {
-                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                    Map<String, Serializable> hints = workflow.hints();
-                    String prefix = (String) hints.get("prefix");
-                    log.info("remodelling namespace " + prefix);
-                    String cnd = new CndSerializer(session, prefix).getOutput();
-                    log.debug("new cnd:\n" + cnd);
-                    Map<String,List<Change>> cargo = makeCargo(session, prefix);
-                    session.save();
-                    session.refresh(false);
-
-
-                    // log out; the session model will log in again after the updateModel workflow call
-                    // Sessions cache path resolver information, which is incorrect after remapping the prefix.
-                    ((UserSession) Session.get()).releaseJcrSession();
-                    workflow.updateModel(cnd, cargo);
-
-                    return null;
-                } catch (Exception ex) {
-                    log.error("Failed updateModel workflow", ex);
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                }
-            }
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new ResourceReference(StdWorkflow.class, "update-all-16.png");
-            }
-        });
-    }
-
-    public IEditorManager getEditorManager() {
-        return getPluginContext().getService(getPluginConfig().getString("editor.id", IEditorManager.class.getName()), IEditorManager.class);
-    }
+    static final Logger log = LoggerFactory.getLogger(RemodelHelper.class);
     
+    private RemodelHelper() {
+    }
+
     public static Map<String, List<Change>> makeCargo(javax.jcr.Session session, String prefix) throws RepositoryException {
         Map<String, List<Change>> changes = new TreeMap<String, List<Change>>();
         String uri = null;

@@ -121,7 +121,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public List<ITypeDescriptor> getSubTypes() {

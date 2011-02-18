@@ -15,18 +15,16 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.util.tester.FormTester;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.editor.layout.LayoutProviderPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -36,16 +34,14 @@ import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RemodelWorkflowPluginTest extends PluginTest {
+public class NamespaceWorkflowPluginTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";
 
@@ -77,7 +73,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
             "/test/layouts", "frontend:plugin",
                 "plugin.class", LayoutProviderPlugin.class.getName(),
             "/test/plugin", "frontend:plugin",
-                "plugin.class", RemodelWorkflowPlugin.class.getName(),
+                "plugin.class", NamespaceWorkflowPlugin.class.getName(),
                 "wicket.id", "service.actions",
                 "wicket.model", "service.model",
     };
@@ -100,7 +96,6 @@ public class RemodelWorkflowPluginTest extends PluginTest {
         nsWfl.createNamespace("testns", "http://example.org/test/0.0");
 
         Node documentNode = session.getRootNode().getNode("hippo:namespaces/testns");
-        Utilities.dump(documentNode);
         String category = "test";
         WorkflowDescriptor descriptor = wflMgr.getWorkflowDescriptor(category, documentNode);
         WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
@@ -174,24 +169,6 @@ public class RemodelWorkflowPluginTest extends PluginTest {
 
         nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype/editor:templates/_default_");
         assertTrue(nsNode.getItemModel().exists());
-    }
-
-    @Test
-    public void remodelTest() throws Exception {
-        start(config);
-        refreshPage();
-
-        // "new document type"
-        tester.clickLink("root:menu:3:link");
-        // "yes, I know what I'm doing"
-        tester.clickLink("dialog:content:form:wizard:form:buttons:yes");
-        tester.executeBehavior((AbstractAjaxBehavior) home.get("dialog:content:form:wizard:form:view:progress")
-                .getBehaviors().get(0));
-
-        //        printComponents(System.out);
-        session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
-        assertEquals("http://example.org/test/0.1", nsReg.getURI("testns"));
     }
 
 }

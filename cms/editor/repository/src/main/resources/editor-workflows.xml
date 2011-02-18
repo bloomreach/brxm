@@ -45,7 +45,7 @@
         <sv:value>${editor.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -75,7 +75,7 @@
         <sv:value>${editor.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.editor.workflow.TemplateEditorWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

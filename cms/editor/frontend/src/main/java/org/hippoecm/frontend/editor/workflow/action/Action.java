@@ -18,7 +18,7 @@ package org.hippoecm.frontend.editor.workflow.action;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
-import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
@@ -33,15 +33,15 @@ public class Action extends WorkflowAction {
     
     private static final long serialVersionUID = 1L;
 
-    private RemodelWorkflowPlugin plugin;
+    NamespaceWorkflowPlugin plugin;
     
-    public Action(RemodelWorkflowPlugin plugin, String id, String name,
+    public Action(NamespaceWorkflowPlugin plugin, String id, String name,
             ResourceReference iconModel) {
         plugin.super(id, name, iconModel);
         this.plugin = plugin;
     }
 
-    public Action(RemodelWorkflowPlugin plugin, String id, StringResourceModel name) {
+    public Action(NamespaceWorkflowPlugin plugin, String id, StringResourceModel name) {
         plugin.super(id, name);
         this.plugin = plugin;
     }

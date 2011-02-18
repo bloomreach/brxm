@@ -228,7 +228,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow workflow = workflowManager.getWorkflow("editor", nsNode);
 
-                ((NamespaceWorkflow) workflow).addType("compound", info.subType);
+                ((NamespaceWorkflow) workflow).addCompoundType(info.subType);
 
                 nsNode.refresh(false);
 

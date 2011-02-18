@@ -46,13 +46,13 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
         private static final long serialVersionUID = 1L;
 
         private JcrNodeModel nodeModel;
-        private Observable observable;
+        private Observable nthandle;
         private transient String cssClass;
         private transient boolean loaded = false;
 
         StateIconAttributes(JcrNodeModel nodeModel) {
             this.nodeModel = nodeModel;
-            this.observable = new Observable(nodeModel);
+            this.nthandle = new Observable(nodeModel);
         }
 
         @SuppressWarnings("unused")
@@ -65,13 +65,13 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
             loaded = false;
             cssClass = null;
             nodeModel.detach();
-            observable.detach();
+            nthandle.detach();
         }
 
         void load() {
             if (!loaded) {
                 cssClass = "document-16";
-                observable.setTarget(null);
+                nthandle.setTarget(null);
                 try {
                     Node node = nodeModel.getNode();
                     if (node != null && node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
@@ -80,7 +80,7 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
                         String currentUri = nsReg.getURI(prefix);
 
                         Node ntHandle = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-                        observable.setTarget(new JcrNodeModel(ntHandle));
+                        nthandle.setTarget(new JcrNodeModel(ntHandle));
                         NodeIterator variants = ntHandle.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
 
                         Node current = null;
@@ -113,15 +113,15 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
         }
 
         public void setObservationContext(IObservationContext<? extends IObservable> context) {
-            observable.setObservationContext(context);
+            nthandle.setObservationContext(context);
         }
 
         public void startObservation() {
-            observable.startObservation();
+            nthandle.startObservation();
         }
 
         public void stopObservation() {
-            observable.stopObservation();
+            nthandle.stopObservation();
         }
     }
 

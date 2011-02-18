@@ -168,29 +168,6 @@ public class FieldEditor extends Panel {
             }
         };
         addFormField(ordered);
-        addFormField(new CheckBox("primary", new IModel<Boolean>() {
-            private static final long serialVersionUID = 1L;
-
-            public Boolean getObject() {
-                return getDescriptor() == null ? null : new Boolean(getDescriptor().isPrimary());
-            }
-
-            public void setObject(Boolean object) {
-                if (object) {
-                    FieldEditor.this.type.setPrimary(getDescriptor().getName());
-                }
-            }
-
-            public void detach() {
-            }
-        }) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean isVisible() {
-                return FieldEditor.this.type != null;
-            }
-        });
     }
 
     IFieldDescriptor getDescriptor() {

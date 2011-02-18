@@ -31,11 +31,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
-import org.hippoecm.editor.cnd.CndSerializer;
+import org.hippoecm.editor.cnd.RemodelHelper;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
-import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -143,7 +142,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         Workflow workflow = workflowManager.getWorkflow("test", node);
         assertTrue(workflow instanceof NamespaceWorkflow);
-        ((NamespaceWorkflow) workflow).addType("document", "testtype");
+        ((NamespaceWorkflow) workflow).addDocumentType("testtype");
         assertTrue(session.getRootNode().hasNode("hippo:namespaces/hippostd/testtype"));
     }
 
@@ -251,36 +250,6 @@ public class TemplateEditorWorkflowTest extends TestCase {
     }
 
     @Test
-    public void testNewType() throws RepositoryException, WorkflowException, RemoteException {
-        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        Workflow workflow = workflowManager.getWorkflow("test", session.getRootNode().getNode("hippo:namespaces"));
-        assertNotNull(workflow);
-        assertTrue(workflow instanceof TemplateEditorWorkflow);
-
-        ((TemplateEditorWorkflow) workflow).createNamespace("prototypetest", "http://www.hippoecm.org/test/1.0");
-        session.refresh(false);
-
-        workflow = workflowManager.getWorkflow("test", session.getRootNode().getNode("hippo:namespaces").getNode(
-                "prototypetest"));
-        assertNotNull(workflow);
-        assertTrue(workflow instanceof NamespaceWorkflow);
-        ((NamespaceWorkflow) workflow).addType("compound", "subnode");
-
-        // It is necessary to pass the basedocument because the workflow is unable to pass the prefix internally.
-        // New types also lead to problems, as they will be used in queries.
-        Map<String, List<Change>> changes = new HashMap<String, List<Change>>();
-        changes.put("prototypetest:basedocument", new LinkedList<Change>());
-        ((NamespaceWorkflow) workflow).updateModel(
-                "<prototypetest='http://www.hippoecm.org/test/1.1'> [prototypetest:subnode]", changes);
-
-        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces").getNode("prototypetest").getNode(
-                "subnode");
-        NodeIterator prototypes = templateTypeNode.getNode("hipposysedit:prototypes").getNodes();
-        assertTrue(prototypes.hasNext());
-        assertEquals("prototypetest:subnode", prototypes.nextNode().getPrimaryNodeType().getName());
-    }
-
-    @Test
     public void mixinsAreCopiedToDraft() throws RepositoryException, WorkflowException, RemoteException {
         Node root = session.getRootNode();
 
@@ -362,7 +331,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         Workflow workflow = workflowManager.getWorkflow("test", nsNode);
         assertTrue(workflow instanceof NamespaceWorkflow);
 
-        ((NamespaceWorkflow) workflow).updateModel(cndmandatory, RemodelWorkflowPlugin.makeCargo(session, "test"));
+        ((NamespaceWorkflow) workflow).updateModel(cndmandatory, RemodelHelper.makeCargo(session, "test"));
 
         session.logout();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);

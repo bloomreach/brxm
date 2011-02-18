@@ -15,12 +15,15 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
@@ -47,7 +50,9 @@ import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,9 +62,12 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowPlugin.class);
+    private MarkupContainer publishAction;
+    private MarkupContainer revertAction;
 
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
         add(new WorkflowAction("edit", new StringResourceModel("edit", this, null)) {
             private static final long serialVersionUID = 1L;
 
@@ -148,8 +156,77 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
+
+        add(publishAction = new WorkflowAction("commit", new StringResourceModel("commit", this, null)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String execute(Workflow wf) {
+                try {
+                    EditmodelWorkflow workflow = (EditmodelWorkflow) wf;
+                    if (workflow != null) {
+                        workflow.commit();
+                    }
+                } catch (WorkflowException ex) {
+                    return ex.getClass().getName() + ": " + ex.getMessage();
+                } catch (RemoteException ex) {
+                    return ex.getClass().getName() + ": " + ex.getMessage();
+                } catch (RepositoryException ex) {
+                    return ex.getClass().getName() + ": " + ex.getMessage();
+                }
+                return null;
+            }
+        });
+
+        add(revertAction = new WorkflowAction("revert", new StringResourceModel("revert", this, null)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String execute(Workflow wf) {
+                try {
+                    EditmodelWorkflow workflow = (EditmodelWorkflow) wf;
+                    if (workflow != null) {
+                        workflow.revert();
+                    }
+                } catch (WorkflowException ex) {
+                    return ex.getClass().getName() + ": " + ex.getMessage();
+                } catch (RemoteException ex) {
+                    return ex.getClass().getName() + ": " + ex.getMessage();
+                } catch (RepositoryException ex) {
+                    return ex.getClass().getName() + ": " + ex.getMessage();
+                }
+                return null;
+            }
+        });
     }
 
+    @Override
+    protected void onModelChanged() {
+        super.onModelChanged();
+        try {
+            WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();
+            if (workflowDescriptor != null) {
+                Workflow workflow = manager.getWorkflow(workflowDescriptor);
+                Map<String, Serializable> info = workflow.hints();
+                if (info.containsKey("commit") && info.get("commit") instanceof Boolean
+                        && !((Boolean) info.get("commit")).booleanValue()) {
+                    publishAction.setVisible(false);
+                }
+                if (info.containsKey("revert") && info.get("revert") instanceof Boolean
+                        && !((Boolean) info.get("revert")).booleanValue()) {
+                    revertAction.setVisible(false);
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage(), ex);
+        } catch (WorkflowException ex) {
+            log.error(ex.getMessage(), ex);
+        } catch (RemoteException ex) {
+            log.error(ex.getMessage(), ex);
+        }
+    }
+    
     public class CopyModelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
         private static final long serialVersionUID = 1L;
 

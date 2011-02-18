@@ -24,7 +24,7 @@ import org.hippoecm.editor.template.JcrTemplateStore;
 import org.hippoecm.editor.type.JcrDraftLocator;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
-import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateCompoundTypeDialog;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -41,7 +41,7 @@ public class NewCompoundTypeAction extends Action {
     public String name;
     public String layout;
 
-    public NewCompoundTypeAction(RemodelWorkflowPlugin plugin, ILayoutProvider layouts) {
+    public NewCompoundTypeAction(NamespaceWorkflowPlugin plugin, ILayoutProvider layouts) {
         super(plugin, "new-compound-type", new StringResourceModel("new-compound-type", plugin, null));
         this.layoutProvider = layouts;
     }
@@ -61,7 +61,7 @@ public class NewCompoundTypeAction extends Action {
 
         // create type
         NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
-        workflow.addType("compound", name);
+        workflow.addCompoundType(name);
 
         String prefix = (String) workflow.hints().get("prefix");
 

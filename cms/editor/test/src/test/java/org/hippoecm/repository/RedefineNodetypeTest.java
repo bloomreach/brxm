@@ -139,7 +139,7 @@ public class RedefineNodetypeTest extends TestCase {
     }
 
 //    @Test
-    @Ignore
+/*    @Ignore
     public void testWorkflow() throws RepositoryException, WorkflowException, RemoteException {
 
         String cnd1 =
@@ -199,5 +199,5 @@ public class RedefineNodetypeTest extends TestCase {
         node = session.getRootNode().getNode("test").getNode("testing");
         assertTrue(node.getPrimaryNodeType().getName().equals("hippotest2:test"));
         session.save();
-    }
+    } */
 }

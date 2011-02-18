@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,69 +15,35 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
-import org.hippoecm.editor.NamespaceValidator;
-import org.hippoecm.editor.repository.TemplateEditorWorkflow;
-import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.editor.repository.NamespaceWorkflow;
+import org.hippoecm.frontend.editor.layout.ILayoutProvider;
+import org.hippoecm.frontend.editor.workflow.action.NewCompoundTypeAction;
+import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin<NamespaceWorkflow> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    private static final Logger log = LoggerFactory.getLogger(NamespaceWorkflowPlugin.class);
 
     private static final long serialVersionUID = 1L;
 
     public NamespaceWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("create", new StringResourceModel("create-namespace", this, null)) {
-            private static final long serialVersionUID = 1L;
-
-            public String url;
-            public String prefix;
-
-            @Override
-            protected Dialog createRequestDialog() {
-                return new NamespaceDialog(this);
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                NamespaceValidator.checkName(prefix);
-                NamespaceValidator.checkURI(url);
-
-                TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) wf;
-                workflow.createNamespace(prefix, url);
-                return null;
-            }
-        });
+        final ILayoutProvider layouts = context.getService(ILayoutProvider.class.getName(), ILayoutProvider.class);
+        add(new NewDocumentTypeAction(this, "new-document-type", new StringResourceModel("new-document-type", this, null), layouts));
+        add(new NewCompoundTypeAction(this, layouts));
     }
 
-    public class NamespaceDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
-        private static final long serialVersionUID = 1L;
-
-        public NamespaceDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
-            action.super();
-            add(setFocus(new TextFieldWidget("prefix", new PropertyModel(action, "prefix"))));
-            add(new TextFieldWidget("url", new PropertyModel(action, "url")));
-        }
-
-        @Override
-        public IModel getTitle() {
-            return new StringResourceModel("create-namespace", NamespaceWorkflowPlugin.this, null);
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return SMALL;
-        }
+    public IEditorManager getEditorManager() {
+        return getPluginContext().getService(getPluginConfig().getString("editor.id", IEditorManager.class.getName()), IEditorManager.class);
     }
 }

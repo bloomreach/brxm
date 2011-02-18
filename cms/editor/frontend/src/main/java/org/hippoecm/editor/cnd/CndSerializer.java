@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,108 +18,28 @@ package org.hippoecm.editor.cnd;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
-import javax.jcr.NamespaceRegistry;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.editor.type.JcrNamespace;
-import org.hippoecm.editor.type.JcrTypeDescriptor;
-import org.hippoecm.editor.type.JcrTypeStore;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeLocator;
-import org.hippoecm.frontend.types.TypeLocator;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CndSerializer {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: CndSerializer.java 18973 2009-07-23 10:01:26Z fvlankvelt $";
+/**
+ * Create a CND based on ITypeDescriptors.
+ */
+public final class CndSerializer {
 
-    private static Logger log = LoggerFactory.getLogger(CndSerializer.class);
-
-    class TypeEntry {
-        Node oldType;
-        Node newType;
-
-        TypeEntry(Node oldType, Node newType) {
-            this.oldType = oldType;
-            this.newType = newType;
-        }
-
-        ITypeDescriptor getOldType() throws StoreException {
-            try {
-                return new JcrTypeDescriptor(new JcrNodeModel(oldType), oldTypeLocator);
-            } catch (RepositoryException e) {
-                throw new StoreException(e);
-            }
-        }
-
-        ITypeDescriptor getNewType() throws StoreException {
-            try {
-                // FIXME: it should be possible to delete types.
-                if (newType == null) {
-                    return new JcrTypeDescriptor(new JcrNodeModel(oldType), newTypeLocator);
-                }
-                return new JcrTypeDescriptor(new JcrNodeModel(newType), newTypeLocator);
-            } catch (RepositoryException e) {
-                throw new StoreException(e);
-            }
-        }
-
-        TypeUpdate getUpdate() throws StoreException {
-            if (oldType == null) {
-                return null;
-            }
-
-            TypeUpdate update = new TypeUpdate();
-
-            ITypeDescriptor oldTypeDescriptor = getOldType();
-            ITypeDescriptor newTypeDescriptor = getNewType();
-
-            if (newType != null) {
-                update.newName = newTypeDescriptor.getName();
-            } else {
-                update.newName = oldTypeDescriptor.getName();
-            }
-
-            update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
-            for (Map.Entry<String, IFieldDescriptor> entry : oldTypeDescriptor.getFields().entrySet()) {
-                IFieldDescriptor origField = entry.getValue();
-                FieldIdentifier oldId = new FieldIdentifier();
-                oldId.path = origField.getPath();
-                oldId.type = origField.getTypeDescriptor().getType();
-
-                if (newType != null) {
-                    IFieldDescriptor newField = newTypeDescriptor.getField(entry.getKey());
-                    if (newField != null) {
-                        FieldIdentifier newId = new FieldIdentifier();
-                        newId.path = newField.getPath();
-                        newId.type = newField.getTypeDescriptor().getType();
-
-                        update.renames.put(oldId, newId);
-                    }
-                } else {
-                    update.renames.put(oldId, oldId);
-                }
-            }
-            return update;
-        }
-    }
+    static final Logger log = LoggerFactory.getLogger(CndSerializer.class);
 
     class SortContext {
         HashSet<String> visited;
@@ -134,7 +54,7 @@ public class CndSerializer {
                 return;
             }
 
-            ITypeDescriptor descriptor = types.get(typeName).getNewType();
+            ITypeDescriptor descriptor = types.get(typeName);
 
             visited.add(typeName);
             for (String superType : descriptor.getSuperTypes()) {
@@ -143,7 +63,7 @@ public class CndSerializer {
             for (IFieldDescriptor field : descriptor.getFields().values()) {
                 visit(field.getTypeDescriptor().getName());
             }
-            result.add(types.get(typeName).getNewType());
+            result.add(types.get(typeName));
         }
 
         LinkedHashSet<ITypeDescriptor> sort() throws StoreException {
@@ -155,61 +75,17 @@ public class CndSerializer {
         }
     }
 
-    private Session jcrSession;
-    private Map<String, String> namespaces;
-    private LinkedHashMap<String, TypeEntry> types;
-    private HashMap<String, String> pseudoTypes;
-    private ITypeLocator oldTypeLocator;
-    private ITypeLocator newTypeLocator;
+    private final Map<String, String> namespaces = new HashMap<String, String>();
+    private final Map<String, ITypeDescriptor> types = new TreeMap<String, ITypeDescriptor>();
+    private final Session jcrSession;
 
-    public CndSerializer(Session session, final String namespace) throws StoreException {
-        this.jcrSession = session;
-
-        final JcrTypeStore jcrTypeStore = new JcrTypeStore();
-        IStore<ITypeDescriptor> oldBuiltinTypeStore = new BuiltinTypeStore();
-        oldTypeLocator = new TypeLocator(new IStore[] { jcrTypeStore, oldBuiltinTypeStore });
-        jcrTypeStore.setTypeLocator(oldTypeLocator);
-
-        JcrTypeStore newJcrTypeStore = new JcrTypeStore();
-        final BuiltinTypeStore newBuiltinTypeStore = new BuiltinTypeStore();
-        final ITypeLocator newLocator = new TypeLocator(new IStore[] { newJcrTypeStore, newBuiltinTypeStore });
-        newTypeLocator = new ITypeLocator() {
-            private static final long serialVersionUID = 1L;
-
-            public ITypeDescriptor locate(String type) throws StoreException {
-                if (type.indexOf(':') > 0 && namespace.equals(type.substring(0, type.indexOf(':')))) {
-                    if (types.containsKey(type)) {
-                        return types.get(type).getNewType();
-                    } else if (pseudoTypes.containsKey(type)) {
-                        return locate(pseudoTypes.get(type));
-                    } else {
-                        return newBuiltinTypeStore.load(type);
-                    }
-                }
-                return newLocator.locate(type);
-            }
-
-            public List<ITypeDescriptor> getSubTypes(String type) throws StoreException {
-                throw new StoreException("sub-types are not supported in cnd serializer");
-            }
-
-            public void detach() {
-            }
-
-        };
-        newBuiltinTypeStore.setTypeLocator(newTypeLocator);
-        newJcrTypeStore.setTypeLocator(newTypeLocator);
-
-        this.namespaces = new HashMap<String, String>();
-        addNamespace(namespace);
-
-        initTypes(namespace);
-        resolveNamespaces();
-
-        versionNamespace(namespace);
+    public CndSerializer(Session jcrSession) {
+        this.jcrSession = jcrSession;
     }
 
     public String getOutput() {
+        resolveNamespaces();
+
         StringBuffer output = new StringBuffer();
         for (Map.Entry<String, String> entry : namespaces.entrySet()) {
             output.append("<" + entry.getKey() + "='" + entry.getValue() + "'>\n");
@@ -227,70 +103,30 @@ public class CndSerializer {
         return output.toString();
     }
 
-    public Map<String, TypeUpdate> getUpdate() throws StoreException {
-        Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
-        for (Map.Entry<String, TypeEntry> entry : types.entrySet()) {
-            TypeUpdate update = entry.getValue().getUpdate();
-            if (update != null) {
-                result.put(entry.getKey(), entry.getValue().getUpdate());
-            }
-        }
-        return result;
+    public String getNamespace(String prefix) {
+        return namespaces.get(prefix);
     }
 
-    private void initTypes(String namespace) throws StoreException {
-        types = new LinkedHashMap<String, TypeEntry>();
-        pseudoTypes = new HashMap<String, String>();
-
-        try {
-            JcrNamespace jcrNamespace = new JcrNamespace(jcrSession, namespace);
-            String uri = jcrNamespace.getCurrentUri();
-            Node nsNode = jcrSession.getRootNode().getNode(jcrNamespace.getPath().substring(1));
-
-            NodeIterator typeIter = nsNode.getNodes();
-            while (typeIter.hasNext()) {
-                Node templateTypeNode = typeIter.nextNode();
-                String pseudoName = namespace + ":" + templateTypeNode.getName();
-
-                Node oldType = null, newType = null;
-
-                boolean isPseudoType = false;
-                Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-                NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-                while (versions.hasNext()) {
-                    Node version = versions.nextNode();
-                    if (version.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
-                        if (!pseudoName.equals(version.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString())) {
-                            isPseudoType = true;
-                            oldType = version;
-                            break;
-                        }
-                    }
-                    if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                            oldType = version;
-                        }
-                    } else {
-                        newType = version;
-                    }
-                }
-                if (oldType == null && newType == null) {
-                    throw new StoreException("No description found for either old or new version of type " + pseudoName);
-                }
-                if (!isPseudoType) {
-                    types.put(pseudoName, new TypeEntry(oldType, newType));
-                } else {
-                    pseudoTypes.put(pseudoName, oldType.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString());
-                }
+    public void addNamespace(String prefix) {
+        if (!namespaces.containsKey(prefix)) {
+            try {
+                namespaces.put(prefix, jcrSession.getNamespaceURI(prefix));
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
-        } catch (RepositoryException ex) {
-            throw new StoreException("Error retrieving namespace description from repository");
         }
     }
 
-    private void resolveNamespaces() throws StoreException {
-        for (TypeEntry entry : types.values()) {
-            ITypeDescriptor descriptor = entry.getNewType();
+    public void addType(ITypeDescriptor type) {
+        this.types.put(type.getName(), type);
+    }
+
+    public void remap(String prefix, String uri) {
+        namespaces.put(prefix, uri);
+    }
+
+    private void resolveNamespaces() {
+        for (ITypeDescriptor descriptor : types.values()) {
             if (descriptor.isNode()) {
                 String type = descriptor.getType();
                 addNamespace(type.substring(0, type.indexOf(':')));
@@ -314,81 +150,6 @@ public class CndSerializer {
                 }
             }
         }
-    }
-
-    private void addNamespace(String prefix) {
-        if (!namespaces.containsKey(prefix)) {
-            try {
-                namespaces.put(prefix, jcrSession.getNamespaceURI(prefix));
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        }
-    }
-
-    private void versionNamespace(String prefix) {
-        if (namespaces.containsKey(prefix)) {
-            String namespace = namespaces.get(prefix);
-            String last = namespace;
-            int pos = namespace.lastIndexOf('/');
-            try {
-                for (String registered : jcrSession.getNamespacePrefixes()) {
-                    String uri = jcrSession.getNamespaceURI(registered);
-                    if (uri.startsWith(namespace.substring(0, pos + 1))) {
-                        if (isLater(uri, last)) {
-                            last = uri;
-                        }
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-                return;
-            }
-
-            int minorPos = last.lastIndexOf('.');
-            if (minorPos > pos) {
-                int minor = Integer.parseInt(last.substring(minorPos + 1));
-                namespace = last.substring(0, minorPos + 1) + new Integer(minor + 1).toString();
-                namespaces.put(prefix, namespace);
-            } else {
-                log.warn("namespace for " + prefix + " does not conform to versionable format");
-            }
-        } else {
-            log.warn("namespace for " + prefix + " was not found");
-        }
-    }
-
-    private static boolean isLater(String one, String two) {
-        int pos = one.lastIndexOf('/');
-        String[] oneVersions = one.substring(pos + 1).split("\\.");
-        String[] twoVersions = two.substring(pos + 1).split("\\.");
-        for (int i = 0; i < oneVersions.length; i++) {
-            if (i < twoVersions.length) {
-                int oneVersion = Integer.parseInt(oneVersions[i]);
-                int twoVersion = Integer.parseInt(twoVersions[i]);
-                if (oneVersion > twoVersion) {
-                    return true;
-                } else if (oneVersion < twoVersion) {
-                    return false;
-                }
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String getCurrentUri(String prefix) {
-        if ("system".equals(prefix)) {
-            return "internal";
-        }
-        try {
-            NamespaceRegistry nsReg = jcrSession.getWorkspace().getNamespaceRegistry();
-            return nsReg.getURI(prefix);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
     }
 
     private void renderField(StringBuffer output, IFieldDescriptor field) throws StoreException {
@@ -468,5 +229,4 @@ public class CndSerializer {
         }
         return name;
     }
-
 }

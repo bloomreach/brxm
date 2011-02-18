@@ -30,13 +30,12 @@ import org.hippoecm.editor.type.JcrDraftStore;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
-import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateDocumentTypeDialog;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
-import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.Workflow;
@@ -53,7 +52,7 @@ public class NewDocumentTypeAction extends Action {
     public String layout;
     public List<String> mixins = new LinkedList<String>();
 
-    public NewDocumentTypeAction(RemodelWorkflowPlugin plugin, String id, StringResourceModel name,
+    public NewDocumentTypeAction(NamespaceWorkflowPlugin plugin, String id, StringResourceModel name,
             ILayoutProvider layouts) {
         super(plugin, id, name);
         this.layoutProvider = layouts;
@@ -74,7 +73,7 @@ public class NewDocumentTypeAction extends Action {
 
         NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
         try {
-            workflow.addType("document", name);
+            workflow.addDocumentType(name);
         } catch (ItemExistsException ex) {
             return "Type " + name + " already exists";
         }
@@ -87,14 +86,6 @@ public class NewDocumentTypeAction extends Action {
         ITypeLocator typeLocator = new TypeLocator(new IStore[] {draftStore, typeStore, builtinStore});
         typeStore.setTypeLocator(typeLocator);
         builtinStore.setTypeLocator(typeLocator);
-
-        ITypeDescriptor typeDescriptor = typeStore.getDraftType(prefix + ":" + name);
-        List<String> types = typeDescriptor.getSuperTypes();
-        for (String mixin : mixins) {
-            types.add(mixin);
-        }
-        typeDescriptor.setSuperTypes(types);
-        typeStore.save(typeDescriptor);
 
         // create layout
         // FIXME: should be managed by template engine
