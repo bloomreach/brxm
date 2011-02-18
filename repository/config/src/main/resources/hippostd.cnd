@@ -83,3 +83,23 @@
 
 [hippostd:date] > hippostd:datefields, hippo:derived
 - hippostd:date (date) mandatory primary
+
+[hippostd:container] > hippo:container mixin
++ * (hippostd:html) multiple
++ * (hippostd:date) multiple
+
+[hippostd:relaxed] > hippostd:container mixin
+- * (boolean)
+- * (boolean) multiple
+- * (date)
+- * (date) multiple
+- * (decimal)
+- * (decimal) multiple
+- * (double)
+- * (double) multiple
+- * (long)
+- * (long) multiple
+- * (string)
+- * (string) multiple
+- * (uri)
+- * (uri) multiple

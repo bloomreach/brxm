@@ -82,7 +82,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
             throw new WorkflowException("Cannot create new namespace", ex);
         }
     }
-
+    
     private void updateModel(final String prefix, final String cnd, final UpdaterModule module) throws WorkflowException, MappingException,
                                                                                                        RepositoryException, RemoteException {
         UpdaterModule updateModelUpdaterModule = new UpdaterModule() {

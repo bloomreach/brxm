@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -538,7 +539,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     static Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {
         String[] renamed;
-        Value[] values;
         String name = source.getName();
         if (renames.containsKey(path+"/_name")) {
             renamed = renames.get(path+"/_name");
@@ -584,7 +584,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
 
         if (renames.containsKey(path+"/jcr:mixinTypes")) {
-            values = expand(renames.get(path+"/jcr:mixinTypes"), source, PropertyType.NAME);
+            Value[] values = expand(renames.get(path+"/jcr:mixinTypes"), source, PropertyType.NAME);
             for (int i = 0; i < values.length; i++) {
                 if (!target.isNodeType(values[i].getString())) {
                     target.addMixin(values[i].getString());
@@ -640,7 +640,19 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     if(renames.containsKey(path+"/"+prop.getName()) && renames.get(path+"/"+prop.getName()) != null) {
                         target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType()));
                     } else {
-                        target.setProperty(prop.getName(), prop.getValues());
+                        Value[] values = prop.getValues();
+                        List<Value> newValues = new LinkedList<Value>();
+                        for (int i = 0; i < values.length; i++) {
+                            String key = path+"/"+prop.getName()+"["+i+"]";
+                            if (renames.containsKey(key)) {
+                                for (Value substitute : expand(renames.get(key), source, prop.getDefinition().getRequiredType())) {
+                                    newValues.add(substitute);
+                                }
+                            } else {
+                                newValues.add(values[i]);
+                            }
+                        }
+                        target.setProperty(prop.getName(), newValues.toArray(new Value[newValues.size()]));
                     }
                 }
             } else {

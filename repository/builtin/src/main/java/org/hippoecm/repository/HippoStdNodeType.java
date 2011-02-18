@@ -32,10 +32,13 @@ public interface HippoStdNodeType {
     String NT_DIRECTORY = "hippostd:directory";
     String NT_FOLDER = "hippostd:folder";
     String NT_HTML = "hippostd:html";
+    String NT_DATE = "hippostd:date";
     String NT_LANGUAGEABLE = "hippostd:languageable";
     String NT_PUBLISHABLE = "hippostd:publishable";
     String NT_PUBLISHABLESUMMARY = "hippostd:publishableSummary";
     String NT_TRANSLATIONS = "hippostd:translations";
+    String NT_CONTAINER = "hippostd:container";
+    String NT_RELAXED = "hippostd:relaxed";
 
     //--- Hippo Item Names ---//
     String HIPPOSTD_CONTENT = "hippostd:content";

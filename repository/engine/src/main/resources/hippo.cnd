@@ -24,16 +24,7 @@
 - rep:jarExpanded (date) mandatory copy
 + rep:jarContents (nt:base) = nt:folder mandatory copy
 
-// DATA TYPES: RESOURCES AND MARKERS
-
-[hippo:resource]
-- jcr:encoding (string)
-- jcr:mimeType (string) mandatory
-- jcr:data (binary) primary mandatory
-- jcr:lastModified (date) mandatory ignore
-- hippo:text (binary)
-
-[hippo:query] > nt:query
+// DATA TYPES: MARKERS
 
 [hippo:derived] mixin
 - hippo:compute (Reference)
@@ -87,6 +78,29 @@
 [hippo:mirror]
 - hippo:docbase (string) mandatory
 + * multiple ignore
+
+
+// DATA TYPES: RESOURCES
+
+[hippo:resource]
+- jcr:encoding (string)
+- jcr:mimeType (string) mandatory
+- jcr:data (binary) primary mandatory
+- jcr:lastModified (date) mandatory ignore
+- hippo:text (binary)
+
+[hippo:query] > nt:query
+
+[hippo:compound] abstract
+
+[hippo:container] mixin
++ * (hippo:mirror) multiple
++ * (hippo:facetselect) multiple
++ * (hippo:facetsearch) multiple
++ * (hippo:resource) multiple
++ * (hippo:query) multiple
++ * (hippo:compound) multiple
+
 
 // DATA TYPES: TRANSLATION
 
