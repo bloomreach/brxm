@@ -30,19 +30,14 @@ public interface NamespaceWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
     /**
-     * Add a new type descriptor node.
-     * <p>
-     * The node is created by using a type template.  The list of available templates can be
-     * obtained by using hints().get("templates").  This is a Set of Strings.
-     * 
-     * @param template the template to use.  One of the entries in 
-     * @param name
-     * @throws WorkflowException
-     * @throws MappingException
-     * @throws RepositoryException
-     * @throws RemoteException
+     * Add a new document type descriptor node.
      */
-    void addType(String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    void addDocumentType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Add a new compound type descriptor node.
+     */
+    void addCompoundType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     void updateModel(String cnd, Map<String,List<Change>> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

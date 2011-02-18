@@ -29,12 +29,12 @@ public interface EditmodelWorkflow extends Workflow {
     /**
      * Returns the path of the JCR node containing the template definition to edit.
      */
-    public String edit() throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    String edit() throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Saves the draft template, prototype and nodetype definitions.
      */
-    public void save() throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    void save() throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Return the path of the JCR node containing a new the template
@@ -42,5 +42,15 @@ public interface EditmodelWorkflow extends Workflow {
      * copying the node definition of the template definition indicated.
      * The created template definition resides within the same namespace.
      */
-    public String copy(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    String copy(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Publishes the edited draft template definition.
+     */
+    void commit() throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Publishes the edited draft template definition.
+     */
+    void revert() throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
