@@ -216,7 +216,7 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-buildin</artifactId>
+        <artifactId>hippo-cms-builtin</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
@@ -362,6 +362,11 @@
         <artifactId>hippo-cms-translation-test</artifactId>
         <version>${hippo.cms.version}</version>
         <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-translate</artifactId>
+        <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
