@@ -31,9 +31,10 @@
 + hippogallery:thumbnail (hippogallery:image) = hippogallery:image primary mandatory autocreated
 + hippogallery:original (hippogallery:image) = hippogallery:image
 
-[hippogallery:exampleImageSet] > hippo:document
-+ hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
-+ hippogallery:picture (hippo:resource) = hippo:resource
+[hippogallery:container] mixin
++ * (hippogallery:image)
+
+[hippogallery:relaxed] > hippostd:relaxed, hippogallery:container mixin
 
 [hippogallery:exampleAssetSet] > hippo:document
 + hippogallery:asset (hippo:resource) = hippo:resource primary mandatory autocreated
@@ -46,3 +47,8 @@
 
 [hippogallery:stdAssetGallery] > hippostd:gallery orderable
 
+
+// DEPRECATED, use or extend hippogallery:imageset
+[hippogallery:exampleImageSet] > hippo:document
++ hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
++ hippogallery:picture (hippo:resource) = hippo:resource
