@@ -28,6 +28,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,25 +37,23 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import org.hippoecm.repository.api.HippoSession;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
@@ -99,20 +98,21 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
     public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException {
         return new TreeMap<String, Serializable>();
     }
-
+    
     public void translate(String language, Set<String> fields) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         ArrayList<String> paths = new ArrayList<String>();
         paths.addAll(fields);
         List<String> texts = new LinkedList<String>();
         for (String path : paths) {
-            Property property = subject.getProperty(path);
-            if (property.isMultiple()) {
-                Value[] values = property.getValues();
-                for (Value value : values) {
-                    texts.add(value.getString());
+            for (Property property : getProperties(subject, path.split("/"))) {
+                if (property.isMultiple()) {
+                    Value[] values = property.getValues();
+                    for (Value value : values) {
+                        texts.add(value.getString());
+                    }
+                } else {
+                    texts.add(property.getString());
                 }
-            } else {
-                texts.add(property.getString());
             }
         }
 
@@ -128,77 +128,22 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
 
         Iterator<String> iter = texts.iterator();
         for (String path : paths) {
-            Property property = subject.getProperty(path);
-            if (property.isMultiple()) {
-                int numValues = property.getValues().length;
-                String[] values = new String[numValues];
-                for (int i = 0; i < numValues; i++) {
-                    values[i] = iter.next();
+            for (Property property : getProperties(subject, path.split("/"))) {
+                if (property.isMultiple()) {
+                    int numValues = property.getValues().length;
+                    String[] values = new String[numValues];
+                    for (int i = 0; i < numValues; i++) {
+                        values[i] = iter.next();
+                    }
+                    property.setValue(values);
+                } else {
+                    property.setValue(iter.next());
                 }
-                property.setValue(values);
-            } else {
-                property.setValue(iter.next());
             }
         }
 
         if(subject.isNodeType(HippoStdNodeType.NT_LANGUAGEABLE)) {
             subject.setProperty(HippoStdNodeType.HIPPOSTD_LANGUAGE, language);
-        }
-
-        session.save();
-    }
-
-    public Document createTranslation(String language, Set<String> fields) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node = ((HippoSession)session).copy(subject, subject.getName());
-        Document document = new Document(node.getIdentifier());
-        translate(document, language, fields);
-        return document;
-    }
-
-    protected void translate(Document document, String targetLanguage, Set<String> fields) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node = session.getNodeByIdentifier(document.getIdentity());
-        ArrayList<String> paths = new ArrayList<String>();
-        paths.addAll(fields);
-        List<String> texts = new LinkedList<String>();
-        for (String path : paths) {
-            Property property = node.getProperty(path);
-            if (property.isMultiple()) {
-                Value[] values = property.getValues();
-                for (Value value : values) {
-                    texts.add(value.getString());
-                }
-            } else {
-                texts.add(property.getString());
-            }
-        }
-
-        try {
-            if(node.hasProperty(HippoStdNodeType.HIPPOSTD_LANGUAGE)) {
-                translate(texts, targetLanguage, node.getProperty(HippoStdNodeType.HIPPOSTD_LANGUAGE).getString());
-            } else {
-                translate(texts, targetLanguage);
-            }
-        } catch(IOException ex) {
-            throw new WorkflowException("backoffice service unavailable", ex);
-        }
-
-        Iterator<String> iter = texts.iterator();
-        for (String path : paths) {
-            Property property = node.getProperty(path);
-            if (property.isMultiple()) {
-                int numValues = property.getValues().length;
-                String[] values = new String[numValues];
-                for (int i = 0; i < numValues; i++) {
-                    values[i] = iter.next();
-                }
-                property.setValue(values);
-            } else {
-                property.setValue(iter.next());
-            }
-        }
-
-        if(node.isNodeType(HippoStdNodeType.NT_LANGUAGEABLE)) {
-            node.setProperty(HippoStdNodeType.HIPPOSTD_LANGUAGE, targetLanguage);
         }
 
         session.save();
@@ -324,5 +269,22 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
         } catch (JSONException ex) {
             throw new IOException("json protocol error", ex);
         }
+    }
+
+    private static List<Property> getProperties(Node node, String[] elements) throws RepositoryException {
+        List<Property> properties = new LinkedList<Property>();
+        if (elements.length > 1) {
+            String[] subElements = Arrays.copyOfRange(elements, 1, elements.length);
+            NodeIterator children = node.getNodes(elements[0]);
+            while (children.hasNext()) {
+                Node child = children.nextNode();
+                properties.addAll(getProperties(child, subElements));
+            }
+        } else {
+            if (node.hasProperty(elements[0])) {
+                properties.add(node.getProperty(elements[0]));
+            }
+        }
+        return properties;
     }
 }

@@ -31,5 +31,4 @@ public interface TranslateWorkflow extends Workflow {
 
     public void translate(String language, Set<String> fields) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
-    public Document createTranslation(String language, Set<String> fields) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

@@ -17,7 +17,6 @@ package org.hippoecm.frontend.translation.workflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -52,7 +51,6 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.type.JcrTypeStore;
-import org.hippoecm.editor.type.PseudoTypeDescriptor;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
@@ -436,28 +434,6 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             return false;
         }
 
-        private void collectFields(javax.jcr.Session session, String relPath, String nodeType, Set<String> plainTextFields, Set<String> richTextFields) throws StoreException {
-            try {
-                JcrTypeStore jcrTypeStore = new JcrTypeStore();
-                ITypeDescriptor type = jcrTypeStore.load(nodeType);
-                for (Map.Entry<String, IFieldDescriptor> field : type.getFields().entrySet()) {
-                    IFieldDescriptor fieldDescriptor = field.getValue();
-                    ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
-                    if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
-                        richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
-                    } else if (fieldType.getName().equals("Text") || fieldType.getName().equals("Label")) {
-                        plainTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
-                    } else if (fieldType.getName().equals("Html")) {
-                        richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
-                    } else if (fieldType.isNode()) {
-                        collectFields(session, (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(), fieldType.getType(), plainTextFields, richTextFields);
-                    }
-                }
-            } catch(StoreException ex) {
-                // ignore nt:base
-            }
-        }
-
         @Override
         protected String execute(Workflow wf) throws Exception {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
@@ -671,8 +647,30 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         return stringCodecFactory.getStringCodec("encoding.display");
     }
 
-
-        static void collectFields() {
-
+    private static void collectFields(javax.jcr.Session session, String relPath, String nodeType, Set<String> plainTextFields, Set<String> richTextFields) throws StoreException {
+        try {
+            JcrTypeStore jcrTypeStore = new JcrTypeStore();
+            ITypeDescriptor type = jcrTypeStore.load(nodeType);
+            for (Map.Entry<String, IFieldDescriptor> field : type.getFields().entrySet()) {
+                IFieldDescriptor fieldDescriptor = field.getValue();
+                if ("*".equals(fieldDescriptor.getPath())) {
+                    continue;
+                }
+                ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
+                if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
+                    richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
+                } else if (fieldType.getName().equals("Text") || fieldType.getName().equals("Label")) {
+                    plainTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
+                } else if (fieldType.getName().equals("Html")) {
+                    richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
+                } else if (fieldType.isNode()) {
+                    System.out.println("Collecting field " + fieldDescriptor.getName() + ", path: " + fieldDescriptor.getPath() + ", type: " + fieldType.getName());
+                    collectFields(session, (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(), fieldType.getType(), plainTextFields, richTextFields);
+                }
+            }
+        } catch (StoreException ex) {
+            // ignore nt:base
         }
+    }
+
 }
