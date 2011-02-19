@@ -95,7 +95,7 @@
         <sv:value>${browser.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.DefaultWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.editor.workflow.DefaultWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
