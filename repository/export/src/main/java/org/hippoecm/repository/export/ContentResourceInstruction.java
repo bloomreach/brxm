@@ -47,18 +47,20 @@ import org.xml.sax.SAXException;
 
 class ContentResourceInstruction extends ResourceInstruction {
     
+    private final String m_contentresource;
     private final String m_root;
     final String m_context;
     private final boolean m_enabled;
     private final Extension m_extension;
     
-    ContentResourceInstruction(String name, Double sequence, File file, String root, String context, boolean enabled, Extension extension) {
-        super(name, sequence, file);
+    ContentResourceInstruction(String name, Double sequence, File basedir, String contentresource, String root, String context, boolean enabled, Extension extension) {
+        super(name, sequence, new File(basedir, contentresource));
+        if (!m_file.exists()) {
+            m_changed = true;
+        }
+        m_contentresource = contentresource;
         m_root = root;
         m_context = context;
-        if (!m_file.exists()) {
-        	m_changed = true;
-        }
         m_enabled = enabled;
         m_extension = extension;
     }
@@ -69,9 +71,14 @@ class ContentResourceInstruction extends ResourceInstruction {
     		log.info("Export in this context is disabled. Changes will be lost.");
     		return;
     	}
-    	log.info("Exporting " + m_file.getName());
+    	log.info("Exporting " + m_contentresource);
     	try {
-        	if (!m_file.exists()) m_file.createNewFile();
+        	if (!m_file.exists()) {
+        		if (!m_file.getParentFile().exists()) {
+        			m_file.getParentFile().mkdirs();
+        		}
+        		m_file.createNewFile();
+        	}
             OutputStream out = null;
             try {
                 out = new FileOutputStream(m_file);
@@ -89,7 +96,6 @@ class ContentResourceInstruction extends ResourceInstruction {
                 		String context = ((ContentResourceInstruction) instruction).m_context;
                 		if (!context.equals(m_context) && context.startsWith(m_context)) {
                 			String subcontext = context.substring(m_root.length());
-//                			log.debug("filtering subcontext " + subcontext);
                 			excluded.add(subcontext);
                 		}
                 	}
@@ -104,16 +110,16 @@ class ContentResourceInstruction extends ResourceInstruction {
             }
     	}
     	catch (IOException e) {
-    		log.error("Exporting " + m_file.getName() + " failed.", e);
+    		log.error("Exporting " + m_contentresource + " failed.", e);
     	}
     	catch (RepositoryException e) {
-    		log.error("Exporting " + m_file.getName() + " failed.", e);
+    		log.error("Exporting " + m_contentresource + " failed.", e);
         } 
     	catch (TransformerConfigurationException e) {
-    		log.error("Exporting " + m_file.getName() + " failed.", e);
+    		log.error("Exporting " + m_contentresource + " failed.", e);
 		} 
     	catch (SAXException e) {
-    		log.error("Exporting " + m_file.getName() + " failed.", e);
+    		log.error("Exporting " + m_contentresource + " failed.", e);
         }
         m_changed = false;
     }
@@ -134,7 +140,7 @@ class ContentResourceInstruction extends ResourceInstruction {
         contentResourceProperty.add(DocumentFactory.getInstance().createAttribute(contentResourceProperty, NAME_QNAME, "hippo:contentresource"));
         contentResourceProperty.add(DocumentFactory.getInstance().createAttribute(contentResourceProperty, TYPE_QNAME, "String"));
         Element contentResourcePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-        contentResourcePropertyValue.setText(m_file.getName());
+        contentResourcePropertyValue.setText(m_contentresource);
         contentResourceProperty.add(contentResourcePropertyValue);
         element.add(contentResourceProperty);
 
@@ -221,10 +227,8 @@ class ContentResourceInstruction extends ResourceInstruction {
 				String name = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
 				m_path.push(name);
 				String path = m_path.toString();
-//				log.debug("exclude " + path + "?");
 				for (String exclude : m_excluded) {
 					if (path.startsWith(exclude)) {
-//						log.debug("yes");
 						m_skip = true;
 						// don't propagate event
 						return;
@@ -310,9 +314,9 @@ class ContentResourceInstruction extends ResourceInstruction {
 			m_handler.skippedEntity(name);
 		}
 		
-		private static class Path {
+		private static final class Path {
 			
-			private Stack<String> m_stack = new Stack<String>();
+			private final Stack<String> m_stack = new Stack<String>();
 			
 			void push(String element) {
 				m_stack.push(element);
@@ -326,7 +330,7 @@ class ContentResourceInstruction extends ResourceInstruction {
 			public String toString() {
 				StringBuilder sb = new StringBuilder();
 				for (String element : m_stack) {
-					sb.append("/" + element);
+					sb.append("/").append(element);
 				}
 				return sb.toString();
 			}

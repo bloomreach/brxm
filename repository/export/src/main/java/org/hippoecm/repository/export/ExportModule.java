@@ -184,6 +184,7 @@ public final class ExportModule implements DaemonModule {
             ignored.add("/content/documents/tags");
             ignored.add("/content/attic");
             ignored.add("/hst:hst/hst:configuration/hst:default");
+            ignored.add("/hippo:configuration/hippo:modules/autoexport");
         }
         
         private final Extension m_extension;
@@ -269,7 +270,8 @@ public final class ExportModule implements DaemonModule {
                     if (log.isDebugEnabled()) {
                         log.debug(eventString(event) + " on " + path);
                     }
-                    ResourceInstruction instruction = m_extension.findResourceInstruction(path);
+                    boolean isNode = EventComparator.isNodeEventType(event);
+                    ResourceInstruction instruction = m_extension.findResourceInstruction(path, isNode);
                     if (instruction != null) {
                         if (log.isDebugEnabled()) {
                             log.debug("Found instruction " + instruction);
@@ -281,11 +283,16 @@ public final class ExportModule implements DaemonModule {
                         	instruction.nodeAdded(path);
                         }
                         else {
-                        	instruction = m_extension.createResourceInstruction(path);
-	                        if (log.isDebugEnabled()) {
-	                            log.debug("Adding instruction " + instruction);
-	                        }
-                        	m_extension.addInstruction(instruction);
+                        	instruction = m_extension.createResourceInstruction(path, true);
+                        	if (instruction != null) {
+    	                        if (log.isDebugEnabled()) {
+    	                            log.debug("Adding instruction " + instruction);
+    	                        }
+                            	m_extension.addInstruction(instruction);
+                        	}
+                        	else {
+                        		log.warn("Unable to create instruction. This change will be lost");
+                        	}
                         }
                         break;
                     case Event.NODE_REMOVED :
@@ -337,6 +344,8 @@ public final class ExportModule implements DaemonModule {
                     }
                 } catch (RepositoryException ex) {
                     log.error("Failed to process repository event.", ex);
+                } catch (Throwable t) {
+                	t.printStackTrace();
                 }
             }
             

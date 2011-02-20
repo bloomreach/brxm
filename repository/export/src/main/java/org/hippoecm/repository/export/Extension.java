@@ -109,10 +109,10 @@ final class Extension {
     	m_changed = true;
     }
     
-    ResourceInstruction findResourceInstruction(String path) {
+    ResourceInstruction findResourceInstruction(String path, boolean isNode) {
     	return path.startsWith("/jcr:system/jcr:nodeTypes/")
     		? findNodetypesInstruction(path)
-    		: findContentResourceInstruction(path);
+    		: findContentResourceInstruction(path, isNode);
     }
     
     private NodetypesResourceInstruction findNodetypesInstruction(String path) {
@@ -137,7 +137,7 @@ final class Extension {
 		return null;
     }
     
-    private ContentResourceInstruction findContentResourceInstruction(String path) {
+    private ContentResourceInstruction findContentResourceInstruction(String path, boolean isNode) {
     	ContentResourceInstruction result = null;
         for (Instruction instruction : m_instructions) {
             if (instruction instanceof ContentResourceInstruction) {
@@ -148,6 +148,15 @@ final class Extension {
                         result = (ContentResourceInstruction) instruction;
                 	}
                 }
+            }
+        }
+        if (result != null) {
+            // If the context node of the result is not the one that is required, return null
+            // a new instruction needs to be created.
+            String requiredContextNode = LocationMapper.contextNodeForPath(path, isNode);
+            if (!result.m_context.equals(requiredContextNode)) {
+                // But only if this would actually succeed (see createContentNodeInstruction)
+                if (path.equals(requiredContextNode)) return null;
             }
         }
         return result;
@@ -164,9 +173,9 @@ final class Extension {
         return null;
     }
 
-    ResourceInstruction createResourceInstruction(String path) {
+    ResourceInstruction createResourceInstruction(String path, boolean isNode) {
         boolean cnd = path.startsWith("/jcr:system/jcr:nodeTypes");
-    	return cnd ? createNodetypesResourceInstruction(path) : createContentResourceInstruction(path);
+    	return cnd ? createNodetypesResourceInstruction(path) : createContentResourceInstruction(path, isNode);
     }
     
     NamespaceInstruction createNamespaceInstruction(String uri, String prefix) throws IOException {
@@ -175,16 +184,24 @@ final class Extension {
     	return new NamespaceInstructionImpl(prefix, 3000.0, uri, null);
     }
 
-    private ContentResourceInstruction createContentResourceInstruction(String path) {
-    	// path = /hippo:namespaces/example
+    private ContentResourceInstruction createContentResourceInstruction(String path, boolean isNode) {
+
+    	String contextNode = LocationMapper.contextNodeForPath(path, isNode);
+    	String fileForPath = LocationMapper.fileForPath(path, isNode);
+    	
+    	if (!path.equals(contextNode)) {
+    		log.warn("This change needs merge semantics. Can't create instruction.");
+    		return null;
+    	}
+    	// contextNode = /hippo:namespaces/example
     	// name = example-content
     	// root = /hippo:namespaces
-        int lastIndexOfPathSeparator = path.lastIndexOf('/');
-        String name = path.substring(lastIndexOfPathSeparator+1) + "-content";
-        String root = path.substring(0, lastIndexOfPathSeparator);
+        int lastIndexOfPathSeparator = contextNode.lastIndexOf('/');
+        String name = contextNode.substring(lastIndexOfPathSeparator+1) + "-content";
+        String root = contextNode.substring(0, lastIndexOfPathSeparator);
         if (root.equals("")) root = "/";
-        File file = new File(m_file.getParent(), name.replace(':', '$') + ".xml");
-        return new ContentResourceInstruction(name, 3000.3, file, root, path, true, this);
+
+        return new ContentResourceInstruction(name, 3000.3, m_file.getParentFile(), fileForPath, root, contextNode, true, this);
     }
     
     private NodetypesResourceInstruction createNodetypesResourceInstruction(String path) {
@@ -197,10 +214,10 @@ final class Extension {
     	String prefix = relPath.substring(0, indexOfColon);
     	int indexOfUnderscore = prefix.indexOf('_');
     	String name = (indexOfUnderscore == -1) ? prefix : prefix.substring(0, indexOfUnderscore);
-        File file = new File(m_file.getParent(), name + ".cnd");
+    	String nodetypesresource = "namespaces/" + name + ".cnd";
         // ALERT: we use a convention for the node name of a node types resource instruction
         // It is the node type prefix + -nodetypes
-    	return new NodetypesResourceInstruction(name + "-nodetypes", 3000.1, file, null, null, prefix);
+    	return new NodetypesResourceInstruction(name + "-nodetypes", 3000.1, m_file.getParentFile(), nodetypesresource , null, null, prefix);
     }
     
     void addInstruction(Instruction instruction) {
@@ -307,31 +324,29 @@ final class Extension {
             
         }
         if (contentresource != null) {
-            File file = new File(m_file.getParent(), contentresource);
             // context must be read from file, it is the contentroot plus
             // name of the root node in the content xml file
             SAXReader reader = new SAXReader();
             Document document;
 			try {
-				document = reader.read(file);
+				document = reader.read(new File(m_file.getParentFile(), contentresource));
 	            String context = contentroot + "/" + document.getRootElement().attributeValue(NAME_QNAME);
 	            // if contentresource file uses delta xml (h:merge) semantics, then disable export
 	            // we don't deal with that (yet)
 	            String mergeValue = document.getRootElement().attributeValue("merge");
 	            boolean enabled = !(mergeValue != null && !mergeValue.equals(""));
 	            
-	            instruction = new ContentResourceInstruction(name, sequence, file, contentroot, context, enabled, this);
+	            instruction = new ContentResourceInstruction(name, sequence, m_file.getParentFile(), contentresource, contentroot, context, enabled, this);
 			} catch (DocumentException e) {
-				log.error("Failed to read contentresource file as xml. Can't create instruction.", e);
+				log.error("Failed to read contentresource file " + contentresource + " as xml. Can't create instruction.", e);
 			}
         }
         else if (nodetypesresource != null) {
-        	File file = new File(m_file.getParent(), nodetypesresource);
         	// name = example-nodetypes
         	// prefix = example
         	int indexOfDash = name.indexOf("-nodetypes");
         	String prefix = (indexOfDash == -1) ? name : name.substring(0, indexOfDash);
-        	instruction = new NodetypesResourceInstruction(name, sequence, file, namespace, namespacePropertyValue, prefix);
+        	instruction = new NodetypesResourceInstruction(name, sequence, m_file.getParentFile(), nodetypesresource, namespace, namespacePropertyValue, prefix);
         }
         else if (namespace != null) {
         	instruction = new NamespaceInstructionImpl(name, sequence, namespace, namespacePropertyValue);

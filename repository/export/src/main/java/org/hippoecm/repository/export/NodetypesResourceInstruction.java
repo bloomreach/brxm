@@ -35,17 +35,19 @@ import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 
 class NodetypesResourceInstruction extends ResourceInstruction implements NamespaceInstruction {
 	
+    private final String m_nodetypesresource;
 	private String m_internalPrefix;
 	private final String m_prefix;
 	private String m_namespace;
 	private final String m_namespaceroot;
 	private Element m_namespacePropertyValue;
 	
-	NodetypesResourceInstruction(String name, Double sequence, File file, String namespace, Element namespacePropertyValue, String internalPrefix) {
-		super(name, sequence, file);
+	NodetypesResourceInstruction(String name, Double sequence, File basedir, String nodetypesresource, String namespace, Element namespacePropertyValue, String internalPrefix) {
+		super(name, sequence, new File(basedir, nodetypesresource));
 		if (!m_file.exists()) {
 			m_changed = true;
 		}
+        m_nodetypesresource = nodetypesresource;
 		m_internalPrefix = internalPrefix;
 		int indexOfUnderscore = internalPrefix.indexOf('_');
 		m_prefix = (indexOfUnderscore == -1) ? internalPrefix : internalPrefix.substring(0, indexOfUnderscore);
@@ -63,9 +65,14 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 
 	@Override
 	void export(Session session) {
-		log.info("Exporting to " + m_file.getName());
+		log.info("Exporting " + m_nodetypesresource);
 		try {
-			if (!m_file.exists()) m_file.createNewFile();
+			if (!m_file.exists()) {
+				if (!m_file.getParentFile().exists()) {
+					m_file.getParentFile().mkdirs();
+				}
+				m_file.createNewFile();
+			}
 			Writer out = new FileWriter(m_file);
 			try {
 				String cnd = null;
@@ -101,10 +108,10 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 			}
 		}
 		catch (IOException e) {
-    		log.error("Exporting " + m_file.getName() + " failed.", e);
+    		log.error("Exporting " + m_nodetypesresource + " failed.", e);
 		}
 		catch (RepositoryException e) {
-    		log.error("Exporting " + m_file.getName() + " failed.", e);
+    		log.error("Exporting " + m_nodetypesresource + " failed.", e);
 		}
 		m_changed = false;
 	}
@@ -120,7 +127,7 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
         cndProperty.add(DocumentFactory.getInstance().createAttribute(cndProperty, NAME_QNAME, "hippo:nodetypesresource"));
         cndProperty.add(DocumentFactory.getInstance().createAttribute(cndProperty, TYPE_QNAME, "String"));
         Element cndPropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-        cndPropertyValue.setText(m_file.getName());
+        cndPropertyValue.setText(m_nodetypesresource);
         cndProperty.add(cndPropertyValue);
         element.add(cndProperty);
         

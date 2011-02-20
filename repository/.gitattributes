@@ -196,6 +196,7 @@ export/src/main/java/org/hippoecm/repository/export/ContentResourceInstruction.j
 export/src/main/java/org/hippoecm/repository/export/ExportModule.java -text
 export/src/main/java/org/hippoecm/repository/export/Extension.java -text
 export/src/main/java/org/hippoecm/repository/export/Instruction.java -text
+export/src/main/java/org/hippoecm/repository/export/LocationMapper.java -text
 export/src/main/java/org/hippoecm/repository/export/NamespaceInstruction.java -text
 export/src/main/java/org/hippoecm/repository/export/NamespaceInstructionImpl.java -text
 export/src/main/java/org/hippoecm/repository/export/NodetypesResourceInstruction.java -text
