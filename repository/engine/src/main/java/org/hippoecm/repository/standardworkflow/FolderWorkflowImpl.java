@@ -237,6 +237,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 String key = newValue.substring(1);
                 if (arguments.containsKey(key)) {
                     newValue = arguments.get(key);
+                } else {
+                    newValue = null;
                 }
             }
             if (renames.containsKey(values[i])) {
@@ -246,7 +248,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 newValues[oldValues.length] = newValue;
                 renames.put(values[i], newValues);
             } else {
-                renames.put(values[i], new String[] { newValue });
+                if (newValue == null) {
+                    renames.put(values[i], null);
+                } else {
+                    renames.put(values[i], new String[] { newValue });
+                }
             }
         }
     }
