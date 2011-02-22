@@ -185,6 +185,8 @@ public final class ExportModule implements DaemonModule {
             ignored.add("/content/attic");
             ignored.add("/hst:hst/hst:configuration/hst:default");
             ignored.add("/hippo:configuration/hippo:modules/autoexport");
+            ignored.add("/hippo:configuration/hippo:temporary");
+            ignored.add("/hippo:configuration/hippo:initialize");
         }
         
         private final Extension m_extension;
