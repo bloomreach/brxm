@@ -187,6 +187,7 @@ public final class ExportModule implements DaemonModule {
             ignored.add("/hippo:configuration/hippo:modules/autoexport");
             ignored.add("/hippo:configuration/hippo:temporary");
             ignored.add("/hippo:configuration/hippo:initialize");
+            ignored.add("/formdata");
         }
         
         private final Extension m_extension;
