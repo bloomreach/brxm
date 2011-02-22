@@ -53,6 +53,8 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
     private static final String NS_XMLSCHEMA_INSTANCE_PREFIX = "xsi";
     private static final String NS_XMLSCHEMA_URI = "http://www.w3.org/2001/XMLSchema";
     private static final String NS_XMLSCHEMA_PREFIX = "xs";
+    
+    private static final Name SV_MULTIPLE = NameFactoryImpl.getInstance().create(Name.NS_SV_URI, "multiple");
 
     private static final Attributes ATTRS_EMPTY = new AttributesImpl();
     private static final Attributes ATTRS_BINARY_ENCODED_VALUE;
@@ -158,6 +160,11 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
                     "unexpected property-type ordinal: " + prop.getType(), e);
         }
 
+        // multiple attribute
+        if (prop.isMultiple()) {
+            addAttribute(attrs, SV_MULTIPLE, CDATA_TYPE, "true");
+        }
+        
         // start property element
         startElement(NameConstants.SV_PROPERTY, attrs);
 

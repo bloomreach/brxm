@@ -46,7 +46,9 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
+    
+    private static final Name SV_MULTIPLE = NameFactoryImpl.getInstance().create(Name.NS_SV_URI, "multiple");
+    
     private final String NS_XMLIMPORT = "http://www.onehippo.org/jcr/xmlimport";
 
     /**
@@ -62,6 +64,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
      */
     private Name currentPropName;
     private int currentPropType = PropertyType.UNDEFINED;
+    private Boolean currentPropMultiple = null;
     private String currentMergeBehavior = null;
     private String currentMergeLocation = null;
     // list of AppendableValue objects
@@ -233,12 +236,22 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             } catch (NamespaceException e) {
                 throw new SAXException(new InvalidSerializedDataException("illegal property name: " + name, e));
             }
+            
             // property type (sv:type attribute)
             String type = getAttribute(atts, NameConstants.SV_TYPE);
             if (type == null) {
                 throw new SAXException(new InvalidSerializedDataException(
                         "missing mandatory sv:type attribute of element sv:property"));
             }
+            
+            // property multiple (sv:multiple attribute)
+            String multiple = getAttribute(atts, SV_MULTIPLE);
+            if (multiple == null || multiple.equals("")) {
+                currentPropMultiple = null;
+            } else {
+                currentPropMultiple = Boolean.valueOf(multiple);
+            }
+            
             currentMergeBehavior = atts.getValue(NS_XMLIMPORT, "merge");
             currentMergeLocation = atts.getValue(NS_XMLIMPORT, "location");
             try {
@@ -357,7 +370,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                     }
                 }
             } else {
-                PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, currentPropValues
+                PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, currentPropMultiple, currentPropValues
                         .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation);
                 state.props.add(prop);
             }

@@ -77,6 +77,11 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
     private final int type;
 
     /**
+     * Whether property being imported is multiple
+     */
+    private final Boolean multiple;
+    
+    /**
      * True if the property being imported is a path reference.
      */
     private boolean isPathReference = false;
@@ -97,8 +102,9 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
      * @param type type of the property being imported
      * @param values value(s) of the property being imported
      */
-    public PropInfo(NamePathResolver resolver, Name name, int type, TextValue[] values, String mergeBehavior, String mergeLocation) {
+    public PropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior, String mergeLocation) {
         super(name, type, values);
+        this.multiple = multiple != null ? multiple : Boolean.FALSE;
         this.mergeBehavior = mergeBehavior;
         this.mergeLocation = mergeLocation;
         if (name.getLocalName().endsWith(Reference.REFERENCE_SUFFIX)) {
@@ -261,7 +267,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
                 return;
             }
 
-            if (def.isMultiple()) {
+            if (multiple || def.isMultiple()) {
                 node.setProperty(name, new Value[] {}, type);
                 return;
             }
@@ -274,7 +280,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
 
         // multi- or single-valued property?
-        if (va.length == 1 && !def.isMultiple()) {
+        if (!multiple && va.length == 1 && !def.isMultiple()) {
             Exception e = null;
             try {
                 // set single-value
