@@ -194,10 +194,10 @@ final class Extension {
     		return null;
     	}
     	// contextNode = /hippo:namespaces/example
-    	// name = example-content
+    	// name = hippo-namespaces-example
     	// root = /hippo:namespaces
         int lastIndexOfPathSeparator = contextNode.lastIndexOf('/');
-        String name = contextNode.substring(lastIndexOfPathSeparator+1) + "-content";
+        String name = contextNode.substring(1).replaceAll(":", "-").replaceAll("/", "-");
         String root = contextNode.substring(0, lastIndexOfPathSeparator);
         if (root.equals("")) root = "/";
 
