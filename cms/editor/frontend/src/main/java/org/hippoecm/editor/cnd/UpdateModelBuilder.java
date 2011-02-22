@@ -25,7 +25,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.editor.type.JcrNamespace;
+import org.hippoecm.editor.model.JcrNamespace;
 import org.hippoecm.editor.type.JcrTypeDescriptor;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.model.JcrNodeModel;

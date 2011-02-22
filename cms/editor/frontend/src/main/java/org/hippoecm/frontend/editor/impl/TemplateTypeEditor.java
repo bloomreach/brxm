@@ -20,8 +20,11 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.editor.model.JcrTypeInfo;
+import org.hippoecm.editor.model.JcrTypeVersion;
 import org.hippoecm.frontend.editor.AbstractCmsEditor;
 import org.hippoecm.frontend.editor.IEditorContext;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
@@ -37,9 +40,26 @@ class TemplateTypeEditor extends AbstractCmsEditor<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateTypeEditor.class);
 
+    private JcrNodeModel nodeTypeModel;
+
     TemplateTypeEditor(IEditorContext manager, IPluginContext context, IPluginConfig config, IModel<Node> model,
             Mode mode) throws EditorException {
         super(manager, context, config, model, mode);
+    }
+
+    @Override
+    public void start() throws EditorException {
+        Node node = getModel().getObject();
+        if (node != null) {
+            try {
+                JcrTypeInfo info = new JcrTypeInfo(node);
+                JcrTypeVersion draft = info.getDraft();
+                this.nodeTypeModel = new JcrNodeModel(draft.getTypeNode());
+            } catch (RepositoryException e) {
+                throw new EditorException("Could not find draft to display");
+            }
+        }
+        super.start();
     }
 
     @Override
@@ -54,6 +74,17 @@ class TemplateTypeEditor extends AbstractCmsEditor<Node> {
             return;
         }
         try {
+            JcrTypeInfo info = new JcrTypeInfo(node);
+            JcrTypeVersion draft = info.getDraft();
+            JcrNodeModel draftModel = new JcrNodeModel(draft.getTypeNode());
+            if (!draftModel.equals(nodeTypeModel)) {
+                stop();
+
+                nodeTypeModel = null;
+                start();
+                return;
+            }
+
             if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
                 NodeIterator prototypes = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes();
                 while (prototypes.hasNext()) {

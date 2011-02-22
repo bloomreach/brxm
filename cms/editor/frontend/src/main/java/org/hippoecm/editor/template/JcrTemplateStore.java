@@ -31,7 +31,7 @@ import javax.jcr.query.QueryManager;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.editor.EditorNodeType;
-import org.hippoecm.editor.type.JcrNamespace;
+import org.hippoecm.editor.model.JcrNamespace;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;

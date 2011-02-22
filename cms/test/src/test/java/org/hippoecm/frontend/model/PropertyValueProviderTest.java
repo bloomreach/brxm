@@ -18,6 +18,8 @@ package org.hippoecm.frontend.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.Date;
+
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -93,4 +95,27 @@ public class PropertyValueProviderTest extends PluginTest {
         pvm = provider.iterator(0, 1).next();
         assertEquals(null, pvm.getObject());
     }
+
+    @Test
+    public void testAddedNewDateStoresDate() throws RepositoryException {
+        Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:relaxed");
+        JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:date");
+        IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:date", new JavaTypeDescriptor("date",
+                "Date", null));
+        PropertyValueProvider provider = new PropertyValueProvider(field, field.getTypeDescriptor(), propertyModel
+                .getItemModel());
+        provider.addNew();
+
+        assertEquals(1, provider.size());
+        JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
+        assertEquals(null, pvm.getObject());
+        Date date = new Date();
+        pvm.setObject(date);
+        provider.detach();
+
+        assertEquals(1, provider.size());
+        pvm = provider.iterator(0, 1).next();
+        assertEquals(date, pvm.getObject());
+    }
+
 }

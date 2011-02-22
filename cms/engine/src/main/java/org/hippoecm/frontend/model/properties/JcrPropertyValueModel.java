@@ -149,6 +149,13 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         return type;
     }
 
+    public void setType(int type) {
+        if (this.type != NO_TYPE && this.type != type) {
+            throw new IllegalStateException("Attempting to set the type after is was already determined");
+        }
+        this.type = type;
+    }
+    
     /**
      * The index of a value in a multi-valued property.  NO_INDEX (-1) is returned
      * for a single-valued property.
@@ -324,8 +331,8 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     private Value createNullValue() throws UnsupportedRepositoryOperationException, RepositoryException {
         ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
-        int type = getType();
-        return factory.createValue("", (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+        int propertyType = getType();
+        return factory.createValue("", (propertyType == PropertyType.UNDEFINED ? PropertyType.STRING : propertyType));
     }
 
     private void load() {

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -70,46 +71,56 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
         try {
             int index;
             Value value = createValue();
-            Node node = (Node) getItemModel().getParentModel().getObject();
-            String relPath = getItemModel().getPath().substring(node.getPath().length() + 1);
-            getItemModel().detach();
+            if (value != null) {
+                Node node = (Node) getItemModel().getParentModel().getObject();
+                String relPath = getItemModel().getPath().substring(node.getPath().length() + 1);
+                getItemModel().detach();
 
-            if (descriptor.isMultiple()) {
-                Value[] oldValues;
-                if (node.hasProperty(relPath)) {
-                    Property property = node.getProperty(relPath);
-                    if (property.getDefinition().isMultiple()) {
-                        oldValues = property.getValues();
+                if (descriptor.isMultiple()) {
+                    Value[] oldValues;
+                    if (node.hasProperty(relPath)) {
+                        Property property = node.getProperty(relPath);
+                        if (property.getDefinition().isMultiple()) {
+                            oldValues = property.getValues();
+                        } else {
+                            oldValues = new Value[1];
+                            oldValues[0] = property.getValue();
+                        }
                     } else {
-                        oldValues = new Value[1];
-                        oldValues[0] = property.getValue();
+                        oldValues = new Value[0];
                     }
-                } else {
-                    oldValues = new Value[0];
-                }
-                index = oldValues.length;
+                    index = oldValues.length;
 
-                Value[] newValues = new Value[oldValues.length + 1];
-                System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                newValues[oldValues.length] = value;
+                    Value[] newValues = new Value[oldValues.length + 1];
+                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                    newValues[oldValues.length] = value;
 
-                node.setProperty(relPath, newValues);
-            } else if (!descriptor.getValidators().contains("required")){
-                if (node.hasProperty(relPath)) {
-                    log.error("cannot add more than one value to single-valued property");
-                    return;
-                } else {
+                    node.setProperty(relPath, newValues);
+                } else if (!descriptor.getValidators().contains("required")) {
+                    if (node.hasProperty(relPath)) {
+                        log.error("cannot add more than one value to single-valued property");
+                        return;
+                    } else {
+                        node.setProperty(relPath, value);
+                        index = JcrPropertyValueModel.NO_INDEX;
+                    }
                     node.setProperty(relPath, value);
+                } else {
                     index = JcrPropertyValueModel.NO_INDEX;
+                    value = null;
+                    autocreate = true;
                 }
-                node.setProperty(relPath, value);
             } else {
                 index = JcrPropertyValueModel.NO_INDEX;
-                value = null;
                 autocreate = true;
             }
 
-            elements.addLast(new JcrPropertyValueModel(index, value, new JcrPropertyModel(getItemModel())));
+            JcrPropertyValueModel jpvm = new JcrPropertyValueModel(index, value, new JcrPropertyModel(getItemModel()));
+            if (value == null) {
+                int propertyType = PropertyType.valueFromName(type.getType());
+                jpvm.setType(propertyType);
+            }
+            elements.addLast(jpvm);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage(), ex);
         }

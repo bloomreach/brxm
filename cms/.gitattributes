@@ -358,6 +358,9 @@ edit/src/test/resources/cmstest.cnd -text
 edit/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 editor/common/pom.xml svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/NamespaceValidator.java svneol=native#text/plain
+editor/common/src/main/java/org/hippoecm/editor/model/JcrNamespace.java svneol=native#text/plain
+editor/common/src/main/java/org/hippoecm/editor/model/JcrTypeInfo.java svneol=native#text/plain
+editor/common/src/main/java/org/hippoecm/editor/model/JcrTypeVersion.java svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/repository/EditmodelWorkflow.java svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/repository/NamespaceWorkflow.java -text
 editor/common/src/main/java/org/hippoecm/editor/repository/TemplateEditorWorkflow.java -text
@@ -390,7 +393,6 @@ editor/frontend/src/main/java/org/hippoecm/editor/template/TemplateLocator.java 
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrDraftLocator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrDraftStore.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrFieldDescriptor.java -text
-editor/frontend/src/main/java/org/hippoecm/editor/type/JcrNamespace.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeDescriptor.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeLocator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeStore.java -text

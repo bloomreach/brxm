@@ -32,6 +32,8 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.hippoecm.editor.model.JcrTypeInfo;
+import org.hippoecm.editor.model.JcrTypeVersion;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
@@ -46,7 +48,6 @@ import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -95,8 +96,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         ITypeDescriptor result = types.get(name);
         if (result == null) {
             try {
-                TypeVersion version = new TypeVersion(name);
-                Node typeNode = version.getTypeNode(getJcrSession());
+                JcrTypeVersion version = new JcrTypeVersion(getJcrSession(), name);
+                Node typeNode = version.getTypeNode();
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
                     types.put(name, result);
@@ -112,9 +113,12 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         return result;
     }
 
+    @Override
     public void delete(ITypeDescriptor object) {
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation" })
+    @Override
     public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) throws StoreException {
         Map<String, ITypeDescriptor> results = new TreeMap<String, ITypeDescriptor>();
         if (criteria.containsKey("supertype")) {
@@ -198,6 +202,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         return results.values().iterator();
     }
 
+    @Override
     public ITypeDescriptor load(String id) throws StoreException {
         ITypeDescriptor result = getTypeDescriptor(id);
         if (result == null) {
@@ -206,13 +211,14 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         return result;
     }
 
+    @Override
     public String save(ITypeDescriptor object) throws StoreException {
         if (object instanceof JcrTypeDescriptor) {
             ((JcrTypeDescriptor) object).save();
         } else {
-            TypeInfo info;
+            JcrTypeInfo info;
             try {
-                info = new TypeInfo(object.getType());
+                info = new JcrTypeInfo(getJcrSession(), object.getType());
             } catch (RepositoryException ex) {
                 throw new StoreException("unable to store type", ex);
             }
@@ -228,7 +234,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow workflow = workflowManager.getWorkflow("editor", nsNode);
 
-                ((NamespaceWorkflow) workflow).addCompoundType(info.subType);
+                ((NamespaceWorkflow) workflow).addCompoundType(info.getTypeName());
 
                 nsNode.refresh(false);
 
@@ -264,6 +270,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         return object.getName();
     }
 
+    @Override
     public void detach() {
         for (ITypeDescriptor type : types.values()) {
             if (type instanceof IDetachable) {
@@ -281,10 +288,10 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         ITypeDescriptor result = currentTypes.get(name);
         if (result == null) {
             try {
-                TypeVersion version = new TypeVersion(name);
-                TypeInfo info = version.getTypeInfo();
-                TypeVersion current = info.getDraft();
-                Node typeNode = current.getTypeNode(getJcrSession());
+                JcrTypeVersion version = new JcrTypeVersion(getJcrSession(), name);
+                JcrTypeInfo info = version.getTypeInfo();
+                JcrTypeVersion current = info.getDraft();
+                Node typeNode = current.getTypeNode();
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
                     currentTypes.put(name, result);
@@ -300,7 +307,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
 
     // Privates
 
-    private Session getJcrSession() {
+    private static Session getJcrSession() {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
@@ -322,100 +329,6 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
 
         }
         return null;
-    }
-
-    private class TypeInfo {
-        JcrNamespace nsInfo;
-        String subType;
-
-        TypeInfo(String type) throws RepositoryException {
-            String prefix = "system";
-            subType = type;
-            if (type.indexOf(':') > 0) {
-                prefix = type.substring(0, type.indexOf(':'));
-                subType = NodeNameCodec.encode(type.substring(type.indexOf(':') + 1));
-            }
-            nsInfo = new JcrNamespace(getJcrSession(), prefix);
-        }
-
-        JcrNamespace getNamespace() {
-            return nsInfo;
-        }
-
-        String getPath() {
-            return nsInfo.getPath() + "/" + subType;
-        }
-
-        TypeVersion getDraft() throws RepositoryException {
-            return new TypeVersion(this, true, null);
-        }
-    }
-
-    private class TypeVersion {
-
-        TypeInfo info;
-        boolean draft;
-        String uri;
-
-        TypeVersion(String type) throws RepositoryException {
-            info = new TypeInfo(type);
-            draft = false;
-            if (type.indexOf(':') > 0) {
-                String prefix = type.substring(0, type.indexOf(':'));
-                uri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
-            } else {
-                uri = "internal";
-            }
-        }
-
-        TypeVersion(TypeInfo info, boolean draft, String uri) {
-            this.info = info;
-            this.draft = draft;
-            this.uri = uri;
-        }
-
-        TypeInfo getTypeInfo() {
-            return info;
-        }
-        
-        Node getTypeNode(Session session) throws RepositoryException {
-            String path = info.getPath();
-            if (!session.itemExists(path) || !session.getItem(path).isNode()) {
-                return null;
-            }
-
-            NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
-                    HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-
-            String prefix = info.getNamespace().getPrefix();
-            boolean isHippoNs = "hippo".equals(prefix) || "hipposys".equals(prefix);
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    if (draft) {
-                        return node;
-                    } else if (node.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
-                        String realType = node.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
-                        String pseudoType;
-                        if (!"system".equals(prefix)) {
-                            pseudoType = prefix + ":" + info.subType;
-                        } else {
-                            pseudoType = info.subType;
-                        }
-                        if (!realType.equals(pseudoType)) {
-                            return node;
-                        }
-                    }
-                } else {
-                    // ignore uris for hippo namespace
-                    if (isHippoNs || node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        return node;
-                    }
-                }
-            }
-            return null;
-        }
-
     }
 
 }
