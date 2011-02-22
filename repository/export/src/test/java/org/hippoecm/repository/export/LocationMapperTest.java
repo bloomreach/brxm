@@ -116,25 +116,26 @@ public class LocationMapperTest {
         assertEquals("/content/documents/myproject", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/prop", false);
         assertEquals("/content/documents/myproject", contextNode);
-        contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common", true);
-        assertEquals("/content/documents/myproject", contextNode);
-        contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/prop", false);
-        assertEquals("/content/documents/myproject", contextNode);
 
-        file = LocationMapper.fileForPath("/content/documents/myproject/common/article", true);
-        assertEquals("content/documents/myproject/common/article.xml", file);
+        file = LocationMapper.fileForPath("/content/documents/myproject/common", true);
+        assertEquals("content/documents/myproject/common.xml", file);
+        contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common", true);
+        assertEquals("/content/documents/myproject/common", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/prop", false);
+        assertEquals("/content/documents/myproject/common", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/article", true);
-        assertEquals("/content/documents/myproject/common/article", contextNode);
+        assertEquals("/content/documents/myproject/common", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/article/prop", false);
-        assertEquals("/content/documents/myproject/common/article", contextNode);
+        assertEquals("/content/documents/myproject/common", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/article/subnode", true);
-        assertEquals("/content/documents/myproject/common/article", contextNode);
+        assertEquals("/content/documents/myproject/common", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/article/subnode/prop", false);
-        assertEquals("/content/documents/myproject/common/article", contextNode);
+        assertEquals("/content/documents/myproject/common", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/article/any/sub/node", true);
-        assertEquals("/content/documents/myproject/common/article", contextNode);
+        assertEquals("/content/documents/myproject/common", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/article/any/sub/node/prop", false);
-        assertEquals("/content/documents/myproject/common/article", contextNode);
+        assertEquals("/content/documents/myproject/common", contextNode);
+
 
         // catch all: /node
         file = LocationMapper.fileForPath("/node", true);

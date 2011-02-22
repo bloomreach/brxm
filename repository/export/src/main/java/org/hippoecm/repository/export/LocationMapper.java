@@ -75,16 +75,16 @@ class LocationMapper {
 		file = "content.xml";
 		ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
 		// /content/documents/myproject
-		nodePatterns = new String[] {"/content/" + NAME + "/" + NAME, "/content/" + NAME + "/" + NAME + "/" + NAME};
-		propertyPatterns = new String[] {"/content/" + NAME + "/" + NAME + "/" + NAME, "/content/" + NAME + "/" + NAME + "/" + NAME + "/" + NAME};
+		nodePatterns = new String[] {"/content/" + NAME + "/" + NAME};
+		propertyPatterns = new String[] {"/content/" + NAME + "/" + NAME + "/" + NAME};
 		contextNode = "/content/$1/$2";
 		file = "content/$1/$2.xml";
 		ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
-		// /content/documents/myproject/common/mydocument
-		nodePatterns = new String[] {"/content/" + NAME + "/" + NAME + "/" + NAME + "/" + NAME, "/content/" + NAME + "/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
-		propertyPatterns = new String[] {"/content/" + NAME + "/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
-		contextNode = "/content/$1/$2/$3/$4";
-		file = "content/$1/$2/$3/$4.xml";
+		// /content/documents/myproject/common
+		nodePatterns = new String[] {"/content/" + NAME + "/" + NAME + "/" + NAME, "/content/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
+		propertyPatterns = new String[] {"/content/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
+		contextNode = "/content/$1/$2/$3";
+		file = "content/$1/$2/$3.xml";
 		ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
 		// catch all: /node
 		nodePatterns = new String[] {"/" + NAME, "/" + NAME + "/" + NAME};
