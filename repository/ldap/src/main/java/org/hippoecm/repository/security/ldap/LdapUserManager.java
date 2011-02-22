@@ -49,8 +49,16 @@ public class LdapUserManager extends AbstractUserManager {
 
     /**
      * On sync save every after every SAVE_INTERVAL changes
+     * TODO: make configurable
      */
     private final int SAVE_INTERVAL = 250;
+
+    /**
+     * Ldap servers often have a limit of 1000 results. Use paged searching
+     * to avoid hitting this limit.
+     * TODO: make configurable
+     */
+    private final int LDAP_SEARCH_PAGE_SIZE = 200;
 
     /**
      * The initialized ldap context factory
@@ -151,7 +159,8 @@ public class LdapUserManager extends AbstractUserManager {
 
             if (user != null) {
                 if (!isManagerForUser(user)) {
-                    log.warn("Unable to sync user info. User '{}' not not managed by provider: {} ", userId,
+                    log
+                            .warn("Unable to sync user info. User '{}' not not managed by provider: {} ", userId,
                                     providerId);
                     return;
                 }
@@ -198,63 +207,86 @@ public class LdapUserManager extends AbstractUserManager {
      */
     public synchronized void updateUsers() {
         log.info("Starting synchronizing ldap users for: " + providerId);
+        long startTime = System.currentTimeMillis();
+
+        // paged searching
+        boolean usePagedSearch = true;
+
+        // ldap search
         NamingEnumeration<SearchResult> results = null;
+        SearchControls ctls = new SearchControls();
+        ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        LdapContext ctx = null;
+
+        // search results
         String dn = null;
         Node user = null;
         String userId = null;
-        SearchControls ctls = new SearchControls();
-        ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         int count = 0;
         int total = 0;
+
+        // loop over all ldap searches
         for (LdapUserSearch search : searches) {
-            LdapContext ctx = null;
             try {
+                log.debug("Searching for users in '{}' with filter '{}'", search.getBaseDn(), search.getFilter());
                 ctx = lcf.getSystemLdapContext();
-                results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
-                while (results.hasMore()) {
-                    try {
-                        SearchResult sr = results.next();
-                        Attributes attrs = sr.getAttributes();
-                        Attribute uidAttr = attrs.get(search.getNameAttr());
-                        dn = sr.getName() + "," + search.getBaseDn();
-                        log.trace("Found dn: {}", dn);
-                        if (uidAttr == null) {
-                            log.warn("Skipping dn='" + sr.getName() + "' because the uid attribute is not found.");
-                        } else {
-                            try {
-                                userId = (String) uidAttr.get();
-                                user = getUser(userId);
+                usePagedSearch = LdapUtils.enablePagedSearching(ctx, LDAP_SEARCH_PAGE_SIZE);
 
-                                // create the user if it doesn't exists
-                                if (user == null) {
-                                    user = createUser(userId);
-                                    user.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
-                                }
+                // outer loop for paged searching
+                do {
+                    results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
 
-                                // update the mappings
-                                if (isManagerForUser(user)) {
-                                    count++;
-                                    total++;
-                                    syncMappingInfo(user, attrs);
-                                }
-
-                            } catch (RepositoryException e) {
-                                log.warn("Unable to update user: " + userId + " by provider: " + providerId, e);
-                            }
-                            if (count >= SAVE_INTERVAL) {
-                                count = 0;
+                    // inner loop over paged resultset
+                    while (results != null && results.hasMore()) {
+                        try {
+                            SearchResult sr = results.next();
+                            Attributes attrs = sr.getAttributes();
+                            Attribute uidAttr = attrs.get(search.getNameAttr());
+                            dn = sr.getName() + "," + search.getBaseDn();
+                            log.trace("Found dn: {}", dn);
+                            if (uidAttr == null) {
+                                log.warn("Skipping dn='" + sr.getName() + "' because the uid attribute is not found.");
+                            } else {
                                 try {
-                                    log.debug("Saving {} ldap users for provider: {}", SAVE_INTERVAL, providerId);
-                                    saveUsers();
+                                    userId = (String) uidAttr.get();
+                                    user = getUser(userId);
+
+                                    // create the user if it doesn't exists
+                                    if (user == null) {
+                                        user = createUser(userId);
+                                        user.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
+                                    }
+
+                                    // update the mappings
+                                    if (isManagerForUser(user)) {
+                                        count++;
+                                        total++;
+                                        syncMappingInfo(user, attrs);
+                                    }
                                 } catch (RepositoryException e) {
-                                    log.error("Error while saving users node: " + usersPath, e);
+                                    log.warn("Unable to update user: " + userId + " by provider: " + providerId, e);
+                                }
+                                if (count >= SAVE_INTERVAL) {
+                                    count = 0;
+                                    try {
+                                        log.debug("Saving {} ldap users for provider: {}", SAVE_INTERVAL, providerId);
+                                        saveUsers();
+                                    } catch (RepositoryException e) {
+                                        log.error("Error while saving users node: " + usersPath, e);
+                                    }
                                 }
                             }
+                        } catch (NamingException e) {
+                            log.error("Error while trying fetching user info from ldap: " + providerId, e);
                         }
-                    } catch (NamingException e) {
-                        log.error("Error while trying fetching user info from ldap: " + providerId, e);
                     }
-                }
+
+                    if (usePagedSearch) {
+                        usePagedSearch = LdapUtils.advancePagedResultSet(ctx, LDAP_SEARCH_PAGE_SIZE);
+                    }
+
+                } while (usePagedSearch);
+
             } catch (NamingException e) {
                 log.error("Error while trying fetching users from ldap: " + providerId, e);
             } finally {
@@ -269,7 +301,10 @@ public class LdapUserManager extends AbstractUserManager {
         } catch (RepositoryException e) {
             log.error("Error while saving users node: " + usersPath, e);
         }
-        log.info("Finished synchronizing {} ldap users for: {}", total, providerId);
+        long duration = System.currentTimeMillis() - startTime;
+        log
+                .info("Finished synchronizing {} ldap users for: {} in {} ms.", new Object[] { total, providerId,
+                        duration });
     }
 
     /**

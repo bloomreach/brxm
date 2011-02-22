@@ -64,8 +64,8 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     // updates and sync caches
     private long lastUpdate = 0;
     private final Object mutex = new Object();
-    private final long DEFAULT_CACHE_TIME = 600 * 1000;
-    private long cacheTime = DEFAULT_CACHE_TIME;
+    private final long DEFAULT_CACHE_MAX_AGE = 600 * 1000;
+    private long cacheMaxAge = DEFAULT_CACHE_MAX_AGE;
 
     //private Session session;
     private SecurityProviderContext context;
@@ -110,10 +110,11 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
 
     @Override
     public void sync() {
-        if ((System.currentTimeMillis() - lastUpdate) < cacheTime) {
+        long cacheAge = System.currentTimeMillis()- lastUpdate;
+        if (cacheAge < cacheMaxAge) {
             // keep using cache
-            log.debug("Time until cache refresh: {} ms for provider {}.",
-                    (System.currentTimeMillis() - lastUpdate - cacheTime), context.getProviderId());
+            log.debug("Time until cache refresh is {} ms for provider {}, cache max age {} ms.",
+                    new Object[] { (cacheMaxAge - cacheAge), context.getProviderId(), cacheMaxAge });
             return;
         }
 
@@ -185,14 +186,14 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                 log.warn("No group manager found, using dummy manager");
             }
 
-            cacheTime = DEFAULT_CACHE_TIME;
+            cacheMaxAge = DEFAULT_CACHE_MAX_AGE;
             try {
                 context.getSession().refresh(false);
                 if (providerNode.hasProperty(PROPERTY_CACHE_MAX_AGE)) {
-                    cacheTime = providerNode.getProperty(PROPERTY_CACHE_MAX_AGE).getLong() * 1000;
+                    cacheMaxAge = providerNode.getProperty(PROPERTY_CACHE_MAX_AGE).getLong() * 1000;
                 }
             } catch (RepositoryException e) {
-                log.info("No refresh time found using default of: {} ms.", cacheTime);
+                log.info("No refresh time found using default of: {} ms.", cacheMaxAge);
             }
         } catch (NamingException e) {
             // wrap error

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.security.ldap;
 
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,8 +51,16 @@ public class LdapGroupManager extends AbstractGroupManager {
 
     /**
      * On sync save every after every SAVE_INTERVAL changes
+     * TODO: make configurable
      */
     private final static int SAVE_INTERVAL = 100;
+
+    /**
+     * Ldap servers often have a limit of 1000 results. Use paged searching
+     * to avoid hitting this limit.
+     * TODO: make configurable
+     */
+    private final int LDAP_SEARCH_PAGE_SIZE = 200;
 
     /**
      * The initialized ldap context factory
@@ -120,7 +127,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                 log.trace("Found " + members.size() + " members for group: " + dn);
             }
             Set<String> uids = new HashSet<String>();
-            
+
             // do lookups
             if (memberNameMatcher.startsWith("<dn>:")) {
                 for (String member : members) {
@@ -138,7 +145,6 @@ public class LdapGroupManager extends AbstractGroupManager {
                     }
                 }
             }
-            
 
             // parse matcher
             String prefix = "";
@@ -156,8 +162,7 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
             prefix = memberNameMatcher.substring(0, pos);
             suffix = memberNameMatcher.substring(pos + len);
-                
-                
+
             // parse member dn string
             for (String member : members) {
                 if (member != null) {
@@ -228,9 +233,11 @@ public class LdapGroupManager extends AbstractGroupManager {
                         }
                     }
                 } catch (NamingException e) {
-                    log.debug("Skipping atturibute for group unable to get attributes: {} : {}", mapping.getSource(), e.getMessage());
+                    log.debug("Skipping atturibute for group unable to get attributes: {} : {}", mapping.getSource(), e
+                            .getMessage());
                 } catch (RepositoryException e) {
-                    log.debug("Skipping attribute for group unable to get/create property: {} : {}", mapping.getTarget(), e.getMessage());
+                    log.debug("Skipping attribute for group unable to get/create property: {} : {}", mapping
+                            .getTarget(), e.getMessage());
                 }
             }
         } catch (NamingException e) {
@@ -247,7 +254,7 @@ public class LdapGroupManager extends AbstractGroupManager {
      * substituted.
      */
     public Set<String> backendGetMemberships(Node user) throws RepositoryException {
-        Set<String> groups  = new HashSet<String>();
+        Set<String> groups = new HashSet<String>();
         NamingEnumeration<SearchResult> results = null;
         String dn = user.getProperty(LdapSecurityProvider.PROPERTY_LDAP_DN).getString();
         String userId = user.getName();
@@ -262,11 +269,12 @@ public class LdapGroupManager extends AbstractGroupManager {
                     log.warn("Skipping search base dn: " + search.getBaseDn() + " name attr: " + search.getNameAttr());
                     continue;
                 }
-                String memberNameMatcher = search.getMemberNameMatcher(); 
+                String memberNameMatcher = search.getMemberNameMatcher();
                 if (memberNameMatcher.contains(":")) {
                     memberNameMatcher = memberNameMatcher.substring(0, memberNameMatcher.indexOf(":"));
                 }
-                String filter = "(&(" + search.getFilter() + ")(" + search.getMemberAttr() + "=" + memberNameMatcher + "))";
+                String filter = "(&(" + search.getFilter() + ")(" + search.getMemberAttr() + "=" + memberNameMatcher
+                        + "))";
                 filter = filter.replaceFirst(LdapGroupSearch.UID_MATCHER, userId);
                 filter = filter.replaceFirst(LdapGroupSearch.DN_MATCHER, dn);
                 if (log.isDebugEnabled()) {
@@ -299,64 +307,89 @@ public class LdapGroupManager extends AbstractGroupManager {
      */
     public synchronized void updateGroups() {
         log.info("Starting synchronizing ldap groups for: " + providerId);
+        long startTime = System.currentTimeMillis();
+
+        // paged searching
+        boolean usePagedSearch = true;
+
+        // ldap search
         NamingEnumeration<SearchResult> results = null;
-        String dn = null;
+        SearchControls ctls = new SearchControls();
+        ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         LdapContext ctx = null;
+
+        // search results
+        String dn = null;
         int count = 0;
         int total = 0;
-        try {
-            ctx = lcf.getSystemLdapContext();
-            SearchControls ctls = new SearchControls();
-            ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-            for (LdapGroupSearch search : searches) {
+        // loop over all ldap searches
+        for (LdapGroupSearch search : searches) {
+            try {
                 if (search.getBaseDn() == null || search.getNameAttr() == null || search.getFilter() == null) {
                     // skip wrongly configured search?
                     log.warn("Skipping search base dn: " + search.getBaseDn() + " name attr: " + search.getNameAttr());
                     continue;
                 }
 
-                results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
-                if (log.isDebugEnabled()) {
-                    log.debug("Searching for groups in '"+search.getBaseDn()+"' with filter '"+search.getFilter()+"'");
-                }
-                String groupId = null;
+                log.debug("Searching for groups in '{}' with filter '{}'", search.getBaseDn(), search.getFilter());
+                ctx = lcf.getSystemLdapContext();
+                usePagedSearch = LdapUtils.enablePagedSearching(ctx, LDAP_SEARCH_PAGE_SIZE);
 
-                while (results.hasMore()) {
-                    SearchResult sr = results.next();
-                    Attributes attrs = sr.getAttributes();
-                    dn = sr.getName() + "," + search.getBaseDn();
-                    groupId = buildGroupName(search, sr);
-                    if (groupId != null) {
+                // outer loop for paged searching
+                do {
+                    results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
+
+                    // inner loop over paged resultset
+                    while (results.hasMore()) {
                         try {
-                            Node group = getOrCreateGroup(groupId);
-                            List<String> members = LdapUtils.getAllAttributeValues(attrs.get(search.getMemberAttr()));
-                            if (isManagerForGroup(group)) {
-                                setGroup(group, dn, members, search.getMemberNameMatcher());
-                                count++;
-                                total++;
-                            } else {
-                                log.debug("Not updating group {}, because it is not managed by this provider: {}", dn, providerId);
+                            SearchResult sr = results.next();
+                            Attributes attrs = sr.getAttributes();
+                            dn = sr.getName() + "," + search.getBaseDn();
+                            String groupId = buildGroupName(search, sr);
+                            if (groupId != null) {
+                                try {
+                                    Node group = getOrCreateGroup(groupId);
+                                    List<String> members = LdapUtils.getAllAttributeValues(attrs.get(search
+                                            .getMemberAttr()));
+                                    if (isManagerForGroup(group)) {
+                                        setGroup(group, dn, members, search.getMemberNameMatcher());
+                                        count++;
+                                        total++;
+                                    } else {
+                                        log
+                                                .debug(
+                                                        "Not updating group {}, because it is not managed by this provider: {}",
+                                                        dn, providerId);
+                                    }
+                                } catch (RepositoryException e) {
+                                    log.error("Error while updating or creating group " + groupId + " by provider: "
+                                            + providerId, e);
+                                }
+                                if (count == SAVE_INTERVAL) {
+                                    count = 0;
+                                    try {
+                                        log.debug("Saving {} ldap groups for provider: {}", SAVE_INTERVAL, providerId);
+                                        saveGroups();
+                                    } catch (RepositoryException e) {
+                                        log.error("Error while saving groups node: " + groupsPath, e);
+                                    }
+                                }
                             }
-                        } catch (RepositoryException e) {
-                            log.error("Error while updating or creating group " + groupId + " by provider: " + providerId, e);
-                        }
-                        if (count == SAVE_INTERVAL) {
-                            count = 0;
-                            try {
-                                log.debug("Saving {} ldap groups for provider: {}", SAVE_INTERVAL, providerId);
-                                saveGroups();
-                            } catch (RepositoryException e) {
-                                log.error("Error while saving groups node: " + groupsPath, e);
-                            }
+                        } catch (NamingException e) {
+                            log.error("Error while trying fetching group info from ldap: " + providerId, e);
                         }
                     }
-                }
+                    if (usePagedSearch) {
+                        usePagedSearch = LdapUtils.advancePagedResultSet(ctx, LDAP_SEARCH_PAGE_SIZE);
+                    }
+
+                } while (usePagedSearch);
+            } catch (NamingException e) {
+                log.error("Error while trying fetching groups from ldap", e);
+            } finally {
+                lcf.close(ctx);
             }
-        } catch (NamingException e) {
-            log.error("Error while trying fetching groups from ldap", e);
-        } finally {
-            lcf.close(ctx);
         }
 
         // save remaining unsaved group nodes
@@ -366,7 +399,9 @@ public class LdapGroupManager extends AbstractGroupManager {
         } catch (RepositoryException e) {
             log.error("Error while saving groups node: " + groupsPath, e);
         }
-        log.info("Finished synchronizing {} ldap groups for: {}", total, providerId);
+        long duration = System.currentTimeMillis() - startTime;
+        log.info("Finished synchronizing {} ldap groups for: {} in {} ms.",
+                new Object[] { total, providerId, duration });
     }
 
     /**
@@ -379,7 +414,8 @@ public class LdapGroupManager extends AbstractGroupManager {
         statement.append("SELECT * FROM ").append(LdapSecurityProvider.NT_LDAPGROUPSEARCH);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE ");
-        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_GROUPPROVIDER).append("/%'");
+        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_GROUPPROVIDER).append(
+                "/%'");
 
         Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
         QueryResult result = q.execute();
@@ -397,7 +433,8 @@ public class LdapGroupManager extends AbstractGroupManager {
                     ldapSearch.setMemberAttr(search.getProperty(LdapGroupSearch.PROPERTY_MEMBER_ATTR).getString());
                 }
                 if (search.hasProperty(LdapGroupSearch.PROPERTY_MEMBERNAME_MATCHER)) {
-                    ldapSearch.setMemberNameMatcher(search.getProperty(LdapGroupSearch.PROPERTY_MEMBERNAME_MATCHER).getString());
+                    ldapSearch.setMemberNameMatcher(search.getProperty(LdapGroupSearch.PROPERTY_MEMBERNAME_MATCHER)
+                            .getString());
                 }
                 searches.add(ldapSearch);
             } catch (RepositoryException e) {
@@ -416,7 +453,8 @@ public class LdapGroupManager extends AbstractGroupManager {
         statement.append("SELECT * FROM ").append(LdapSecurityProvider.NT_LDAPMAPPING);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE ");
-        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_GROUPPROVIDER).append("/%'");
+        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_GROUPPROVIDER).append(
+                "/%'");
 
         Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
         QueryResult result = q.execute();
@@ -489,7 +527,7 @@ public class LdapGroupManager extends AbstractGroupManager {
         }
         return groupId;
     }
-    
+
     /** 
      * Get an attribute from a dn
      * @param dn

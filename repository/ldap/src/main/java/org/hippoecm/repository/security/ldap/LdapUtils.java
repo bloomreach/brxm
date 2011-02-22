@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security.ldap;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,10 @@ import javax.jcr.RepositoryException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
+import javax.naming.ldap.Control;
 import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.PagedResultsControl;
+import javax.naming.ldap.PagedResultsResponseControl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,4 +122,70 @@ public class LdapUtils {
         return values;
     }
 
+    /**
+     * Enable paged ldap searching.
+     * @param ctx The ldap context that is used for the search.
+     * @param pageSize The number of results to return in a result set.
+     * @return return true when paging is enabled, else return false.
+     */
+    public static boolean enablePagedSearching(LdapContext ctx, int pageSize) {
+        try {
+            ctx.setRequestControls(new Control[] { new PagedResultsControl(pageSize, Control.NONCRITICAL) });
+            log.debug("Using paged searching with page size: {}", pageSize);
+            return true;
+        } catch (NamingException e) {
+            log.warn("Unable to use paged searching: {}", e.getMessage());
+            log.debug("Trace: ", e);
+            return false;
+        } catch (IOException e) {
+            log.warn("IOException while trying to enable paged searching: {}", e.getMessage());
+            log.debug("Trace: ", e);
+            return false;
+        }
+    }
+
+    /**
+     * Advance to the next result set in the paged ldap search.
+     * @param ctx The ldap context that is used for the search.
+     * @param pageSize The number of results to return in a result set.
+     * @return return true when successfully advanced, else return false.
+     */
+    public static boolean advancePagedResultSet(LdapContext ctx, int pageSize) {
+        byte[] cookie = null;
+        try {
+            // Examine the paged results control response
+            Control[] controls = ctx.getResponseControls();
+            if (controls != null) {
+                for (int i = 0; i < controls.length; i++) {
+                    if (controls[i] instanceof PagedResultsResponseControl) {
+                        PagedResultsResponseControl prrc = (PagedResultsResponseControl) controls[i];
+                        cookie = prrc.getCookie();
+                        if (cookie == null) {
+                            if (log.isDebugEnabled()) {
+                                int resultSize = prrc.getResultSize();
+                                if (resultSize != 0) {
+                                    log.debug("End of paged search reached, total number of results {}.", resultSize);
+                                } else {
+                                    log.debug("End of paged search reached.");
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                log.error("Unable to advance page in paged searching: no controls received from server.");
+                return false;
+            }
+            // Re-activate paged results
+            ctx.setRequestControls(new Control[] { new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
+            return true;
+        } catch (NamingException e) {
+            log.error("Unable to advance page in paged searching.", e);
+            return false;
+        } catch (IOException e) {
+            log.error("IOException while trying to advance page in paged searching.", e);
+            return false;
+        }
+    }
 }
