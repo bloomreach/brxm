@@ -103,15 +103,8 @@ public class ParameterUtils {
                 } else if (isGetter) {
                     String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
                     
-                    if (parameterValue == null) {
-                        parameterValue = panno.defaultValue();
-                    }
-                    
-                    if ("".equals(parameterValue) && !(returnType.equals(String.class))) {
-                        /*
-                         *  if the returnType is not of type String, but the parameterValue is "". we need to return the default value as well.
-                         *  For example, an integer should get its defaultValue returned when "".  
-                         */
+                    if (parameterValue == null || "".equals(parameterValue)) {
+                        // when the parameter value is null or an empty string we return the default value from the annotation
                         parameterValue = panno.defaultValue();
                     }
                     
