@@ -770,4 +770,16 @@
           ]]></example>
     </tag>
     
+    <function>
+        <description>
+            Tests if a bean accessor exists on the object/bean 
+        </description>
+        <name>hasAccessor</name>
+        <function-class>org.hippoecm.hst.utils.BeanUtils</function-class>
+        <function-signature>boolean hasAccessor(java.lang.Object, java.lang.String)</function-signature>
+        <example>
+            &lt;c:if test="${hst:hasAccessor(object, 'propertyName')}"&gt;
+        </example>
+    </function>
+    
 </taglib>
