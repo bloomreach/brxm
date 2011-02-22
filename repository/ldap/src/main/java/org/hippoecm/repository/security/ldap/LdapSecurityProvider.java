@@ -83,7 +83,9 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     public void init(SecurityProviderContext context) throws RepositoryException {
         log.info("Initializing security provider: '{}'.", context.getProviderId());
         this.context = context;
-
+        final String pId = context.getProviderId();
+        
+        
         /* Register a listener for the provider node.  Whenever a node
          * or property is added, refresh the security provider.
          */
@@ -93,9 +95,9 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                 try {
                     reloadConfig();
                 } catch (InvalidItemStateException e) {
-                    log.debug("Invalid state while reloading config, provider probably removed: " + e.getMessage());
+                    log.debug("Invalid state while reloading config, provider {} probably removed: {}", pId, e.getMessage());
                 } catch (RepositoryException e) {
-                    log.warn("Failed to reload config for provider: {}", e.getMessage());
+                    log.error("Failed to reload config for provider: " + pId, e);
                 }
             }
         };

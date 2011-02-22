@@ -114,4 +114,9 @@ public class GullibleSSLSocketFactory extends SSLSocketFactory {
             final int localPort) throws IOException {
         return factory.createSocket(address, port, localAddress, localPort);
     }
+    
+    // don not use the Override annotation as the method is only available in Java 6
+    public Socket createSocket() throws IOException {
+        return factory.createSocket();
+    }
 }
