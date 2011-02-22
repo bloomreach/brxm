@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,101 +15,84 @@
  */
 package org.hippoecm.repository.ocm;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import org.apache.jackrabbit.api.XASession;
 
+import org.datanucleus.OMFContext;
+import org.datanucleus.ObjectManager;
+import org.datanucleus.Transaction;
+import org.datanucleus.exceptions.NucleusDataStoreException;
+import org.datanucleus.store.connection.AbstractConnectionFactory;
+import org.datanucleus.store.connection.AbstractManagedConnection;
+import org.datanucleus.store.connection.ConnectionFactory;
+import org.datanucleus.store.connection.ManagedConnection;
+import org.datanucleus.store.connection.ManagedConnectionResourceListener;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.jpox.ConnectionFactory;
-import org.jpox.ManagedConnection;
-import org.jpox.OMFContext;
-import org.jpox.ObjectManager;
-import org.jpox.exceptions.JPOXException;
 
-class ConnectionFactoryImpl implements ConnectionFactory {
+public class ConnectionFactoryImpl extends AbstractConnectionFactory implements ConnectionFactory {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private HippoRepository repository;
-    private Session session;
-    private String location;
-    private String username;
-    private String password;
-    private OMFContext omfContext;
-
-    public ConnectionFactoryImpl(OMFContext omfContext) throws RepositoryException {
-        this.omfContext = omfContext;
-        location = null;
-        String url = omfContext.getPersistenceConfiguration().getConnectionURL();
-        if (url != null) {
-            if (!url.startsWith("jcr")) {
-                throw new JPOXException("JCR location invalid");
-            }
-            location = url.substring(4); // Omit the jcr prefix
-        }
-        if (location != null && !location.equals("")) {
-            repository = HippoRepositoryFactory.getHippoRepository(location);
-        } else {
-            repository = HippoRepositoryFactory.getHippoRepository();
-        }
-        session = null;
-        username = null; // FIXME
-        password = null; // FIXME
+    public ConnectionFactoryImpl(OMFContext omfContext, String resourceType) throws RepositoryException {
+        super(omfContext, resourceType);
     }
 
-    public ConnectionFactoryImpl(OMFContext omfContext, Session session) throws RepositoryException {
-        this.omfContext = omfContext;
-        location = null;
-        String url = omfContext.getPersistenceConfiguration().getConnectionURL();
-        if (url != null) {
-            if (!url.startsWith("jcr")) {
-                throw new JPOXException("JCR location invalid");
-            }
-        }
-        repository = null;
-        this.session = session;
-        username = null; // FIXME
-        password = null; // FIXME
+    @Override
+    public ManagedConnection createManagedConnection(Object o, Map transactionOptions) {
+        return new JCRManagedConnection(omfContext, transactionOptions);
     }
 
-    ConnectionFactoryImpl(String username, String password) throws RepositoryException {
-        repository = HippoRepositoryFactory.getHippoRepository();
-        this.username = username;
-        this.password = password;
-    }
+    /**
+     * Implementation of a ManagedConnection for JCR.
+     */
+    public class JCRManagedConnection extends AbstractManagedConnection implements ManagedConnection {
+        private OMFContext omfContext;
+        private Map options;
+        private List<ManagedConnectionResourceListener> listeners = new ArrayList<ManagedConnectionResourceListener>();
 
-    public ManagedConnection getConnection(ObjectManager om, Map options) {
-        ManagedConnection mconn = omfContext.getConnectionManager().allocateConnection(this, om, options);
-        return mconn;
-    }
+        //private Session session;
+        @SuppressWarnings("unused")
+        boolean locked = false;
+        Session session;
 
-    public ManagedConnection createManagedConnection(Map transactionOptions) {
-        if (session != null)
-            return new ExistingConnection();
-        else
-            return new JCRManagedConnection();
-    }
-
-    class JCRManagedConnection implements ManagedConnection {
-        private Session session;
-        @SuppressWarnings("unused") private boolean transactional;
-
-        public JCRManagedConnection() {
-            this.session = null;
-            transactional = false;
+        public JCRManagedConnection(OMFContext omfContext, Map options) {
+            //session = null;
+            this.omfContext = omfContext;
+            this.options = options;
         }
 
-        public JCRManagedConnection(Session session) {
-            this.session = session;
-            transactional = false;
-        }
-
+        @Override
         public Object getConnection() {
+            session = ((JcrStoreManager)omfContext.getStoreManager()).session;
             if (session == null) {
                 try {
+                    String location;
+                    String url = omfContext.getPersistenceConfiguration()
+                            .getStringProperty("datanucleus.ConnectionURL");
+                    if (url != null && url.startsWith("jcr:")) {
+                        location = url.substring(4); // Omit the jcr prefix
+                    } else {
+                        throw new NucleusDataStoreException("JCR location invalid. Found datanucleus.ConnectionURL "
+                                + url);
+                    }
+                    HippoRepository repository;
+                    if (location != null && !location.equals("")) {
+                        repository = HippoRepositoryFactory.getHippoRepository(location);
+                    } else {
+                        repository = HippoRepositoryFactory.getHippoRepository();
+                    }
+                    String username = omfContext.getPersistenceConfiguration().getStringProperty(
+                            "datanucleus.ConnectionUserName");
+                    String password = omfContext.getPersistenceConfiguration().getStringProperty(
+                            "datanucleus.ConnectionPassword");
                     session = repository.login(username, password.toCharArray());
                 } catch (LoginException ex) {
                     // FIXME: log something
@@ -122,6 +105,7 @@ class ConnectionFactoryImpl implements ConnectionFactory {
             return session;
         }
 
+        @Override
         public javax.transaction.xa.XAResource getXAResource() {
             if (session instanceof org.apache.jackrabbit.api.XASession) {
                 return ((org.apache.jackrabbit.api.XASession) session).getXAResource();
@@ -130,49 +114,15 @@ class ConnectionFactoryImpl implements ConnectionFactory {
             }
         }
 
-        public void release() {
-        }
-
+        @Override
         public void close() {
+            /*for (ManagedConnectionResourceListener listener : listeners) {
+                listener.managedConnectionPreClose();
+            }
             if (session != null) {
                 session.logout();
                 session = null;
-            }
-        }
-
-        public void setTransactional() {
-            transactional = true;
-        }
-    }
-
-    class ExistingConnection implements ManagedConnection {
-        private boolean transactional;
-
-        public ExistingConnection() {
-            transactional = false;
-        }
-
-        public Object getConnection() {
-            return session;
-        }
-
-        public javax.transaction.xa.XAResource getXAResource() {
-            /* FIXME
-              if (session instanceof org.apache.jackrabbit.api.XASession) {
-                  return ((org.apache.jackrabbit.api.XASession) session).getXAResource();
-                  } else */{
-                return null;
-            }
-        }
-
-        public void release() {
-        }
-
-        public void close() {
-        }
-
-        public void setTransactional() {
-            transactional = true;
+            }*/
         }
     }
 }

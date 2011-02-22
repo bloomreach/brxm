@@ -308,6 +308,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         try {
                             Constructor[] constructors = clazz.getConstructors();
                             int constructorIndex;
+                            boolean found = false;
                             for (constructorIndex=0; constructorIndex<constructors.length; constructorIndex++) {
                                 Class[] params = constructors[constructorIndex].getParameterTypes();
                                 if(params.length == 4 && WorkflowContext.class.isAssignableFrom(params[0])
@@ -316,16 +317,21 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                                       && Node.class.isAssignableFrom(params[3])) {
                                     workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
                                             new WorkflowContextNodeImpl(workflowNode, getSession(), item), getSession(), rootSession, item });
+                                    found = true;
                                     break;
                                 } else if(params.length == 3 && Session.class.isAssignableFrom(params[0])
                                                              && Session.class.isAssignableFrom(params[1])
                                                              && Node.class.isAssignableFrom(params[2])) {
                                     workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
                                             getSession(), rootSession, item });
+                                    found = true;
                                     break;
                                 }
                             }
                             if(constructorIndex == constructors.length) {
+                                throw new RepositoryException("no valid constructor found in standards plugin");
+                            }
+                            if(!found) {
                                 throw new RepositoryException("no valid constructor found in standards plugin");
                             }
                         } catch (IllegalAccessException ex) {

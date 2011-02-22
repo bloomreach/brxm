@@ -104,6 +104,10 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
+  <category additivity="true" name="org.hippoecm.repository.export.ExportModule">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
 
 
   <root>

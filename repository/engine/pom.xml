@@ -82,8 +82,15 @@
       <version>${lucene.version}</version>
     </dependency>
     <dependency>
-      <groupId>jpox</groupId>
-      <artifactId>jpox-core</artifactId>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
+      <version>${org.datanucleus.version}</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -147,42 +154,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>jpox-maven-plugin</artifactId>
-          <dependencies>
-            <dependency>
-              <groupId>jpox</groupId>
-              <artifactId>jpox</artifactId>
-              <version>1.2.0</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>javax.resource</groupId>
-                  <artifactId>jta</artifactId>
-                </exclusion>
-                <exclusion>
-                  <groupId>javax.resource</groupId>
-                  <artifactId>connector</artifactId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-          </dependencies>
-        </plugin>
-        <plugin>
-          <groupId>jpox</groupId>
-          <artifactId>jpox-maven-plugin</artifactId>
-          <dependencies>
-            <dependency>
-              <groupId>bcel</groupId>
-              <artifactId>bcel</artifactId>
-              <version>5.2</version>
-            </dependency>
-         </dependencies>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -246,36 +217,13 @@
         <configuration>
           <additionalBuildcommands>
             <buildCommand>
-              <name>org.jpox.ide.eclipse.enhancerbuilder</name>
+              <name>org.datanucleus.ide.eclipse.enhancerbuilder</name>
             </buildCommand>
           </additionalBuildcommands>
           <additionalProjectnatures>
-            <projectnature>org.jpox.ide.eclipse.projectnature</projectnature>
+            <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
           </additionalProjectnatures>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>jpox</groupId>
-        <artifactId>jpox-maven-plugin</artifactId>
-        <version>1.2.0-beta-2</version>
-        <configuration>
-          <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
-          <verbose>false</verbose>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals><goal>enhance</goal></goals>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>${javax.jcr.version}</version>
-            <scope>compile</scope>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <inherited>true</inherited>

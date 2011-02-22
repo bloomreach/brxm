@@ -61,10 +61,6 @@
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>jpox</groupId>
-      <artifactId>jpox-core</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -130,42 +126,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>jpox-maven-plugin</artifactId>
-          <dependencies>
-            <dependency>
-              <groupId>jpox</groupId>
-              <artifactId>jpox</artifactId>
-              <version>1.2.0</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>javax.resource</groupId>
-                  <artifactId>jta</artifactId>
-                </exclusion>
-                <exclusion>
-                  <groupId>javax.resource</groupId>
-                  <artifactId>connector</artifactId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-          </dependencies>
-        </plugin>
-        <plugin>
-          <groupId>jpox</groupId>
-          <artifactId>jpox-maven-plugin</artifactId>
-          <dependencies>
-            <dependency>
-              <groupId>bcel</groupId>
-              <artifactId>bcel</artifactId>
-              <version>5.2</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -198,31 +158,6 @@
             </property>
           </systemProperties>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>jpox</groupId>
-        <artifactId>jpox-maven-plugin</artifactId>
-        <version>1.2.0-beta-2</version>
-        <configuration>
-          <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
-          <verbose>false</verbose>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>enhance</goal>
-            </goals>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>${javax.jcr.version}</version>
-            <scope>compile</scope>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </build>

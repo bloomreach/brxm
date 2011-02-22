@@ -76,9 +76,10 @@
     <commons-cli.version>1.0</commons-cli.version>
     <commons-logging.provided.version>1.1.1</commons-logging.provided.version>
     <concurrent.version>1.3.4</concurrent.version>
+    <org.datanucleus.version>2.2.2</org.datanucleus.version>
     <javax.jcr.version>2.0</javax.jcr.version>
-    <javax.jdo2-api.version>2.0</javax.jdo2-api.version>
-    <jpox.version>1.2.0-beta-3</jpox.version>
+    <javax.jdo2-api.version>2.3-eb</javax.jdo2-api.version>
+    <org.datanucleus.version>2.2.2</org.datanucleus.version>
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
     <org.apache.geronimo.specs.jta.version>1.1</org.apache.geronimo.specs.jta.version>
     <org.apache.derby.version>10.2.1.6</org.apache.derby.version>
@@ -168,6 +169,37 @@
         </configuration>
       </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.datanucleus</groupId>
+          <artifactId>maven-datanucleus-plugin</artifactId>
+          <version>2.2.1</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.datanucleus</groupId>
+              <artifactId>datanucleus-core</artifactId>
+              <version>${org.datanucleus.version}</version>
+            </dependency>
+          </dependencies>
+        <configuration>
+          <!--mappingIncludes>**/*.jdo, **/*.class</mappingIncludes-->
+          <log4jConfiguration>log4j.xml</log4jConfiguration>
+          <verbose>false</verbose>
+          <enhancerName>ASM</enhancerName>
+          <props>jdo.properties</props>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals><goal>enhance</goal></goals>
+          </execution>
+        </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
   </build>
 
   <dependencyManagement>
@@ -252,9 +284,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>jpox</groupId>
-        <artifactId>jpox-core</artifactId>
-        <version>${jpox.version}</version>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-core</artifactId>
+        <version>${org.datanucleus.version}</version>
         <exclusions>
           <exclusion>
             <groupId>jpox</groupId>

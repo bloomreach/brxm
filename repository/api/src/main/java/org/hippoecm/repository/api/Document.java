@@ -111,7 +111,8 @@ public class Document extends Object implements Serializable, Cloneable {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("Document[");
+        sb.append(getClass().getName());
+        sb.append("[");
         if (identity != null) {
             sb.append("uuid=");
             sb.append(identity);

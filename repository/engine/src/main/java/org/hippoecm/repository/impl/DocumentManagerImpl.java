@@ -17,36 +17,37 @@ package org.hippoecm.repository.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jdo.JDOHelper;
 import javax.jdo.JDODataStoreException;
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
+import javax.jdo.datastore.JDOConnection;
+import org.datanucleus.OMFContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.jpox.PersistenceManagerFactoryImpl;
-
+import org.datanucleus.jdo.JDOPersistenceManagerFactory;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.ocm.JCROID;
-import org.hippoecm.repository.ocm.StoreManagerImpl;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.ocm.ConnectionFactoryImpl;
+import org.hippoecm.repository.ocm.JcrOID;
+import org.hippoecm.repository.ocm.JcrPersistenceHandler;
+import org.hippoecm.repository.ocm.JcrStoreManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentManagerImpl implements DocumentManager {
     @SuppressWarnings("unused")
@@ -54,13 +55,12 @@ public class DocumentManagerImpl implements DocumentManager {
 
     private final Logger log = LoggerFactory.getLogger(DocumentManagerImpl.class);
 
-    Session session;
-    Node configuration;
-    PersistenceManagerFactory pmf;
-    StoreManagerImpl sm;
-    PersistenceManager pm;
-    private ClassLoader loader;
-
+    private Session session;
+    private Node configuration;
+    private PersistenceManagerFactory pmf;
+    private PersistenceManager pm;
+    private JcrPersistenceHandler ph;
+    
     public DocumentManagerImpl(Session session) {
         this.session = session;
         try {
@@ -74,18 +74,18 @@ public class DocumentManagerImpl implements DocumentManager {
             InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
             properties.load(istream);
             properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
-
             pmf = JDOHelper.getPersistenceManagerFactory(properties);
+            ((JcrStoreManager)((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager()).setSession(session);
             pm = null;
-            sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
-            sm.setSession(session);
+            ph = (JcrPersistenceHandler) ((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager().getPersistenceHandler();
         } catch(IOException ex) {
-            log.error("failed to initialize JDO layer: "+ex.getMessage());
+            log.error("failed to initialize JDO layer: "+ex.getMessage(), ex);
         }
     }
 
     void reset() {
-        if(pm != null) {
+        if (pm != null) {
+            pmf.getDataStoreCache().evictAll();
             pm.evictAll();
         }
     }
@@ -98,35 +98,43 @@ public class DocumentManagerImpl implements DocumentManager {
         Object obj = null;
         if(pm == null) {
             pm = pmf.getPersistenceManager();
+            OMFContext omfContext = ((JDOPersistenceManagerFactory)pmf).getOMFContext();
+            JcrStoreManager s = ((JcrStoreManager)omfContext.getStoreManager());
+            s.setSession(session);
+            JDOConnection c = pm.getDataStoreConnection();
+            Object n = c.getNativeConnection();
         }
         if(types != null) {
-            sm.setTypes(types);
+            ph.setTypes(types);
         }
 
-        ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
-            if (loader != null) {
-                Thread.currentThread().setContextClassLoader(loader);
-            }
-            obj = pm.getObjectById(new JCROID(uuid, classname));
+            reset();
+            obj = pm.getObjectById(new JcrOID(uuid, classname));
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
-            sm.setTypes(null);
-            if (loader != null) {
-                Thread.currentThread().setContextClassLoader(oldLoader);
-            }
+            ph.setTypes(null);
         }
         return obj;
     }
 
+    public <T> T getDocument(String uuid, Class<T> clazz) {
+        return (T) getObject(uuid, clazz.getName(), null);
+    }
+    
+    public void putDocument(Document document) throws RepositoryException {
+        putObject(document.getIdentity(), null, document);
+    }
+    
     public void putObject(String uuid, Node types, Object object) throws RepositoryException {
         if(pm == null) {
             pm = pmf.getPersistenceManager();
         }
         if(types != null) {
-            sm.setTypes(types);
+            ph.setTypes(types);
         }
+        
         Transaction tx = pm.currentTransaction();
         tx.setNontransactionalRead(true);
         tx.setNontransactionalWrite(true);

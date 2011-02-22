@@ -100,11 +100,13 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 Document document = (Document) returnObject;
                 sb.append("document[uuid=");
                 sb.append(document.getIdentity());
-                sb.append(",path='");
-                try {
-                    sb.append(rootSession.getNodeByUUID(document.getIdentity()).getPath());
-                } catch (RepositoryException e) {
-                    sb.append("error:").append(e.getMessage());
+                if(document.getIdentity() != null) {
+                    sb.append(",path='");
+                    try {
+                        sb.append(rootSession.getNodeByIdentifier(document.getIdentity()).getPath());
+                    } catch (RepositoryException e) {
+                        sb.append("error:").append(e.getMessage());
+                    }
                 }
                 sb.append("']");
                 return sb.toString();

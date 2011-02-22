@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
 <!--
   Copyright 2007 Hippo
 
@@ -14,11 +15,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<plugin id="org.hippoecm.repository.workflow.reviewedactions" name="JPOX JCR" provider-name="JPOX">
-  <extension point="org.jpox.store_manager">
-    <store-manager class-name="org.hippoecm.repository.ocm.StoreManagerImpl" key="jcr"/>
-  </extension>
-  <extension point="org.jpox.store_valuegenerator">
+<plugin id="org.hippoecm.repository.ocm" name="DataNucleus JCR" provider-name="Hippo">
+    <!-- STORE MANAGER -->
+    <extension point="org.datanucleus.store_manager">
+        <store-manager class-name="org.hippoecm.repository.ocm.JcrStoreManager" key="jcr" url-key="jcr"/>
+    </extension>
+
+    <!-- CONNECTION FACTORY -->
+    <extension point="org.datanucleus.store_connectionfactory">
+        <connectionfactory name="jcr" class-name="org.hippoecm.repository.ocm.ConnectionFactoryImpl" transactional="true" datastore="jcr"/>
+    </extension>
+
+    <!-- QUERY LANGUAGES -->
+    <extension point="org.datanucleus.store_query_query">
+        <!-- 
+        <query class-name="org.hippoecm.repository.ocm.query.JDOQLQuery" datastore="jcr" name="JDOQL"/>
+        <query class-name="org.hippoecm.repository.ocm.query.JPQLQuery" datastore="jcr" name="JPQL"/>
+         -->
+    </extension>
+
+    <extension point="org.datanucleus.store_datastoreidentity">
+        <datastoreidentity name="myoid" class-name="org.hippoecm.repository.ocm.query.JcrOID" unique="true"/>
+    </extension>
+
+  <extension point="org.datanucleus.store_valuegenerator">
     <valuegenerator name="auid" class-name="org.jpox.store.poid.AUIDPoidGenerator" unique="true" datastore="jcr"/>
     <valuegenerator name="uuid-hex" class-name="org.jpox.store.poid.UUIDHexPoidGenerator" unique="true" datastore="jcr"/>
     <valuegenerator name="uuid-string" class-name="org.jpox.store.poid.UUIDStringPoidGenerator" unique="true" datastore="jcr"/>
