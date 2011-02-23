@@ -22,6 +22,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.StringResourceModel;
@@ -29,6 +31,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -90,6 +93,14 @@ public class ImageUploadPlugin extends RenderPlugin {
                     handleUpload(fileUpload, context);
                 }
 
+            });
+
+            add(new AjaxLink<String>("crop-link"){
+                @Override
+                public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                    IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                    dialogService.show(new ImageEditorDialog());
+                }
             });
         }
 
