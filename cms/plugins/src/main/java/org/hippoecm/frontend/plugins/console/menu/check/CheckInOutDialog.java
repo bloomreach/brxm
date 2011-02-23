@@ -27,7 +27,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class CheckInOutDialog extends AbstractDialog<Node> {
     private Label actionLabel;
     private Label statusLabel;
 
-    public CheckInOutDialog(MenuPlugin plugin) {
+    public CheckInOutDialog(CheckInOutPlugin plugin) {
         model = (JcrNodeModel) plugin.getDefaultModel();
 
         PropertyModel actionModel = new PropertyModel(this, "action");

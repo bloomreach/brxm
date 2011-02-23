@@ -48,7 +48,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
 
     static final Logger log = LoggerFactory.getLogger(ReferencesDialog.class);
 
-    public ReferencesDialog(final MenuPlugin plugin) {
+    public ReferencesDialog(final ReferencesPlugin plugin) {
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         setModel(nodeModel);
 

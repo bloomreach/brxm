@@ -86,7 +86,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private String mergeBehavior = "Disable merging";
     private String derefBehavior = "Throw error when not found";
 
-    MenuPlugin plugin;
+    ContentImportPlugin plugin;
 
     private final void InitMaps() {
         uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
@@ -108,7 +108,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     }
 
 
-    public ContentImportDialog(MenuPlugin plugin) {
+    public ContentImportDialog(ContentImportPlugin plugin) {
         InitMaps();
         this.plugin = plugin;
         nodeModel = (JcrNodeModel) plugin.getDefaultModel();

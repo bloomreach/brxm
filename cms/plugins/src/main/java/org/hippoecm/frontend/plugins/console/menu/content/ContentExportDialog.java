@@ -54,7 +54,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
 
     private boolean skipBinary = false;
 
-    public ContentExportDialog(MenuPlugin plugin) {
+    public ContentExportDialog(ContentExportPlugin plugin) {
         setModel(plugin.getModel());
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();

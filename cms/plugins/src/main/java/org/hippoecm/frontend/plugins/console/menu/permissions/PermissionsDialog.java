@@ -78,7 +78,7 @@ public class PermissionsDialog extends AbstractDialog<Node> {
 
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
-    public PermissionsDialog(MenuPlugin plugin) {
+    public PermissionsDialog(PermissionsPlugin plugin) {
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         setModel(nodeModel);
 

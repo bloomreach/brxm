@@ -39,9 +39,9 @@ public class WorkflowDialog extends AbstractDialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    private final MenuPlugin plugin;
+    private final WorkflowPlugin plugin;
 
-    public WorkflowDialog(MenuPlugin plugin) {
+    public WorkflowDialog(WorkflowPlugin plugin) {
         this.plugin = plugin;
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();

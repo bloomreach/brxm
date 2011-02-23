@@ -27,7 +27,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ public class AutoExportDialog extends AbstractDialog<Void> {
 	private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
 	private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
 	
-	public AutoExportDialog(MenuPlugin plugin) {
+	public AutoExportDialog(AutoExportPlugin plugin) {
 
 		final String location = getExportLocation();
 		

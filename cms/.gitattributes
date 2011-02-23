@@ -1079,20 +1079,30 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.html
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/SortMenuPlugin.html -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/SortMenuPlugin.java -text svneol=unset#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/check/CheckInOutPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/check/CheckInOutPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndExportDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndExportDialog.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndExportPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndExportPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndImportDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndImportDialog.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndImportPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndImportPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentExportDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentExportDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentExportDialog.properties -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentExportDialog_fr.properties -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentExportDialog_it.properties -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentExportPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentExportPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog.properties -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog_fr.properties -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog_it.properties -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/DownloadExportLink.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/copy/CopyDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/copy/CopyDialog.java svneol=native#text/plain
@@ -1103,22 +1113,32 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDi
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDialog_it.properties -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportDialog.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportDialog.java -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/move/MoveDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/move/MoveDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/namespace/NamespaceDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/namespace/NamespaceDialog.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/namespace/NamespacePlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/namespace/NamespacePlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/node/NodeDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/node/NodeDialog.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/permissions/PermissionsPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/permissions/PermissionsPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/refs/ReferencesDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/refs/ReferencesDialog.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/refs/ReferencesPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/refs/ReferencesPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/rename/RenameDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/rename/RenameDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/reset/ResetDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/reset/ResetDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialog.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/login/BrowserCheckBehavior.java -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.java svneol=native#text/plain

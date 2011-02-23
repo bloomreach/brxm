@@ -208,125 +208,152 @@
       <sv:property sv:name="wicket.dialog" sv:type="String">
         <sv:value>service.dialog</sv:value>
       </sv:property>
-      <sv:node sv:name="items">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:node sv:name="workflow">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>View Workflow</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="permissions">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>View Permissions</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.permissions.PermissionsDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="references">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>View References</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.refs.ReferencesDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="xmlimport">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>XML Import</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="xmlexport">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>XML Export</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="checkinout">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>Check In/Out</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.check.CheckInOutDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="addnamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>Add Namespace</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.namespace.NamespaceDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="cndimport">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>CND Import</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="cndexport">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>CND Export</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="autoexport">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-	      <sv:property sv:name="label" sv:type="String">
-            <sv:value>Auto Export</sv:value>
-          </sv:property>
-	      <sv:property sv:name="class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.menu.export.AutoExportDialog</sv:value>
-          </sv:property>
-          <sv:property sv:name="enabled" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <!-- <sv:property sv:name="excluded" sv:type="String"/>  -->
-        </sv:node>
-      </sv:node>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="workflow">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="permissions">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.permissions.PermissionsPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="references">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+	  <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.refs.ReferencesPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="xmlimport">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+	  <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentImportPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="xmlexport">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="label" sv:type="String">
+        <sv:value>XML Export</sv:value>
+      </sv:property>
+	  <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentExportPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="checkinout">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+	  <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.check.CheckInOutPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="addnamespace">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+	  <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.namespace.NamespacePlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="cndimport">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+	  <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndImportPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="cndexport">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndExportPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="autoexport">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+	  <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.export.AutoExportPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="check">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

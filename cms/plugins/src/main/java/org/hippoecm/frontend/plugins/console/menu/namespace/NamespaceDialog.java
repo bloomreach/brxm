@@ -42,7 +42,7 @@ public class NamespaceDialog  extends AbstractDialog<Node> {
     private String namespaceName;
     private String namespaceUri;
 
-    public NamespaceDialog(MenuPlugin plugin) {
+    public NamespaceDialog(NamespacePlugin plugin) {
         add(setFocus(new RequiredTextFieldWidget("name", new PropertyModel(this, "namespaceName"), new Model("namespace name"))));
         add(new RequiredTextFieldWidget("uri", new PropertyModel(this, "namespaceUri"), new Model("namespace url")));
     }

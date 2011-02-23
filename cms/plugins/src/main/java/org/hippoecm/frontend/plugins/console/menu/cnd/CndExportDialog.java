@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
@@ -41,7 +40,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.hippoecm.tools.projectexport.DownloadLink;
@@ -64,7 +62,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
 
     String selectedNs;
 
-    public CndExportDialog(MenuPlugin menuPlugin) {
+    public CndExportDialog(CndExportPlugin menuPlugin) {
         final PropertyModel selectedNsModel = new PropertyModel(this, "selectedNs");
 
         List<String> nsPrefixes = null;
