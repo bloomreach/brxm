@@ -59,38 +59,6 @@ public class BeanUtils {
 
     private final static Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
-    
-    /**
-     * Determine whether given {@code object} exposes (existing and accessible) bean property having {@code
-     * propertyName}.
-     * <p/>
-     * Results of required class introspection are statically cached within the application's ClassLoader, rather than
-     * relying on the JDK's system-wide BeanInfo cache (in order to avoid leaks on ClassLoader shutdown).
-     * <p/>
-     * This utility method is particularly useful when conditional rendering of properties in a templating language
-     * -such as JSTL- is favored. Calling this method through the definition of a custom function in a TLD file is a
-     * possible approach to achieve this.
-     *
-     *
-     * @param object the object to inspect
-     * @param propertyName the name of the property to determine exists
-     * @return {@code false} when object is {@code null}, a property named {@code propertyName} is non existent or
-     *         inaccessible, {@code true} otherwise
-     * @throws IllegalArgumentException if {@code propertyName} is null
-     * @see org.springframework.beans.BeanUtils
-     */
-    public static boolean hasAccessor(Object object, String propertyName) {
-        if(propertyName == null || "".equals(propertyName)) {
-            throw new IllegalArgumentException("PropertyName cannot be null or blank");
-        }
-        if (object == null) {
-            return false;
-        }
-        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
-        return beanWrapper.isReadableProperty(propertyName);
-    }
-
-    
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
      * 
