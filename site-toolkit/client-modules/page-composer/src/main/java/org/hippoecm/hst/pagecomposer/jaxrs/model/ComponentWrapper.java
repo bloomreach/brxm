@@ -91,6 +91,8 @@ public class ComponentWrapper {
                         prop.setDocLocation(propAnnotation.docLocation());
                         prop.setAllowCreation(propAnnotation.allowCreation());
 
+                        //Set the value to be default value before setting it with original value
+                        prop.setValue(propAnnotation.defaultValue());
                         if (hstParameters != null && hstParameters.get(propAnnotation.name()) != null) {
                             prop.setValue(hstParameters.get(propAnnotation.name()));
                         }
