@@ -51,57 +51,45 @@ final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
     }
 
     @Override
-    protected JSONObject updateRecord(JSONObject record) {
-        try {
-            String id = record.getString("id");
-            for (FolderTranslation data : translations) {
-                if (data.getId().equals(id)) {
-                    if (record.has("namefr") && !"".equals(record.getString("namefr"))) {
-                        data.setNamefr(record.getString("namefr"));
-                    }
-                    if (record.has("urlfr") && !"".equals(record.getString("urlfr"))) {
-                        data.setUrlfr(record.getString("urlfr"));
-                    }
-
-                    JSONObject jsonLine = new JSONObject();
-                    for (ExtField field : getFields()) {
-                        Object value = PropertyResolver.getValue(field.getName(), data);
-                        jsonLine.put(field.getName(), value);
-                    }
-                    return jsonLine;
+    protected JSONObject updateRecord(JSONObject record) throws JSONException {
+        String id = record.getString("id");
+        for (FolderTranslation data : translations) {
+            if (data.getId().equals(id)) {
+                if (record.has("namefr") && !"".equals(record.getString("namefr"))) {
+                    data.setNamefr(record.getString("namefr"));
                 }
+                if (record.has("urlfr") && !"".equals(record.getString("urlfr"))) {
+                    data.setUrlfr(record.getString("urlfr"));
+                }
+
+                JSONObject jsonLine = new JSONObject();
+                for (ExtField field : getFields()) {
+                    Object value = PropertyResolver.getValue(field.getName(), data);
+                    jsonLine.put(field.getName(), value);
+                }
+                return jsonLine;
             }
-        } catch (JSONException e) {
-            log.error("Could not update record, exception " + e.getMessage());
         }
         return null;
     }
 
     @Override
-    protected JSONObject getProperties() {
+    protected JSONObject getProperties() throws JSONException {
         JSONObject properties = super.getProperties();
-        try {
-            properties.put("writer", new JSONIdentifier("new Ext.data.JsonWriter()"));
-        } catch (JSONException e) {
-            log.error("Could not add writer to properties, " + e.getMessage());
-        }
+        properties.put("writer", new JSONIdentifier("new Ext.data.JsonWriter()"));
         return properties;
     }
 
     @Override
-    protected JSONArray getData() {
+    protected JSONArray getData() throws JSONException {
         JSONArray jsonData = new JSONArray();
-        try {
-            for (FolderTranslation record : translations) {
-                JSONObject jsonLine = new JSONObject();
-                for (ExtField field : getFields()) {
-                    Object value = PropertyResolver.getValue(field.getName(), record);
-                    jsonLine.put(field.getName(), value);
-                }
-                jsonData.put(jsonLine);
+        for (FolderTranslation record : translations) {
+            JSONObject jsonLine = new JSONObject();
+            for (ExtField field : getFields()) {
+                Object value = PropertyResolver.getValue(field.getName(), record);
+                jsonLine.put(field.getName(), value);
             }
-        } catch (JSONException e) {
-            log.error("Failed to initialize data, " + e.getMessage());
+            jsonData.put(jsonLine);
         }
         return jsonData;
     }

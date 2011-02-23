@@ -19,7 +19,6 @@ import java.util.Locale;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.json.JSONException;
@@ -45,30 +44,22 @@ public final class PathRenderer extends ExtObservable {
     }
     
     @Override
-    protected JSONObject getProperties() {
+    protected JSONObject getProperties() throws JSONException {
         JSONObject properties = super.getProperties();
 
-        try {
-            JSONObject jsonLocales = new JSONObject();
-            for (HippoLocale hippoLocale : provider.getLocales()) {
-                JSONObject jsonLocale = new JSONObject();
-                Locale locale = hippoLocale.getLocale();
-                jsonLocale.put("name", hippoLocale.getDisplayName(Session.get().getLocale()));
-                jsonLocale.put("country", locale.getCountry().toLowerCase());
-                jsonLocales.put(hippoLocale.getName(), jsonLocale);
-            }
-            properties.put("locales", jsonLocales);
-        } catch (JSONException e) {
-            throw new WicketRuntimeException("Could not build json object with locales", e);
+        JSONObject jsonLocales = new JSONObject();
+        for (HippoLocale hippoLocale : provider.getLocales()) {
+            JSONObject jsonLocale = new JSONObject();
+            Locale locale = hippoLocale.getLocale();
+            jsonLocale.put("name", hippoLocale.getDisplayName(Session.get().getLocale()));
+            jsonLocale.put("country", locale.getCountry().toLowerCase());
+            jsonLocales.put(hippoLocale.getName(), jsonLocale);
         }
+        properties.put("locales", jsonLocales);
 
-        try {
-            JSONObject resources = new JSONObject();
-            resources.put("language", new StringResourceModel("language", component, null).getString());
-            properties.put("resources", resources);
-        } catch (JSONException e) {
-            throw new WicketRuntimeException("Could not build json object with resources", e);
-        }
+        JSONObject resources = new JSONObject();
+        resources.put("language", new StringResourceModel("language", component, null).getString());
+        properties.put("resources", resources);
 
         return properties;
     }

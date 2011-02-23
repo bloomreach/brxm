@@ -52,12 +52,17 @@ public final class SiblingLocator extends ExtObservable {
         this.behavior = new AbstractExtBehavior() {
             private static final long serialVersionUID = 1L;
             
+            @Override
             public void onRequest() {
                 final RequestCycle requestCycle = RequestCycle.get();
                 String t9Id = requestCycle.getRequest().getParameter(T9ID_ID);
                 if (t9Id != null) {
-                    JSONObject data = getSiblingsAsJSON(t9Id);
-                    requestCycle.setRequestTarget(new ExtJsonRequestTarget(data));
+                    try {
+                        JSONObject siblingsAsJson = getSiblingsAsJSON(t9Id);
+                        requestCycle.setRequestTarget(new ExtJsonRequestTarget(siblingsAsJson));
+                    } catch (JSONException e) {
+                        throw new WicketRuntimeException("Could not build map of siblings");
+                    }
                 } else {
                     throw new WicketRuntimeException("No node id provided");
                 }
@@ -71,23 +76,19 @@ public final class SiblingLocator extends ExtObservable {
         component.add(behavior);
     }
 
-    public JSONObject getSiblingsAsJSON(String t9id) {
+    public JSONObject getSiblingsAsJSON(String t9id) throws JSONException {
         Map<String, List<T9Node>> siblings = getSiblings(t9id);
-        JSONObject data = new JSONObject();
-        try {
-            for (Map.Entry<String, List<T9Node>> entry : siblings.entrySet()) {
-                JSONArray path = new JSONArray();
-                for (T9Node node : entry.getValue()) {
-                    JSONObject properties = new JSONObject();
-                    ExtPropertyConverter.addProperties(node, node.getClass(), properties);
-                    path.put(properties);
-                }
-                data.put(entry.getKey(), path);
+        JSONObject asJson = new JSONObject();
+        for (Map.Entry<String, List<T9Node>> entry : siblings.entrySet()) {
+            JSONArray path = new JSONArray();
+            for (T9Node node : entry.getValue()) {
+                JSONObject properties = new JSONObject();
+                ExtPropertyConverter.addProperties(node, node.getClass(), properties);
+                path.put(properties);
             }
-        } catch (JSONException e) {
-            throw new WicketRuntimeException("Could not build map of siblings");
+            asJson.put(entry.getKey(), path);
         }
-        return data;
+        return asJson;
     }
 
     public Map<String, List<T9Node>> getSiblings(String t9id) {
@@ -104,13 +105,9 @@ public final class SiblingLocator extends ExtObservable {
     }
 
     @Override
-    protected JSONObject getProperties() {
+    protected JSONObject getProperties() throws JSONException {
         JSONObject properties = super.getProperties();
-        try {
-            properties.put("dataUrl", behavior.getCallbackUrl());
-        } catch (JSONException e) {
-            throw new WicketRuntimeException("Could not build ext component configuration", e);
-        }
+        properties.put("dataUrl", behavior.getCallbackUrl());
         return properties;
     }
 
