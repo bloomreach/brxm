@@ -155,10 +155,10 @@ public final class ExportModule implements DaemonModule {
     	}
     	// remove location property
     	try {
-			m_session.getNode(CONFIG_NODE_PATH).getProperty("location").remove();
+			m_session.getNode(CONFIG_NODE_PATH).getProperty("hipposys:location").remove();
 			m_session.save();
 		} catch(PathNotFoundException e) {
-			// ignore
+		    log.debug("No such item: " + CONFIG_NODE_PATH + "/hipposys:location");
 		} catch (RepositoryException e) {
 			log.error("Error removing location property from repository. ", e);
 		}
