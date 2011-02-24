@@ -1,4 +1,5 @@
 * text=auto !eol
+/WICKET-3473.patch -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text svneol=unset#image/png
