@@ -96,6 +96,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/LockRen
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/NameRenderer.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/PathRenderer.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/PropertyRenderer.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/RowSelector$CheckBoxWrapper.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/StateIconAttributeModifier.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/StateIconAttributes.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/resolvers/TypeRenderer.java -text svneol=unset#text/plain
