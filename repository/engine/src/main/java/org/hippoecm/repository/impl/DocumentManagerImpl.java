@@ -109,7 +109,6 @@ public class DocumentManagerImpl implements DocumentManager {
         }
 
         try {
-            reset();
             obj = pm.getObjectById(new JcrOID(uuid, classname));
         } catch(Exception e) {
             e.printStackTrace();
@@ -200,6 +199,7 @@ public class DocumentManagerImpl implements DocumentManager {
                 Node resultNode = iter.nextNode();
                 String uuid = resultNode.getUUID();
                 if(queryNode.isNodeType(HippoNodeType.NT_OCMQUERY) || queryNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
+                    reset();
                     return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
                                                 queryNode.getNode(HippoNodeType.NT_TYPES));
                 } else {

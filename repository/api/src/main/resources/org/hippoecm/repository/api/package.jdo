@@ -18,7 +18,7 @@
 <jdo>
   <package name="org.hippoecm.repository.api">
     <class name="Document" detachable="true" table="documents">
-      <inheritance strategy="new-table"/>
+      <inheritance strategy="subclass-table"/>
       <field name="identity" column="jcr:uuid"/>
     </class>
   </package>

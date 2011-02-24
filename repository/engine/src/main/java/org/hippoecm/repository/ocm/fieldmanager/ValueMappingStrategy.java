@@ -15,14 +15,12 @@
  */
 package org.hippoecm.repository.ocm.fieldmanager;
 
-import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -34,7 +32,6 @@ import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.datanucleus.StateManager;
-import org.datanucleus.api.ApiAdapter;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.datanucleus.exceptions.NucleusException;
 import org.datanucleus.identity.OIDImpl;
@@ -49,7 +46,6 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ocm.JcrOID;
-import org.hippoecm.repository.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -559,12 +555,15 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
 
     private void store(Object value) {
         if (log.isDebugEnabled()) {
-            log.debug("Storing field=" + mmd.getName() + " culumn=" + mmd.getColumn() + " fullfield="
+            log.debug("Storing field=" + mmd.getName() + " column=" + mmd.getColumn() + " fullfield="
                     + mmd.getFullFieldName() + " type=" + mmd.getTypeName() + " class=" + mmd.getClassName() + " value="
                     + value);
         }
 
         if (mmd.getColumn() == null) {
+            return;
+        }
+        if (mmd.getName().equals("jcr:uuid")) { // FIXME: on isProtected already covered
             return;
         }
         // check primitives
@@ -795,10 +794,7 @@ pcSM.makePersistent();
     }
 
     private void storeStringField(String value) {
-        if ( mmd.getName().equals("jcr:uuid")) { // FIXME: on isProtected already covered
-            return;
-        }
-        try {
+       try {
             Node node = null;
             Object objectId = op.getExternalObjectId();
             if(objectId instanceof JcrOID) {
@@ -821,7 +817,7 @@ pcSM.makePersistent();
                 }
                 property = node.setProperty(mmd.getColumn(), value);
             } else {
-if(property.getDefinition().isProtected()) return;
+if(property.getDefinition().isProtected()) return; // FIXME
                 if (!property.getParent().isCheckedOut()) {
                     checkoutNode(property.getParent());
                 }
