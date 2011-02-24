@@ -43,6 +43,15 @@
       </releases>
       <layout>default</layout>
     </repository>
+    <!-- mvn repository for snapshots; will be available in next hippo-cms7-project release -->
+    <repository>
+      <id>hippo-maven2-snapshots</id>
+      <name>Hippo Maven 2</name>
+      <url>http://maven.onehippo.com/maven2-snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <modules>
@@ -80,7 +89,7 @@
   </modules>
 
   <properties>
-    <repository.version>2.19.00-SNAPSHOT</repository.version>
+    <repository.version>2.19.00</repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -283,7 +292,7 @@
       <dependency>
         <groupId>org.wicketstuff</groupId>
         <artifactId>wicket-extjs</artifactId>
-        <version>0.5</version>
+        <version>0.6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.yui</groupId>
