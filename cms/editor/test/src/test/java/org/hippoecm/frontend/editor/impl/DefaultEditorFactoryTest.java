@@ -21,6 +21,8 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
@@ -41,12 +43,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
@@ -235,6 +237,13 @@ public class DefaultEditorFactoryTest extends PluginTest {
         session.save();
 
         config = new JavaPluginConfig("plugin");
+        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
+        try {
+            String uri = nsReg.getURI("content");
+            assertEquals("http://content/1.0", uri);
+        } catch (NamespaceException e) {
+            nsReg.registerNamespace("content", "http://content/1.0");
+        }
     }
 
     protected void createDocument(String name) throws RepositoryException {
