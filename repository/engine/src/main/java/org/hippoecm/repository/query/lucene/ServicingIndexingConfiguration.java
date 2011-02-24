@@ -99,4 +99,13 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      * @return  the hippo namespace URI 
      */
     String getHippoNamespaceURI();
+
+    /**
+     * Returns <code>true</code> if the node names should be indexed
+     * according to this configuration.
+     *
+     * @return <code>true</code> if the node names should be indexed; <code>false</code>
+     *         otherwise.
+     */
+    public boolean isNodeNameIndexingEnabled();
 }

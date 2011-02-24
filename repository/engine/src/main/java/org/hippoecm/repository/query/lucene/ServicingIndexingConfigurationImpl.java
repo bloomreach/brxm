@@ -96,6 +96,12 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      */
     private Set<Name> excludePropertiesSingleIndexTerm = new HashSet<Name>();
 
+    /**
+     * boolean indicating if node names should be indexed.
+     */
+    private boolean indexNodeNames = true;
+
+
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
         super.init(config, context, nsMappings);
@@ -161,6 +167,18 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     }
                 }
             }
+
+            if(configNode.getNodeName().equals("indexnodename")) {
+                String configValue = getTextContent(configNode);
+                if(configValue !=null && !configValue.equals("")){
+                    // is true by default
+                    if(!Boolean.getBoolean(configValue)){
+                        indexNodeNames = false;
+                    }
+                    log.debug("Indexing of node names is set to: {}", indexNodeNames);
+                }
+            }
+
         }
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
         hippoText = resolver.getQName(HippoNodeType.HIPPO_TEXT);
@@ -255,4 +273,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         // we know the hippo:handle is of namespace hippo, hence we can take the hippo namespace from here.
         return getHippoHandleName().getNamespaceURI();
     }
+
+    public boolean isNodeNameIndexingEnabled(){
+        return this.indexNodeNames;
+    }
+
 }

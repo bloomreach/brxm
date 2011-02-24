@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -27,17 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.Executor;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.lucene.document.Fieldable;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.Parser;
 import org.apache.jackrabbit.core.id.PropertyId;
-import org.apache.jackrabbit.core.query.lucene.LazyTextExtractorField;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
@@ -46,7 +40,6 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.NodeIndexer;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
-import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
@@ -234,7 +227,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
                  * index the nodename to search on. We index this as hippo:_localname, a pseudo property which does not really exist but
                  * only meant to search on
                  */
-                indexNodeName(doc, child.getName().getLocalName());
+                if(this.servicingIndexingConfig.isNodeNameIndexingEnabled()) {
+                    indexNodeName(doc, child.getName().getLocalName());
+                }
                 
                 // TODO ARD: imo this code does not belong in the node indexer: if aggregation is needed, it should be in the servicing search index arranged 
                 if(indexFacets) {
