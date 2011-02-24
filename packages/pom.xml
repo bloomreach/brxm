@@ -36,7 +36,7 @@
   </scm>
 
   <properties>
-    <repository.version>2.19.00-SNAPSHOT</repository.version>
+    <repository.version>2.19.01-SNAPSHOT</repository.version>
     <cms.version>2.19.00-SNAPSHOT</cms.version>
     <publication-workflow.version>2.19.00-SNAPSHOT</publication-workflow.version>
     <faceteddate.version>2.19.00-SNAPSHOT</faceteddate.version>
