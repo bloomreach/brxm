@@ -34,35 +34,36 @@
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <version>${javax.jcr.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${repository.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-common</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${repository.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
       <version>${repository.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
       <version>${javax.jdo2-api.version}</version>
-      <!--
-      <scope>provided</scope>
-      -->
       <exclusions>
         <exclusion>
           <groupId>geronimo-spec</groupId>
@@ -71,103 +72,59 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>jpox</groupId>
-      <artifactId>jpox-core</artifactId>
-      <version>${jpox.version}</version>
-      <!--
-      <scope>provided</scope>
-      -->
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${org.slf4j.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
+      <version>${org.datanucleus.version}</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <defaultGoal>package</defaultGoal>
+    <defaultGoal>install</defaultGoal>
     <pluginManagement>
       <plugins>
-        <!-- plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>jpox-maven-plugin</artifactId>
-          <dependencies>
-            <dependency>
-              <groupId>jpox</groupId>
-              <artifactId>jpox</artifactId>
-              <version>1.2.0</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>javax.resource</groupId>
-                  <artifactId>jta</artifactId>
-                </exclusion>
-                <exclusion>
-                  <groupId>javax.resource</groupId>
-                  <artifactId>connector</artifactId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-          </dependencies>
-        </plugin -->
         <plugin>
-          <groupId>jpox</groupId>
-          <artifactId>jpox-maven-plugin</artifactId>
-          <version>1.2.0-beta-2</version>
-          <dependencies>
-            <dependency>
-              <groupId>bcel</groupId>
-              <artifactId>bcel</artifactId>
-              <version>5.2</version>
-            </dependency>
-            <dependency>
-              <groupId>javax.jcr</groupId>
-              <artifactId>jcr</artifactId>
-              <version>${javax.jcr.version}</version>
-              <scope>compile</scope>
-            </dependency>
-            <dependency>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-repository-builtin</artifactId>
-              <version>${repository.version}</version>
-              <scope>compile</scope>
-            </dependency>
-            <dependency>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-repository-api</artifactId>
-              <version>${repository.version}</version>
-              <scope>compile</scope>
-            </dependency>
-         </dependencies>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <configuration>
+            <additionalBuildcommands>
+              <buildCommand>
+                <name>org.datanucleus.ide.eclipse.enhancerbuilder</name>
+              </buildCommand>
+            </additionalBuildcommands>
+            <additionalProjectnatures>
+              <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
+            </additionalProjectnatures>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
-    <!-- resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*.cnd</include>
-          <include>**/*.xml</include>
-          <include>**/package.jdo</include>
-        </includes>
-      </resource>
-    </resources -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.8</version>
         <configuration>
           <additionalBuildcommands>
             <buildCommand>
-              <name>org.jpox.ide.eclipse.enhancerbuilder</name>
+              <name>org.datanucleus.ide.eclipse.enhancerbuilder</name>
             </buildCommand>
           </additionalBuildcommands>
           <additionalProjectnatures>
-            <projectnature>org.jpox.ide.eclipse.projectnature</projectnature>
+            <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
           </additionalProjectnatures>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>maven-datanucleus-plugin</artifactId>
+        <version>2.2.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -176,41 +133,6 @@
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>jpox</groupId>
-        <artifactId>jpox-maven-plugin</artifactId>
-        <version>1.2.0-beta-2</version>
-        <configuration>
-          <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
-          <verbose>true</verbose>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals><goal>enhance</goal></goals>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>${javax.jcr.version}</version>
-            <scope>compile</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-repository-builtin</artifactId>
-            <version>${repository.version}</version>
-            <scope>compile</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-repository-api</artifactId>
-            <version>${repository.version}</version>
-            <scope>compile</scope>
-          </dependency>
-        </dependencies>
       </plugin>
    </plugins>
   </build>

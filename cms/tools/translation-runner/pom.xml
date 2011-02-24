@@ -81,8 +81,8 @@
           <artifactId>jdo2-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>jpox</groupId>
-          <artifactId>jpox-core</artifactId>
+          <groupId>org.datanucleus</groupId>
+          <artifactId>datanucleus-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -101,8 +101,8 @@
           <artifactId>jdo2-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>jpox</groupId>
-          <artifactId>jpox-core</artifactId>
+          <groupId>org.datanucleus</groupId>
+          <artifactId>datanucleus-core</artifactId>
         </exclusion>
         <exclusion>
           <groupId>xerces</groupId>
