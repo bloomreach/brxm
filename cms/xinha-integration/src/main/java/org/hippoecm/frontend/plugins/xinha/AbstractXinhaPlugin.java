@@ -359,7 +359,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         return sb.toString();
     }
 
-    class Configuration extends BaseConfiguration {
+    public class Configuration extends BaseConfiguration {
         private static final long serialVersionUID = 1L;
 
         private static final String XINHA_PLUGINS = "Xinha.plugins";
