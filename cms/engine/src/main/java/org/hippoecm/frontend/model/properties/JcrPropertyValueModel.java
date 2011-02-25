@@ -74,7 +74,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
      * @param propertyModel 
      */
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) {
-        this.propertyModel = propertyModel;
+        this(NO_INDEX, null, propertyModel);
     }
 
     /**
@@ -100,6 +100,15 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         this.value = value;
         if (value != null) {
             this.type = value.getType();
+        } else {
+            if (propertyModel.getItemModel().exists()) {
+                Property property = propertyModel.getProperty();
+                try {
+                    this.type = property.getType();
+                } catch (RepositoryException e) {
+                    throw new RuntimeException("Could not determine type of property", e);
+                }
+            }
         }
         if (index != NO_INDEX) {
             this.index = index;
