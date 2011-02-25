@@ -21,6 +21,7 @@ import java.io.InputStream;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 
+import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 
 public abstract class AbstractImageOperation {
@@ -31,6 +32,14 @@ public abstract class AbstractImageOperation {
         // do nothing
     }
 
+    /**
+     * Executes an image operation.
+     *
+     * @param data the image data. The stream is closed by this method.
+     * @param mimeType MIME type of the image
+     *
+     * @throws GalleryException when the image operation fails
+     */
     public void execute(InputStream data, String mimeType) throws GalleryException {
         ImageReader reader = null;
         ImageWriter writer = null;
@@ -45,7 +54,7 @@ public abstract class AbstractImageOperation {
             }
             execute(data, reader, writer);
         } catch (IOException e) {
-            throw new GalleryException("Could not resize image", e);
+            throw new GalleryException("Could not execute image operation", e);
         } finally {
             // the != null checks are unnecessary, but otherwise Sonar will report critical issues
             if (reader != null) {
@@ -54,9 +63,19 @@ public abstract class AbstractImageOperation {
             if (writer != null) {
                 writer.dispose();
             }
+            IOUtils.closeQuietly(data);
         }
     }
 
+    /**
+     * Executes a concrete image operation.
+     *
+     * @param data the image data. Closing the stream is the responsibility of the caller (i.e. this class).
+     * @param reader reader for the image data
+     * @param writer writer for the image data
+     *
+     * @throws IOException when the image operation fails
+     */
     public abstract void execute(InputStream data, ImageReader reader, ImageWriter writer) throws IOException;
 
 }
