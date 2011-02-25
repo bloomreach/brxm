@@ -18,7 +18,6 @@ package org.hippoecm.repository.ocm.fieldmanager;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusException;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.store.ObjectProvider;
@@ -35,20 +34,21 @@ public class UpdateFieldManager extends AbstractFieldManager {
     private ObjectProvider op;
     private Session session;
     private Node node;
-    private Node types;
+    private ColumnResolver columnResolver;
+    private TypeResolver typeResolver;
 
-    public UpdateFieldManager(ObjectProvider op, Session session, Node types, Node node) {
+    public UpdateFieldManager(ObjectProvider op, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
         this.op = op;
         this.session = session;
         this.node = node;
-        this.types = types;
+        this.columnResolver = columnResolver;
+        this.typeResolver = typeResolver;
     }
 
     @Override
     public void storeObjectField(int fieldNumber, Object value) {
         AbstractMemberMetaData mmd = op.getClassMetaData().getMetaDataForManagedMemberAtAbsolutePosition(fieldNumber);
-        AbstractMappingStrategy ms = AbstractMappingStrategy.findMappingStrategy(op, mmd, session, types, node);
-        
+        AbstractMappingStrategy ms = AbstractMappingStrategy.findMappingStrategy(op, mmd, session, columnResolver, typeResolver, node);
         if (ms != null) {
             ms.update(value);
             return;

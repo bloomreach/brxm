@@ -60,7 +60,8 @@ public class DocumentManagerImpl implements DocumentManager {
     private PersistenceManagerFactory pmf;
     private PersistenceManager pm;
     private JcrPersistenceHandler ph;
-    
+    private JcrStoreManager storeManager;
+
     public DocumentManagerImpl(Session session) {
         this.session = session;
         try {
@@ -99,13 +100,11 @@ public class DocumentManagerImpl implements DocumentManager {
         if(pm == null) {
             pm = pmf.getPersistenceManager();
             OMFContext omfContext = ((JDOPersistenceManagerFactory)pmf).getOMFContext();
-            JcrStoreManager s = ((JcrStoreManager)omfContext.getStoreManager());
-            s.setSession(session);
-            JDOConnection c = pm.getDataStoreConnection();
-            Object n = c.getNativeConnection();
+            storeManager = ((JcrStoreManager)omfContext.getStoreManager());
+            storeManager.setSession(session); // FIXME is storeManger really per session?
         }
         if(types != null) {
-            ph.setTypes(types);
+            storeManager.setTypes(types);
         }
 
         try {
@@ -113,7 +112,7 @@ public class DocumentManagerImpl implements DocumentManager {
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
-            ph.setTypes(null);
+            storeManager.setTypes(null);
         }
         return obj;
     }
@@ -131,7 +130,7 @@ public class DocumentManagerImpl implements DocumentManager {
             pm = pmf.getPersistenceManager();
         }
         if(types != null) {
-            ph.setTypes(types);
+            storeManager.setTypes(types);
         }
         
         Transaction tx = pm.currentTransaction();

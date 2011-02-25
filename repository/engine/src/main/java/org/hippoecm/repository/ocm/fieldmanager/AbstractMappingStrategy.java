@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,15 +17,11 @@ package org.hippoecm.repository.ocm.fieldmanager;
 
 import java.util.Calendar;
 import java.util.Date;
-
 import javax.jcr.Node;
 import javax.jcr.Session;
-
-import org.datanucleus.StateManager;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.metadata.MetaDataManager;
 import org.datanucleus.store.ObjectProvider;
-import org.hippoecm.repository.api.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +42,15 @@ public abstract class AbstractMappingStrategy {
 
     /** The JCR name of the field meta data. */
     protected String name;
-
+    
     /** The JCR Session */
     protected Session session;
-    
-    /** The types node */
-    protected Node types;
-    
+
     /** The node to perform the update on */
     protected Node node;
     
-    
+    protected ColumnResolver columnResolver;
+    protected TypeResolver typeResolver;
 
     /**
      * Instantiates a new abstract mapping strategy.
@@ -64,15 +58,15 @@ public abstract class AbstractMappingStrategy {
      * @param fieldNumber the field number
      * @param attributes the attributes
      */
-    protected AbstractMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session, Node types, Node node) {
+    protected AbstractMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
         this.op = op;
         this.mmd = mmd;
         this.session = session;
-        this.types = types;
+        this.columnResolver = columnResolver;
+        this.typeResolver = typeResolver;
         this.node = node;
         this.type = mmd.getType();
         this.name = mmd.getName();
-        
     }
 
     /**
@@ -94,9 +88,9 @@ public abstract class AbstractMappingStrategy {
     public abstract Object fetch();
 
 
-    public static AbstractMappingStrategy findMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd,
-            Session session) {
-        return findMappingStrategy(op, mmd, session, null, null);
+    public static AbstractMappingStrategy findMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session,
+            ColumnResolver columnResolver, TypeResolver typeResolver) {
+        return findMappingStrategy(op, mmd, session, columnResolver, typeResolver, null);
 }
     /**
      * Finds the mapping strategy for the specified field of the state manager.
@@ -105,8 +99,8 @@ public abstract class AbstractMappingStrategy {
      * @param session for persisting and retrieving the properties and nodes
      * @return the mapping strategy, null if now appropriate mapping strategy exists
      */
-    public static AbstractMappingStrategy findMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd,
-            Session session, Node types, Node node) {
+    public static AbstractMappingStrategy findMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session,
+            ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
         MetaDataManager mmgr = op.getExecutionContext().getMetaDataManager();
 
         Class type = mmd.getType();
@@ -122,21 +116,16 @@ public abstract class AbstractMappingStrategy {
                 || Character.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type)
                 || Date.class.isAssignableFrom(type) || Calendar.class.isAssignableFrom(type) || type.isEnum()) {
             if (isArray) {
-                return new ArrayMappingStrategy(op, mmd, session);
+                return new ArrayMappingStrategy(op, mmd, session, columnResolver, typeResolver, node);
             } else if (isCollection) {
                 // FIXME: implement
                 //return new CollectionMappingStrategy(sm, mmd, session);
             } else {
-                return new ValueMappingStrategy(op, mmd, session);
+                return new ValueMappingStrategy(op, mmd, session, columnResolver, typeResolver, node);
             }
-        } else if (Document.class.isAssignableFrom(type)) {
-            return new ValueMappingStrategy(op, mmd, session, types, node);
-        } else if (Object.class.isAssignableFrom(type)) {
-            // should always be true.... but do we want this?
-            return new ValueMappingStrategy(op, mmd, session, types, node);
+        } else {
+            return new ValueMappingStrategy(op, mmd, session, columnResolver, typeResolver, node);
         }
-
         return null;
     }
-
 }

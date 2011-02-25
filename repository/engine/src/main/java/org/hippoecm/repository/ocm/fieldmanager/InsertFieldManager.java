@@ -35,25 +35,25 @@ public class InsertFieldManager extends AbstractFieldManager {
     private ObjectProvider op;
     private Session session;
     private Node node;
-    private Node types;
+    private ColumnResolver columnResolver;
+    private TypeResolver typeResolver;
 
-    public InsertFieldManager(ObjectProvider op, Session session, Node types, Node node) {
+    public InsertFieldManager(ObjectProvider op, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
         this.op = op;
         this.session = session;
+        this.columnResolver = columnResolver;
+        this.typeResolver = typeResolver;
         this.node = node;
-        this.types = types;
     }
 
     @Override
     public void storeObjectField(int fieldNumber, Object value) {
         AbstractMemberMetaData mmd = op.getClassMetaData().getMetaDataForManagedMemberAtAbsolutePosition(fieldNumber);
-        
-        AbstractMappingStrategy ms = AbstractMappingStrategy.findMappingStrategy(op, mmd, session, types, node);
+        AbstractMappingStrategy ms = AbstractMappingStrategy.findMappingStrategy(op, mmd, session, columnResolver, typeResolver, node);
         if (ms != null) {
             ms.insert(value);
             return;
         }
-
         throw new NucleusException("Field " + mmd.getFullFieldName() + " cannot be persisted because type="
                 + mmd.getTypeName() + " is not supported for this datastore");
     }
@@ -98,4 +98,8 @@ public class InsertFieldManager extends AbstractFieldManager {
         storeObjectField(fieldNumber, Long.valueOf(value));
     }
 
+    @Override
+    public void storeStringField(int fieldNumber, String value) {
+        storeObjectField(fieldNumber, value);
+    }
 }

@@ -26,7 +26,6 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
-
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.datanucleus.identity.OID;
 import org.slf4j.Logger;

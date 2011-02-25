@@ -15,9 +15,8 @@
  */
 package org.hippoecm.repository.ocm.fieldmanager;
 
+import javax.jcr.Node;
 import javax.jcr.Session;
-
-import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.store.ObjectProvider;
@@ -36,23 +35,29 @@ public class FetchFieldManager extends AbstractFieldManager {
 
     private ObjectProvider op;
     private Session session;
+    private Node node;
+    private ColumnResolver columnResolver;
+    private TypeResolver typeResolver;
 
-    public FetchFieldManager(ObjectProvider op, Session session) {
+    public FetchFieldManager(ObjectProvider op, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
         this.op = op;
         this.session = session;
+        this.columnResolver = columnResolver;
+        this.typeResolver = typeResolver;
+        this.node = node;
     }
 
     @Override
     public Object fetchObjectField(int fieldNumber) {
         AbstractMemberMetaData mmd = op.getClassMetaData().getMetaDataForManagedMemberAtAbsolutePosition(fieldNumber);
 
-        AbstractMappingStrategy ms = AbstractMappingStrategy.findMappingStrategy(op, mmd, session);
+        AbstractMappingStrategy ms = AbstractMappingStrategy.findMappingStrategy(op, mmd, session, columnResolver, typeResolver);
         if (ms != null) {
             return ms.fetch();
         } else {
             // check for node name query
             if (".".equals(mmd.getColumn())) {
-                
+                // FIXME
             }
         }
 
@@ -104,5 +109,4 @@ public class FetchFieldManager extends AbstractFieldManager {
     public short fetchShortField(int fieldNumber) {
         return (Short) fetchObjectField(fieldNumber);
     }
-
 }

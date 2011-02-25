@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.ocm.fieldmanager;
 
+import java.lang.Cloneable;
 import java.util.Calendar;
 import java.util.Date;
 import javax.jcr.AccessDeniedException;
@@ -29,7 +30,6 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
-
 import org.apache.jackrabbit.JcrConstants;
 import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusDataStoreException;
@@ -39,12 +39,6 @@ import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.state.StateManagerFactory;
 import org.datanucleus.store.ObjectProvider;
 import org.datanucleus.store.types.ObjectStringConverter;
-import org.hippoecm.repository.DerivedDataEngine;
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HierarchyResolver;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ocm.JcrOID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +54,8 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
 
     protected final Logger log = LoggerFactory.getLogger(ValueMappingStrategy.class);
 
-    public ValueMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session) {
-        super(op, mmd, session, null, null);
-    }
-
-    public ValueMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session, Node types, Node node) {
-        super(op, mmd, session, types, node);
+    public ValueMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
+        super(op, mmd, session, columnResolver, typeResolver, node);
     }
 
     @Override
@@ -140,10 +130,6 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
         if (Calendar.class.isAssignableFrom(type)) {
             return fetchDateField();
         }
-        
-        if (Document.class.isAssignableFrom(type) || WorkflowImpl.class.isAssignableFrom(type)) {
-            return fetchObjectField();
-        }
 
         // check String converter
         ObjectStringConverter converter = null;
@@ -156,9 +142,7 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
             return fetchEnumField(type);
         }
 
-        // TODO Localize this
-        throw new NucleusException("Cant obtain value for field " + mmd.getFullFieldName() + " since type="
-                + mmd.getTypeName() + " is not supported for this datastore");
+        return fetchObjectField();
     }
 
     private Value fetchValueField() {
@@ -184,7 +168,7 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
             } else {
                 throw new NucleusDataStoreException("OID");
             }
-            Property prop = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, mmd.getColumn());
+            Property prop = columnResolver.resolveProperty(node, mmd.getColumn());
             if (prop != null) {
                 return prop.getValue();
             } else {
@@ -242,7 +226,7 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
                 throw new NucleusDataStoreException("OID");
             }
 
-            Node child = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, mmd.getColumn());
+            Node child = columnResolver.resolveNode(node, mmd.getColumn());
             if (child != null) {
                 Class clazz = mmd.getType();
                 Object id = new JcrOID(child.getIdentifier(), clazz.getName());
@@ -278,8 +262,7 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
                 // check if the node name itself was requested
                 if (name.lastIndexOf('/') > -1) {
                     // strip slash and set the node and name
-                    node = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node,
-                            name.substring(0, name.lastIndexOf('/')));
+                    node = columnResolver.resolveNode(node, name.substring(0, name.lastIndexOf('/')));
                     name = name.substring(name.lastIndexOf('/') + 1);
                 }
                 
@@ -644,71 +627,54 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
         JcrOID oid = (JcrOID) op.getExternalObjectId();
 
         try {
+            JcrOID clonedSource;
             Node node = oid.getNode(session);
-
-            if(value instanceof Document && ((Document)value).isCloned()!= null) {
-                    HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                    Node child = (Node) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, mmd.getColumn(), false, last);
-                    if (child != null) {
-                        if(!child.getParent().isCheckedOut()) {
-                            child.getParent().checkout();
-                        }
-                        DerivedDataEngine.removal(child);
-                        child.remove();
-                        op.getExecutionContext().deleteObject(value); //op.getExecutionContext().removeObjectFromCache(value, op.getExecutionContext().getApiAdapter()); //
+            ColumnResolver.NodeLocation location = columnResolver.resolveNodeLocation(node, mmd.getColumn());
+            Node child = location.child;
+            if (value instanceof Cloneable && (clonedSource = columnResolver.resolveClone((Cloneable)value)) != null) {
+                Node clonedNode = clonedSource.getNode(session);
+                if (child != null) {
+                    if (!child.getParent().isCheckedOut()) {
+                        child.getParent().checkout();
                     }
-                    Document document = (Document) value;
-                    child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
-                    if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
-                    }
-                    child = ((HippoSession)node.getSession()).copy(child, last.node.getPath() + "/" + last.relPath);
-                    if(log.isDebugEnabled()) {
-                        log.debug("copying \"" + mmd.getColumn() + "\" from cloned");
-                    }
-                    document.setIdentity(child.getIdentifier());
-
+                    op.getExecutionContext().deleteObject(value); // FIXME: huh?
+                }
+                if (!location.parent.isCheckedOut()) {
+                    location.parent.checkout();
+                }
+                child = columnResolver.copyClone(clonedNode, (Cloneable)value, location.parent, location.name, child);
                 Class clazz = mmd.getType();
                 Object id = new JcrOID(child.getIdentifier(), clazz.getName());
-                //StateManager pcSM = StateManagerFactory.newStateManagerForEmbedded(op.getExecutionContext(), value, false);
                 StateManager pcSM = StateManagerFactory.newStateManagerForHollowPreConstructed(op.getExecutionContext(), id, value);
-//StateManager pcSM = op.getExecutionContext().
-pcSM.makePersistent();
-//pcSM.flush();
-                //pcSM.saveFields();
-            } else {     
-            HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-            Node child = (Node) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, mmd.getColumn(), false, last);
-            if (child != null) {
-                Class clazz = mmd.getType();
-                Object id = new JcrOID(child.getIdentifier(), clazz.getName());
-                if(value == null) {
-			Node n = child.getParent();
-			String m = child.getName();
-                child.remove();
-                        op.getExecutionContext().deleteObject(value); // op.getExecutionContext().removeObjectFromCache(value, op.getExecutionContext().getApiAdapter()); //op.getExecutionContext().deleteObject(value);
-                } else {
-                StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(op.getExecutionContext(), id, value);
-                pcSM.flush();
+                pcSM.makePersistent();
+            } else {
+                if (child != null) {
+                    Class clazz = mmd.getType();
+                    Object id = new JcrOID(child.getIdentifier(), clazz.getName());
+                    if (value == null) {
+                        Node n = child.getParent();
+                        String m = child.getName();
+                        child.remove();
+                        op.getExecutionContext().deleteObject(value);
+                    } else {
+                        StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(op.getExecutionContext(), id, value);
+                        pcSM.flush();
+                    }
+                } else if (value != null) {
+                    String[] nodeTypes = typeResolver.resolve(mmd.getType().getName());
+                    if (nodeTypes.length > 0) {
+                        child = location.parent.addNode(location.name, nodeTypes[0]);
+                        for (int i = 1; i < nodeTypes.length; i++) {
+                            child.addMixin(nodeTypes[i]);
+                        }
+                    } else {
+                        child = location.parent.addNode(location.name);
+                    }
+                    Object id = new JcrOID(child.getIdentifier(), mmd.getType().getName());
+                    StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(op.getExecutionContext(), id, value);
+                    pcSM.flush();
+                    pcSM.makePersistent();
                 }
-            } else if(value != null) {
-                Class clazz = mmd.getType();
-                child = last.node.addNode(last.relPath, types.getNode(clazz.getName()).getProperty("hipposys:nodetype").getString());
-                if(child.isNodeType("hippo:document")) {
-                    child.addMixin("hippo:harddocument");
-                } else if(child.isNodeType("hippo:request")) {
-                    child.addMixin("mix:referenceable");
-                }
-                Object id = new JcrOID(child.getIdentifier(), clazz.getName());
-                if(value == null) {
-                child.remove();
-                        op.getExecutionContext().deleteObject(value); // op.getExecutionContext().removeObjectFromCache(value, op.getExecutionContext().getApiAdapter()); //op.getExecutionContext().deleteObject(value);
-                } else {
-                StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(op.getExecutionContext(), id, value);
-                pcSM.flush();
-pcSM.makePersistent();
-                }
-            }
             }
         } catch (ValueFormatException ex) {
             if (log.isDebugEnabled()) {
@@ -737,8 +703,7 @@ pcSM.makePersistent();
         try {
             JcrOID oid = (JcrOID) op.getExternalObjectId();
             Node node = oid.getNode(session);
-            Property property = ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getProperty(node,
-                    mmd.getColumn());
+            Property property = columnResolver.resolveProperty(node, mmd.getColumn());
             if (property == null) {
                 if (!node.isCheckedOut()) {
                     checkoutNode(node);
@@ -767,8 +732,7 @@ pcSM.makePersistent();
         try {
             JcrOID oid = (JcrOID) op.getExternalObjectId();
             Node node = oid.getNode(session);
-            Property property = ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getProperty(node,
-                    mmd.getColumn());
+            Property property = columnResolver.resolveProperty(node, mmd.getColumn());
             if (property == null) {
                 if (!node.isCheckedOut()) {
                     checkoutNode(node);
@@ -809,8 +773,7 @@ pcSM.makePersistent();
             } else {
                 throw new NucleusDataStoreException("OID");
             }
-            Property property = ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getProperty(node,
-                    mmd.getColumn());
+            Property property = columnResolver.resolveProperty(node, mmd.getColumn());
             if (property == null) {
                 if (!node.isCheckedOut()) {
                     checkoutNode(node);
@@ -845,8 +808,7 @@ if(property.getDefinition().isProtected()) return; // FIXME
         try {
             JcrOID oid = (JcrOID) op.getExternalObjectId();
             Node node = oid.getNode(session);
-            Property property = ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getProperty(node,
-                    mmd.getColumn());
+            Property property = columnResolver.resolveProperty(node, mmd.getColumn());
             if (property == null) {
                 if (!node.isCheckedOut()) {
                     checkoutNode(node);

@@ -20,7 +20,6 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -30,18 +29,13 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
-
 import org.apache.jackrabbit.JcrConstants;
-import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.datanucleus.exceptions.NucleusException;
 import org.datanucleus.identity.OIDImpl;
 import org.datanucleus.metadata.AbstractMemberMetaData;
-import org.datanucleus.state.StateManagerFactory;
 import org.datanucleus.store.ObjectProvider;
 import org.datanucleus.store.types.ObjectStringConverter;
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.ocm.JcrOID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,13 +52,8 @@ public class ArrayMappingStrategy extends ValueMappingStrategy {
 
     protected Class componentType;
 
-    public ArrayMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session) {
-        super(op, mmd, session, null, null);
-        componentType = type.getComponentType();
-    }
-
-    public ArrayMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session, Node types, Node node) {
-        super(op, mmd, session, types, node);
+    public ArrayMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
+        super(op, mmd, session, columnResolver, typeResolver, node);
         componentType = type.getComponentType();
     }
 
@@ -242,7 +231,7 @@ public class ArrayMappingStrategy extends ValueMappingStrategy {
             } else {
                 throw new NucleusDataStoreException("OID");
             }
-            Property prop = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, mmd.getColumn());
+            Property prop = columnResolver.resolveProperty(node, mmd.getColumn());
             if (prop != null) {
                 return prop.getValues();
             } else {
@@ -410,7 +399,7 @@ public class ArrayMappingStrategy extends ValueMappingStrategy {
             } else {
                 throw new NucleusDataStoreException("OID");
             }
-            Property property = ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getProperty(node, mmd.getColumn());
+            Property property = columnResolver.resolveProperty(node, mmd.getColumn());
             if (property == null) {
                 if (!node.isCheckedOut()) {
                     checkoutNode(node);

@@ -28,16 +28,16 @@ import org.datanucleus.exceptions.NucleusUserException;
 import org.datanucleus.identity.OIDImpl;
 import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.IdentityType;
-import org.datanucleus.state.AbstractStateManager;
 import org.datanucleus.store.ExecutionContext;
 import org.datanucleus.store.ObjectProvider;
 import org.datanucleus.store.StoreManager;
 import org.datanucleus.store.StorePersistenceHandler;
 import org.datanucleus.store.connection.ManagedConnection;
 import org.datanucleus.util.StringUtils;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.ocm.fieldmanager.ColumnResolver;
 import org.hippoecm.repository.ocm.fieldmanager.FetchFieldManager;
 import org.hippoecm.repository.ocm.fieldmanager.InsertFieldManager;
+import org.hippoecm.repository.ocm.fieldmanager.TypeResolver;
 import org.hippoecm.repository.ocm.fieldmanager.UpdateFieldManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,18 +49,9 @@ public class JcrPersistenceHandler implements StorePersistenceHandler {
     private final Logger log = LoggerFactory.getLogger(JcrPersistenceHandler.class);
     
     private JcrStoreManager storeMgr;
-    private Node types;
 
-    /**
-     * Constructor.
-     * @param storeMgr Manager for the datastore
-     */
     public JcrPersistenceHandler(StoreManager storeMgr) {
         this.storeMgr = (JcrStoreManager) storeMgr;
-    }
-
-    public void setTypes(Node types) {
-        this.types = types;
     }
     
     /**
@@ -147,7 +138,7 @@ public class JcrPersistenceHandler implements StorePersistenceHandler {
                 throw new NucleusDataStoreException("Object not found", op.getExternalObjectId());
             }
 
-            op.provideFields(fieldNumbers, new UpdateFieldManager(op, session, types, node));
+            op.provideFields(fieldNumbers, new UpdateFieldManager(op, session, storeMgr.columnResolver, storeMgr.typeResolver, node));
 
             if (log.isDebugEnabled()) {
                 log.debug("JCR.ExecutionTime {}",
@@ -240,19 +231,21 @@ public class JcrPersistenceHandler implements StorePersistenceHandler {
             if (nodeName == null || nodeName.equals("")) {
                 nodeName = cmd.getEntityName();
             }
-            Node nodeTypeNode = types.getNode(cmd.getFullClassName());
             if (!node.isCheckedOut()) {
                 node.getSession().getWorkspace().getVersionManager().checkout(node.getPath());
             }
-            node = node.addNode(nodeName, nodeTypeNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString());
-            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
-            } else if (node.isNodeType(HippoNodeType.NT_REQUEST)) {
-                node.addMixin("mix:referenceable");
+            String[] nodeTypes = storeMgr.typeResolver.resolve(cmd.getFullClassName());
+            if (nodeTypes.length > 0) {
+                node = node.addNode(nodeName, nodeTypes[0]);
+                for (int i = 1; i < nodeTypes.length; i++) {
+                    node.addMixin(nodeTypes[i]);
+                }
+            } else {
+                node = node.addNode(nodeName);
             }
 
             int[] fieldNumbers = op.getClassMetaData().getAllMemberPositions();
-            op.provideFields(fieldNumbers, new InsertFieldManager(op, session, types, node));
+            op.provideFields(fieldNumbers, new InsertFieldManager(op, session, storeMgr.columnResolver, storeMgr.typeResolver, node));
 
             // TODO Implement version retrieval
             if (log.isDebugEnabled()) {
@@ -317,7 +310,7 @@ public class JcrPersistenceHandler implements StorePersistenceHandler {
             }
 
             Session session = (Session) mconn.getConnection();
-            op.replaceFields(fieldNumbers, new FetchFieldManager(op, session));
+            op.replaceFields(fieldNumbers, new FetchFieldManager(op, session, storeMgr.columnResolver, storeMgr.typeResolver, null));
 
             if (log.isDebugEnabled()) {
                 log.debug("JCR.ExecutionTime {}",

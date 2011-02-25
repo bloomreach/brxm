@@ -16,26 +16,24 @@
 package org.hippoecm.repository.ocm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.ServiceLoader;
+import javax.jcr.Credentials;
+import javax.jcr.GuestCredentials;
 import javax.jcr.LoginException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.RepositoryFactory;
 import javax.jcr.Session;
-import org.apache.jackrabbit.api.XASession;
-
+import javax.jcr.SimpleCredentials;
 import org.datanucleus.OMFContext;
-import org.datanucleus.ObjectManager;
-import org.datanucleus.Transaction;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.datanucleus.store.connection.AbstractConnectionFactory;
 import org.datanucleus.store.connection.AbstractManagedConnection;
 import org.datanucleus.store.connection.ConnectionFactory;
 import org.datanucleus.store.connection.ManagedConnection;
 import org.datanucleus.store.connection.ManagedConnectionResourceListener;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class ConnectionFactoryImpl extends AbstractConnectionFactory implements ConnectionFactory {
     @SuppressWarnings("unused")
@@ -80,20 +78,36 @@ public class ConnectionFactoryImpl extends AbstractConnectionFactory implements 
                     if (url != null && url.startsWith("jcr:")) {
                         location = url.substring(4); // Omit the jcr prefix
                     } else {
-                        throw new NucleusDataStoreException("JCR location invalid. Found datanucleus.ConnectionURL "
-                                + url);
+                        throw new NucleusDataStoreException("JCR location invalid. Found datanucleus.ConnectionURL " + url);
                     }
-                    HippoRepository repository;
-                    if (location != null && !location.equals("")) {
-                        repository = HippoRepositoryFactory.getHippoRepository(location);
+                    Repository repository = null;
+                    for (RepositoryFactory factory : ServiceLoader.load(RepositoryFactory.class)) {
+                        repository = factory.getRepository(options);
+                        if (repository != null) {
+                            break;
+                        }
+                    }
+                    String username = omfContext.getPersistenceConfiguration().getStringProperty("datanucleus.ConnectionUserName");
+                    String password = omfContext.getPersistenceConfiguration().getStringProperty("datanucleus.ConnectionPassword");
+                    Credentials credentials;
+                    if (username != null) {
+                        credentials = new SimpleCredentials(username, password.toCharArray());
                     } else {
-                        repository = HippoRepositoryFactory.getHippoRepository();
+                        credentials = new GuestCredentials();
                     }
-                    String username = omfContext.getPersistenceConfiguration().getStringProperty(
-                            "datanucleus.ConnectionUserName");
-                    String password = omfContext.getPersistenceConfiguration().getStringProperty(
-                            "datanucleus.ConnectionPassword");
-                    session = repository.login(username, password.toCharArray());
+                    if(location.length() > 0) {
+                        if(credentials != null) {
+                            session = repository.login(credentials, location);
+                        } else {
+                            session = repository.login(location);
+                        }
+                    } else {
+                        if(credentials != null) {
+                            session = repository.login(credentials);
+                        } else {
+                            session = repository.login();
+                        }
+                    }
                 } catch (LoginException ex) {
                     // FIXME: log something
                     return null;
