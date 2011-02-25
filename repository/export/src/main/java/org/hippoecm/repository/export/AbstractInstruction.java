@@ -17,24 +17,24 @@ abstract class AbstractInstruction implements Instruction {
     static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
 
     
-    final String m_name;
-    final Double m_sequence;
+    final String name;
+    final Double sequence;
 
     
     AbstractInstruction(String name, Double sequence) {
-        m_name = name;
-        m_sequence = sequence;
+        this.name = name;
+        this.sequence = sequence;
     }
     
     public String getName() {
-    	return m_name;
+    	return name;
     }
     
     Element createBaseInstructionElement() {
         // create element:
         // <sv:node sv:name="{m_name}"/>
         Element instructionNode = DocumentFactory.getInstance().createElement(NODE_QNAME);
-        instructionNode.add(DocumentFactory.getInstance().createAttribute(instructionNode, NAME_QNAME, m_name));
+        instructionNode.add(DocumentFactory.getInstance().createAttribute(instructionNode, NAME_QNAME, name));
         // create element:
         // <sv:property sv:name="jcr:primaryType" sv:type="Name">
         //   <sv:value>hippo:initializeitem</sv:value>
@@ -54,7 +54,7 @@ abstract class AbstractInstruction implements Instruction {
         sequenceProperty.add(DocumentFactory.getInstance().createAttribute(sequenceProperty, NAME_QNAME, "hippo:sequence"));
         sequenceProperty.add(DocumentFactory.getInstance().createAttribute(sequenceProperty, TYPE_QNAME, "Double"));
         Element sequencePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-        sequencePropertyValue.setText(String.valueOf(m_sequence));
+        sequencePropertyValue.setText(String.valueOf(sequence));
         sequenceProperty.add(sequencePropertyValue);
         instructionNode.add(sequenceProperty);
         return instructionNode;

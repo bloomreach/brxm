@@ -35,63 +35,63 @@ import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 
 class NodetypesResourceInstruction extends ResourceInstruction implements NamespaceInstruction {
 	
-    private final String m_nodetypesresource;
-	private String m_internalPrefix;
-	private final String m_prefix;
-	private String m_namespace;
-	private final String m_namespaceroot;
-	private Element m_namespacePropertyValue;
+    private final String nodetypesresource;
+	private String internalPrefix;
+	private final String prefix;
+	private String namespace;
+	private final String namespaceroot;
+	private Element namespacePropertyValue;
 	
 	NodetypesResourceInstruction(String name, Double sequence, File basedir, String nodetypesresource, String namespace, Element namespacePropertyValue, String internalPrefix) {
 		super(name, sequence, new File(basedir, nodetypesresource));
-		if (!m_file.exists()) {
-			m_changed = true;
+		if (!file.exists()) {
+			changed = true;
 		}
-        m_nodetypesresource = nodetypesresource;
-		m_internalPrefix = internalPrefix;
+        this.nodetypesresource = nodetypesresource;
+		this.internalPrefix = internalPrefix;
 		int indexOfUnderscore = internalPrefix.indexOf('_');
-		m_prefix = (indexOfUnderscore == -1) ? internalPrefix : internalPrefix.substring(0, indexOfUnderscore);
+		this.prefix = (indexOfUnderscore == -1) ? internalPrefix : internalPrefix.substring(0, indexOfUnderscore);
 		if (namespace != null) {
-			m_namespace = namespace;
+			this.namespace = namespace;
 			int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
-			m_namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+			namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
 		}
 		else {
-			m_namespace = null;
-			m_namespaceroot = null;
+			this.namespace = null;
+			namespaceroot = null;
 		}
-		m_namespacePropertyValue = namespacePropertyValue;
+		this.namespacePropertyValue = namespacePropertyValue;
 	}
 
 	@Override
 	void export(Session session) {
-		log.info("Exporting " + m_nodetypesresource);
+		log.info("Exporting " + nodetypesresource);
 		try {
-			if (!m_file.exists()) {
-				if (!m_file.getParentFile().exists()) {
-					m_file.getParentFile().mkdirs();
+			if (!file.exists()) {
+				if (!file.getParentFile().exists()) {
+					file.getParentFile().mkdirs();
 				}
-				m_file.createNewFile();
+				file.createNewFile();
 			}
-			Writer out = new FileWriter(m_file);
+			Writer out = new FileWriter(file);
 			try {
 				String cnd = null;
 				try {
-					log.debug("Trying to export cnd for internal prefix " + m_internalPrefix);
-					cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), m_internalPrefix);
+					log.debug("Trying to export cnd for internal prefix " + internalPrefix);
+					cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), internalPrefix);
 					// HACK: we only get events for /jcr:system/jcr:nodeTypes/example_1_1 instead
 					// of for /jcr:system/jcr:nodeTypes/example
 					// here we fix that prefix
-					cnd = cnd.replaceAll(m_internalPrefix, m_prefix);
+					cnd = cnd.replaceAll(internalPrefix, prefix);
 				} 
 				catch (NamespaceException e) {
-					log.debug("Failed. Now trying regular prefix " + m_prefix);
+					log.debug("Failed. Now trying regular prefix " + prefix);
 					// update all content was already finished, we can use regular prefix
 					// but we need to first get a fresh session because the old session
 					// does not seem to pick up the last step in update all content
 					session = ((HippoSession) session).impersonate(new SimpleCredentials("system", new char[]{}));
 					try {
-						cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), m_prefix);
+						cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), prefix);
 					}
 					finally {
 						session.logout();
@@ -108,12 +108,12 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 			}
 		}
 		catch (IOException e) {
-    		log.error("Exporting " + m_nodetypesresource + " failed.", e);
+    		log.error("Exporting " + nodetypesresource + " failed.", e);
 		}
 		catch (RepositoryException e) {
-    		log.error("Exporting " + m_nodetypesresource + " failed.", e);
+    		log.error("Exporting " + nodetypesresource + " failed.", e);
 		}
-		m_changed = false;
+		changed = false;
 	}
 
 	@Override
@@ -127,11 +127,11 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
         cndProperty.add(DocumentFactory.getInstance().createAttribute(cndProperty, NAME_QNAME, "hippo:nodetypesresource"));
         cndProperty.add(DocumentFactory.getInstance().createAttribute(cndProperty, TYPE_QNAME, "String"));
         Element cndPropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-        cndPropertyValue.setText(m_nodetypesresource);
+        cndPropertyValue.setText(nodetypesresource);
         cndProperty.add(cndPropertyValue);
         element.add(cndProperty);
         
-        if (m_namespace != null) {
+        if (namespace != null) {
             // create element:
             // <sv:property sv:name="hippo:namespace" sv:type="String">
             //   <sv:value>{this.m_namespace}</sv:value>
@@ -140,9 +140,9 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
             namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, NAME_QNAME, "hippo:namespace"));
             namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, TYPE_QNAME, "String"));
             Element namespacePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-            namespacePropertyValue.setText(m_namespace);
+            namespacePropertyValue.setText(namespace);
             namespaceProperty.add(namespacePropertyValue);
-            m_namespacePropertyValue = namespacePropertyValue;
+            this.namespacePropertyValue = namespacePropertyValue;
             element.add(namespaceProperty);
         }
         
@@ -152,13 +152,13 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 	@Override
     void nodeAdded(String path) {
     	setInternalPrefixFromPath(path);
-    	m_changed = true;
+    	changed = true;
     }
     
 	@Override
     boolean nodeRemoved(String path) {
     	setInternalPrefixFromPath(path);
-    	m_changed = true;
+    	changed = true;
     	// TODO: should determine whether or not context was removed
     	return false;
     }
@@ -167,21 +167,21 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
 	@Override
     void propertyAdded(String path) {
     	setInternalPrefixFromPath(path);
-    	m_changed = true;
+    	changed = true;
     }
     
     /* Don't think this can happen on a node type node */
 	@Override
     void propertyChanged(String path) {
     	setInternalPrefixFromPath(path);
-    	m_changed = true;
+    	changed = true;
     }
     
     /* Don't think this can happen on a node type node */
 	@Override
     void propertyRemoved(String path) {
     	setInternalPrefixFromPath(path);
-    	m_changed = true;
+    	changed = true;
     }
     
     private void setInternalPrefixFromPath(String path) {
@@ -193,32 +193,32 @@ class NodetypesResourceInstruction extends ResourceInstruction implements Namesp
     	String nodeTypeRoot = (indexOfPathSeparator == -1) ? relPath : relPath.substring(0, indexOfPathSeparator);
     	// internalPrefix = example_1_2
     	int indexOfColon = nodeTypeRoot.indexOf(':');
-    	m_internalPrefix = (indexOfColon == -1) ? nodeTypeRoot : nodeTypeRoot.substring(0, indexOfColon);
+    	internalPrefix = (indexOfColon == -1) ? nodeTypeRoot : nodeTypeRoot.substring(0, indexOfColon);
     }
     
-	boolean matchesPrefix(String internalPrefix) {
+	boolean matchesPrefix(String _internalPrefix) {
 		// internalPrefix = example_1_2
 		// prefix = example
-		int indexOfUnderscore = internalPrefix.indexOf('_');
-		String prefix = (indexOfUnderscore == -1) ? internalPrefix : internalPrefix.substring(0, indexOfUnderscore);
-		return prefix.equals(m_prefix);
+		int indexOfUnderscore = _internalPrefix.indexOf('_');
+		String _prefix = (indexOfUnderscore == -1) ? _internalPrefix : _internalPrefix.substring(0, indexOfUnderscore);
+		return _prefix.equals(prefix);
 	}
 	
 	@Override
 	public String toString() {
-		return "NodetypesResourceInstruction[prefix=" + m_prefix + "]"; 
+		return "NodetypesResourceInstruction[prefix=" + prefix + "]"; 
 	}
 
 	@Override
-	public boolean matchesNamespace(String namespace) {
-		if (m_namespace == null) return false;
-		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
-		String namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
-		return namespaceroot.equals(m_namespaceroot);
+	public boolean matchesNamespace(String _namespace) {
+		if (namespace == null) return false;
+		int lastIndexOfPathSeparator = _namespace.lastIndexOf('/');
+		String _namespaceroot = (lastIndexOfPathSeparator == -1) ? _namespace : _namespace.substring(0, lastIndexOfPathSeparator);
+		return _namespaceroot.equals(namespaceroot);
 	}
 	
 	public void updateNamespace(String namespace) {
-		m_namespace = namespace;
-		m_namespacePropertyValue.setText(namespace);
+		this.namespace = namespace;
+		namespacePropertyValue.setText(namespace);
 	}
 }

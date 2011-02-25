@@ -64,14 +64,13 @@ public final class ExportModule implements DaemonModule {
     
     // ---------- Member variables
     
-    private Extension m_extension;
-    private Session m_session;
+    private Session session;
     
-    // we keep the listener and the manager as members here
+    // we keep the listener, the manager and the executor here as members
     // so we can shutdown properly
-    private EventListener m_listener;
-    private ObservationManager m_manager;
-    private ScheduledExecutorService m_executor;
+    private EventListener listener;
+    private ObservationManager manager;
+    private ScheduledExecutorService executor;
     
     // ---------- Constructor
     
@@ -83,7 +82,7 @@ public final class ExportModule implements DaemonModule {
     @Override
     public void initialize(Session session) throws RepositoryException {
     	
-    	m_session = session;
+    	this.session = session;
     	
     	// read 'hippoecm.export.dir' system property
     	String configDir = System.getProperty("hippoecm.export.dir");
@@ -113,9 +112,10 @@ public final class ExportModule implements DaemonModule {
         log.info("Automatically exporting changes to directory " + configDirectory.getPath());
 
         // create extension
-        File extension = new File(configDirectory, "hippoecm-extension.xml");
+        Extension extension = null;
+        File file = new File(configDirectory, "hippoecm-extension.xml");
         try {
-            m_extension = new Extension(extension);
+            extension = new Extension(file);
         } catch (IOException ex) {
             log.error("Failed to initialize export. "
                     + "Automatic export will not be available.", ex);
@@ -126,15 +126,15 @@ public final class ExportModule implements DaemonModule {
             return;
         }
         
-        m_executor = Executors.newSingleThreadScheduledExecutor();
+        executor = Executors.newSingleThreadScheduledExecutor();
         
         // install event listener
-        m_listener = new ExportEventListener(m_extension, session, m_executor);
+        listener = new ExportEventListener(extension, session, executor);
         int eventTypes = Event.NODE_ADDED | Event.NODE_REMOVED
         		| Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
         try {
-        	m_manager = session.getWorkspace().getObservationManager();
-            m_manager.addEventListener(m_listener, eventTypes, "/", true, null, null, false);
+        	manager = session.getWorkspace().getObservationManager();
+            manager.addEventListener(listener, eventTypes, "/", true, null, null, false);
         } catch (RepositoryException e) {
             log.error("Failed to initialize export. Automatic export will not be available.", e);
         }
@@ -144,19 +144,19 @@ public final class ExportModule implements DaemonModule {
     @Override
     public void shutdown() {
     	// remove event listener
-    	if (m_manager != null) {
+    	if (manager != null) {
         	try {
-    			m_manager.removeEventListener(m_listener);
+    			manager.removeEventListener(listener);
     		} catch (RepositoryException e) {}
     	}
     	// shutdown executor
-    	if (m_executor != null) {
-    		m_executor.shutdown();
+    	if (executor != null) {
+    		executor.shutdown();
     	}
     	// remove location property
     	try {
-			m_session.getNode(CONFIG_NODE_PATH).getProperty("hipposys:location").remove();
-			m_session.save();
+			session.getNode(CONFIG_NODE_PATH).getProperty("hipposys:location").remove();
+			session.save();
 		} catch(PathNotFoundException e) {
 		    log.debug("No such item: " + CONFIG_NODE_PATH + "/hipposys:location");
 		} catch (RepositoryException e) {
@@ -190,28 +190,28 @@ public final class ExportModule implements DaemonModule {
             ignored.add("/formdata");
         }
         
-        private final Extension m_extension;
-        private final Session m_session;
-        private final ScheduledExecutorService m_executor;
-        private final Set<String> m_uris;
-        private final Runnable m_task = new Runnable() {
+        private final Extension extension;
+        private final Session session;
+        private final ScheduledExecutorService executor;
+        private final Set<String> uris;
+        private final Runnable task = new Runnable() {
 			@Override public synchronized void run() {
 				processEvents();
-				m_events.clear();
+				events.clear();
 			}
         };
-        private final Set<Event> m_events = new HashSet<Event>(100);
-        private ScheduledFuture<?> m_future;
+        private final Set<Event> events = new HashSet<Event>(100);
+        private ScheduledFuture<?> future;
         
         private ExportEventListener(Extension extension, Session session, ScheduledExecutorService executor) throws RepositoryException {
-            m_extension = extension;
-            m_session = session;
-            m_executor = executor;
+            this.extension = extension;
+            this.session = session;
+            this.executor = executor;
             
             // cache the registered namespace uris so we can detect when any were added 
-            String[] uris = m_session.getWorkspace().getNamespaceRegistry().getURIs();
-            m_uris = new HashSet<String>(uris.length+10);
-            Collections.addAll(m_uris, uris);
+            String[] _uris = session.getWorkspace().getNamespaceRegistry().getURIs();
+            this.uris = new HashSet<String>(_uris.length+10);
+            Collections.addAll(uris, _uris);
         }
 
         @Override
@@ -225,10 +225,10 @@ public final class ExportModule implements DaemonModule {
         	// The following synchronized block will block if m_task is already running.
         	// Once the lock is acquired m_task.run() itself will block, 
         	// thereby making it possible to cancel it here
-        	synchronized(m_task) {
-        		if (m_future != null) {
+        	synchronized(task) {
+        		if (future != null) {
         			// try to cancel
-        			m_future.cancel(true);
+        			future.cancel(true);
         		}
         		// add events to the set to be processed
         		while (iter.hasNext()) {
@@ -245,16 +245,16 @@ public final class ExportModule implements DaemonModule {
 					} catch (RepositoryException e) {
 						log.error("Error occurred getting path from event.", e);
 					}
-        			m_events.add(event);
+        			events.add(event);
         		}
-        		if (m_events.size() > 0) {
+        		if (events.size() > 0) {
             		// Schedule events to be processed 2 seconds in the future.
             		// If other events arrive during this period the task will
             		// be cancelled and a new task is scheduled.
             		// This allows us to process events in bigger batches,
             		// thus preventing multiple calls to processEvents() where a single
             		// call suffices.
-            		m_future = m_executor.schedule(m_task, 2, TimeUnit.SECONDS);
+            		future = executor.schedule(task, 2, TimeUnit.SECONDS);
         		}
         	}
         }
@@ -263,18 +263,18 @@ public final class ExportModule implements DaemonModule {
             long startTime = System.nanoTime();
             
             // sort the events (see EventComparator)
-        	List<Event> events = new ArrayList<Event>(m_events);
-        	Collections.sort(events, new EventComparator());
+        	List<Event> _events = new ArrayList<Event>(events);
+        	Collections.sort(_events, new EventComparator());
 
         	// process the events
-            for(Event event : events) {
+            for(Event event : _events) {
                 try {
                     String path = event.getPath();
                     if (log.isDebugEnabled()) {
                         log.debug(eventString(event) + " on " + path);
                     }
                     boolean isNode = EventComparator.isNodeEventType(event);
-                    ResourceInstruction instruction = m_extension.findResourceInstruction(path, isNode);
+                    ResourceInstruction instruction = extension.findResourceInstruction(path, isNode);
                     if (instruction != null) {
                         if (log.isDebugEnabled()) {
                             log.debug("Found instruction " + instruction);
@@ -286,12 +286,12 @@ public final class ExportModule implements DaemonModule {
                         	instruction.nodeAdded(path);
                         }
                         else {
-                        	instruction = m_extension.createResourceInstruction(path, true);
+                        	instruction = extension.createResourceInstruction(path, true);
                         	if (instruction != null) {
     	                        if (log.isDebugEnabled()) {
     	                            log.debug("Adding instruction " + instruction);
     	                        }
-                            	m_extension.addInstruction(instruction);
+                            	extension.addInstruction(instruction);
                         	}
                         	else {
                         		log.warn("Unable to create instruction. This change will be lost");
@@ -305,7 +305,7 @@ public final class ExportModule implements DaemonModule {
     	                            log.debug("Removing instruction " + instruction);
     	                        }
                 				// the root node of this instruction was removed, remove the instruction
-                				m_extension.removeInstruction(instruction);
+                				extension.removeInstruction(instruction);
                     		}
                     	}
                     	else {
@@ -354,29 +354,29 @@ public final class ExportModule implements DaemonModule {
             
             // now check if the namespace registry has changed
             try {
-            	NamespaceRegistry registry = m_session.getWorkspace().getNamespaceRegistry();
+            	NamespaceRegistry registry = session.getWorkspace().getNamespaceRegistry();
 				// Were any namespaces added?
 				for (String uri : registry.getURIs()) {
-					if (!m_uris.contains(uri)) {
+					if (!uris.contains(uri)) {
 					    if (log.isDebugEnabled()) {
 	                        log.debug("New namespace detected: " + uri);
 					    }
-						NamespaceInstruction instruction = m_extension.findNamespaceInstruction(uri);
+						NamespaceInstruction instruction = extension.findNamespaceInstruction(uri);
 						if (instruction != null) {
 						    if (log.isDebugEnabled()) {
 	                            log.debug("Updating instruction " + instruction);
 						    }
 							instruction.updateNamespace(uri);
-							m_extension.setChanged();
+							extension.setChanged();
 						}
 						else {
-							instruction = m_extension.createNamespaceInstruction(uri, registry.getPrefix(uri));
+							instruction = extension.createNamespaceInstruction(uri, registry.getPrefix(uri));
 	                        if (log.isDebugEnabled()) {
 	                            log.debug("Adding instruction " + instruction);
 	                        }
-	                    	m_extension.addInstruction(instruction);
+	                    	extension.addInstruction(instruction);
 						}
-						m_uris.add(uri);
+						uris.add(uri);
 					}
 				}
 				// No need to check removal of namespaces. Jackrabbit doesn't support that
@@ -387,7 +387,7 @@ public final class ExportModule implements DaemonModule {
 			}
 			
 			// export
-	        m_extension.export(m_session);
+	        extension.export(session);
 	        
 	        if (log.isDebugEnabled()) {
 	            long estimatedTime = System.nanoTime() - startTime;
@@ -408,7 +408,7 @@ public final class ExportModule implements DaemonModule {
         private boolean isExportEnabled() {
         	boolean enabled = true;
         	try {
-				Node node = m_session.getNode(CONFIG_NODE_PATH);
+				Node node = session.getNode(CONFIG_NODE_PATH);
 				enabled = node.getProperty("hipposys:enabled").getBoolean();
 			} catch (PathNotFoundException e) {
 				log.debug("No such item: " + CONFIG_NODE_PATH + "/hipposys:enabled");

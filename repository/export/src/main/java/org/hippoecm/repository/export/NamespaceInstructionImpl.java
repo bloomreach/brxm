@@ -10,16 +10,16 @@ import org.dom4j.Element;
 
 class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceInstruction {
 
-	private String m_namespace;
-	private final String m_namespaceroot;
-	private Element m_namespacePropertyValue;
+	private String namespace;
+	private final String namespaceroot;
+	private Element namespacePropertyValue;
 	
 	NamespaceInstructionImpl(String name, Double sequence, String namespace, Element namespacePropertyValue) {
 		super(name, sequence);
-		m_namespace = namespace;
-		m_namespacePropertyValue = namespacePropertyValue;
+		this.namespace = namespace;
+		this.namespacePropertyValue = namespacePropertyValue;
 		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
-		m_namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+		this.namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
 	}
 	
 	@Override
@@ -33,9 +33,9 @@ class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceI
         namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, NAME_QNAME, "hippo:namespace"));
         namespaceProperty.add(DocumentFactory.getInstance().createAttribute(namespaceProperty, TYPE_QNAME, "String"));
         Element namespacePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-        namespacePropertyValue.setText(m_namespace);
+        namespacePropertyValue.setText(namespace);
         namespaceProperty.add(namespacePropertyValue);
-        m_namespacePropertyValue = namespacePropertyValue;
+        this.namespacePropertyValue = namespacePropertyValue;
         element.add(namespaceProperty);
         return element;
 	}
@@ -43,16 +43,16 @@ class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceI
 	public boolean matchesNamespace(String namespace) {
 		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
 		String namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
-		return namespaceroot.equals(m_namespaceroot);
+		return namespaceroot.equals(this.namespaceroot);
 	}
 	
 	public void updateNamespace(String namespace) {
-		m_namespace = namespace;
-		m_namespacePropertyValue.setText(namespace);
+		this.namespace = namespace;
+		this.namespacePropertyValue.setText(namespace);
 	}
 	
 	@Override
 	public String toString() {
-		return "NamespaceInstruction[namespace=" + m_namespace + "]"; 
+		return "NamespaceInstruction[namespace=" + namespace + "]"; 
 	}
 }

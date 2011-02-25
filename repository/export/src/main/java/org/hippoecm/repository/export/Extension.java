@@ -50,27 +50,27 @@ final class Extension {
     
     // ---------- Member variables
     
-	private final File m_file;
-    private final List<Instruction> m_instructions;
-    private final Document m_document;
+	private final File file;
+    private final List<Instruction> instructions;
+    private final Document document;
     
-    private volatile boolean m_changed = false;
+    private volatile boolean changed = false;
 
 
     
     // ---------- Constructor
     
     Extension(File file) throws DocumentException, IOException {
-        m_file = file;
-        if (!m_file.exists()) {
-            m_file.createNewFile();
-            m_document = createDocument();
-            m_instructions = new ArrayList<Instruction>();
-            m_changed = true;
+        this.file = file;
+        if (!file.exists()) {
+            file.createNewFile();
+            document = createDocument();
+            instructions = new ArrayList<Instruction>();
+            changed = true;
         } else {
             SAXReader reader = new SAXReader();
-            m_document = reader.read(m_file);
-            m_instructions = parseExtension(m_document.getRootElement());
+            document = reader.read(file);
+            instructions = parseExtension(document.getRootElement());
         }
     }
         
@@ -78,21 +78,21 @@ final class Extension {
     // ---------- API
 
     void export(Session session) {
-        if (m_changed) {
-        	log.info("Exporting " + m_file.getName());
+        if (changed) {
+        	log.info("Exporting " + file.getName());
             XMLWriter writer;
     		try {
     	        OutputFormat format = OutputFormat.createPrettyPrint();
     	        format.setNewLineAfterDeclaration(false);
-    			writer = new XMLWriter(new FileWriter(m_file), format);
-    	        writer.write(m_document);
+    			writer = new XMLWriter(new FileWriter(file), format);
+    	        writer.write(document);
     	        writer.flush();
     		} catch (IOException e) {
-    			log.error("Exporting " + m_file.getName() + " failed.", e);
+    			log.error("Exporting " + file.getName() + " failed.", e);
     		}
-            m_changed = false;
+            changed = false;
         }
-        for (Instruction instruction : m_instructions) {
+        for (Instruction instruction : instructions) {
             if (instruction instanceof ResourceInstruction) {
             	if (((ResourceInstruction) instruction).hasChanged()) {
             		((ResourceInstruction)instruction).export(session);
@@ -102,11 +102,11 @@ final class Extension {
     }
     
     List<Instruction> getInstructions() {
-    	return m_instructions;
+    	return instructions;
     }
     
     void setChanged() {
-    	m_changed = true;
+    	changed = true;
     }
     
     ResourceInstruction findResourceInstruction(String path, boolean isNode) {
@@ -127,7 +127,7 @@ final class Extension {
 		int indexOfColon = nodeTypeRoot.indexOf(':');
 		String prefix = (indexOfColon == -1) ? nodeTypeRoot : nodeTypeRoot.substring(0, indexOfColon);
         // find node types resource instruction that matches the prefix
-		for (Instruction instruction : m_instructions) {
+		for (Instruction instruction : instructions) {
             if (instruction instanceof NodetypesResourceInstruction) {
                 if (((NodetypesResourceInstruction) instruction).matchesPrefix(prefix)) {
                     return (NodetypesResourceInstruction) instruction;
@@ -139,12 +139,12 @@ final class Extension {
     
     private ContentResourceInstruction findContentResourceInstruction(String path, boolean isNode) {
     	ContentResourceInstruction result = null;
-        for (Instruction instruction : m_instructions) {
+        for (Instruction instruction : instructions) {
             if (instruction instanceof ContentResourceInstruction) {
                 if (((ContentResourceInstruction) instruction).matchesPath(path)) {
                 	// choose the instruction with the longest context path
-                	if (result == null || ((ContentResourceInstruction) instruction).m_context.length() 
-                							> result.m_context.length()) {
+                	if (result == null || ((ContentResourceInstruction) instruction).context.length() 
+                							> result.context.length()) {
                         result = (ContentResourceInstruction) instruction;
                 	}
                 }
@@ -154,7 +154,7 @@ final class Extension {
             // If the context node of the result is not the one that is required, return null
             // a new instruction needs to be created.
             String requiredContextNode = LocationMapper.contextNodeForPath(path, isNode);
-            if (!result.m_context.equals(requiredContextNode)) {
+            if (!result.context.equals(requiredContextNode)) {
                 // But only if this would actually succeed (see createContentNodeInstruction)
                 if (path.equals(requiredContextNode)) return null;
             }
@@ -163,7 +163,7 @@ final class Extension {
     }
     
     NamespaceInstruction findNamespaceInstruction(String namespace) {
-        for (Instruction instruction : m_instructions) {
+        for (Instruction instruction : instructions) {
             if (instruction instanceof NamespaceInstruction) {
             	if (((NamespaceInstruction) instruction).matchesNamespace(namespace)) {
             		return (NamespaceInstruction) instruction;
@@ -201,7 +201,7 @@ final class Extension {
         String root = contextNode.substring(0, lastIndexOfPathSeparator);
         if (root.equals("")) root = "/";
 
-        return new ContentResourceInstruction(name, 3000.3, m_file.getParentFile(), fileForPath, root, contextNode, true, this);
+        return new ContentResourceInstruction(name, 3000.3, file.getParentFile(), fileForPath, root, contextNode, true, this);
     }
     
     private NodetypesResourceInstruction createNodetypesResourceInstruction(String path) {
@@ -217,31 +217,31 @@ final class Extension {
     	String nodetypesresource = "namespaces/" + name + ".cnd";
         // ALERT: we use a convention for the node name of a node types resource instruction
         // It is the node type prefix + -nodetypes
-    	return new NodetypesResourceInstruction(name + "-nodetypes", 3000.1, m_file.getParentFile(), nodetypesresource , null, null, prefix);
+    	return new NodetypesResourceInstruction(name + "-nodetypes", 3000.1, file.getParentFile(), nodetypesresource , null, null, prefix);
     }
     
     void addInstruction(Instruction instruction) {
-        m_instructions.add(instruction);
+        instructions.add(instruction);
         Element element = instruction.createInstructionElement();
-        m_document.getRootElement().add(element);
-        m_changed = true;
+        document.getRootElement().add(element);
+        changed = true;
     }
 
     @SuppressWarnings("rawtypes")
     void removeInstruction(Instruction instruction) {
-		List nodes = m_document.getRootElement().elements();
+		List nodes = document.getRootElement().elements();
     	for (Iterator iter = nodes.iterator(); iter.hasNext();) {
     		Element node = (Element)iter.next();
     		if (node.attributeValue("name").equals(instruction.getName())) {
-    			m_document.getRootElement().remove(node);
+    			document.getRootElement().remove(node);
     			break;
     		}
     	}
-    	m_instructions.remove(instruction);
+    	instructions.remove(instruction);
     	if (instruction instanceof ResourceInstruction) {
     		((ResourceInstruction) instruction).delete();
     	}
-    	m_changed = true;
+    	changed = true;
     }
     
     
@@ -329,14 +329,14 @@ final class Extension {
             SAXReader reader = new SAXReader();
             Document document;
 			try {
-				document = reader.read(new File(m_file.getParentFile(), contentresource));
+				document = reader.read(new File(file.getParentFile(), contentresource));
 	            String context = contentroot + "/" + document.getRootElement().attributeValue(NAME_QNAME);
 	            // if contentresource file uses delta xml (h:merge) semantics, then disable export
 	            // we don't deal with that (yet)
 	            String mergeValue = document.getRootElement().attributeValue("merge");
 	            boolean enabled = !(mergeValue != null && !mergeValue.equals(""));
 	            
-	            instruction = new ContentResourceInstruction(name, sequence, m_file.getParentFile(), contentresource, contentroot, context, enabled, this);
+	            instruction = new ContentResourceInstruction(name, sequence, file.getParentFile(), contentresource, contentroot, context, enabled, this);
 			} catch (DocumentException e) {
 				log.error("Failed to read contentresource file " + contentresource + " as xml. Can't create instruction.", e);
 			}
@@ -346,7 +346,7 @@ final class Extension {
         	// prefix = example
         	int indexOfDash = name.indexOf("-nodetypes");
         	String prefix = (indexOfDash == -1) ? name : name.substring(0, indexOfDash);
-        	instruction = new NodetypesResourceInstruction(name, sequence, m_file.getParentFile(), nodetypesresource, namespace, namespacePropertyValue, prefix);
+        	instruction = new NodetypesResourceInstruction(name, sequence, file.getParentFile(), nodetypesresource, namespace, namespacePropertyValue, prefix);
         }
         else if (namespace != null) {
         	instruction = new NamespaceInstructionImpl(name, sequence, namespace, namespacePropertyValue);

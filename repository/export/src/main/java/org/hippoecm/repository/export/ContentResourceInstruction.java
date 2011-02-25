@@ -47,41 +47,41 @@ import org.xml.sax.SAXException;
 
 class ContentResourceInstruction extends ResourceInstruction {
     
-    private final String m_contentresource;
-    private final String m_root;
-    final String m_context;
-    private final boolean m_enabled;
-    private final Extension m_extension;
+    private final String contentresource;
+    private final String root;
+    final String context;
+    private final boolean enabled;
+    private final Extension extension;
     
     ContentResourceInstruction(String name, Double sequence, File basedir, String contentresource, String root, String context, boolean enabled, Extension extension) {
         super(name, sequence, new File(basedir, contentresource));
-        if (!m_file.exists()) {
-            m_changed = true;
+        if (!file.exists()) {
+            changed = true;
         }
-        m_contentresource = contentresource;
-        m_root = root;
-        m_context = context;
-        m_enabled = enabled;
-        m_extension = extension;
+        this.contentresource = contentresource;
+        this.root = root;
+        this.context = context;
+        this.enabled = enabled;
+        this.extension = extension;
     }
     
     @Override
     void export(Session session) {
-    	if (!m_enabled) {
+    	if (!enabled) {
     		log.info("Export in this context is disabled. Changes will be lost.");
     		return;
     	}
-    	log.info("Exporting " + m_contentresource);
+    	log.info("Exporting " + contentresource);
     	try {
-        	if (!m_file.exists()) {
-        		if (!m_file.getParentFile().exists()) {
-        			m_file.getParentFile().mkdirs();
+        	if (!file.exists()) {
+        		if (!file.getParentFile().exists()) {
+        			file.getParentFile().mkdirs();
         		}
-        		m_file.createNewFile();
+        		file.createNewFile();
         	}
             OutputStream out = null;
             try {
-                out = new FileOutputStream(m_file);
+                out = new FileOutputStream(file);
                 SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
                 TransformerHandler handler = stf.newTransformerHandler();
                 Transformer transformer = handler.getTransformer();
@@ -91,18 +91,18 @@ class ContentResourceInstruction extends ResourceInstruction {
                 transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
                 handler.setResult(new StreamResult(out));
                 List<String> excluded = new ArrayList<String>();
-                for (Instruction instruction : m_extension.getInstructions()) {
+                for (Instruction instruction : extension.getInstructions()) {
                 	if (instruction instanceof ContentResourceInstruction) {
-                		String context = ((ContentResourceInstruction) instruction).m_context;
-                		if (!context.equals(m_context) && context.startsWith(m_context)) {
-                			String subcontext = context.substring(m_root.length());
+                		String _context = ((ContentResourceInstruction) instruction).context;
+                		if (!_context.equals(context) && _context.startsWith(context)) {
+                			String subcontext = _context.substring(root.length());
                 			excluded.add(subcontext);
                 		}
                 	}
                 }
                 ContentHandler filter = new FilterContentHandler(handler, excluded);
                 session = ((HippoSession) session).impersonate(new SimpleCredentials("system", new char[]{}));
-                ((SessionDecorator) session).exportDereferencedView(m_context, filter, false, false);
+                ((SessionDecorator) session).exportDereferencedView(context, filter, false, false);
 			} finally {
                 try {
                     out.close();
@@ -110,23 +110,23 @@ class ContentResourceInstruction extends ResourceInstruction {
             }
     	}
     	catch (IOException e) {
-    		log.error("Exporting " + m_contentresource + " failed.", e);
+    		log.error("Exporting " + contentresource + " failed.", e);
     	}
     	catch (RepositoryException e) {
-    		log.error("Exporting " + m_contentresource + " failed.", e);
+    		log.error("Exporting " + contentresource + " failed.", e);
         } 
     	catch (TransformerConfigurationException e) {
-    		log.error("Exporting " + m_contentresource + " failed.", e);
+    		log.error("Exporting " + contentresource + " failed.", e);
 		} 
     	catch (SAXException e) {
-    		log.error("Exporting " + m_contentresource + " failed.", e);
+    		log.error("Exporting " + contentresource + " failed.", e);
         }
-        m_changed = false;
+        changed = false;
     }
     
     boolean nodeRemoved(String path) {
-    	m_changed = true;
-    	return path.equals(m_context);
+    	changed = true;
+    	return path.equals(context);
     }
     
     @Override
@@ -140,7 +140,7 @@ class ContentResourceInstruction extends ResourceInstruction {
         contentResourceProperty.add(DocumentFactory.getInstance().createAttribute(contentResourceProperty, NAME_QNAME, "hippo:contentresource"));
         contentResourceProperty.add(DocumentFactory.getInstance().createAttribute(contentResourceProperty, TYPE_QNAME, "String"));
         Element contentResourcePropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-        contentResourcePropertyValue.setText(m_contentresource);
+        contentResourcePropertyValue.setText(contentresource);
         contentResourceProperty.add(contentResourcePropertyValue);
         element.add(contentResourceProperty);
 
@@ -152,7 +152,7 @@ class ContentResourceInstruction extends ResourceInstruction {
         contentRootProperty.add(DocumentFactory.getInstance().createAttribute(contentRootProperty, NAME_QNAME, "hippo:contentroot"));
         contentRootProperty.add(DocumentFactory.getInstance().createAttribute(contentRootProperty, TYPE_QNAME, "String"));
         Element contentRootPropertyValue = DocumentFactory.getInstance().createElement(VALUE_QNAME);
-        contentRootPropertyValue.setText(m_root);
+        contentRootPropertyValue.setText(root);
         contentRootProperty.add(contentRootPropertyValue);
         element.add(contentRootProperty);
         
@@ -160,12 +160,12 @@ class ContentResourceInstruction extends ResourceInstruction {
     }
     
     boolean matchesPath(String path) {
-    	return path.startsWith(m_context);
+    	return path.startsWith(context);
     }
     
     @Override
     public String toString() {
-    	return "ResourceContentInstruction[context=" + m_context + "]";
+    	return "ResourceContentInstruction[context=" + context + "]";
     }
     
     /** 
@@ -175,49 +175,49 @@ class ContentResourceInstruction extends ResourceInstruction {
      */
     static class FilterContentHandler implements ContentHandler {
 
-    	private final ContentHandler m_handler;
-    	private final List<String> m_excluded;
-    	private final Path m_path;
+    	private final ContentHandler handler;
+    	private final List<String> excluded;
+    	private final Path path;
 
-    	private String m_svprefix;
-    	private boolean m_skip = false;
-    	private boolean m_insideTypeProperty = false;
-    	private boolean m_modifyvalue = false;
+    	private String svprefix;
+    	private boolean skip = false;
+    	private boolean insideTypeProperty = false;
+    	private boolean modifyvalue = false;
     	
     	FilterContentHandler(ContentHandler handler, List<String> excluded) {
-    		m_handler = handler;
-    		m_excluded = excluded;
-    		m_path = new Path();
+    		this.handler = handler;
+    		this.excluded = excluded;
+    		this.path = new Path();
     	}
     	
 		@Override
 		public void setDocumentLocator(Locator locator) {
-			m_handler.setDocumentLocator(locator);
+			handler.setDocumentLocator(locator);
 		}
 
 		@Override
 		public void startDocument() throws SAXException {
-			m_handler.startDocument();
+			handler.startDocument();
 		}
 
 		@Override
 		public void endDocument() throws SAXException {
-			m_handler.endDocument();
+			handler.endDocument();
 		}
 
 		@Override
 		public void startPrefixMapping(String prefix, String uri) throws SAXException {
 			// only forward prefix mappings in the jcr/sv namespace
 			if (uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				m_svprefix = prefix;
-				m_handler.startPrefixMapping(prefix, uri);
+				svprefix = prefix;
+				handler.startPrefixMapping(prefix, uri);
 			}
 		}
 
 		@Override
 		public void endPrefixMapping(String prefix) throws SAXException {
-			if (prefix.equals(m_svprefix)) {
-				m_handler.endPrefixMapping(prefix);
+			if (prefix.equals(svprefix)) {
+				handler.endPrefixMapping(prefix);
 			}
 		}
 
@@ -225,62 +225,62 @@ class ContentResourceInstruction extends ResourceInstruction {
 		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 			if (localName.equals("node") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
 				String name = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
-				m_path.push(name);
-				String path = m_path.toString();
-				for (String exclude : m_excluded) {
-					if (path.startsWith(exclude)) {
-						m_skip = true;
+				path.push(name);
+				String _path = path.toString();
+				for (String exclude : excluded) {
+					if (_path.startsWith(exclude)) {
+						skip = true;
 						// don't propagate event
 						return;
 					}
 				}
 			}
-			else if (m_skip) {
+			else if (skip) {
 				return;
 			}
 			else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
 				String propName = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
 				if (propName.equals("type") || propName.equals("hipposysedit:supertype")
 						|| propName.equals("jcr:primaryType")) {
-					m_insideTypeProperty = true;
+					insideTypeProperty = true;
 				}
 			}
 			else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				m_modifyvalue = m_insideTypeProperty;
+				modifyvalue = insideTypeProperty;
 			}
-			m_handler.startElement(uri, localName, qName, atts);
+			handler.startElement(uri, localName, qName, atts);
 		}
 
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if (localName.equals("node") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				String path = m_path.toString();
-				for (String exclude : m_excluded) {
-					if (path.startsWith(exclude)) {
-						m_path.pop();
-						m_skip = false;
+				String _path = path.toString();
+				for (String exclude : excluded) {
+					if (_path.startsWith(exclude)) {
+						path.pop();
+						skip = false;
 						// don't propagate event
 						return;
 					}
 				}
-				m_path.pop();
+				path.pop();
 			}
-			else if (m_skip) {
+			else if (skip) {
 				return;
 			}
 			else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				m_insideTypeProperty = false;
+				insideTypeProperty = false;
 			}
 			else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				m_modifyvalue = false;
+				modifyvalue = false;
 			}
-			m_handler.endElement(uri, localName, qName);
+			handler.endElement(uri, localName, qName);
 		}
 
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
-			if (m_skip) return;
-			if (m_modifyvalue) {
+			if (skip) return;
+			if (modifyvalue) {
 				// strip the prefix of version data
 				// e.g. example_1_1:basedocument becomes example:basedocument
 				String value = new String(ch, start, length);
@@ -295,41 +295,41 @@ class ContentResourceInstruction extends ResourceInstruction {
 					length = ch.length;
 				}
 			}
-			m_handler.characters(ch, start, length);
+			handler.characters(ch, start, length);
 		}
 
 		@Override
 		public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-			if (m_skip) return;
-			m_handler.ignorableWhitespace(ch, start, length);
+			if (skip) return;
+			handler.ignorableWhitespace(ch, start, length);
 		}
 
 		@Override
 		public void processingInstruction(String target, String data) throws SAXException {
-			m_handler.processingInstruction(target, data);
+			handler.processingInstruction(target, data);
 		}
 
 		@Override
 		public void skippedEntity(String name) throws SAXException {
-			m_handler.skippedEntity(name);
+			handler.skippedEntity(name);
 		}
 		
 		private static final class Path {
 			
-			private final Stack<String> m_stack = new Stack<String>();
+			private final Stack<String> stack = new Stack<String>();
 			
 			void push(String element) {
-				m_stack.push(element);
+				stack.push(element);
 			}
 			
 			void pop() {
-				m_stack.pop();
+				stack.pop();
 			}
 			
 			@Override
 			public String toString() {
 				StringBuilder sb = new StringBuilder();
-				for (String element : m_stack) {
+				for (String element : stack) {
 					sb.append("/").append(element);
 				}
 				return sb.toString();

@@ -22,45 +22,45 @@ import javax.jcr.Session;
 abstract class ResourceInstruction extends AbstractInstruction {
 	
 	/** the resource */
-	final File m_file;
+	final File file;
 	
 	/** dirty flag */
-    volatile boolean m_changed = false;
+    volatile boolean changed = false;
 	
 	ResourceInstruction(String name, Double sequence, File file) {
 		super(name, sequence);
-		m_file = file;
+		this.file = file;
 	}
 	
     boolean hasChanged() {
-    	return m_changed;
+    	return changed;
     }
 
     abstract void export(Session session);
     
     void delete() {
-    	m_file.delete();
+    	file.delete();
     }
     
     void nodeAdded(String path) {
-    	m_changed = true;
+    	changed = true;
     }
     
     boolean nodeRemoved(String path) {
-    	m_changed = true;
+    	changed = true;
     	return false;
     }
     
     void propertyAdded(String path) {
-    	m_changed = true;
+    	changed = true;
     }
     
     void propertyChanged(String path) {
-    	m_changed = true;
+    	changed = true;
     }
     
     void propertyRemoved(String path) {
-    	m_changed = true;
+    	changed = true;
     }
     
 }
