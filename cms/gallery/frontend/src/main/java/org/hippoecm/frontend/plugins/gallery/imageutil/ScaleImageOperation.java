@@ -26,6 +26,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.wicket.util.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,10 +86,8 @@ public class ScaleImageOperation extends AbstractImageOperation {
      * equal to the original.</p>
      *
      * @param data the original image data
-     * @param mimeType the MIME type of the image
-     * @param width width of the bounding box
-     * @param height height of the bounding box
-     * @param upscaling whether to scale the image up or not
+     * @param reader reader for the image data
+     * @param writer writer for the image data
      */
     public void execute(InputStream data, ImageReader reader, ImageWriter writer) throws IOException {
         MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(data);
