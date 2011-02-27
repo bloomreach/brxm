@@ -100,16 +100,20 @@ public final class ExportModule implements DaemonModule {
         }
         
         // set export location property in the repository
+        String path = null;
         try {
+            path = configDirectory.getCanonicalPath();
             Node node = session.getNode(CONFIG_NODE_PATH);
-            node.setProperty("hipposys:location", configDirectory.getPath());
+            node.setProperty("hipposys:location", path);
             session.save();	
         }
         catch (RepositoryException e) {
         	log.warn("Cannot set export location property: " + e.getMessage());
+        } catch (IOException e) {
+            log.warn("Cannot set export location property: " + e.getMessage());
         }
         
-        log.info("Automatically exporting changes to directory " + configDirectory.getPath());
+        log.info("Automatically exporting changes to directory " + path);
 
         // create extension
         Extension extension = null;
