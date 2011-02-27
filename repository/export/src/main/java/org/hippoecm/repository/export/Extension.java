@@ -63,7 +63,6 @@ final class Extension {
     Extension(File file) throws DocumentException, IOException {
         this.file = file;
         if (!file.exists()) {
-            file.createNewFile();
             document = createDocument();
             instructions = new ArrayList<Instruction>();
             changed = true;
@@ -82,6 +81,9 @@ final class Extension {
         	log.info("Exporting " + file.getName());
             XMLWriter writer;
     		try {
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
     	        OutputFormat format = OutputFormat.createPrettyPrint();
     	        format.setNewLineAfterDeclaration(false);
     			writer = new XMLWriter(new FileWriter(file), format);
