@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 class LocationMapper {
 
 	private final static List<Entry> ENTRIES = new ArrayList<Entry>();
-	private final static String NAME = "([\\w:]+)";
+	private final static String NAME = "([\\w:-]+)";
 	private final static String ANY = "(.*)";
 
 	// cache the result of the last invocation 

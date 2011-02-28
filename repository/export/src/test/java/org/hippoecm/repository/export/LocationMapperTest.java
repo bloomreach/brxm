@@ -110,8 +110,8 @@ public class LocationMapperTest {
         contextNode = LocationMapper.contextNodeForPath("/content/documents/prop", false);
         assertEquals("/content", contextNode);
 
-        file = LocationMapper.fileForPath("/content/documents/myproject", true);
-        assertEquals("content/documents/myproject.xml", file);
+        file = LocationMapper.fileForPath("/content/documents/my-project", true);
+        assertEquals("content/documents/my-project.xml", file);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject", true);
         assertEquals("/content/documents/myproject", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/prop", false);
