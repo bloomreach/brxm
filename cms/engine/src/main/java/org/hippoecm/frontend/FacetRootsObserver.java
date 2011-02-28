@@ -37,9 +37,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +73,7 @@ public class FacetRootsObserver {
             QueryManager queryMgr = session.getWorkspace().getQueryManager();
             Query query = queryMgr.createQuery("select * from " + JcrConstants.NT_BASE + " where "
                     + JcrConstants.JCR_PRIMARYTYPE + "='" + HippoNodeType.NT_FACETSEARCH + "' or "
-                    + JcrConstants.JCR_PRIMARYTYPE + "='" + FacNavNodeType.NT_FACETNAVIGATION + "'", Query.SQL);
+                    + JcrConstants.JCR_PRIMARYTYPE + "='hippofacnav:facetnavigation'", Query.SQL);
             QueryResult result = query.execute();
             NodeIterator nodes = result.getNodes();
 
