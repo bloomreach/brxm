@@ -254,7 +254,7 @@ public class JcrObservationManager implements ObservationManager {
         List<String> fixed;
         List<Event> events;
         Session session;
-        FacetSearchObserver fso;
+        FacetRootsObserver fro;
         WeakReference<UserSession> sessionRef;
 
         JcrListener(UserSession userSession, EventListener upstream) {
@@ -336,17 +336,17 @@ public class JcrObservationManager implements ObservationManager {
             // subscribe to facet search observer.
             // FIXME due to HREPTWO-2655, will not be able to receive events on newly
             // created facet search nodes.
-            fso = getSession().getFacetSearchObserver();
+            fro = getSession().getFacetRootsObserver();
 
             // subscribe when listening to deep tree structures;
             // there will/might be facetsearches in there.
             if (isDeep && uuids == null) {
                 if (nodeTypes == null) {
-                    fso.subscribe(this, path);
+                    fro.subscribe(this, path);
                 } else {
                     for (String type : nodeTypes) {
                         if (type.equals(HippoNodeType.NT_DOCUMENT)) {
-                            fso.subscribe(this, path);
+                            fro.subscribe(this, path);
                         }
                     }
                 }
@@ -357,7 +357,7 @@ public class JcrObservationManager implements ObservationManager {
             try {
                 for (Node node = getRoot(); node.getDepth() > 0;) {
                     if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-                        fso.subscribe(this, node.getPath());
+                        fro.subscribe(this, node.getPath());
                         break;
                     }
                     node = node.getParent();
@@ -365,7 +365,7 @@ public class JcrObservationManager implements ObservationManager {
 
                 for (Node node : getReferencedNodes()) {
                     if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-                        fso.subscribe(this, node.getPath());
+                        fro.subscribe(this, node.getPath());
                     }
                 }
             } catch (PathNotFoundException pnfe) {
@@ -376,8 +376,8 @@ public class JcrObservationManager implements ObservationManager {
         }
 
         void unsubscribe() throws RepositoryException {
-            fso.unsubscribe(this);
-            fso = null;
+            fro.unsubscribe(this);
+            fro = null;
 
             if (session.isLive()) {
                 ObservationManager obMgr = session.getWorkspace().getObservationManager();
@@ -1024,7 +1024,7 @@ public class JcrObservationManager implements ObservationManager {
             // notify facet search listeners.
             // FIXME due to HREPTWO-2655, will not be able to receive events on newly
             // created facet search nodes.
-            FacetSearchObserver fso = session.getFacetSearchObserver();
+            FacetRootsObserver fso = session.getFacetRootsObserver();
             fso.refresh();
 
             // create set of paths that need to be refreshed

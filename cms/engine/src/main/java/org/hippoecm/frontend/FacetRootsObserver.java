@@ -36,30 +36,33 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacetSearchObserver {
+public class FacetRootsObserver {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
-    static final Logger log = LoggerFactory.getLogger(FacetSearchObserver.class);
+    static final Logger log = LoggerFactory.getLogger(FacetRootsObserver.class);
 
     private WeakReference<Session> sessionRef;
-    private Map<String, FacetSearchListener> listeners;
+    private Map<String, FacetRootListener> listeners;
     private Set<UpstreamEntry> upstream;
     private boolean broadcast = false;
 
-    public FacetSearchObserver(Session session) {
+    public FacetRootsObserver(Session session) {
         this.sessionRef = new WeakReference<Session>(session);
         this.upstream = new HashSet<UpstreamEntry>();
-        this.listeners = new HashMap<String, FacetSearchListener>();
+        this.listeners = new HashMap<String, FacetRootListener>();
     }
 
     /**
-     * Broadcast facet search update events to listeners that observe ancestors
-     * or descendants of a facetsearch node.  To be invoked when the session has
+     * Broadcast facet roots update events to listeners that observe ancestors
+     * or descendants of a facet root node.  To be invoked when the session has
      * been refreshed.
      */
     public void broadcastEvents() {
@@ -70,7 +73,9 @@ public class FacetSearchObserver {
         Session session = sessionRef.get();
         try {
             QueryManager queryMgr = session.getWorkspace().getQueryManager();
-            Query query = queryMgr.createQuery("select * from " + HippoNodeType.NT_FACETSEARCH, Query.SQL);
+            Query query = queryMgr.createQuery("select * from " + JcrConstants.NT_BASE + " where "
+                    + JcrConstants.JCR_PRIMARYTYPE + "='" + HippoNodeType.NT_FACETSEARCH + "' or "
+                    + JcrConstants.JCR_PRIMARYTYPE + "='" + FacNavNodeType.NT_FACETNAVIGATION + "'", Query.SQL);
             QueryResult result = query.execute();
             NodeIterator nodes = result.getNodes();
 
@@ -84,7 +89,7 @@ public class FacetSearchObserver {
                 }
             }
         } catch (RepositoryException ex) {
-            log.error("Failure to subscribe to facetsearch nodes", ex);
+            log.error("Failure to subscribe to facet root nodes", ex);
         }
     }
 
@@ -93,9 +98,9 @@ public class FacetSearchObserver {
         if (session != null && session.isLive()) {
             try {
                 ObservationManager obMgr = session.getWorkspace().getObservationManager();
-                Iterator<Map.Entry<String, FacetSearchListener>> iter = listeners.entrySet().iterator();
+                Iterator<Map.Entry<String, FacetRootListener>> iter = listeners.entrySet().iterator();
                 while (iter.hasNext()) {
-                    Map.Entry<String, FacetSearchListener> entry = iter.next();
+                    Map.Entry<String, FacetRootListener> entry = iter.next();
                     obMgr.removeEventListener(entry.getValue());
                     iter.remove();
                 }
@@ -108,8 +113,8 @@ public class FacetSearchObserver {
     void refresh() {
         if (broadcast) {
             broadcast = false;
-            for (Map.Entry<String, FacetSearchListener> entry : listeners.entrySet()) {
-                FacetSearchListener listener = entry.getValue();
+            for (Map.Entry<String, FacetRootListener> entry : listeners.entrySet()) {
+                FacetRootListener listener = entry.getValue();
                 listener.broadcast();
             }
         }
@@ -142,9 +147,9 @@ public class FacetSearchObserver {
         }
     }
 
-    private FacetSearchListener addFacetSearchListener(ObservationManager mgr, String docbase, Node node)
+    private FacetRootListener addFacetSearchListener(ObservationManager mgr, String docbase, Node node)
             throws RepositoryException {
-        FacetSearchListener listener = new FacetSearchListener(node.getPath());
+        FacetRootListener listener = new FacetRootListener(node.getPath());
         mgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED, docbase, true,
                 null, null, false);
         return listener;
@@ -155,14 +160,14 @@ public class FacetSearchObserver {
         EventListener listener;
     }
 
-    private class FacetSearchListener implements EventListener {
+    private class FacetRootListener implements EventListener {
 
-        // path to the facetsearch node
-        private String fsNodePath;
+        // path to the facet root node
+        private String nodePath;
         private boolean refresh = false;
 
-        FacetSearchListener(String path) {
-            this.fsNodePath = path;
+        FacetRootListener(String path) {
+            this.nodePath = path;
         }
 
         void broadcast() {
@@ -172,7 +177,7 @@ public class FacetSearchObserver {
                 base.add(new Event() {
 
                     public String getPath() throws RepositoryException {
-                        return fsNodePath;
+                        return nodePath;
                     }
 
                     public int getType() {
@@ -180,7 +185,7 @@ public class FacetSearchObserver {
                     }
 
                     public String getUserID() {
-                        return "FacetSearchObserver";
+                        return "FacetRootsObserver";
                     }
 
                     public String getIdentifier() throws RepositoryException {
@@ -206,10 +211,10 @@ public class FacetSearchObserver {
                 }
                 for (UpstreamEntry listener : listeners) {
                     // notify listener if it registered at an ancestor or child
-                    if (fsNodePath.startsWith(listener.basePath) || listener.basePath.startsWith(fsNodePath)) {
+                    if (nodePath.startsWith(listener.basePath) || listener.basePath.startsWith(nodePath)) {
                         final Iterator<Event> baseIter = base.iterator();
                         if (log.isDebugEnabled()) {
-                            log.error("Notifying listener at " + listener.basePath + " of change at " + fsNodePath);
+                            log.error("Notifying listener at " + listener.basePath + " of change at " + nodePath);
                         }
                         listener.listener.onEvent(new EventIterator() {
 
@@ -256,7 +261,7 @@ public class FacetSearchObserver {
             }
             for (UpstreamEntry listener : listeners) {
                 // notify listener if it registered at an ancestor or child
-                if (fsNodePath.startsWith(listener.basePath) || listener.basePath.startsWith(fsNodePath)) {
+                if (nodePath.startsWith(listener.basePath) || listener.basePath.startsWith(nodePath)) {
                     refresh = true;
                     break;
                 }

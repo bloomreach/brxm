@@ -32,7 +32,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.FacetSearchObserver;
+import org.hippoecm.frontend.FacetRootsObserver;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.JcrObservationManager;
 import org.hippoecm.frontend.Main;
@@ -69,7 +69,7 @@ public class UserSession extends WebSession {
 
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
-    private transient FacetSearchObserver facetSearchObserver;
+    private transient FacetRootsObserver facetRootsObserver;
 
     public static void setCredentials(UserCredentials credentials) throws RepositoryException {
         fallbackSession = JcrSessionModel.login(credentials);
@@ -205,7 +205,7 @@ public class UserSession extends WebSession {
         }
         classLoader.detach();
         workflowManager.detach();
-        facetSearchObserver = null;
+        facetRootsObserver = null;
     }
 
     @Deprecated
@@ -229,7 +229,7 @@ public class UserSession extends WebSession {
         }
         classLoader.detach();
         workflowManager.detach();
-        facetSearchObserver = null;
+        facetRootsObserver = null;
         IModel<Session> oldModel = null;
         synchronized (jcrSessions) {
             JcrSessionReference sessionRef = jcrSessions.get(this);
@@ -254,7 +254,7 @@ public class UserSession extends WebSession {
     public void logout() {
         classLoader.detach();
         workflowManager.detach();
-        facetSearchObserver = null;
+        facetRootsObserver = null;
 
         IModel<Session> oldModel = null;
         synchronized (jcrSessions) {
@@ -345,11 +345,11 @@ public class UserSession extends WebSession {
     /**
      * THIS METHOD IS NOT PART OF THE PUBLIC API AND SHOULD NOT BE INVOKED BY PLUGINS
      */
-    public FacetSearchObserver getFacetSearchObserver() {
-        if (facetSearchObserver == null) {
-            facetSearchObserver = new FacetSearchObserver(getJcrSession());
+    public FacetRootsObserver getFacetRootsObserver() {
+        if (facetRootsObserver == null) {
+            facetRootsObserver = new FacetRootsObserver(getJcrSession());
         }
-        return facetSearchObserver;
+        return facetRootsObserver;
     }
 
     private Map<String, Integer> pluginComponentCounters = new HashMap<String, Integer>();

@@ -172,7 +172,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             UserSession us = (UserSession) org.apache.wicket.Session.get();
             session = us.getJcrSession();
             session.refresh(false);
-            us.getFacetSearchObserver().broadcastEvents();
+            us.getFacetRootsObserver().broadcastEvents();
         }
 
         protected String execute(T workflow) throws Exception {

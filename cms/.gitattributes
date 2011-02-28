@@ -663,7 +663,7 @@ editor/test/src/test/resources/test-namespace.xml -text
 editor/test/src/test/resources/test-workflows.xml -text
 editor/test/src/test/resources/test.cnd -text
 engine/src/main/java/org/hippoecm/frontend/ClassFromKeyStringResourceLoader.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/FacetSearchObserver.java -text
+engine/src/main/java/org/hippoecm/frontend/FacetRootsObserver.java -text
 engine/src/main/java/org/hippoecm/frontend/Home.html -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/Home.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain

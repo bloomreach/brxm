@@ -101,7 +101,7 @@ public class ObservationTest extends PluginTest {
         int identity = 12345;
 
         @SuppressWarnings("unchecked")
-        public void setObservationContext(IObservationContext<?> context) {
+        public void setObservationContext(IObservationContext<? extends IObservable> context) {
             this.context = (IObservationContext<IObservable>) context;
         }
 
@@ -528,7 +528,7 @@ public class ObservationTest extends PluginTest {
 
         // emulate separate workflow operation
         session.refresh(false);
-        ((UserSession) org.apache.wicket.Session.get()).getFacetSearchObserver().broadcastEvents();
+        ((UserSession) org.apache.wicket.Session.get()).getFacetRootsObserver().broadcastEvents();
 
         home.processEvents();
 

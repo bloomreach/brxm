@@ -280,13 +280,13 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-config</artifactId>
+        <artifactId>hippo-repository-modules</artifactId>
         <version>${repository.version}</version>
-        <scope>test</scope>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-modules</artifactId>
+        <artifactId>hippo-repository-config</artifactId>
         <version>${repository.version}</version>
         <scope>test</scope>
       </dependency>

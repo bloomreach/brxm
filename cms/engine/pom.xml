@@ -64,6 +64,10 @@
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket</artifactId>
       <scope>compile</scope>
