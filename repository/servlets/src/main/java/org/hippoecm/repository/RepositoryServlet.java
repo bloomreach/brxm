@@ -260,6 +260,7 @@ public class RepositoryServlet extends HttpServlet {
         SimpleCredentials creds = BasicAuth.parseAuthoriztionHeader(req);
 
         String path = req.getRequestURI();
+        if (!path.endsWith("/")) res.sendRedirect(path + "/");
         if (path.startsWith(req.getContextPath())) {
             path = path.substring(req.getContextPath().length());
         }
