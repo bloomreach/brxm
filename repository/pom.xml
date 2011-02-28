@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>3</version>
+    <version>4-SNAPSHOT</version>
   </parent>
 
   <name>Repository</name>
@@ -29,6 +29,14 @@
 
   <repositories>
     <repository>
+      <id>hippo-maven2-snapshots</id>
+      <name>Hippo Maven 2</name>
+      <url>http://maven.onehippo.com/maven2-snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>hippo</id>
       <name>Hippo Maven 2</name>
       <url>http://maven.onehippo.com/maven2/</url>
@@ -38,7 +46,6 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-      <layout>default</layout>
     </repository>
   </repositories>
 
