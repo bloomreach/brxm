@@ -37,11 +37,6 @@ import org.datanucleus.store.NucleusConnectionImpl;
 import org.datanucleus.store.connection.ConnectionFactory;
 import org.datanucleus.store.connection.ManagedConnection;
 import org.datanucleus.store.exceptions.NoExtentException;
-import org.hippoecm.repository.ocm.ConnectionFactoryImpl.JCRManagedConnection;
-import org.hippoecm.repository.ocm.fieldmanager.ColumnResolver;
-import org.hippoecm.repository.ocm.fieldmanager.ColumnResolverImpl;
-import org.hippoecm.repository.ocm.fieldmanager.TypeResolver;
-import org.hippoecm.repository.ocm.fieldmanager.TypeResolverImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

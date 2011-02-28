@@ -13,11 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.ocm.fieldmanager;
+package org.hippoecm.repository.ocm;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusException;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.store.ObjectProvider;
@@ -25,11 +26,11 @@ import org.datanucleus.store.fieldmanager.AbstractFieldManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdateFieldManager extends AbstractFieldManager {
+public class InsertFieldManager extends AbstractFieldManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final Logger log = LoggerFactory.getLogger(UpdateFieldManager.class);
+    protected final Logger log = LoggerFactory.getLogger(InsertFieldManager.class);
 
     private ObjectProvider op;
     private Session session;
@@ -37,12 +38,12 @@ public class UpdateFieldManager extends AbstractFieldManager {
     private ColumnResolver columnResolver;
     private TypeResolver typeResolver;
 
-    public UpdateFieldManager(ObjectProvider op, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
+    public InsertFieldManager(ObjectProvider op, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
         this.op = op;
         this.session = session;
-        this.node = node;
         this.columnResolver = columnResolver;
         this.typeResolver = typeResolver;
+        this.node = node;
     }
 
     @Override
@@ -50,7 +51,7 @@ public class UpdateFieldManager extends AbstractFieldManager {
         AbstractMemberMetaData mmd = op.getClassMetaData().getMetaDataForManagedMemberAtAbsolutePosition(fieldNumber);
         AbstractMappingStrategy ms = AbstractMappingStrategy.findMappingStrategy(op, mmd, session, columnResolver, typeResolver, node);
         if (ms != null) {
-            ms.update(value);
+            ms.insert(value);
             return;
         }
         throw new NucleusException("Field " + mmd.getFullFieldName() + " cannot be persisted because type="

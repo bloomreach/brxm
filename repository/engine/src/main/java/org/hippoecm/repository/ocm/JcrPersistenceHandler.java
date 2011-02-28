@@ -34,11 +34,6 @@ import org.datanucleus.store.StoreManager;
 import org.datanucleus.store.StorePersistenceHandler;
 import org.datanucleus.store.connection.ManagedConnection;
 import org.datanucleus.util.StringUtils;
-import org.hippoecm.repository.ocm.fieldmanager.ColumnResolver;
-import org.hippoecm.repository.ocm.fieldmanager.FetchFieldManager;
-import org.hippoecm.repository.ocm.fieldmanager.InsertFieldManager;
-import org.hippoecm.repository.ocm.fieldmanager.TypeResolver;
-import org.hippoecm.repository.ocm.fieldmanager.UpdateFieldManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

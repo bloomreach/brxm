@@ -1,4 +1,4 @@
-package org.hippoecm.repository.ocm.fieldmanager;
+package org.hippoecm.repository.ocm;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
