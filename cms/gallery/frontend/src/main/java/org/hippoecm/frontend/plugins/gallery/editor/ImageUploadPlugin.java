@@ -40,6 +40,8 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
+import org.hippoecm.frontend.resource.JcrResource;
+import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +101,7 @@ public class ImageUploadPlugin extends RenderPlugin {
                 @Override
                 public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                     IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                    dialogService.show(new ImageEditorDialog());
+                    dialogService.show(new ImageEditorDialog(createOriginalImage()));
                 }
             });
         }
@@ -108,7 +110,32 @@ public class ImageUploadPlugin extends RenderPlugin {
         protected void onSubmit() {
             widget.handleNonFlashSubmit();
         }
+
     }
+
+    private JcrResourceStream createOriginalImage(){
+        Node jcrImageNode = (Node) getModel().getObject();
+        if(jcrImageNode == null){
+
+        }
+        else{
+
+            try {
+                Node originalImageNode = jcrImageNode.getParent().getNode("hippogallery:original");
+                JcrNodeModel nodeModel = new JcrNodeModel(originalImageNode);
+                JcrResourceStream jrs = new JcrResourceStream(nodeModel);
+                return jrs;
+            } catch (RepositoryException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+
+        }
+
+        return null;
+    }
+
+
 
     private void handleUpload(FileUpload upload, IPluginContext context) {
         String fileName = upload.getClientFileName();
