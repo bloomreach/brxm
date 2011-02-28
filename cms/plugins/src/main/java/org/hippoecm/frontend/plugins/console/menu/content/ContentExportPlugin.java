@@ -1,7 +1,5 @@
 package org.hippoecm.frontend.plugins.console.menu.content;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 
 import org.apache.wicket.model.Model;
@@ -24,7 +22,7 @@ public class ContentExportPlugin extends RenderPlugin<Node> {
                 return new ContentExportDialog(ContentExportPlugin.this);
             }
         };
-        add(new DialogLink("link", new Model<String>("XML export"), factory, getDialogService()));
+        add(new DialogLink("link", new Model<String>("XML Export"), factory, getDialogService()));
     }
 
 }

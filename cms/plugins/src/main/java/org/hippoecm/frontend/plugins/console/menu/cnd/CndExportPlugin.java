@@ -22,7 +22,7 @@ public class CndExportPlugin extends RenderPlugin<Node> {
                 return new CndExportDialog(CndExportPlugin.this);
             }
         };
-        add(new DialogLink("link", new Model<String>("CND export"), factory, getDialogService()));
+        add(new DialogLink("link", new Model<String>("CND Export"), factory, getDialogService()));
     }
 
 }

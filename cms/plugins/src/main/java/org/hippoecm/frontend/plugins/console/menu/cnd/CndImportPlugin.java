@@ -22,7 +22,7 @@ public class CndImportPlugin extends RenderPlugin<Node> {
                 return new CndImportDialog(CndImportPlugin.this);
             }
         };
-        add(new DialogLink("link", new Model<String>("CND import"), factory, getDialogService()));
+        add(new DialogLink("link", new Model<String>("CND Import"), factory, getDialogService()));
     }
 
 }

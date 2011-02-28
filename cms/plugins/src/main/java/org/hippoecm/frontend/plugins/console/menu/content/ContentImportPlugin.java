@@ -1,7 +1,5 @@
 package org.hippoecm.frontend.plugins.console.menu.content;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 
 import org.apache.wicket.model.Model;
@@ -10,8 +8,6 @@ import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.console.menu.refs.ReferencesDialog;
-import org.hippoecm.frontend.plugins.console.menu.refs.ReferencesPlugin;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class ContentImportPlugin extends RenderPlugin<Node> {
@@ -26,7 +22,7 @@ public class ContentImportPlugin extends RenderPlugin<Node> {
                 return new ContentImportDialog(ContentImportPlugin.this);
             }
         };
-        add(new DialogLink("link", new Model<String>("XML import"), factory, getDialogService()));
+        add(new DialogLink("link", new Model<String>("XML Import"), factory, getDialogService()));
     }
 
 
