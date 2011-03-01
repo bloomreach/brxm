@@ -57,10 +57,22 @@ class LocationMapper {
 		file = "hst/configurations/$1/$2.xml";
 		ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
 		// /hippo:configuration
-		nodePatterns = new String[] {"/hippo:configuration", "/hippo:configuration/" + NAME,};
-		propertyPatterns = new String[] {"/hippo:configuration/" + NAME, "/hippo:configuration/" + NAME + "/" + NAME,};
+		nodePatterns = new String[] {"/hippo:configuration", "/hippo:configuration/" + NAME};
+		propertyPatterns = new String[] {"/hippo:configuration/" + NAME, "/hippo:configuration/" + NAME + "/" + NAME};
 		contextNode = "/hippo:configuration";
 		file = "configuration.xml";
+		ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+		// /hippo:configuration/hippo:queries
+		nodePatterns = new String[] {"/hippo:configuration/hippo:queries/" + NAME};
+		propertyPatterns = new String[] {"/hippo:configuration/hippo:queries/" + NAME + "/" + NAME};
+		contextNode = "/hippo:configuration/hippo:queries/$1";
+		file = "configuration/queries/$1.xml";
+		ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+		// /hippo:configuration/hippo:queries/queryfolder/query
+		nodePatterns = new String[] {"/hippo:configuration/hippo:queries/" + NAME + "/" + NAME, "/hippo:configuration/hippo:queries/" + NAME + "/" + NAME + "/"+ ANY};
+		propertyPatterns = new String[] {"/hippo:configuration/hippo:queries/" + NAME + "/" + NAME + "/" + ANY};
+		contextNode = "/hippo:configuration/hippo:queries/$1/$2";
+		file = "configuration/queries/$1/$2.xml";
 		ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
 		// /hippo:configuration/subnode/subsubnode
 		nodePatterns = new String[] {"/hippo:configuration/" + NAME + "/" + NAME, "/hippo:configuration/" + NAME + "/" + NAME + "/" + ANY};

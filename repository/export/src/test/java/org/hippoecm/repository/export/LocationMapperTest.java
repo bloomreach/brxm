@@ -82,7 +82,7 @@ public class LocationMapperTest {
         assertEquals("/hippo:configuration", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/subnode/prop", false);
         assertEquals("/hippo:configuration", contextNode);
-
+        
         file = LocationMapper.fileForPath("/hippo:configuration/subnode/subsubnode", true);
         assertEquals("configuration/subnode/subsubnode.xml", file);
         contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/subnode/subsubnode", true);
@@ -98,6 +98,24 @@ public class LocationMapperTest {
         contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/subnode/subsubnode/any/sub/node/prop", false);
         assertEquals("/hippo:configuration/subnode/subsubnode", contextNode);
 
+        // hippo:configuration/hippo:queries
+        file = LocationMapper.fileForPath("/hippo:configuration/hippo:queries/hippo:templates", true);
+        assertEquals("configuration/queries/templates.xml", file);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:queries/hippo:templates", true);
+        assertEquals("/hippo:configuration/hippo:queries/hippo:templates", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:queries/hippo:templates/prop", false);
+        assertEquals("/hippo:configuration/hippo:queries/hippo:templates", contextNode);
+        file = LocationMapper.fileForPath("/hippo:configuration/hippo:queries/hippo:templates/simple", true);
+        assertEquals("configuration/queries/templates/simple.xml", file);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:queries/hippo:templates/simple", true);
+        assertEquals("/hippo:configuration/hippo:queries/hippo:templates/simple", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:queries/hippo:templates/simple/prop", false);
+        assertEquals("/hippo:configuration/hippo:queries/hippo:templates/simple", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:queries/hippo:templates/simple/subnode", true);
+        assertEquals("/hippo:configuration/hippo:queries/hippo:templates/simple", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:queries/hippo:templates/simple/subnode/prop", true);
+        assertEquals("/hippo:configuration/hippo:queries/hippo:templates/simple", contextNode);
+        
         // /content
         file = LocationMapper.fileForPath("/content", true);
         assertEquals("content.xml", file);
