@@ -986,6 +986,12 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/File
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.html -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.java -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_fr.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.properties -text
