@@ -58,19 +58,9 @@ public abstract class OnEnterAjaxBehavior extends AjaxFormSubmitBehavior {
             if (_helper == null) {
                 throw new IllegalStateException("Page has no yui manager behavior, unable to register module dependencies.");
             }
+            _helper.addOnDomLoad("new Hippo.EnterHandler('" + component.getMarkupId() + "')");
         }
         _helper.renderHead(response);
-    }
-
-    @Override
-    protected void onComponentRendered() {
-        if (getComponent() instanceof AbstractTextComponent) {
-            Response response = getComponent().getResponse();
-            final String id = getComponent().getMarkupId();
-            response.write(JavascriptUtils.SCRIPT_OPEN_TAG);
-            response.write("new Hippo.EnterHandler('" + id + "');");
-            response.write(JavascriptUtils.SCRIPT_CLOSE_TAG);
-        }
     }
 
     @Override
