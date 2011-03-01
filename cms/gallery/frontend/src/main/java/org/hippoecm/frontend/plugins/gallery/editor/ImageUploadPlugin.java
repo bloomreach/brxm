@@ -45,18 +45,18 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageEditPlugin extends RenderPlugin {
+public class ImageUploadPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageEditPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
 
     private IValueMap types;
     private FileUploadForm form;
 
-    public ImageEditPlugin(final IPluginContext context, IPluginConfig config) {
+    public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         // if the types config is not set, all extensions are allowed
@@ -71,7 +71,7 @@ public class ImageEditPlugin extends RenderPlugin {
 
 
         //The edit image button
-        final IModel<Node> jcrImageNodeModel = ImageEditPlugin.this.getModel();
+        final IModel<Node> jcrImageNodeModel = ImageUploadPlugin.this.getModel();
         AjaxLink<String> cropLink = new AjaxLink<String>("crop-link") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
@@ -137,7 +137,7 @@ public class ImageEditPlugin extends RenderPlugin {
         if (types != null && types.getString(extension.toLowerCase()) == null) {
             String extensions = StringUtils.join(types.keySet().toArray(), ", ");
             getDialogService().show(
-                    new ExceptionDialog(new StringResourceModel("unrecognized", ImageEditPlugin.this, null,
+                    new ExceptionDialog(new StringResourceModel("unrecognized", ImageUploadPlugin.this, null,
                             new Object[]{extension, extensions}).getString()) {
                         public IValueMap getProperties() {
                             return SMALL;
@@ -146,7 +146,7 @@ public class ImageEditPlugin extends RenderPlugin {
                     });
             log.warn("Unrecognised file type");
         } else {
-            JcrNodeModel nodeModel = (JcrNodeModel) ImageEditPlugin.this.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) ImageUploadPlugin.this.getDefaultModel();
             Node node = nodeModel.getNode();
             try {
                 GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
