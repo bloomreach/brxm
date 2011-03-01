@@ -69,27 +69,6 @@ public class ImageUploadPlugin extends RenderPlugin {
         String mode = config.getString("mode", "edit");
         form.setVisible("edit".equals(mode));
 
-
-        //The edit image button
-        final IModel<Node> jcrImageNodeModel = ImageUploadPlugin.this.getModel();
-        AjaxLink<String> cropLink = new AjaxLink<String>("crop-link") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new ImageEditorDialog(jcrImageNodeModel));
-            }
-        };
-        try {
-            cropLink.setVisible(
-                    "edit".equals(mode) &&
-                    !"hippogallery:original".equals(jcrImageNodeModel.getObject().getName()));
-        } catch (RepositoryException e) {
-            // FIXME: report back to user
-            e.printStackTrace();
-        }
-        add(cropLink);
-
-
         add(new EventStoppingBehavior("onclick"));
 
     }
@@ -109,7 +88,6 @@ public class ImageUploadPlugin extends RenderPlugin {
             settings.setHideBrowseDuringUpload(true);
 
             add(widget = new FileUploadWidget("multifile", settings) {
-
                 @Override
                 protected void onFileUpload(FileUpload fileUpload) {
                     handleUpload(fileUpload, context);

@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImageEditPlugin extends RenderPlugin {
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ImageEditPlugin.java 27169 2011-03-01 14:25:35Z mchatzidakis $";
 
