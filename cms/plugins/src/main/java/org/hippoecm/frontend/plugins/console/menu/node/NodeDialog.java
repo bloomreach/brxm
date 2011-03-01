@@ -89,7 +89,7 @@ public class NodeDialog extends AbstractDialog<Node> {
         final Model<String> typeModel = new Model<String>() {
             private static final long serialVersionUID = 1L;
             @Override public String getObject() {
-                if (name != null) {
+                if (name != null && choices.containsKey(name)) {
                     type = choices.get(name);
                 }
                 return type;
