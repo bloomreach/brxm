@@ -27,7 +27,6 @@ public class CropBehavior extends AbstractYuiBehavior {
 
     public CropBehavior(String regionInputId){
         this.regionInputId = regionInputId;
-
     }
 
     @Override

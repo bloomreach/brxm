@@ -159,7 +159,7 @@
             <sv:value>1000</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="upload">
+        <sv:node sv:name="edit">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -167,7 +167,7 @@
             <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageUploadPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageEditPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>

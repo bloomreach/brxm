@@ -26,6 +26,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -40,24 +41,22 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
-import org.hippoecm.frontend.resource.JcrResource;
-import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageUploadPlugin extends RenderPlugin {
+public class ImageEditPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(ImageEditPlugin.class);
 
     private IValueMap types;
     private FileUploadForm form;
 
-    public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {
+    public ImageEditPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         // if the types config is not set, all extensions are allowed
@@ -69,6 +68,27 @@ public class ImageUploadPlugin extends RenderPlugin {
         add(form = new FileUploadForm("form", context));
         String mode = config.getString("mode", "edit");
         form.setVisible("edit".equals(mode));
+
+
+        //The edit image button
+        final IModel<Node> jcrImageNodeModel = ImageEditPlugin.this.getModel();
+        AjaxLink<String> cropLink = new AjaxLink<String>("crop-link") {
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                dialogService.show(new ImageEditorDialog(jcrImageNodeModel));
+            }
+        };
+        try {
+            cropLink.setVisible(
+                    "edit".equals(mode) &&
+                    !"hippogallery:original".equals(jcrImageNodeModel.getObject().getName()));
+        } catch (RepositoryException e) {
+            // FIXME: report back to user
+            e.printStackTrace();
+        }
+        add(cropLink);
+
 
         add(new EventStoppingBehavior("onclick"));
 
@@ -96,15 +116,8 @@ public class ImageUploadPlugin extends RenderPlugin {
                 }
 
             });
-
-            add(new AjaxLink<String>("crop-link"){
-                @Override
-                public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                    IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                    dialogService.show(new ImageEditorDialog(createOriginalImage()));
-                }
-            });
         }
+
 
         @Override
         protected void onSubmit() {
@@ -112,29 +125,6 @@ public class ImageUploadPlugin extends RenderPlugin {
         }
 
     }
-
-    private JcrResourceStream createOriginalImage(){
-        Node jcrImageNode = (Node) getModel().getObject();
-        if(jcrImageNode == null){
-
-        }
-        else{
-
-            try {
-                Node originalImageNode = jcrImageNode.getParent().getNode("hippogallery:original");
-                JcrNodeModel nodeModel = new JcrNodeModel(originalImageNode);
-                JcrResourceStream jrs = new JcrResourceStream(nodeModel);
-                return jrs;
-            } catch (RepositoryException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-
-
-        }
-
-        return null;
-    }
-
 
 
     private void handleUpload(FileUpload upload, IPluginContext context) {
@@ -147,8 +137,8 @@ public class ImageUploadPlugin extends RenderPlugin {
         if (types != null && types.getString(extension.toLowerCase()) == null) {
             String extensions = StringUtils.join(types.keySet().toArray(), ", ");
             getDialogService().show(
-                    new ExceptionDialog(new StringResourceModel("unrecognized", ImageUploadPlugin.this, null,
-                            new Object[] { extension, extensions }).getString()) {
+                    new ExceptionDialog(new StringResourceModel("unrecognized", ImageEditPlugin.this, null,
+                            new Object[]{extension, extensions}).getString()) {
                         public IValueMap getProperties() {
                             return SMALL;
                         }
@@ -156,11 +146,11 @@ public class ImageUploadPlugin extends RenderPlugin {
                     });
             log.warn("Unrecognised file type");
         } else {
-            JcrNodeModel nodeModel = (JcrNodeModel) ImageUploadPlugin.this.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) ImageEditPlugin.this.getDefaultModel();
             Node node = nodeModel.getNode();
             try {
                 GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
-                    "gallery.processor.service"), GalleryProcessor.class);
+                        "gallery.processor.service"), GalleryProcessor.class);
                 if (processor == null) {
                     processor = new DefaultGalleryProcessor();
                 }
