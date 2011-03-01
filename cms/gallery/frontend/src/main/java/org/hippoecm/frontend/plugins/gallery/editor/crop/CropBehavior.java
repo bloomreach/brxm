@@ -24,9 +24,12 @@ import org.onehippo.yui.YuiNamespace;
 public class CropBehavior extends AbstractYuiBehavior {
 
     private String regionInputId;
+    private String imagePreviewContainerId;
 
-    public CropBehavior(String regionInputId){
+
+    public CropBehavior(String regionInputId, String imagePreviewContainerId){
         this.regionInputId = regionInputId;
+        this.imagePreviewContainerId = imagePreviewContainerId;
     }
 
     @Override
@@ -46,15 +49,24 @@ public class CropBehavior extends AbstractYuiBehavior {
                 return getInitString();
             }
         });
+        context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath()+"imagecropper/assets/skins/sam/imagecropper-skin.css"));
+        context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath()+"resize/assets/skins/sam/resize-skin.css"));
     }
 
     private String getInitString() {
 
         // create image cropper instance
-        return "var imgCrop = new YAHOO.widget.ImageCropper('" + getComponent().getMarkupId() + "');" +
+        return  "var imgCrop = new YAHOO.widget.ImageCropper('" + getComponent().getMarkupId() + "', {keyTick:5});" +
+                "var imgpreviewdiv = YAHOO.util.Dom.get('"+ imagePreviewContainerId +"');" +
+                "var imgpreview = YAHOO.util.Dom.getFirstChild(imgpreviewdiv);" +
+                "var regionInput = YAHOO.util.Dom.get('"+ regionInputId +"');" +
                 "imgCrop.on('moveEvent', function() { " +
                 "   var region = imgCrop.getCropCoords(); " +
-                "   YAHOO.util.Dom.get('"+ regionInputId +"').value = YAHOO.lang.JSON.stringify(region);" +
+                "   regionInput.value = YAHOO.lang.JSON.stringify(region);" +
+                "   imgpreview.style.top = '-' + region.top + 'px';" +
+                "   imgpreview.style.left = '-' + region.left + 'px';" +
+                "   imgpreviewdiv.style.height = region.height + 'px';" +
+                "   imgpreviewdiv.style.width = region.width + 'px';" +
                 "});";
 
 

@@ -3,10 +3,13 @@ package org.hippoecm.frontend.plugins.gallery.editor;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -37,9 +40,27 @@ public class ImageEditorDialog extends AbstractDialog {
             try {
                 Node originalImageNode = ((Node) getModelObject()).getParent().getNode("hippogallery:original");
                 JcrNodeModel nodeModel = new JcrNodeModel(originalImageNode);
-                JcrImage img = new JcrImage("image", new JcrResourceStream(nodeModel));
-                img.add(new CropBehavior(regionField.getMarkupId()));
-                add(img);
+
+                JcrImage originalImage = new JcrImage("image", new JcrResourceStream(nodeModel));
+                JcrImage imgPreview = new JcrImage("imagepreview", new JcrResourceStream(nodeModel));
+                WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
+                imagePreviewContainer.setOutputMarkupId(true);
+                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("border:1px solid black"), ";"));
+                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:83px"), ";"));
+                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:125px"), ";"));
+                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("position:relative"), ";"));
+                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("overflow:hidden"), ";"));
+
+                imgPreview.add(new AttributeAppender("style", new Model<String>("top:-20px"), ";"));
+                imgPreview.add(new AttributeAppender("style", new Model<String>("left:-20px"), ";"));
+                imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
+
+                imagePreviewContainer.add(imgPreview);
+
+                originalImage.add(new CropBehavior(regionField.getMarkupId(), imagePreviewContainer.getMarkupId()));
+
+                add(originalImage);
+                add(imagePreviewContainer);
 
             } catch (RepositoryException e) {
                 // FIXME: report back to user
