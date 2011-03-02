@@ -71,11 +71,28 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
 
     // Constructor
     public JcrMultiPropertyValueModel(JcrItemModel<Property> itemModel) {
-        this.propertyModel = new JcrPropertyModel<T>(itemModel);
+        this(new JcrPropertyModel<T>(itemModel));
     }
 
     public JcrMultiPropertyValueModel(JcrPropertyModel<T> propertyModel) {
         this.propertyModel = propertyModel;
+        Property property = propertyModel.getProperty();
+        if (property != null) {
+            try {
+                type = property.getType();
+            } catch (RepositoryException e) {
+                log.error("Unable to get property type", e);
+            }
+        } else {
+            PropertyDefinition def = getPropertyDefinition();
+            // try to determine real value
+            if (def != null) {
+                type = def.getRequiredType();
+            }
+        }
+        if (type == NO_TYPE) {
+            type = PropertyType.UNDEFINED;
+        }
     }
 
     public Property getProperty() {
@@ -152,14 +169,14 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
                     }
                     default:
                         // skip empty string as it cannot be an id in a list UI
-                        if (!objects.get(i).toString().equals("")) {
+                        if (!objects.get(i).toString().isEmpty()) {
                             values.add(factory.createValue(objects.get(i).toString(),
                                     (type == PropertyType.UNDEFINED ? PropertyType.STRING : type)));
                         }
                     }
                 }
             } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+                log.error(ex.getMessage(), ex);
                 return;
             }
             setValues(values);
@@ -170,8 +187,6 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     protected List<T> load() {
         try {
             List<Value> values = getValues();
-
-            int type = getType(values);
 
             switch (type) {
             case PropertyType.BOOLEAN:
@@ -212,21 +227,6 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
             log.error(ex.getMessage());
         }
         return null;
-    }
-
-    private int getType(List<Value> values) throws RepositoryException {
-        if (type == NO_TYPE) {
-            PropertyDefinition def = getPropertyDefinition();
-            // try to determine real value
-            if (def != null) {
-                type = def.getRequiredType();
-            } else if (values.size() > 0) {
-                type = values.get(0).getType();
-            } else {
-                type = PropertyType.UNDEFINED;
-            }
-        }
-        return type;
     }
 
     private PropertyDefinition getPropertyDefinition() {
