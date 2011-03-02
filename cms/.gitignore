@@ -240,9 +240,11 @@ skin/.classpath
 skin/.project
 skin/.settings
 skin/target
+surf/*.iml
 surf/frontend/*.iml
 surf/frontend/target
 surf/repository/target
+surf/target
 /target
 test/*.tmp
 test/.classpath
