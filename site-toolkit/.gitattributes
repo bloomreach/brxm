@@ -1568,6 +1568,7 @@ components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/util/ProxyF
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/AbstractSessionPoolSpringTestCase.java svneol=native#text/plain
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestBasicPoolingRepository.java svneol=native#text/plain
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestBasicPoolingRepositoryFactory.java svneol=native#text/plain
+components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestJcrHippoRepository.java -text
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestLazyMultiplePoolingRepository.java svneol=native#text/plain
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestMultiplePoolingRepositoryFactory.java svneol=native#text/plain
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestMultipleRepository.java svneol=native#text/plain
