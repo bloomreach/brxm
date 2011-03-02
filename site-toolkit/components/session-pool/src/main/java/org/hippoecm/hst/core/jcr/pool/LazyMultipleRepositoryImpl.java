@@ -171,13 +171,17 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     
     @Override
     protected Session login(CredentialsWrapper credentialsWrapper) throws LoginException, RepositoryException {
-        if (!repositoryMap.containsKey(credentialsWrapper)) {
+        Repository repository = repositoryMap.get(credentialsWrapper);
+        
+        if (repository == null) {
             try {
-                createRepositoryOnDemand(credentialsWrapper);
+                repository = createRepositoryOnDemand(credentialsWrapper);
             } catch (Exception e) {
                 throw new RepositoryException(e);
             }
         }
+
+        setCurrentThreadRepository(repository);
         
         String credentialsDomain = StringUtils.substringAfter(credentialsWrapper.getUserID(), credentialsDomainSeparator);
         Set<String> credsDomains = tlCurrentCredsDomains.get();
@@ -189,12 +193,14 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             credsDomains.add(credentialsDomain);
         }
         
-        return super.login(credentialsWrapper);
+        return repository.login(credentialsWrapper.getCredentials());
     }
     
-    protected synchronized void createRepositoryOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
-        if (repositoryMap.containsKey(credentialsWrapper)) {
-            return;
+    protected synchronized Repository createRepositoryOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
+        PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
+        
+        if (repository != null) {
+            return repository;
         }
         
         Map<String, String> configMap = new HashMap<String, String>(defaultConfigMap);
@@ -206,7 +212,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             poolingRepositoryFactory = new BasicPoolingRepositoryFactory();
         }
         
-        PoolingRepository repository = poolingRepositoryFactory.getObjectInstanceByConfigMap(configMap);
+        repository = poolingRepositoryFactory.getObjectInstanceByConfigMap(configMap);
         
         if (repository instanceof MultipleRepositoryAware) {
             ((MultipleRepositoryAware) repository).setMultipleRepository(this);
@@ -236,6 +242,8 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             inactiveRepositoryDisposer = new InactiveRepositoryDisposer();
             inactiveRepositoryDisposer.start();
         }
+        
+        return repository;
     }
     
     private class DelegatingResourceLifecycleManagements implements ResourceLifecycleManagement {
@@ -388,26 +396,30 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                         
                         PoolingRepository poolingRepo = entry2.getValue();
                         
-                        if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() == 0) {
-                            Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
-                            
-                            if (repoMap != null) {
-                                PoolingRepository removed = repoMap.remove(userID);
-                                
-                                if (removed != null) {
-                                    try {
-                                        removeRepository(((BasicPoolingRepository) removed).getDefaultCredentials());
-                                        removed.close();
-                                    } catch (Exception e) {
-                                        if (log.isDebugEnabled()) {
-                                            log.warn("Failed to close an inactive pooling repository.", e);
-                                        } else {
-                                            log.warn("Failed to close an inactive pooling repository. {}", e.toString());
-                                        }
-                                    }
+                        if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() <= 0) {
+                            synchronized (LazyMultipleRepositoryImpl.this) {
+                                if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() <= 0) {
+                                    Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
                                     
-                                    if (repoMap.isEmpty()) {
-                                        Map<String, PoolingRepository> removedMap = repositoriesMapByCredsDomain.remove(credsDomain);
+                                    if (repoMap != null) {
+                                        PoolingRepository removed = repoMap.remove(userID);
+                                        
+                                        if (removed != null) {
+                                            try {
+                                                removeRepository(((BasicPoolingRepository) removed).getDefaultCredentials());
+                                                removed.close();
+                                            } catch (Exception e) {
+                                                if (log.isDebugEnabled()) {
+                                                    log.warn("Failed to close an inactive pooling repository.", e);
+                                                } else {
+                                                    log.warn("Failed to close an inactive pooling repository. {}", e.toString());
+                                                }
+                                            }
+                                            
+                                            if (repoMap.isEmpty()) {
+                                                Map<String, PoolingRepository> removedMap = repositoriesMapByCredsDomain.remove(credsDomain);
+                                            }
+                                        }
                                     }
                                 }
                             }
