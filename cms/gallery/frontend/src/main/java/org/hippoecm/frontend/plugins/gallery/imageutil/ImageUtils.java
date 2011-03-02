@@ -149,9 +149,14 @@ public class ImageUtils {
      * the target width or target height is 0 or less.
      */
     public static BufferedImage scaleImage(BufferedImage img, int targetWidth, int targetHeight, Object hint,
-            boolean highQuality) {
+                                           boolean highQuality) {
+        return scaleImage(img, 0, 0, img.getWidth(), img.getHeight(), targetWidth, targetHeight, hint, highQuality);
+    }
 
-        if (targetWidth <= 0 || targetHeight <= 0) {
+    public static BufferedImage scaleImage(BufferedImage img, int xOffset, int yOffset, int sourceWidth, int sourceHeight, int targetWidth, int targetHeight, Object hint,
+                                           boolean highQuality) {
+
+        if (sourceWidth <= 0 || sourceHeight <= 0 || targetWidth <= 0 || targetHeight <= 0) {
             return null;
         }
 
@@ -159,6 +164,9 @@ public class ImageUtils {
                 : BufferedImage.TYPE_INT_ARGB;
 
         BufferedImage result = img;
+        if (xOffset != 0 || yOffset != 0 || sourceWidth != img.getWidth() || sourceHeight != img.getHeight()) {
+            result = result.getSubimage(xOffset, yOffset, sourceWidth, sourceHeight);
+        }
 
         int width, height;
 
@@ -196,5 +204,4 @@ public class ImageUtils {
 
         return result;
     }
-
 }

@@ -25,6 +25,8 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +46,15 @@ public class ImageEditPlugin extends RenderPlugin {
 
         String mode = config.getString("mode", "edit");
 
+        final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+
         //The edit image button
         final IModel<Node> jcrImageNodeModel = ImageEditPlugin.this.getModel();
         AjaxLink<String> cropLink = new AjaxLink<String>("crop-link") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new ImageEditorDialog(jcrImageNodeModel));
+                dialogService.show(new ImageEditorDialog(jcrImageNodeModel, (processor != null ? processor : new DefaultGalleryProcessor())));
             }
         };
         try {
