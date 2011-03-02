@@ -242,6 +242,7 @@ skin/.settings
 skin/target
 surf/frontend/*.iml
 surf/frontend/target
+surf/repository/target
 /target
 test/*.tmp
 test/.classpath
