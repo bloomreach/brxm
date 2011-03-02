@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -53,37 +54,28 @@ public class ImageEditorDialog extends AbstractDialog {
         super(jcrImageNodeModel);
         this.galleryProcessor = galleryProcessor;
 
-        TextField regionField = new TextField("region", new PropertyModel(this, "region"));
+        HiddenField regionField = new HiddenField("region", new PropertyModel(this, "region"));
         regionField.setOutputMarkupId(true);
         add(regionField);
 
         if(getModelObject() != null){
             try {
-                this.thumbnailDimension = galleryProcessor.getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
-
+                thumbnailDimension = galleryProcessor.getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
                 Node originalImageNode = ((Node) getModelObject()).getParent().getNode("hippogallery:original");
+                originalImageDimension = new Dimension(
+                                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
+                                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
+
                 JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
-
                 JcrImage originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
+
                 JcrImage imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
-
-                this.originalImageDimension = new Dimension(
-                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
-
+                imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
 
                 WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
                 imagePreviewContainer.setOutputMarkupId(true);
-                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("border:1px solid black"), ";"));
                 imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:"+ thumbnailDimension.getHeight() +"px"), ";"));
                 imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:"+ thumbnailDimension.getWidth() +"px"), ";"));
-                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("position:relative"), ";"));
-                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("overflow:hidden"), ";"));
-
-                /*imgPreview.add(new AttributeAppender("style", new Model<String>("top:-20px"), ";"));
-                imgPreview.add(new AttributeAppender("style", new Model<String>("left:-20px"), ";"));*/
-                imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
-
                 imagePreviewContainer.add(imgPreview);
 
                 originalImage.add(new CropBehavior(
@@ -113,7 +105,6 @@ public class ImageEditorDialog extends AbstractDialog {
     @Override
     protected void onOk() {
         JSONObject jsonObject = JSONObject.fromObject(region);
-        System.out.println(jsonObject);
 
         int top = jsonObject.getInt("top");
         int height = jsonObject.getInt("height");
