@@ -395,7 +395,16 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                                 PoolingRepository removed = repoMap.remove(userID);
                                 
                                 if (removed != null) {
-                                    removeRepository(((BasicPoolingRepository) removed).getDefaultCredentials());
+                                    try {
+                                        removeRepository(((BasicPoolingRepository) removed).getDefaultCredentials());
+                                        removed.close();
+                                    } catch (Exception e) {
+                                        if (log.isDebugEnabled()) {
+                                            log.warn("Failed to close an inactive pooling repository.", e);
+                                        } else {
+                                            log.warn("Failed to close an inactive pooling repository. {}", e.toString());
+                                        }
+                                    }
                                     
                                     if (repoMap.isEmpty()) {
                                         Map<String, PoolingRepository> removedMap = repositoriesMapByCredsDomain.remove(credsDomain);

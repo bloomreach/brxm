@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -50,6 +51,7 @@ public class TestLazyMultiplePoolingRepository {
     private SimpleCredentials defaultCreds = new SimpleCredentials("admin@onehippo.org", "admin".toCharArray());
     private SimpleCredentials wikiCreds = new SimpleCredentials("admin@wiki.onehippo.org", "admin".toCharArray());
     private SimpleCredentials disposableWikiCreds = new SimpleCredentials("admin@wiki.onehippo.org;disposable", "admin".toCharArray());
+    private SimpleCredentials disposableWiki2Creds = new SimpleCredentials("admin@wiki2.onehippo.org;disposable", "admin".toCharArray());
     private MultipleRepository multipleRepository;
     
     @Before
@@ -63,7 +65,7 @@ public class TestLazyMultiplePoolingRepository {
         basicPoolConfigMap.put("testOnBorrow", "true");
         basicPoolConfigMap.put("testOnReturn", "false");
         basicPoolConfigMap.put("testWhileIdle", "false");
-        basicPoolConfigMap.put("timeBetweenEvictionRunsMillis", "2000");
+        basicPoolConfigMap.put("timeBetweenEvictionRunsMillis", "1000");
         basicPoolConfigMap.put("numTestsPerEvictionRun", "1");
         basicPoolConfigMap.put("minEvictableIdleTimeMillis", "0");
         basicPoolConfigMap.put("refreshOnPassivate", "true");
@@ -178,6 +180,28 @@ public class TestLazyMultiplePoolingRepository {
         
         disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWikiCreds);
         assertNull(disposableWikiRepo);
+    }
+    
+    @Test
+    public void testClosingForAutomaticallyDisposedPoolingRepository() throws Exception {
+        ((LazyMultipleRepositoryImpl) multipleRepository).setTimeBetweenEvictionRunsMillis(1000);
+        ((LazyMultipleRepositoryImpl) multipleRepository).setDisposableUserIDPattern(".*;disposable");
+        
+        Repository disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWiki2Creds);
+        assertNull(disposableWikiRepo);
+        
+        Session session = multipleRepository.login(disposableWiki2Creds);
+        assertNotNull(session);
+        PoolingRepository disposableWikiPoolingRepo = (PoolingRepository) multipleRepository.getRepositoryByCredentials(disposableWiki2Creds);
+        session.logout();
+        assertNotNull(disposableWikiPoolingRepo);
+        assertTrue(disposableWikiPoolingRepo.isActive());
+        
+        Thread.sleep(3000);
+        
+        disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWiki2Creds);
+        assertNull(disposableWikiRepo);
+        assertFalse(disposableWikiPoolingRepo.isActive());
     }
     
     @Ignore
