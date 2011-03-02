@@ -81,6 +81,7 @@
     <module>layout</module>
     <module>config</module>
     <module>skin</module>
+    <module>surf</module>
     <module>upgrade</module>
     <module>resources</module>
     <module>dependencies</module>
@@ -129,7 +130,7 @@
 
   <!-- 
      Software configuration management (scm): where to find and how to get acces to the source repository 
-     This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
+     This is used by normal plugins, but also to autogenerate documentation in .../target/channel/source-repository.html
   -->
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
@@ -614,9 +615,9 @@
       </plugin>
 
       <!-- Autogenerate reports with change counts of files and on developers doing the changes. 
-           target/site/changelog.html
-           target/site/dev-activity.html
-           target/site/file-activity.html
+           target/channel/changelog.html
+           target/channel/dev-activity.html
+           target/channel/file-activity.html
       -->
       <plugin>
         <inherited>true</inherited>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node sv:name="cms-services" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+
+  <!-- This cluster contains the plugins that expose non-gui services that must
+  be available before the plugins in cms-static are started.  It is a separate
+  cluster, so that extensions to the cms can add their plugins here. -->
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugincluster</sv:value>
+  </sv:property>
+  
+  <sv:node sv:name="ajaxPopupService">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.popup.AjaxPopupService</sv:value>
+    </sv:property>
+    <sv:property sv:name="service.id" sv:type="String">
+      <sv:value>ajax.popup.service</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="previewSiteDocumentUrlService">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.documenturl.SiteDocumentUrlService</sv:value>
+    </sv:property>
+    <sv:property sv:name="service.id" sv:type="String">
+      <sv:value>preview.site.document.url.service</sv:value>
+    </sv:property>
+    <sv:property sv:name="protocol" sv:type="String">
+      <sv:value>http</sv:value>
+    </sv:property>
+    <sv:property sv:name="domain" sv:type="String">
+      <sv:value>localhost</sv:value>
+    </sv:property>
+    <sv:property sv:name="port" sv:type="Long">
+      <sv:value>80</sv:value>
+    </sv:property>
+    <sv:property sv:name="path" sv:type="String">
+      <sv:value>/site/previewfromcms</sv:value>
+    </sv:property>
+    <sv:property sv:name="type" sv:type="String">
+      <sv:value>preview</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="liveSiteDocumentUrlService">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.documenturl.SiteDocumentUrlService</sv:value>
+    </sv:property>
+    <sv:property sv:name="service.id" sv:type="String">
+      <sv:value>live.site.document.url.service</sv:value>
+    </sv:property>
+    <sv:property sv:name="protocol" sv:type="String">
+      <sv:value>http</sv:value>
+    </sv:property>
+    <sv:property sv:name="domain" sv:type="String">
+      <sv:value>localhost</sv:value>
+    </sv:property>
+    <sv:property sv:name="port" sv:type="Long">
+      <sv:value>80</sv:value>
+    </sv:property>
+    <sv:property sv:name="path" sv:type="String">
+      <sv:value>/site/previewfromcms</sv:value>
+    </sv:property>
+    <sv:property sv:name="type" sv:type="String">
+      <sv:value>live</sv:value>
+    </sv:property>
+  </sv:node>
+
+</sv:node>
