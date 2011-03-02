@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.model;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
@@ -249,6 +250,29 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         } while (w != targetWidth || h != targetHeight);
 
         return ret;
+    }
+
+    public Dimension getDesiredResourceDimension(Node node) throws RepositoryException {
+        if(node.isNodeType("hippo:resource")) {
+            try {
+                InputStream imageData = node.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
+                ImageReader reader = getImageReader(node.getProperty(JcrConstants.JCR_MIMETYPE).getString());
+                MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(imageData);
+                reader.setInput(imageInputStream);
+                double originalWidth = reader.getWidth(FIRST_IMAGE_IN_FILE);
+                double originalHeight = reader.getHeight(FIRST_IMAGE_IN_FILE);
+                double resizeRatio = calcResizeRatio(thumbnailSize, originalWidth, originalHeight);
+                int resizeWidth = (int)(originalWidth * resizeRatio);
+                int resizeHeight = (int)(originalHeight * resizeRatio);
+                return new Dimension(resizeWidth, resizeHeight);
+            } catch (IOException ex) {
+                return null;
+            } catch (UnsupportedMimeTypeException ex) {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     public static class UnsupportedMimeTypeException extends Exception {

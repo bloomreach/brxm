@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.model;
 
+import java.awt.Dimension;
 import java.io.InputStream;
 import java.util.Calendar;
 
@@ -26,13 +27,14 @@ import org.apache.wicket.IClusterable;
 public interface GalleryProcessor extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
+    public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
             RepositoryException;
 
-    void validateResource(Node node, String fileName) throws GalleryException, RepositoryException;
+    public void validateResource(Node node, String fileName) throws GalleryException, RepositoryException;
 
-    void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
+    public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
             throws GalleryException, RepositoryException;
 
+    public Dimension getDesiredResourceDimension(Node node) throws GalleryException, RepositoryException;
 }
 

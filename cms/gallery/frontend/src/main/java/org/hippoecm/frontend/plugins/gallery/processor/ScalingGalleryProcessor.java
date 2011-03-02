@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.processor;
 
+import java.awt.Dimension;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -115,6 +116,15 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
         node.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, height);
     }
 
-
-
+    public Dimension getDesiredResourceDimension(Node resource) throws GalleryException, RepositoryException {
+        String nodeName = resource.getName();
+        ScalingParameters scaleOperation = scalingParametersMap.get(nodeName);
+        if (scaleOperation != null) {
+            int width = scaleOperation.getWidth();
+            int height = scaleOperation.getHeight();
+            return new Dimension(width, height);
+        } else {
+            return null;
+        }
+    }
 }
