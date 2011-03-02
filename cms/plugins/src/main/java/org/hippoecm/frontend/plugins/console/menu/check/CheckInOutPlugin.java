@@ -17,17 +17,17 @@ package org.hippoecm.frontend.plugins.console.menu.check;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,11 +35,14 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CheckInOutPlugin.class);
+    
+    private final Image icon;
     private final AjaxLink<Void> link;
-            
+
     public CheckInOutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        // set up label component
         final Label label = new Label("link-text", new Model<String>() {
             private static final long serialVersionUID = 1L;
             @Override public String getObject() {
@@ -57,6 +60,26 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
                 return isCheckedOut() ? "color:green" : "color:red";
             }
         }));
+        // set up icon component
+        icon = new Image("icon") {
+            private static final long serialVersionUID = 1L;
+            private final ResourceReference emptyGif 
+                = new ResourceReference(CheckInOutPlugin.class, "empty.gif");
+            private final ResourceReference checkedinIcon 
+                = new ResourceReference(CheckInOutPlugin.class, "checkedin.png");
+            private final ResourceReference checkedoutIcon 
+                = new ResourceReference(CheckInOutPlugin.class, "checkedout.png");
+            @Override
+            protected ResourceReference getImageResourceReference() {
+                if (!isVersionable()) {
+                    return emptyGif;
+                }
+                return isCheckedOut() ? checkedoutIcon : checkedinIcon;
+            }
+        };
+        icon.setOutputMarkupId(true);
+        add(icon);
+        // set up link component
         link = new AjaxLink<Void>("link") {
             private static final long serialVersionUID = 1L;
             @Override
@@ -70,6 +93,7 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
                     }
                 }
                 target.addComponent(label);
+                target.addComponent(icon);
             }
         };
         link.add(label);
@@ -110,15 +134,11 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
             log.error("An error occurred trying to check out node.", e);
         }
     }
-    
-    private Session getJcrSession() {
-        Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-        return session;
-    }
-    
+        
     @Override
     protected void onModelChanged() {
         link.setEnabled(isVersionable());
+        icon.setEnabled(isVersionable());
         redraw();
     }
 

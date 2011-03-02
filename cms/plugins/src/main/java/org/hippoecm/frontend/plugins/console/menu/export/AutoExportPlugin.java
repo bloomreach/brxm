@@ -22,12 +22,15 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.menu.check.CheckInOutPlugin;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -44,7 +47,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         
         final String location = getExportLocation();
         
-        // enable / disable link
+        // set up label component
         final Label label = new Label("link-text", new Model<String>() {
             private static final long serialVersionUID = 1L;
             
@@ -61,11 +64,31 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             @Override
             public String getObject() {
                 if (location == null) {
-                    return "color:red";
+                    return "color:grey";
                 }
                 return isExportEnabled() ? "color:green" : "color:red";
             }
         }));
+        // set up icon component
+        final Image icon = new Image("icon") {
+            private static final long serialVersionUID = 1L;
+            private final ResourceReference emptyGif 
+                = new ResourceReference(CheckInOutPlugin.class, "empty.gif");
+            private final ResourceReference on 
+                = new ResourceReference(AutoExportPlugin.class, "autoexport_on.png");
+            private final ResourceReference off
+                = new ResourceReference(AutoExportPlugin.class, "autoexport_off.png");
+            @Override
+            protected ResourceReference getImageResourceReference() {
+                if (location == null) {
+                    return emptyGif;
+                }
+                return isExportEnabled() ? on : off;
+            }
+            
+        };
+        icon.setOutputMarkupId(true);
+        add(icon);
         AjaxLink<Void> link = new AjaxLink<Void>("link") {
 
             private static final long serialVersionUID = 1L;
@@ -74,6 +97,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             public void onClick(AjaxRequestTarget target) {
                 setExportEnabled(!isExportEnabled());
                 target.addComponent(label);
+                target.addComponent(icon);
             }
             
         };

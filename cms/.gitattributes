@@ -1094,6 +1094,9 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/SortMenuPlugin.
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/SortMenuPlugin.java -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/check/CheckInOutPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/check/CheckInOutPlugin.java -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/check/checkedin.png -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/check/checkedout.png -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/check/empty.gif -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndExportDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndExportDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/cnd/CndExportPlugin.html -text
@@ -1128,6 +1131,9 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExpo
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportDialog.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.java -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/autoexport_off.png -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/autoexport_on.png -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/empty.gif -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/move/MoveDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/move/MoveDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/namespace/NamespaceDialog.html svneol=native#text/plain
