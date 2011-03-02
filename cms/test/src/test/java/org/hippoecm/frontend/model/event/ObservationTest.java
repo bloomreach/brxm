@@ -357,6 +357,36 @@ public class ObservationTest extends PluginTest {
     }
 
     @Test
+    public void testInSessionBinaryEvent() throws Exception {
+        Node root = session.getRootNode();
+        Node testNode = root.addNode("test", "nt:unstructured");
+        ByteArrayInputStream bais = new ByteArrayInputStream("aap".getBytes());
+        testNode.setProperty("x", bais);
+        session.save();
+
+        List<IEvent> events = new LinkedList<IEvent>();
+        IObserver observer = new TestObserver(new JcrNodeModel(testNode), events);
+        context.registerService(observer, IObserver.class.getName());
+        home.processEvents();
+
+        bais = new ByteArrayInputStream("noot".getBytes());
+        testNode.setProperty("x", bais);
+
+        home.processEvents();
+        assertEquals(1, events.size());
+        {
+            JcrEvent jcrEvent = (JcrEvent) events.get(0);
+            Event event = jcrEvent.getEvent();
+            assertEquals(Event.PROPERTY_ADDED, event.getType());
+            assertEquals("/test/x", event.getPath());
+        }
+        events.clear();
+
+        home.processEvents();
+        assertEquals(0, events.size());
+    }
+
+    @Test
     public void testInterSessionCommunication() throws Exception {
         Node root = session.getRootNode();
         List<IEvent> events = new LinkedList<IEvent>();

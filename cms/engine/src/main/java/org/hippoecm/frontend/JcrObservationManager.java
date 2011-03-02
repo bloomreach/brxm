@@ -18,6 +18,9 @@ package org.hippoecm.frontend;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,6 +47,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.Event;
@@ -75,6 +79,15 @@ public class JcrObservationManager implements ObservationManager {
 
     private static JcrObservationManager INSTANCE = new JcrObservationManager();
 
+    private final static MessageDigest BINARY_DIGEST;
+    static {
+        try {
+            BINARY_DIGEST = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private WeakHashMap<Session, Map<String, NodeState>> cache = new WeakHashMap<Session, Map<String, NodeState>>();
 
     public void setUserData(String userData) throws RepositoryException {
@@ -85,7 +98,8 @@ public class JcrObservationManager implements ObservationManager {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public EventJournal getEventJournal(int eventTypes, String absPath, boolean isDeep, String[] uuid, String[] nodeTypeName) throws RepositoryException {
+    public EventJournal getEventJournal(int eventTypes, String absPath, boolean isDeep, String[] uuid,
+            String[] nodeTypeName) throws RepositoryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -159,12 +173,14 @@ public class JcrObservationManager implements ObservationManager {
         private Map<String, Value[]> properties;
         private List<String> nodes;
 
-        NodeState(Node node) throws RepositoryException {
+        NodeState(Node node, boolean skipBinaries) throws RepositoryException {
             this.path = node.getPath();
             this.userId = node.getSession().getUserID();
 
             properties = new HashMap<String, Value[]>();
             nodes = new LinkedList<String>();
+
+            ValueFactory factory = node.getSession().getValueFactory();
 
             PropertyIterator propIter = node.getProperties();
             while (propIter.hasNext()) {
@@ -175,6 +191,19 @@ public class JcrObservationManager implements ObservationManager {
                         properties.put(property.getName(), property.getValues());
                     } else {
                         properties.put(property.getName(), new Value[] { property.getValue() });
+                    }
+                } else if (!skipBinaries) {
+                    if (property.getDefinition().isMultiple()) {
+                        Value[] values = property.getValues();
+                        Value[] hashes = new Value[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            byte[] md5 = BINARY_DIGEST.digest(values[i].getString().getBytes());
+                            hashes[i] = factory.createValue(new BigInteger(1, md5).toString(16));
+                        }
+                        properties.put(property.getName(), hashes);
+                    } else {
+                        byte[] md5 = BINARY_DIGEST.digest(property.getValue().getString().getBytes());
+                        properties.put(property.getName(), new Value[] { factory.createValue(new BigInteger(1, md5).toString(16)) });
                     }
                 }
             }
@@ -784,7 +813,7 @@ public class JcrObservationManager implements ObservationManager {
                     if (dirty.containsKey(path)) {
                         newState = dirty.get(path);
                     } else {
-                        newState = new NodeState(node);
+                        newState = new NodeState(node, false);
                         dirty.put(path, newState);
                     }
 
@@ -812,8 +841,8 @@ public class JcrObservationManager implements ObservationManager {
 
         @Override
         public String toString() {
-            return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", path).append("isDeep",
-                    isDeep).append("UUIDs", uuids).toString();
+            return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", path)
+                    .append("isDeep", isDeep).append("UUIDs", uuids).toString();
         }
     }
 
@@ -883,7 +912,7 @@ public class JcrObservationManager implements ObservationManager {
                             if (!states.containsKey(path)) {
                                 try {
                                     if (jcrSession.itemExists(path)) {
-                                        NodeState state = new NodeState((Node) jcrSession.getItem(path));
+                                        NodeState state = new NodeState((Node) jcrSession.getItem(path), true);
                                         states.put(path, state);
                                     }
                                 } catch (RepositoryException ex) {
@@ -1058,7 +1087,7 @@ public class JcrObservationManager implements ObservationManager {
             } else {
                 log.info("No root not found; cleaning up listeners");
                 synchronized (listeners) {
-                    for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext(); ) {
+                    for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext();) {
                         JcrListener listener = iter.next();
                         if (listener.getSession() == session) {
                             iter.remove();
@@ -1075,15 +1104,15 @@ public class JcrObservationManager implements ObservationManager {
         cleanup();
 
         synchronized (listeners) {
-            for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext(); ) {
+            for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext();) {
                 JcrListener listener = iter.next();
                 if (listener.getSession() == session) {
-                    iter.remove(); 
+                    iter.remove();
                     listener.dispose();
                 }
-            }       
-        }           
-    }                   
+            }
+        }
+    }
 
     void processEvents() {
         cleanup();
