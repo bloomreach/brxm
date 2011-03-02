@@ -192,7 +192,7 @@ public class JcrObservationManager implements ObservationManager {
                     } else {
                         properties.put(property.getName(), new Value[] { property.getValue() });
                     }
-                } else if (!skipBinaries) {
+                } else if (!skipBinaries && BINARY_DIGEST != null) {
                     if (property.getDefinition().isMultiple()) {
                         Value[] values = property.getValues();
                         Value[] hashes = new Value[values.length];
