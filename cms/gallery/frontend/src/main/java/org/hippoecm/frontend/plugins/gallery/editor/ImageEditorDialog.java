@@ -1,6 +1,7 @@
 package org.hippoecm.frontend.plugins.gallery.editor;
 
 import java.awt.Dimension;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -129,12 +130,20 @@ public class ImageEditorDialog extends AbstractDialog {
             if (writer == null) {
                 throw new GalleryException("Unsupported MIME type for writing: " + mimeType);
             }
-            JcrNodeModel nodeModel = new JcrNodeModel(originalImageNode);
             MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(originalImageNode.getProperty(JcrConstants.JCR_DATA).getStream());
             reader.setInput(imageInputStream);
             BufferedImage original = reader.read(0);
             Dimension dimension = galleryProcessor.getDesiredResourceDimension((Node)getModelObject());
-            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height, (int)dimension.getWidth(), (int)dimension.getHeight(), null, true);
+            Object hints;
+            boolean highQuality;
+            if(Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
+                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+                highQuality = true;
+            } else {
+                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+                highQuality = false;
+            }
+            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height, (int)dimension.getWidth(), (int)dimension.getHeight(), hints, highQuality);
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail);
             ((Node)getModelObject()).getProperty(JcrConstants.JCR_DATA).setValue(new ByteArrayInputStream(bytes.toByteArray()));
         } catch (GalleryException ex) {
@@ -149,4 +158,3 @@ public class ImageEditorDialog extends AbstractDialog {
         }
     }
 }
-
