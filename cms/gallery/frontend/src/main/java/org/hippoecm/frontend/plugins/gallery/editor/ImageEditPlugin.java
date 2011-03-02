@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.gallery.editor;
 
+import java.awt.Dimension;
+import java.util.Calendar;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -25,6 +28,9 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -45,26 +51,28 @@ public class ImageEditPlugin extends RenderPlugin {
         super(context, config);
 
         String mode = config.getString("mode", "edit");
+        final IModel<Node> jcrImageNodeModel = getModel();
 
-        final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+        try{
+            boolean isOriginal = "hippogallery:original".equals(jcrImageNodeModel.getObject().getName());
 
-        //The edit image button
-        final IModel<Node> jcrImageNodeModel = ImageEditPlugin.this.getModel();
-        AjaxLink<String> cropLink = new AjaxLink<String>("crop-link") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new ImageEditorDialog(jcrImageNodeModel, (processor != null ? processor : new DefaultGalleryProcessor())));
-            }
-        };
-        try {
-            cropLink.setVisible(
-                    "edit".equals(mode) &&
-                    !"hippogallery:original".equals(jcrImageNodeModel.getObject().getName()));
-        } catch (RepositoryException e) {
-            // FIXME: report back to user
-            e.printStackTrace();
+            final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+
+            //The edit image button
+            AjaxLink<String> cropLink = new AjaxLink<String>("crop-link") {
+                @Override
+                public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                    IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                    dialogService.show(new ImageEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
+                }
+            };
+
+            cropLink.setVisible("edit".equals(mode) && !isOriginal);
+            add(cropLink);
+
+        } catch(RepositoryException ex){
+            error(ex);
+            log.error(ex.getMessage());
         }
-        add(cropLink);
     }
 }

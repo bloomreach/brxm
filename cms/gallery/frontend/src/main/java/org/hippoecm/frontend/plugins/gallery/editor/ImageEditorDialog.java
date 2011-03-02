@@ -24,10 +24,12 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.CropBehavior;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.resource.JcrResourceStream;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +43,12 @@ public class ImageEditorDialog extends AbstractDialog {
 
     private String region;
     private GalleryProcessor galleryProcessor;
+    private Dimension originalImageDimension;
+    private Dimension thumbnailDimension;
 
     private ImageEditorDialog(){}
 
-    public ImageEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor){
+    public ImageEditorDialog(IModel<Node> jcrImageNodeModel,  GalleryProcessor galleryProcessor){
         super(jcrImageNodeModel);
         this.galleryProcessor = galleryProcessor;
 
@@ -54,31 +58,46 @@ public class ImageEditorDialog extends AbstractDialog {
 
         if(getModelObject() != null){
             try {
-                Node originalImageNode = ((Node) getModelObject()).getParent().getNode("hippogallery:original");
-                JcrNodeModel nodeModel = new JcrNodeModel(originalImageNode);
+                this.thumbnailDimension = galleryProcessor.getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
 
-                JcrImage originalImage = new JcrImage("image", new JcrResourceStream(nodeModel));
-                JcrImage imgPreview = new JcrImage("imagepreview", new JcrResourceStream(nodeModel));
+                Node originalImageNode = ((Node) getModelObject()).getParent().getNode("hippogallery:original");
+                JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
+
+                JcrImage originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
+                JcrImage imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
+
+                this.originalImageDimension = new Dimension(
+                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
+                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
+
+
                 WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
                 imagePreviewContainer.setOutputMarkupId(true);
                 imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("border:1px solid black"), ";"));
-                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:83px"), ";"));
-                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:125px"), ";"));
+                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:"+ thumbnailDimension.getHeight() +"px"), ";"));
+                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:"+ thumbnailDimension.getWidth() +"px"), ";"));
                 imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("position:relative"), ";"));
                 imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("overflow:hidden"), ";"));
 
-                imgPreview.add(new AttributeAppender("style", new Model<String>("top:-20px"), ";"));
-                imgPreview.add(new AttributeAppender("style", new Model<String>("left:-20px"), ";"));
+                /*imgPreview.add(new AttributeAppender("style", new Model<String>("top:-20px"), ";"));
+                imgPreview.add(new AttributeAppender("style", new Model<String>("left:-20px"), ";"));*/
                 imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
 
                 imagePreviewContainer.add(imgPreview);
 
-                originalImage.add(new CropBehavior(regionField.getMarkupId(), imagePreviewContainer.getMarkupId()));
+                originalImage.add(new CropBehavior(
+                        regionField.getMarkupId(),
+                        imagePreviewContainer.getMarkupId(),
+                        originalImageDimension,
+                        thumbnailDimension));
 
                 add(originalImage);
                 add(imagePreviewContainer);
 
             } catch (RepositoryException e) {
+                // FIXME: report back to user
+                e.printStackTrace();
+            } catch (GalleryException e){
                 // FIXME: report back to user
                 e.printStackTrace();
             }
@@ -93,6 +112,8 @@ public class ImageEditorDialog extends AbstractDialog {
     @Override
     protected void onOk() {
         JSONObject jsonObject = JSONObject.fromObject(region);
+        System.out.println(jsonObject);
+
         int top = jsonObject.getInt("top");
         int height = jsonObject.getInt("height");
         int left = jsonObject.getInt("left");

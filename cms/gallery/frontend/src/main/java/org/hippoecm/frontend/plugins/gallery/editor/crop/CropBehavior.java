@@ -1,21 +1,16 @@
 package org.hippoecm.frontend.plugins.gallery.editor.crop;
 
+import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.util.template.TextTemplate;
-import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
+import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
-import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 import org.onehippo.yui.YahooNamespace;
-import org.onehippo.yui.YuiNamespace;
 
 /**
  * Created by IntelliJ IDEA. User: mchatzidakis Date: 2/28/11 Time: 3:07 PM To change this template use File | Settings
@@ -25,11 +20,15 @@ public class CropBehavior extends AbstractYuiBehavior {
 
     private String regionInputId;
     private String imagePreviewContainerId;
+    private Dimension originalImageDimension;
+    private Dimension thumbnailDimension;
 
 
-    public CropBehavior(String regionInputId, String imagePreviewContainerId){
+    public CropBehavior(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension, Dimension thumbnailDimension){
         this.regionInputId = regionInputId;
         this.imagePreviewContainerId = imagePreviewContainerId;
+        this.originalImageDimension = originalImageDimension;
+        this.thumbnailDimension = thumbnailDimension;
     }
 
     @Override
@@ -53,24 +52,19 @@ public class CropBehavior extends AbstractYuiBehavior {
         context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath()+"resize/assets/skins/sam/resize-skin.css"));
     }
 
+
     private String getInitString() {
+        PackagedTextTemplate cropperJsTemplate = new PackagedTextTemplate(CropBehavior.class, "Hippo.ImageCropper.js");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("originalImageMarkupId", getComponent().getMarkupId());
+        parameters.put("imagePreviewContainerMarkupId", imagePreviewContainerId);
+        parameters.put("regionInputMarkupId", regionInputId);
+        parameters.put("originalImageWidth", originalImageDimension.getWidth());
+        parameters.put("originalImageHeight", originalImageDimension.getHeight());
+        parameters.put("thumbnailWidth", thumbnailDimension.getWidth());
+        parameters.put("thumbnailHeight", thumbnailDimension.getHeight());
 
-        // create image cropper instance
-        return  "var imgCrop = new YAHOO.widget.ImageCropper('" + getComponent().getMarkupId() + "', {keyTick:5});" +
-                "var imgpreviewdiv = YAHOO.util.Dom.get('"+ imagePreviewContainerId +"');" +
-                "var imgpreview = YAHOO.util.Dom.getFirstChild(imgpreviewdiv);" +
-                "var regionInput = YAHOO.util.Dom.get('"+ regionInputId +"');" +
-                "imgCrop.on('moveEvent', function() { " +
-                "   var region = imgCrop.getCropCoords(); " +
-                "   regionInput.value = YAHOO.lang.JSON.stringify(region);" +
-                "   imgpreview.style.top = '-' + region.top + 'px';" +
-                "   imgpreview.style.left = '-' + region.left + 'px';" +
-                "   imgpreviewdiv.style.height = region.height + 'px';" +
-                "   imgpreviewdiv.style.width = region.width + 'px';" +
-                "});";
-
-
-        // listen to events
+        return cropperJsTemplate.interpolate(parameters).getString();
     }
 
 
