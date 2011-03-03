@@ -63,6 +63,10 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.wicketstuff</groupId>
+      <artifactId>wicket-extjs</artifactId>
+    </dependency>
 
     <!-- test -->
     <dependency>
@@ -135,6 +139,15 @@
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
         </includes>
       </resource>
     </resources>
