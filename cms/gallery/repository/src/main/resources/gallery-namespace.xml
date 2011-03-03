@@ -127,10 +127,28 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ThumbnailEditorButtons</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="wicket.extensions" sv:type="String">
+            <sv:value>extension.display</sv:value>
+            <sv:value>extension.upload</sv:value>
+            <sv:value>extension.crop</sv:value>
+            <sv:value>extension.revert</sv:value>
+          </sv:property>
+          <sv:property sv:name="extension.display" sv:type="String">
+            <sv:value>${cluster.id}.display</sv:value>
+          </sv:property>
+          <sv:property sv:name="extension.upload" sv:type="String">
+            <sv:value>${cluster.id}.upload</sv:value>
+          </sv:property>
+          <sv:property sv:name="extension.crop" sv:type="String">
+            <sv:value>${cluster.id}.crop</sv:value>
+          </sv:property>
+          <sv:property sv:name="extension.revert" sv:type="String">
+            <sv:value>${cluster.id}.revert</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="display">
@@ -141,7 +159,7 @@
             <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageDisplayPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
+            <sv:value>${cluster.id}.display</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
@@ -170,7 +188,7 @@
             <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageUploadPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
+            <sv:value>${cluster.id}.upload</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
@@ -179,7 +197,7 @@
             <sv:value>service.gallery.processor</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="edit">
+        <sv:node sv:name="crop">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -187,10 +205,30 @@
             <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageEditPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageCropPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
+            <sv:value>${cluster.id}.crop</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>${wicket.model}</sv:value>
+          </sv:property>
+          <sv:property sv:name="gallery.processor.id" sv:type="String">
+            <sv:value>service.gallery.processor</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="revert">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageRevertPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.revert</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>

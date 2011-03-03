@@ -1,0 +1,28 @@
+.left-crop-area {
+  float: left;
+  max-width: 600px;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.right-crop-area {
+  float: left;
+  border-left: 1px solid blue;
+  max-width: 220px;
+  width: 220px;
+  padding: 5px;
+}
+
+.right-crop-area .preview-container {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid black;
+}
+
+.right-crop-area .preview-title {
+  font-weight: bold;
+}
+
+.right-crop-area .preview-description {
+
+}

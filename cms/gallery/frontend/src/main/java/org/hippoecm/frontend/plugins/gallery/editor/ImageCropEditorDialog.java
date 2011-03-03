@@ -11,13 +11,12 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import net.sf.json.JSONObject;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -26,7 +25,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.CropBehavior;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
-import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
@@ -35,22 +33,24 @@ import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * ImageEditorDialog shows a modal dialog with simple image editor in it, the only operation available currently is
- * "cropping". The ImageEditorDialog will replace the current variant with the result of the image editing actions.
- */
-public class ImageEditorDialog extends AbstractDialog {
+import net.sf.json.JSONObject;
 
-    Logger log = LoggerFactory.getLogger(ImageEditorDialog.class);
+/**
+ * ImageCropEditorDialog shows a modal dialog with simple image editor in it, the only operation available currently is
+ * "cropping". The ImageCropEditorDialog will replace the current variant with the result of the image editing actions.
+ */
+public class ImageCropEditorDialog extends AbstractDialog {
+
+    Logger log = LoggerFactory.getLogger(ImageCropEditorDialog.class);
 
     private String region;
     private GalleryProcessor galleryProcessor;
     private Dimension originalImageDimension;
     private Dimension thumbnailDimension;
 
-    private ImageEditorDialog(){}
+    private ImageCropEditorDialog(){}
 
-    public ImageEditorDialog(IModel<Node> jcrImageNodeModel,  GalleryProcessor galleryProcessor){
+    public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor){
         super(jcrImageNodeModel);
         this.galleryProcessor = galleryProcessor;
 
@@ -69,6 +69,8 @@ public class ImageEditorDialog extends AbstractDialog {
                 JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
                 JcrImage originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
 
+                boolean isPreviewVisible = thumbnailDimension.getWidth() <= 200;
+
                 JcrImage imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
                 imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
 
@@ -77,15 +79,21 @@ public class ImageEditorDialog extends AbstractDialog {
                 imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:"+ thumbnailDimension.getHeight() +"px"), ";"));
                 imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:"+ thumbnailDimension.getWidth() +"px"), ";"));
                 imagePreviewContainer.add(imgPreview);
+                imagePreviewContainer.setVisible(isPreviewVisible);
 
                 originalImage.add(new CropBehavior(
-                        regionField.getMarkupId(),
-                        imagePreviewContainer.getMarkupId(),
-                        originalImageDimension,
-                        thumbnailDimension));
+                    regionField.getMarkupId(),
+                    imagePreviewContainer.getMarkupId(),
+                    originalImageDimension,
+                    thumbnailDimension));
 
                 add(originalImage);
                 add(imagePreviewContainer);
+
+                Label previewDescription = new Label("preview-description", isPreviewVisible ?
+                                new StringResourceModel("preview-description-enabled", this, null) :
+                                new StringResourceModel("preview-description-disabled", this, null));
+                add(previewDescription);
 
             } catch (RepositoryException e) {
                 // FIXME: report back to user
@@ -99,7 +107,7 @@ public class ImageEditorDialog extends AbstractDialog {
 
     @Override
     public IModel<String> getTitle() {
-        return new StringResourceModel("edit-image-dialog-title", ImageEditorDialog.this, null);
+        return new StringResourceModel("edit-image-dialog-title", ImageCropEditorDialog.this, null);
     }
 
     @Override

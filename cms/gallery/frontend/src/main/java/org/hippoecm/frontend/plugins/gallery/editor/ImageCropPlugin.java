@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.gallery.editor;
 
-import java.awt.Dimension;
-import java.util.Calendar;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -29,25 +26,22 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
-import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageEditPlugin extends RenderPlugin {
+public class ImageCropPlugin extends RenderPlugin {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ImageEditPlugin.java 27169 2011-03-01 14:25:35Z mchatzidakis $";
+    private final static String SVN_ID = "$Id: ImageCropPlugin.java 27169 2011-03-01 14:25:35Z mchatzidakis $";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageEditPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(ImageCropPlugin.class);
 
 
-    public ImageEditPlugin(final IPluginContext context, IPluginConfig config) {
+    public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         String mode = config.getString("mode", "edit");
@@ -63,7 +57,7 @@ public class ImageEditPlugin extends RenderPlugin {
                 @Override
                 public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                     IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                    dialogService.show(new ImageEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
+                    dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
                 }
             };
 

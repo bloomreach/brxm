@@ -1194,22 +1194,30 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/ren
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-zip-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog.java -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin.html -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_it.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.html -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.html -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog_fr.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.html -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.java -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin_fr.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageUploadPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageUploadPlugin_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ThumbnailEditorButtons.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop/CropBehavior.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop/Hippo.ImageCropper.js -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop/crop-editor-dialog.css -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/DiffusionFilterOp.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFEncoder.java -text svneol=unset#text/plain

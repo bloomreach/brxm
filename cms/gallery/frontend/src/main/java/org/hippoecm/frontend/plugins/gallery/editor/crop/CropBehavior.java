@@ -50,6 +50,7 @@ public class CropBehavior extends AbstractYuiBehavior {
         });
         context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath()+"imagecropper/assets/skins/sam/imagecropper-skin.css"));
         context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath()+"resize/assets/skins/sam/resize-skin.css"));
+        context.addCssReference(new ResourceReference(CropBehavior.class, "crop-editor-dialog.css"));
     }
 
 
@@ -63,6 +64,7 @@ public class CropBehavior extends AbstractYuiBehavior {
         parameters.put("originalImageHeight", originalImageDimension.getHeight());
         parameters.put("thumbnailWidth", thumbnailDimension.getWidth());
         parameters.put("thumbnailHeight", thumbnailDimension.getHeight());
+        parameters.put("isPreviewVisible", thumbnailDimension.getWidth() <= 200);
 
         return cropperJsTemplate.interpolate(parameters).getString();
     }
