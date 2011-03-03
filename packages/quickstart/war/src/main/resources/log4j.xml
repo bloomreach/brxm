@@ -50,13 +50,16 @@
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="false" name="JPOX">
-    <level value="warn"/>
+  <category additivity="false" name="DataNucleus.Plugin">
+    <level value="fatal"/>
     <appender-ref ref="root"/>
   </category>
-
-  <category additivity="false" name="JPOX.Plugin">
-    <level value="error"/>
+  <category additivity="false" name="DataNucleus.ClassLoading">
+    <level value="fatal"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="DataNucleus.Enhancer">
+    <level value="fatal"/>
     <appender-ref ref="root"/>
   </category>
 
