@@ -779,8 +779,6 @@
         <function-signature>boolean isReadable(java.lang.Object, java.lang.String)</function-signature>
         <example>
             &lt;c:if test="${hst:isReadable(object, 'propertyName')}"&gt;
-            or
-            &lt;c:if test="${hst:isReadable(object, 'propertyName.childName')}"&gt;
         </example>
     </function>
     
