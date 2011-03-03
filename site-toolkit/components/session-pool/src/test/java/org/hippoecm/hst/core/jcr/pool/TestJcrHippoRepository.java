@@ -64,12 +64,12 @@ public class TestJcrHippoRepository {
         JcrHippoRepository vmRepository1 = new JcrHippoRepository("vm://");
         Session session1 = vmRepository1.login(defaultCreds);
         assertNotNull(session1);
-        session.logout();
+        session1.logout();
         
         JcrHippoRepository vmRepository2 = new JcrHippoRepository("vm://");
         Session session2 = vmRepository2.login(defaultCreds);
         assertNotNull(session2);
-        session.logout();
+        session2.logout();
         
         // even though a JcrHippoRepository is closed, 
         // the internal hippo repository must not be closed
