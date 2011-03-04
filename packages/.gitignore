@@ -51,6 +51,7 @@ quickstart/war/.classpath
 quickstart/war/.pom.xml.swp
 quickstart/war/.project
 quickstart/war/.settings
+quickstart/war/overlays
 quickstart/war/src/main/resources/.jetty.xml.swp
 quickstart/war/src/main/webapp/skin
 quickstart/war/src/main/webapp/xinha
