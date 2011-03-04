@@ -1,8 +1,9 @@
 .crop-link {
-    /*background-image: ;*/
+    background: url("crop_icononly.png") no-repeat scroll 0 0 transparent;
     display: block;
     width: 244px;
     height: 26px;
+    padding: 6px 0 0 30px;
     color: #333333;
     cursor: pointer;
 }

@@ -87,7 +87,6 @@ public class ImageCropPlugin extends RenderPlugin {
                     dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
                 }
             });
-
             cropLink.setVisible("edit".equals(mode) && !isOriginal && !originalImageSmallerThanThumbSize);
             add(cropLink);
 
