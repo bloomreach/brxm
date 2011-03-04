@@ -1,7 +1,7 @@
 .left-crop-area {
   float: left;
-  max-width: 590px;
-  max-height: 480px;
+  width: 580px;
+  height: 480px;
   overflow: auto;
 }
 
@@ -38,4 +38,9 @@
 .right-crop-area .thumbnail-size {
   display: block;
   padding-top: 10px;
+}
+
+/* YUI has a bug when the image is small but the cropping mask large. It repeats the image...*/
+.yui-crop-resize-mask {
+    background-repeat: no-repeat;
 }
