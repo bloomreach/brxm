@@ -211,6 +211,19 @@
       <artifactId>hippo-cms-plugins</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <!-- Surf addon -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-surf-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-surf-repository</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
