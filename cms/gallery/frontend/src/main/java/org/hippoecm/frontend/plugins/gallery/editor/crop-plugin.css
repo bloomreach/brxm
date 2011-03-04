@@ -1,0 +1,12 @@
+.crop-link {
+    /*background-image: ;*/
+    display: block;
+    width: 244px;
+    height: 26px;
+    color: #333333;
+    cursor: pointer;
+}
+
+.imageset-override-styles .resource-values, .imageset-override-styles .dataTableContainer {
+    margin-top: 4px;
+}

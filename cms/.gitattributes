@@ -1217,6 +1217,7 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/Imag
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageUploadPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageUploadPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ThumbnailEditorButtons.html -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop-plugin.css -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop/CropBehavior.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop/Hippo.ImageCropper.js -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop/crop-editor-dialog.css -text
