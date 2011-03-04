@@ -1,15 +1,16 @@
 .left-crop-area {
   float: left;
   width: 580px;
-  height: 480px;
+  height: 470px;
   overflow: auto;
+  margin:5px;
 }
 
 .right-crop-area {
   float: right;
   border-left: 1px solid #999999;
-  max-width: 220px;
-  width: 220px;
+  max-width: 216px;
+  width: 216px;
   padding: 5px;
   padding-left:12px;
   margin: 5px 0;
