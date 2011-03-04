@@ -15,14 +15,18 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <div class="resource-values resource-properties yui-skin-sam" style="float:left; max-width:630px; max-height:360px; overflow:auto">
+    <div class="resource-values resource-properties yui-skin-sam left-crop-area">
       <img wicket:id="image"/>
       <input wicket:id="region" type="hidden"/>
     </div>
-    <div wicket:id="previewcontainer" style="position:relative; overflow:hidden; border:1px solid black;">
-        <img wicket:id="imagepreview"/>
-    </div>
+    <div class="right-crop-area">
+      <span class="preview-title"><wicket:message key="preview-title"/></span>
+      <span wicket:id="preview-description" class="preview-description"/>
 
+      <div wicket:id="previewcontainer" class="preview-container">
+        <img wicket:id="imagepreview"/>
+      </div>
+    </div>
   </wicket:extend>
 
 </html>

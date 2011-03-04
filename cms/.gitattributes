@@ -1194,7 +1194,12 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/ren
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/columns/render/res/mimetype-zip-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/FileNameDisplayPlugin_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog.java -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog_fr.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_fr.properties -text
@@ -1203,9 +1208,6 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/Imag
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_nl.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.html -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditorDialog_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.properties -text
