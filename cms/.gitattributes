@@ -1208,10 +1208,6 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/Imag
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_it.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_fr.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_it.properties -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageRevertPlugin.properties -text
