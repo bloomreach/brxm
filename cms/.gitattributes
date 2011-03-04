@@ -1202,6 +1202,10 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/Imag
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropEditorDialog_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin.html -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin.java -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin_fr.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin_it.properties -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageCropPlugin_nl.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_fr.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageDisplayPlugin_it.properties -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/ImageEditPlugin.properties -text

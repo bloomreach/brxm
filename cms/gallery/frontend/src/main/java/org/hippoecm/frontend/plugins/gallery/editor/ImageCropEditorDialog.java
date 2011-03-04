@@ -21,6 +21,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.CropBehavior;
@@ -95,6 +97,12 @@ public class ImageCropEditorDialog extends AbstractDialog {
                                 new StringResourceModel("preview-description-disabled", this, null));
                 add(previewDescription);
 
+                Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null, new Object[]{
+                        ((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight())
+                }));
+                add(thumbnailSize);
+
+
             } catch (RepositoryException e) {
                 // FIXME: report back to user
                 e.printStackTrace();
@@ -103,6 +111,11 @@ public class ImageCropEditorDialog extends AbstractDialog {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return new ValueMap("width=855,height=565").makeImmutable();
     }
 
     @Override

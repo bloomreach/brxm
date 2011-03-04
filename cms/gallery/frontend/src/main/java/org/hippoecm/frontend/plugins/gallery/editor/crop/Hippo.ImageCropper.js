@@ -8,7 +8,7 @@
     var imgCrop = new YAHOO.widget.ImageCropper(
             '${originalImageMarkupId}',
             {
-                keyTick:5,
+                keyTick:4,
                 initialXY:[10, 10],
                 initHeight: thumbnailHeight,
                 initWidth: thumbnailWidth,

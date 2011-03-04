@@ -1,16 +1,20 @@
 .left-crop-area {
   float: left;
-  max-width: 600px;
-  max-height: 360px;
+  max-width: 590px;
+  max-height: 480px;
   overflow: auto;
 }
 
 .right-crop-area {
-  float: left;
-  border-left: 1px solid blue;
+  float: right;
+  border-left: 1px solid #999999;
   max-width: 220px;
   width: 220px;
   padding: 5px;
+  padding-left:12px;
+  margin: 5px 0;
+  min-height: 454px;
+  _height: 454px;
 }
 
 .right-crop-area .preview-container {
@@ -20,9 +24,18 @@
 }
 
 .right-crop-area .preview-title {
+  display: block;
+  font-size: 14px;
   font-weight: bold;
+  padding-bottom: 14px;
 }
 
 .right-crop-area .preview-description {
+  display: block;
+  padding-bottom: 12px;
+}
 
+.right-crop-area .thumbnail-size {
+  display: block;
+  padding-top: 10px;
 }
