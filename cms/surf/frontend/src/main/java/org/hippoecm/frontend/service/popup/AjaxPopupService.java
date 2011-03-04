@@ -70,7 +70,7 @@ public class AjaxPopupService extends Plugin implements IPopupService {
     }
 
     private String getPopupBlockerDetectionScript() {
-        final ClassResourceModel messageModel = new ClassResourceModel("popup.blocker.detected", null);
+        final ClassResourceModel messageModel = new ClassResourceModel("popup.blocker.detected", getClass());
 
         StringBuilder sb = new StringBuilder();
         sb.append("var popupDetectionTest = window.open('', '', 'width=1,height=1,left=0,top=0,scrollbars=no');");
