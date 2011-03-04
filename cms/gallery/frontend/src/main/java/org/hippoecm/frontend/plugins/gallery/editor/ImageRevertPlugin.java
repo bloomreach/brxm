@@ -60,6 +60,8 @@ public class ImageRevertPlugin extends RenderPlugin {
             };
 
             revertLink.setVisible("edit".equals(mode) && !isOriginal);
+            //for now, hide this button
+            revertLink.setVisible(false);
             add(revertLink);
 
         } catch(RepositoryException ex){

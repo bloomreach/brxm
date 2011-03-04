@@ -62,8 +62,6 @@ public class ImageCropPlugin extends RenderPlugin {
             };
 
             cropLink.setVisible("edit".equals(mode) && !isOriginal);
-            //for now, hide this button
-            cropLink.setVisible(false);
             add(cropLink);
 
         } catch(RepositoryException ex){
