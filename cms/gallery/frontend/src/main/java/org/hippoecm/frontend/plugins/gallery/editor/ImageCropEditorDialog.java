@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageInputStream;
@@ -157,7 +159,10 @@ public class ImageCropEditorDialog extends AbstractDialog {
             }
             BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height, (int)dimension.getWidth(), (int)dimension.getHeight(), hints, highQuality);
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail);
-            ((Node)getModelObject()).getProperty(JcrConstants.JCR_DATA).setValue(new ByteArrayInputStream(bytes.toByteArray()));
+
+            Node modelObject = (Node) getModelObject();
+            modelObject.getProperty(JcrConstants.JCR_DATA).setValue(new ByteArrayInputStream(bytes.toByteArray()));
+            modelObject.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
         } catch (GalleryException ex) {
             log.error("Unable to create thumbnail image", ex);
             error(ex);
