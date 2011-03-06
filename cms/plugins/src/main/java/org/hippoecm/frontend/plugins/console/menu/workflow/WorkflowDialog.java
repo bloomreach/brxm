@@ -28,7 +28,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -65,9 +64,9 @@ public class WorkflowDialog extends AbstractDialog<Node> {
                         + (descriptor != null ? descriptor.getDisplayName() : "none"));
             }
             out.flush();
-            dump.setDefaultModel(new Model(new String(ostream.toByteArray())));
+            dump.setDefaultModel(new Model<String>(new String(ostream.toByteArray())));
         } catch(RepositoryException ex) {
-            dump.setDefaultModel(new Model(ex.getClass().getName()+": "+ex.getMessage()));
+            dump.setDefaultModel(new Model<String>(ex.getClass().getName()+": "+ex.getMessage()));
         }
 
         setCancelVisible(false);
@@ -82,7 +81,7 @@ public class WorkflowDialog extends AbstractDialog<Node> {
     public void onCancel() {
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         String path;
         try {
@@ -90,6 +89,6 @@ public class WorkflowDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        return new Model("Workflow for " + path);
+        return new Model<String>("Workflow for " + path);
     }
 }
