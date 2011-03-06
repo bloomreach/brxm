@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
@@ -57,8 +58,8 @@ class NodeEditor extends Form {
         super(id);
         setOutputMarkupId(true);
 
-        add(new Label("primarytype", new PropertyModel(this, "primaryType")));
-        add(new Label("types", new PropertyModel(this, "mixinTypes")));
+        add(new Label("primarytype", new PropertyModel<String>(this, "primaryType")));
+        add(new Label("types", new PropertyModel<String>(this, "mixinTypes")));
 
         propertyProvider = new PropertyProvider(new EmptyDataProvider());
         propertiesEditor = new PropertiesEditor("properties", propertyProvider);
@@ -71,7 +72,7 @@ class NodeEditor extends Form {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        IModel model = getModel();
+        IModel<Node> model = getModel();
         if ((model != null) && (model instanceof JcrNodeModel) && (((JcrNodeModel) model).getNode() != null)) {
             try {
                 JcrNodeModel newModel = (JcrNodeModel) model;

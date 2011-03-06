@@ -32,14 +32,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Check;
 import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class NodeTypesEditor extends CheckGroup {
+class NodeTypesEditor extends CheckGroup<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -51,17 +51,17 @@ class NodeTypesEditor extends CheckGroup {
         super(id, nodeTypes);
         this.nodeModel = nodeModel;
 
-        add(new ListView("type", getAllNodeTypes()) {
+        add(new ListView<String>("type", getAllNodeTypes()) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem item) {
-                ListItemModel model = (ListItemModel) item.getModel();
+            protected void populateItem(ListItem<String> item) {
+                IModel<String> model = item.getModel();
 
-                Check check = new Check("check", model);
+                Check<String> check = new Check<String>("check", model);
                 item.add(check);
 
-                String type = (String) model.getObject();
+                String type = model.getObject();
                 check.add(new Label("name", type));
             }
         });
@@ -78,7 +78,7 @@ class NodeTypesEditor extends CheckGroup {
     }
 
     @Override
-    protected void onSelectionChanged(Collection selection) {
+    protected void onSelectionChanged(Collection<? extends String> selection) {
         if (getModelObject() instanceof List && nodeModel != null) {
             try {
                 Node node = nodeModel.getNode();

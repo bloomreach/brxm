@@ -15,11 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
+import javax.jcr.Node;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class EditorPlugin extends RenderPlugin {
+public class EditorPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
