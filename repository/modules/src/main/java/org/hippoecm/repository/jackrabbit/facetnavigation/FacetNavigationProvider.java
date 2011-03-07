@@ -104,21 +104,6 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         
         String[] filters = getProperty(nodeId, facetFilters);
         
-        // temporary: we do not want draft results, hence we by default configure to not show them. This should be improved
-        try {
-            this.resolveName("hippostd:state");
-            String[] extendedFilter = new String[filters != null ? filters.length + 1 : 1];
-            if (filters != null && filters.length > 0) {
-                System.arraycopy(filters, 0, extendedFilter, 0, filters.length);
-            }
-            extendedFilter[extendedFilter.length -1] = "hippostd:state != draft";
-            filters = extendedFilter;
-        } catch (IllegalNameException e){
-            // hippostd is not a known namespace, we skip it
-        } catch (NamespaceException e){
-            // hippostd is not a known namespace, we skip it
-        }
-        
         String facetedFiltersString = null;
         if(filters != null) {
             try { 
