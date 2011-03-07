@@ -40,8 +40,8 @@ import javax.jcr.security.AccessControlPolicy;
 import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
-import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 
+import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
@@ -154,6 +154,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      * The HippoAccessCache instance
      */
     private HippoAccessCache readAccessCache;
+    private WeakHashMap<HippoNodeId,Boolean> readVirtualAccessCache;
 
     private static final int DEFAULT_PERM_CACHE_SIZE = 20000;
 
@@ -260,6 +261,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
         HippoAccessCache.setMaxSize(cacheSize);
         readAccessCache = HippoAccessCache.getInstance(userId);
+        readVirtualAccessCache = new WeakHashMap<HippoNodeId, Boolean>();
 
         // we're done
         initialized = true;
@@ -276,6 +278,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
 
         // clear out all caches
         readAccessCache.clear();
+        readVirtualAccessCache.clear();
         //requestItemStateCache.clear();
         groupIds.clear();
         currentDomainRoleIds.clear();
@@ -348,7 +351,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
         
         // not a read, remove node from cache
-        readAccessCache.remove(id);
+        removeAccessFromCache((NodeId) id);
         
         return isGranted(hierMgr.getPath(id), permissions);
     }
@@ -470,7 +473,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
 
         // check cache
-        Boolean allowRead = readAccessCache.get(id);
+        Boolean allowRead = getAccessFromCache(id);
         if (allowRead != null) {
             return allowRead.booleanValue();
         }
@@ -483,14 +486,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         if (nodeState.getStatus() == NodeState.STATUS_NEW && !(nodeState.getId() instanceof HippoNodeId)) {
             // allow read to new nodes in own session
             // the write check is done on save
-            readAccessCache.put(id, true);
+            addAccessToCache(id, true);
             return true;
         }
 
         // make sure all parent nodes are readable
         if (!rootNodeId.equals(id)) {
             if (!canRead(nodeState.getParentId())) {
-                readAccessCache.put(id, false);
+                addAccessToCache(id, false);
                 return false;
             }
         }
@@ -500,16 +503,40 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             Set<String> privs = fap.getPrivileges();
             if (privs.contains("jcr:read")) {
                 if (isNodeInDomain(nodeState, fap)) {
-                    readAccessCache.put(id, true);
+                    addAccessToCache(id, true);
                     return true;
                 }
             }
         }
-        readAccessCache.put(id, false);
+        addAccessToCache(id, false);
         if (log.isInfoEnabled()) {
             log.info("DENIED read : {}", npRes.getJCRPath(hierMgr.getPath(id)));
         }
         return false;
+    }
+    
+    private Boolean getAccessFromCache(NodeId id) {
+        if (id instanceof HippoNodeId) {
+            return readVirtualAccessCache.get(id);
+        } else {
+            return readAccessCache.get(id);
+        }
+    }
+
+    private void addAccessToCache(NodeId id, boolean value) {
+        if (id instanceof HippoNodeId) {
+            readVirtualAccessCache.put((HippoNodeId) id, value);
+        } else {
+            readAccessCache.put(id, value);
+        }
+    }
+    
+    private void removeAccessFromCache(NodeId id) {
+        if (id instanceof HippoNodeId) {
+            readVirtualAccessCache.remove(id);
+        } else {
+            readAccessCache.remove(id);
+        }
     }
     
     /**
@@ -1315,7 +1342,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                                 log.info("GRANT: " + priv.getName() + " to user " + userId + " in domain " + fap + " for " + npRes.getJCRPath(absPath));
                             }
                             if (priv.getName().equals("jcr:setProperties")) {
-                                readAccessCache.remove(id);
+                                removeAccessFromCache(id);
                             }
                             break;
                         }

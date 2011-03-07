@@ -55,10 +55,10 @@ import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.Modules;
-import org.hippoecm.repository.SessionStateThresholdEnum;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
+import org.hippoecm.repository.Modules;
+import org.hippoecm.repository.SessionStateThresholdEnum;
 import org.hippoecm.repository.dataprovider.DataProviderContext;
 import org.hippoecm.repository.dataprovider.DataProviderModule;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
@@ -362,24 +362,24 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public boolean hasItemState(ItemId id) {
-            if(id instanceof HippoNodeId || id instanceof ParameterizedNodeId) {
-                return true;
-            }
-            return super.hasItemState(id);
+        if(id instanceof HippoNodeId || id instanceof ParameterizedNodeId) {
+            return true;
+        } else if (id instanceof PropertyId && ((PropertyId) id).getParentId() instanceof HippoNodeId) {
+            return true;
+        }
+        return super.hasItemState(id);
     }
 
     @Override
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException {
         NodeState state = null;
-        try {
-            state = super.getNodeState(id);
-        } catch(NoSuchItemStateException ex) {
-            if(!(id instanceof HippoNodeId) && !(id instanceof ParameterizedNodeId)) {
-                throw ex;
-            }
-        } catch(ItemStateException ex) {
-            if(!(id instanceof HippoNodeId)) {
-                throw ex;
+        if (!(id instanceof HippoNodeId)) {
+            try {
+                state = super.getNodeState(id);
+            } catch (NoSuchItemStateException ex) {
+                if(!(id instanceof ParameterizedNodeId)) {
+                    throw ex;
+                }
             }
         }
 
@@ -421,6 +421,9 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public PropertyState getPropertyState(PropertyId id) throws NoSuchItemStateException, ItemStateException {
+        if (id.getParentId() instanceof HippoNodeId) {
+            throw new NoSuchItemStateException("Property of a virtual node cannot be retrieved from shared ISM");
+        }
         return super.getPropertyState(id);
     }
     
