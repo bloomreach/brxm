@@ -113,6 +113,9 @@ public class LoggingServlet extends HttpServlet {
             BasicAuth.setRequestAuthorizationHeaders(res, "LoggingServlet");
             return;
         }
+        
+        String path = req.getRequestURI();
+        if (!path.endsWith("/")) res.sendRedirect(path + "/");
 
         res.setStatus(HttpServletResponse.SC_OK);
         res.setContentType("text/html");
@@ -142,7 +145,7 @@ public class LoggingServlet extends HttpServlet {
         String lastLogger = req.getParameter("logger");
         String lastLevel = req.getParameter("level");
         SortedMap<String, String> loggerLevelMap = getLoggerLevelMap();
-        printForm(writer, loggerLevelMap, lastLogger, lastLevel, req.getRequestURI());
+        printForm(writer, loggerLevelMap, lastLogger, lastLevel);
         printLoggerLevels(writer, loggerLevelMap);
 
         writer.println("</p>");
@@ -211,8 +214,8 @@ public class LoggingServlet extends HttpServlet {
         }
     }
 
-    private void printForm(PrintWriter writer, Map<String, String> loggerLevelMap, String lastLogger, String lastLevel, String actionPath) {
-        writer.println("  <form action=\"" + actionPath + "\" method=\"POST\" enctype=\"application/x-www-form-urlencoded\">");
+    private void printForm(PrintWriter writer, Map<String, String> loggerLevelMap, String lastLogger, String lastLevel) {
+        writer.println("  <form action=\".\" method=\"POST\" enctype=\"application/x-www-form-urlencoded\">");
         writer.println("    <table>");
         writer.println("      <tr>");
         writer.println("        <td>");
