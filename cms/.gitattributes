@@ -779,6 +779,8 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/TemplateEdit
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/action/Action.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/action/NewCompoundTypeAction.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/action/NewDocumentTypeAction.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/copy-16.png -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/delete-16.png -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/AbstractWizardLink.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CancelLink.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/CreateCompoundTypeDialog.java svneol=native#text/plain
@@ -819,6 +821,12 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/Remod
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard$Step2_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/RemodelWizard.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/SelectLayoutStep.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/document-save-16.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/document-saveclose-16.png -text svneol=unset#image/png
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/edit-16.png -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/move-16.png -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/rename-16.png -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/where-used-16.png -text svneol=unset#unset
 editor/pom.xml -text
 editor/repository/pom.xml -text
 editor/repository/src/main/resources/default-editor-factory.xml svneol=native#text/plain
