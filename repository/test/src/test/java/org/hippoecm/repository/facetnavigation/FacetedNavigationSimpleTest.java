@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -307,6 +308,40 @@ public class FacetedNavigationSimpleTest extends TestCase {
         assertEquals(4L, navigation.getNode("hippo:date/" + globalCal.getTimeInMillis()).getProperty(
                 HippoNodeType.HIPPO_COUNT).getLong());
 
+    }
+
+    /**
+     * Tests CMS7-5026: facetnavigation on hippostd:state should include 'draft' state
+     *
+     * @throws RepositoryException
+     * @throws IOException
+     */
+    @Test
+    public void testFacetsOnHippoState() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDocumentsWithStateStructure(testNode);
+        createFacetNodeHippoState(testNode);
+        session.save();
+
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        Node stateNode = navigation.getNode(HippoStdNodeType.HIPPOSTD_STATE);
+        assertNotNull(stateNode);
+        assertEquals(3L, stateNode.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
+        Node published = stateNode.getNode("published");
+        assertNotNull(published);
+        assertEquals(1L, published.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
+        Node unpublished = stateNode.getNode("unpublished");
+        assertNotNull(unpublished);
+        assertEquals(1L, unpublished.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
+        Node draft = stateNode.getNode("draft");
+        assertNotNull(draft);
+        assertEquals(1L, draft.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
     }
 
     @Test
@@ -632,6 +667,25 @@ public class FacetedNavigationSimpleTest extends TestCase {
         car.setProperty("tags", tags2);
     }
 
+    private void createDocumentsWithStateStructure(Node test) throws RepositoryException {
+        Node documents = test.addNode("documents", "nt:unstructured");
+        documents.addMixin("mix:referenceable");
+        Node myDocs = documents.addNode("mydocs", "nt:unstructured");
+
+        addDocumentWithState(myDocs, "doc1", "published");
+        addDocumentWithState(myDocs, "doc2", "unpublished");
+        addDocumentWithState(myDocs, "article3", "draft");
+    }
+
+    private void addDocumentWithState(Node node, String name, String state) throws RepositoryException {
+        Node article = node.addNode(name, "hippo:handle");
+        article.addMixin("hippo:hardhandle");
+        article = article.addNode(name, "hippo:document");
+        article.addMixin("hippo:harddocument");
+        article.addMixin(HippoStdNodeType.NT_PUBLISHABLE);
+        article.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
+    }
+
     private void createFacetNodeSingleValues(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node.addMixin("mix:referenceable");
@@ -664,5 +718,11 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date" });
     }
 
-    
+    private void createFacetNodeHippoState(Node node) throws RepositoryException {
+        node = node.addNode("facetnavigation");
+        node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { HippoStdNodeType.HIPPOSTD_STATE });
+    }
+
 }
