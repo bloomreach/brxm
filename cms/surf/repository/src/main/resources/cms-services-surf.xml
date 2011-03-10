@@ -14,15 +14,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="cms-services" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="cms-services" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
 
-  <!-- This cluster contains the plugins that expose non-gui services that must
-  be available before the plugins in cms-static are started.  It is a separate
-  cluster, so that extensions to the cms can add their plugins here. -->
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugincluster</sv:value>
-  </sv:property>
-  
   <sv:node sv:name="ajaxPopupService">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

@@ -1783,7 +1783,7 @@ surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService
 surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/IPopupService.java -text
 surf/pom.xml -text
 surf/repository/pom.xml -text
-surf/repository/src/main/resources/cms-services.xml -text
+surf/repository/src/main/resources/cms-services-surf.xml -text
 surf/repository/src/main/resources/hippoecm-extension.xml -text
 surf/repository/src/main/resources/workflow-websiteactions.xml -text
 test/src/main/resources/jta.properties svneol=native#text/plain
