@@ -107,7 +107,7 @@ if (!YAHOO.hippo.Upload) {
             Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');
             this.elements.selectFiles.appendChild(this.elements.selectFilesLink);
 
-            Dom.setStyle(this.elements.uploaderOverlay, 'width', "244px");
+            Dom.setStyle(this.elements.uploaderOverlay, 'width', config.buttonWidth);
             Dom.setStyle(this.elements.uploaderOverlay, 'height', "26px");
 
             this.uploader = new YAHOO.widget.Uploader(this.elements.uploaderOverlay);

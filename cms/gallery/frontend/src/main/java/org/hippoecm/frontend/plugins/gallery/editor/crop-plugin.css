@@ -15,13 +15,17 @@
  */
 
 .crop-link {
-  background: url("crop_icononly.png") no-repeat scroll 0 0 transparent;
+  background: url("res/button_crop.png") no-repeat scroll 0 0 transparent;
   display: block;
-  width: 244px;
+  width: 154px;
   height: 26px;
   padding: 6px 0 0 30px;
   color: #333333;
   cursor: pointer;
+}
+
+.crop-link:hover {
+    background: url("res/button_crop_hover.png") no-repeat scroll 0 0 transparent;
 }
 
 /*.imageset-override-styles .resource-values, .imageset-override-styles .dataTableContainer {
@@ -34,4 +38,15 @@
 
 .imageset-override-styles .imageset-extension-crop, .imageset-override-styles .imageset-extension-revert {
   padding-top: 10px;
+}
+
+
+.imageset-override-styles .imageset-extension-upload .selectFilesLink {
+    width:154px;
+    background: url("res/button_upload.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+}
+
+.imageset-override-styles .imageset-extension-upload .selectFilesLink.rollover {
+    background: url("res/button_upload_hover.png") no-repeat scroll 0 0 transparent;
 }

@@ -56,6 +56,9 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
     //Map containing translations used on the client
     private Map<String, String> translations = new HashMap<String, String>();
 
+    //Specify the width of the button so that it is not anymore hardcoded.
+    private String buttonWidth;
+
     public boolean isAllowMultipleFiles() {
         return allowMultipleFiles;
     }
@@ -146,6 +149,14 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
     public void addTranslation(String key, String value) {
         this.translations.put(key, value);
+    }
+
+    public String getButtonWidth() {
+        return buttonWidth;
+    }
+
+    public void setButtonWidth(String buttonWidth) {
+        this.buttonWidth = buttonWidth;
     }
 
 }

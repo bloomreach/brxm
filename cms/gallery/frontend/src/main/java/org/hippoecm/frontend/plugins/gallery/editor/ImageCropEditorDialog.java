@@ -77,6 +77,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
         regionField.setOutputMarkupId(true);
         add(regionField);
 
+
         if(getModelObject() != null){
             try {
                 Node thumbnailImageNode = (Node) jcrImageNodeModel.getObject();
