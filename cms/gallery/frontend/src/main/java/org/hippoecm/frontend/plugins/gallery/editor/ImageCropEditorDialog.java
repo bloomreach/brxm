@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2011 Hippo.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.frontend.plugins.gallery.editor;
 
 import java.awt.Dimension;
@@ -64,8 +79,9 @@ public class ImageCropEditorDialog extends AbstractDialog {
 
         if(getModelObject() != null){
             try {
-                thumbnailDimension = galleryProcessor.getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
-                Node originalImageNode = ((Node) getModelObject()).getParent().getNode("hippogallery:original");
+                Node thumbnailImageNode = (Node) jcrImageNodeModel.getObject();
+                thumbnailDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
+                Node originalImageNode = thumbnailImageNode.getParent().getNode("hippogallery:original");
                 originalImageDimension = new Dimension(
                                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
                                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
@@ -100,17 +116,17 @@ public class ImageCropEditorDialog extends AbstractDialog {
                 add(previewDescription);
 
                 Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null, new Object[]{
-                        ((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight())
+                        thumbnailImageNode.getName(), ((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight())
                 }));
                 add(thumbnailSize);
 
 
             } catch (RepositoryException e) {
-                // FIXME: report back to user
-                e.printStackTrace();
+                log.error(e.getMessage());
+                error(e);
             } catch (GalleryException e){
-                // FIXME: report back to user
-                e.printStackTrace();
+                log.error(e.getMessage());
+                error(e);
             }
         }
     }

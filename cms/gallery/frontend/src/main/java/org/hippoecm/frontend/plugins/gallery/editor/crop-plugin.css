@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2011 Hippo.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 .crop-link {
   background: url("crop_icononly.png") no-repeat scroll 0 0 transparent;
   display: block;
@@ -12,10 +28,10 @@
     margin-top: 4px;
 } */
 
-.imageset-extension-upload, .imageset-extension-crop, .imageset-extension-revert {
+.imageset-override-styles .imageset-extension-upload, .imageset-override-styles .imageset-extension-crop, .imageset-override-styles .imageset-extension-revert {
   float:left;
 }
 
-.imageset-extension-crop, .imageset-extension-revert {
+.imageset-override-styles .imageset-extension-crop, .imageset-override-styles .imageset-extension-revert {
   padding-top: 10px;
 }
