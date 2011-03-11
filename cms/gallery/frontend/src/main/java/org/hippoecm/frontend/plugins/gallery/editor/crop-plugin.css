@@ -17,7 +17,7 @@
 .crop-link {
   background: url("res/button_crop.png") no-repeat scroll 0 0 transparent;
   display: block;
-  width: 154px;
+  width: 124px;
   height: 26px;
   padding: 6px 0 0 30px;
   color: #333333;
@@ -42,11 +42,12 @@
 
 
 .imageset-override-styles .imageset-extension-upload .selectFilesLink {
-    width:154px;
+    width:124px;
     background: url("res/button_upload.png") no-repeat scroll 0 0 transparent;
-    cursor: pointer;
 }
 
-.imageset-override-styles .imageset-extension-upload .selectFilesLink.rollover {
+.imageset-override-styles .imageset-extension-upload .selectFilesLink.rollover,
+.imageset-override-styles .imageset-extension-upload .selectFilesLink:hover {
     background: url("res/button_upload_hover.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
 }
