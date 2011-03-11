@@ -4,6 +4,8 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/configs/ListConfigsPanel.html -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/configs/ListConfigsPanel.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbBar$BreadCrumbComponent.html -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbBar.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbPanel.java -text
