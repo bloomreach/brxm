@@ -20,20 +20,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigDataProvider extends SortableDataProvider {
+public class ConfigBackupDataProvider extends SortableDataProvider {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -42,58 +40,47 @@ public class ConfigDataProvider extends SortableDataProvider {
 
     private static final String BACKUPS_ROOT = "/backups";
 
-    private static transient List<Config> configList = new ArrayList<Config>();
+    private static transient List<ConfigBackup> configBackupList = new ArrayList<ConfigBackup>();
 
     private static String sessionId = "none";
 
-    public ConfigDataProvider() {
+    public ConfigBackupDataProvider() {
     }
 
-    public Iterator<Config> iterator(int first, int count) {
-        List<Config> users = new ArrayList<Config>();
+    public Iterator<ConfigBackup> iterator(int first, int count) {
+        List<ConfigBackup> users = new ArrayList<ConfigBackup>();
         for (int i = first; i < (count + first); i++) {
-            users.add(configList.get(i));
+            users.add(configBackupList.get(i));
         }
         return users.iterator();
     }
 
     public IModel model(Object object) {
-        return new DetachableConfig((Config) object);
+        return new DetachableConfigBackup((ConfigBackup) object);
     }
 
     public int size() {
-        populateConfigList();
-        return configList.size();
+        populateConfigBackupList();
+        return configBackupList.size();
     }
 
     /**
      * Populate list, refresh when a new session id is found or when dirty
      */
-    private static void populateConfigList() {
-        synchronized (ConfigDataProvider.class) {
-            NodeIterator iter = null;
-            try {
-                iter = ((UserSession) Session.get()).getJcrSession().getNode(BACKUPS_ROOT).getNodes();
-            } catch (RepositoryException e) {
-                log.error("Could not fetch backed up configurations.", e);
-                return;
-            }
+    private static void populateConfigBackupList() {
+        HippoSession session = (HippoSession) ((UserSession) Session.get()).getJcrSession();
 
-            configList.clear();
+        configBackupList.clear();
 
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        configList.add(new Config(node));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to instantiate new configuration.", e);
-                    }
-                }
-            }
-            Collections.sort(configList);
-            sessionId = Session.get().getId();
+        ConfigBackupManager manager = new ConfigBackupManager(session);
+
+        try {
+            configBackupList.addAll(manager.listConfigBackups());
+        } catch (RepositoryException e) {
+            log.error("Cannot populate list of backup configurations.", e);
         }
+        Collections.sort(configBackupList);
+        sessionId = Session.get().getId();
     }
 
 }

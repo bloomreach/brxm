@@ -17,6 +17,20 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
     <h2><wicket:message key="admin-configurations-title"/></h2>
+
+    <form class="hippo-controlpanel-form" wicket:id="form">
+      <table>
+        <tr>
+          <td><wicket:message key="configuration-name"/></td>
+          <td><input type="text" wicket:id="backupName"/></td>
+        </tr>
+      </table>
+      <div class="hippo-controlpanel-actions">
+        <input type="submit" wicket:message="value:backup-create-action" wicket:id="create-button"/>
+        <input type="submit" wicket:message="value:backup-upload-action" wicket:id="upload-button"/>
+      </div>
+    </form>
+
 <!--
     <ul class="hippo-controlpanel-options">
       <li><a href="#" wicket:id="create-user"><wicket:message key="user-create"/></a></li>

@@ -15,49 +15,42 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.configs;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DetachableConfig extends LoadableDetachableModel {
+public final class DetachableConfigBackup extends LoadableDetachableModel {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DetachableConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(DetachableConfigBackup.class);
 
-    private String path;
+    private String name;
 
-    protected Node getRootNode() throws RepositoryException {
-        return ((UserSession) Session.get()).getJcrSession().getRootNode();
+    public DetachableConfigBackup() {
     }
 
-    public DetachableConfig() {
+    public DetachableConfigBackup(final ConfigBackup config) {
+        this(config.getName());
     }
 
-    public DetachableConfig(final Config config) {
-        this(config.getPath());
+    public DetachableConfigBackup(final String name) {
+        this.name = name;
     }
 
-    public DetachableConfig(final String path) {
-        if (path == null || path.length() == 0) {
-            throw new IllegalArgumentException();
-        }
-        this.path = path.startsWith("/") ? path.substring(1) : path;
-    }
-
-    public Config getConfig() {
-        return (Config) getObject();
+    public ConfigBackup getConfigBackup() {
+        return (ConfigBackup) getObject();
     }
 
     @Override
     public int hashCode() {
-        return path.hashCode();
+        return name.hashCode();
     }
 
     /**
@@ -72,9 +65,9 @@ public final class DetachableConfig extends LoadableDetachableModel {
             return true;
         } else if (obj == null) {
             return false;
-        } else if (obj instanceof DetachableConfig) {
-            DetachableConfig other = (DetachableConfig) obj;
-            return path.equals(other.path);
+        } else if (obj instanceof DetachableConfigBackup) {
+            DetachableConfigBackup other = (DetachableConfigBackup) obj;
+            return name.equals(other.name);
         }
         return false;
     }
@@ -83,15 +76,12 @@ public final class DetachableConfig extends LoadableDetachableModel {
      * @see org.apache.wicket.model.LoadableDetachableModel#load()
      */
     @Override
-    protected Config load() {
-        if (path == null) {
-            return new Config();
-        }
-        // loads config from jcr
+    protected ConfigBackup load() {
         try {
-            return new Config(getRootNode().getNode(path));
+            HippoSession session = (HippoSession) ((UserSession)Session.get()).getJcrSession();
+            return new ConfigBackupManager(session).getConfigBackup(name);
         } catch (RepositoryException e) {
-            log.error("Unable to re-attach configuration with path '{}'", path, e);
+            log.error("Unable to re-attach backup with name '" + name + "'", e);
             return null;
         }
     }
