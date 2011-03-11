@@ -26,8 +26,8 @@ public class FileUploadWidgetSettings implements IClusterable{
     private boolean clearAfterUpload;
     private int clearTimeout;
     private boolean hideBrowseDuringUpload;
-
     private String buttonWidth;
+    private String buttonHeight;
 
     public FileUploadWidgetSettings() {
         fileExtensions = new String[0];
@@ -89,6 +89,14 @@ public class FileUploadWidgetSettings implements IClusterable{
 
     public void setButtonWidth(String buttonWidth) {
         this.buttonWidth = buttonWidth;
+    }
+
+    public String getButtonHeight() {
+        return buttonHeight;
+    }
+
+    public void setButtonHeight(String buttonHeight) {
+        this.buttonHeight = buttonHeight;
     }
 
 }

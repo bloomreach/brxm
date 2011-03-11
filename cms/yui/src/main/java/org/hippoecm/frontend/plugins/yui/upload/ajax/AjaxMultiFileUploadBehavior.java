@@ -52,11 +52,6 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
                    settings.isUploadAfterSelect() ? new StringResourceModel("upload.file.link", getComponent(), null).getString() :
                                                     new StringResourceModel("select.file.link", getComponent(), null).getString()
                 );
-
-                if(settings.getButtonWidth() == null){
-                    settings.setButtonWidth("244px");
-                }
-
                 return settings;
             }
 
