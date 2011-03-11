@@ -71,3 +71,7 @@
 [hippo:testproplvlinit] > nt:base
 - hippo:single (string)
 - hippo:multi (string) multiple
+
+[hippo:autocreatedchild] > hippo:document
++ hippo:child (nt:unstructured) = nt:unstructured autocreated mandatory
+- * (string)

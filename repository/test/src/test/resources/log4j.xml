@@ -106,8 +106,8 @@
   </category>
   
   <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
+    <level value="info"/>
+    <appender-ref ref="root"/>
   </category>
 
   <root>

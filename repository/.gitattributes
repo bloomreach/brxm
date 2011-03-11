@@ -57,6 +57,7 @@ config/src/main/resources/role-author.xml -text svneol=unset#text/plain
 config/src/main/resources/role-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/role-jcrread.xml -text svneol=unset#text/plain
 config/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
+config/src/main/resources/versioning-workflows.xml -text
 config/src/site/apt/index.apt -text
 config/src/site/site.xml svneol=native#text/plain
 config/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
@@ -275,6 +276,7 @@ test/src/test/java/org/hippoecm/repository/FacetedNavigationPerfTestCase.java -t
 test/src/test/java/org/hippoecm/repository/HREPTWO1493Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/VersioningWorkflowTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/FacetedReferenceTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/MirrorCombiFacetSelectTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/decorating/MirrorTest.java -text

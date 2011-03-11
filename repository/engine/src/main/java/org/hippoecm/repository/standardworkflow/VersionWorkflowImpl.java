@@ -15,37 +15,22 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.InternalWorkflow;
 
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
+import javax.jcr.*;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
-
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.ext.InternalWorkflow;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.*;
 
 public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
 
@@ -144,11 +129,16 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             if ("rep:root".equals(childType)) {
                 continue;
             }
-            for (NodeType nt : nodeTypes) {
-                if (nt.canAddChildNode(child.getName(), childType)) {
-                    Node childTarget = target.addNode(child.getName(), childType);
-                    restore(childTarget, child);
-                    break;
+            if (target.hasNode(child.getName() + "[" + child.getIndex() + "]")) {
+                Node childTarget = target.getNode(child.getName() + "[" + child.getIndex() + "]");
+                restore(childTarget, child);
+            } else {
+                for (NodeType nt : nodeTypes) {
+                    if (nt.canAddChildNode(child.getName(), childType)) {
+                        Node childTarget = target.addNode(child.getName(), childType);
+                        restore(childTarget, child);
+                        break;
+                    }
                 }
             }
         }
@@ -241,7 +231,11 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         for (NodeIterator childIter = node.getNodes(); childIter.hasNext();) {
             Node child = childIter.nextNode();
             if (child != null) {
-                child.remove();
+                if (child.getDefinition().isAutoCreated()) {
+                    clear(child);
+                } else {
+                    child.remove();
+                }
             }
         }
 
