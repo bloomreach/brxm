@@ -146,14 +146,12 @@ public class JcrOID implements OID, Serializable {
         return node;
     }
 
-    @Override
     public Object getKeyValue() {
         if (key == null)
             throw new NullPointerException();
         return key;
     }
 
-    @Override
     public String getPcClass() {
         return classname;
     }
@@ -170,7 +168,7 @@ public class JcrOID implements OID, Serializable {
     public int hashCode() {
         if (key == null)
             throw new NullPointerException();
-        return key.hashCode() + classname.hashCode(); // FIXME
+        return key.hashCode() ^ classname.hashCode();
     }
 
     @Override

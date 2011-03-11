@@ -150,8 +150,6 @@ public class JcrPersistenceHandler implements StorePersistenceHandler {
     public void deleteObject(StateManager sm) {
         // Check if read-only so update not permitted
         storeMgr.assertReadOnlyForUpdateOfObject(sm.getObjectProvider());
-
-        // TODO Auto-generated method stub
     }
 
     /**
