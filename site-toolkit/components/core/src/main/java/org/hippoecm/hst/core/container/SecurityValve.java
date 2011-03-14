@@ -164,6 +164,8 @@ public class SecurityValve extends AbstractValve {
                     return null;
                 } catch (ContainerException e) {
                     return e;
+                } finally {
+                    HstSubject.clearSubject();
                 }
             }
         }, null);
