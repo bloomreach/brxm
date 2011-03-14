@@ -47,6 +47,7 @@ import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree.TreeNodeTranslat
 import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperBehavior;
 import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperSettings;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.standards.tree.FolderTreeNode;
 import org.hippoecm.frontend.plugins.standards.tree.icon.DefaultTreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;

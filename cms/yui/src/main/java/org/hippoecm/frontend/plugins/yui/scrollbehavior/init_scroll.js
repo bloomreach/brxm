@@ -13,13 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-if(!Hippo_scroll_registered) {
 
-	Wicket.Ajax.registerPreCallHandler(Hippo_scroll_savePosition);
-	Wicket.Ajax.registerPostCallHandler(Hippo_scroll_loadPosition);
-
-	Hippo_scroll_registered = true;
-}
-
-Hippo_scroll_setTreeId('${id}'); 
-
+var scrollStateSaver = new YAHOO.hippo.ScrollStateSaver("${filterName}");
+scrollStateSaver.setScrollElementId("${id}");

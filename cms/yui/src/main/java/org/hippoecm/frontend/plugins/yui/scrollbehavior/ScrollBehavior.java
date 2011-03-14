@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.tree;
+package org.hippoecm.frontend.plugins.yui.scrollbehavior;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +24,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 
 public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: ScrollBehavior.java 22030 2010-03-04 16:06:45Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
 
     private static final ResourceReference SCRIPT = new JavascriptResourceReference(ScrollBehavior.class, "scroll.js");
@@ -60,8 +61,8 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
         @Override
         public Object getObject() {
             parameters.put("id", getComponent().getMarkupId());
+            parameters.put("filterName", WebApplication.get().getWicketFilter().getFilterConfig().getFilterName());
             return parameters;
         }
-
     }
 }

@@ -439,11 +439,8 @@ browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/service/IBrowserSe
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/CmsJcrTree.java svneol=native#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/FolderTreePlugin.html svneol=native#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/FolderTreePlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/ScrollBehavior.java svneol=native#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/SectionTreePlugin.html svneol=native#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/SectionTreePlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/init_scroll.js svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/scroll.js svneol=native#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperBehavior.java -text svneol=unset#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperSettings.java -text svneol=unset#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/YuiTreeNamespace.java -text svneol=unset#text/plain
@@ -1308,9 +1305,6 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/breadcrumb/Breadcrum
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/breadcrumb/BreadcrumbPlugin.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain
-plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/ScrollBehavior.java -text svneol=unset#text/plain
-plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/init_scroll.js -text svneol=unset#text/plain
-plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/scroll.js -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupTargetTreeView.java svneol=native#text/plain
@@ -2378,6 +2372,9 @@ yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/WireframeSettings.jav
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/YuiId.java -text
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/YuiIdProcessor.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/rightclick/RightClickBehavior.java -text svneol=unset#text/plain
+yui/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/ScrollBehavior.java -text
+yui/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/init_scroll.js -text
+yui/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/scroll.js -text
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeBehavior.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeNamespace.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeSettings.java svneol=native#text/plain
