@@ -657,44 +657,13 @@
                By the way, this attribute does not affect anything in portal/portlet environment. </description>
         </attribute>
     </tag>
-
-    <tag>
-        <name>write-head-contributions</name>
-        <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
-        <body-content>empty</body-content>
-        <description>Deprecated: use writeHeadContributions instead.
-        </description>
-        <attribute>
-            <name>xhtml</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <type>boolean</type>
-            <description>Tag is deprecated: use writeHeadContributions instead.</description>
-        </attribute>
-        <attribute>
-            <name>categoryIncludes</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>Tag is deprecated: use writeHeadContributions instead.</description>
-        </attribute>
-        <attribute>
-            <name>categoryExcludes</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <type>java.lang.String</type>
-            <description>Tag is deprecated: use writeHeadContributions instead.</description>
-        </attribute>
-    </tag>
-
+    
     <tag>
         <name>writeHeadContributions</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
         <body-content>empty</body-content>
-        <description> All the HEAD elements contributed by each HstComponent can be accessed only by
-            the root HstComponent. The root HstComponent will be responsible for rendering all the
-            contributed HEAD elements. By inserting this tag, the root HstComponent can render all
-            the contributed HEAD elements. </description>
+        <description>Deprecated: use headContributions instead.
+        </description>
         <attribute>
             <name>xhtml</name>
             <required>false</required>
