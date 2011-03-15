@@ -117,7 +117,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
                 add(previewDescription);
 
                 Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null, new Object[]{
-                        thumbnailImageNode.getName(), ((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight())
+                        ((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight())
                 }));
                 add(thumbnailSize);
 
