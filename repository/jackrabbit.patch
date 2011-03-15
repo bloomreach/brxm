@@ -1,126 +1,65 @@
-Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/persistence/bundle/AbstractBundlePersistenceManager.java
+Index: jackrabbit-core/src/test/java/org/apache/jackrabbit/api/security/user/UserManagerSearchTest.java
 ===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/persistence/bundle/AbstractBundlePersistenceManager.java	(revision 1032558)
---- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/persistence/bundle/AbstractBundlePersistenceManager.java	(working copy)
+*** jackrabbit-core/src/test/java/org/apache/jackrabbit/api/security/user/UserManagerSearchTest.java	(revision 1081311)
+--- jackrabbit-core/src/test/java/org/apache/jackrabbit/api/security/user/UserManagerSearchTest.java	(working copy)
 ***************
-*** 538,544 ****
-                  PropertyId id = (PropertyId) state.getId();
-                  // skip redundant primaryType, mixinTypes and uuid properties
-                  if (id.getName().equals(NameConstants.JCR_PRIMARYTYPE)
--                     || id.getName().equals(NameConstants.JCR_MIXINTYPES)
-                      || id.getName().equals(NameConstants.JCR_UUID)) {
-                      continue;
-                  }
---- 538,543 ----
-***************
-*** 586,592 ****
-                  PropertyId id = (PropertyId) state.getId();
-                  // skip primaryType pr mixinTypes properties
-                  if (id.getName().equals(NameConstants.JCR_PRIMARYTYPE)
--                     || id.getName().equals(NameConstants.JCR_MIXINTYPES)
-                      || id.getName().equals(NameConstants.JCR_UUID)) {
-                      continue;
-                  }
---- 585,590 ----
-Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/persistence/util/BundleBinding.java
-===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/persistence/util/BundleBinding.java	(revision 1032558)
---- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/persistence/util/BundleBinding.java	(working copy)
-***************
-*** 113,119 ****
-              PropertyId pId = new PropertyId(bundle.getId(), name);
-              // skip redundant primaryType, mixinTypes and uuid properties
-              if (name.equals(NameConstants.JCR_PRIMARYTYPE)
--                 || name.equals(NameConstants.JCR_MIXINTYPES)
-                  || name.equals(NameConstants.JCR_UUID)) {
-                  readPropertyEntry(in, pId);
-                  name = readIndexedQName(in);
---- 113,118 ----
-***************
-*** 281,287 ****
-          for (Name pName : bundle.getPropertyNames()) {
-              // skip redundant primaryType, mixinTypes and uuid properties
-              if (pName.equals(NameConstants.JCR_PRIMARYTYPE)
--                 || pName.equals(NameConstants.JCR_MIXINTYPES)
-                  || pName.equals(NameConstants.JCR_UUID)) {
-                  continue;
-              }
---- 280,285 ----
-Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/LocalItemStateManager.java
-===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/LocalItemStateManager.java	(revision 1032558)
---- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/LocalItemStateManager.java	(working copy)
-***************
-*** 69,77 ****
-       */
-      protected LocalItemStateManager(SharedItemStateManager sharedStateMgr,
-                                   EventStateCollectionFactory factory, ItemStateCacheFactory cacheFactory) {
--         cache = new ItemStateReferenceCache(cacheFactory);
-          this.sharedStateMgr = sharedStateMgr;
-          this.factory = factory;
+*** 779,792 ****
       }
   
-      /**
---- 69,81 ----
-       */
-      protected LocalItemStateManager(SharedItemStateManager sharedStateMgr,
-                                   EventStateCollectionFactory factory, ItemStateCacheFactory cacheFactory) {
-          this.sharedStateMgr = sharedStateMgr;
-          this.factory = factory;
-+         cache = initializeItemStateCache(cacheFactory);
-+     }
-+ 
-+     protected ItemStateCache initializeItemStateCache(ItemStateCacheFactory cacheFactory) {
-+         return new ItemStateReferenceCache(cacheFactory);
+      private static <T> void assertSameElements(Iterator<? extends T> it1, Iterator<? extends T> it2) {
+!         Set<? extends T> set1 = toSet(it1);
+!         Set<? extends T> set2 = toSet(it2);
+  
+!         Set<? super T> missing = new HashSet<T>();
+          missing.addAll(set2);
+          missing.removeAll(set1);
+  
+!         Set<? super T> excess = new HashSet<T>();
+          excess.addAll(set1);
+          excess.removeAll(set2);
+  
+--- 779,792 ----
       }
   
-      /**
+      private static <T> void assertSameElements(Iterator<? extends T> it1, Iterator<? extends T> it2) {
+!         Set set1 = toSet(it1);
+!         Set set2 = toSet(it2);
+  
+!         Set missing = new HashSet<T>();
+          missing.addAll(set2);
+          missing.removeAll(set1);
+  
+!         Set excess = new HashSet<T>();
+          excess.addAll(set1);
+          excess.removeAll(set2);
+  
+Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemSaveOperation.java
+===================================================================
+*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemSaveOperation.java	(revision 1081311)
+--- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemSaveOperation.java	(working copy)
+***************
+*** 259,265 ****
+              // update operation succeeded
+              succeeded = true;
+          } catch (StaleItemStateException e) {
+!             throw new InvalidItemStateException(e.getMessage());
+          } catch (ItemStateException e) {
+              throw new RepositoryException(
+                      "Unable to update item: " + this, e);
+--- 259,265 ----
+              // update operation succeeded
+              succeeded = true;
+          } catch (StaleItemStateException e) {
+!             throw new InvalidItemStateException(e.getMessage(), e);
+          } catch (ItemStateException e) {
+              throw new RepositoryException(
+                      "Unable to update item: " + this, e);
 Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java
 ===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java	(revision 1032558)
+*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java	(revision 1081311)
 --- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java	(working copy)
 ***************
-*** 17,22 ****
---- 17,23 ----
-  package org.apache.jackrabbit.core.state;
-  
-  import java.io.PrintStream;
-+ import java.util.Iterator;
-  import java.util.HashMap;
-  import java.util.List;
-  import java.util.Set;
-***************
-*** 196,202 ****
-                                    ItemStateCacheFactory cacheFactory,
-                                    ISMLocking locking)
-              throws ItemStateException {
-!         cache = new ItemStateReferenceCache(cacheFactory);
-          this.persistMgr = persistMgr;
-          this.ntReg = ntReg;
-          this.usesReferences = usesReferences;
---- 197,203 ----
-                                    ItemStateCacheFactory cacheFactory,
-                                    ISMLocking locking)
-              throws ItemStateException {
-!         cache = initializeItemStateCache(cacheFactory);
-          this.persistMgr = persistMgr;
-          this.ntReg = ntReg;
-          this.usesReferences = usesReferences;
-***************
-*** 209,214 ****
---- 210,219 ----
-          ensureActivitiesNode();
-      }
-  
-+     protected ItemStateCache initializeItemStateCache(ItemStateCacheFactory cacheFactory) {
-+         return new ItemStateReferenceCache(cacheFactory);
-+     }
-+ 
-      /**
-       * Enables or disables the referential integrity checking, this
-       * should be used very carefully by experienced developers only.
-***************
-*** 1055,1061 ****
+*** 1054,1060 ****
                           // same UUID, i.e. the node is still referenceable.
                           if (refs.hasReferences() && !local.has(targetId)) {
                               String msg = node.getNodeId()
@@ -128,7 +67,7 @@ Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItem
                               log.debug(msg);
                               throw new ReferentialIntegrityException(msg);
                           }
---- 1060,1070 ----
+--- 1054,1064 ----
                           // same UUID, i.e. the node is still referenceable.
                           if (refs.hasReferences() && !local.has(targetId)) {
                               String msg = node.getNodeId()
@@ -142,10 +81,10 @@ Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItem
                           }
 Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/EventConsumer.java
 ===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/EventConsumer.java	(revision 1032558)
+*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/EventConsumer.java	(revision 1081311)
 --- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/EventConsumer.java	(working copy)
 ***************
-*** 300,306 ****
+*** 302,308 ****
        * @throws RepositoryException
        */
       private boolean canRead(EventState eventState) throws RepositoryException {
@@ -153,71 +92,37 @@ Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/observation/Even
 !         return session.getAccessManager().canRead(targetPath, null);
       }
   }
---- 300,305 ----
+--- 302,307 ----
        * @throws RepositoryException
        */
       private boolean canRead(EventState eventState) throws RepositoryException {
 !         return true;
       }
   }
-Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemImpl.java
-===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemImpl.java	(revision 1032558)
---- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemImpl.java	(working copy)
-***************
-*** 1142,1148 ****
-                  // update operation succeeded
-                  succeeded = true;
-              } catch (StaleItemStateException e) {
-!                 throw new InvalidItemStateException(e.getMessage());
-              } catch (ItemStateException e) {
-                  throw new RepositoryException(
-                          "Unable to update item: " + this, e);
---- 1142,1148 ----
-                  // update operation succeeded
-                  succeeded = true;
-              } catch (StaleItemStateException e) {
-!                 throw new InvalidItemStateException(e.getMessage(), e);
-              } catch (ItemStateException e) {
-                  throw new RepositoryException(
-                          "Unable to update item: " + this, e);
-Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/HierarchyManagerImpl.java
-===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/HierarchyManagerImpl.java	(revision 1032558)
---- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/HierarchyManagerImpl.java	(working copy)
-***************
-*** 93,98 ****
---- 93,102 ----
-                                   ItemId id, int typesAllowed)
-              throws ItemStateException, MalformedPathException {
-  
-+         /*if (next >= elements.length) {
-+             return null;
-+         }*/
-+ 
-          PathBuilder builder = new PathBuilder();
-          for (int i = 0; i < next; i++) {
-              builder.addLast(elements[i]);
 Index: jackrabbit-core/pom.xml
 ===================================================================
-*** jackrabbit-core/pom.xml	(revision 1032558)
+*** jackrabbit-core/pom.xml	(revision 1081311)
 --- jackrabbit-core/pom.xml	(working copy)
 ***************
-*** 31,41 ****
---- 31,67 ----
+*** 31,45 ****
+--- 31,71 ----
     </parent>
     <artifactId>jackrabbit-core</artifactId>
     <name>Jackrabbit Core</name>
-+   <version>2.1.2-h1</version>
++   <version>2.2.4-h1</version>
     <description>Jackrabbit content repository implementation</description>
   
 +   <distributionManagement>
 +     <repository>
-+       <id>repository.hippocms.org</id>
-+       <url>ftp://repository.hippocms.org/maven2</url>
++       <id>hippo-maven2</id>
++       <url>https://maven.onehippo.com/content/repositories/releases/</url>
 +     </repository>
 +   </distributionManagement>
-+  
++ 
+    <properties>
+      <org.apache.jackrabbit.test.integration>false</org.apache.jackrabbit.test.integration>
+    </properties>
+  
     <build>
 +     <extensions>
 +       <extension>
@@ -244,14 +149,14 @@ Index: jackrabbit-core/pom.xml
             <execution>
 Index: jackrabbit-jcr-client/pom.xml
 ===================================================================
-*** jackrabbit-jcr-client/pom.xml	(revision 1032558)
+*** jackrabbit-jcr-client/pom.xml	(revision 1081311)
 --- jackrabbit-jcr-client/pom.xml	(working copy)
 ***************
 *** 109,115 ****
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-core</artifactId>
-!             <version>2.1.2</version>
+!             <version>2.2.4</version>
               <scope>test</scope>
           </dependency>
           <dependency>
@@ -259,20 +164,20 @@ Index: jackrabbit-jcr-client/pom.xml
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-core</artifactId>
-!             <version>2.1.2-h1</version>
+!             <version>2.2.4-h1</version>
               <scope>test</scope>
           </dependency>
           <dependency>
 Index: jackrabbit-jcr2dav/pom.xml
 ===================================================================
-*** jackrabbit-jcr2dav/pom.xml	(revision 1032558)
+*** jackrabbit-jcr2dav/pom.xml	(revision 1081311)
 --- jackrabbit-jcr2dav/pom.xml	(working copy)
 ***************
 *** 162,168 ****
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2</version>
+!       <version>2.2.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -280,20 +185,20 @@ Index: jackrabbit-jcr2dav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2-h1</version>
+!       <version>2.2.4-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
 Index: jackrabbit-jca/pom.xml
 ===================================================================
-*** jackrabbit-jca/pom.xml	(revision 1032558)
+*** jackrabbit-jca/pom.xml	(revision 1081311)
 --- jackrabbit-jca/pom.xml	(working copy)
 ***************
 *** 108,114 ****
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2</version>
+!       <version>2.2.4</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -301,20 +206,20 @@ Index: jackrabbit-jca/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2-h1</version>
+!       <version>2.2.4-h1</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
 Index: jackrabbit-jcr-servlet/pom.xml
 ===================================================================
-*** jackrabbit-jcr-servlet/pom.xml	(revision 1032558)
+*** jackrabbit-jcr-servlet/pom.xml	(revision 1081311)
 --- jackrabbit-jcr-servlet/pom.xml	(working copy)
 ***************
 *** 59,65 ****
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2</version>
+!       <version>2.2.4</version>
         <optional>true</optional>
       </dependency>
     </dependencies>
@@ -322,41 +227,41 @@ Index: jackrabbit-jcr-servlet/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2-h1</version>
+!       <version>2.2.4-h1</version>
         <optional>true</optional>
       </dependency>
     </dependencies>
 Index: jackrabbit-jcr-rmi/pom.xml
 ===================================================================
-*** jackrabbit-jcr-rmi/pom.xml	(revision 1032558)
+*** jackrabbit-jcr-rmi/pom.xml	(revision 1081311)
 --- jackrabbit-jcr-rmi/pom.xml	(working copy)
 ***************
-*** 672,678 ****
+*** 675,681 ****
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2</version>
+!       <version>2.2.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>
---- 672,678 ----
+--- 675,681 ----
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2-h1</version>
+!       <version>2.2.4-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
 Index: jackrabbit-spi2jcr/pom.xml
 ===================================================================
-*** jackrabbit-spi2jcr/pom.xml	(revision 1032558)
+*** jackrabbit-spi2jcr/pom.xml	(revision 1081311)
 --- jackrabbit-spi2jcr/pom.xml	(working copy)
 ***************
 *** 129,135 ****
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2</version>
+!       <version>2.2.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -364,28 +269,28 @@ Index: jackrabbit-spi2jcr/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2-h1</version>
+!       <version>2.2.4-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
 Index: jackrabbit-webapp/pom.xml
 ===================================================================
-*** jackrabbit-webapp/pom.xml	(revision 1032558)
+*** jackrabbit-webapp/pom.xml	(revision 1081311)
 --- jackrabbit-webapp/pom.xml	(working copy)
 ***************
-*** 42,48 ****
+*** 46,52 ****
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
---- 42,48 ----
+!       <version>2.2.4</version>
+        <exclusions>
+          <exclusion>
+            <groupId>log4j</groupId>
+--- 46,52 ----
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.1.2-h1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
+!       <version>2.2.4-h1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>log4j</groupId>
