@@ -18,9 +18,9 @@ package org.hippoecm.frontend.plugins.yui.scrollbehavior;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -28,7 +28,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 
-public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
+public class ScrollBehavior extends AbstractBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ScrollBehavior.java 22030 2010-03-04 16:06:45Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
@@ -36,9 +36,14 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
     private static final ResourceReference SCRIPT = new JavascriptResourceReference(ScrollBehavior.class, "scroll.js");
     private final PackagedTextTemplate INIT = new PackagedTextTemplate(ScrollBehavior.class, "init_scroll.js");
     private final ParameterModel model = new ParameterModel();
+    private String componentMarkupId;
 
     public ScrollBehavior() {
         super();
+    }
+
+    public void bind(Component component) {
+        this.componentMarkupId = component.getMarkupId();
     }
 
     @Override
@@ -48,11 +53,6 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
         TextTemplateHeaderContributor.forJavaScript(INIT, model).renderHead(response);
     }
 
-    @Override
-    protected void respond(AjaxRequestTarget target) {
-        // NOP
-    }
-
     class ParameterModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;
 
@@ -60,7 +60,7 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
 
         @Override
         public Object getObject() {
-            parameters.put("id", getComponent().getMarkupId());
+            parameters.put("id", componentMarkupId);
             parameters.put("filterName", WebApplication.get().getWicketFilter().getFilterConfig().getFilterName());
             return parameters;
         }
