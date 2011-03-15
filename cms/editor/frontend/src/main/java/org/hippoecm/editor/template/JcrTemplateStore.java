@@ -60,6 +60,8 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         this.typeLocator = typeStore;
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
     public List<String> getMetadataEditors() {
         List<String> mixins = new LinkedList<String>();
 
@@ -111,6 +113,7 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         return mixins;
     }
 
+    @Override
     public Iterator<IClusterConfig> find(Map<String, Object> criteria) {
         if (criteria.containsKey("type")) {
             List<IClusterConfig> list = new ArrayList<IClusterConfig>(1);
@@ -124,6 +127,7 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         return new ArrayList<IClusterConfig>(0).iterator();
     }
 
+    @Override
     public IClusterConfig load(String id) throws StoreException {
         JcrNodeModel nodeModel = new JcrNodeModel(id);
         if (nodeModel.getNode() == null) {
@@ -132,6 +136,8 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         return new JcrClusterConfig(nodeModel);
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
     public String save(IClusterConfig cluster) throws StoreException {
         if (cluster instanceof JcrClusterConfig) {
             try {
@@ -174,6 +180,7 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         }
     }
 
+    @Override
     public void delete(IClusterConfig object) {
     }
 
@@ -181,6 +188,7 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
      * Retrieve the node that contains the template cluster.  Throws an exception when no such
      * node can be found.
      */
+    @SuppressWarnings("deprecation")
     protected Node getTemplateNode(ITypeDescriptor type, boolean create) throws RepositoryException, StoreException {
         javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
 
@@ -259,9 +267,10 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         }
     }
 
+    @Override
     public void detach() {
-        if (typeLocator instanceof IDetachable) {
-            ((IDetachable) typeLocator).detach();
+        if (typeLocator != null) {
+            typeLocator.detach();
         }
     }
 

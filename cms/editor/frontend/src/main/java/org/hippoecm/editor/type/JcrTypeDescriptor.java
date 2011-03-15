@@ -23,10 +23,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -571,30 +571,19 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             for (Map.Entry<String, IFieldDescriptor> entry : pathToField.entrySet()) {
                 if (builtinPathToField.containsKey(entry.getKey())) {
                     validateField(entry.getValue(), builtinPathToField.get(entry.getKey()));
-                } else {
+                } else if (!builtinAnyPaths.isEmpty()) {
                     log.warn("Path " + entry.getKey() + " is present in description, but not in CND definition for " + name);
                 }
             }
             for (Map.Entry<String, IFieldDescriptor> entry : builtinPathToField.entrySet()) {
+                if ("*".equals(entry.getKey())) {
+                    continue;
+                }
                 if (!pathToField.containsKey(entry.getKey())) {
                     log.warn("Path " + entry.getKey() + " is present in CND definition, but not in description for " + name);
                 }
             }
 
-            for (Map.Entry<String, IFieldDescriptor> entry : anyPaths.entrySet()) {
-                if (builtinAnyPaths.containsKey(entry.getKey())) {
-                    validateField(entry.getValue(), builtinAnyPaths.get(entry.getKey()));
-                } else {
-                    log.warn("Field with path *, type " + entry.getKey()
-                            + " is present in description, but not in CND definition for " + name);
-                }
-            }
-            for (Map.Entry<String, IFieldDescriptor> entry : builtinAnyPaths.entrySet()) {
-                if (!anyPaths.containsKey(entry.getKey())) {
-                    log.warn("Field with path *, type " + entry.getKey()
-                            + " is present in CND definition, but not in description for " + name);
-                }
-            }
         }
     }
 

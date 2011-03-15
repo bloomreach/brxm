@@ -76,6 +76,9 @@ public class FieldPluginHelper implements IDetachable {
                     } else if ("*".equals(field.getPath())) {
                         log.error("Field path * is not supported, field name is " + fieldName);
                         field = null;
+                    } else if (field.getPath() == null) {
+                        log.error("No path available for field " + fieldName);
+                        field = null;
                     }
                 } catch (TemplateEngineException tee) {
                     log.error("Could not resolve field for name " + fieldName, tee);

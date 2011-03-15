@@ -105,4 +105,11 @@ class TemplateTypeEditor extends AbstractCmsEditor<Node> {
         }
     }
 
+    @Override
+    public void detach() {
+        if (nodeTypeModel != null) {
+            nodeTypeModel.detach();
+        }
+        super.detach();
+    }
 }
