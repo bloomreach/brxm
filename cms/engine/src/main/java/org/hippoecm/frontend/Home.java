@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.WicketAjaxReference;
@@ -48,10 +51,14 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService, IContextMenuManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    private static final Logger log = LoggerFactory.getLogger(Home.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -69,6 +76,13 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     }
 
     public Home(IApplicationFactory appFactory) {
+        try {
+            Session session = ((UserSession) getSession()).getJcrSession();
+            session.save();
+            session.refresh(false);
+        } catch (RepositoryException repositoryException) {
+            log.error("Error refreshing jcr session.", repositoryException);
+        }
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
