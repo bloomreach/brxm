@@ -116,10 +116,10 @@
                 {name:'until 1994', resolution:'year', end:-15}
                 ]</sv:value>
             <sv:value>demosite:mileage$[
-                {name:'&lt; 20.000 km', resolution:'long', begin:0, end:20000},
-                {name:'&lt; 50.000 km', resolution:'long', begin:0, end:50000},
-                {name:'&lt; 100.000 km', resolution:'long', begin:0, end:100000},
-                {name:'&lt; 150.000 km', resolution:'long', begin:0, end:150000},
+                {name:'less 20.000 km', resolution:'long', begin:0, end:20000},
+                {name:'less 50.000 km', resolution:'long', begin:0, end:50000},
+                {name:'less 100.000 km', resolution:'long', begin:0, end:100000},
+                {name:'less 150.000 km', resolution:'long', begin:0, end:150000},
                 {name:'all', resolution:'long'}
                 ]</sv:value>
             <sv:value>demosite:price$[
