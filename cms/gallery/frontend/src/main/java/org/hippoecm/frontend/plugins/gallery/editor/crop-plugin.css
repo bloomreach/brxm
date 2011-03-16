@@ -32,11 +32,11 @@
     margin-top: 4px;
 } */
 
-.imageset-override-styles .imageset-extension-upload, .imageset-override-styles .imageset-extension-crop, .imageset-override-styles .imageset-extension-revert {
+.imageset-override-styles .imageset-extension-upload, .imageset-override-styles .imageset-extension-crop {
   float:left;
 }
 
-.imageset-override-styles .imageset-extension-crop, .imageset-override-styles .imageset-extension-revert {
+.imageset-override-styles .imageset-extension-crop {
   padding-top: 10px;
 }
 

@@ -136,7 +136,7 @@
             <sv:value>extension.display</sv:value>
             <sv:value>extension.upload</sv:value>
             <sv:value>extension.crop</sv:value>
-            <sv:value>extension.revert</sv:value>
+            <sv:value>extension.regenerate</sv:value>
           </sv:property>
           <sv:property sv:name="extension.display" sv:type="String">
             <sv:value>${cluster.id}.display</sv:value>
@@ -147,8 +147,8 @@
           <sv:property sv:name="extension.crop" sv:type="String">
             <sv:value>${cluster.id}.crop</sv:value>
           </sv:property>
-          <sv:property sv:name="extension.revert" sv:type="String">
-            <sv:value>${cluster.id}.revert</sv:value>
+          <sv:property sv:name="extension.regenerate" sv:type="String">
+            <sv:value>${cluster.id}.regenerate</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="display">
@@ -217,7 +217,7 @@
             <sv:value>service.gallery.processor</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="revert">
+        <sv:node sv:name="regenerate">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -225,10 +225,10 @@
             <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageRevertPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.gallery.editor.ImageRegeneratePlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.revert</sv:value>
+            <sv:value>${cluster.id}.regenerate</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>

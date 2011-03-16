@@ -19,10 +19,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -32,37 +35,39 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageRevertPlugin extends RenderPlugin {
+public class ImageRegeneratePlugin extends RenderPlugin {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ImageRevertPlugin.java 27169 2011-03-01 14:25:35Z mchatzidakis $";
+    private final static String SVN_ID = "$Id: ImageRegeneratePlugin.java 27169 2011-03-01 14:25:35Z mchatzidakis $";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageRevertPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(ImageRegeneratePlugin.class);
 
-
-    public ImageRevertPlugin(final IPluginContext context, IPluginConfig config) {
+    public ImageRegeneratePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         String mode = config.getString("mode", "edit");
         final IModel<Node> jcrImageNodeModel = getModel();
+
+        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "regenerate-plugin.css"));
 
         try{
             boolean isOriginal = "hippogallery:original".equals(jcrImageNodeModel.getObject().getName());
 
             final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
 
-            Link<String> revertLink = new Link<String>("revert-link"){
+            Label regenerateButton = new Label("regenerate-button", new StringResourceModel("regenerate-button-label", this, null));
+            regenerateButton.add(new AjaxEventBehavior("onclick") {
                 @Override
-                public void onClick() {
+                protected void onEvent(final AjaxRequestTarget target) {
+                    /*IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                    dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));*/
                 }
-            };
+            });
 
-            revertLink.setVisible("edit".equals(mode) && !isOriginal);
-            //for now, hide this button
-            revertLink.setVisible(false);
-            add(revertLink);
+            regenerateButton.setVisible("edit".equals(mode) && !isOriginal);
+            add(regenerateButton);
 
         } catch(RepositoryException ex){
             error(ex);
