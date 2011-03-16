@@ -1357,8 +1357,6 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDi
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDialog.properties -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDialog_fr.properties -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDialog_it.properties -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportDialog.html -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportDialog.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/autoexport_off.png -text
