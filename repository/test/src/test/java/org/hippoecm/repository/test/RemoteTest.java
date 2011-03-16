@@ -56,8 +56,9 @@ import org.junit.runners.Suite;
     org.hippoecm.repository.decorating.FacetedReferenceTest.class,
     org.hippoecm.repository.decorating.MirrorTest.class,
     org.hippoecm.repository.decorating.PathsTest.class,
-    org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class
+    org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class,
 //  org.hippoecm.frontend.model.event.ObservationTest.class
+    org.hippoecm.repository.HREPTWO4999Test.class
 })
 public class RemoteTest extends Suite
 {

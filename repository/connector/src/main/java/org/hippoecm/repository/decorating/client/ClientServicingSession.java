@@ -32,6 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.security.AccessControlException;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
@@ -111,5 +112,15 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
 
     public XAResource getXAResource() {
         return remote.getXAResource();
+    }
+    
+    @Override
+    public void checkPermission(String path, String actions)
+            throws AccessControlException, RepositoryException {
+        try {
+            remote.checkPermission(path, actions);
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
     }
 }

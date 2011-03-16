@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.security.AccessControlException;
 import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
@@ -89,5 +90,9 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
 
     public XAResource getXAResource() {
         return session.getXAResource();
+    }
+
+    public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException {
+        session.checkPermission(path, actions);
     }
 }

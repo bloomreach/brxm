@@ -23,6 +23,7 @@ import java.rmi.RemoteException;
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.security.AccessControlException;
 import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
@@ -43,4 +44,6 @@ public interface RemoteServicingSession extends RemoteSession, Remote, Serializa
             int mergeBehavior) throws IOException, RepositoryException, RemoteException;
 
     public XAResource getXAResource();
+
+    public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
 }

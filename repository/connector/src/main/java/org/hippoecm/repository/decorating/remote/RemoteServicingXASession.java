@@ -21,6 +21,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.security.AccessControlException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
@@ -40,4 +41,5 @@ public interface RemoteServicingXASession extends RemoteXASession, Remote, Seria
     public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, RepositoryException, RemoteException;
 
+    public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
 }

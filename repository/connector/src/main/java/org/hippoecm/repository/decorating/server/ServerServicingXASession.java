@@ -24,6 +24,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.security.AccessControlException;
 import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
@@ -85,5 +86,9 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
+    }
+
+    public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException {
+        session.checkPermission(path, actions);
     }
 }
