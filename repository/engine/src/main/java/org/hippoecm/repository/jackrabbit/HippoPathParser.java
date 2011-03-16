@@ -382,5 +382,9 @@ public class HippoPathParser {
         public String toString() {
             return getString();
         }
+
+        public String getIdentifier() {
+            return null;
+        }
     }
 }

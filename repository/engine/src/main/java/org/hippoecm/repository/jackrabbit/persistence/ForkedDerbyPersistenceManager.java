@@ -19,12 +19,13 @@ package org.hippoecm.repository.jackrabbit.persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.persistence.PMContext;
+import org.apache.jackrabbit.core.util.db.ConnectionHelper;
+import org.apache.jackrabbit.core.util.db.DerbyConnectionHelper;
 
-import java.sql.DriverManager;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import javax.jcr.RepositoryException;
+import javax.sql.DataSource;
 
 /**
  * Extends the {@link BundleDbPersistenceManager} by derby specific code.
@@ -252,34 +253,28 @@ public class ForkedDerbyPersistenceManager extends PatchedBundleDbPersistenceMan
             setSchemaObjectPrefix("");
         }
         super.init(context);
+        // set properties       
+        if (DERBY_EMBEDDED_DRIVER.equals(getDriver())) {
+            conHelper.exec("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
+                    + "('derby.storage.initialPages', '" + derbyStorageInitialPages + "')");
+            conHelper.exec("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
+                    + "('derby.storage.minimumRecordSize', '" + derbyStorageMinimumRecordSize + "')");
+            conHelper.exec("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
+                    + "('derby.storage.pageCacheSize', '" + derbyStoragePageCacheSize + "')");
+            conHelper.exec("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
+                    + "('derby.storage.pageReservedSpace', '" + derbyStoragePageReservedSpace + "')");
+            conHelper.exec("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY " + "('derby.storage.pageSize', '"
+                    + derbyStoragePageSize + "')");
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void checkSchema() throws SQLException, RepositoryException {
-        // set properties
-        if (DERBY_EMBEDDED_DRIVER.equals(getDriver())) {
-            Statement stmt = connectionManager.getConnection().createStatement();
-            try {
-                stmt.execute("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
-                        + "('derby.storage.initialPages', '" + derbyStorageInitialPages + "')");
-                stmt.execute("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
-                        + "('derby.storage.minimumRecordSize', '" + derbyStorageMinimumRecordSize + "')");
-                stmt.execute("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
-                        + "('derby.storage.pageCacheSize', '" + derbyStoragePageCacheSize + "')");
-                stmt.execute("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
-                        + "('derby.storage.pageReservedSpace', '" + derbyStoragePageReservedSpace + "')");
-                stmt.execute("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY "
-                        + "('derby.storage.pageSize', '" + derbyStoragePageSize + "')");
-
-            } finally {
-                stmt.close();
-            }
-        }
-        super.checkSchema();
+    @Override
+    protected ConnectionHelper createConnectionHelper(DataSource dataSrc) {
+        return new DerbyConnectionHelper(dataSrc, blockOnConnectionLoss);
     }
-
 
     /**
      * {@inheritDoc}
@@ -300,35 +295,8 @@ public class ForkedDerbyPersistenceManager extends PatchedBundleDbPersistenceMan
      * @see DatabasePersistenceManager#closeConnection(Connection)
      */
     public void close() throws Exception {
-        // check for embedded driver
-        if (!DERBY_EMBEDDED_DRIVER.equals(getDriver())) {
-            return;
-        }
-
-        // prepare connection url for issuing shutdown command
-        String url = connectionManager.getConnection().getMetaData().getURL();
-        int pos = url.lastIndexOf(';');
-        if (pos != -1) {
-            // strip any attributes from connection url
-            url = url.substring(0, pos);
-        }
-        url += ";shutdown=true";
-
-        // we have to reset the connection to 'autoCommit=true' before closing it;
-        // otherwise Derby would mysteriously complain about some pending uncommitted
-        // changes which can't possibly be true.
-        // @todo further investigate
-        connectionManager.getConnection().setAutoCommit(true);
-
         super.close();
-
-        // now it's safe to shutdown the embedded Derby database
-        try {
-            DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            // a shutdown command always raises a SQLException
-            log.info(e.getMessage());
-        }
+        ((DerbyConnectionHelper) conHelper).shutDown(getDriver());
     }
 
 }

@@ -35,6 +35,12 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
+import org.apache.jackrabbit.core.RepositoryContext;
+import org.apache.jackrabbit.core.WorkspaceImpl;
+import org.apache.jackrabbit.core.WorkspaceManager;
+import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
+import org.apache.jackrabbit.core.session.SessionContext;
+import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,39 +67,40 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
 
     private final SessionImplHelper helper;
 
-    protected XASessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
+    protected XASessionImpl(RepositoryContext repositoryContext, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
-        super(rep, loginContext, wspConfig);
+        super(repositoryContext, loginContext, wspConfig);
         namePathResolver = new HippoNamePathResolver(this, true);
-        helper = new SessionImplHelper(this, ntMgr, rep, loginContext.getSubject()) {
+        helper = new SessionImplHelper(this, repositoryContext, context, loginContext.getSubject()) {
             @Override
             SessionItemStateManager getItemStateManager() {
-                return itemStateMgr;
+                return context.getItemStateManager();
             }
         };
-        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)((XAWorkspaceImpl)wsp).getItemStateManager();
-        rep.initializeLocalItemStateManager(localISM, this, subject);
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
+        ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, this, subject);
     }
 
-    protected XASessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
+    protected XASessionImpl(RepositoryContext repositoryContext, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
                                                                                                    RepositoryException {
-        super(rep, subject, wspConfig);
-        helper = new SessionImplHelper(this, ntMgr, rep, subject) {
+        super(repositoryContext, subject, wspConfig);
+        helper = new SessionImplHelper(this, repositoryContext, context, subject) {
             @Override
             SessionItemStateManager getItemStateManager() {
-                return itemStateMgr;
+                return context.getItemStateManager();
             }
         };
-        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)((XAWorkspaceImpl)wsp).getItemStateManager();
-        rep.initializeLocalItemStateManager(localISM, this, subject);
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
+        ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, this, subject);
     }
 
     @Override
-    protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
-        AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
+    protected AccessManager createAccessManager(Subject subject) throws AccessDeniedException, RepositoryException {
+        AccessManagerConfig amConfig = context.getRepository().getConfig().getAccessManagerConfig();
         try {
-            HippoAMContext ctx = new HippoAMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()),
-                    ((RepositoryImpl)rep).getFileSystem(), this, subject, hierMgr, this, getWorkspace().getName(), ntMgr, getItemStateManager());
+            HippoAMContext ctx = new HippoAMContext(new File(((RepositoryImpl)context.getRepository()).getConfig().getHomeDir()),
+                    context.getRepositoryContext().getFileSystem(),
+                    this, subject, context.getHierarchyManager(), this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
             AccessManager accessMgr = (AccessManager)amConfig.newInstance(AccessManager.class);
             accessMgr.init(ctx);
             return accessMgr;
@@ -116,22 +123,15 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
     }
 
     @Override
-    protected org.apache.jackrabbit.core.WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
-                                                                               SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
-                                                                               org.apache.jackrabbit.core.SessionImpl session) {
-        return new XAWorkspaceImpl(wspConfig, stateMgr, rep, this);
+    protected SessionItemStateManager createSessionItemStateManager() {
+        SessionItemStateManager mgr = new HippoSessionItemStateManager(context.getRootNodeId(), context.getWorkspace().getItemStateManager());
+        context.getWorkspace().getItemStateManager().addListener(mgr);
+        return mgr;
     }
 
     @Override
-    protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager localISM) {
-        SessionItemStateManager sessionISM = new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), localISM, ((RepositoryImpl)rep).getNodeTypeRegistry());
-        localISM.addListener(sessionISM);
-        return sessionISM;
-    }
-
-    @Override
-    protected org.apache.jackrabbit.core.ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
-        return ItemManager.createInstance(itemStateMgr, hierMgr, this, ntMgr.getRootNodeDefinition(), ((RepositoryImpl)rep).getRootNodeId());
+    protected org.apache.jackrabbit.core.ItemManager createItemManager() {
+        return new ItemManager(context);
     }
 
     @Override
@@ -207,9 +207,8 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
         new DefaultContentHandler(handler).parse(in);
     }
 
-    @Override
     public SessionItemStateManager getItemStateManager() {
-        return super.getItemStateManager();
+        return context.getItemStateManager();
     }
 
     public Node getCanonicalNode(Node node) throws RepositoryException {
@@ -221,12 +220,19 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
         if(log.isDebugEnabled()) {
             super.finalize();
         } else {
-            if (alive) {
+            if (context.getSessionState().isAlive()) {
                 log.info("Unclosed session detected.");
                 logout();
-                alive = false;
+                context.getSessionState().close();
             }
         }
     }
 
+    @Override
+    public LocalItemStateManager createItemStateManager(RepositoryContext repositoryContext, WorkspaceImpl workspace, SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory, String attribute, ItemStateCacheFactory cacheFactory) {
+        RepositoryImpl repository = (RepositoryImpl) repositoryContext.getRepository();
+        LocalItemStateManager mgr = new HippoLocalItemStateManager(sharedStateMgr, workspace, repositoryContext.getItemStateCacheFactory(), attribute, repository.getNodeTypeRegistry(), repository.isStarted(), repositoryContext.getRootNodeId());
+        sharedStateMgr.addListener(mgr);
+        return mgr;
+    }
 }

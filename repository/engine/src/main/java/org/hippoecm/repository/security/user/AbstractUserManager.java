@@ -435,6 +435,10 @@ public abstract class AbstractUserManager implements UserManager {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public Iterator<Authorizable> findAuthorizables(org.apache.jackrabbit.api.security.user.Query query) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public User createUser(String userID, String password) throws AuthorizableExistsException, RepositoryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -451,11 +455,14 @@ public abstract class AbstractUserManager implements UserManager {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isAutoSave() {
+    public Group createGroup(String string) throws AuthorizableExistsException, RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Group createGroup(String string, Principal prncpl, String string1) throws AuthorizableExistsException, RepositoryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void autoSave(boolean enable) throws UnsupportedRepositoryOperationException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

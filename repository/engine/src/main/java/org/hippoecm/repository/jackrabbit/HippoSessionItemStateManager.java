@@ -49,8 +49,8 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
     HippoLocalItemStateManager localStateMgr;
     NodeId rootNodeId;
 
-    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager mgr, NodeTypeRegistry ntReg) {
-        super(rootNodeId, mgr, ntReg);
+    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager mgr) {
+        super(rootNodeId, mgr);
         this.rootNodeId = rootNodeId;
         this.localStateMgr = (HippoLocalItemStateManager) mgr;
         if (wrappedHierMgr == null) {
@@ -67,7 +67,7 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
         if (interests == null || interests.contains(SessionStateThresholdEnum.UNPERSISTED)) {
             try {
                 int count = 0;
-                for (Iterator iter = getDescendantTransientItemStates(rootNodeId); iter.hasNext(); iter.next()) {
+                for (ItemState state : getDescendantTransientItemStates(rootNodeId)) {
                     ++count;
                 }
                 return count >= LocalHippoRepository.batchThreshold;
@@ -129,8 +129,9 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
      * @return the ItemState
      * @throws NoSuchItemStateException when the item is not in the attic store
      * @throws ItemStateException when the item should be in the attic but cannot be found
+     * @throws ItemStateException won a generic internal error
      */
-    public ItemState getAtticItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+    public ItemState getAtticItemState(ItemId id) throws NoSuchItemStateException, ItemStateException, RepositoryException {
         ItemState itemState = null;
 
         // If the item id is in the attic it should be in the localStateManager as well
@@ -145,9 +146,7 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
         // FIXME: FIX_IN_JACKRABBIT! This is extremely expensive on large deletes.
         // somehow we do have getTransientState but not getAtticState
         // it is possible to get a list of all attic states from the root node
-        Iterator iter = getDescendantTransientItemStatesInAttic(rootNodeId);
-        while (iter.hasNext()) {
-            ItemState state = (ItemState) iter.next();
+        for(ItemState state : getDescendantTransientItemStatesInAttic(rootNodeId)) {
             if (state.getId().equals(id)) {
                 itemState = state;
                 break;

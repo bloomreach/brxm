@@ -44,6 +44,7 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
@@ -52,6 +53,7 @@ import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
@@ -84,10 +86,11 @@ abstract class SessionImplHelper {
      */
     private String userId;
 
-    NodeTypeManagerImpl ntMgr;
+    NodeTypeRegistry ntReg;
     RepositoryImpl rep;
     Subject subject;
     org.apache.jackrabbit.core.SessionImpl sessionImpl;
+    SessionContext context;
 
     /**
      * Local namespace mappings. Prefixes as keys and namespace URIs as values.
@@ -256,11 +259,12 @@ abstract class SessionImplHelper {
 
     private HashSet<Privilege> jcrPrivileges = new HashSet<Privilege>();
     
-    SessionImplHelper(org.apache.jackrabbit.core.SessionImpl sessionImpl,
-                      NodeTypeManagerImpl ntMgr, RepositoryImpl rep, Subject subject) throws RepositoryException {
+    SessionImplHelper(org.apache.jackrabbit.core.SessionImpl sessionImpl, RepositoryContext repositoryContext,
+                      SessionContext sessionContext, Subject subject) throws RepositoryException {
         this.sessionImpl = sessionImpl;
-        this.ntMgr = ntMgr;
-        this.rep = rep;
+        this.context = sessionContext;
+        this.ntReg = repositoryContext.getNodeTypeRegistry();
+        this.rep = (RepositoryImpl) repositoryContext.getRepository();
         this.subject = subject;
         setUserId();
         AccessControlManager acMgr = sessionImpl.getAccessControlManager();
@@ -364,9 +368,7 @@ abstract class SessionImplHelper {
         }
         NodeId nodeId = ((org.apache.jackrabbit.core.NodeImpl)NodeDecorator.unwrap(node)).getNodeId();
 
-        Iterator iter = getItemStateManager().getDescendantTransientItemStates(nodeId);
-        while (iter.hasNext()) {
-            ItemState itemState = (ItemState)iter.next();
+        for(ItemState itemState : getItemStateManager().getDescendantTransientItemStates(nodeId)) {
             NodeState state = null;
             if (!itemState.isNode()) {
                 try {
@@ -392,7 +394,6 @@ abstract class SessionImplHelper {
                     Set mixins = state.getMixinTypeNames();
                     if (!mixins.contains(ntName)) {
                         // build effective node type of mixins & primary type
-                        NodeTypeRegistry ntReg = ntMgr.getNodeTypeRegistry();
                         try {
                             if (!ntReg.getEffectiveNodeType(state.getNodeTypeName(),mixins).includesNodeType(ntName)) {
                                 continue;
@@ -526,7 +527,7 @@ abstract class SessionImplHelper {
 
         // check lock status
         if (!parent.isNew()) {
-            sessionImpl.getLockManager().checkLock(parent);
+            context.getWorkspace().getInternalLockManager().checkLock(parent);
         }
 
         DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);

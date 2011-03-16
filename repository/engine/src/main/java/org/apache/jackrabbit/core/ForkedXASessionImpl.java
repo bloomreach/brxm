@@ -44,6 +44,7 @@ import java.util.Map;
 /**
  * Session extension that provides XA support.
  */
+@SuppressWarnings("deprecation")
 public class ForkedXASessionImpl extends SessionImpl implements XASession, XAResource {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -87,14 +88,9 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
     private InternalXAResource[] txResources;
 
     /**
-     * Session-local lock manager.
-     */
-    private LockManager lockMgr;
-
-    /**
      * Create a new instance of this class.
      *
-     * @param rep          repository
+     * @param repositoryContext repository context
      * @param loginContext login context containing authenticated subject
      * @param wspConfig    workspace configuration
      * @throws AccessDeniedException if the subject of the given login context
@@ -102,31 +98,29 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      *                               workspace
      * @throws RepositoryException   if another error occurs
      */
-    protected ForkedXASessionImpl(RepositoryImpl rep, AuthContext loginContext,
-                            WorkspaceConfig wspConfig)
+    protected ForkedXASessionImpl(
+            RepositoryContext repositoryContext, AuthContext loginContext,
+            WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
-
-        super(rep, loginContext, wspConfig);
-
+        super(repositoryContext, loginContext, wspConfig);
         init();
     }
 
     /**
      * Create a new instance of this class.
      *
-     * @param rep       repository
+     * @param repositoryContext repository context
      * @param subject   authenticated subject
      * @param wspConfig workspace configuration
      * @throws AccessDeniedException if the given subject is not granted access
      *                               to the specified workspace
      * @throws RepositoryException   if another error occurs
      */
-    protected ForkedXASessionImpl(RepositoryImpl rep, Subject subject,
-                            WorkspaceConfig wspConfig)
+    protected ForkedXASessionImpl(
+            RepositoryContext repositoryContext, Subject subject,
+            WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
-
-        super(rep, subject, wspConfig);
-
+        super(repositoryContext, subject, wspConfig);
         init();
     }
 
@@ -134,9 +128,18 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      * Initialize this object.
      */
     private void init() throws RepositoryException {
-        ForkedXAItemStateManager stateMgr = (ForkedXAItemStateManager) wsp.getItemStateManager();
-        XALockManager lockMgr = (XALockManager) getLockManager();
-        InternalXAVersionManager versionMgr = (InternalXAVersionManager) getInternalVersionManager();
+        WorkspaceImpl workspace = context.getWorkspace();
+        ForkedXAItemStateManager stateMgr =
+            (ForkedXAItemStateManager) workspace.getItemStateManager();
+        XALockManager lockMgr;
+        LockManager lockManagerImpl = workspace.getInternalLockManager();
+        if (lockManagerImpl instanceof XALockManager) {
+            lockMgr = (XALockManager)lockManagerImpl;
+        } else {
+            lockMgr = new XALockManager((LockManagerImpl)lockManagerImpl);
+        }
+        InternalXAVersionManager versionMgr =
+            (InternalXAVersionManager) getInternalVersionManager();
 
         /**
          * Create array that contains all resources that participate in this
@@ -162,33 +165,16 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
     /**
      * {@inheritDoc}
      */
-    protected WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
-                                                    SharedItemStateManager stateMgr,
-                                                    RepositoryImpl rep,
-                                                    SessionImpl session) {
-        return new XAWorkspace(wspConfig, stateMgr, rep, session);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected InternalVersionManager createVersionManager(RepositoryImpl rep)
+    @Override
+    protected InternalVersionManager createVersionManager()
             throws RepositoryException {
-
-        InternalVersionManagerImpl vMgr = (InternalVersionManagerImpl) rep.getVersionManager();
-        return new InternalXAVersionManager(vMgr, rep.getNodeTypeRegistry(), this, rep.getItemStateCacheFactory());
+        return new InternalXAVersionManager(
+                repositoryContext.getInternalVersionManager(),
+                repositoryContext.getNodeTypeRegistry(),
+                this,
+                repositoryContext.getItemStateCacheFactory());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public LockManager getLockManager() throws RepositoryException {
-        if (lockMgr == null) {
-            LockManagerImpl lockMgr = (LockManagerImpl) wsp.getInternalLockManager();
-            this.lockMgr = new XALockManager(lockMgr);
-        }
-        return lockMgr;
-    }
     //-------------------------------------------------------------< XASession >
     /**
      * {@inheritDoc}
@@ -276,7 +262,9 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      * @return transaction context
      */
     private TransactionContext createTransaction(Xid xid) {
-        TransactionContext tx = new TransactionContext(xid, txResources, getTransactionTimeout());
+        TransactionContext tx = new TransactionContext(
+                xid, txResources,
+                getTransactionTimeout(), repositoryContext.getTimer());
         txGlobal.put(xid, tx);
         return tx;
     }

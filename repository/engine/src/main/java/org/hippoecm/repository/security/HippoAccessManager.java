@@ -1001,6 +1001,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                 return itemMgr.getAtticItemState(id);
             } catch (ItemStateException e) {
                 log.debug("Error while trying to get item state from the attic ism of id: " + id, e);
+            } catch (RepositoryException e) {
+                log.debug("Error while trying to get item state from the attic ism of id: " + id, e);
             }
         }
         

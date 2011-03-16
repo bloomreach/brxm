@@ -16,12 +16,10 @@
  */
 package org.hippoecm.repository.jackrabbit.persistence;
 
-import org.apache.jackrabbit.util.Text;
+import org.apache.jackrabbit.core.util.db.CheckSchemaOperation;
 
 /**
- * Extends the {@link BundleDbPersistenceManager} by MS-SQL specific code.
- * <p/>
- * Configuration:<br>
+ * Extends the {@link BundleDbPersistenceManager} by MS-SQL specific code. <p/> Configuration:<br>
  * <ul>
  * <li>&lt;param name="{@link #setBundleCacheSize(String) bundleCacheSize}" value="8"/>
  * <li>&lt;param name="{@link #setConsistencyCheck(String) consistencyCheck}" value="false"/>
@@ -46,14 +44,18 @@ public class ForkedMSSqlPersistenceManager extends PatchedBundleDbPersistenceMan
         setDatabaseType("mssql");
     }
 
-    protected String createSchemaSQL(String sql) {
-        return Text.replace(
-                super.createSchemaSQL(sql), "${tableSpace}", tableSpace);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected CheckSchemaOperation createCheckSchemaOperation() {
+        return super.createCheckSchemaOperation().addVariableReplacement(
+            CheckSchemaOperation.TABLE_SPACE_VARIABLE, tableSpace);
     }
 
     /**
      * Returns the configured MS SQL table space.
-     *
+     * 
      * @return the configured MS SQL table space.
      */
     public String getTableSpace() {
@@ -62,11 +64,11 @@ public class ForkedMSSqlPersistenceManager extends PatchedBundleDbPersistenceMan
 
     /**
      * Sets the MS SQL table space.
-     *
+     * 
      * @param tableSpace the MS SQL table space.
      */
     public void setTableSpace(String tableSpace) {
-        if (tableSpace != null && tableSpace.length() > 0) {
+        if (tableSpace != null && tableSpace.trim().length() > 0) {
             this.tableSpace = "on " + tableSpace.trim();
         } else {
             this.tableSpace = "";

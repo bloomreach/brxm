@@ -50,6 +50,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
+import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
@@ -732,12 +733,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     return true;
                 }
                 if ((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
-                    if (!current.isNode()) {
-                        PropertyState propState = (PropertyState) current;
-                        if (modifiedExternals.contains(propState.getParentId())) {
-                            return false;
-                        }
-                    }
                     return true;
                 }
                 if (modified) {
