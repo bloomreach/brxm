@@ -180,6 +180,9 @@ public class ImageCropEditorDialog extends AbstractDialog {
             Node modelObject = (Node) getModelObject();
             modelObject.getProperty(JcrConstants.JCR_DATA).setValue(new ByteArrayInputStream(bytes.toByteArray()));
             modelObject.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
+            modelObject.getProperty("hippogallery:width").setValue(dimension.getWidth());
+            modelObject.getProperty("hippogallery:height").setValue(dimension.getHeight());
+
         } catch (GalleryException ex) {
             log.error("Unable to create thumbnail image", ex);
             error(ex);

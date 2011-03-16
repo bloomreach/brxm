@@ -75,10 +75,10 @@ public class ImageCropPlugin extends RenderPlugin {
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
 
-            boolean originalImageSmallerThanThumbSize = thumbnailDimension.getHeight() > originalImageDimension.getHeight() || thumbnailDimension.getWidth() > originalImageDimension.getWidth();
+            boolean isOriginalImageSmallerThanThumbSize = thumbnailDimension.getHeight() > originalImageDimension.getHeight() || thumbnailDimension.getWidth() > originalImageDimension.getWidth();
 
 
-            //The edit image button
+            //The crop image button
             Label cropLink = new Label("crop-link", new StringResourceModel("crop-link-label", this, null));
             cropLink.add(new AjaxEventBehavior("onclick") {
                 @Override
@@ -87,7 +87,7 @@ public class ImageCropPlugin extends RenderPlugin {
                     dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
                 }
             });
-            cropLink.setVisible("edit".equals(mode) && !isOriginal && !originalImageSmallerThanThumbSize);
+            cropLink.setVisible("edit".equals(mode) && !isOriginal && !isOriginalImageSmallerThanThumbSize);
             add(cropLink);
 
         } catch(RepositoryException ex){
