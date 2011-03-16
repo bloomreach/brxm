@@ -195,7 +195,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             if (!typeDescriptor.getFields().containsKey(newName)
                     && !fieldNames.contains(newName)
                     && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
-                            .getFields().containsKey(newName)))) {
+                    .getFields().containsKey(newName)))) {
                 JavaFieldDescriptor javaFieldDescriptor = new JavaFieldDescriptor(delegate);
                 typeDescriptor.removeField(name);
                 javaFieldDescriptor.setName(newName);
@@ -512,7 +512,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
             clusterConfig.setPlugins(configs);
         }
-        
+
         public void detach() {
             for (IPluginConfig config : clusterConfig.getPlugins()) {
                 if (config instanceof IDetachable) {
@@ -562,7 +562,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         protected IObservationContext<IClusterConfig> getObservationContext() {
             return (IObservationContext<IClusterConfig>) super.getObservationContext();
         }
-        
+
         @Override
         public void startObservation() {
             super.startObservation();
@@ -587,7 +587,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         obContext.notifyObservers(collection);
                     }
                 }
-                
+
             });
         }
 
@@ -640,13 +640,13 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
         IStore draftStore = new JcrDraftStore(jcrTypeStore, prefix);
         BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
-        typeLocator = new TypeLocator(new IStore[] { draftStore, jcrTypeStore, builtinTypeStore });
+        typeLocator = new TypeLocator(new IStore[]{draftStore, jcrTypeStore, builtinTypeStore});
         builtinTypeStore.setTypeLocator(typeLocator);
         jcrTypeStore.setTypeLocator(typeLocator);
 
         this.jcrTemplateStore = new JcrTemplateStore(typeLocator);
         this.builtinTemplateStore = new BuiltinTemplateStore(typeLocator);
-        builtinTemplateStore.setTemplateLocator(new TemplateLocator(new IStore[] { jcrTemplateStore }));
+        builtinTemplateStore.setTemplateLocator(new TemplateLocator(new IStore[]{jcrTemplateStore}));
 
         this.prototypeStore = new JcrPrototypeStore();
 
@@ -834,14 +834,15 @@ public class TemplateBuilder implements IDetachable, IObservable {
                             Value value = property.getValue();
                             property.remove();
                             if (newField.isMultiple()) {
-                                prototype.setProperty(newField.getPath(), new Value[] { value });
+                                prototype.setProperty(newField.getPath(), new Value[]{value});
                             } else {
                                 prototype.setProperty(newField.getPath(), value);
                             }
                         }
                     }
                 }
-            } else if (oldPath.equals("*") || newField.getPath().equals("*")) {
+            } else if ((oldPath.equals("*") || newField.getPath().equals("*"))
+                    && !(oldPath.equals(newField.getPath()))) {
                 log.warn("Wildcard fields are not supported");
             }
         } else {
@@ -901,16 +902,16 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         if (event instanceof ClusterConfigEvent) {
                             ClusterConfigEvent cce = (ClusterConfigEvent) event;
                             switch (cce.getType()) {
-                            case PLUGIN_CHANGED:
-                                // notify observers when the wicket hierarchy has changed
-                                if (updatePluginCache()) {
+                                case PLUGIN_CHANGED:
+                                    // notify observers when the wicket hierarchy has changed
+                                    if (updatePluginCache()) {
+                                        notifyObservers();
+                                    }
+                                    break;
+                                case PLUGIN_ADDED:
+                                case PLUGIN_REMOVED:
                                     notifyObservers();
-                                }
-                                break;
-                            case PLUGIN_ADDED:
-                            case PLUGIN_REMOVED:
-                                notifyObservers();
-                                break;
+                                    break;
                             }
                         }
                     }
