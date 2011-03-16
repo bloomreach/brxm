@@ -337,7 +337,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         Map<String, Serializable> hints = new TreeMap<String, Serializable>();
         NodeTypeState state = new NodeTypeState();
         if (state.draft == null) {
-            hints.put("publish", false);
+            hints.put("commit", false);
             hints.put("revert", false);
         }
         return hints;
