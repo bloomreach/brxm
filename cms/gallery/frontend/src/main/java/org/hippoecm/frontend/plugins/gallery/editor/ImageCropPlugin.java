@@ -68,13 +68,15 @@ public class ImageCropPlugin extends RenderPlugin {
         Label cropLink = new Label("crop-link", new StringResourceModel("crop-link-label", this, null));
         boolean isOriginal = true;
         boolean isOriginalImageSmallerThanThumbSize = true;
+        boolean areExceptionsThrown = false;
 
         //Check if this is the original image
         try{
             isOriginal = "hippogallery:original".equals(jcrImageNodeModel.getObject().getName());
         } catch (RepositoryException e){
             error(e);
-            log.error("Cannot retrieve name of image node", e);
+            log.error("Cannot retrieve name of original image node", e);
+            areExceptionsThrown = true;
         }
 
         //Get dimensions of this thumbnail variant
@@ -90,9 +92,11 @@ public class ImageCropPlugin extends RenderPlugin {
         } catch(RepositoryException e){
             error(e);
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
+            areExceptionsThrown = true;
         } catch(GalleryException e){
             error(e);
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
+            areExceptionsThrown = true;
         }
 
         cropLink.add(new AjaxEventBehavior("onclick") {
@@ -103,7 +107,7 @@ public class ImageCropPlugin extends RenderPlugin {
             }
         });
 
-        cropLink.setVisible("edit".equals(mode) && !isOriginal && !isOriginalImageSmallerThanThumbSize);
+        cropLink.setVisible("edit".equals(mode) && !isOriginal && !isOriginalImageSmallerThanThumbSize && !areExceptionsThrown);
         add(cropLink);
     }
 }
