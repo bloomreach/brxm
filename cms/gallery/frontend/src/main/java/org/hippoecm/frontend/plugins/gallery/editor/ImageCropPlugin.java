@@ -65,9 +65,9 @@ public class ImageCropPlugin extends RenderPlugin {
         final IModel<Node> jcrImageNodeModel = getModel();
         final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
 
-        Label cropLink = new Label("crop-link", new StringResourceModel("crop-link-label", this, null));
         boolean isOriginal = true;
-        boolean isOriginalImageSmallerThanThumbSize = true;
+        boolean isOriginalImageWidthSmallerThanThumbWidth = false;
+        boolean isOriginalImageHeightSmallerThanThumbHeight = false;
         boolean areExceptionsThrown = false;
 
         //Check if this is the original image
@@ -87,7 +87,8 @@ public class ImageCropPlugin extends RenderPlugin {
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
 
-            isOriginalImageSmallerThanThumbSize = thumbnailDimension.getHeight() > originalImageDimension.getHeight() || thumbnailDimension.getWidth() > originalImageDimension.getWidth();
+            isOriginalImageWidthSmallerThanThumbWidth = thumbnailDimension.getWidth() > originalImageDimension.getWidth();
+            isOriginalImageHeightSmallerThanThumbHeight = thumbnailDimension.getHeight() > originalImageDimension.getHeight();
 
         } catch(RepositoryException e){
             error(e);
@@ -99,15 +100,33 @@ public class ImageCropPlugin extends RenderPlugin {
             areExceptionsThrown = true;
         }
 
-        cropLink.add(new AjaxEventBehavior("onclick") {
-            @Override
-            protected void onEvent(final AjaxRequestTarget target) {
-                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
-            }
-        });
+        Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this, null));
+        cropButton.setVisible("edit".equals(mode));
 
-        cropLink.setVisible("edit".equals(mode) && !isOriginal && !isOriginalImageSmallerThanThumbSize && !areExceptionsThrown);
-        add(cropLink);
+        if("edit".equals(mode)){
+            if(!isOriginal && !areExceptionsThrown && !isOriginalImageWidthSmallerThanThumbWidth && !isOriginalImageHeightSmallerThanThumbHeight) {
+                cropButton.add(new AjaxEventBehavior("onclick") {
+                    @Override
+                    protected void onEvent(final AjaxRequestTarget target) {
+                        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                        dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
+                    }
+                });
+            }
+
+            cropButton.add(new AttributeAppender("class", new Model<String>(
+                (isOriginal || areExceptionsThrown || isOriginalImageWidthSmallerThanThumbWidth || isOriginalImageHeightSmallerThanThumbHeight) ? "crop-button inactive" : "crop-button active"
+            ), " "));
+            String buttonTipProperty =
+                isOriginal ? "crop-button-tip-inactive-original" :
+                areExceptionsThrown ? "crop-button-tip-inactive-error" :
+                isOriginalImageWidthSmallerThanThumbWidth ? "crop-button-tip-inactive-width" :
+                isOriginalImageHeightSmallerThanThumbHeight ? "crop-button-tip-inactive-height" :
+                "crop-button-tip";
+
+            cropButton.add(new AttributeAppender("title", new Model<String>(new StringResourceModel(buttonTipProperty, this, null).getString()), ""));
+        }
+
+        add(cropButton);
     }
 }

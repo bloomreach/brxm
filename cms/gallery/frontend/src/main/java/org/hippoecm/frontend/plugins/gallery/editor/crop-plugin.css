@@ -14,18 +14,26 @@
  *  limitations under the License.
  */
 
-.crop-link {
-  background: url("res/button_crop.png") no-repeat scroll 0 0 transparent;
+.crop-button {
   display: block;
   width: 124px;
   height: 26px;
   padding: 6px 0 0 30px;
-  color: #333333;
-  cursor: pointer;
 }
 
-.crop-link:hover {
-    background: url("res/button_crop_hover.png") no-repeat scroll 0 0 transparent;
+.crop-button.active {
+  background: url("res/button_crop.png") no-repeat scroll 0 0 transparent;
+  cursor: pointer;
+  color: #333333;
+}
+
+.crop-button.active:hover {
+  background: url("res/button_crop_hover.png") no-repeat scroll 0 0 transparent;
+}
+
+.crop-button.inactive {
+  background: url("res/button_crop_inactive.png") no-repeat scroll 0 0 transparent;
+  color: #999999;
 }
 
 /*.imageset-override-styles .resource-values, .imageset-override-styles .dataTableContainer {

@@ -15,19 +15,26 @@
  */
 
 .regenerate-button {
-  background: url("res/button_regenerate.png") no-repeat scroll 0 0 transparent;
   display: block;
   width: 124px;
   height: 26px;
   padding: 6px 0 0 30px;
-  color: #333333;
-  cursor: pointer;
 }
 
-.regenerate-button:hover {
+.regenerate-button.active {
+  background: url("res/button_regenerate.png") no-repeat scroll 0 0 transparent;
+  cursor: pointer;
+  color: #333333;
+}
+
+.regenerate-button.active:hover {
     background: url("res/button_regenerate_hover.png") no-repeat scroll 0 0 transparent;
 }
 
+.regenerate-button.inactive {
+  background: url("res/button_regenerate_inactive.png") no-repeat scroll 0 0 transparent;
+  color: #999999;
+}
 
 .imageset-override-styles .imageset-extension-regenerate {
   padding-top: 10px;

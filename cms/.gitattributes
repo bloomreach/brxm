@@ -1231,8 +1231,10 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/crop
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/regenerate-plugin.css -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_crop.png -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_crop_hover.png -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_crop_inactive.png -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_regenerate.png -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_regenerate_hover.png -text
+gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_regenerate_inactive.png -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_upload.png -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/editor/res/button_upload_hover.png -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java -text svneol=unset#text/plain

@@ -25,10 +25,12 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -70,9 +72,20 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
         boolean isOriginal = true;
         boolean areExceptionsThrown = false;
+        boolean isThumbnailModified = false;
 
         try{
-            isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(((Node)getModel().getObject()).getName());
+            isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(((Node) getModel().getObject()).getName());
+        } catch(RepositoryException e){
+            error(e);
+            log.error("Cannot retrieve name of original image node", e);
+            areExceptionsThrown = true;
+        }
+
+        try{
+            Node thumbnailImageNode = (Node) getModelObject();
+            Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+            isThumbnailModified = originalImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate().equals(thumbnailImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate());
         } catch(RepositoryException e){
             error(e);
             log.error("Cannot retrieve name of original image node", e);
@@ -80,14 +93,31 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         }
 
         Label regenerateButton = new Label("regenerate-button", new StringResourceModel("regenerate-button-label", this, null));
-        regenerateButton.add(new AjaxEventBehavior("onclick") {
-            @Override
-            protected void onEvent(final AjaxRequestTarget target) {
-                regenerateThumbnail();
-            }
-        });
+        regenerateButton.setVisible("edit".equals(mode));
 
-        regenerateButton.setVisible("edit".equals(mode) && !isOriginal && !areExceptionsThrown);
+        if("edit".equals(mode)){
+            if(!isOriginal && !areExceptionsThrown && isThumbnailModified) {
+                regenerateButton.add(new AjaxEventBehavior("onclick") {
+                    @Override
+                    protected void onEvent(final AjaxRequestTarget target) {
+                        regenerateThumbnail();
+                    }
+                });
+            }
+
+            regenerateButton.add(new AttributeAppender("class", new Model<String>(
+                (isOriginal || areExceptionsThrown || !isThumbnailModified) ? "regenerate-button inactive" : "regenerate-button active"
+            ), " "));
+
+            String buttonTipProperty =
+                isOriginal ? "regenerate-button-tip-inactive-original" :
+                areExceptionsThrown ? "regenerate-button-tip-inactive-error" :
+                !isThumbnailModified ? "regenerate-button-tip-inactive-not-modified" :
+                "regenerate-button-tip";
+
+            regenerateButton.add(new AttributeAppender("title", new Model<String>(new StringResourceModel(buttonTipProperty, this, null).getString()), ""));
+        }
+
         add(regenerateButton);
     }
 
