@@ -58,6 +58,11 @@ public class TypeTranslator extends NodeTypeModelWrapper {
         return new PropertyValueModel(property, value);
     }
 
+    public IModel<String> getPropertyName(String compoundName) {
+        attach();
+        return new PropertyModel(compoundName);
+    }
+
     @Override
     public void detach() {
         if (attached) {
@@ -157,7 +162,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                                 if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && child.hasProperty(HippoNodeType.HIPPO_PROPERTY)
                                         && child.hasProperty(HippoNodeType.HIPPO_VALUE)) {
                                     if (child.getProperty(HippoNodeType.HIPPO_PROPERTY).getString().equals(property)
-                                            && child.getProperty(HippoNodeType.HIPPO_VALUE).getString().equals(value.getObject())) {
+                                            && child.getProperty(HippoNodeType.HIPPO_VALUE).getString().equals(name.getObject())) {
                                         String language = child.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
                                         if (locale.getLanguage().equals(language)) {
                                             return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
@@ -181,6 +186,57 @@ public class TypeTranslator extends NodeTypeModelWrapper {
             TypeTranslator.this.detach();
         }
 
+    }
+
+    class PropertyModel extends LoadableDetachableModel<String> {
+        private static final long serialVersionUID = 1L;
+
+        private String propertyName;
+
+        PropertyModel(String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        @Override
+        protected String load() {
+            JcrNodeModel nodeModel = getNodeModel();
+            if (nodeModel != null) {
+                Node node = nodeModel.getNode();
+                if (node != null) {
+                    try {
+                        if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                            Locale locale = Session.get().getLocale();
+                            NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
+                            while (nodes.hasNext()) {
+                                Node child = nodes.nextNode();
+                                if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
+                                    if (child.getProperty(HippoNodeType.HIPPO_PROPERTY).getString().equals(propertyName)) {
+                                        String language = child.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+                                        if (locale.getLanguage().equals(language)) {
+                                            return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+            }
+            int colonIndex = propertyName.indexOf(":");
+            if (colonIndex != -1 && colonIndex + 1 < propertyName.length()) {
+                return propertyName.substring(colonIndex + 1);
+            } else {
+                return propertyName;
+            }
+        }
+
+        @Override
+        public void detach() {
+            super.detach();
+            TypeTranslator.this.detach();
+        }
     }
 
 }

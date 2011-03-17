@@ -113,6 +113,7 @@ InsertImage.prototype.show = function(image)
     {
       f_url    : this.stripBaseURL(image.getAttribute('src',2)), // the second parameter makes IE return the value as it is set, as opposed to an "interpolated" (as MSDN calls it) value
       f_facetselect : getSpecifiedAttribute(image,'facetselect'),
+      f_type   : getSpecifiedAttribute(image,'type'),
       f_alt    : image.alt,
       f_border : image.border,
       f_align  : image.align,
@@ -128,6 +129,7 @@ InsertImage.prototype.show = function(image)
     {
       f_url    : '',
       f_facetselect  : '',
+      f_type   : '',
       f_alt    : '',
       f_border : '',
       f_align  : '',
@@ -195,6 +197,12 @@ InsertImage.prototype.apply = function()
       img.setAttribute("facetselect",value);
       else
       img.removeAttribute("facetselect");
+      break;
+      case "f_type":
+      if (value)
+      img.setAttribute("type",value);
+      else
+      img.removeAttribute("type");
       break;
       case "f_alt":
       if (value)

@@ -39,6 +39,7 @@ public abstract class XinhaImage extends DocumentLink {
     public static final String HORIZONTAL_SPACE = "f_horiz";
     public static final String WIDTH = "f_width";
     public static final String HEIGHT = "f_height";
+    public static final String TYPE = "f_type";
 
     public XinhaImage(Map<String, String> values, IDetachable targetId) {
         super(values, targetId);
@@ -58,6 +59,14 @@ public abstract class XinhaImage extends DocumentLink {
 
     public String getFacetSelectPath() {
         return get(FACET_SELECT);
+    }
+
+    public void setType(String type){
+        put(TYPE, type);
+    }
+
+    public String getType(){
+        return (String) get(TYPE);
     }
 
     @Override

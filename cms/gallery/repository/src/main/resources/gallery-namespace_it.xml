@@ -46,6 +46,40 @@
     </sv:node>
   </sv:node>
 
+  <sv:node sv:name="imageset" h:merge="combine">
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Thumbnail [it]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippogallery:thumbnail</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="imageset" h:merge="combine">
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>it</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Original [it]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippogallery:original</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
   <sv:node sv:name="exampleImageSet" h:merge="combine">
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

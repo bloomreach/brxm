@@ -18,13 +18,21 @@ package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
@@ -46,6 +54,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
@@ -58,6 +69,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.ThrottledTextFieldWidget;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -77,16 +89,43 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
     public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
+    private static final String CONFIG_KEY_PREFERRED_RESOURCE_NAMES = "preferred.resource.names";
 
-    private ImagePickerSettings settings;
+    DropDownChoice<String> type;
+
+    private LinkedHashMap<String, String> nameTypeMap;
+
+    private IModel<XinhaImage> imageModel;
 
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<XinhaImage> model) {
         super(context, config, model);
-
-        settings = new ImagePickerSettings();
-        if (config.containsKey("preferred.resource.names")) {
-            settings.setPreferredResourceNames(config.getStringArray("preferred.resource.names"));
+        imageModel = model;
+        if (nameTypeMap == null) {
+            nameTypeMap = new  LinkedHashMap<String, String>();
         }
+        type = new DropDownChoice<String>("type", new StringPropertyModel(model, XinhaImage.TYPE), new ArrayList<String>(nameTypeMap.keySet()), new IChoiceRenderer<String>() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getDisplayValue(String object) {
+                return nameTypeMap.get(object);
+            }
+
+            public String getIdValue(String object, int index) {
+                return object;
+            }
+
+        });
+        type.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                checkState();
+            }
+        });
+        type.setOutputMarkupId(true);
+        type.setNullValid(false);
+        add(type);
 
         createUploadForm(config);
 
@@ -126,6 +165,62 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         add(align);
 
         checkState();
+    }
+
+    protected void onModelSelected(IModel<Node> model) {
+        setTypeChoices(model.getObject());
+
+        if (type != null) {
+            // if an preexisting image is selected, the constructor is not yet called so the class members are not initialized
+            setPreferredTypeChoice();
+            AjaxRequestTarget target = AjaxRequestTarget.get();
+            if (target != null) {
+                target.addComponent(type);
+            }
+        }
+    }
+
+    private void setPreferredTypeChoice() {
+        IPluginConfig config = getPluginConfig();
+        if (config.containsKey(CONFIG_KEY_PREFERRED_RESOURCE_NAMES)) {
+            String[] preferredType = config.getStringArray(CONFIG_KEY_PREFERRED_RESOURCE_NAMES);
+            if (preferredType.length > 0) {
+                if (nameTypeMap.containsKey(preferredType[0])) {
+                    imageModel.getObject().setType(preferredType[0]);
+                } else {
+                    log.warn("The preferred image variant '{}' configured by '{}' in the xinha plugin configuration is not present, available are '{}'", new Object[] {preferredType[0], CONFIG_KEY_PREFERRED_RESOURCE_NAMES, nameTypeMap.keySet()});
+                }
+            }
+        }
+    }
+
+    private void setTypeChoices(final Node imageSetNode) {
+        if (nameTypeMap == null) {
+             nameTypeMap = new LinkedHashMap<String, String>();
+        } else {
+            nameTypeMap.clear();
+        }
+
+        try {
+            Node tmpImageSetNode = imageSetNode;
+            if (tmpImageSetNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                tmpImageSetNode = tmpImageSetNode.getNode(tmpImageSetNode.getName());
+            }
+            TypeTranslator typeTranslator = new TypeTranslator(new JcrNodeTypeModel(tmpImageSetNode.getPrimaryNodeType()));
+            NodeIterator childNodes = tmpImageSetNode.getNodes();
+            while (childNodes.hasNext()) {
+                Node childNode = childNodes.nextNode();
+                if (childNode.isNodeType("hippogallery:image")) {
+                    String childNodeName = childNode.getName();
+                    nameTypeMap.put(childNodeName, typeTranslator.getPropertyName(childNodeName).getObject());
+                }
+            }
+        } catch (RepositoryException repositoryException) {
+            log.error("Error updating the available image variants.", repositoryException);
+        }
+        if (type != null) {
+            type.setChoices(new ArrayList<String>(nameTypeMap.keySet()));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -247,24 +342,20 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     protected void onOk() {
         XinhaImage image = getModelObject();
 
-        //FIXME: Because our Image picker doesn't allow users to choose between the child-node-definitions
-        // (thumbnail, original, etc) we work around this by selecting the "preferred" by default.
+        boolean imageIsValid = false;
         String facetSelect = image.getFacetSelectPath();
         if (facetSelect != null && facetSelect.indexOf('/') > 0) {
             String basePath = facetSelect.substring(0, facetSelect.lastIndexOf('/') + 1);
-            boolean match = false;
-            for (String resourceName : settings.getPreferredResourceNames()) {
-                image.setFacetSelectPath(basePath + resourceName);
-                if (image.isValid()) {
-                    match = true;
-                    break;
-                }
-            }
-            if (!match) {
+            String imageType = image.getType();
+            image.setFacetSelectPath(basePath + imageType);
+            imageIsValid = image.isValid();
+            if (!imageIsValid) {
                 image.setFacetSelectPath(facetSelect);
+                imageIsValid = image.isValid();
             }
         }
-        if (image.isValid()) {
+
+        if (imageIsValid) {
             image.save();
         } else {
             error("Please select an image");

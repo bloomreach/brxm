@@ -75,10 +75,11 @@ public class XinhaImageService implements IDetachable {
             public void setLinkTarget(IDetachable model) {
                 super.setLinkTarget(model);
                 setFacetSelectPath(factory.getDefaultFacetSelectPath(model));
+                setInitType(getType());
             }
 
             public void save() {
-                if (isAttacheable()) {
+                 if (isAttacheable() || !isSameType(getType())) {
                     if (isReplacing()) {
                         RichTextImage remove = loadImageItem(getInitialValues());
                         if (remove != null) {
@@ -87,10 +88,11 @@ public class XinhaImageService implements IDetachable {
                     }
                     try {
                         RichTextImage item = createImageItem(getLinkTarget());
-                        String facetSelect = getFacetSelectPath();
-                        if (facetSelect != null) {
-                            String resource = facetSelect.substring(facetSelect.lastIndexOf('/') + 1);
-                            item.setSelectedResourceDefinition(resource);
+                        final String type = getType();
+                        if (!isSameType(type) || !isExisting()) {
+                            put(WIDTH, "");
+                            put(HEIGHT, "");
+                            item.setSelectedResourceDefinition(type);
                         }
                         setUrl(item.getUrl());
                     } catch (RichTextException e) {

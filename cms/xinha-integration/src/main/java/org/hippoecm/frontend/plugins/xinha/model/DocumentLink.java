@@ -33,6 +33,7 @@ public abstract class DocumentLink extends XinhaLink {
     
     private IDetachable initialModel;
     private IDetachable selectedModel;
+    private String initType;
 
     public DocumentLink(Map<String, String> values, IDetachable model) {
         super(values);
@@ -71,6 +72,14 @@ public abstract class DocumentLink extends XinhaLink {
 
     public void setLinkTarget(IDetachable model) {
         this.selectedModel = model;
+    }
+
+    public void setInitType(String type) {
+        this.initType = type;
+}
+
+    public boolean isSameType(String type) {
+        return this.initType.endsWith(type);
     }
 
 }
