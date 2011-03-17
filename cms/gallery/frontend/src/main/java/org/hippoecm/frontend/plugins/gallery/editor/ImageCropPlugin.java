@@ -59,46 +59,51 @@ public class ImageCropPlugin extends RenderPlugin {
     public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        String mode = config.getString("mode", "edit");
-        final IModel<Node> jcrImageNodeModel = getModel();
-
         add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "crop-plugin.css"));
 
+        String mode = config.getString("mode", "edit");
+        final IModel<Node> jcrImageNodeModel = getModel();
+        final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+
+        Label cropLink = new Label("crop-link", new StringResourceModel("crop-link-label", this, null));
+        boolean isOriginal = true;
+        boolean isOriginalImageSmallerThanThumbSize = true;
+
+        //Check if this is the original image
         try{
-            boolean isOriginal = "hippogallery:original".equals(jcrImageNodeModel.getObject().getName());
+            isOriginal = "hippogallery:original".equals(jcrImageNodeModel.getObject().getName());
+        } catch (RepositoryException e){
+            error(e);
+            log.error("Cannot retrieve name of image node", e);
+        }
 
-            final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
-
+        //Get dimensions of this thumbnail variant
+        try{
             Dimension thumbnailDimension = (processor == null ? new DefaultGalleryProcessor() : processor).getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
             Node originalImageNode = ((Node) getModelObject()).getParent().getNode("hippogallery:original");
             Dimension originalImageDimension = new Dimension(
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
 
-            boolean isOriginalImageSmallerThanThumbSize = thumbnailDimension.getHeight() > originalImageDimension.getHeight() || thumbnailDimension.getWidth() > originalImageDimension.getWidth();
+            isOriginalImageSmallerThanThumbSize = thumbnailDimension.getHeight() > originalImageDimension.getHeight() || thumbnailDimension.getWidth() > originalImageDimension.getWidth();
 
-
-            //The crop image button
-            Label cropLink = new Label("crop-link", new StringResourceModel("crop-link-label", this, null));
-            cropLink.add(new AjaxEventBehavior("onclick") {
-                @Override
-                protected void onEvent(final AjaxRequestTarget target) {
-                    IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                    dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
-                }
-            });
-            cropLink.setVisible("edit".equals(mode) && !isOriginal && !isOriginalImageSmallerThanThumbSize);
-            add(cropLink);
-
-        } catch(RepositoryException ex){
-            error(ex);
-            log.error(ex.getMessage());
-        }  catch(GalleryException ex){
-            error(ex);
-            log.error(ex.getMessage());
+        } catch(RepositoryException e){
+            error(e);
+            log.error("Cannot retrieve dimensions of original or thumbnail image", e);
+        } catch(GalleryException e){
+            error(e);
+            log.error("Cannot retrieve dimensions of original or thumbnail image", e);
         }
+
+        cropLink.add(new AjaxEventBehavior("onclick") {
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
+            }
+        });
+
+        cropLink.setVisible("edit".equals(mode) && !isOriginal && !isOriginalImageSmallerThanThumbSize);
+        add(cropLink);
     }
-
-
-
 }
