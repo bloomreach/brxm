@@ -1,0 +1,12 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path="target/maven-shared-archive-resources" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/jcr/jcr/2.0/jcr-2.0.jar" sourcepath="M2_REPO/javax/jcr/jcr/2.0/jcr-2.0-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/aschrijvers/.m2/repository/javax/jcr/jcr/2.0/jcr-2.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="src" path="/hippo-repository-api"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+</classpath>

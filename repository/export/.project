@@ -1,0 +1,20 @@
+<projectDescription>
+  <name>hippo-repository-export</name>
+  <comment>Repository configuration export daemon module. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects>
+    <project>hippo-repository-api</project>
+    <project>hippo-repository-builtin</project>
+    <project>hippo-repository-connector</project>
+    <project>hippo-repository-engine</project>
+    <project>hippo-repository-provider</project>
+    <project>hippo-repository-utilities</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
