@@ -23,8 +23,6 @@ application/src/main/webapp/META-INF/services/org.xml.sax.driver -text
 application/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 application/src/site/apt/index.apt -text
 application/src/site/site.xml svneol=native#text/plain
-builtin/.classpath -text svneol=unset#text/plain
-builtin/.project -text svneol=unset#text/plain
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/CopyWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflow.java -text
@@ -192,8 +190,6 @@ engine/src/test/resources/repository-testsubns2.cnd -text
 engine/src/test/resources/repository-testsuperns.cnd -text
 engine/src/test/resources/repository-testsuperns2.cnd -text
 engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
-export/.classpath -text svneol=unset#text/plain
-export/.project -text svneol=unset#text/plain
 export/pom.xml -text
 export/src/main/java/org/hippoecm/repository/export/AbstractInstruction.java -text
 export/src/main/java/org/hippoecm/repository/export/Constants.java -text
@@ -240,9 +236,6 @@ provider/src/main/java/org/hippoecm/repository/HitsRequested.java svneol=native#
 provider/src/main/java/org/hippoecm/repository/OrderBy.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/ParsedFacet.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/dataprovider/IFilterNodeId.java svneol=native#text/plain
-resources/.classpath -text svneol=unset#text/plain
-resources/.project -text svneol=unset#text/plain
-resources/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 resources/pom.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
