@@ -16,6 +16,9 @@
 
 (Hippo.ImageCropper = function(){
 
+    var initialX = 10;
+    var initialY = 10;
+
     var originalImageWidth = ${originalImageWidth};
     var originalImageHeight = ${originalImageHeight};
     var thumbnailWidth = ${thumbnailWidth};
@@ -25,7 +28,7 @@
             '${originalImageMarkupId}',
             {
                 keyTick:4,
-                initialXY:[10, 10],
+                initialXY:[initialX, initialY],
                 initHeight: thumbnailHeight,
                 initWidth: thumbnailWidth,
                 ratio: true,
@@ -42,8 +45,8 @@
         var previewImage = YAHOO.util.Dom.getFirstChild(previewContainer);
 
         //initial values
-        previewImage.style.top = '-10px';
-        previewImage.style.left = '-10px';
+        previewImage.style.top = "-" + initialX + "px";
+        previewImage.style.left = "-" + initialY + "px";
     }
 
     imgCrop.on('moveEvent', function() {
