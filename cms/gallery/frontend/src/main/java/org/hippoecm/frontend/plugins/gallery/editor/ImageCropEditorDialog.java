@@ -34,6 +34,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -47,6 +48,7 @@ import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
+import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
@@ -71,65 +73,74 @@ public class ImageCropEditorDialog extends AbstractDialog {
 
     public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor){
         super(jcrImageNodeModel);
+
         this.galleryProcessor = galleryProcessor;
+        Node thumbnailImageNode = (Node) jcrImageNodeModel.getObject();
 
         HiddenField regionField = new HiddenField("region", new PropertyModel(this, "region"));
         regionField.setOutputMarkupId(true);
         add(regionField);
 
+        Image imgPreview;
+        Image originalImage;
 
-        if(getModelObject() != null){
-            try {
-                Node thumbnailImageNode = (Node) jcrImageNodeModel.getObject();
-                thumbnailDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
-                Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
-                originalImageDimension = new Dimension(
-                                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
+        WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
+        imagePreviewContainer.setOutputMarkupId(true);
 
-                JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
-                JcrImage originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
+        boolean isPreviewVisible = false;
+        String thumbnailDimensionsLabel = new String();
 
-                boolean isPreviewVisible = thumbnailDimension.getWidth() <= 200;
-
-                JcrImage imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
-                imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
-
-                WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
-                imagePreviewContainer.setOutputMarkupId(true);
-                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:"+ thumbnailDimension.getHeight() +"px"), ";"));
-                imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:"+ thumbnailDimension.getWidth() +"px"), ";"));
-                imagePreviewContainer.add(imgPreview);
-                imagePreviewContainer.setVisible(isPreviewVisible);
-
-                originalImage.add(new CropBehavior(
-                    regionField.getMarkupId(),
-                    imagePreviewContainer.getMarkupId(),
-                    originalImageDimension,
-                    thumbnailDimension));
-
-                add(originalImage);
-                add(imagePreviewContainer);
-
-                Label previewDescription = new Label("preview-description", isPreviewVisible ?
-                                new StringResourceModel("preview-description-enabled", this, null) :
-                                new StringResourceModel("preview-description-disabled", this, null));
-                add(previewDescription);
-
-                Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null, new Object[]{
-                        ((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight())
-                }));
-                add(thumbnailSize);
-
-
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-                error(e);
-            } catch (GalleryException e){
-                log.error(e.getMessage());
-                error(e);
-            }
+        try{
+            thumbnailDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
+            isPreviewVisible = thumbnailDimension.getWidth() <= 200;
+            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:"+ thumbnailDimension.getHeight() +"px"), ";"));
+            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:"+ thumbnailDimension.getWidth() +"px"), ";"));
+            thumbnailDimensionsLabel = String.valueOf((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight());
+        } catch (RepositoryException e) {
+            log.error("Cannot retrieve thumbnail dimensions", e);
+            error(e);
+        } catch (GalleryException e){
+            log.error("Cannot retrieve thumbnail dimensions", e);
+            error(e);
         }
+
+        try{
+            Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+            originalImageDimension = new Dimension(
+                (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
+                (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong()
+            );
+
+            JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
+            originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
+            imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
+
+            originalImage.add(new CropBehavior(
+                regionField.getMarkupId(),
+                imagePreviewContainer.getMarkupId(),
+                originalImageDimension,
+                thumbnailDimension));
+
+        } catch (RepositoryException e) {
+            log.error("Cannot retrieve original image", e);
+            error(e);
+            originalImage = new Image("image");
+            imgPreview = new Image("imagepreview");
+        }
+
+        add(originalImage);
+        imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
+        imagePreviewContainer.add(imgPreview);
+        imagePreviewContainer.setVisible(isPreviewVisible);
+        add(imagePreviewContainer);
+
+        Label previewDescription = new Label("preview-description", isPreviewVisible ?
+            new StringResourceModel("preview-description-enabled", this, null) :
+            new StringResourceModel("preview-description-disabled", this, null));
+        add(previewDescription);
+
+        Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null, new Object[]{thumbnailDimensionsLabel}));
+        add(thumbnailSize);
     }
 
     @Override
