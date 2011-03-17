@@ -72,7 +72,7 @@ public class ImageCropPlugin extends RenderPlugin {
 
         //Check if this is the original image
         try{
-            isOriginal = "hippogallery:original".equals(jcrImageNodeModel.getObject().getName());
+            isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(jcrImageNodeModel.getObject().getName());
         } catch (RepositoryException e){
             error(e);
             log.error("Cannot retrieve name of original image node", e);
@@ -82,7 +82,7 @@ public class ImageCropPlugin extends RenderPlugin {
         //Get dimensions of this thumbnail variant
         try{
             Dimension thumbnailDimension = (processor == null ? new DefaultGalleryProcessor() : processor).getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
-            Node originalImageNode = ((Node) getModelObject()).getParent().getNode("hippogallery:original");
+            Node originalImageNode = ((Node) getModelObject()).getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             Dimension originalImageDimension = new Dimension(
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());

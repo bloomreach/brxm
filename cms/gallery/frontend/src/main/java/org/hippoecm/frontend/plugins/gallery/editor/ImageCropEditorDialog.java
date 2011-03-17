@@ -82,7 +82,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
             try {
                 Node thumbnailImageNode = (Node) jcrImageNodeModel.getObject();
                 thumbnailDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
-                Node originalImageNode = thumbnailImageNode.getParent().getNode("hippogallery:original");
+                Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
                 originalImageDimension = new Dimension(
                                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
                                         (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
@@ -151,7 +151,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
         int left = jsonObject.getInt("left");
         int width = jsonObject.getInt("width");
         try {
-            Node originalImageNode = ((Node)getModelObject()).getParent().getNode("hippogallery:original");
+            Node originalImageNode = ((Node)getModelObject()).getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
             ImageReader reader = ImageUtils.getImageReader(mimeType);
             if (reader == null) {
