@@ -40,6 +40,10 @@
     if(isPreviewVisible){
         var previewContainer = YAHOO.util.Dom.get('${imagePreviewContainerMarkupId}');
         var previewImage = YAHOO.util.Dom.getFirstChild(previewContainer);
+
+        //initial values
+        previewImage.style.top = '-10px';
+        previewImage.style.left = '-10px';
     }
 
     imgCrop.on('moveEvent', function() {
@@ -58,6 +62,5 @@
             previewImage.style.left = '-' + (Math.floor(region.left * scalingFactor)) + 'px';
         }
     });
-
 
 })();
