@@ -34,6 +34,9 @@ application/tmlog.lck
 application/version
 application/wdbp-error-log.txt
 application/workspaces
+builtin/.classpath
+builtin/.project
+builtin/.settings
 builtin/target
 checker/*.tmp
 checker/.classpath
@@ -86,6 +89,8 @@ engine/tm.out.1
 engine/tm.out.lck
 engine/tmlog.lck
 engine/wdbp-error-log.txt
+export/.classpath
+export/.project
 export/.settings
 export/target
 jca/*.tmp
@@ -134,6 +139,9 @@ provider/tm.out.1
 provider/tm.out.lck
 provider/tmlog.lck
 provider/wdbp-error-log.txt
+resources/.classpath
+resources/.project
+resources/.settings
 resources/target
 servlets/*.tmp
 servlets/.classpath
