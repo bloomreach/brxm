@@ -25,7 +25,6 @@ application/src/site/apt/index.apt -text
 application/src/site/site.xml svneol=native#text/plain
 builtin/.classpath -text svneol=unset#text/plain
 builtin/.project -text svneol=unset#text/plain
-builtin/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/CopyWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflow.java -text
