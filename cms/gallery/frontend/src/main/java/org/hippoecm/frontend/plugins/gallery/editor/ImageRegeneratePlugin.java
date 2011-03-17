@@ -72,7 +72,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         boolean areExceptionsThrown = false;
 
         try{
-            isOriginal = "hippogallery:original".equals(((Node)getModel().getObject()).getName());
+            isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(((Node)getModel().getObject()).getName());
         } catch(RepositoryException e){
             error(e);
             log.error("Cannot retrieve name of original image node", e);
@@ -93,44 +93,21 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
     private void regenerateThumbnail() {
         try {
-            Node modelObject = (Node) getModelObject();
-            Node originalImageNode = modelObject.getParent().getNode("hippogallery:original");
+            Node thumbnailImageNode = (Node) getModelObject();
+            Node imageSetNode = thumbnailImageNode.getParent();
+            Node originalImageNode = imageSetNode.getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
-            ImageReader reader = ImageUtils.getImageReader(mimeType);
-            if (reader == null) {
-                throw new GalleryException("Unsupported MIME type for reading: " + mimeType);
-            }
-            ImageWriter writer = ImageUtils.getImageWriter(mimeType);
-            if (writer == null) {
-                throw new GalleryException("Unsupported MIME type for writing: " + mimeType);
-            }
-            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(originalImageNode.getProperty(JcrConstants.JCR_DATA).getStream());
-            reader.setInput(imageInputStream);
-            BufferedImage original = reader.read(0);
-            Object hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-            boolean highQuality = true;
+            String filename = imageSetNode.getProperty(HippoGalleryNodeType.IMAGE_SET_FILE_NAME).getString();
 
-            Dimension dimension = galleryProcessor.getDesiredResourceDimension((Node)getModelObject());
-            int targetWidth = (int)dimension.getWidth();
-            int targetHeight = (int)dimension.getHeight();
-
-            BufferedImage thumbnail = ImageUtils.scaleImage(original, targetWidth, targetHeight, hints, highQuality);
-            ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail);
-
-            modelObject.getProperty(JcrConstants.JCR_DATA).setValue(new ByteArrayInputStream(bytes.toByteArray()));
-            modelObject.setProperty(JcrConstants.JCR_LASTMODIFIED, originalImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate());
-
-            //The following code can originally be found in org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation
-            double resizeRatio = calculateResizeRatio(original.getWidth(), original.getHeight(), targetWidth, targetHeight);
-            int actualWidth = (int)Math.max(original.getWidth() * resizeRatio, 1);
-            int actualHeight = (int)Math.max(original.getHeight() * resizeRatio, 1);
-            modelObject.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).setValue(actualWidth);
-            modelObject.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).setValue(actualHeight);
+            galleryProcessor.initGalleryResource(
+                thumbnailImageNode,
+                originalImageNode.getProperty(JcrConstants.JCR_DATA).getStream(),
+                mimeType,
+                filename,
+                originalImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate()
+            );
 
         } catch (GalleryException ex) {
-            log.error("Unable to create thumbnail image", ex);
-            error(ex);
-        } catch (IOException ex) {
             log.error("Unable to create thumbnail image", ex);
             error(ex);
         } catch (RepositoryException ex) {
@@ -138,23 +115,6 @@ public class ImageRegeneratePlugin extends RenderPlugin {
             error(ex);
         }
 
-    }
-
-    //The following code can originally be found in org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation
-    private double calculateResizeRatio(double originalWidth, double originalHeight, int targetWidth, int targetHeight) {
-        double widthRatio = 1;
-        double heightRatio = 1;
-
-        if (targetWidth >= 1) {
-            widthRatio = targetWidth / originalWidth;
-        }
-        if (targetHeight >= 1) {
-            heightRatio = targetHeight / originalHeight;
-        }
-
-        // If the image has to be scaled down we should return the largest negative ratio.
-        // If the image has to be scaled up, and we should take the smallest positive ratio.
-        return Math.min(widthRatio, heightRatio);
     }
 
     @Override
