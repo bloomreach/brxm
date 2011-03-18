@@ -50,7 +50,7 @@ public class FacetFiltersQuery {
        try {
             for (FacetFilter filter : facetFilters.getFilters()) {
                 if (filter.operator == FacetFilters.NOOP_OPERATOR) {
-                    QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, analyzer, synonymProvider, null);
+                    QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, analyzer, synonymProvider);
                     Query freeTextQuery = parser.parse(filter.queryString);
                     if(filter.negated) {
                         freeTextQuery = QueryHelper.negateQuery(freeTextQuery);
@@ -63,7 +63,7 @@ public class FacetFiltersQuery {
                     tmp.append(":").append(FieldNames.FULLTEXT_PREFIX);
                     tmp.append(propName.getLocalName());
                     String fieldname = tmp.toString();
-                    QueryParser parser = new JackrabbitQueryParser(fieldname, analyzer, synonymProvider, null);
+                    QueryParser parser = new JackrabbitQueryParser(fieldname, analyzer, synonymProvider);
                     Query textQuery = parser.parse(filter.queryString);
                     if(filter.negated) {
                         textQuery = QueryHelper.negateQuery(textQuery);

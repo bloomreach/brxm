@@ -25,7 +25,6 @@ import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.QueryResultImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.query.qom.ColumnImpl;
 import org.apache.lucene.search.Query;
@@ -47,7 +46,9 @@ public class HippoQueryResult extends QueryResultImpl {
     protected final boolean[] orderSpecs;
 
     public HippoQueryResult(SearchIndex index,
-                            SessionContext sessionContext,
+                            ItemManager itemMgr,
+                            SessionImpl session,
+                            AccessManager accessMgr,
                             AbstractQueryImpl queryImpl,
                             Query query,
                             ColumnImpl[] columns,
@@ -56,7 +57,7 @@ public class HippoQueryResult extends QueryResultImpl {
                             boolean documentOrder,
                             long offset,
                             long limit) throws RepositoryException {
-        super(index, sessionContext, queryImpl, null, columns, documentOrder, offset, limit);
+        super(index, itemMgr, session, accessMgr, queryImpl, null, columns, documentOrder, offset, limit);
         this.query = query;
         this.orderProps = orderProps;
         this.orderSpecs = orderSpecs;
@@ -69,7 +70,7 @@ public class HippoQueryResult extends QueryResultImpl {
      */
     protected MultiColumnQueryHits executeQuery(long resultFetchHint)
             throws IOException {
-        MultiColumnQueryHits hits = index.executeQuery(sessionContext.getSessionImpl(), queryImpl, query,
+        MultiColumnQueryHits hits = index.executeQuery(session, queryImpl, query,
                 orderProps, orderSpecs, resultFetchHint);
         totalSize = hits.getSize();
         return hits;

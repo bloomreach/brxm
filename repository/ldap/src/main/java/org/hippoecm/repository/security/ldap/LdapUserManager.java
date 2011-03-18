@@ -441,8 +441,4 @@ public class LdapUserManager extends AbstractUserManager {
     public boolean isCaseSensitive() {
         return isCaseSensitive;
     }
-
-    public boolean isAutoSave() {
-        return true;
-    }
 }

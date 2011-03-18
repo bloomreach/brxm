@@ -49,7 +49,6 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.QueryImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.query.lucene.SingleColumnQueryResult;
-import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
@@ -103,13 +102,12 @@ public class ServicingSearchIndex extends SearchIndex {
     }
 
     @Override
-    public ExecutableQuery createExecutableQuery(
-            SessionContext sessionContext, String statement, String language)
-            throws InvalidQueryException {
+    public ExecutableQuery createExecutableQuery(SessionImpl session, ItemManager itemMgr, String statement,
+            String language) throws InvalidQueryException {
        
         if(statement.contains(HippoNodeType.HIPPO_PATHS)) {
            // Do not search in versioning
-           return new QueryImpl(sessionContext, this,
+           return new QueryImpl(session, itemMgr, this,
                     getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
                // we override the needsSystemTree() to return false: We do not want to search in versioning.
                @Override
@@ -118,7 +116,7 @@ public class ServicingSearchIndex extends SearchIndex {
                }
            };
         } else {
-            QueryImpl query = new QueryImpl(sessionContext, this,
+            QueryImpl query = new QueryImpl(session, itemMgr, this,
                     getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
                 long totalSize;
                 @Override
@@ -128,11 +126,11 @@ public class ServicingSearchIndex extends SearchIndex {
                     }
 
                     // build lucene query
-                    Query query = LuceneQueryBuilder.createQuery(root, sessionContext.getSessionImpl(),
+                    Query query = LuceneQueryBuilder.createQuery(root, session,
                             index.getContext().getItemStateManager(),
                             index.getNamespaceMappings(), index.getTextAnalyzer(),
                             propReg, index.getSynonymProvider(),
-                            index.getIndexFormatVersion(), null);
+                            index.getIndexFormatVersion());
 
                     OrderQueryNode orderNode = root.getOrderNode();
 
@@ -149,7 +147,8 @@ public class ServicingSearchIndex extends SearchIndex {
                         ascSpecs[i] = orderSpecs[i].isAscending();
                     }
 
-                    return new HippoQueryResult(index, sessionContext,
+                    return new HippoQueryResult(index, itemMgr,
+                            session, session.getAccessManager(),
                             this, query,
                             getColumns(), orderProperties, ascSpecs,
                             orderProperties.length == 0 && getRespectDocumentOrder(),

@@ -75,8 +75,8 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     }
 
     @Override
-    protected NamespaceRegistryImpl createNamespaceRegistry() throws RepositoryException {
-        NamespaceRegistryImpl nsReg = super.createNamespaceRegistry();
+    protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs) throws RepositoryException {
+        NamespaceRegistryImpl nsReg = super.createNamespaceRegistry(fs);
         log.info("Initializing hippo namespace");
         safeRegisterNamespace(nsReg, "hippo", "http://www.onehippo.org/jcr/hippo/nt/2.0.2");
         log.info("Initializing hipposys namespace");
@@ -130,51 +130,52 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     }
 
     @Override
-    protected SharedItemStateManager createItemStateManager(
-            PersistenceManager persistMgr, boolean usesReferences,
-            ISMLocking locking) throws ItemStateException {
-        return new HippoSharedItemStateManager(this, persistMgr, context.getRootNodeId(),
-                context.getNodeTypeRegistry(), true, context.getItemStateCacheFactory(),
-                locking);
+    protected SharedItemStateManager createItemStateManager(PersistenceManager persistMgr, NodeId rootNodeId,
+            NodeTypeRegistry ntReg, boolean usesReferences, ItemStateCacheFactory cacheFactory, ISMLocking locking)
+            throws ItemStateException {
+        return new HippoSharedItemStateManager(this, persistMgr, rootNodeId, ntReg, true, cacheFactory, locking);
     }
-               
 
     @Override
     protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(AuthContext loginContext,
             WorkspaceConfig wspConfig) throws AccessDeniedException, RepositoryException {
 
-        return new XASessionImpl(context, loginContext, wspConfig);
+        return new XASessionImpl(this, loginContext, wspConfig);
     }
 
     @Override
     protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(Subject subject, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
 
-        return new XASessionImpl(context, subject, wspConfig);
+        return new XASessionImpl(this, subject, wspConfig);
     }
 
     protected RepositoryConfig getRepositoryConfig() {
         return super.getConfig();
     }
 
+    @Override
     protected NodeTypeRegistry getNodeTypeRegistry() {
-        return context.getNodeTypeRegistry();
+        return super.getNodeTypeRegistry();
     }
 
+    @Override
     protected NodeId getRootNodeId() {
-        return context.getRootNodeId();
+        return super.getRootNodeId();
     }
 
+    @Override
     protected FileSystem getFileSystem() {
-        return context.getFileSystem();
+        return super.getFileSystem();
     }
 
+    @Override
     protected NamespaceRegistryImpl getNamespaceRegistry() {
-        return context.getNamespaceRegistry();
+        return super.getNamespaceRegistry();
     }
 
     public JackrabbitSecurityManager getSecurityManager() throws RepositoryException {
-        return context.getSecurityManager();
+        return super.getSecurityManager();
     }
 
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {

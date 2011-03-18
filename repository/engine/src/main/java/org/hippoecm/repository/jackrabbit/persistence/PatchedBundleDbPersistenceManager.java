@@ -23,7 +23,6 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,7 +31,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
-import org.apache.jackrabbit.core.persistence.pool.BundleDbPersistenceManager;
+import org.apache.jackrabbit.core.persistence.bundle.BundleDbPersistenceManager;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -40,7 +39,6 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeReferences;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.util.db.DbUtility;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.slf4j.Logger;
@@ -107,7 +105,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
 
             try {
                 // analyze child node bundles
-                NodePropBundle child = loadBundle(entry.getId());
+                NodePropBundle child = loadBundle(entry.getId(), true);
                 if (child == null) {
                     log.error(
                             "NodeState '" + id + "' references inexistent child"
@@ -170,8 +168,9 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
             ResultSet rs = null;
             try {
                 String sql = "select count(*) from " + schemaObjectPrefix + "BUNDLE";
+                Statement stmt = connectionManager.executeStmt(sql, new Object[0]);
                 try {
-                    rs = conHelper.exec(sql, new Object[0], false, 0);
+                    rs = stmt.getResultSet();
                     if (!rs.next()) {
                         log.error("Could not retrieve total number of bundles. empty result set.");
                         return;
@@ -180,14 +179,15 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
 
                     log.info(name + ": Checking " + total + " bundles...");
                 } finally {
-                    DbUtility.close(rs);
+                    closeResultSet(rs);
                 }
                 if (getStorageModel() == SM_BINARY_KEYS) {
                     sql = "select NODE_ID from " + schemaObjectPrefix + "BUNDLE";
                 } else {
                     sql = "select NODE_ID_HI, NODE_ID_LO from " + schemaObjectPrefix + "BUNDLE";
                 }
-                rs = conHelper.exec(sql, new Object[0], false, 0);
+                stmt = connectionManager.executeStmt(sql, new Object[0]);
+                rs = stmt.getResultSet();
 
                 // iterate over all node bundles in the db
                 while (rs.next()) {
@@ -202,7 +202,8 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                     ResultSet bRs = null;
                     byte[] data = null;
                     try {
-                        bRs = conHelper.exec(bundleSelectSQL, getKey(id), false, 0);
+                        Statement bSmt = connectionManager.executeStmt(bundleSelectSQL, getKey(id));
+                        bRs = bSmt.getResultSet();
                         if (!bRs.next()) {
                             //throw new SQLException("bundle cannot be retrieved?");
                             log.error("invalid bundle '" + id + "', bundle cannot be retrieved or empty result?");
@@ -212,32 +213,21 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                             try {
                                 // parse and check bundle
                                 // checkBundle will log any problems itself
-                                
-                                NodePropBundle bundle = null;
-                                try {
-                                    InputStream din = new DataInputStream(new ByteArrayInputStream(data));
-                                    if (rs.getMetaData().getColumnType(1) == Types.BLOB) {
-                                        din = rs.getBlob(1).getBinaryStream();
-                                    } else {
-                                        din = rs.getBinaryStream(1);
-                                    }
-                                    try {
-                                        bundle = binding.readBundle(din, id);
-                                    } finally {
-                                        din.close();
-                                    }
-                                } catch (IOException e) {
-                                    SQLException exception = new SQLException("Failed to parse bundle " + id);
-                                    exception.initCause(e);
-                                    throw exception;
+                                DataInputStream din = new DataInputStream(new ByteArrayInputStream(data));
+                                if (binding.checkBundle(din)) {
+                                    // reset stream for readBundle()
+                                    din = new DataInputStream(new ByteArrayInputStream(data));
+                                    NodePropBundle bundle = binding.readBundle(din, id);
+                                    checkBundleConsistency(id, bundle, fix, modifications, orphans);
+                                } else {
+                                    log.error("invalid bundle '" + id + "', see previous BundleBinding error log entry");
                                 }
-                                checkBundleConsistency(id, bundle, fix, modifications);
                            } catch (Exception e) {
                                log.error("Error in bundle " + id + ": " + e);
                            }
                         }
                     } finally {
-                        DbUtility.close(bRs);
+                        closeResultSet(bRs);
                     }
 
                     count++;
@@ -248,7 +238,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
             } catch (Exception e) {
                 log.error("Error loading bundle", e);
             } finally {
-                DbUtility.close(rs);
+                closeResultSet(rs);
                 total = count;
             }
         } else {
@@ -275,7 +265,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                 NodeId id = idList.get(i);
                 try {
                     // load the node from the database
-                    NodePropBundle bundle = loadBundle(id);
+                    NodePropBundle bundle = loadBundle(id, true);
 
                     if (bundle == null) {
                         log.error("No bundle found for uuid '" + id + "'");
@@ -358,8 +348,9 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         ResultSet rs = null;
         try {
             String sql = "select count(*) from " + schemaObjectPrefix + "REFS";
+            Statement stmt = connectionManager.executeStmt(sql, new Object[0]);
             try {
-                rs = conHelper.exec(sql, new Object[0], false, 0);
+                rs = stmt.getResultSet();
                 if (!rs.next()) {
                     log.error("Could not retrieve total number of references. Empty result set.");
                     return new ArrayList();
@@ -367,14 +358,15 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                 total = rs.getInt(1);
                 log.info(name + ": checked " + count + "/" + total + " references...");
             } finally {
-                DbUtility.close(rs);
+                closeResultSet(rs);
             }
             if (getStorageModel() == SM_BINARY_KEYS) {
                 sql = "select NODE_ID from " + schemaObjectPrefix + "REFS";
             } else {
                 sql = "select NODE_ID_HI, NODE_ID_LO from " + schemaObjectPrefix + "REFS";
             }
-            rs = conHelper.exec(sql, new Object[0], false, 0);
+            stmt = connectionManager.executeStmt(sql, new Object[0]);
+            rs = stmt.getResultSet();
 
             // iterate over all node bundles in the db
             while (rs.next()) {
@@ -395,8 +387,9 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         } catch (Exception e) {
             log.error("Error loading bundle", e);
         } finally {
-            DbUtility.close(rs);
+            closeResultSet(rs);
             total = count;
+
             log.info(name + ": checked " + count + "/" + total + " references.");
         }
         return references;
@@ -460,7 +453,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
             if (fix) {
                 log.info(name + ": Removing references to: '" + targetNode + "'");
                 try {
-                    conHelper.exec(nodeReferenceDeleteSQL, getKey(targetNode));
+                    connectionManager.executeStmt(nodeReferenceDeleteSQL, getKey(targetNode));
                     return false;
                 } catch (Exception ex) {
                     String msg = "failed to delete references to: " + targetNode;
@@ -475,7 +468,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
             if (fix) {
                 log.info(name + ": Removing references to: '" + targetNode + "'");
                 try {
-                    conHelper.exec(nodeReferenceDeleteSQL, getKey(targetNode));
+                    connectionManager.executeStmt(nodeReferenceDeleteSQL, getKey(targetNode));
                     return false;
                 } catch (Exception ex) {
                     String msg = "failed to delete references to: " + targetNode;
@@ -504,7 +497,7 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         Iterator iterator = bundle.getChildNodeEntries().iterator();
         while(iterator.hasNext()) {
             NodePropBundle.ChildNodeEntry entry = (NodePropBundle.ChildNodeEntry) iterator.next();
-            NodePropBundle child = loadBundle(entry.getId());
+            NodePropBundle child = loadBundle(entry.getId(), true);
             destroyOrphansRecursive(child); 
         }
         log.info(name + ": Removing orphan bundle '{}'", bundle.getId());

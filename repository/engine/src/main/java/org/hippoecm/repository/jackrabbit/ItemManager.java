@@ -15,11 +15,20 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeDefinition;
 import org.apache.jackrabbit.core.id.NodeId;
-import org.apache.jackrabbit.core.session.SessionContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.state.ItemStateManager;
+import org.apache.jackrabbit.core.state.SessionItemStateManager;
 
 public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     @SuppressWarnings("unused")
@@ -29,9 +38,24 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
 
     private NodeId rootNodeId;
 
-    protected ItemManager(SessionContext context) {
-        super(context);
-        this.rootNodeId = context.getRootNodeId();
-        context.getItemStateManager().addListener(this);
+    protected ItemManager(SessionItemStateManager sism,
+                          HierarchyManager hierMgr,
+                          SessionImpl session,
+                          org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl rootNodeDef,
+                          NodeId rootNodeId) {
+        super(sism, hierMgr, session, rootNodeDef, rootNodeId);
+        this.rootNodeId = rootNodeId;
+    }
+
+    public static ItemManager createInstance(
+            SessionItemStateManager itemStateProvider,
+            HierarchyManager hierMgr,
+            SessionImpl session,
+            org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl rootNodeDef,
+            NodeId rootNodeId) {
+        ItemManager mgr = new ItemManager(itemStateProvider, hierMgr,
+                session, rootNodeDef, rootNodeId);
+        itemStateProvider.addListener(mgr);
+        return mgr;
     }
 }

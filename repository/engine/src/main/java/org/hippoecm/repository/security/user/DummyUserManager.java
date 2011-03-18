@@ -55,9 +55,4 @@ public class DummyUserManager extends AbstractUserManager {
     public boolean isCaseSensitive() {
         return true;
     }
-
-    @Override
-    public boolean isAutoSave() {
-        return true;
-    }
 }

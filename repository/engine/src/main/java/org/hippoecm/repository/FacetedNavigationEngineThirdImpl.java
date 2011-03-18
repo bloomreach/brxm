@@ -123,7 +123,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 }
                 scopes = docbases.split(",");
             } else {
-                QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider(), null);
+                QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider());
                 //parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
                 try {
                     org.apache.lucene.search.Query query = parser.parse(parameter);
@@ -146,7 +146,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                                 getNamespaceMappings(), getTextAnalyzer(),
                                 getContext().getPropertyTypeRegistry(),
                                 getSynonymProvider(),
-                                getIndexFormatVersion(), null);
+                                getIndexFormatVersion());
                         
                         // if there is a sort, set the sort
                         Sort sort = null;
@@ -676,7 +676,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 context.session, getQueryNodeFactory());
         org.apache.lucene.search.Query query = LuceneQueryBuilder.createQuery(root, context.session, getContext()
                 .getItemStateManager(), getNamespaceMappings(), getTextAnalyzer(), getContext()
-                .getPropertyTypeRegistry(), getSynonymProvider(), getIndexFormatVersion(), null);
+                .getPropertyTypeRegistry(), getSynonymProvider(), getIndexFormatVersion());
 
         Set<NodeId> nodeIdHits = new LinkedHashSet<NodeId>();
         try {

@@ -16,21 +16,20 @@
  */
 package org.hippoecm.repository.jackrabbit.persistence;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.apache.jackrabbit.core.persistence.PMContext;
-import org.apache.jackrabbit.core.persistence.pool.DbNameIndex;
-import org.apache.jackrabbit.core.persistence.pool.NGKDbNameIndex;
-import org.apache.jackrabbit.core.util.db.CheckSchemaOperation;
-import org.apache.jackrabbit.core.util.db.ConnectionHelper;
-import org.apache.jackrabbit.core.util.db.OracleConnectionHelper;
+import org.apache.jackrabbit.core.persistence.bundle.NGKDbNameIndex;
+import org.apache.jackrabbit.core.persistence.bundle.DbNameIndex;
+import org.apache.jackrabbit.util.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extends the {@link BundleDbPersistenceManager} by Oracle specific code. <p/> Configuration:<br>
+ * Extends the {@link BundleDbPersistenceManager} by Oracle specific code.
+ * <p/>
+ * Configuration:<br>
  * <ul>
  * <li>&lt;param name="{@link #setExternalBLOBs(String)} externalBLOBs}" value="false"/>
  * <li>&lt;param name="{@link #setBundleCacheSize(String) bundleCacheSize}" value="8"/>
@@ -53,8 +52,12 @@ public class ForkedOraclePersistenceManager extends PatchedBundleDbPersistenceMa
      */
     private static Logger log = LoggerFactory.getLogger(ForkedOraclePersistenceManager.class);
 
+    /** the variable for the Oracle table space */
+    public static final String TABLE_SPACE_VARIABLE =
+        "${tableSpace}";
+
     /** the Oracle table space to use */
-    protected String tableSpace = "";
+    protected String tableSpace;
 
     /**
      * Creates a new oracle persistence manager
@@ -66,7 +69,6 @@ public class ForkedOraclePersistenceManager extends PatchedBundleDbPersistenceMa
 
     /**
      * Returns the configured Oracle table space.
-     * 
      * @return the configured Oracle table space.
      */
     public String getTableSpace() {
@@ -75,14 +77,13 @@ public class ForkedOraclePersistenceManager extends PatchedBundleDbPersistenceMa
 
     /**
      * Sets the Oracle table space.
-     * 
      * @param tableSpace the Oracle table space.
      */
     public void setTableSpace(String tableSpace) {
-        if (tableSpace != null && tableSpace.trim().length() > 0) {
-            this.tableSpace = "tablespace " + tableSpace.trim();
+        if (tableSpace != null) {
+            this.tableSpace = tableSpace.trim();
         } else {
-            this.tableSpace = "";
+            this.tableSpace = null;
         }
     }
 
@@ -101,34 +102,77 @@ public class ForkedOraclePersistenceManager extends PatchedBundleDbPersistenceMa
             setSchemaObjectPrefix(context.getHomeDir().getName() + "_");
         }
         super.init(context);
+
+        // check driver version
+        try {
+            DatabaseMetaData metaData = connectionManager.getConnection().getMetaData();
+            if (metaData.getDriverMajorVersion() < 10) {
+                // Oracle drivers prior to version 10 only support
+                // writing BLOBs up to 32k in size...
+                log.warn("Unsupported driver version detected: "
+                        + metaData.getDriverName()
+                        + " v" + metaData.getDriverVersion());
+            }
+        } catch (SQLException e) {
+            log.warn("Can not retrieve driver version", e);
+        }
     }
 
     /**
      * Returns a new instance of a NGKDbNameIndex.
-     * 
      * @return a new instance of a NGKDbNameIndex.
      * @throws SQLException if an SQL error occurs.
      */
     protected DbNameIndex createDbNameIndex() throws SQLException {
-        return new NGKDbNameIndex(conHelper, schemaObjectPrefix);
+        return new NGKDbNameIndex(connectionManager, schemaObjectPrefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return <code>true</code>
+     */
+    protected boolean checkTablesWithUser() {
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected ConnectionHelper createConnectionHelper(DataSource dataSrc) throws Exception {
-        OracleConnectionHelper helper = new OracleConnectionHelper(dataSrc, blockOnConnectionLoss);
-        helper.init();
-        return helper;
+    protected String createSchemaSQL(String sql) {
+        sql = Text.replace(sql, SCHEMA_OBJECT_PREFIX_VARIABLE, schemaObjectPrefix).trim();
+        // set the tablespace if it is defined
+        String tspace;
+        if (tableSpace == null || "".equals(tableSpace)) {
+            tspace = "";
+        } else {
+            tspace = "tablespace " + tableSpace;
+        }
+        return Text.replace(sql, TABLE_SPACE_VARIABLE, tspace).trim();
     }
 
     /**
-     * {@inheritDoc}
+     * Since Oracle only supports table names up to 30 characters in
+     * length illegal characters are simply replaced with "_" rather than
+     * escaping them with "_x0000_".
+     *
+     * @inheritDoc
      */
-    @Override
-    protected CheckSchemaOperation createCheckSchemaOperation() {
-        return super.createCheckSchemaOperation().addVariableReplacement(
-            CheckSchemaOperation.TABLE_SPACE_VARIABLE, tableSpace);
+    protected void prepareSchemaObjectPrefix() throws Exception {
+        DatabaseMetaData metaData = connectionManager.getConnection().getMetaData();
+        String legalChars = metaData.getExtraNameCharacters();
+        legalChars += "ABCDEFGHIJKLMNOPQRSTUVWXZY0123456789_";
+
+        String prefix = schemaObjectPrefix.toUpperCase();
+        StringBuffer escaped = new StringBuffer();
+        for (int i = 0; i < prefix.length(); i++) {
+            char c = prefix.charAt(i);
+            if (legalChars.indexOf(c) == -1) {
+                escaped.append('_');
+            } else {
+                escaped.append(c);
+            }
+        }
+        schemaObjectPrefix = escaped.toString();
     }
 }
