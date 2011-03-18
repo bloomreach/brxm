@@ -820,6 +820,7 @@
           </sv:property>
       </sv:node>
     </sv:node>
+    </sv:node>
     <sv:node sv:name="hipposysedit:prototypes">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposysedit:prototypeset</sv:value>
@@ -838,7 +839,6 @@
         </sv:property>
       </sv:node>
     </sv:node>
-  </sv:node>
   </sv:node>
   <!-- end "hippo:facetsearch" -->
   <!-- "hippo:document"-->
