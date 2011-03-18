@@ -105,7 +105,7 @@
     <configeditor.version>1.05.00</configeditor.version>
   
    
-    <jdo.version>2.0</jdo.version>
+    <jdo.version>2.3-eb</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
     <yui.sources.version>1.01.09</yui.sources.version>
