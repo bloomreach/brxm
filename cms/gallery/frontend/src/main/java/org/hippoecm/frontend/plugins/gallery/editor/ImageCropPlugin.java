@@ -101,7 +101,7 @@ public class ImageCropPlugin extends RenderPlugin {
         }
 
         Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this, null));
-        cropButton.setVisible("edit".equals(mode));
+        cropButton.setVisible("edit".equals(mode) && !isOriginal);
 
         if("edit".equals(mode)){
             if(!isOriginal && !areExceptionsThrown && !isOriginalImageWidthSmallerThanThumbWidth && !isOriginalImageHeightSmallerThanThumbHeight) {
@@ -118,7 +118,6 @@ public class ImageCropPlugin extends RenderPlugin {
                 (isOriginal || areExceptionsThrown || isOriginalImageWidthSmallerThanThumbWidth || isOriginalImageHeightSmallerThanThumbHeight) ? "crop-button inactive" : "crop-button active"
             ), " "));
             String buttonTipProperty =
-                isOriginal ? "crop-button-tip-inactive-original" :
                 areExceptionsThrown ? "crop-button-tip-inactive-error" :
                 isOriginalImageWidthSmallerThanThumbWidth ? "crop-button-tip-inactive-width" :
                 isOriginalImageHeightSmallerThanThumbHeight ? "crop-button-tip-inactive-height" :

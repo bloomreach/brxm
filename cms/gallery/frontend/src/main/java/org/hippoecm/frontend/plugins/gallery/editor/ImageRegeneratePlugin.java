@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -61,6 +62,9 @@ public class ImageRegeneratePlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(ImageRegeneratePlugin.class);
 
     private GalleryProcessor galleryProcessor;
+    private boolean isOriginal;
+    private boolean areExceptionsThrown;
+    private IModel<Boolean> isModelModified;
 
     public ImageRegeneratePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -70,9 +74,8 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         String mode = config.getString("mode", "edit");
         galleryProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
 
-        boolean isOriginal = true;
-        boolean areExceptionsThrown = false;
-        boolean isThumbnailModified = false;
+        isOriginal = true;
+        areExceptionsThrown = false;
 
         try{
             isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(((Node) getModel().getObject()).getName());
@@ -82,40 +85,61 @@ public class ImageRegeneratePlugin extends RenderPlugin {
             areExceptionsThrown = true;
         }
 
-        try{
-            Node thumbnailImageNode = (Node) getModelObject();
-            Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
-            isThumbnailModified = originalImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate().equals(thumbnailImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate());
-        } catch(RepositoryException e){
-            error(e);
-            log.error("Cannot retrieve name of original image node", e);
-            areExceptionsThrown = true;
-        }
+        isModelModified = new LoadableDetachableModel<Boolean>(){
+            @Override
+            protected Boolean load() {
+                 try{
+                    Node thumbnailImageNode = (Node) getModelObject();
+                    Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+                    return ! originalImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate().equals(thumbnailImageNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate());
+                } catch(RepositoryException e){
+                    error(e);
+                    log.error("Cannot retrieve name of original image node", e);
+                    areExceptionsThrown = true;
+                }
+                return false;
+            }
+        };
 
-        Label regenerateButton = new Label("regenerate-button", new StringResourceModel("regenerate-button-label", this, null));
-        regenerateButton.setVisible("edit".equals(mode));
+
+        Label regenerateButton = new Label("regenerate-button", new StringResourceModel("regenerate-button-label", this, null)) {
+            @Override
+            public boolean isEnabled() {
+                return !isOriginal && !areExceptionsThrown && isModelModified.getObject();
+            }
+        };
+        regenerateButton.setVisible("edit".equals(mode) && !isOriginal);
 
         if("edit".equals(mode)){
-            if(!isOriginal && !areExceptionsThrown && isThumbnailModified) {
-                regenerateButton.add(new AjaxEventBehavior("onclick") {
-                    @Override
-                    protected void onEvent(final AjaxRequestTarget target) {
-                        regenerateThumbnail();
-                    }
-                });
-            }
 
-            regenerateButton.add(new AttributeAppender("class", new Model<String>(
-                (isOriginal || areExceptionsThrown || !isThumbnailModified) ? "regenerate-button inactive" : "regenerate-button active"
-            ), " "));
+            regenerateButton.add(new AjaxEventBehavior("onclick") {
+                @Override
+                protected void onEvent(final AjaxRequestTarget target) {
+                    regenerateThumbnail();
+                }
+            });
 
-            String buttonTipProperty =
-                isOriginal ? "regenerate-button-tip-inactive-original" :
-                areExceptionsThrown ? "regenerate-button-tip-inactive-error" :
-                !isThumbnailModified ? "regenerate-button-tip-inactive-not-modified" :
-                "regenerate-button-tip";
 
-            regenerateButton.add(new AttributeAppender("title", new Model<String>(new StringResourceModel(buttonTipProperty, this, null).getString()), ""));
+            regenerateButton.add(new AttributeAppender("class", new LoadableDetachableModel<String>(){
+                @Override
+                protected String load(){
+                   return (isOriginal || areExceptionsThrown || !isModelModified.getObject()) ? "regenerate-button inactive" : "regenerate-button active";
+                }
+            }, " "));
+
+
+            regenerateButton.add(new AttributeAppender("title", new LoadableDetachableModel<String>() {
+                @Override
+                protected String load() {
+                    String buttonTipProperty =
+                    areExceptionsThrown ? "regenerate-button-tip-inactive-error" :
+                    !isModelModified.getObject() ? "regenerate-button-tip-inactive-not-modified" :
+                    "regenerate-button-tip";
+
+                    return new StringResourceModel(buttonTipProperty, ImageRegeneratePlugin.this, null).getString();
+                }
+            }, " "));
+
         }
 
         add(regenerateButton);
@@ -145,6 +169,12 @@ public class ImageRegeneratePlugin extends RenderPlugin {
             error(ex);
         }
 
+    }
+
+    @Override
+    protected void onDetach() {
+        isModelModified.detach();
+        super.onDetach();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Override
