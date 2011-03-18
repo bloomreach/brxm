@@ -17,6 +17,9 @@ package org.hippoecm.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.sf.json.JSONArray;
 
@@ -29,20 +32,60 @@ public class ParsedFacet {
 
     public static final String VALID_RANGE_EXAMPLE = "hippo:date$[{name:'this week', resolution:'week', begin:-1, end:0}, {name:'last 7 days', resolution:'day', begin:-7, end:0 }]";
 
+    
+    /*
+     * A cache shared between all threads that keep parsedFacets as they are expensive to create 
+     */
+    private final static Map<String, ParsedFacet> sharedCache = new ConcurrentHashMap<String, ParsedFacet>(new LRUMap<String, ParsedFacet>()); 
+    
     String displayFacetName;
 
     // property in format {namespace}localname
     String namespacedProperty;
+    
+    // jcrPropertyName is format: prefix:localname
+    String jcrPropertyName;
 
     String rangeConfig;
     List<FacetRange> facetRanges;
 
+    int hashCode;
+    
+    
+    public final static ParsedFacet getInstance(String facetNameConfig, String facetNodeName, HippoVirtualProvider provider) throws Exception {
+        String cacheKey = facetNameConfig + '\uFFFF' + facetNodeName;        
+        ParsedFacet pf = sharedCache.get(cacheKey);   
+        if(pf == null) {
+            pf = new ParsedFacet(facetNameConfig, facetNodeName, provider);
+            sharedCache.put(cacheKey,pf);
+        } else {
+            // we need to check if the namespace did not bump or change. IF so, we evict this item from cache.
+            Path currentQName = provider.resolvePath(pf.jcrPropertyName);
+            // if the currentQName is equal to pf.namespacedProperty , there was no namespace bumb and we can return pf
+            if(currentQName.toString().equals(pf.namespacedProperty)) {
+               // do nothing" pf is still valid
+            } else {
+                pf = new ParsedFacet(facetNameConfig, facetNodeName, provider);
+                sharedCache.put(cacheKey,pf);
+            }
+        } 
+        return pf;
+    }
+    
+    public final static ParsedFacet getInstance(String namespacedFacetConfig) throws Exception{
+        ParsedFacet pf = sharedCache.get(namespacedFacetConfig);   
+        if(pf == null) {
+            pf = new ParsedFacet(namespacedFacetConfig);
+            sharedCache.put(namespacedFacetConfig,pf);
+        } 
+        return pf;
+    }
+    
     public ParsedFacet(String facetNameConfig, String facetNodeName, HippoVirtualProvider provider) throws Exception {
-
         displayFacetName = facetNameConfig;
         boolean mapped = false;
         // jcrPropertyName is format: prefix:localname
-        String jcrPropertyName = facetNameConfig;
+        jcrPropertyName = facetNameConfig;
         if (facetNodeName != null && !"".equals(facetNodeName)) {
             displayFacetName = facetNodeName;
             mapped = true;
@@ -138,5 +181,83 @@ public class ParsedFacet {
     public String getNamespacedProperty() {
         return namespacedProperty;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+       if(obj == null || !(obj instanceof ParsedFacet)) {
+           return false;
+       }
+       if(this == obj) {
+           return true;
+       }
+       
+       ParsedFacet o = (ParsedFacet)obj;
+       
+       if ((displayFacetName != null && o.displayFacetName == null) || (o.displayFacetName != null && displayFacetName == null)) {
+           return false;
+       }
+       if(displayFacetName != null && !displayFacetName.equals(o.displayFacetName)) {
+           return false;
+       }
+       
+       if ((jcrPropertyName != null && o.jcrPropertyName == null) || (o.jcrPropertyName != null && jcrPropertyName == null)) {
+           return false;
+       }
+       if(jcrPropertyName != null && !jcrPropertyName.equals(o.jcrPropertyName)) {
+           return false;
+       }
+       
+       if ((namespacedProperty != null && o.namespacedProperty == null) || (o.namespacedProperty != null && namespacedProperty == null)) {
+           return false;
+       }
+       if(rangeConfig != null && !rangeConfig.equals(o.rangeConfig)) {
+           return false;
+       }
+       
+       if ((displayFacetName != null && o.displayFacetName == null) || (o.displayFacetName != null && displayFacetName == null)) {
+           return false;
+       }
+       if(displayFacetName != null && !displayFacetName.equals(o.displayFacetName)) {
+           return false;
+       }
+       
+       if(facetRanges == null && o.facetRanges == null) {
+           return true;
+       }
+       if( (facetRanges != null && o.facetRanges == null) || (facetRanges == null && o.facetRanges != null)) {
+           return false;
+       }
+       
+       ListIterator<FacetRange> e1 = facetRanges.listIterator();
+       ListIterator<FacetRange> e2 = o.facetRanges.listIterator();
+       while(e1.hasNext() && e2.hasNext()) {
+           FacetRange o1 = e1.next();
+           FacetRange o2 = e2.next();
+           if (!(o1==null ? o2==null : o1.equals(o2)))
+           return false;
+       }
+       return !(e1.hasNext() || e2.hasNext());
+    }
 
+    @Override
+    public int hashCode() {
+        if(hashCode != 0) {
+            return hashCode;
+        }
+        int result = 1;
+        
+        result = 31 * result + (displayFacetName == null ? 0 : displayFacetName.hashCode());
+        result = 31 * result + (namespacedProperty == null ? 0 : namespacedProperty.hashCode());
+        result = 31 * result + (rangeConfig == null ? 0 : rangeConfig.hashCode());
+        result = 31 * result + (jcrPropertyName == null ? 0 : jcrPropertyName.hashCode());
+        if(facetRanges != null) {
+            for(FacetRange range : facetRanges) {
+                result = 31 * result + range.hashCode();
+            }
+        }
+        
+        hashCode = result;
+        return hashCode;
+    }
+    
 }

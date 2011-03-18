@@ -27,6 +27,12 @@ import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * This class is unused since faceted navigation caching. Kept for now because it might be used later again for more efficient range queries
+ * on Double's and Long
+ * @deprecated
+ */
 public class FacetResultCollector extends HitCollector {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

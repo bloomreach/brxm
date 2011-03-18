@@ -86,7 +86,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
         // TODO HREPTWO-3571 remove the hippofacnav registration here to its own subproject
         log.info("Initializing hippofacnav namespace: this needs to move to its own subproject, see HREPTWO-3571: ");
-        safeRegisterNamespace(nsReg, "hippofacnav", "http://www.onehippo.org/jcr/hippofacnav/nt/1.0");
+        safeRegisterNamespace(nsReg, "hippofacnav", "http://www.onehippo.org/jcr/hippofacnav/nt/1.0.1");
         return nsReg;
     }
 

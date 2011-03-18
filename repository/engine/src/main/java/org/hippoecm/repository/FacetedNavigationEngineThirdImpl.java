@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -41,6 +42,9 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.name.PathBuilder;
 import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.jackrabbit.spi.commons.query.QueryRootNode;
 import org.apache.lucene.document.Document;
@@ -55,6 +59,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.QueryWrapperFilter;
@@ -70,13 +75,15 @@ import org.hippoecm.repository.query.lucene.FacetFiltersQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetRangeQuery;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
-import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
 import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
 import org.hippoecm.repository.query.lucene.RangeFields;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
+import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager;
+import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache;
+import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache.FECacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,8 +164,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                             for (int i = 0; i < orderSpecs.length; i++) {
                                 orderProperties[i] = orderSpecs[i].getPropertyPath();
                                 ascSpecs[i] = orderSpecs[i].isAscending();
-                                sort = new Sort(createSortFields(orderProperties, ascSpecs));
                             }
+                            sort = new Sort(createSortFields(orderProperties, ascSpecs));
                         }
                         queryAndSort = new QueryAndSort(query, sort);
                         
@@ -221,10 +228,31 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             this.session = session;
         }
     }
+    
+    class BitSetFilter extends Filter {
+        private static final long serialVersionUID = 1L;
+        BitSet filter;
+        BitSetFilter(List<BitSet> bitSets, int size){
+            filter = new BitSet(size);
+            filter.flip(0, size);
+            for(BitSet bitSet : bitSets) {
+                filter.and(bitSet);
+            }
+        }
+        @Override
+        public BitSet bits(IndexReader reader) throws IOException {
+            return filter;
+        }
+     }
 
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngine.class);
 
+    private final FacetedEngineCacheManager facetedEngineCacheMngr = new FacetedEngineCacheManager();
+    
+    private int bitSetCacheSize = 1000; 
+    private int facetValueCountMapCacheSize = 1000;
+      
     public FacetedNavigationEngineThirdImpl() {
     }
 
@@ -258,106 +286,120 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         // deliberate ignore
     }
 
+    /**
+     * The facetedEngineCacheMngr property for the maximum number of cached BitSet's
+     */            
+    public void setBitSetCacheSize(int bitSetCacheSize) {
+        this.bitSetCacheSize = bitSetCacheSize;
+    }
+    
+    // although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
+    // of org.apache.commons.collections.BeanMap#keyIterator
+    public int getBitSetCacheSize() {
+        return bitSetCacheSize;
+    }
+    
+    /**
+     * The facetedEngineCacheMngr property for the maximum number of facetValueCount's
+     */
+    public void setFacetValueCountMapCacheSize(int facetValueCountMapCacheSize) {
+        this.facetValueCountMapCacheSize = facetValueCountMapCacheSize;
+    }
+
+    // although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
+    // of org.apache.commons.collections.BeanMap#keyIterator
+    public int getFacetValueCountMapCacheSize() {
+        return facetValueCountMapCacheSize;
+    }
+
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery,
             Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException, IllegalArgumentException {
+       
         NamespaceMappings nsMappings = getNamespaceMappings();
 
-        /*
-         * facetsQuery: get the query for the facets that are asked for
-         */
-        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings);
+        BitSet matchingDocs = null;
+        
+        FacetedEngineCache cache = null;
+        
+        try {
+            cache = facetedEngineCacheMngr.getCache(getIndex().getIndexReader(), bitSetCacheSize, facetValueCountMapCacheSize);
+            IndexReader indexReader = cache.getIndexReader();
+            IndexSearcher searcher = cache.getIndexSearcher();
+            
+            List<BitSet> bitSetFilterList = new ArrayList<BitSet>();
+            
+            /*
+             * facetsQuery: get the query for the facets that are asked for
+             */
+            org.apache.lucene.search.BooleanQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings).getQuery();
+            
+            addQueryAsBitSetToFilter(facetsQuery, bitSetFilterList, cache, indexReader);
+            
+            /*
+             * facetRangeQuery : get the query for the ranges of facet values
+             */
+            org.apache.lucene.search.BooleanQuery facetRangeQuery = new FacetRangeQuery(rangeQuery, nsMappings, this).getQuery();
+           
+            addQueryAsBitSetToFilter(facetRangeQuery, bitSetFilterList, cache, indexReader);
+            
+            
+            /*
+             * inheritedFilter: get the query representation of the interited filters (for example from facetselect)
+             */
 
-        /*
-         * facetRangeQuery : get the query for the ranges of facet values
-         */
-        FacetRangeQuery facetRangeQuery = new FacetRangeQuery(rangeQuery, nsMappings, this);
+            org.apache.lucene.search.BooleanQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings).getQuery();
+            addQueryAsBitSetToFilter(inheritedFilterQuery, bitSetFilterList, cache, indexReader);
 
-        /*
-         * inheritedFilter: get the query representation of the interited filters (for example from facetselect)
-         */
-
-        InheritedFilterQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings);
-
-        /*
-         * initialQuery: get the query for initialQuery. This is the hippo:docbase value. 
-         */
-        org.apache.lucene.search.Query initialLuceneQuery = null;
-        if (initialQuery != null && !(initialQuery.scopes == null) && initialQuery.scopes.length > 0) {
-            if(initialQuery.scopes.length == 1) {
-                initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.scopes[0]));
-            } else {
-                initialLuceneQuery = new BooleanQuery(true);
-                for(String scope : initialQuery.scopes) {
-                    ((BooleanQuery)initialLuceneQuery).add(new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, scope)), Occur.SHOULD);
+            /*
+             * initialQuery: get the query for initialQuery. This is the hippo:docbase value. 
+             */
+            org.apache.lucene.search.Query initialLuceneQuery = null;
+            if (initialQuery != null && !(initialQuery.scopes == null) && initialQuery.scopes.length > 0) {
+                if(initialQuery.scopes.length == 1) {
+                    initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.scopes[0]));
+                } else {
+                    initialLuceneQuery = new BooleanQuery(true);
+                    for(String scope : initialQuery.scopes) {
+                        ((BooleanQuery)initialLuceneQuery).add(new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, scope)), Occur.SHOULD);
+                    }
                 }
             }
-        }
-        
-        FacetFiltersQuery facetFiltersQuery = null;
-        if (initialQuery != null && initialQuery.facetFilters != null) {
-            facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, nsMappings, this.getTextAnalyzer(), this.getSynonymProvider()); 
-        }
-
-        /*
-         * authorizationQuery: get the query for the facets the person is allowed to see (which
-         * is again a facetsQuery)
-         */
-
-        BooleanQuery searchQuery = new BooleanQuery(false);
-        Sort freeSearchInjectedSort = null;
-
-        if (facetsQuery.getQuery().clauses().size() > 0) {
-            searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
-        }
-
-        if (facetRangeQuery.getQuery().clauses().size() > 0) {
-            searchQuery.add(facetRangeQuery.getQuery(), Occur.MUST);
-        }
-
-        if (inheritedFilterQuery.getQuery().clauses().size() > 0) {
-            searchQuery.add(inheritedFilterQuery.getQuery(), Occur.MUST);
-        }
-
-        if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
-            searchQuery.add(facetFiltersQuery.getQuery(), Occur.MUST);
-        }
-        
-        if (openQuery != null) {
-            QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-            if(queryAndSort.query != null) {
-                searchQuery.add(queryAndSort.query, Occur.MUST);
+            
+            addQueryAsBitSetToFilter(initialLuceneQuery, bitSetFilterList, cache, indexReader);
+            
+            FacetFiltersQuery facetFiltersQuery = null;
+            if (initialQuery != null && initialQuery.facetFilters != null) {
+                facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, nsMappings, this.getTextAnalyzer(), this.getSynonymProvider()); 
             }
             
-            freeSearchInjectedSort = queryAndSort.sort;
-        }
+            
+            // TODO perhaps create cached user specific filter for authorisation to gain speed
+            if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
+                // TODO enable again after HREPTWO-3959 is fixed
+                // TODO create a CACHED BITSET FILTER FOR IT
+            }
 
-        // TODO perhaps create cached user specific filter for authorisation to gain speed
-        if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
-            // TODO enable again after HREPTWO-3959 is fixed
-            //searchQuery.add(contextImpl.authorizationQuery.getQuery(), Occur.MUST);
-        }
-
-        if (initialLuceneQuery != null) {
-            searchQuery.add(initialLuceneQuery, Occur.MUST);
-        }
-
-        //FacetResultCollector collector = null;
-        BitSet matchingDocs = null;
-        IndexReader indexReader = null;
-        IndexSearcher searcher = null;
-        try {
-            /*
-             * if getIndexReader(true) you will also get version storage index which
-             * should not be used for facet searches, therefore set 'false'
-             */
-            indexReader = getIndexReader(false);
-            searcher = new IndexSearcher(indexReader);
-            searcher.setSimilarity(new FixedScoreSimilarity());
-            // In principle, below, there is always one facet
             if (resultset != null) {
-                for (String namespacedFacet : resultset.keySet()) {
+               // If there are more than one facet in the 'resultset' we return an empty result as this is not allowed
+               if(resultset.size() > 1) {
+                   log.error("The resultset cannot contain multiple facets");
+                   return new ResultImpl(0, null);
+               }
+               
+               for (String namespacedFacet : resultset.keySet()) {
+                   
+                   // Not a search involving scoring, thus compute bitsets for facetFiltersQuery & freeSearchInjectedSort
+                  
+                   if (facetFiltersQuery != null) {
+                       addQueryAsBitSetToFilter(facetFiltersQuery.getQuery(), bitSetFilterList, cache, indexReader);
+                   }
+                   
+                   if (openQuery != null) {
+                       QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
+                       addQueryAsBitSetToFilter(queryAndSort.query, bitSetFilterList, cache, indexReader);
+                   }
                     /*
                      * Nodes not having this facet, still should be counted if they are a hit
                      * in the query without this facet. Therefor, first get the count query without
@@ -366,12 +408,12 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     int numHits = 0;
                     if (hitsRequested.isFixedDrillPath()) {
                         // only in the case of the fixed drillpath we use the count where the facet does not need to exist
-                        numHits = searcher.search(searchQuery).length();
+                        numHits = new BitSetFilter(bitSetFilterList, indexReader.maxDoc()).bits(indexReader).cardinality();
                     }
 
                     ParsedFacet parsedFacet = null;
                     try {
-                        parsedFacet = new ParsedFacet(namespacedFacet);
+                        parsedFacet = ParsedFacet.getInstance(namespacedFacet);
                     } catch (Exception e) {
                         log.error("Error parsing facet: ", e);
                         return new ResultImpl(0, null);
@@ -383,29 +425,25 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
-
-                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(propertyName);
-
-                    searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
-
-                    /*
-                     * TODO when there are MANY facet values and few hits, a collector is more efficient then populateFacetValueCountMap. 
-                     * When needed for performance, we need to find (empirical) the optimal numbers when to switch to a collector
-                     */
-                    long start = 0;
-                    if(log.isDebugEnabled()) {
-                        start = System.currentTimeMillis();
-                    }
-                    Filter filter = new QueryWrapperFilter(searchQuery);
-                    matchingDocs = filter.bits(indexReader);
-                    if(log.isDebugEnabled()) {
-                        log.debug("Took '{}' ms to create the bitset filter (#hits = '"+matchingDocs.cardinality()+"' ) for the query '{}'", (System.currentTimeMillis() - start), searchQuery.toString());
-                    }
                     
-                    Map<String, Count> facetValueCountMap = resultset.get(namespacedFacet);
-                    // this method populates the resultset for the current facet
-                    populateFacetValueCountMap(propertyName, parsedFacet, facetValueCountMap, matchingDocs, indexReader);
-
+                    addQueryAsBitSetToFilter(new FacetPropExistsQuery(propertyName).getQuery(), bitSetFilterList, cache, indexReader);
+                   
+                    matchingDocs = new BitSetFilter(bitSetFilterList, indexReader.maxDoc()).bits(indexReader);
+                    
+                    // this method populates the facetValueCountMap for the current facet
+                    Object[] keyObjects = {matchingDocs,propertyName,parsedFacet};
+                       
+                    FECacheKey feKey = new FECacheKey(keyObjects);
+                    Map<String, Count> facetValueCountMap = cache.getFacetValueCountMap(feKey);
+                    if(facetValueCountMap == null) { 
+                        facetValueCountMap =  new HashMap<String, Count>();
+                        populateFacetValueCountMap(propertyName, parsedFacet, facetValueCountMap, matchingDocs, indexReader);
+                        cache.putFacetValueCountMap(feKey, facetValueCountMap);
+                    } 
+                    
+                    Map<String, Count> resultFacetValueCountMap = resultset.get(namespacedFacet);
+                    resultFacetValueCountMap.putAll(facetValueCountMap);
+                    
                     // set the numHits value
                     if (hitsRequested.isFixedDrillPath()) {
                         return new ResultImpl(numHits, null);
@@ -417,10 +455,35 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             } else {
                 // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
                 if (!hitsRequested.isResultRequested()) {
-                    // only fetch the count and return:
-                    Hits hits = searcher.search(searchQuery);
-                    return new ResultImpl(hits.length(), null);
+                    // No search with SCORING involved, this everything can be done with BitSet's
+                    if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
+                        addQueryAsBitSetToFilter(facetFiltersQuery.getQuery(), bitSetFilterList, cache, indexReader);
+                    }
+                    
+                    if (openQuery != null) {
+                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);                        
+                        addQueryAsBitSetToFilter(queryAndSort.query, bitSetFilterList, cache, indexReader);   
+                    }
+                    
+                    int size = new BitSetFilter(bitSetFilterList, indexReader.maxDoc()).bits(indexReader).cardinality();
+                    return new ResultImpl(size, null);
+                    
                 } else {
+                    
+                    BooleanQuery searchQuery = new BooleanQuery(false);
+                    Sort freeSearchInjectedSort = null;
+                    if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
+                        searchQuery.add(facetFiltersQuery.getQuery(), Occur.MUST);
+                    }
+                    
+                    if (openQuery != null) {
+                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
+                        if(queryAndSort.query != null) {
+                            searchQuery.add(queryAndSort.query, Occur.MUST);
+                        }
+                        freeSearchInjectedSort = queryAndSort.sort;
+                    }
+
                     Set<String> fieldNames = new HashSet<String>();
                     fieldNames.add(FieldNames.UUID);
                     FieldSelector fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
@@ -431,58 +494,77 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                         // we already have a sort from the xpath or sql free search. Use this one
                         sort = freeSearchInjectedSort;
                     } else  if (hitsRequested.getOrderByList().size() > 0) {
-                        List<SortField> sortFields = new ArrayList<SortField>();
+                        List<Path> orderPropertiesList = new ArrayList<Path>();
+                        List<Boolean> ascSpecsList = new ArrayList<Boolean>();
                         for (OrderBy orderBy : hitsRequested.getOrderByList()) {
                             try {
-                                String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings,
-                                        orderBy.getName());
-                                String internalFacetName = ServicingNameFormat.getInternalFacetName(propertyName);
-                                boolean reverse = orderBy.isDescending();
-
-                                /*
-                                 * Ard: we need to check here unfortanetly whether the field we want to sort on in Lucene is actually indexed
-                                 * because, imo, Lucene incorrectly throws a RunTimeException (lucene 2.3.2) in  {@link ExtendedFieldCacheImpl#createValue(IndexReader, Object)}
-                                 * when trying to sort on a non existing lucene field. Therefor the check below, otherwise 
-                                 * 
-                                 * tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal, sort);
-                                 * 
-                                 * throws an exception when the sort contains a non indexed field
-                                 */
-
-                                TermEnum termEnum = indexReader.terms(new Term(internalFacetName, ""));
-                                Term term = termEnum.term();
-                                if (term == null) {
-                                    log.warn(
-                                            "Cannot sort on non-indexed property '{}'. Skip sorting on this property.",
-                                            orderBy.getName());
-                                }
-                                if (term.field().equals(internalFacetName)) {
-                                    // found a field with internalFacetName: we can sort on it! 
-                                    sortFields.add(new SortField(internalFacetName, reverse));
-                                } else {
-                                    log.warn(
-                                            "Cannot sort on non-indexed property '{}'. Skip sorting on this property.",
-                                            orderBy.getName());
-                                }
-                                termEnum.close();
-                            } catch (IllegalNameException e) {
-                                log.error("Cannot order by illegal name: '{}' : '{}'. Skip name ", orderBy.getName(), e
-                                        .getMessage());
+                               Name orderByProp = NameFactoryImpl.getInstance().create(orderBy.getName());
+                               boolean isAscending = !orderBy.isDescending();
+                               orderPropertiesList.add(createPath(orderByProp));
+                               ascSpecsList.add(isAscending);
+                            } catch (IllegalArgumentException e) {
+                               log.warn("Skip property '{}' because cannot create a Name for it: {}",orderBy.getName(), e.toString());
                             }
                         }
-                        if (sortFields.size() > 0) {
-                            sort = new Sort(sortFields.toArray(new SortField[sortFields.size()]));
+                        if(orderPropertiesList.size() > 0) {
+                            Path[] orderProperties = orderPropertiesList.toArray(new Path[orderPropertiesList.size()]);
+                            boolean[] ascSpecs = new boolean[ascSpecsList.size()];
+                            int i = 0;
+                            for(Boolean b : ascSpecsList) {
+                                ascSpecs[i] = b;
+                                i++;
+                            }
+                            sort = new Sort(createSortFields(orderProperties, ascSpecs));
                         }
                     }
 
+                    boolean sortScoreAscending = false;
+                    // if the sort is on score descending, we can set it to null as this is the default and more efficient                  
+                    if(sort != null && sort.getSort().length == 1 && sort.getSort()[0].getType() == SortField.SCORE) {
+                        
+                        if(sort.getSort()[0].getReverse()) {
+                            sortScoreAscending = true;
+                        } else {
+                            // we can skip sort as it is on score descending
+                            sort = null;
+                        }
+                    }
+                    
                     TopDocs tfDocs;
+                    org.apache.lucene.search.Query query = searchQuery;
+                    if(searchQuery.clauses().size() == 0) {
+                       // add a match all query
+                       // searchQuery.add(new MatchAllDocsQuery(), Occur.MUST);
+                        query = new MatchAllDocsQuery();
+                     }
+                     
                     if (sort == null) {
                         // when sort == null, use this search without search as is more efficient
-                        tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal);
+                        Filter filterToApply = new BitSetFilter(bitSetFilterList, indexReader.maxDoc());
+                        tfDocs = searcher.search(query, filterToApply, fetchTotal);
                     } else {
-                        tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal, sort);
-                        //tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal);
+                        if(sortScoreAscending) {
+                            // we need the entire searchQuery because scoring is involved
+                            Filter filterToApply = new BitSetFilter(bitSetFilterList, indexReader.maxDoc());
+                            tfDocs = searcher.search(query, filterToApply, fetchTotal, sort);
+                        } else {
+                            // because we have at least one explicit sort, scoring can be skipped. We can use cached bitsets combined with a match all query
+                            if (facetFiltersQuery != null) {
+                                addQueryAsBitSetToFilter(facetFiltersQuery.getQuery(), bitSetFilterList, cache, indexReader);   
+                            }
+                            if (openQuery != null) {
+                                QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
+                                addQueryAsBitSetToFilter(queryAndSort.query, bitSetFilterList, cache, indexReader);
+                            }
+                            
+                            Filter filterToApply = new BitSetFilter(bitSetFilterList, indexReader.maxDoc());
+                            // set query to MatchAllDocsQuery because we have everything as filter now
+                            query = new MatchAllDocsQuery();
+                            tfDocs = searcher.search(query, filterToApply, fetchTotal, sort);
+                        }
+                        
                     }
+                    
                     ScoreDoc[] hits = tfDocs.scoreDocs;
                     int position = hitsRequested.getOffset();
 
@@ -505,24 +587,74 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         } catch (IOException e) {
             log.error("Error during creating view: ", e);
         } finally {
-            if (searcher != null) {
-                try {
-                    searcher.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (indexReader != null) {
-                try {
-                    indexReader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if(cache != null) {
+                facetedEngineCacheMngr.decreaseRefCount(cache);
             }
         }
-        // an exception happend
-
         return new ResultImpl(0, null);
+    }
+
+    public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
+            List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery,
+            Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
+            throws UnsupportedOperationException, IllegalArgumentException {
+
+        return this.view(queryName, initialQuery, contextImpl, facetsQueryList, null, openQuery, resultset,
+                inheritedFilter, hitsRequested);
+    }
+
+    public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
+            List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery, Map<String, String> inheritedFilter,
+            HitsRequested hitsRequested) throws IllegalArgumentException{
+        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter,
+                hitsRequested);
+    }
+
+    public QueryImpl parse(String query) throws IllegalArgumentException {
+        return this.new QueryImpl(query);
+    }
+
+    @Override
+    protected void doInit() throws IOException {
+        QueryHandlerContext context = getContext();
+        HippoSharedItemStateManager stateMgr = (HippoSharedItemStateManager) context.getItemStateManager();
+        stateMgr.repository.setFacetedNavigationEngine(this);
+        super.doInit();
+    }
+
+    public Result query(String statement, ContextImpl context) throws InvalidQueryException, RepositoryException {
+        QueryRootNode root = org.apache.jackrabbit.spi.commons.query.QueryParser.parse(statement, "xpath",
+                context.session, getQueryNodeFactory());
+        org.apache.lucene.search.Query query = LuceneQueryBuilder.createQuery(root, context.session, getContext()
+                .getItemStateManager(), getNamespaceMappings(), getTextAnalyzer(), getContext()
+                .getPropertyTypeRegistry(), getSynonymProvider(), getIndexFormatVersion());
+
+        Set<NodeId> nodeIdHits = new LinkedHashSet<NodeId>();
+        try {
+            IndexReader indexReader = getIndexReader(false);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+           
+            TopDocs tfDocs = searcher.search(query, (Filter) null, 1000);
+            ScoreDoc[] hits = tfDocs.scoreDocs;
+            int position = 0;
+
+            Set<String> fieldNames = new HashSet<String>();
+            fieldNames.add(FieldNames.UUID);
+            FieldSelector fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
+
+            // LinkedHashSet because ordering should be kept!
+            while (position < hits.length) {
+                Document d = indexReader.document(hits[position].doc, fieldSelector);
+                Field uuidField = d.getField(FieldNames.UUID);
+                if (uuidField != null) {
+                    nodeIdHits.add(NodeId.valueOf(uuidField.stringValue()));
+                }
+                position++;
+            }
+        } catch (IOException ex) {
+            log.warn(ex.getMessage(), ex);
+        }
+        return new ResultImpl(nodeIdHits.size(), nodeIdHits);
     }
 
     private void populateFacetValueCountMap(String propertyName, ParsedFacet parsedFacet,
@@ -642,69 +774,52 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             log.debug("Populating the FacetValueCountMap took '{}' ms for  #'{}' facet values (in case of ranges, this is not the same as all unique facet values, but only the number of ranges) ", (System.currentTimeMillis() - start), facetValueCountMap.size());
         }
     }
-
-    public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
-            List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery,
-            Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
-            throws UnsupportedOperationException, IllegalArgumentException {
-
-        return this.view(queryName, initialQuery, contextImpl, facetsQueryList, null, openQuery, resultset,
-                inheritedFilter, hitsRequested);
-    }
-
-    public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-            List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery, Map<String, String> inheritedFilter,
-            HitsRequested hitsRequested) throws IllegalArgumentException{
-        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter,
-                hitsRequested);
-    }
-
-    public QueryImpl parse(String query) throws IllegalArgumentException {
-        return this.new QueryImpl(query);
-    }
-
-    @Override
-    protected void doInit() throws IOException {
-        QueryHandlerContext context = getContext();
-        HippoSharedItemStateManager stateMgr = (HippoSharedItemStateManager) context.getItemStateManager();
-        stateMgr.repository.setFacetedNavigationEngine(this);
-        super.doInit();
-    }
-
-    public Result query(String statement, ContextImpl context) throws InvalidQueryException, RepositoryException {
-        QueryRootNode root = org.apache.jackrabbit.spi.commons.query.QueryParser.parse(statement, "xpath",
-                context.session, getQueryNodeFactory());
-        org.apache.lucene.search.Query query = LuceneQueryBuilder.createQuery(root, context.session, getContext()
-                .getItemStateManager(), getNamespaceMappings(), getTextAnalyzer(), getContext()
-                .getPropertyTypeRegistry(), getSynonymProvider(), getIndexFormatVersion());
-
-        Set<NodeId> nodeIdHits = new LinkedHashSet<NodeId>();
+   
+    private void addQueryAsBitSetToFilter(org.apache.lucene.search.Query query, List<BitSet> bitSetFilterList,
+             FacetedEngineCache cache, IndexReader indexReader) throws IOException {
+         if(query == null) {
+             return;
+         }
+         
+         BitSet queryBitSet = null;
+         if(query instanceof BooleanQuery) {
+             if(((BooleanQuery)query).clauses().size() > 0) {
+                 String key = query.toString();
+                 queryBitSet = cache.getBitSet(key);
+                 if(queryBitSet == null) {
+                     Filter filter = new QueryWrapperFilter(query);
+                     queryBitSet = filter.bits(indexReader);
+                     cache.putBitSet(key, queryBitSet);
+                 } 
+             }
+         } else {
+             String key = query.toString();
+             queryBitSet = cache.getBitSet(key);
+             if(queryBitSet == null) {
+                 Filter filter = new QueryWrapperFilter(query);
+                 queryBitSet = filter.bits(indexReader);
+                 cache.putBitSet(key, queryBitSet);
+             } 
+         }
+         if(queryBitSet != null) {
+             bitSetFilterList.add(queryBitSet);
+         }
+     }
+    
+    /**
+     * Creates a path with a single element out of the given <code>name</code>.
+     *
+     * @param name the name to create the path from.
+     * @return a path with a single element.
+     */
+    private static Path createPath(Name name) {
         try {
-            IndexReader indexReader = getIndexReader(false);
-            IndexSearcher searcher = new IndexSearcher(indexReader);
-            searcher.setSimilarity(new FixedScoreSimilarity());
-
-            TopDocs tfDocs = searcher.search(query, (Filter) null, 1000);
-            ScoreDoc[] hits = tfDocs.scoreDocs;
-            int position = 0;
-
-            Set<String> fieldNames = new HashSet<String>();
-            fieldNames.add(FieldNames.UUID);
-            FieldSelector fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
-
-            // LinkedHashSet because ordering should be kept!
-            while (position < hits.length) {
-                Document d = indexReader.document(hits[position].doc, fieldSelector);
-                Field uuidField = d.getField(FieldNames.UUID);
-                if (uuidField != null) {
-                    nodeIdHits.add(NodeId.valueOf(uuidField.stringValue()));
-                }
-                position++;
-            }
-        } catch (IOException ex) {
-            log.warn(ex.getMessage(), ex);
+            PathBuilder builder = new PathBuilder();
+            builder.addLast(name);
+            return builder.getPath();
+        } catch (MalformedPathException e) {
+            // never happens, we just added an element
+            throw new InternalError();
         }
-        return new ResultImpl(nodeIdHits.size(), nodeIdHits);
     }
-
 }

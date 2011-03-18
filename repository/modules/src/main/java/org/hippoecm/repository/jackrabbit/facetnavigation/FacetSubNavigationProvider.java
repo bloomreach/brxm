@@ -26,6 +26,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.hippoecm.repository.FacetKeyValue;
 import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.HitsRequested;
@@ -47,16 +48,22 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
     
     protected FacetsAvailableNavigationProvider facetsAvailableNavigationProvider = null;
 
+    Name leafName;
+    QPropertyDefinition leafPropDef;
+    
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
         facetsAvailableNavigationProvider = (FacetsAvailableNavigationProvider) lookup(FacetsAvailableNavigationProvider.class.getName());
         virtualNodeName = resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION);
         register(null, virtualNodeName);
+        leafName = resolveName(FacNavNodeType.HIPPOFACNAV_LEAF);
+        leafPropDef = lookupPropDef(resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION), leafName);
     }
  
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
+        long startTime = System.currentTimeMillis();
         NodeId nodeId = state.getNodeId();
         if (nodeId instanceof FacetNavigationNodeId) {
             FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
@@ -78,7 +85,12 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             state.addPropertyName(countName);
             
             if(facetNavigationNodeId.stopSubNavigation || facetNavigationNodeId.count == 0) {
-                // we are done with this facet - value combination
+                // we are done with this facet - value combination: set the property hippofacnav:leaf = true
+                PropertyState leafState = createNew(leafName, state.getNodeId());
+                leafState.setType(PropertyType.BOOLEAN);
+                leafState.setValues(new InternalValue[] { InternalValue.create(true) });
+                leafState.setMultiValued(false);
+                state.addPropertyName(leafName);
                 return state;
             }
            
@@ -95,7 +107,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                 
                 ParsedFacet parsedFacet;
                 try {
-                    parsedFacet = new ParsedFacet(facetNodeView.facet, facetNodeView.displayName, this);
+                    parsedFacet = ParsedFacet.getInstance(facetNodeView.facet, facetNodeView.displayName, this);
                 } catch (Exception e) {
                     log.warn("Malformed facet range configuration '{}'. Valid format is "+VALID_RANGE_EXAMPLE,
                             facetNodeView.facet);
@@ -144,6 +156,11 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             
             state.addChildNodeEntry(resultSetChildName, childNodeId);
         }
+         
+        if(log.isDebugEnabled()) {
+            log.debug(getStats(System.currentTimeMillis() - startTime, state, context));
+        }
+        
         return state;
     }
     

@@ -96,18 +96,16 @@ engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PhysicalSysViewSAXEv
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PropInfo.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/Reference.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/ocm/ConnectionFactoryImpl.java -text
-engine/src/main/java/org/hippoecm/repository/query/lucene/AuthorizationFilter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/AuthorizedOnlyIndexReader.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetFiltersQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetRangeQuery.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/query/lucene/FacetsQueryFilter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/HippoDateTools.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/InheritedFilterQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/QueryHelper.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/RangeFields.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/StandardHippoAnalyzer.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/query/lucene/caching/CachedAuthorizationBitSet.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/query/lucene/caching/CachedQueryBitSet.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCache.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheManager.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/repository/security/ExampleLoginModule.java -text
 engine/src/main/java/org/hippoecm/repository/security/FacetAuthConstants.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/HippoAMContext.java -text svneol=unset#text/plain
@@ -233,6 +231,7 @@ modules/src/site/site.xml svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetFilters.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetRange.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/HitsRequested.java svneol=native#text/plain
+provider/src/main/java/org/hippoecm/repository/LRUMap.java -text svneol=unset#text/plain
 provider/src/main/java/org/hippoecm/repository/OrderBy.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/ParsedFacet.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/dataprovider/IFilterNodeId.java svneol=native#text/plain
@@ -284,6 +283,7 @@ test/src/test/java/org/hippoecm/repository/decorating/SingledViewFacetSelectTest
 test/src/test/java/org/hippoecm/repository/export/ExportTest.java -text
 test/src/test/java/org/hippoecm/repository/facetnavigation/AbstractDateFacetNavigationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/AbstractRangesFacetNavigationTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationConcurrencyTest.java -text svneol=unset#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationDateBrowsingTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationFilteredTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationGuidedBrowsingTest.java svneol=native#text/plain

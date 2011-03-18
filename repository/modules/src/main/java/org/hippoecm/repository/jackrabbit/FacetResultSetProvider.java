@@ -29,6 +29,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -139,6 +140,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
 
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws IllegalNameException, NamespaceException {
+        long startTime = System.currentTimeMillis();
         FacetResultSetNodeId nodeId = (FacetResultSetNodeId) state.getNodeId();
         String queryname = nodeId.queryname;
         String docbase = nodeId.docbase;
@@ -253,7 +255,25 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         
             state.addChildNodeEntry(name, subNodesProvider . newViewNodeId(state.getNodeId(), upstream, context, name, view, order , singledView));
         }
-
+        
+        if(log.isDebugEnabled()) {
+            NodeId anc = state.getParentId();
+            NodeId child = state.getNodeId();
+            String path = "";
+            while(anc != null) {
+                NodeState ancState = getNodeState(anc, context);
+                ChildNodeEntry e =  ancState.getChildNodeEntry(child);
+                if(e == null) {
+                    // this happens sometimes for some reason but is harmless. We just put _ignore_ with uFFFF around it instead of the real name
+                    path = "/" + '\uFFFF' +"_ignore_"+'\uFFFF' + path;
+                } else {
+                    path = "/" + e.getName().getLocalName() + path;
+                }
+                child = ancState.getNodeId();
+                anc = ancState.getParentId();
+            }        
+            log.debug((System.currentTimeMillis() - startTime) + " ms for " + path);
+        }
         return state;
     }
 }

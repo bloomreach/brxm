@@ -24,6 +24,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.QPropertyDefinition;
@@ -326,5 +327,25 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
             throw new IllegalArgumentException("Only supported sortby values are 'facetvalue', 'count' or 'config' but configured one is: '"+sortby+"'");
         }
         
+    }
+    
+    public String getStats(long time, NodeState state, StateProviderContext context) {
+       
+        NodeId anc = state.getParentId();
+        NodeId child = state.getNodeId();
+        String path = "";
+        while(anc != null) {
+            NodeState ancState = getNodeState(anc, context);
+            ChildNodeEntry e =  ancState.getChildNodeEntry(child);
+            if(e == null) {
+                // this happens sometimes for some reason but is harmless. We just put _ignore_ with uFFFF around it instead of the real name
+                path = "/" + '\uFFFF' +"_ignore_"+'\uFFFF' + path;
+            } else {
+                path = "/" + e.getName().getLocalName() + path;
+            }
+            child = ancState.getNodeId();
+            anc = ancState.getParentId();
+        }
+        return time + " ms for " + path;
     }
 }

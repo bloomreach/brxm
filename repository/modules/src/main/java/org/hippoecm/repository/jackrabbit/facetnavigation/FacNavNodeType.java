@@ -49,6 +49,11 @@ public interface FacNavNodeType {
      * 
      */
     final public static String HIPPOFACNAV_FACETLIMIT = "hippofacnav:limit";
+    
+    /**
+     * 
+     */
+    final public static String HIPPOFACNAV_LEAF = "hippofacnav:leaf";
 
     /**
      * 

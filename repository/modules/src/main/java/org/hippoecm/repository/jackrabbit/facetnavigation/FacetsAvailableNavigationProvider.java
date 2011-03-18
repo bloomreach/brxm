@@ -64,6 +64,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
+        long startTime = System.currentTimeMillis();
         NodeId nodeId = state.getNodeId();
         if (nodeId instanceof FacetNavigationNodeId) {
             FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId) nodeId;
@@ -79,7 +80,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
             ParsedFacet parsedFacet;
             try {
-                parsedFacet = new ParsedFacet(currentFacetNodeView.facet, null, this);
+                parsedFacet = ParsedFacet.getInstance(currentFacetNodeView.facet, null, this);
             } catch (Exception e) {
                 log.warn("Malformed facet range configuration '{}'. Valid format is {}", currentFacetNodeView.facet,
                         ParsedFacet.VALID_RANGE_EXAMPLE);
@@ -289,7 +290,11 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             state.addChildNodeEntry(resultSetChildName, childNodeId);
 
         }
-
+        
+        if(log.isDebugEnabled()) {
+            log.debug(getStats(System.currentTimeMillis() - startTime, state, context));
+        }
+        
         return state;
     }
 
