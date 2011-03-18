@@ -39,6 +39,7 @@ public class RichTextProcessor {
 
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
+    private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
 
     private static ResourceReference BROKEN_IMAGE = new ResourceReference(RichTextProcessor.class, "broken-image-32.png");
 
@@ -47,6 +48,7 @@ public class RichTextProcessor {
      * neither be null.
      */
     public static String prefixImageLinks(String text, IImageURLProvider decorator) {
+
         StringBuffer processed = new StringBuffer();
         Matcher imageMatcher = IMG_PATTERN.matcher(text);
 
@@ -60,7 +62,6 @@ public class RichTextProcessor {
                 String link = sourceMatcher.group(1);
 
                 if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                    String type = link.substring(link.lastIndexOf("/")+1);
                     String url;
                     try {
                         url = decorator.getURL(link);
@@ -72,9 +73,13 @@ public class RichTextProcessor {
                     newImg.append("facetselect=\"");
                     newImg.append(link);
                     newImg.append("\" ");
-                    newImg.append("type=\"");
-                    newImg.append(type);
-                    newImg.append("\" ");
+                    Matcher resourceDefinitionMatcher = RESOURCE_DEFINITION_PATTERN.matcher(link);
+                    if (resourceDefinitionMatcher.find()) {
+                        String type = resourceDefinitionMatcher.group(1);
+                        newImg.append("type=\"");
+                        newImg.append(type);
+                        newImg.append("\" ");
+                    }
                 } else {
                     sourceMatcher.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
                 }
@@ -100,19 +105,16 @@ public class RichTextProcessor {
 
             String src = null;
             String facet = null;
-            String type = null;
             while (s.find()) {
                 String srcOrFacet = s.group();
                 if (srcOrFacet.startsWith("src")) {
                     src = srcOrFacet;
                 } else if (srcOrFacet.startsWith("facetselect")) {
                     facet = srcOrFacet;
-                } else {
-                    type = srcOrFacet;
                 }
                 s.appendReplacement(newImg, "");
             }
-            if (src != null && facet != null && type != null) {
+            if (src != null && facet != null) {
                 Matcher fs = FACET_SELECT_PATTERN.matcher(facet);
                 if (fs.find()) {
                     fs.appendReplacement(newImg, ("src=\"" + fs.group(1) + "\"").replace("\\", "\\\\").replace("$",
@@ -123,8 +125,6 @@ public class RichTextProcessor {
                 newImg.append(src);
             } else if (facet != null) {
                 newImg.append(facet);
-            } else if (type != null) {
-                newImg.append(type);
             }
             s.appendTail(newImg);
             m.appendReplacement(processed, newImg.toString().replace("\\", "\\\\").replace("$", "\\$"));
