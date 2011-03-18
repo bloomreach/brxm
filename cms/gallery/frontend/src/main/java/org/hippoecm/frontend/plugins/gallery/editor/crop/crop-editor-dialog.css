@@ -22,6 +22,10 @@
   margin:5px;
 }
 
+.left-crop-area .yui-skin-sam {
+  float:left;
+}
+
 .right-crop-area {
   float: right;
   border-left: 1px solid #999999;
