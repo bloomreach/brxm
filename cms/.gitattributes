@@ -1505,6 +1505,7 @@ skin/src/main/webapp/images/icons/admin-128.png -text
 skin/src/main/webapp/images/icons/admin-16.png -text
 skin/src/main/webapp/images/icons/admin-32.png -text
 skin/src/main/webapp/images/icons/admin-48.png -text
+skin/src/main/webapp/images/icons/alert-16.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/arrow-paging-next-16.png -text
 skin/src/main/webapp/images/icons/arrow-paging-previous-16.png -text
 skin/src/main/webapp/images/icons/arrow-sort-down-16.png -text
@@ -1532,6 +1533,7 @@ skin/src/main/webapp/images/icons/dialog-question-128.png -text
 skin/src/main/webapp/images/icons/dialog-question-16.png -text
 skin/src/main/webapp/images/icons/dialog-question-32.png -text
 skin/src/main/webapp/images/icons/dialog-question-48.png -text
+skin/src/main/webapp/images/icons/document-16.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/document-copy-16.png -text
 skin/src/main/webapp/images/icons/document-deleted-16.png -text
 skin/src/main/webapp/images/icons/document-handle-16.png -text
@@ -1573,6 +1575,7 @@ skin/src/main/webapp/images/icons/emblem-documents-v2-16.png -text
 skin/src/main/webapp/images/icons/emblem-documents-v2-24.png -text
 skin/src/main/webapp/images/icons/emblem-documents-v2-32.png -text
 skin/src/main/webapp/images/icons/emblem-documents-v2-48.png -text
+skin/src/main/webapp/images/icons/folder-16.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/folder-extended-new-128.png -text
 skin/src/main/webapp/images/icons/folder-extended-new-16.png -text
 skin/src/main/webapp/images/icons/folder-extended-new-32.png -text

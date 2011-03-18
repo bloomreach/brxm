@@ -78,6 +78,9 @@
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>
       </sv:property>
+      <sv:property sv:name="documentTypeIconRenderer" sv:type="String">
+        <sv:value>resourceIconRenderer</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="searchColumns">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

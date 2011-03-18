@@ -23,6 +23,8 @@ import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPl
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
@@ -46,8 +48,17 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
         //Type Icon
         ListColumn<Node> column = new ListColumn<Node>(new Model<String>(""), "icon");
         column.setComparator(new TypeComparator());
-        column.setRenderer(new IconRenderer());
-        column.setAttributeModifier(new IconAttributeModifier());
+        String iconRenderer = getPluginConfig().getString("documentTypeIconRenderer");
+        if ("cssIconRenderer".equals(iconRenderer)) {
+            column.setRenderer(new EmptyRenderer<Node>());
+            column.setAttributeModifier(new DocumentTypeIconAttributeModifier());
+        } else if ("resourceIconRenderer".equals(iconRenderer)) {
+            column.setRenderer(new IconRenderer());
+            column.setAttributeModifier(new IconAttributeModifier());
+        } else {
+            column.setRenderer(new IconRenderer());
+            column.setAttributeModifier(new IconAttributeModifier());
+        }
         column.setCssClass("doclisting-icon");
         columns.add(column);
 

@@ -1575,6 +1575,15 @@ ents-small-folders h3 {
   margin-left: 3px;
 }
 
+/* mimetypes icons */
+table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.alert-16, .alert-16{background-image:url("images/icons/alert-16.png")}
+table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
+
+/* mimetypes icons for virtual trees */
+table tr.selected span.document-virtual-16, .document-virtual-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:url("images/icons/folder-virtual-16.gif")}
+
 /* Accordion */
 .hippo-accordion-unit {
   background: #f4f4f4;
