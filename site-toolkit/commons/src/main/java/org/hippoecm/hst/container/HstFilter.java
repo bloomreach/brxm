@@ -17,7 +17,12 @@ package org.hippoecm.hst.container;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,18 +34,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -49,18 +57,25 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 
 public class HstFilter implements Filter {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final String LOGGER_CATEGORY_NAME = HstFilter.class.getName();
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstFilter.class.getName();
     private final static String REQUEST_START_TICK_KEY = "request.start_"+HstFilter.class.getName();
-  
+
+    // used to redirect to nodes with a certain JCR uuid in mounts of a certain type
+    private static final String PATH_PREFIX_UUID_REDIRECT = "/previewfromcms";
+    private static final String REQUEST_PARAM_UUID = "uuid";
+    private static final String REQUEST_PARAM_TYPE = "type";
+    private static final String DEFAULT_REQUEST_PARAM_TYPE = "live";
+
     private FilterConfig filterConfig;
 
     /* moved here from HstContainerServlet initialization */
@@ -69,7 +84,7 @@ public class HstFilter implements Filter {
     public static final String CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM = "clientComponentManagerConfigurations";
     public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
     public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstFilter.class.getName() + ".clientComponentManager";
-    
+
     protected String contextNamespace;
     protected String clientComponentManagerClassName;
     protected String [] clientComponentManagerConfigurations;
@@ -77,43 +92,43 @@ public class HstFilter implements Filter {
     protected ComponentManager clientComponentManager;
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     protected volatile HstContainerConfig requestContainerConfig;
-    
+
     protected HstManager hstSitesManager;
     protected HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
-    
+
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
-       
+
         /* HST and ClientComponentManager initialization */
 
         contextNamespace = getConfigOrContextInitParameter(CONTEXT_NAMESPACE_INIT_PARAM, contextNamespace);
-        
+
         clientComponentManagerClassName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM, clientComponentManagerClassName);
-        
+
         String param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null);
-        
+
         if (param != null) {
             String [] configs = param.split(",");
-            
+
             for (int i = 0; i < configs.length; i++) {
                 configs[i] = configs[i].trim();
             }
-            
+
             clientComponentManagerConfigurations = configs;
         }
-        
+
         clientComponentManagerContextAttributeName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, clientComponentManagerContextAttributeName);
-        
+
         initialized = false;
-        
+
         if (HstServices.isAvailable()) {
             synchronized (this) {
                 doInit(filterConfig);
                 initialized = true;
             }
-            
+
             Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-            
+
             if (hstSitesManager != null) {
                 siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
                 if(siteMapItemHandlerFactory == null) {
@@ -124,54 +139,54 @@ public class HstFilter implements Filter {
             }
         }
     }
-    
+
     protected void doInit(FilterConfig config) {
         hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        
+
         if (clientComponentManager != null) {
             try {
                 clientComponentManager.stop();
                 clientComponentManager.close();
-            } 
+            }
             catch (Exception e) {
             	// ignored
-            } 
+            }
             finally {
                 clientComponentManager = null;
             }
         }
-        
+
         try {
             if (clientComponentManagerClassName != null && clientComponentManagerConfigurations != null && clientComponentManagerConfigurations.length > 0) {
                 clientComponentManager = (ComponentManager) Thread.currentThread().getContextClassLoader().loadClass(clientComponentManagerClassName).newInstance();
-                
+
                 if (clientComponentManager instanceof ServletContextAware) {
                     ((ServletContextAware) clientComponentManager).setServletContext(config.getServletContext());
                 }
-                
+
                 clientComponentManager.setConfigurationResources(clientComponentManagerConfigurations);
                 clientComponentManager.initialize();
                 clientComponentManager.start();
                 config.getServletContext().setAttribute(clientComponentManagerContextAttributeName, clientComponentManager);
-                
+
             }
-        } 
+        }
         catch (Exception e) {
             log("Invalid client component manager class or configuration: " + e);
         }
     }
-    
+
     /**
      * Returns the client component manager instance if available.
      * @param servletContext
      * @return
      */
     public static ComponentManager getClientComponentManager(ServletContext servletContext) {
-        String attributeName = ServletConfigUtils.getInitParameter(null, servletContext, 
+        String attributeName = ServletConfigUtils.getInitParameter(null, servletContext,
                 CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
         return (ComponentManager)servletContext.getAttribute(attributeName);
     }
-    
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
     ServletException {
 
@@ -179,12 +194,12 @@ public class HstFilter implements Filter {
     		request.removeAttribute(FILTER_DONE_KEY);
     		request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
     	}
-    	
+
 		if (request.getAttribute(FILTER_DONE_KEY) != null) {
 			chain.doFilter(request, response);
 			return;
 		}
-		
+
     	HttpServletRequest req = (HttpServletRequest)request;
     	HttpServletResponse res = (HttpServletResponse)response;
 
@@ -196,18 +211,18 @@ public class HstFilter implements Filter {
     		chain.doFilter(request, response);
     		return;
     	}
-    	
+
 		request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
 
     	Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-    	
+
     	try {
     		if (!HstServices.isAvailable()) {
     			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     			logger.error("The HST Container Services are not initialized yet.");
     			return;
     		}
-    		
+
     		// ensure ClientComponentManager (if defined) is initialized properly
     		if (!initialized) {
     		    synchronized (this) {
@@ -216,7 +231,7 @@ public class HstFilter implements Filter {
     	                initialized = true;
     		        }
     		    }
-    		    
+
                 if (hstSitesManager != null) {
                     siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
                     if(siteMapItemHandlerFactory == null) {
@@ -226,13 +241,13 @@ public class HstFilter implements Filter {
                     logger.error("Cannot find the virtualHostsManager component for '{}'", HstManager.class.getName());
                 }
     		}
-    		
+
     		if(this.siteMapItemHandlerFactory == null || this.hstSitesManager == null) {
     			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     			logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
     			return;
     		}
-    		
+
     		if (requestContainerConfig == null) {
         		synchronized (this) {
         			if (requestContainerConfig == null) {
@@ -240,15 +255,14 @@ public class HstFilter implements Filter {
         			}
         		}
     		}
-    		
+
     		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
-    		
+
     		// Sets up the container request wrapper
             HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstSitesManager.getPathSuffixDelimiter());
-            
+
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
-    		
     		// we always want to have the virtualhost available, even when we do not have hst request processing:
     		// We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
     		// This info is on the virtual host.
@@ -260,16 +274,16 @@ public class HstFilter implements Filter {
                 chain.doFilter(request, response);
                 return;
             }
-            
+
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
-    		
+
     		// when getPathSuffix() is not null, we have a REST url and never skip hst request processing
     		if(vHosts == null || (containerRequest.getPathSuffix() == null && vHosts.isExcluded(containerRequest.getPathInfo()))) {
     		    chain.doFilter(request, response);
     			return;
     		}
-    		
-    		HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);    		
+
+    		HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     		if (requestContext == null) {
         		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create(false);
@@ -279,95 +293,96 @@ public class HstFilter implements Filter {
         		containerRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
     		}
     		requestContext.setServletContext(filterConfig.getServletContext());
-    		requestContext.setPathSuffix(containerRequest.getPathSuffix());
-    		
-    		ResolvedMount mount = requestContext.getResolvedMount();
-    		if (mount == null) {
-				mount = vHosts.matchMount(hostName, containerRequest.getContextPath() , containerRequest.getPathInfo());
-				if(mount != null) {
-					requestContext.setResolvedMount(mount);
-				} 
-				else {
-					throw new MatchException("No matching Mount for '"+hostName+"' and '"+containerRequest.getRequestURI()+"'");
-				}
-    		}
-    		
-    		// CRUCIAL :  now we set the HST equivalent of the servletPath, namely the Mount#getMountPath as servletPath on the containerRequest
-    		((HstContainerRequestImpl)containerRequest).setServletPath(mount.getResolvedMountPath());
-    		
-			HstURLFactory factory = hstSitesManager.getUrlFactory();
-			
-    		HstContainerURL hstContainerURL = requestContext.getBaseURL();
-    		if (hstContainerURL == null) {
-				hstContainerURL = factory.getContainerURLProvider().parseURL(containerRequest, res, mount);
-				requestContext.setBaseURL(hstContainerURL);
-    		}
-    		
-    		if (mount.getMount().isMapped()) {
-    			ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-    			boolean processSiteMapItemHandlers = false;
-    			
-    			if (resolvedSiteMapItem == null) {
-    				processSiteMapItemHandlers = true;
-					resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
-					if(resolvedSiteMapItem == null) {
-						// should not be possible as when it would be null, an exception should have been thrown
-					    // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
-					    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-						logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
-						res.sendError(HttpServletResponse.SC_NOT_FOUND);
-						return;
-					}
-					requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-    			}
-    			
-				processResolvedSiteMapItem(containerRequest, res, requestContext, processSiteMapItemHandlers, logger);				
-					
-    		}
-    		else {
-				if(mount.getNamedPipeline() == null) {
-					logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
-					// on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
-					req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-					res.sendError(HttpServletResponse.SC_NOT_FOUND);
-				}
-				else {
-					logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
-					HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, mount.getNamedPipeline());
-				}
-    		}
-    	} 
+            requestContext.setPathSuffix(containerRequest.getPathSuffix());
+
+            if (req.getServletPath().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
+                final String jcrUuid = getJcrUuidParameter(req, logger);
+                if (jcrUuid == null) {
+                    sendError(req, res, HttpServletResponse.SC_BAD_REQUEST);
+                    return;
+                }
+                final String mountType = getTypeParameter(req, logger);
+
+                final String hostGroupName = resolvedVirtualHost.getVirtualHost().getHostGroupName();
+                final ResolvedMount mount = getMountForType(containerRequest, mountType, hostName, hostGroupName, vHosts);
+                if (mount != null) {
+                    requestContext.setResolvedMount(mount);
+                } else {
+                    throw new MatchException("No matching mount for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
+                }
+
+                ((GenericHttpServletRequestWrapper)containerRequest).setRequestURI(mount.getResolvedMountPath() + "/previewfromcms");
+                setHstServletPath(containerRequest, requestContext, mount, res);
+
+                sendRedirectToUuidUrl(req, res, requestContext, jcrUuid, logger);
+                req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            } else {
+                ResolvedMount mount = requestContext.getResolvedMount();
+                if (mount == null) {
+                    mount = vHosts.matchMount(hostName, containerRequest.getContextPath() , containerRequest.getPathInfo());
+                    if(mount != null) {
+                        requestContext.setResolvedMount(mount);
+                    }
+                    else {
+                        throw new MatchException("No matching Mount for '"+hostName+"' and '"+containerRequest.getRequestURI()+"'");
+                    }
+                }
+
+                HstContainerURL hstContainerUrl = setHstServletPath(containerRequest, requestContext, mount, res);
+
+                if (mount.getMount().isMapped()) {
+                    ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+                    boolean processSiteMapItemHandlers = false;
+
+                    if (resolvedSiteMapItem == null) {
+                        processSiteMapItemHandlers = true;
+                        resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerUrl.getPathInfo());
+                        if(resolvedSiteMapItem == null) {
+                            // should not be possible as when it would be null, an exception should have been thrown
+                            logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
+                            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                            return;
+                        }
+                        requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+                    }
+
+                    processResolvedSiteMapItem(containerRequest, res, requestContext, processSiteMapItemHandlers, logger);
+
+                }
+                else {
+                    if(mount.getNamedPipeline() == null) {
+                        logger.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
+                        sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                    }
+                    else {
+                        logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
+                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, mount.getNamedPipeline());
+                    }
+                }
+            }
+    	}
     	catch (MatchException e) {
-    	    // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
-    	    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-            if(logger.isDebugEnabled()) {
+    	    if(logger.isDebugEnabled()) {
                 logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());
             }
-            res.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerException e) {
-           // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
-            req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-            if(logger.isDebugEnabled()) {
+           if(logger.isDebugEnabled()) {
                 logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());
             }
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        } 
+            sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     	catch (Exception e) {
-    	    // on ERROR, we always remove the HST_REQUEST_CONTEXT from the req 
-    	    req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     	    if(logger.isDebugEnabled()) {
                 logger.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn("Fatal error encountered while processing request '{}': '{}'" , req.getRequestURI(),  e.getMessage());    
+                logger.warn("Fatal error encountered while processing request '{}': '{}'" , req.getRequestURI(),  e.getMessage());
             }
-    	    res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
+            sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     	}
     	finally {
     		if (logger != null && logger.isDebugEnabled()) {
@@ -378,7 +393,155 @@ public class HstFilter implements Filter {
     		}
     	}
     }
-    
+
+    private String getJcrUuidParameter(ServletRequest request, Logger logger) throws IOException {
+        String jcrUuid = request.getParameter(REQUEST_PARAM_UUID);
+
+        if (jcrUuid == null || "".equals(jcrUuid)) {
+            logger.warn("Cannot redirect when there is no UUID");
+            return null;
+        }
+
+        try {
+            UUID.fromString(jcrUuid);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Cannot redirect because '{}' is not a valid UUID", jcrUuid);
+            return null;
+        }
+
+        return jcrUuid;
+    }
+
+    private String getTypeParameter(ServletRequest request, Logger logger) {
+        String type = request.getParameter(REQUEST_PARAM_TYPE);
+
+        if (type == null) {
+            logger.debug("No type defined. Default type is '{}'", DEFAULT_REQUEST_PARAM_TYPE);
+            type = DEFAULT_REQUEST_PARAM_TYPE;
+        } else if (!"live".equals(type) && !"preview".equals(type)) {
+            logger.warn("Ignoring unknown type '{}', using '{}' instead. Known types are 'preview' and 'live'.", type, DEFAULT_REQUEST_PARAM_TYPE);
+            type = DEFAULT_REQUEST_PARAM_TYPE;
+        }
+
+        return type;
+    }
+
+    /**
+     * Finds a resolved mount of the correct type ('preview' or 'live') for a host in a host group in the given
+     * virtual host. If multiple mounts are of the same type, the one with the fewest types is picked.
+     * These mounts are in general the most generic ones.
+     *
+     * @param containerRequest current request
+     * @param type the mount type
+     * @param hostName name of the host to match
+     *
+     * @return the resolved mount of the given type
+     *
+     * @throws org.hippoecm.hst.core.container.RepositoryNotAvailableException
+     * @throws org.hippoecm.hst.configuration.hosting.MatchException when no matching mount could be found for the given host and type.
+     */
+    private ResolvedMount getMountForType(HstContainerRequest containerRequest, String type, String hostName, String hostGroupName, VirtualHosts vHosts) throws RepositoryNotAvailableException {
+        List<Mount> mounts = vHosts.getMountsByHostGroup(hostGroupName);
+        if (mounts == null) {
+            throw new MatchException("No mounts found for host '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
+        }
+
+        String requestPath = null;
+        int typeCount = Integer.MAX_VALUE;
+        for (Mount mount : mounts) {
+            if (mount.getType().equals(type) && mount.getTypes().size() < typeCount) {
+                typeCount = mount.getTypes().size();
+                requestPath = mount.getMountPath();
+            }
+        }
+        if (requestPath == null) {
+            throw new MatchException("There is no mount of type '" + type + "' in the host group for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
+        }
+
+        return vHosts.matchMount(hostName, containerRequest.getContextPath(), requestPath);
+    }
+
+    /**
+     * Sets the HST equivalent of the servletPath on the container request, namely the resolved path of the
+     * resolved HST mount.
+     *
+     * @param containerRequest request to the set HST servlet path for
+     * @param requestContext HST request context
+     * @param mount the resolved HST mount
+     * @param response servlet response for parsing the URL
+     * @return the HST container URL for the resolved HST mount
+     */
+    private HstContainerURL setHstServletPath(HstContainerRequest containerRequest, HstMutableRequestContext requestContext, ResolvedMount mount, HttpServletResponse response) {
+        ((GenericHttpServletRequestWrapper) containerRequest).setServletPath(mount.getResolvedMountPath());
+
+        HstContainerURL hstContainerURL = requestContext.getBaseURL();
+
+        if (hstContainerURL == null) {
+            hstContainerURL = hstSitesManager.getUrlFactory().getContainerURLProvider().parseURL(containerRequest, response, mount);
+            requestContext.setBaseURL(hstContainerURL);
+        }
+
+        return hstContainerURL;
+    }
+
+    /**
+     * Sends a redirect to a URL for the JCR node with the given UUID.
+     *
+     * @param req HTTP servlet request
+     * @param res HTTP servlet response
+     * @param requestContext the HST request context
+     * @param jcrUuid the UUID of the JCR node
+     * @param logger
+     * @throws javax.jcr.RepositoryException
+     * @throws java.io.IOException
+     */
+    private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, String jcrUuid, Logger logger) throws RepositoryException, IOException {
+        final Session session = requestContext.getSession();
+
+        Node node = null;
+        try {
+            node = session.getNodeByIdentifier(jcrUuid);
+        } catch (ItemNotFoundException e) {
+            logger.warn("Cannot find a node for uuid '{}'", jcrUuid);
+            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        final HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
+        if (linkCreator == null) {
+            logger.error("Cannot create a 'uuid url' when there is no linkCreator available");
+            sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        requestContext.setURLFactory(hstSitesManager.getUrlFactory());
+        final HstLink link = linkCreator.create(node, requestContext, null, true, false);
+        if (link == null) {
+            logger.warn("Not able to create link for node '{}' belonging to uuid = '{}'", node.getPath(), jcrUuid);
+            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        final String url = link.toUrlForm(requestContext, false);
+        if (logger.isInfoEnabled()) {
+            logger.info("Created HstLink for uuid '{}': '{}'", node.getPath(), url);
+        }
+
+        res.sendRedirect(url);
+    }
+
+    /**
+     * Removes the HST request context from the request and sends an error response.
+     *
+     * @param request HTTP servlet request
+     * @param response HTTP servlet response
+     * @param errorCode the error code to send
+     */
+    private static void sendError(HttpServletRequest request, HttpServletResponse response, int errorCode) throws IOException {
+        request.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        response.sendError(errorCode);
+    }
+
     protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
@@ -397,7 +560,7 @@ public class HstFilter implements Filter {
 			try {
 				if (logger.isDebugEnabled()) {
 					logger.debug("The resolved sitemap item for {} has error status: {}", requestContext.getBaseURL().getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
-				}           
+				}
 				res.sendError(resolvedSiteMapItem.getErrorCode());
 
 			} catch (IOException e) {
@@ -409,11 +572,11 @@ public class HstFilter implements Filter {
 			}
 			// we're done:
 			return;
-		} 
-		
+		}
+
 		HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
-		
-		// now, as long as there is a forward, we keep invoking processResolvedSiteMapItem: 
+
+		// now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
         if(req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
             String forwardPathInfo = (String) req.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
             req.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
@@ -425,19 +588,19 @@ public class HstFilter implements Filter {
             }
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
             requestContext.setBaseURL(hstSitesManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
-            
+
             processResolvedSiteMapItem(req, res, requestContext, true, logger);
         }
-		
+
 		return;
     }
 
     /**
-     * This method is invoked for every {@link HstSiteMapItemHandler} from the resolvedSiteMapItem that was matched from {@link ResolvedMount#matchSiteMapItem(HstContainerURL)}. 
+     * This method is invoked for every {@link HstSiteMapItemHandler} from the resolvedSiteMapItem that was matched from {@link ResolvedMount#matchSiteMapItem(String)}.
      * If in the for loop the <code>orginalResolvedSiteMapItem</code> switches to a different newResolvedSiteMapItem, then still
      * the handlers for  <code>orginalResolvedSiteMapItem</code> are processed and not the one from <code>newResolvedSiteMapItem</code>. If some intermediate
-     * {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, HttpServletRequest, HttpServletResponse)} returns <code>null</code>, the loop and processing is stooped, 
-     * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for 
+     * {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, HttpServletRequest, HttpServletResponse)} returns <code>null</code>, the loop and processing is stooped,
+     * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for
      * example if one of the handlers is a caching handler). When <code>null</code> is returned, request processing is stopped.
      * @param orginalResolvedSiteMapItem
      * @param req
@@ -446,7 +609,7 @@ public class HstFilter implements Filter {
      */
     protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem, HttpServletRequest req, HttpServletResponse res) {
         Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-        
+
         ResolvedSiteMapItem newResolvedSiteMapItem = orginalResolvedSiteMapItem;
         List<HstSiteMapItemHandlerConfiguration> handlerConfigsFromMatchedSiteMapItem = orginalResolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
         for(HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigsFromMatchedSiteMapItem) {
@@ -465,16 +628,16 @@ public class HstFilter implements Filter {
         }
         return newResolvedSiteMapItem;
     }
-    
+
     public synchronized void destroy() {
         if (clientComponentManager != null) {
             try{
                 clientComponentManager.stop();
                 clientComponentManager.close();
-            } 
+            }
             catch (Exception e) {
             	// ignored
-            } 
+            }
             finally {
                 clientComponentManager = null;
             }
