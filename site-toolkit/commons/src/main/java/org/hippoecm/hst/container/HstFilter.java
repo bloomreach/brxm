@@ -294,8 +294,12 @@ public class HstFilter implements Filter {
     		}
     		requestContext.setServletContext(filterConfig.getServletContext());
             requestContext.setPathSuffix(containerRequest.getPathSuffix());
-
-            if (req.getServletPath().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
+            
+            if (containerRequest.getPathInfo().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
+                /*
+                 * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
+                 * a URL for the uuid, and send a browser redirect to this URL. 
+                 */
                 final String jcrUuid = getJcrUuidParameter(req, logger);
                 if (jcrUuid == null) {
                     sendError(req, res, HttpServletResponse.SC_BAD_REQUEST);
@@ -311,11 +315,11 @@ public class HstFilter implements Filter {
                     throw new MatchException("No matching mount for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
                 }
 
-                ((GenericHttpServletRequestWrapper)containerRequest).setRequestURI(mount.getResolvedMountPath() + "/previewfromcms");
-                setHstServletPath(containerRequest, requestContext, mount, res);
+                ((GenericHttpServletRequestWrapper)containerRequest).setRequestURI(mount.getResolvedMountPath() + "/" + PATH_PREFIX_UUID_REDIRECT);
+                setMountPathAsServletPath(containerRequest, requestContext, mount, res);
 
                 sendRedirectToUuidUrl(req, res, requestContext, jcrUuid, logger);
-                req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+                return;
             } else {
                 ResolvedMount mount = requestContext.getResolvedMount();
                 if (mount == null) {
@@ -328,7 +332,7 @@ public class HstFilter implements Filter {
                     }
                 }
 
-                HstContainerURL hstContainerUrl = setHstServletPath(containerRequest, requestContext, mount, res);
+                HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, requestContext, mount, res);
 
                 if (mount.getMount().isMapped()) {
                     ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
@@ -471,7 +475,7 @@ public class HstFilter implements Filter {
      * @param response servlet response for parsing the URL
      * @return the HST container URL for the resolved HST mount
      */
-    private HstContainerURL setHstServletPath(HstContainerRequest containerRequest, HstMutableRequestContext requestContext, ResolvedMount mount, HttpServletResponse response) {
+    private HstContainerURL setMountPathAsServletPath(HstContainerRequest containerRequest, HstMutableRequestContext requestContext, ResolvedMount mount, HttpServletResponse response) {
         ((GenericHttpServletRequestWrapper) containerRequest).setServletPath(mount.getResolvedMountPath());
 
         HstContainerURL hstContainerURL = requestContext.getBaseURL();
@@ -496,38 +500,45 @@ public class HstFilter implements Filter {
      * @throws java.io.IOException
      */
     private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, String jcrUuid, Logger logger) throws RepositoryException, IOException {
-        final Session session = requestContext.getSession();
-
-        Node node = null;
+        
+        Session session = null;
         try {
-            node = session.getNodeByIdentifier(jcrUuid);
-        } catch (ItemNotFoundException e) {
-            logger.warn("Cannot find a node for uuid '{}'", jcrUuid);
-            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-            return;
+            session = requestContext.getSession();
+            Node node = null;
+            try {
+                node = session.getNodeByIdentifier(jcrUuid);
+            } catch (ItemNotFoundException e) {
+                logger.warn("Cannot find a node for uuid '{}'", jcrUuid);
+                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+    
+            final HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
+            if (linkCreator == null) {
+                logger.error("Cannot create a 'uuid url' when there is no linkCreator available");
+                sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
+    
+            requestContext.setURLFactory(hstSitesManager.getUrlFactory());
+            final HstLink link = linkCreator.create(node, requestContext, null, true, false);
+            if (link == null) {
+                logger.warn("Not able to create link for node '{}' belonging to uuid = '{}'", node.getPath(), jcrUuid);
+                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+    
+            final String url = link.toUrlForm(requestContext, false);
+            if (logger.isInfoEnabled()) {
+                logger.info("Created HstLink for uuid '{}': '{}'", node.getPath(), url);
+            }
+            req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            res.sendRedirect(url);
+        } finally {
+            if(session != null) {
+                session.logout();
+            }
         }
-
-        final HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
-        if (linkCreator == null) {
-            logger.error("Cannot create a 'uuid url' when there is no linkCreator available");
-            sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
-
-        requestContext.setURLFactory(hstSitesManager.getUrlFactory());
-        final HstLink link = linkCreator.create(node, requestContext, null, true, false);
-        if (link == null) {
-            logger.warn("Not able to create link for node '{}' belonging to uuid = '{}'", node.getPath(), jcrUuid);
-            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
-        final String url = link.toUrlForm(requestContext, false);
-        if (logger.isInfoEnabled()) {
-            logger.info("Created HstLink for uuid '{}': '{}'", node.getPath(), url);
-        }
-
-        res.sendRedirect(url);
     }
 
     /**
