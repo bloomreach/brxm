@@ -26,6 +26,6 @@ import org.hippoecm.repository.api.WorkflowException;
 public interface TemplateEditorWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
-    void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
+    String createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
             RepositoryException, RemoteException;
 }

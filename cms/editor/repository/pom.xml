@@ -23,8 +23,8 @@
     <version>2.19.00-SNAPSHOT</version>
   </parent>
 
-  <name>CMS editor repository addon</name>
-  <description>Hippo CMS editor repository addon</description>
+  <name>CMS Editor Repository</name>
+  <description>Hippo CMS Editor repository addon</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-editor-repository</artifactId>
   <packaging>jar</packaging>
@@ -88,9 +88,9 @@
   <build>
     <defaultGoal>install</defaultGoal>
     <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
           <configuration>
             <additionalBuildcommands>

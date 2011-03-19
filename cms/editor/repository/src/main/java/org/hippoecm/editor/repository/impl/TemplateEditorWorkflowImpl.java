@@ -39,15 +39,19 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
         super();
     }
 
-    public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
+    public String createNamespace(String prefix, String uri) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
-        Document root = getWorkflowContext().getDocument("root","root");
+
+        Document root = getWorkflowContext().getDocument("root", "root");
         RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal", root);
-        repositoryWorkflow.createNamespace(prefix, namespace);
-        FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
-        Map<String,String> replacements = new TreeMap<String,String>();
-        replacements.put("./_name", prefix);
+        repositoryWorkflow.createNamespace(prefix, uri);
+
+        FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext(null).getWorkflow("internal");
+        Map<String, String> replacements = new TreeMap<String, String>();
         replacements.put("name", prefix);
-        folderWorkflow.add("Template Editor Namespace", "namespace", replacements);
+        replacements.put("uri", uri);
+        return folderWorkflow.add("Template Editor Namespace", "namespace", replacements);
+
     }
+
 }

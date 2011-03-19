@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.NodeTypeTemplate;
+
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -25,8 +31,9 @@ import org.hippoecm.editor.repository.TemplateEditorWorkflow;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 
 public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
@@ -55,7 +62,31 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 NamespaceValidator.checkURI(url);
 
                 TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) wf;
-                workflow.createNamespace(prefix, url);
+                String nsPath = workflow.createNamespace(prefix, url);
+
+                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                if (session.itemExists(nsPath + "/basedocument")) {
+                    Node baseDocNode = session.getNode(nsPath + "/basedocument");
+                    NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+                    if (!ntMgr.hasNodeType(prefix + ":basedocument")) {
+                        NodeTypeTemplate ntTpl = ntMgr.createNodeTypeTemplate();
+                        ntTpl.setName(prefix + ":basedocument");
+                        if (baseDocNode.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+                            Node draft = baseDocNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                            if (draft.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
+                                Value[] supers = draft.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
+                                String[] superStrings = new String[supers.length];
+                                for (int i = 0; i < supers.length; i++) {
+                                    superStrings[i] = supers[i].getString();
+                                }
+                                ntTpl.setDeclaredSuperTypeNames(superStrings);
+                            }
+                        }
+                        ntTpl.setOrderableChildNodes(true);
+                        ntMgr.registerNodeType(ntTpl, false);
+                    }
+                }
+
                 return null;
             }
         });

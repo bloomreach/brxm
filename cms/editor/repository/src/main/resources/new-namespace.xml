@@ -25,6 +25,8 @@
   <sv:property sv:name="hippostd:modify" sv:type="String">
     <sv:value>./_name</sv:value>
     <sv:value>$name</sv:value>
+    <sv:value>./basedocument/hipposysedit:nodetype/hipposysedit:nodetype/hipposysedit:uri</sv:value>
+    <sv:value>$uri</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:language" sv:type="String">
     <sv:value>xpath</sv:value>
@@ -60,6 +62,12 @@
           <sv:node sv:name="hipposysedit:nodetype">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hipposysedit:nodetype</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+              <sv:value>hipposysedit:remodel</sv:value>
+            </sv:property>
+            <sv:property sv:name="hipposysedit:uri" sv:type="String">
+              <sv:value>uri</sv:value>
             </sv:property>
             <sv:property sv:name="hipposysedit:supertype" sv:type="String">
               <sv:value>hippo:document</sv:value>
