@@ -89,7 +89,7 @@
   </modules>
 
   <properties>
-    <repository.version>2.19.01-SNAPSHOT</repository.version>
+    <repository.version>2.19.01</repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
