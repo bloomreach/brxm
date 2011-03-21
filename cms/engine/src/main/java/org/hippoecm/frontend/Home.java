@@ -76,13 +76,6 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     }
 
     public Home(IApplicationFactory appFactory) {
-        try {
-            Session session = ((UserSession) getSession()).getJcrSession();
-            session.save();
-            session.refresh(false);
-        } catch (RepositoryException repositoryException) {
-            log.error("Error refreshing jcr session.", repositoryException);
-        }
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
