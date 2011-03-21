@@ -195,28 +195,6 @@
       </dependencies>
     </profile>
     <profile>
-      <id>skip-tests</id>
-      <activation>
-        <property>
-          <name>maven.test.skip</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <dependencyManagement>
-        <dependencies>
-          <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-repository-engine</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-            <optional>true</optional>
-          </dependency>
-        </dependencies>
-      </dependencyManagement>
-    </profile>
-    <profile>
       <id>appserver-tests</id>
       <activation>
         <property>
