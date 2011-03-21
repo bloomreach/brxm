@@ -36,11 +36,11 @@
   </scm>
 
   <properties>
-    <repository.version>2.19.01-SNAPSHOT</repository.version>
-    <cms.version>2.19.00-SNAPSHOT</cms.version>
-    <publication-workflow.version>2.19.00-SNAPSHOT</publication-workflow.version>
-    <faceteddate.version>2.19.00-SNAPSHOT</faceteddate.version>
-    <defaultcontent.version>2.19.00-SNAPSHOT</defaultcontent.version>
+    <repository.version>2.19.01</repository.version>
+    <cms.version>2.19.00</cms.version>
+    <publication-workflow.version>2.19.00</publication-workflow.version>
+    <faceteddate.version>2.18.01</faceteddate.version>
+    <defaultcontent.version>2.19.00</defaultcontent.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <javax.servlet.version>2.4</javax.servlet.version>
     <commons-lang.version>2.4</commons-lang.version>
