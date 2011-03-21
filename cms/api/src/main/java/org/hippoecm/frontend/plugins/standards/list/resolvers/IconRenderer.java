@@ -19,6 +19,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.image.Image;
@@ -62,6 +63,11 @@ public class IconRenderer implements IListCellRenderer<Node> {
 
     protected ResourceReference getResourceReference(Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (node.hasNode(node.getName())) {
+                Node child = node.getNode(node.getName());
+                String nodeTypeIconName = StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
+                return BrowserStyle.getIcon(nodeTypeIconName, "document", IconSize.TINY);
+            }
             return BrowserStyle.getIcon("document", IconSize.TINY);
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             if (node instanceof HippoNode) {
@@ -79,13 +85,15 @@ public class IconRenderer implements IListCellRenderer<Node> {
                     if (!canonical.isSame(node)) {
                         return BrowserStyle.getIcon("document-virtual", IconSize.TINY);
                     } else {
-                        return BrowserStyle.getIcon("document", IconSize.TINY);
+                        String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
+                        return BrowserStyle.getIcon(nodeTypeIconName, "document", IconSize.TINY);
                     }
                 }
             } else {
                 Node parent = node.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    return BrowserStyle.getIcon("document", IconSize.TINY);
+                    String nodeTypeIconName = StringUtils.replace(node.getPrimaryNodeType().getName(), ":", "-");
+                    return BrowserStyle.getIcon(nodeTypeIconName, "document", IconSize.TINY);
                 }
             }
         }
