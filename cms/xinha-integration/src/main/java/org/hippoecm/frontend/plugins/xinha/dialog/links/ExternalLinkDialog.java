@@ -41,28 +41,33 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
 
     public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel<ExternalXinhaLink> model) {
         super(model);
-        
-        add(new DropDownChoice<String>("protocols",
-                new PropertyModel<String>(model, "protocol"), ExternalXinhaLink.PROTOCOLS));
 
-        TextFieldWidget widget;
-        add(widget = new RequiredTextFieldWidget("href", new StringPropertyModel(model, "address")){
+        final DropDownChoice<String> protocolsChoice = new DropDownChoice<String>("protocols",
+                new PropertyModel<String>(model, "protocol"), ExternalXinhaLink.PROTOCOLS);
+        protocolsChoice.setOutputMarkupId(true);
+        add(protocolsChoice);
+
+        final TextFieldWidget addressTextField = new RequiredTextFieldWidget("href", new StringPropertyModel(model, "address")) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(ExternalLinkDialog.this);
+                target.addComponent(protocolsChoice);
+                target.addComponent(this);
             }
-        });
-        widget.setSize(SIZE);
-        setFocus(widget);
-        
-        add(widget = new TextFieldWidget("title", new StringPropertyModel(model, ExternalXinhaLink.TITLE)));
-        widget.setSize(SIZE);
-        
-        add(new LabelledBooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target"),
-                new StringResourceModel("labels.popup", this, null)));
+        };
+        addressTextField.setOutputMarkupId(true);
+        addressTextField.setSize(SIZE);
+        setFocus(addressTextField);
+        add(addressTextField);
 
+        final TextFieldWidget titleTextField = new TextFieldWidget("title", new StringPropertyModel(model, ExternalXinhaLink.TITLE));
+        titleTextField.setSize(SIZE);
+        add(titleTextField);
+
+        final LabelledBooleanFieldWidget targetField = new LabelledBooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target"),
+                new StringResourceModel("labels.popup", this, null));
+        add(targetField);
     }
     
     @Override
