@@ -28,10 +28,6 @@ if (!YAHOO.hippo.DataTable) {
                 fixedHeaderWidth: 0,
                 fixedColumnWidth: 0,
 
-                fixedTableHeight: 0,
-                tableHeight: 0,
-                pagingHeight: 0,
-
                 scrolling: false
             };
 
@@ -39,10 +35,10 @@ if (!YAHOO.hippo.DataTable) {
         
         YAHOO.extend(YAHOO.hippo.DataTable, YAHOO.hippo.Widget, {
 
-        	  resize: function(sizes, preserveScroll) {
+            resize: function(sizes, preserveScroll) {
                 var table = Dom.get(this.id);
                 if(table.rows.length <= 1) {
-                     return; //no rows in body
+                    return; //no rows in body
                 }
 
                 if(YAHOO.env.ua.gecko > 0 || YAHOO.env.ua.webkit > 0) {
@@ -50,14 +46,14 @@ if (!YAHOO.hippo.DataTable) {
                 } else {
                     this._updateIE(sizes, table);
                 }
-        	  },
+            },
 
             update : function() {
                 var table = Dom.get(this.id);
                 var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
                 this.resize(un.getSizes(), true);
             },
-        	
+
             _updateIE: function(sizes, table) {
                 var rows = table.rows;
 
@@ -108,15 +104,15 @@ if (!YAHOO.hippo.DataTable) {
                 var scrolling = tbodyRegion.height > availableHeight;
 
                 if(scrolling) {
-                        //Couldn't get the scrolling of a tbody working in IE so set the whole
-                        //unit to scrolling
-                        //TODO: ask Hippo Services
-                        var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                        un.set('scroll', true);
+                    //Couldn't get the scrolling of a tbody working in IE so set the whole
+                    //unit to scrolling
+                    //TODO: ask Hippo Services
+                    var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                    un.set('scroll', true);
                 } else {
-                        Dom.setStyle(tbody, 'height', prevHeight);
+                    Dom.setStyle(tbody, 'height', prevHeight);
                 }
-        	  },
+            },
 
             _updateGecko : function(sizes, table, preserveScroll) {
                 var thead = this._getThead(table);
@@ -128,38 +124,20 @@ if (!YAHOO.hippo.DataTable) {
                 var previousScrollTop = tbody.scrollTop;
 
                 var cells = Dom.getElementsByClassName(this.config.autoWidthClassName , 'td' , tbody);
-                if(cells.length == 0) {
-                    return;
+                if(cells.length > 0) {
+                    var widthData = this.getWidthData(headers, cells, sizes);
+                    this._setColsWidth(headers, widthData.headerWidth, cells, widthData.columnWidth);
                 }
 
-                var widthData = this.getWidthData(headers, cells, sizes);
-                //if(widthData.changed) {
-                    this._setColsWidth(headers, widthData.headerWidth, cells, widthData.columnWidth);
-                //}
-
-                var heightData = this.getHeightData(table, thead, tbody, sizes, widthData.changed);
-                //if(heightData.changed) {
-                    Dom.setStyle(tbody, 'height', heightData.tbodyHeight + 'px');
-                //}
+                var heightData = this.getHeightData(table, thead, tbody, sizes);
+                Dom.setStyle(tbody, 'height', heightData.tbodyHeight + 'px');
                 if(preserveScroll) {
                     tbody.scrollTop = previousScrollTop;
                 }
 
-                if(widthData.changed && heightData.scrolling) {
-                    var scrollWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
-//                    for(var i=0; i<cells.length; ++i) {
-//                        var td = cells[i];
-//                        Dom.setStyle(td, 'width', (widthData.columnWidth - scrollWidth) + 'px');
-//                        Dom.setStyle(td, 'display', 'block');
-//                        Dom.setStyle(td, 'overflow', 'hidden');
-//                    }
-
-                   // this._setColsWidth(headers, widthData.headerWidth - scrollWidth, cells, widthData.columnWidth - scrollWidth);
-                }
-
                 if(YAHOO.env.ua.webkit > 0) {
-                      Dom.setStyle(headers[0], 'display', 'block');
-                      Dom.setStyle(tbody, 'display', 'block');
+                    Dom.setStyle(headers[0], 'display', 'block');
+                    Dom.setStyle(tbody, 'display', 'block');
                 }
             },
 
@@ -174,14 +152,6 @@ if (!YAHOO.hippo.DataTable) {
                     this.data.fixedHeaderWidth = 0;
                     this.data.fixedColumnWidth = 0;
 
-                    //TODO: should this before height calc or here?
-                    //Dom.setStyle(tbody, 'height', 'auto');
-
-                    //reset tds width for correct calculation
-//                    for(var i=0; i<cells.length; ++i) {
-//                        Dom.setStyle(cells[i], 'width', '');
-//                        Dom.setStyle(cells[i], 'display', '');
-//                    }
                     //reset header as well
                     var className = this.config.autoWidthClassName;
                     var h = Dom.getElementBy(function(node) { return Dom.hasClass(node, className); }, 'th', headers[0]);
@@ -208,45 +178,40 @@ if (!YAHOO.hippo.DataTable) {
 
                 return {
                     headerWidth: this.data.headerWidth,
-                    columnWidth: this.data.columnWidth,
-                    changed: prevHeaderWidth != this.data.headerWidth && prevColumnWidth != this.data.columnWidth
+                    columnWidth: this.data.columnWidth
                 }
             },
 
-            getHeightData : function(table, thead, tbody, sizes, widthChanged) {
+            getHeightData : function(table, thead, tbody, sizes) {
                 var siblings = Dom.getChildren(table.parentNode);
-                if(this.data.nrOfTableSiblings != siblings.length) {
-                    //calculate height of table siblings
-                    for(var i=0; i<siblings.length; ++i) {
-                        var sibling = siblings[i];
-                        if(sibling != table) {
-                            this.data.fixedTableHeight += Dom.getRegion(sibling).height;
-                        }
+                var fixedTableHeight = 0;
+                //calculate height of table siblings
+                for(var i=0; i<siblings.length; ++i) {
+                    var sibling = siblings[i];
+                    if(sibling != table) {
+                        fixedTableHeight += Dom.getRegion(sibling).height;
                     }
-                    //add margin/padding/border value of table
-                    this.data.fixedTableHeight += this.helper.getMargin(table).h;
-                    //add height of header
-                    this.data.fixedTableHeight += Dom.getRegion(thead).height;
-
-                    this.data.nrOfTableSiblings = siblings.length;
                 }
+                //add margin/padding/border value of table
+                fixedTableHeight += this.helper.getMargin(table).h;
+                //add height of header
+                fixedTableHeight += Dom.getRegion(thead).height;
 
                 var pagingTr = Dom.getElementsByClassName('hippo-list-paging', 'tr', table);
+                var pagingHeight = 0;
                 if(pagingTr.length > 0) {
-                    this.data.pagingHeight = Dom.getRegion(pagingTr).height;
-                } else {
-                    this.data.pagingHeight = 0;
+                    for (var i = 0; i < pagingTr.length; i++) {
+                        pagingHeight += Dom.getRegion(pagingTr[i]).height;
+                    }
                 }
 
-                var prevHeight = this.data.tbodyHeight;
-                var availableHeight = sizes.wrap.h - (this.data.fixedTableHeight + this.data.pagingHeight);
+                var availableHeight = sizes.wrap.h - (fixedTableHeight + pagingHeight);
                 Dom.setStyle(tbody, 'height', 'auto');
                 var tbodyHeight = Dom.getRegion(tbody).height;
                 this.data.scrolling = tbodyHeight > availableHeight;
                 this.data.tbodyHeight = this.data.scrolling ?  availableHeight : tbodyHeight;
 
                 return {
-                    changed: prevHeight != this.data.tbodyHeight && true,
                     tbodyHeight: this.data.tbodyHeight,
                     scrolling: this.data.scrolling
                 }
@@ -265,8 +230,6 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _setColsWidth : function(headers, headerWidth, cells, cellWidth) {
-                // TODO: when cellWidth < minimum (150px?), add horizontal scrollbar
-
                 if (cellWidth < 100) {
                   cellWidth = 100;
                 }
@@ -274,10 +237,6 @@ if (!YAHOO.hippo.DataTable) {
                 var className = this.config.autoWidthClassName;
                 var h = Dom.getElementBy(function(node) { return Dom.hasClass(node, className); }, 'th', headers[0]);
                 Dom.setStyle(h, 'width', headerWidth + 'px');
-                if(YAHOO.env.ua.gecko > 0) {
-                    //Dom.setStyle(h, 'display', 'block');
-                    //Dom.setStyle(h, 'overflow', 'hidden');
-                }
 
                 for(var i=0; i<cells.length; ++i) {
                     var td = cells[i];
@@ -295,4 +254,3 @@ if (!YAHOO.hippo.DataTable) {
         version: "2.8.1", build: "19"
     });
 }
-	
