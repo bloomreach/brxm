@@ -62,7 +62,7 @@
         <sv:value>demosite-common-folder-about-us-id</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:summary" sv:type="String">
-        <sv:value>Who we are. erg wer</sv:value>
+        <sv:value>Who we are.</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:title" sv:type="String">
         <sv:value>About us</sv:value>
