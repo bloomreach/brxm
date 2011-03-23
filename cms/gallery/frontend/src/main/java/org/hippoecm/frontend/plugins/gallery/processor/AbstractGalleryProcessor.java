@@ -17,20 +17,25 @@ package org.hippoecm.frontend.plugins.gallery.processor;
 
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.NodeType;
 
-import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.frontend.model.ocm.IStore;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,15 +70,24 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         String primaryMimeType = primaryChild.getProperty("jcr:mimeType").getString();
         initGalleryNode(node, stream, primaryMimeType, fileName);
 
+        IStore<ITypeDescriptor> store = new JcrTypeStore();
+        ITypeDescriptor type = null;
+        try {
+            type = store.load(node.getPrimaryNodeType().getName());
+        } catch (StoreException e) {
+            log.error("Could not load primary node type of " + node.getName() + ", cannot create imageset variants", e);
+            return;
+        }
+        Map<String, IFieldDescriptor> fields = type.getFields();
+
         // create all child resource nodes, reusing the stream of the primary child
         Calendar lastModified = primaryChild.getProperty("jcr:lastModified").getDate();
-        for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
-            NodeType childNodeType = childDef.getDefaultPrimaryType();
-            if (childNodeType != null && childNodeType.isNodeType(HippoNodeType.NT_RESOURCE)) {
-                String childName = childDef.getName();
+        for (IFieldDescriptor field: type.getFields().values()) {
+            if (field.getTypeDescriptor().isType(HippoGalleryNodeType.IMAGE)) {
+                String childName = field.getPath();
                 if (!node.hasNode(childName)) {
                     log.debug("Adding resource {}", childName);
-                    Node child = node.addNode(childName);
+                    Node child = node.addNode(childName, field.getTypeDescriptor().getType());
                     InputStream primaryData = primaryChild.getProperty("jcr:data").getStream();
                     initGalleryResource(child, primaryData, primaryMimeType, fileName, lastModified);
                 }
