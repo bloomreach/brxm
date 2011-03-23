@@ -137,6 +137,18 @@ public class HippoItem implements HippoBean {
         return (T) getProperties().get(name);
     }
 
+
+    @Override
+    public <T> T getProperty(String name, T defaultValue) {
+        
+        T val = (T) getProperties().get(name);
+        if(val == null) {
+            return defaultValue;
+        }
+        return val;
+    }
+
+    
     /**
      * @see {@link #getProperties()}
      * @see org.hippoecm.hst.content.beans.standard.HippoBean#getProperty()

@@ -110,6 +110,10 @@ public class MockHippoBean implements HippoBean {
     public <T> T getProperty(String name) {
         throw new UnsupportedOperationException("Not supproted yet");
     }
+    
+    public <T> T getProperty(String name, T defaultValue) {
+        throw new UnsupportedOperationException("Not supproted yet");
+    }
 
     public Map<String, Object> getProperty() {
         throw new UnsupportedOperationException("Not supproted yet");

@@ -75,10 +75,20 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     /**
      * Return types can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
      * @param <T>
-     * @param name
-     * @return The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+      * @param name the name of the property
+     * @return The value of the property and <code>null</code> if it does not exist. The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
      */
     <T> T getProperty(String name);
+    
+    /**
+     * If the property does not exist, return the <code>defaultValue</code>. If the property does exist, the same value as {@link #getProperty(String)} will be returned
+     * Return types can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     * @param <T>
+     * @param name the name of the property
+     * @return The value of the property and <code>defaultValue</code> if it does not exist. The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     * 
+     */
+    <T> T getProperty(String name, T defaultValue);
 
     /**
      * @return Map of all properties, where the values can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
