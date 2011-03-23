@@ -37,13 +37,15 @@ public class CropBehavior extends AbstractYuiBehavior {
     private String imagePreviewContainerId;
     private Dimension originalImageDimension;
     private Dimension thumbnailDimension;
+    private boolean isUpscalingEnabled;
 
 
-    public CropBehavior(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension, Dimension thumbnailDimension){
+    public CropBehavior(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension, Dimension thumbnailDimension, boolean isUpscalingEnabled){
         this.regionInputId = regionInputId;
         this.imagePreviewContainerId = imagePreviewContainerId;
         this.originalImageDimension = originalImageDimension;
         this.thumbnailDimension = thumbnailDimension;
+        this.isUpscalingEnabled = isUpscalingEnabled;
     }
 
     @Override
@@ -80,6 +82,7 @@ public class CropBehavior extends AbstractYuiBehavior {
         parameters.put("thumbnailWidth", thumbnailDimension.getWidth());
         parameters.put("thumbnailHeight", thumbnailDimension.getHeight());
         parameters.put("isPreviewVisible", thumbnailDimension.getWidth() <= 200);
+        parameters.put("isUpscalingEnabled", isUpscalingEnabled);
 
         return cropperJsTemplate.interpolate(parameters).getString();
     }

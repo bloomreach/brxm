@@ -158,4 +158,16 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
     public abstract void initGalleryResource(Node node, InputStream data, String mimeType, String fileName,
             Calendar lastModified) throws GalleryException, RepositoryException;
 
+    /**
+     * Checks whether upscaling is enabled for a particular Node.
+     * This implementation returns always true
+     *
+     * @param node the hippo:resource node     *
+     *
+     * @throws RepositoryException when repository access failed.
+     */
+    public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException {
+        return true;
+    }
+
 }

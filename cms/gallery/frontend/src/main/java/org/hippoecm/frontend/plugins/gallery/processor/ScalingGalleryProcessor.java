@@ -127,4 +127,10 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             return null;
         }
     }
+
+    public boolean isUpscalingEnabled(Node resource) throws GalleryException, RepositoryException {
+        String nodeName = resource.getName();
+        ScalingParameters scaleOperation = scalingParametersMap.get(nodeName);
+        return scaleOperation != null ? scaleOperation.getUpscaling() : true;
+    }
 }

@@ -36,5 +36,7 @@ public interface GalleryProcessor extends IClusterable {
             throws GalleryException, RepositoryException;
 
     public Dimension getDesiredResourceDimension(Node node) throws GalleryException, RepositoryException;
+
+    public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException;
 }
 

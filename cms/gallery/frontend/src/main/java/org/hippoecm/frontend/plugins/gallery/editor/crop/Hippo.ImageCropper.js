@@ -23,6 +23,10 @@
     var originalImageHeight = ${originalImageHeight};
     var thumbnailWidth = ${thumbnailWidth};
     var thumbnailHeight = ${thumbnailHeight};
+    var isUpscalingEnabled = ${isUpscalingEnabled};
+
+    var minimumWidth = isUpscalingEnabled ? 16 : thumbnailWidth;
+    var minimumHeight = isUpscalingEnabled ? 16 : thumbnailHeight;
 
     var imgCrop = new YAHOO.widget.ImageCropper(
             '${originalImageMarkupId}',
@@ -32,8 +36,8 @@
                 initHeight: thumbnailHeight,
                 initWidth: thumbnailWidth,
                 ratio: true,
-                minHeight: 16,
-                minWidth: 16
+                minWidth: minimumWidth,
+                minHeight: minimumHeight
             });
 
     var regionInput = YAHOO.util.Dom.get('${regionInputMarkupId}');

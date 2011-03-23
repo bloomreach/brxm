@@ -354,4 +354,8 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
     private ValueFactory getValueFactory(Node node) throws RepositoryException {
         return ResourceHelper.getValueFactory(node);
     }
+
+    public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException {
+        return true;
+    }
 }

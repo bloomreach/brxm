@@ -115,18 +115,31 @@ public class ImageCropEditorDialog extends AbstractDialog {
             originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
             imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
 
-            originalImage.add(new CropBehavior(
-                regionField.getMarkupId(),
-                imagePreviewContainer.getMarkupId(),
-                originalImageDimension,
-                thumbnailDimension));
-
         } catch (RepositoryException e) {
             log.error("Cannot retrieve original image", e);
             error(e);
             originalImage = new Image("image");
             imgPreview = new Image("imagepreview");
         }
+
+        boolean isUpscalingEnabled = true;
+        try{
+            isUpscalingEnabled = galleryProcessor.isUpscalingEnabled(thumbnailImageNode);
+        } catch (GalleryException e){
+            log.error("Cannot retrieve Upscaling configuration option", e);
+            error(e);
+        }
+        catch (RepositoryException e){
+            log.error("Cannot retrieve Upscaling configuration option", e);
+            error(e);
+        }
+
+        originalImage.add(new CropBehavior(
+                regionField.getMarkupId(),
+                imagePreviewContainer.getMarkupId(),
+                originalImageDimension,
+                thumbnailDimension,
+                isUpscalingEnabled));
 
         add(originalImage);
         imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
