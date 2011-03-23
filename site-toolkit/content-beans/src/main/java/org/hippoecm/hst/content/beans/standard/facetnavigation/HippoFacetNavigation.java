@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
@@ -60,6 +61,21 @@ public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavig
             combinedCount += folder.getValueProvider().getLong(HippoNodeType.HIPPO_COUNT);
         }
         return combinedCount;
+    }
+    
+    /**
+     * because there are only documents below the resultset, we can return empty list here directly
+     */
+    @Override
+    public List<HippoDocumentBean> getDocuments(boolean sorted) {
+        return new ArrayList<HippoDocumentBean>();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        // nodes.hasNodes is too expensive for faceted navigation. Only HippoFacetSubNavigation beans can be a leaf node.
+        // hence, skip the test here and for the HippoFacetsAvailableNavigation
+        return false;
     }
     
     public Long getCount() {

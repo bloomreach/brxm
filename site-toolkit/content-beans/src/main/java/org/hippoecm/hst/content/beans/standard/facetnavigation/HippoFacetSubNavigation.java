@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
+import java.lang.Boolean;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,20 @@ public class HippoFacetSubNavigation extends AbstractHippoFacetChildNavigation {
         return NodeNameCodec.decode(super.getName());
     }
 
-
+    /**
+     * We override the isLeaf method as it is costly to check whether the HippoFacetSubNavigation has child nodes. Instead, we check
+     * the property "hippofacnav:leaf"
+     */
+    @Override
+    public boolean isLeaf() {
+        if(getValueProvider().hasProperty("hippofacnav:leaf")) {
+           return ((Boolean)getProperty("hippofacnav:leaf")).booleanValue();
+        } 
+        else {
+           return false;
+        }
+    }
+    
     public KeyValue<String, String> getFacetValueCombi(){
         try {
             final String key = this.getNode().getParent().getName();
