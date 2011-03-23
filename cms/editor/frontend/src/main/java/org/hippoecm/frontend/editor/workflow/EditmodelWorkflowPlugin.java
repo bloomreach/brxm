@@ -23,7 +23,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
@@ -62,13 +61,12 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowPlugin.class);
-    private MarkupContainer publishAction;
-    private MarkupContainer revertAction;
+    private WorkflowAction editAction;
 
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("edit", new StringResourceModel("edit", this, null)) {
+        add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this, null)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -77,12 +75,10 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (emWorkflow != null) {
                     String path = emWorkflow.edit();
                     try {
-                        Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(
-                                path.substring(1));
+                        Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path.substring(1));
                         JcrItemModel itemModel = new JcrItemModel(node);
                         if (path != null) {
-                            IEditorManager editorMgr = context.getService(config.getString(IEditorManager.EDITOR_ID),
-                                    IEditorManager.class);
+                            IEditorManager editorMgr = context.getService(config.getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                             if (editorMgr != null) {
                                 JcrNodeModel nodeModel = new JcrNodeModel(itemModel);
                                 IEditor editor = editorMgr.getEditor(nodeModel);
@@ -130,11 +126,9 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                             IPluginContext context = EditmodelWorkflowPlugin.this.getPluginContext();
                             IPluginConfig config = EditmodelWorkflowPlugin.this.getPluginConfig();
 
-                            IEditorManager editService = context.getService(config.getString(IEditorManager.EDITOR_ID),
-                                    IEditorManager.class);
+                            IEditorManager editService = context.getService(config.getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                             IEditor editor = editService.openEditor(nodeModel);
-                            IRenderService renderer = context.getService(context.getReference(editor).getServiceId(),
-                                    IRenderService.class);
+                            IRenderService renderer = context.getService(context.getReference(editor).getServiceId(), IRenderService.class);
                             if (renderer != null) {
                                 renderer.focus(null);
                             }
@@ -156,48 +150,6 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-
-        add(publishAction = new WorkflowAction("commit", new StringResourceModel("commit", this, null)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String execute(Workflow wf) {
-                try {
-                    EditmodelWorkflow workflow = (EditmodelWorkflow) wf;
-                    if (workflow != null) {
-                        workflow.commit();
-                    }
-                } catch (WorkflowException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                } catch (RemoteException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                } catch (RepositoryException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                }
-                return null;
-            }
-        });
-
-        add(revertAction = new WorkflowAction("revert", new StringResourceModel("revert", this, null)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String execute(Workflow wf) {
-                try {
-                    EditmodelWorkflow workflow = (EditmodelWorkflow) wf;
-                    if (workflow != null) {
-                        workflow.revert();
-                    }
-                } catch (WorkflowException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                } catch (RemoteException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                } catch (RepositoryException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                }
-                return null;
-            }
-        });
     }
 
     @Override
@@ -209,13 +161,8 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             if (workflowDescriptor != null) {
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
-                if (info.containsKey("commit") && info.get("commit") instanceof Boolean
-                        && !((Boolean) info.get("commit")).booleanValue()) {
-                    publishAction.setVisible(false);
-                }
-                if (info.containsKey("revert") && info.get("revert") instanceof Boolean
-                        && !((Boolean) info.get("revert")).booleanValue()) {
-                    revertAction.setVisible(false);
+                if (info.containsKey("edit") && info.get("edit") instanceof Boolean && !((Boolean) info.get("edit")).booleanValue()) {
+                    editAction.setVisible(false);
                 }
             }
         } catch (RepositoryException ex) {
@@ -226,7 +173,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             log.error(ex.getMessage(), ex);
         }
     }
-    
+
     public class CopyModelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
         private static final long serialVersionUID = 1L;
 
@@ -260,7 +207,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         @Override
         public IModel getTitle() {
-            return new StringResourceModel("copy-model", this, null, new Object[] { new PropertyModel(this, "name") });
+            return new StringResourceModel("copy-model", this, null, new Object[]{new PropertyModel(this, "name")});
         }
 
         @Override
@@ -273,14 +220,14 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         private static final long serialVersionUID = 1L;
 
         private Exception exception;
-        
+
         ExceptionError(Exception e) {
             this.exception = e;
         }
-        
+
         public String getErrorMessage(IErrorMessageSource messageSource) {
             return exception.getLocalizedMessage();
         }
-        
+
     }
 }
