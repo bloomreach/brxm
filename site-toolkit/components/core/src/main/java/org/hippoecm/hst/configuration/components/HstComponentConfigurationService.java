@@ -163,7 +163,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if (parameterNames != null && parameterValues != null) {
             if (parameterNames.length != parameterValues.length) {
-                log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+                log.warn("Skipping parameters for component '{}' because they only make sense if there are equal number of names and values", id);
             } else {
                 for (int i = 0; i < parameterNames.length; i++) {
                     this.parameters.put(parameterNames[i], parameterValues[i]);
@@ -192,7 +192,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     // we also need an ordered list
                     orderedListConfigs.add(componentConfiguration);
                     childConfByName.put(child.getValueProvider().getName(), componentConfiguration);
-                    log.debug("Added component service with key '{}'", componentConfiguration.getId());
+                    log.debug("Added component service with key '{}'", id);
                 } catch (ServiceException e) {
                     if (log.isDebugEnabled()) {
                         log.warn("Skipping component '{}'", child.getValueProvider().getPath(), e);
@@ -384,7 +384,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     .get(this.getReferenceComponent());
             if (referencedComp != null) {
                 if(referencedComp == this) {
-                    throw new ServiceException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. ComponentId = "+this.getId());
+                    throw new ServiceException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. Incorrect ComponentId = "+this.getId());
                 }
                 if (referencedComp.getReferenceComponent() != null) {
                     // populate referenced comp first:
