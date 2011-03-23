@@ -42,6 +42,7 @@ import javax.jcr.version.VersionException;
 
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
@@ -84,6 +85,22 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     }
                 }
             }
+        }
+
+        boolean isEditable() throws RepositoryException {
+            if ("system".equals(subject.getParent().getName())) {
+                return false;
+            }
+            String ntName = subject.getParent().getName() + ":" + subject.getName();
+            NodeTypeManager ntMgr = subject.getSession().getWorkspace().getNodeTypeManager();
+            if (!ntMgr.hasNodeType(ntName)) {
+                return false;
+            }
+            NodeType type = ntMgr.getNodeType(ntName);
+            if (!type.isNodeType(HippoStdNodeType.NT_RELAXED)) {
+                return false;
+            }
+            return true;
         }
 
         void checkout() throws RepositoryException {
@@ -336,6 +353,9 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
     public Map<String, Serializable> hints() throws RepositoryException {
         Map<String, Serializable> hints = new TreeMap<String, Serializable>();
         NodeTypeState state = new NodeTypeState();
+        if (!state.isEditable()) {
+            hints.put("edit", false);
+        }
         if (state.draft == null) {
             hints.put("commit", false);
             hints.put("revert", false);
