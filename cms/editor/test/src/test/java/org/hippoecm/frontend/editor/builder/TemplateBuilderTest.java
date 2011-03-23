@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +23,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -56,6 +52,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class TemplateBuilderTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";
@@ -71,6 +72,9 @@ public class TemplateBuilderTest extends PluginTest {
 
         public void detach() {
         }
+    }
+
+    private static class PluginSelectModel  extends Model {
 
     }
 
@@ -92,7 +96,8 @@ public class TemplateBuilderTest extends PluginTest {
      * verify that a plugin is added to the cluster when a field is added to the type
      */
     public void testAddField() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
+        IModel<String> pluginSelectModel = new PluginSelectModel();
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel(), pluginSelectModel);
 
         final List<IPluginConfig> added = new LinkedList<IPluginConfig>();
         final List<IPluginConfig> removed = new LinkedList<IPluginConfig>();
@@ -135,6 +140,7 @@ public class TemplateBuilderTest extends PluginTest {
         home.processEvents();
 
         assertEquals(1, added.size());
+        assertEquals(added.get(0).getName(), pluginSelectModel.getObject());
     }
 
     @Test
@@ -142,7 +148,7 @@ public class TemplateBuilderTest extends PluginTest {
      * verify that an added plugin will get the model.compareTo reference
      */
     public void testAddWithCompare() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:comparable", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:comparable", false, context, new ExtPtModel(), new PluginSelectModel());
 
         IClusterConfig config = builder.getTemplate();
 
@@ -161,7 +167,7 @@ public class TemplateBuilderTest extends PluginTest {
      * verify that a field is removed from the type when a plugin is removed from the cluster
      */
     public void testRemovePlugin() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel(), new PluginSelectModel());
 
         // initialize type descriptor and template
         final ITypeDescriptor type = builder.getTypeDescriptor();
@@ -212,7 +218,7 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testAddRemoveCycle() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel(), new PluginSelectModel());
 
         // initialize type descriptor and template
         final ITypeDescriptor type = builder.getTypeDescriptor();
@@ -243,7 +249,10 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testChangePath() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
+        PluginSelectModel pluginModel = new PluginSelectModel();
+        pluginModel.setObject("title");
+
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel(), pluginModel);
 
         // initialize type descriptor and template
         ITypeDescriptor type = builder.getTypeDescriptor();
@@ -259,8 +268,10 @@ public class TemplateBuilderTest extends PluginTest {
         node.setProperty("test:title", "titel");
 
         titleField.setPath("test:titel_new");
-
         home.processEvents();
+
+        // same plugin should still be selected
+        assertEquals("titel_new", pluginModel.getObject());
 
         assertTrue(prototype.getNode().hasProperty("test:titel_new"));
         assertEquals("titel", prototype.getNode().getProperty("test:titel_new").getString());
@@ -276,7 +287,7 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testSetPathOnNewTemplateChangesFieldName() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:new", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:new", false, context, new ExtPtModel(), new PluginSelectModel());
 
         // initialize type descriptor and template
         ITypeDescriptor type = builder.getTypeDescriptor();
@@ -309,7 +320,7 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testSetPathOnSubTypePreservesFieldName() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel(), new PluginSelectModel());
 
         // initialize type descriptor and template
         ITypeDescriptor type = builder.getTypeDescriptor();

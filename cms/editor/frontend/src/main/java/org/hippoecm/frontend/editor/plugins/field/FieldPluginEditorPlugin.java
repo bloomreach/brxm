@@ -189,7 +189,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
             helper = new PropertyEditor(getPluginContext(), helperConfig,
                     getBuilderContext().getEditablePluginConfig(), type, edit);
-            helper.show(false);
+            helper.show(getBuilderContext().hasFocus());
             getBuilderContext().addBuilderListener(new IBuilderListener() {
                 private static final long serialVersionUID = 1L;
 

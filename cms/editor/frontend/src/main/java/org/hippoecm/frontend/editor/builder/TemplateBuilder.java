@@ -230,6 +230,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             if (!containsNewName) {
                 clusterConfig.setPlugins(newPlugins);
+                pluginModel.setObject(newName);
             }
         }
 
@@ -603,6 +604,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private boolean readonly;
     private IPluginContext context;
     private IModel selectedExtPtModel;
+    private IModel<String> pluginModel;
 
     private IStore<IClusterConfig> jcrTemplateStore;
     private BuiltinTemplateStore builtinTemplateStore;
@@ -624,12 +626,13 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private BuilderPluginList plugins;
 
-    public TemplateBuilder(final String type, boolean readonly, IPluginContext context, IModel extPtModel)
+    public TemplateBuilder(final String type, boolean readonly, IPluginContext context, IModel extPtModel, IModel<String> pluginModel)
             throws BuilderException {
         this.type = type;
         this.readonly = readonly;
         this.context = context;
         this.selectedExtPtModel = extPtModel;
+        this.pluginModel = pluginModel;
 
         jcrTypeStore = new JcrTypeStore();
         String prefix;
@@ -884,6 +887,8 @@ public class TemplateBuilder implements IDetachable, IObservable {
             pluginConfig.put("caption", fieldType.getName());
 
             getPlugins().add(pluginConfig);
+
+            pluginModel.setObject(pluginName);
         }
     }
 

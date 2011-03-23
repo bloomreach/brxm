@@ -70,7 +70,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             modelChanged();
         }
 
-    };
+    }
 
     private TemplateBuilder builder;
     private IClusterControl child;
@@ -95,7 +95,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         typeModelService.init(getPluginContext());
 
         selectedPluginId = context.getReference(this).getServiceId() + ".model.selected_plugin";
-        ModelReference selectedPluginService = new ModelReference(selectedPluginId, null);
+        final ModelReference selectedPluginService = new ModelReference(selectedPluginId, null);
         selectedPluginService.init(getPluginContext());
 
         selectedExtPtId = context.getReference(this).getServiceId() + ".model.selected_extension_point";
@@ -125,8 +125,26 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
                 }
 
             };
-            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context,
-                    selectedExtensionPointModel);
+            IModel<String> selectedPluginModel = new IModel<String>() {
+
+                @Override
+                public String getObject() {
+                    if (selectedPluginService.getModel() != null) {
+                        return (String) selectedPluginService.getModel().getObject();
+                    }
+                    return null;
+                }
+
+                @Override
+                public void setObject(final String object) {
+                    selectedPluginService.setModel(new Model(object));
+                }
+
+                @Override
+                public void detach() {
+                }
+            };
+            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context, selectedExtensionPointModel, selectedPluginModel);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
             throw new RuntimeException("Failed to initialize", ex);
@@ -170,8 +188,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             builderParameters.put("model.type", typeModelId);
             builderParameters.put("model.plugin", selectedPluginId);
             builderParameters.put("model.extensionpoint", selectedExtPtId);
-            PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), builderParameters, "edit"
-                    .equals(mode));
+            PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), builderParameters, "edit".equals(mode));
 
             context.getService(clusterModelId, IModelReference.class).setModel(new Model(builder.getTemplate()));
             context.getService(typeModelId, IModelReference.class).setModel(new Model(builder.getTypeDescriptor()));
@@ -220,7 +237,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
     }
 
     private List<String> names = null;
-    
+
     @Override
     public void render(PluginRequestTarget target) {
         if (builder != null) {
@@ -240,7 +257,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         }
         super.render(target);
     }
-    
+
     @Override
     protected void onDetach() {
         // null-check; if plugin has registered its render-service and then throws

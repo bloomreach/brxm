@@ -120,7 +120,10 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
                 public void onEvent(Iterator events) {
                     for (ValidationFilter listener : new ArrayList<ValidationFilter>(listeners.values())) {
-                        listener.onValidation(helper.getValidationModel().getObject());
+                        IValidationResult validationResult = helper.getValidationModel().getObject();
+                        if (validationResult != null) {
+                            listener.onValidation(validationResult);
+                        }
                     }
                 }
 
