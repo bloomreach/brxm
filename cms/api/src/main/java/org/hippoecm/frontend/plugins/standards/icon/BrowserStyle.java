@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.standards.icon;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
@@ -29,7 +29,7 @@ public final class BrowserStyle {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final Map<String, Boolean> customPackageResourceExists = new HashMap<String, Boolean>();
+    private static final Map<String, Boolean> customPackageResourceExists = new ConcurrentHashMap<String, Boolean>();
 
     private BrowserStyle() {
     }
