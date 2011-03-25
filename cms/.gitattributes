@@ -1316,6 +1316,8 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/breadcrumb/Breadcrum
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/breadcrumb/BreadcrumbPlugin.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-export.png -text svneol=unset#image/png
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-import.png -text svneol=unset#image/png
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupTargetTreeView.java svneol=native#text/plain

@@ -54,10 +54,9 @@ public class ContentExportDialog extends AbstractDialog<Node> {
 
     private boolean skipBinary = false;
 
-    public ContentExportDialog(ContentExportPlugin plugin) {
-        setModel(plugin.getModel());
+    public ContentExportDialog(final JcrNodeModel nodeModel) {
+        setModel(nodeModel);
 
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         try {
             String path = nodeModel.getNode().getPath();
             add(new Label("message", new StringResourceModel("dialog.message", this, null, new Object[] {path})));

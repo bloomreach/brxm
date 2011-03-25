@@ -32,6 +32,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -86,8 +87,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private String mergeBehavior = "Disable merging";
     private String derefBehavior = "Throw error when not found";
 
-    ContentImportPlugin plugin;
-
     private final void InitMaps() {
         uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
         uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING), "Replace existing node with same uuid");
@@ -108,10 +107,9 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     }
 
 
-    public ContentImportDialog(ContentImportPlugin plugin) {
+    public ContentImportDialog(JcrNodeModel nodeModel) {
         InitMaps();
-        this.plugin = plugin;
-        nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+        this.nodeModel = nodeModel;
         
         DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
         DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
@@ -130,7 +128,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         setFocus(uuid);
 
         try {
-            String path = nodeModel.getNode().getPath();
+            String path = this.nodeModel.getNode().getPath();
             add(new Label("message", new StringResourceModel("dialog.message", this, null, new Object[] {path})));
 
             //info("Import content from a file to node: " + nodeModel.getNode().getPath());
@@ -163,8 +161,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
                 ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
                 info("Import done.");
-
-                plugin.setDefaultModel(nodeModel);
 
             } catch (PathNotFoundException ex) {
                 log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);

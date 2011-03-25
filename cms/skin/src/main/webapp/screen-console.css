@@ -149,3 +149,31 @@ body.hippo-root div.yui-log-container {
   top: 72px;
   right: 10px;
 }
+/* context menu */
+.hippo-console-contextmenu {
+  background-color: #FFFFFF;
+  color: #000000;
+  padding: 1px;
+  border: 1px solid #666666;
+  position: absolute;
+  top: 3px;
+  left: 0px;
+  width: 150px;
+  -moz-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+}
+.hippo-console-contextmenu li {
+  padding: 1px;
+}
+.hippo-console-contextmenu li:hover {
+  background-color: #ABD5FF;
+}
+.hippo-console-contextmenu img {
+  padding-left: 4px;
+}
+.hippo-console-contextmenu .menu-item {
+  padding-left: 4px;
+}
+.hippo-console-contextmenu .menu-item a {
+  color: #000000;
+}
