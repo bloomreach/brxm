@@ -34,12 +34,12 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.internal.HeaderResponse;
 import org.apache.wicket.response.StringResponse;
+import org.apache.wicket.util.string.JavascriptUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of {@link Component}s that
- * have been added.
+ * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of {@link Component}s that have been added.
  */
 public class PluginRequestTarget extends AjaxRequestTarget implements AjaxRequestTarget.IListener {
     @SuppressWarnings("unused")
@@ -67,9 +67,7 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
             throw new IllegalArgumentException("component cannot be null");
         }
         if (component.getOutputMarkupId() == false) {
-            throw new IllegalArgumentException(
-                    "cannot update component that does not have setOutputMarkupId property set to true. Component: "
-                            + component.toString());
+            throw new IllegalArgumentException("cannot update component that does not have setOutputMarkupId property set to true. Component: " + component.toString());
         }
         this.updates.add(component);
     }
@@ -191,9 +189,33 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
             }
 
             @Override
+            public void renderJavascript(final CharSequence javascript, final String id) {
+                if (javascript == null) {
+                    throw new IllegalArgumentException("javascript cannot be null");
+                }
+                List<Object> token = Arrays.asList(new Object[]{javascript.toString(), id});
+                if (wasRendered(token) == false) {
+                    JavascriptUtils.writeJavascript(RequestCycle.get().getResponse(), javascript, id);
+                    markRendered(token);
+                }
+            }
+
+            @Override
+            public void renderString(final CharSequence string) {
+                if (string == null) {
+                    throw new IllegalArgumentException("string cannot be null");
+                }
+                String token = string.toString();
+                if (wasRendered(token) == false)
+                {
+                    RequestCycle.get().getResponse().write(string);
+                    markRendered(token);
+                }
+            }
+
+            @Override
             public void renderOnDomReadyJavascript(String javascript) {
-                List<String> token = Arrays
-                        .asList(new String[] { "javascript-event", "window", "domready", javascript });
+                List<String> token = Arrays.asList(new String[]{"javascript-event", "window", "domready", javascript});
                 if (wasRendered(token) == false) {
                     domReadyJavascripts.add(javascript);
                     markRendered(token);
@@ -202,7 +224,7 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
 
             @Override
             public void renderOnLoadJavascript(String javascript) {
-                List<String> token = Arrays.asList(new String[] { "javascript-event", "window", "load", javascript });
+                List<String> token = Arrays.asList(new String[]{"javascript-event", "window", "load", javascript});
                 if (wasRendered(token) == false) {
                     // execute the javascript after all other scripts are executed
                     appendJavascripts.add(javascript);
