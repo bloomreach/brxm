@@ -20,12 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -54,7 +50,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -184,12 +179,15 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         IPluginConfig config = getPluginConfig();
         if (config.containsKey(CONFIG_KEY_PREFERRED_RESOURCE_NAMES)) {
             String[] preferredType = config.getStringArray(CONFIG_KEY_PREFERRED_RESOURCE_NAMES);
-            if (preferredType.length > 0) {
-                if (nameTypeMap.containsKey(preferredType[0])) {
-                    imageModel.getObject().setType(preferredType[0]);
-                } else {
-                    log.warn("The preferred image variant '{}' configured by '{}' in the xinha plugin configuration is not present, available are '{}'", new Object[] {preferredType[0], CONFIG_KEY_PREFERRED_RESOURCE_NAMES, nameTypeMap.keySet()});
-                }
+            if (preferredType.length > 0 && nameTypeMap.containsKey(preferredType[0])) {
+                imageModel.getObject().setType(preferredType[0]);
+            }
+        }
+        if (StringUtils.isBlank(imageModel.getObject().getType())) {
+            log.warn("The preferred image variant configuration of the xinha plugin is not correct. Configure one of the available variants '{}'.", nameTypeMap.keySet());
+            if (nameTypeMap.size() > 0) {
+                String firstType = nameTypeMap.keySet().iterator().next();
+                imageModel.getObject().setType(firstType);
             }
         }
     }

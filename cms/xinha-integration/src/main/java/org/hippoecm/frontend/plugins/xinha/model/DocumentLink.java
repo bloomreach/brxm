@@ -76,10 +76,10 @@ public abstract class DocumentLink extends XinhaLink {
 
     public void setInitType(String type) {
         this.initType = type;
-}
+    }
 
     public boolean isSameType(String type) {
-        return this.initType.endsWith(type);
+        return this.initType != null && this.initType.endsWith(type);
     }
 
 }
