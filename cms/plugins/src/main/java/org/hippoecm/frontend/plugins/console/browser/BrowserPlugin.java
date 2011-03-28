@@ -23,25 +23,24 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
-import org.hippoecm.frontend.behaviors.RightClickBehavior;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
+import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetSettings;
@@ -78,83 +77,7 @@ public class BrowserPlugin extends RenderPlugin {
     }
 
     protected JcrTree newTree(TreeModel treeModel) {
-        JcrTree tree = new JcrTree("tree", treeModel) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateTreeItem(WebMarkupContainer item, int level){
-                super.populateTreeItem(item, level);
-
-                IJcrTreeNode treeNode = (IJcrTreeNode) item.getDefaultModelObject();
-                final WebMarkupContainer menu = createContextMenu("contextMenu", 1, (JcrNodeModel) treeNode.getNodeModel());
-                item.add(menu);
-                item.add(new RightClickBehavior(menu, item) {
-                    @Override
-                    protected void respond(AjaxRequestTarget target) {
-                        getContextmenu().setVisible(true);
-                        target.addComponent(getComponentToUpdate());
-                        IContextMenuManager menuManager = findParent(IContextMenuManager.class);
-                        if (menuManager != null) {
-                            menuManager.showContextMenu(this);
-                            String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
-                            String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
-                            target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
-                                    + menu.getMarkupId() + "', " + x + ", " + y + ");");
-                        }
-                    }
-                });
-            }
-            @Override
-            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                if (clickedNode instanceof IJcrTreeNode) {
-                    IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
-                    BrowserPlugin.this.onSelect(treeNodeModel, target);
-                }
-            }
-
-            private WebMarkupContainer createContextMenu(String contextMenu, final int index, final JcrNodeModel model) {
-                WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
-                menuContainer.setOutputMarkupId(true);
-                menuContainer.setVisible(false);
-                // xml export
-                IDialogFactory factory1 = new IDialogFactory() {
-                    private static final long serialVersionUID = 1L;
-                    public IDialogService.Dialog createDialog() {
-                        return new ContentExportDialog(model);
-                    }
-                };
-                menuContainer.add(new DialogLink("xml-export", new Model<String>("XML Export"), factory1, getDialogService()));
-                // xml export icon
-                Image iconXmlExport = new Image("icon-xml-export") {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    protected ResourceReference getImageResourceReference() {
-                        return new ResourceReference(BrowserPlugin.class, "xml-export.png");
-                    }
-                };
-                iconXmlExport.setOutputMarkupId(true);
-                menuContainer.add(iconXmlExport);
-                // xml import
-                IDialogFactory factory2 = new IDialogFactory() {
-                    private static final long serialVersionUID = 1L;
-                    public IDialogService.Dialog createDialog() {
-                        return new ContentImportDialog(model);
-                    }
-                };
-                menuContainer.add(new DialogLink("xml-import", new Model<String>("XML Import"), factory2, getDialogService()));
-                // xml export icon
-                Image iconXmlImport = new Image("icon-xml-import") {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    protected ResourceReference getImageResourceReference() {
-                        return new ResourceReference(BrowserPlugin.class, "xml-import.png");
-                    }
-                };
-                iconXmlImport.setOutputMarkupId(true);
-                menuContainer.add(iconXmlImport);
-                return menuContainer;
-            }
-        };
+        JcrTree tree = new BrowserTree(treeModel);
 
         tree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
         return tree;
@@ -187,4 +110,86 @@ public class BrowserPlugin extends RenderPlugin {
         treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
     }
 
+    private class BrowserTree extends JcrTree {
+        private static final long serialVersionUID = 1L;
+
+        public BrowserTree(final TreeModel treeModel) {
+            super("tree", treeModel);
+        }
+
+        @Override
+        protected void populateTreeItem(WebMarkupContainer item, int level){
+            super.populateTreeItem(item, level);
+
+            IJcrTreeNode treeNode = (IJcrTreeNode) item.getDefaultModelObject();
+            final WebMarkupContainer menu = createContextMenu("contextMenu", 1, (JcrNodeModel) treeNode.getNodeModel());
+            item.add(menu);
+            item.add(new RightClickBehavior(menu, item) {
+                @Override
+                protected void respond(AjaxRequestTarget target) {
+                    getContextmenu().setVisible(true);
+                    target.addComponent(getComponentToUpdate());
+                    IContextMenuManager menuManager = findParent(IContextMenuManager.class);
+                    if (menuManager != null) {
+                        menuManager.showContextMenu(this);
+                        String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
+                        String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
+                        target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
+                                + menu.getMarkupId() + "', " + x + ", " + y + ");");
+                    }
+                }
+            });
+        }
+
+        @Override
+        protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
+            if (clickedNode instanceof IJcrTreeNode) {
+                IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
+                BrowserPlugin.this.onSelect(treeNodeModel, target);
+            }
+        }
+
+        private WebMarkupContainer createContextMenu(String contextMenu, final int index, final JcrNodeModel model) {
+            WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
+            menuContainer.setOutputMarkupId(true);
+            menuContainer.setVisible(false);
+            // xml export
+            IDialogFactory factory1 = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public IDialogService.Dialog createDialog() {
+                    return new ContentExportDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("xml-export", new Model<String>("XML Export"), factory1, getDialogService()));
+            // xml export icon
+            Image iconXmlExport = new Image("icon-xml-export") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "xml-export.png");
+                }
+            };
+            iconXmlExport.setOutputMarkupId(true);
+            menuContainer.add(iconXmlExport);
+            // xml import
+            IDialogFactory factory2 = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public IDialogService.Dialog createDialog() {
+                    return new ContentImportDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("xml-import", new Model<String>("XML Import"), factory2, getDialogService()));
+            // xml export icon
+            Image iconXmlImport = new Image("icon-xml-import") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "xml-import.png");
+                }
+            };
+            iconXmlImport.setOutputMarkupId(true);
+            menuContainer.add(iconXmlImport);
+            return menuContainer;
+        }
+    }
 }
