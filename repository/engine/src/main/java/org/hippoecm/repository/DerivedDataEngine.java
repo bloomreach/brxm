@@ -201,7 +201,11 @@ public class DerivedDataEngine {
 
     private final boolean compute(ValueFactory valueFactory, Node derivatesFolder, Node modified) throws ConstraintViolationException, RepositoryException {
                 if(!modified.isCheckedOut()) {
-                    modified.checkout(); // FIXME: is this node always versionable?
+                    Node ancestor = modified;
+                    while (!ancestor.isNodeType("mix:versionable")) {
+                        ancestor = ancestor.getParent();
+                    }
+                    ancestor.checkout();
                 }
                 SortedSet<String> dependencies = new TreeSet<String>();
 
