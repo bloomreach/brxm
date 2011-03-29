@@ -70,6 +70,7 @@ if (!YAHOO.hippo.Upload) {
         YAHOO.hippo.UploadWidget = function(id, config) {
             this.id = id;
             this.config = config;
+            this.initializationAttempts = 0;
             this.scrollData = null;
             this.progressBars = new YAHOO.hippo.HashMap();
             this.elements = {uiElements: null};
@@ -110,28 +111,32 @@ if (!YAHOO.hippo.Upload) {
             Dom.setStyle(this.elements.uploaderOverlay, 'width', config.buttonWidth == null || config.buttonWidth == ""  ? "244px" : config.buttonWidth);
             Dom.setStyle(this.elements.uploaderOverlay, 'height', config.buttonHeight == null || config.buttonHeight == "" ? "26px" : config.buttonHeight);
 
-            this.uploader = new YAHOO.widget.Uploader(this.elements.uploaderOverlay);
             this.fileList = null;
             this.numberOfUploads = 0;
 
-            this.uploader.addListener('contentReady', this.handleContentReady, this, true);
-            this.uploader.addListener('fileSelect', this.onFileSelect, this, true);
-            this.uploader.addListener('uploadStart', this.onUploadStart, this, true);
-            this.uploader.addListener('uploadProgress', this.onUploadProgress, this, true);
-            this.uploader.addListener('uploadCancel', this.onUploadCancel, this, true);
-            this.uploader.addListener('uploadComplete', this.onUploadComplete, this, true);
-            this.uploader.addListener('uploadCompleteData', this.onUploadResponse, this, true);
-            this.uploader.addListener('uploadError', this.onUploadError, this, true);
-            this.uploader.addListener('rollOver', this.handleRollOver, this, true);
-            this.uploader.addListener('rollOut', this.handleRollOut, this, true);
-            this.uploader.addListener('click', this.handleClick, this, true);
-            this.uploader.addListener('mouseDown', this.handleMouseDown, this, true);
-            this.uploader.addListener('mouseUp', this.handleMouseUp, this, true);
+            this.initializeUploader();
 
             YAHOO.hippo.HippoAjax.registerDestroyFunction(root, this.destroy, this);
         };
 
         YAHOO.hippo.UploadWidget.prototype = {
+
+            initializeUploader : function() {
+                this.uploader = new YAHOO.widget.Uploader(this.elements.uploaderOverlay);
+                this.uploader.addListener('contentReady', this.handleContentReady, this, true);
+                this.uploader.addListener('fileSelect', this.onFileSelect, this, true);
+                this.uploader.addListener('uploadStart', this.onUploadStart, this, true);
+                this.uploader.addListener('uploadProgress', this.onUploadProgress, this, true);
+                this.uploader.addListener('uploadCancel', this.onUploadCancel, this, true);
+                this.uploader.addListener('uploadComplete', this.onUploadComplete, this, true);
+                this.uploader.addListener('uploadCompleteData', this.onUploadResponse, this, true);
+                this.uploader.addListener('uploadError', this.onUploadError, this, true);
+                this.uploader.addListener('rollOver', this.handleRollOver, this, true);
+                this.uploader.addListener('rollOut', this.handleRollOut, this, true);
+                this.uploader.addListener('click', this.handleClick, this, true);
+                this.uploader.addListener('mouseDown', this.handleMouseDown, this, true);
+                this.uploader.addListener('mouseUp', this.handleMouseUp, this, true);
+            },
 
             upload : function() {
                 if(this.fileList != null) {
@@ -269,28 +274,35 @@ if (!YAHOO.hippo.Upload) {
             },
 
             handleContentReady  : function() {
-                // Allows the uploader to send log messages to trace, as well as to YAHOO.log
-                //this.uploader.setAllowLogging(true);
+                // CMS7-5086 the flash object javascript callbacks are not available at the moment
+                // the swfReady event is fired from the flash object.
+                if (this.uploader._swf.setAllowMultipleFiles !== undefined) {
+                    // Allows multiple file selection in "Browse" dialog.
+                    this.uploader.setAllowMultipleFiles(this.config.allowMultipleFiles);
+                    this.uploader.setSimUploadLimit(this.config.simultaneousUploadLimit);
 
-                // Allows multiple file selection in "Browse" dialog.
-                this.uploader.setAllowMultipleFiles(this.config.allowMultipleFiles);
-                this.uploader.setSimUploadLimit(this.config.simultaneousUploadLimit);
-
-                if(this.config.fileExtensions != null && this.config.fileExtensions.length > 0) {
-                    var allowedExtensions = '';
-                    for(var i=0; i<this.config.fileExtensions.length; ++i) {
-                        allowedExtensions += this.config.fileExtensions[i] + ';';
+                    if (this.config.fileExtensions != null && this.config.fileExtensions.length > 0) {
+                        var allowedExtensions = '';
+                        for (var i = 0; i < this.config.fileExtensions.length; ++i) {
+                            allowedExtensions += this.config.fileExtensions[i] + ';';
+                        }
+                        // Apply new set of file filters to the uploader.
+                        this.uploader.setFileFilters(new Array({description:"Files", extensions:allowedExtensions}));
                     }
-                    // Apply new set of file filters to the uploader.
-                    this.uploader.setFileFilters(new Array({description:"Files", extensions:allowedExtensions}));
+
+                    // Add the custom formatter to the shortcuts
+                    YAHOO.widget.DataTable.Formatter.titleFormatter = this._titleFormatter;
+                    YAHOO.widget.DataTable.Formatter.bytesFormatter = this._bytesFormatter;
+                    YAHOO.widget.DataTable.Formatter.removeFormatter = this._removeFormatter;
+
+                    this.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(Dom.get(this.id));
+                } else if (this.initializationAttempts++ < 20) {
+                    var that = this;
+                    window.setTimeout(function() {
+                        that.uploader.destroy();
+                        that.initializeUploader();
+                    }, 100);
                 }
-
-  	            // Add the custom formatter to the shortcuts
-      	        YAHOO.widget.DataTable.Formatter.titleFormatter = this._titleFormatter;
-      	        YAHOO.widget.DataTable.Formatter.bytesFormatter = this._bytesFormatter;
-                YAHOO.widget.DataTable.Formatter.removeFormatter = this._removeFormatter;
-
-                this.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(Dom.get(this.id));
             },
 
             handleRollOver : function() {
