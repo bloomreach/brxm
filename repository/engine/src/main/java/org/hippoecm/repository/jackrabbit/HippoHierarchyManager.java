@@ -29,6 +29,7 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.name.CargoNamePath;
 import org.apache.jackrabbit.spi.commons.name.PathBuilder;
 import org.hippoecm.repository.dataprovider.ParameterizedNodeId;
 import org.slf4j.Logger;
@@ -99,7 +100,7 @@ public class HippoHierarchyManager implements HierarchyManager {
         NodeId smartNodeId = null;
         int count = 0;
         for (Path.Element element : elements) {
-            if (element instanceof HippoPathParser.SmartElement) {
+            if (element instanceof CargoNamePath) {
                 Name name = element.getName();
                 int index = element.getIndex();
                 if (index == 0) {
@@ -111,7 +112,7 @@ public class HippoHierarchyManager implements HierarchyManager {
                     ChildNodeEntry nodeEntry = parentState.getChildNodeEntry(name, index);
                     if (nodeEntry != null) {
                         smartNodeId = nodeEntry.getId();
-                        smartNodeId = new ParameterizedNodeId(smartNodeId, ((HippoPathParser.SmartElement)element).argument);
+                        smartNodeId = new ParameterizedNodeId(smartNodeId, element.getIdentifier());
                     } else
                         return null;
                 } catch (NoSuchItemStateException ex) {

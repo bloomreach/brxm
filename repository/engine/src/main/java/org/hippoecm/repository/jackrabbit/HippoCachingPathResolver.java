@@ -24,11 +24,11 @@ import java.util.TreeSet;
 import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.spi.Path;
-import org.apache.jackrabbit.spi.commons.conversion.CachingPathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
+import org.apache.jackrabbit.spi.commons.name.CargoNamePath;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
 class HippoCachingPathResolver implements PathResolver {
@@ -54,7 +54,7 @@ class HippoCachingPathResolver implements PathResolver {
         if (qpath == null) {
             qpath = HippoPathParser.parse(path, nResolver, PathFactoryImpl.getInstance());
             for (Path.Element element : qpath.getElements()) {
-                if (element instanceof HippoPathParser.SmartElement)
+                if (element instanceof CargoNamePath)
                     return qpath;
             }
             cache.put(path, qpath);
@@ -66,9 +66,8 @@ class HippoCachingPathResolver implements PathResolver {
      * {@inheritDoc}
      */
     public String getJCRPath(Path qpath) throws NamespaceException {
-        for(Path.Element element: qpath.getElements()) {
-            if(element instanceof HippoPathParser.SmartElement)
-                return pResolver.getJCRPath(qpath);
+        if(qpath instanceof CargoNamePath) {
+            return pResolver.getJCRPath(qpath);
         }
         String path = qpath.getString();
         Path foundPath = cache.get(qpath.getString());
@@ -89,9 +88,8 @@ class HippoCachingPathResolver implements PathResolver {
             qpath = cache.get(path);
             if (qpath == null) {
                 qpath = HippoPathParser.parse(path, nResolver, PathFactoryImpl.getInstance());
-                for (Path.Element element : qpath.getElements()) {
-                    if (element instanceof HippoPathParser.SmartElement)
-                        return qpath;
+                if(qpath instanceof CargoNamePath) {
+                    return qpath;
                 }
                 cache.put(path, qpath);
             }

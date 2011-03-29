@@ -103,4 +103,8 @@ public class RepositoryUserManager extends AbstractUserManager {
             return null;
         }
     }
+
+    public boolean isAutoSave() {
+        return false;
+    }
 }

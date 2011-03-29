@@ -481,7 +481,7 @@ public class DereferencedSessionImporter implements Importer {
 
                 // set property
                 if (ref.isMulti()) {
-                    node.setProperty(ref.getName(), vals.toArray(new Value[vals.size()]));
+                    node.setProperty(ref.getName(), vals.toArray(new Value[vals.size()]), PropertyType.REFERENCE);
                 } else {
                     if (vals.size() > 0) {
                         node.setProperty(ref.getName(), vals.get(0));

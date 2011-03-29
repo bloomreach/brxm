@@ -98,7 +98,10 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
             if (password == null) {
                 throw new LoginException("Password is null");
             }
-            return login(new SimpleCredentials(username, password), null);
+            // https://issues.apache.org/jira/browse/JCR-2740
+            SimpleCredentials creds = new SimpleCredentials(username, password);
+            creds.setAttribute("org.apache.jackrabbit.autoFixCorruptions", "true"); 
+            return login(creds, null);
         } else {
             return login(null);
         }

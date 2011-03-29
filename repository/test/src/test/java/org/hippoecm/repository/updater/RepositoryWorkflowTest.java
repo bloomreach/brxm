@@ -25,6 +25,8 @@ import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.TestCase;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -63,10 +65,17 @@ public class RepositoryWorkflowTest extends TestCase {
             + "+ testUpdateModel:folder (testUpdateModel:folder) multiple\n";
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp(true);
         session.getRootNode().addNode("test");
         session.save();
+    }
+    
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown(true);
     }
 
     private RepositoryWorkflow getWorkflow() throws RepositoryException {
