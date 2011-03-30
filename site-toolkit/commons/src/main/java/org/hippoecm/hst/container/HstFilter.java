@@ -369,14 +369,14 @@ public class HstFilter implements Filter {
     	    if(logger.isDebugEnabled()) {
                 logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());
+                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerException e) {
            if(logger.isDebugEnabled()) {
                 logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.getMessage());
+                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -384,7 +384,7 @@ public class HstFilter implements Filter {
     	    if(logger.isDebugEnabled()) {
                 logger.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn("Fatal error encountered while processing request '{}': '{}'" , req.getRequestURI(),  e.getMessage());
+                logger.warn("Fatal error encountered while processing request '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     	}
