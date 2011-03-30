@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import org.hippoecm.repository.decorating.AbstractDecorator;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.query.lucene.HippoQueryResult;
 
-/**
- */
 public class QueryResultDecorator extends AbstractDecorator implements QueryResult {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -68,6 +66,6 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
     }
 
     public String[] getSelectorNames() throws RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return result.getSelectorNames();
     }
 }

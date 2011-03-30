@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,14 @@ import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.AccessControlException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
@@ -42,14 +46,22 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 import javax.jcr.version.VersionException;
 
 import javax.jdo.JDOException;
+import org.hippoecm.repository.standardworkflow.TriggerWorkflow;
+import org.hippoecm.repository.util.Utilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -295,7 +307,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
-                String uuid = null;
+                boolean objectPersist;
+                String uuid = item.getIdentifier();
                 String path = item.getPath();
                 /* The synchronized must operate on the core root session, because there is
                  * only one such session, while there may be many decorated ones.
@@ -305,6 +318,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     Workflow workflow = null; // compiler does not detect properly there is no path where this not set
                     Class clazz = Class.forName(classname);
                     if (InternalWorkflow.class.isAssignableFrom(clazz)) {
+                        objectPersist = false;
                         try {
                             Constructor[] constructors = clazz.getConstructors();
                             int constructorIndex;
@@ -345,14 +359,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             throw new RepositoryException("standards plugin invalid", ex);
                         }
                     } else {
-                        uuid = item.getUUID();
+                        objectPersist = true;
                         Object object = documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
                         if (workflow instanceof WorkflowImpl) {
                             ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowNode, getSession(), item));
                         }
                     }
-
                     try {
                         Class[] interfaces = workflow.getClass().getInterfaces();
                         Vector vector = new Vector();
@@ -362,7 +375,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             }
                         }
                         interfaces = (Class[])vector.toArray(new Class[vector.size()]);
-                        InvocationHandler handler = new WorkflowInvocationHandler(workflow, uuid, path, types);
+                        InvocationHandler handler = new WorkflowInvocationHandler(category, workflow, uuid, path, types, objectPersist);
                         Class proxyClass = Proxy.getProxyClass(workflow.getClass().getClassLoader(), interfaces);
                         workflow = (Workflow)proxyClass.getConstructor(new Class[] {InvocationHandler.class}).
                                 newInstance(new Object[] {handler});
@@ -473,16 +486,20 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     class WorkflowInvocationHandler implements InvocationHandler {
+        String category;
         Workflow upstream;
         String uuid;
         Node types;
         String path;
+        boolean objectPersist;
 
-        WorkflowInvocationHandler(Workflow upstream, String uuid, String path, Node types) {
+        WorkflowInvocationHandler(String category, Workflow upstream, String uuid, String path, Node types, boolean objectPersist) {
+            this.category = category;
             this.upstream = upstream;
             this.uuid = uuid;
             this.path = path;
             this.types = types;
+            this.objectPersist = objectPersist;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -495,11 +512,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
             rootSession.refresh(false);
 
+            PostActions postActions = null;
             try {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(rootSession)) {
+                    postActions = createPostActions(category, targetMethod, uuid);
                     returnObject = targetMethod.invoke(upstream, args);
-                    if (uuid != null && !targetMethod.getName().equals("hints")) {
+                    if (objectPersist && !targetMethod.getName().equals("hints")) {
                         documentManager.putObject(uuid, types, upstream);
                         rootSession.save();
                     }
@@ -516,8 +535,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
                                                     targetMethod.getName(), args, returnObject, path);
                     }
+                    if (postActions != null) {
+                        postActions.execute(returnObject);
+                    }
                 }
-
                 return returnObject;
             } catch (RepositoryException ex) {
                 rootSession.refresh(false);
@@ -549,6 +570,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 log.info(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 throw returnException = ex.getCause();
             } finally {
+                if (postActions != null) {
+                    postActions.dispose();
+                }
                 StringBuffer sb = new StringBuffer();
                 sb.append("AUDIT workflow invocation ");
                 sb.append(uuid);
@@ -698,7 +722,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         public Object invoke(Session session) throws RepositoryException, WorkflowException {
             workflowSubjectNode = session.getNodeByUUID(workflowSubjectNode.getUUID());
-            WorkflowManager workflowManager = new WorkflowManagerImpl(session, session);
+            WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session, session);
             Workflow workflow = workflowManager.getWorkflow(category, workflowSubjectNode);
             Method[] methods = workflow.getClass().getMethods();
             method = null;
@@ -717,7 +741,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 }
             }
             try {
-                return method.invoke(workflow, arguments);
+                Object returnObject = method.invoke(workflow, arguments);
+                return returnObject;
             } catch(IllegalAccessException ex) {
                 log.debug(ex.getMessage(), ex);
                 throw new RepositoryException(ex.getMessage(), ex);
@@ -740,6 +765,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         Object invoke(WorkflowManagerImpl manager) throws RepositoryException, WorkflowException {
+            PostActions postActions = null;
             try {
                 Workflow workflow = null; // compiler does not detect properly there is no path where this not set
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
@@ -750,6 +776,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (item == null) {
                     item = manager.rootSession.getNodeByUUID(workflowSubject.getIdentity());
                 }
+                postActions = manager.createPostActions(category, method, item.getIdentifier());
                 try {
                     Class clazz = Class.forName(classname);
                     if (InternalWorkflow.class.isAssignableFrom(clazz)) {
@@ -801,6 +828,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         manager.documentManager.putObject(uuid, types, workflow);
                         manager.rootSession.save();
                     }
+                    postActions.execute(returnObject);
                     return returnObject;
                 }
             } catch (InvocationTargetException ex) {
@@ -857,6 +885,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } catch (InvalidItemStateException ex) {
                 log.debug(ex.getMessage(), ex);
                 throw ex;
+            } finally {
+                postActions.dispose();
             }
         }
     }
@@ -1009,6 +1039,127 @@ public class WorkflowManagerImpl implements WorkflowManager {
         
         protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification) {
             return new WorkflowContextDocumentImpl(workflowDefinition, subjectSession, subject, specification);
+        }
+    }
+
+    PostActions createPostActions(String workflowCategory, Method workflowMethod, String sourceIdentity) {
+        if (workflowMethod.getName().equals("hints") || workflowCategory.startsWith("triggers")) {
+            return null;
+        }
+        try {
+            Node wfSubject = rootSession.getNodeByIdentifier(sourceIdentity);
+            Node wfNode = WorkflowManagerImpl.this.getWorkflowNode("triggers", wfSubject, rootSession);
+            if (wfNode == null) {
+                return null;
+            }
+            return new PostActions(wfSubject, Document.class.isAssignableFrom(workflowMethod.getReturnType()), wfNode,
+                    workflowCategory + ":" + workflowMethod.getName());
+        } catch (RepositoryException ex) {
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    class PostActions {
+        String sourceIdentity;
+        boolean isDocumentResult;
+        Node wfSubject;
+        Node wfNode;
+        String info;
+        Set<String> preconditionSet;
+
+        private PostActions(Node wfSubject, boolean isDocumentResult, Node wfNode, String info) throws RepositoryException {
+            this.wfSubject = wfSubject;
+            this.isDocumentResult = isDocumentResult;
+            this.wfNode = wfNode;
+            this.info = info;
+            this.sourceIdentity = wfSubject.getIdentifier();
+            if (wfNode.hasNode("hipposys:triggerprecondition")) {
+                Query preQuery = rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:triggerprecondition"));
+                preconditionSet = evaluateQuery(preQuery, null);
+            } else {
+                preconditionSet = new HashSet<String>();
+            }
+        }
+
+        private Set<String> evaluateQuery(Query query, String resultIdentity) throws RepositoryException {
+            Set<String> result = new HashSet<String>();
+            ValueFactory valueFactory = rootSession.getValueFactory();
+            query.bindValue("subject", valueFactory.createValue(sourceIdentity));
+            if (isDocumentResult && resultIdentity != null) {
+                query.bindValue("result", valueFactory.createValue(resultIdentity));
+            }
+            QueryResult queryResult = query.execute();
+            String selectorName = null;
+            String[] selectorNames = queryResult.getSelectorNames();
+            if (selectorNames != null && selectorNames.length > 0) {
+                selectorName = selectorNames[0];
+            }
+            RowIterator rows = queryResult.getRows();
+            while (rows.hasNext()) {
+                while (rows.hasNext()) {
+                    Row row = rows.nextRow();
+                    String id;
+                    if (selectorName != null) {
+                        id = row.getNode(selectorName).getIdentifier();
+                    } else {
+                        id = row.getNode().getIdentifier();
+                    }
+                    result.add(id);
+                }
+            }
+            return result;
+        }
+
+        void execute(Object returnObject) {
+            if (sourceIdentity != null) {
+                String resultIdentity = null;
+                if (isDocumentResult) {
+                    if (returnObject != null) {
+                        resultIdentity = ((Document)returnObject).getIdentity();
+                    }
+                }
+                try {
+                    Query postQuery = (wfNode.hasNode("hipposys:triggerpostcondition") ? rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:triggerpostcondition")) : null);
+                    if (postQuery != null) {
+                        Set<String> postconditionSet = evaluateQuery(postQuery, (resultIdentity == null ? "" : resultIdentity));
+                        String conditionOperator = "post\\pre";
+                        if (wfNode.hasProperty("hipposys:triggerconditionoperator")) {
+                            conditionOperator = wfNode.getProperty("hipposys:triggerconditionoperator").getString();
+                        }
+                        if (conditionOperator.equals("post\\pre")) {
+                            postconditionSet.removeAll(preconditionSet);
+                            if (postconditionSet.size() == 0) {
+                                return;
+                            }
+                        } else {
+                            log.warn("trigger operator " + conditionOperator + " unrecognized");
+                        }
+                    }
+                    Workflow workflow = getWorkflow("triggers", wfSubject);
+                    if (workflow instanceof TriggerWorkflow) {
+                        TriggerWorkflow trigger = (TriggerWorkflow)workflow;
+                        try {
+                            if (isDocumentResult) {
+                                trigger.fire((Document)returnObject);
+                            } else {
+                                trigger.fire();
+                            }
+                        } catch (WorkflowException ex) {
+                            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                        } catch (MappingException ex) {
+                            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                        } catch (RemoteException ex) {
+                            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                        }
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                }
+            }
+        }
+
+        void dispose() {
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2009 Hippo
+ * Copyright 2007-2011 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0.2'>
+<hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0.3'>
 
 // BOOTSTRAP
 
@@ -63,6 +63,13 @@
 - hipposys:privileges (string) multiple
 + hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
 + hipposys:config (nt:unstructured) = nt:unstructured
+
+[hipposys:workflowtrigger] > hipposys:workflow
+
+[hipposys:workflowsimplequerytrigger] > hipposys:workflowtrigger
+- hipposys:triggerconditionoperator (string)
++ hipposys:triggerprecondition (nt:query)
++ hipposys:triggerpostcondition (nt:query)
 
 [hipposys:workflowcategory] > nt:base orderable
 + * (hipposys:workflow) = hipposys:workflow

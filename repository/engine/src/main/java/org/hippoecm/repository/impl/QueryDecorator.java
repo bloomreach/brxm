@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,8 +43,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
-/**
- */
 public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDecorator implements HippoQuery {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -158,9 +156,13 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     }
 
     public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException {
-        if(arguments == null)
-            arguments = new HashMap<String, Value>();
-        arguments.put(varName, value);
+        if (query.getStatement().contains(MAGIC_NAMED_START)) {
+            if(arguments == null)
+                arguments = new HashMap<String, Value>();
+            arguments.put(varName, value);
+        } else {
+            query.bindValue(varName, value);
+        }
     }
 
     public void setLimit(long limit) {
