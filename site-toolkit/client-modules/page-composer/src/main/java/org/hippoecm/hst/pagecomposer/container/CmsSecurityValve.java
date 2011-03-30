@@ -98,7 +98,7 @@ public class CmsSecurityValve extends AbstractValve {
                             if(!cmsBaseUrl.endsWith("/")) {
                                 cmsBaseUrl += "/";
                             }
-                            cmsAuthUrl = cmsBaseUrl + "/auth?destinationUrl=" +
+                            cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" +
                                     URLEncoder.encode(destinationLink.toUrlForm(requestContext, true), "UTF8")
                                     + "&key=" + key;
                         } else {
