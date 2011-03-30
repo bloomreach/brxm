@@ -70,6 +70,11 @@ public class UserSession extends WebSession {
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
     private transient FacetRootsObserver facetRootsObserver;
+    private UserCredentials credentials;
+
+    public UserCredentials getCredentials() {
+        return credentials;
+    }
 
     public static void setCredentials(UserCredentials credentials) throws RepositoryException {
         fallbackSession = JcrSessionModel.login(credentials);
@@ -241,6 +246,8 @@ public class UserSession extends WebSession {
             }
             sessionRef.jcrSession = sessionModel;
         }
+
+        this.credentials = credentials;
         if (oldModel != null) {
             oldModel.detach();
         }

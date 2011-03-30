@@ -76,7 +76,7 @@ public class UserCredentials {
         return username;
     }
 
-    Credentials getJcrCredentials() {
+    public Credentials getJcrCredentials() {
         return credentials;
     }
 }

@@ -15,26 +15,11 @@
  */
 package org.hippoecm.frontend;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.observation.EventListener;
-import javax.jcr.observation.EventListenerIterator;
-import javax.servlet.ServletContext;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -43,6 +28,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
+import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IExceptionSettings;
@@ -61,8 +47,27 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.EventListenerIterator;
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Main extends WebApplication {
     @SuppressWarnings("unused")
@@ -70,7 +75,9 @@ public class Main extends WebApplication {
 
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    /** Parameter name of the repository storage directory */
+    /**
+     * Parameter name of the repository storage directory
+     */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
     public final static String REPOSITORY_USERNAME_PARAM = "repository-username";
@@ -213,6 +220,74 @@ public class Main extends WebApplication {
                 return false;
             }
         });
+
+
+        /*
+         * HST SAML kind of authentication handler needed for Template Composer integration
+         *
+         */
+        mount(new AbstractRequestTargetUrlCodingStrategy("auth") {
+            @Override
+            public CharSequence encode(IRequestTarget iRequestTarget) {
+                return null;
+            }
+
+            @Override
+            /**
+             * Checks the usercredentials, and requestParameters: hstSecret, destinationUrl,
+             * if any of these is null then redirects to homepage.
+             * Otherwise encodes the credentials and redirects to desinationUrl
+             */
+            public IRequestTarget decode(final RequestParameters requestParameters) {
+
+
+                UserSession userSession = (UserSession) Session.get();
+                final UserCredentials userCredentials = userSession.getCredentials();
+
+                IRequestTarget requestTarget = new BookmarkablePageRequestTarget(getHomePage());
+
+
+                final Object keyParams = requestParameters.getParameters().get("hstSecret");
+                final Object destinationUrlParams = requestParameters.getParameters().get("destinationUrl");
+
+                if (userCredentials != null && keyParams != null && destinationUrlParams != null) {
+
+                    requestTarget = new IRequestTarget() {
+
+                        @Override
+                        public void detach(RequestCycle requestCycle) {
+                            //Nothing to detach.
+                        }
+
+                        @Override
+                        public void respond(RequestCycle requestCycle) {
+                            String key = ((String[]) keyParams)[0];
+                            String destinationUrl = ((String[]) destinationUrlParams)[0];
+                            CredentialCipher cipher = CredentialCipher.getInstance();
+                            String encryptedString = cipher.getEncryptedString((SimpleCredentials) userCredentials.getJcrCredentials());
+
+                            String utf8Base64EncodedCred = null;
+                            try {
+                                utf8Base64EncodedCred = URLEncoder.encode(encryptedString, "UTF8");
+                                Response response = RequestCycle.get().getResponse();
+                                response.redirect(destinationUrl + "?key=" + key + "&cred=" + utf8Base64EncodedCred);
+                            } catch (UnsupportedEncodingException e) {
+                                throw new RuntimeException("Unable to encode the string to UTF8", e);
+                            }
+
+
+                        }
+                    };
+                }
+                return requestTarget;
+            }
+
+            @Override
+            public boolean matches(IRequestTarget iRequestTarget) {
+                return false;
+            }
+        });
+
 
         resourceSettings.setLocalizer(new StagedLocalizer());
 
