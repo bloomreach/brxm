@@ -247,7 +247,7 @@ public class Main extends WebApplication {
                 IRequestTarget requestTarget = new BookmarkablePageRequestTarget(getHomePage());
 
 
-                final Object keyParams = requestParameters.getParameters().get("hstSecret");
+                final Object keyParams = requestParameters.getParameters().get("key");
                 final Object destinationUrlParams = requestParameters.getParameters().get("destinationUrl");
 
                 if (userCredentials != null && keyParams != null && destinationUrlParams != null) {
