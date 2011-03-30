@@ -53,7 +53,6 @@ public class CmsSecurityValve extends AbstractValve {
         HstRequestContext requestContext = context.getRequestContext();
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
         //First check if the user has access to the requested mount
-        System.out.println("before has access");
         if (!hasAccess(servletRequest)) {
             HstLink destinationLink = null;
 
@@ -116,7 +115,6 @@ public class CmsSecurityValve extends AbstractValve {
 
                     return;
                 } else {
-                    System.out.println("decode the request: " + credentialParam);
                     CredentialCipher credentialCipher = CredentialCipher.getInstance();
                     Credentials cred = credentialCipher.decryptFromString(credentialParam);
                     servletRequest.getSession(true).setAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME, cred);
