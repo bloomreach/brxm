@@ -95,7 +95,7 @@
     <spring.version>3.0.4.RELEASE</spring.version>
     <aspectj.version>1.6.2</aspectj.version>
 
-    <jackrabbit.version>2.1.2</jackrabbit.version>
+    <jackrabbit.version>2.2.5</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <cms.version>2.19.02-SNAPSHOT</cms.version>
