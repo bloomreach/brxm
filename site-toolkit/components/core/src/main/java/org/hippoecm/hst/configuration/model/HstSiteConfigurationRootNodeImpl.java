@@ -69,7 +69,8 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
                 } else {
                     log.info("Found the property '{}' on node '{}' but the property only inherits when configured on nodes of type 'hst:configuration'", HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, jcrNode.getPath());
                 }
-                
+            }
+            if(!jcrNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
                 // Load the implicitly inherited hst:configuration nodes: When there is a hst:configuration node that is called 'hst:default' then we need to merge this.
                 HstSiteConfigurationRootNodeImpl hstDefaultConfig = (HstSiteConfigurationRootNodeImpl)hstManagerImpl.getConfigurationRootNodes().get(HstNodeTypes.NODENAME_HST_HSTDEFAULT);
                 if(hstDefaultConfig == null) {
