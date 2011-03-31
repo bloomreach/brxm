@@ -52,7 +52,6 @@ public final class CredentialCipher {
     private final SecretKeySpec secret;
 
     private CredentialCipher() {
-        Thread.dumpStack();
         KeyGenerator kgen = null;
         try {
             kgen = KeyGenerator.getInstance("AES");
