@@ -16,8 +16,11 @@
 package org.hippoecm.repository.test;
 
 import java.rmi.RemoteException;
+import java.util.Iterator;
+import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.TriggerWorkflow;
@@ -26,16 +29,15 @@ public class TriggerWorkflowImpl extends WorkflowImpl implements TriggerWorkflow
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public static int fireCount = 0;
-
     public TriggerWorkflowImpl() throws RemoteException {
     }
 
     public void fire() throws WorkflowException, MappingException {
-        ++fireCount;
     }
 
-    public void fire(Document result) throws WorkflowException, MappingException {
-        ++fireCount;
+    public void fire(Document document) throws WorkflowException, MappingException {
+    }
+
+    public void fire(Iterator<Document> documentIterator) throws WorkflowException, MappingException {
     }
 }

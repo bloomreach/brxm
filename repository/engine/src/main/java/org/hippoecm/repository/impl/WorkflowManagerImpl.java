@@ -27,6 +27,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.AccessControlException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -886,7 +887,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 log.debug(ex.getMessage(), ex);
                 throw ex;
             } finally {
-                postActions.dispose();
+                if (postActions != null) {
+                    postActions.dispose();
+                }
             }
         }
     }
@@ -1121,15 +1124,16 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 }
                 try {
                     Query postQuery = (wfNode.hasNode("hipposys:triggerpostcondition") ? rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:triggerpostcondition")) : null);
+                    Set<String> postconditionSet = null;
                     if (postQuery != null) {
-                        Set<String> postconditionSet = evaluateQuery(postQuery, (resultIdentity == null ? "" : resultIdentity));
+                        postconditionSet = evaluateQuery(postQuery, (resultIdentity == null ? "" : resultIdentity));
                         String conditionOperator = "post\\pre";
                         if (wfNode.hasProperty("hipposys:triggerconditionoperator")) {
                             conditionOperator = wfNode.getProperty("hipposys:triggerconditionoperator").getString();
                         }
                         if (conditionOperator.equals("post\\pre")) {
                             postconditionSet.removeAll(preconditionSet);
-                            if (postconditionSet.size() == 0) {
+                            if (postconditionSet.isEmpty()) {
                                 return;
                             }
                         } else {
@@ -1140,10 +1144,37 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     if (workflow instanceof TriggerWorkflow) {
                         TriggerWorkflow trigger = (TriggerWorkflow)workflow;
                         try {
-                            if (isDocumentResult) {
-                                trigger.fire((Document)returnObject);
+                            if (postconditionSet != null) {
+                                final Iterator<String> postconditionSetIterator = postconditionSet.iterator();
+                                trigger.fire(new Iterator<Document>() {
+                                    public boolean hasNext() {
+                                        return postconditionSetIterator.hasNext();
+                                    }
+                                    public Document next() {
+                                        System.err.println("BERRY NEXT DOCUMENT");
+                                        String id = postconditionSetIterator.next();
+                                        try {
+                                            Node node = rootSession.getNodeByIdentifier(id);
+                                            if (node.isNodeType("hippo:handle")) {
+                                                if(node.hasNode(node.getName())) {
+                                                    id = node.getNode(node.getName()).getIdentifier();
+                                                }
+                                            }
+                                        } catch (RepositoryException ex) {
+                                            // deliberate ignore of error, possible because document has been deleted, denied, but id is still relevant
+                                        }
+                                        return new Document(id);
+                                    }
+                                    public void remove() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                });
                             } else {
-                                trigger.fire();
+                                if (isDocumentResult) {
+                                    trigger.fire((Document)returnObject);
+                                } else {
+                                    trigger.fire();
+                                }
                             }
                         } catch (WorkflowException ex) {
                             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);

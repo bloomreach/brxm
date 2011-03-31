@@ -16,6 +16,7 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
+import java.util.Iterator;
 import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
@@ -26,6 +27,8 @@ public interface TriggerWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
     public void fire() throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void fire(Document result) throws WorkflowException, MappingException, RepositoryException, RemoteException;
-}
 
+    public void fire(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public void fire(Iterator<Document> documents) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+}
