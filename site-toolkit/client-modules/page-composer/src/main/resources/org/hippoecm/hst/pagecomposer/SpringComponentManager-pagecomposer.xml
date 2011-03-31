@@ -118,78 +118,101 @@
   </bean>
 
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject">
-      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
-        <property name="propertyPath" value="pipelines"/>
-      </bean>
-    </property>
-    <property name="targetMethod" value="put" />
-    <property name="arguments">
-      <list>
-        <value>ComposerBootstrapPipeline</value>
-          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-            <property name="preInvokingValves">
-              <list>
-                <ref bean="initializationValve" />
-              </list>
-            </property>
-            <property name="invokingValves">
-              <list>
-                <ref bean="cmsSecurityValve" />
-                <ref bean="subjectBasedSessionValve" />
-                <ref bean="jcrSessionStatefulConcurrencyValve" />
-                <ref bean="noCacheResponseHeadersValve" />
-                <ref bean="composerBootstrap" />
-              </list>
-            </property>
-            <property name="postInvokingValves">
-              <list>
-                <ref bean="cleanupValve" />
-            </list>
-          </property>
+      <property name="targetObject">
+        <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+          <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
+          <property name="propertyPath" value="pipelines"/>
         </bean>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
-    <property name="defaultPipelineName" value="DefaultSitePipeline" />
-    <property name="pipelines">
-      <map>
-        <entry key="ComposerPreviewPipeline">
-          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-            <property name="preInvokingValves">
-              <list>
-                <ref bean="initializationValve" />
-              </list>
-            </property>
-            <property name="invokingValves">
-              <list>
-                <ref bean="contextResolvingValve" />
-                <ref bean="localizationValve" />
-                <ref bean="cmsSecurityValve" />
-                <ref bean="subjectBasedSessionValve" />
-                <ref bean="jcrSessionStatefulConcurrencyValve"/>
-                <ref bean="siteMenusResolvingValve" />
-                <ref bean="actionValve" />
-                <ref bean="resourceServingValve" />
-                <ref bean="aggregationValve" />
-              </list>
-            </property>
-            <property name="postInvokingValves">
-              <list>
-                <ref bean="cleanupValve" />
+      </property>
+      <property name="targetMethod" value="put" />
+      <property name="arguments">
+        <list>
+          <value>ComposerBootstrapPipeline</value>
+            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+              <property name="preInvokingValves">
+                <list>
+                  <ref bean="initializationValve" />
+                </list>
+              </property>
+              <property name="invokingValves">
+                <list>
+                  <ref bean="cmsSecurityValve" />
+                  <ref bean="subjectBasedSessionValve" />
+                  <ref bean="jcrSessionStatefulConcurrencyValve" />
+                  <ref bean="noCacheResponseHeadersValve" />
+                  <ref bean="composerBootstrap" />
+                </list>
+              </property>
+              <property name="postInvokingValves">
+                <list>
+                  <ref bean="cleanupValve" />
               </list>
             </property>
           </bean>
-        </entry>
-      </map>
-    </property>
-  </bean>
+        </list>
+      </property>
+    </bean>
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <property name="targetObject">
+        <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+          <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
+          <property name="propertyPath" value="pipelines"/>
+        </bean>
+      </property>
+      <property name="targetMethod" value="put" />
+      <property name="arguments">
+        <list>
+          <value>ComposerPreviewPipeline</value>
+            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+              <property name="preInvokingValves">
+                <list>
+                  <ref bean="initializationValve" />
+                </list>
+              </property>
+              <property name="invokingValves">
+                <list>
+                  <ref bean="contextResolvingValve" />
+                  <ref bean="localizationValve" />
+                  <ref bean="cmsSecurityValve" />
+                  <ref bean="subjectBasedSessionValve" />
+                  <ref bean="jcrSessionStatefulConcurrencyValve"/>
+                  <ref bean="siteMenusResolvingValve" />
+                  <ref bean="actionValve" />
+                  <ref bean="resourceServingValve" />
+                  <ref bean="aggregationValve" />
+                </list>
+              </property>
+              <property name="postInvokingValves">
+                <list>
+                  <ref bean="cleanupValve" />
+                </list>
+              </property>
+            </bean>
+                    <value>ComposerBootstrapPipeline</value>
+            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+              <property name="preInvokingValves">
+                <list>
+                  <ref bean="initializationValve" />
+                </list>
+              </property>
+              <property name="invokingValves">
+                <list>
+                  <ref bean="cmsSecurityValve" />
+                  <ref bean="subjectBasedSessionValve" />
+                  <ref bean="jcrSessionStatefulConcurrencyValve" />
+                  <ref bean="noCacheResponseHeadersValve" />
+                  <ref bean="composerBootstrap" />
+                </list>
+              </property>
+              <property name="postInvokingValves">
+                <list>
+                  <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
 
-
-
-
+        </list>
+      </property>
+    </bean>
 </beans>
 
