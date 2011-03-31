@@ -30,6 +30,10 @@
       <field name="self" column="."/>
     </class>
     <class name="TriggerWorkflowImpl" detachable="false" identity-type="datastore">
+     <field name="counter" column="hippo:triggercounter"/>
+    </class>
+    <class name="PostProcessWorkflowImpl" detachable="false" identity-type="datastore">
+      <field name="identifier" column="hippo:triggercounter"/>
     </class>
   </package>
 </jdo>

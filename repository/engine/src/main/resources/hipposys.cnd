@@ -67,9 +67,11 @@
 [hipposys:workflowtrigger] > hipposys:workflow
 
 [hipposys:workflowsimplequerytrigger] > hipposys:workflowtrigger
-- hipposys:triggerconditionoperator (string)
+- hipposys:triggerconditionoperator (string) mandatory
+- hipposys:triggerdocument (path)
 + hipposys:triggerprecondition (nt:query)
 + hipposys:triggerpostcondition (nt:query)
++ hipposys:triggerdocument (nt:query)
 
 [hipposys:workflowcategory] > nt:base orderable
 + * (hipposys:workflow) = hipposys:workflow

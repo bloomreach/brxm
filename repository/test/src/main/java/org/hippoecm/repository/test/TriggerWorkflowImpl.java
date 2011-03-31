@@ -29,15 +29,32 @@ public class TriggerWorkflowImpl extends WorkflowImpl implements TriggerWorkflow
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private long counter;
+
     public TriggerWorkflowImpl() throws RemoteException {
     }
 
     public void fire() throws WorkflowException, MappingException {
+        throw new WorkflowException("unexpected fire method called");
     }
 
     public void fire(Document document) throws WorkflowException, MappingException {
+        throw new WorkflowException("unexpected fire method called");
     }
 
     public void fire(Iterator<Document> documentIterator) throws WorkflowException, MappingException {
+        while(documentIterator.hasNext()) {
+            Document document = documentIterator.next();
+            try {
+                Workflow documentWorkflow = getWorkflowContext().getWorkflow("postprocess", document);
+                PostProcessWorkflow postprocessWorkflow = (PostProcessWorkflow) documentWorkflow;
+                postprocessWorkflow.setIdentifier(counter);
+                ++counter;
+            } catch(RepositoryException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+                // FIXME log some error
+            }
+        }
     }
 }
