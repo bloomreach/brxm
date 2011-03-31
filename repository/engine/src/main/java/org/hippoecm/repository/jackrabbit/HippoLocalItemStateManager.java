@@ -228,12 +228,29 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         super.dispose();
     }
 
+    boolean editFakeMode = false;
+    boolean editRealMode = false;
+    
     @Override
     public synchronized void edit() throws IllegalStateException {
-        if(inEditMode()) {
+        if (!editFakeMode)
+            editRealMode = true;
+        boolean editPreviousMode = editFakeMode;
+        editFakeMode = false;
+        if (super.inEditMode()) {
+            editFakeMode = editPreviousMode;
             return;
         }
+        editFakeMode = editPreviousMode;
+        //BERRYThread.dumpStack();
         super.edit();
+    }
+
+    @Override
+    public boolean inEditMode() {
+        if(editFakeMode)
+            return false;
+        return editRealMode;
     }
 
     @Override
@@ -254,19 +271,30 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     public void update()
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
         super.update();
-        edit();
-        FilteredChangeLog tempChangeLog = filteredChangeLog;
-        filteredChangeLog = null;
-        parameterizedView = false;
-        if(tempChangeLog != null) {
-            tempChangeLog.repopulate();
+        editRealMode = false;
+        try {
+            editFakeMode = true;
+            edit();
+            FilteredChangeLog tempChangeLog = filteredChangeLog;
+            filteredChangeLog = null;
+            parameterizedView = false;
+            if (tempChangeLog != null) {
+                tempChangeLog.repopulate();
+            }
+        } finally {
+            editFakeMode = false;
         }
     }
 
     void refresh() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
+        boolean editPreviousMode = editRealMode;
+        if (!inEditMode()) {
+            edit();
+        }
         noUpdateChangeLog = true;
         update();
         noUpdateChangeLog = false;
+        editRealMode = editPreviousMode;
     }
 
     public ItemState getCanonicalItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
@@ -284,6 +312,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         currentContext = null;
         ItemState state;
+        boolean editPreviousMode = editFakeMode;
+        editFakeMode = true;
         try {
             if (id instanceof ParameterizedNodeId) {
                 currentContext = new StateProviderContext(((ParameterizedNodeId)id).getParameterString());
@@ -356,6 +386,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             }
         } finally {
             currentContext = null;
+            editFakeMode = editPreviousMode;
         }
         return state;
     }
@@ -386,19 +417,22 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         if(virtualNodes.containsKey(id)) {
             state = (NodeState) virtualNodes.get(id);
         } else if(state == null && id instanceof HippoNodeId) {
-            edit();
+            boolean editPreviousMode = editFakeMode;
+            editFakeMode = true;
             NodeState nodeState;
-            if (isEnabled()) {
-                nodeState = ((HippoNodeId)id).populate(currentContext);
-                if (nodeState == null) {
-                    throw new NoSuchItemStateException("Populating node failed");
+            try {
+                edit();
+                 if (isEnabled()) {
+                    nodeState = ((HippoNodeId)id).populate(currentContext);
+                    if (nodeState == null) {
+                        throw new NoSuchItemStateException("Populating node failed");
+                    }
+                } else {
+                    nodeState = populate((HippoNodeId)id);
                 }
-            } else {
-                nodeState = populate((HippoNodeId)id);
-            }
 
-            virtualNodes.put((HippoNodeId)id, nodeState);
-            store(nodeState);
+                virtualNodes.put((HippoNodeId)id, nodeState);
+                store(nodeState);
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName)) {
@@ -413,7 +447,9 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     }
                     state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
                 }
-
+            } finally {
+                editFakeMode = editPreviousMode;
+            }
             return nodeState;
         }
         return state;
@@ -853,4 +889,5 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         }*/
         stateDiscarded(state);
     }
+
 }

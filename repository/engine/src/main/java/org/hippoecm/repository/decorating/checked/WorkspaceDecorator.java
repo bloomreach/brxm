@@ -167,11 +167,13 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
     }
 
     public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        return workspace.getLockManager();
     }
 
     public VersionManager getVersionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        check();
+        return workspace.getVersionManager();
     }
 
     public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {
