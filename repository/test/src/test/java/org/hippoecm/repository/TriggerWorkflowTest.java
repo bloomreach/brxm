@@ -19,6 +19,8 @@ import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.Lock;
+import javax.jcr.lock.LockManager;
 
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
@@ -28,6 +30,7 @@ import org.hippoecm.repository.util.Utilities;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -78,7 +81,7 @@ public class TriggerWorkflowTest extends TestCase {
 
         "/hippo:configuration/hippo:workflows/triggers", "hipposys:workflowcategory",
         "/hippo:configuration/hippo:workflows/triggers/test", "hipposys:workflowsimplequerytrigger",
-        "hipposys:nodetype", "hippo:document",
+        "hipposys:nodetype", "hippostd:folder",
         "hipposys:display", "triggertest",
         "hipposys:classname", "org.hippoecm.repository.test.TriggerWorkflowImpl",
         "hipposys:triggerconditionoperator", "post\\pre",
@@ -96,7 +99,7 @@ public class TriggerWorkflowTest extends TestCase {
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
         root = session.getRootNode();
         while (root.hasNode("test")) {
             root.getNode("test").remove();
