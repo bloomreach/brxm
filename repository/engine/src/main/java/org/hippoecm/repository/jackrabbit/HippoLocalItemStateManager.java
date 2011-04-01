@@ -287,14 +287,13 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     void refresh() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
-        boolean editPreviousMode = editRealMode;
         if (!inEditMode()) {
             edit();
         }
         noUpdateChangeLog = true;
         update();
         noUpdateChangeLog = false;
-        editRealMode = editPreviousMode;
+        editRealMode = false;
     }
 
     public ItemState getCanonicalItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
