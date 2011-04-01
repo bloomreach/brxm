@@ -15,23 +15,13 @@
  */
 
 
-if (Hippo.Translation.Queue == undefined) {
+if (Hippo.Translation.WicketHook == undefined) {
   (function() {
 
-    Hippo.Translation.Queue = {
-      tasks: [],
+    Hippo.Translation.WicketHook = {
       listeners: [],
 
       cleanup: function() {
-        for (var i = 0; i < this.tasks.length;) {
-          var handle = this.tasks[i];
-          if (handle.completed) {
-            this.tasks.splice(i, 1);
-          } else {
-            i++;
-          }
-        }
-
         for (var i = 0; i < this.listeners.length;) {
           var listener = this.listeners[i];
           if (Ext.get(listener.id) == null) {
@@ -42,50 +32,9 @@ if (Hippo.Translation.Queue == undefined) {
         }
       },
 
-      enqueue: function(callback, delay) {
-        this.cleanup();
-
-        var task = new Ext.util.DelayedTask();
-        var handle = {
-           extTask: task,
-           started: false,
-           completed: false,
-           callback: callback
-        };
-        this.tasks.push(handle);
-        task.delay(delay, function() {
-          if (!handle.started) {
-            handle.started = true;
-            callback.call(window, function() {
-              handle.completed = true;
-            });
-          }
-        });
-        return handle;
-      },
-
-      cancel: function(handle) {
-        if (!handle.started) {
-          handle.started = true;
-          handle.extTask.cancel();
-          handle.completed = true;
-        }
-      },
-
-      flush: function() {
-        this.cleanup();
-
-        for (var i = 0; i < this.tasks.length; i++) {
-          var handle = this.tasks[i];
-          if (!handle.started) {
-            handle.extTask.cancel();
-            handle.started = true;
-            handle.callback.call(window);
-            handle.completed = true;
-          }
-        }
-
-        for (var i = 0; i < this.listeners.length; i++) {
+      preAjaxCall: function() {
+        var listenersLength = this.listeners.length;
+        for (var i = 0; i < listenersLength; i++) {
           var listener = this.listeners[i];
           var el = Ext.get(listener.id);
           if (el != null) {
@@ -95,14 +44,14 @@ if (Hippo.Translation.Queue == undefined) {
       },
       
       addListener: function(id, callback) {
+        this.cleanup();
         this.listeners.push({ id: id, callback: callback });
       }
 
     };
-
   })();
   Wicket.Ajax.registerPreCallHandler(function() { 
-    Hippo.Translation.Queue.flush();
+    Hippo.Translation.WicketHook.preAjaxCall();
   });
 }
 
@@ -131,9 +80,9 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
     this.imgRight = imageService.getImage(config.targetLanguage);
 
     this.record = null;
-    this.task = null;
+    this.updateUrlTask = null;
 
-    this.updateUrl = function(record, value, callback) {
+    this.updateUrl = function(record, value, async) {
         var xhr;
         if (window.XMLHttpRequest) {    // Mozilla/Safari
             xhr = new XMLHttpRequest();
@@ -143,22 +92,23 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
         var handleResponse = function() {
           var obj = Ext.decode(xhr.responseText);
           if (!record.checked) {
-            record.set('urlfr', obj.data);
+            if (async) {
+              Ext.getCmp('urlfr').setRawValue(obj.data);
+            } else {
+              record.set('urlfr', obj.data); // triggers store update event
+            }
           }
         };
-        xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), callback != undefined);
+        xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), async);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Wicket-Ajax', "true");
         xhr.onreadystatechange = function() {
           if (xhr.readyState == 4) {
             handleResponse();
-            if (callback != undefined) {
-              callback.call(this);
-            }
           }
         };
         xhr.send(null);
-        if (callback == undefined) {
+        if (!async) {
           if (xhr.status == 200) {
             handleResponse();
             self.store.save();
@@ -168,16 +118,15 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
 
     this.onKeyUp = function (field, event) {
       var rec = self.record;
-      if (self.task == null) {
-        self.task = Hippo.Translation.Queue.enqueue(function(callback) {
-          self.task = null;
-          if (!rec.checked) {
-            self.updateUrl(rec, field.getRawValue(), callback);
-          } else {
-            callback.call(this);
-          }
-        }, 500);
+      if (self.updateUrlTask) {
+        self.updateUrlTask.cancel();
       }
+      self.updateUrlTask = new Ext.util.DelayedTask(function() {
+        if (!rec.checked) {
+          self.updateUrl(rec, field.getRawValue(), true);
+        }
+      });
+      self.updateUrlTask.delay(500);
     };
 
     // the column model has information about grid columns
@@ -239,7 +188,6 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
           listeners: {
             rowselect: function(sm, row, rec) {
               if (rec != self.record) {
-                self.task = null;
                 self.record = rec;
                 self.form.loadRecord(rec);
                 Ext.getCmp('url-edit').setDisabled(!self.record.get('editable'));
@@ -252,16 +200,15 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
           }
         }),
         listeners: {
-      		afteredit: function(e) {
-      			if (e.field == "namefr") {
-      			  if (self.task != null) {
-        			  // update url immediately with the current namefr value
-      			    Hippo.Translation.Queue.cancel(self.task);
-      			    self.task = null;
-      			  }
-    			    self.updateUrl(e.record, e.value);
-    			  }
-      		}
+            afteredit: function(e) {
+                if (e.field == "namefr") {
+                    // update url immediately with the current namefr value
+                    if (self.updateUrlTask != null) {
+                        self.updateUrlTask.cancel();
+                    }
+                    self.updateUrl(e.record, e.value, false);
+                }
+            }
       	}
       }, {
         xtype: 'compositefield',
@@ -345,35 +292,28 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
 
     this.store.load();
 
-    this.saving = false;
     this.store.on('update', function(store, record, operation) {
       if (record == this.record) {
         Ext.getCmp('urlfr').setRawValue(record.get('urlfr'));
       }
-      if (this.saving && operation == Ext.data.Record.EDIT) {
+      if (operation == Ext.data.Record.EDIT) {
         if (this.dirty.indexOf(record) == -1) {
           this.dirty.push(record);
         }
       }
-    }.createDelegate(this));
-    this.store.on('beforewrite', function() {
-      this.saving = true;
     }, this);
-    this.store.on('write', function() {
-      this.saving = false;
+    this.store.on('beforesave', function() {
+      for (var i = 0; i < this.dirty.length; i++) {
+        this.dirty[i].markDirty();
+      }
+    }, this);
+    this.store.on('save', function() {
+      this.dirty = [];
     }, this);
     this.on('render', function() {
       var self = this;
-      Hippo.Translation.Queue.addListener(this.getEl().id, function() {
-          var update = (!self.saving && self.store.getModifiedRecords().length);
-          for (var i = 0; i < self.dirty.length; i++) {
-            self.dirty[i].markDirty();
-            update = true;
-          }
-          if (update) {
-            self.dirty = [];
-            self.store.save();
-          }
+      Hippo.Translation.WicketHook.addListener(this.getEl().id, function() {
+        self.store.save();
       });
     }, this);
   },
