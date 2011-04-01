@@ -467,6 +467,69 @@ public class WorkflowManagerImpl implements WorkflowManager {
             throw new RepositoryException("workflow specification corrupt", ex);
         }
     }
+    
+    Workflow getWorkflowInternal(Node workflowNode, Node item) throws RepositoryException {
+        try {
+            String category = workflowNode.getParent().getName();
+            String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+            Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
+
+            boolean objectPersist;
+            String uuid = item.getIdentifier();
+            String path = item.getPath();
+            /* The synchronized must operate on the core root session, because there is
+             * only one such session, while there may be many decorated ones.
+             */
+            synchronized (SessionDecorator.unwrap(rootSession)) {
+                documentManager.reset();
+                Workflow workflow = null; // compiler does not detect properly there is no path where this not set
+                Class clazz = Class.forName(classname);
+                objectPersist = true;
+                Object object = documentManager.getObject(uuid, classname, types);
+                workflow = (Workflow)object;
+                if (workflow instanceof WorkflowImpl) {
+                    ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowNode, getSession(), item));
+                }
+                try {
+                    Class[] interfaces = workflow.getClass().getInterfaces();
+                    Vector vector = new Vector();
+                    for (int i = 0; i < interfaces.length; i++) {
+                        if (Remote.class.isAssignableFrom(interfaces[i])) {
+                            vector.add(interfaces[i]);
+                        }
+                    }
+                    interfaces = (Class[])vector.toArray(new Class[vector.size()]);
+                    InvocationHandler handler = new WorkflowInvocationHandler(category, workflow, uuid, path, types, objectPersist);
+                    Class proxyClass = Proxy.getProxyClass(workflow.getClass().getClassLoader(), interfaces);
+                    workflow = (Workflow)proxyClass.getConstructor(new Class[] {InvocationHandler.class}).
+                            newInstance(new Object[] {handler});
+                } catch (NoSuchMethodException ex) {
+                    log.debug("Impossible situation creating workflow proxy", ex);
+                    throw new RepositoryException("Impossible situation creating workflow proxy", ex);
+                } catch (InstantiationException ex) {
+                    log.error("Unable to create proxy for workflow");
+                    throw new RepositoryException("Unable to create proxy for workflow", ex);
+                } catch (IllegalAccessException ex) {
+                    log.debug("Impossible situation creating workflow proxy", ex);
+                    throw new RepositoryException("Impossible situation creating workflow proxy", ex);
+                } catch (InvocationTargetException ex) {
+                    log.debug("Impossible situation creating workflow proxy", ex);
+                    throw new RepositoryException("Impossible situation creating workflow proxy", ex);
+                }
+
+                return workflow;
+            }
+        } catch (ClassNotFoundException ex) {
+            log.error("Workflow specified at " + workflowNode.getPath() + " not present");
+            throw new RepositoryException("workflow not present", ex);
+        } catch (PathNotFoundException ex) {
+            log.error("Workflow specification corrupt on node " + workflowNode.getPath());
+            throw new RepositoryException("workflow specification corrupt", ex);
+        } catch (ValueFormatException ex) {
+            log.error("Workflow specification corrupt on node " + workflowNode.getPath());
+            throw new RepositoryException("workflow specification corrupt", ex);
+        }
+    }
 
     private String getPath(String uuid) {
         if (uuid==null||uuid.equals("")) {
@@ -625,6 +688,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     log.info(new String(sb));
                 }
                 if(lockable != null) {
+                    rootSession.save();
+                    rootSession.refresh(false);
                     rootSession.getWorkspace().getLockManager().unlock(lockable.getPath());
                 }
             }
@@ -1193,7 +1258,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         log.warn("trigger operator " + conditionOperator + " unrecognized");
                     }
                 }
-                Workflow workflow = getWorkflow("triggers", wfSubject);
+                Workflow workflow = getWorkflowInternal(wfNode, wfSubject);
                 if (workflow instanceof TriggerWorkflow) {
                     TriggerWorkflow trigger = (TriggerWorkflow)workflow;
                     try {

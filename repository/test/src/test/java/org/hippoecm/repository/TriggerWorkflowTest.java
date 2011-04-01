@@ -19,18 +19,14 @@ import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.Lock;
-import javax.jcr.lock.LockManager;
 
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.hippoecm.repository.util.Utilities;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
