@@ -117,7 +117,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return session;
     }
 
-    private Node getWorkflowNode(String category, Node item, Session session) {
+    Node getWorkflowNode(String category, Node item, Session session) {
         if (configuration==null) {
             return null;
         }
@@ -198,7 +198,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return null;
     }
 
-    private Node getWorkflowNode(String category, Document document, Session session) {
+    Node getWorkflowNode(String category, Document document, Session session) {
         if (configuration==null) {
             return null;
         }
@@ -573,12 +573,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
             rootSession.refresh(false);
 
-            PostActions postActions = null;
+            WorkflowPostActions postActions = null;
             Node lockable = null;
             try {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(rootSession)) {
-                    postActions = createPostActions(category, targetMethod, uuid);
+                    postActions = WorkflowPostActionsImpl.createPostActions(WorkflowManagerImpl.this, category, targetMethod, uuid);
                     try {
                         lockable = rootSession.getNodeByIdentifier(uuid);
                         if (lockable.isLocked()) {
@@ -853,7 +853,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         Object invoke(WorkflowManagerImpl manager) throws RepositoryException, WorkflowException {
-            PostActions postActions = null;
+            WorkflowPostActions postActions = null;
             Node lockable = null;
             try {
                 Workflow workflow = null; // compiler does not detect properly there is no path where this not set
@@ -865,7 +865,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (item == null) {
                     item = manager.rootSession.getNodeByUUID(workflowSubject.getIdentity());
                 }
-                postActions = manager.createPostActions(category, method, item.getIdentifier());
+                postActions = WorkflowPostActionsImpl.createPostActions(manager, category, method, item.getIdentifier());
                 try {
                     Class clazz = Class.forName(classname);
                     if (InternalWorkflow.class.isAssignableFrom(clazz)) {
@@ -1156,157 +1156,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         
         protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification) {
             return new WorkflowContextDocumentImpl(workflowDefinition, subjectSession, subject, specification);
-        }
-    }
-
-    PostActions createPostActions(String workflowCategory, Method workflowMethod, String sourceIdentity) {
-        if (workflowMethod.getName().equals("hints") || workflowCategory.startsWith("triggers")) {
-            return null;
-        }
-        try {
-            Node wfSubject = rootSession.getNodeByIdentifier(sourceIdentity);
-            Node wfNode = WorkflowManagerImpl.this.getWorkflowNode("triggers", wfSubject, rootSession);
-            if (wfNode == null) {
-                return null;
-            }
-            return new PostActions(wfSubject, Document.class.isAssignableFrom(workflowMethod.getReturnType()), wfNode,
-                    workflowCategory + ":" + workflowMethod.getName());
-        } catch (RepositoryException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            return null;
-        }
-    }
-
-    class PostActions {
-        String sourceIdentity;
-        boolean isDocumentResult;
-        Node wfSubject;
-        Node wfNode;
-        String info;
-        Set<String> preconditionSet;
-
-        private PostActions(Node wfSubject, boolean isDocumentResult, Node wfNode, String info) throws RepositoryException {
-            this.sourceIdentity = wfSubject.getIdentifier();
-            this.wfSubject = wfSubject;
-            this.isDocumentResult = isDocumentResult;
-            this.wfNode = wfNode;
-            this.info = info;
-            if (wfNode.hasNode("hipposys:triggerdocument")) {
-                // TODO
-            } else if (wfNode.hasProperty("hipposys:triggerdocument")) {
-                this.wfSubject = wfNode.getProperty("hipposys:triggerdocument").getNode();
-            }
-            if (wfNode.hasNode("hipposys:triggerprecondition")) {
-                Query preQuery = rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:triggerprecondition"));
-                preconditionSet = evaluateQuery(preQuery, null);
-            } else {
-                preconditionSet = new HashSet<String>();
-            }
-        }
-
-        private Set<String> evaluateQuery(Query query, String resultIdentity) throws RepositoryException {
-            Set<String> result = new HashSet<String>();
-            ValueFactory valueFactory = rootSession.getValueFactory();
-            query.bindValue("subject", valueFactory.createValue(sourceIdentity));
-            if (isDocumentResult && resultIdentity != null) {
-                query.bindValue("result", valueFactory.createValue(resultIdentity));
-            }
-            QueryResult queryResult = query.execute();
-            String selectorName = null;
-            String[] selectorNames = queryResult.getSelectorNames();
-            if (selectorNames != null && selectorNames.length > 0) {
-                selectorName = selectorNames[0];
-            }
-            RowIterator rows = queryResult.getRows();
-            while (rows.hasNext()) {
-                while (rows.hasNext()) {
-                    Row row = rows.nextRow();
-                    String id;
-                    if (selectorName != null) {
-                        id = row.getNode(selectorName).getIdentifier();
-                    } else {
-                        id = row.getNode().getIdentifier();
-                    }
-                    result.add(id);
-                }
-            }
-            return result;
-        }
-
-        void execute(Object returnObject) {
-            String resultIdentity = null;
-            if (isDocumentResult) {
-                if (returnObject != null) {
-                    resultIdentity = ((Document)returnObject).getIdentity();
-                }
-            }
-            try {
-                Query postQuery = (wfNode.hasNode("hipposys:triggerpostcondition") ? rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:triggerpostcondition")) : null);
-                Set<String> postconditionSet = null;
-                if (postQuery != null) {
-                    postconditionSet = evaluateQuery(postQuery, (resultIdentity == null ? "" : resultIdentity));
-                    String conditionOperator = "post\\pre";
-                    if (wfNode.hasProperty("hipposys:triggerconditionoperator")) {
-                        conditionOperator = wfNode.getProperty("hipposys:triggerconditionoperator").getString();
-                    }
-                    if (conditionOperator.equals("post\\pre")) {
-                        postconditionSet.removeAll(preconditionSet);
-                        if (postconditionSet.isEmpty()) {
-                            return;
-                        }
-                    } else {
-                        log.warn("trigger operator " + conditionOperator + " unrecognized");
-                    }
-                }
-                Workflow workflow = getWorkflowInternal(wfNode, wfSubject);
-                if (workflow instanceof TriggerWorkflow) {
-                    TriggerWorkflow trigger = (TriggerWorkflow)workflow;
-                    try {
-                        if (postconditionSet != null) {
-                            final Iterator<String> postconditionSetIterator = postconditionSet.iterator();
-                            trigger.fire(new Iterator<Document>() {
-                                public boolean hasNext() {
-                                    return postconditionSetIterator.hasNext();
-                                }
-                                public Document next() {
-                                    String id = postconditionSetIterator.next();
-                                    try {
-                                        Node node = rootSession.getNodeByIdentifier(id);
-                                        if (node.isNodeType("hippo:handle")) {
-                                            if (node.hasNode(node.getName())) {
-                                                id = node.getNode(node.getName()).getIdentifier();
-                                            }
-                                        }
-                                    } catch (RepositoryException ex) {
-                                        // deliberate ignore of error, possible because document has been deleted, denied, but id is still relevant
-                                    }
-                                    return new Document(id);
-                                }
-                                public void remove() {
-                                    throw new UnsupportedOperationException();
-                                }
-                            });
-                        } else {
-                            if (isDocumentResult) {
-                                trigger.fire((Document)returnObject);
-                            } else {
-                                trigger.fire();
-                            }
-                        }
-                    } catch (WorkflowException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                    } catch (MappingException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                    } catch (RemoteException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            }
-        }
-
-        void dispose() {
         }
     }
 }
