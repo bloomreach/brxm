@@ -73,7 +73,10 @@ class WorkflowPostAction implements WorkflowPostActions {
         ValueFactory valueFactory = workflowManager.rootSession.getValueFactory();
         query.bindValue("subject", valueFactory.createValue(sourceIdentity));
         if (isDocumentResult && resultIdentity != null) {
+            try {
             query.bindValue("result", valueFactory.createValue(resultIdentity));
+            } catch(java.lang.IllegalArgumentException ex) {
+            }
         }
         QueryResult queryResult = query.execute();
         String selectorName = null;

@@ -859,16 +859,18 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 Workflow workflow = null; // compiler does not detect properly there is no path where this not set
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
-                String uuid = null;
 
                 Node item = workflowSubjectNode;
                 if (item == null) {
                     item = manager.rootSession.getNodeByUUID(workflowSubject.getIdentity());
                 }
+                String uuid = item.getIdentifier();
+                boolean objectPersist;
                 postActions = WorkflowPostActionsImpl.createPostActions(manager, category, method, item.getIdentifier());
                 try {
                     Class clazz = Class.forName(classname);
                     if (InternalWorkflow.class.isAssignableFrom(clazz)) {
+                        objectPersist = false;
                         Constructor[] constructors = clazz.getConstructors();
                         int constructorIndex;
                         for (constructorIndex = 0; constructorIndex < constructors.length; constructorIndex++) {
@@ -889,7 +891,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             throw new RepositoryException("no valid constructor found in standards plugin");
                         }
                     } else {
-                        uuid = item.getUUID();
+                        objectPersist = true;
                         Object object = manager.documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
                         if (workflow instanceof WorkflowImpl) {
@@ -934,7 +936,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         manager.rootSession.getWorkspace().getLockManager().lock(lockable.getPath(), false, true, Long.MAX_VALUE, null);
                     }
                     Object returnObject = targetMethod.invoke(workflow, arguments);
-                    if (uuid!=null && !targetMethod.getName().equals("hints")) {
+                    if (objectPersist && !targetMethod.getName().equals("hints")) {
                         manager.documentManager.putObject(uuid, types, workflow);
                         manager.rootSession.save();
                     }
