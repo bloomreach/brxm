@@ -115,6 +115,7 @@
       <sv:value>default</sv:value>
       <sv:value>versioning</sv:value>
       <sv:value>translation</sv:value>
+      <sv:value>committype</sv:value>
       <sv:value>custom</sv:value>
       <sv:value>admin</sv:value>
     </sv:property>
