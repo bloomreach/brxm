@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>4-SNAPSHOT</version>
+    <version>4</version>
   </parent>
   
   <name>Hippo Product Packages</name>
@@ -36,11 +36,11 @@
   </scm>
 
   <properties>
-    <repository.version>2.19.02-SNAPSHOT</repository.version>
-    <cms.version>2.19.02-SNAPSHOT</cms.version>
-    <publication-workflow.version>2.19.02-SNAPSHOT</publication-workflow.version>
+    <repository.version>2.19.02</repository.version>
+    <cms.version>2.19.02</cms.version>
+    <publication-workflow.version>2.19.02</publication-workflow.version>
     <faceteddate.version>2.18.01</faceteddate.version>
-    <defaultcontent.version>2.19.02-SNAPSHOT</defaultcontent.version>
+    <defaultcontent.version>2.19.02</defaultcontent.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <javax.servlet.version>2.4</javax.servlet.version>
     <commons-lang.version>2.4</commons-lang.version>
@@ -51,7 +51,6 @@
     <selenium.version>0.9.2</selenium.version>
     <atomikos.version>3.1.4</atomikos.version>
 
-    <jpox.version>1.2.0-beta-3</jpox.version>
     <javax.jdo2-api.version>2.0</javax.jdo2-api.version>
     <slf4j.version>1.5.8</slf4j.version>
 
