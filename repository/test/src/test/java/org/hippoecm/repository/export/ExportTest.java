@@ -86,15 +86,15 @@ public class ExportTest extends TestCase {
     	File basedir = new File(System.getProperty("user.dir"));
     	if (basedir.getName().equals("target")) {
     		BUILD_HOME = basedir.getPath();
-    		EXTENSION_HOME = basedir.getParent() + "/src/test/extensions";
+    		EXTENSION_HOME = basedir.getParent() + "/src/test/resources/export/extensions";
     		CONFIG_HOME = basedir.getPath() + "/config";
-    		CONTENT_HOME = basedir.getParent() + "/src/test/content";
+    		CONTENT_HOME = basedir.getParent() + "/src/test/resources/export/content";
     	}
     	else {
     		BUILD_HOME = basedir.getPath() + "/target";
-    		EXTENSION_HOME = basedir.getPath() + "/src/test/extensions";
+    		EXTENSION_HOME = basedir.getPath() + "/src/test/resources/export/extensions";
     		CONFIG_HOME = basedir.getPath() + "/target/config";
-    		CONTENT_HOME = basedir.getPath() + "/src/test/content";
+    		CONTENT_HOME = basedir.getPath() + "/src/test/resources/export/content";
     	}
     	
     }
