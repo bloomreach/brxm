@@ -181,28 +181,37 @@ public class SearchBehavior extends AutoCompleteBehavior {
         JSONRoot.element("response", results);
 
         final String responseStr = callbackMethod + "(" + JSONRoot.toString() + ");";
-        IRequestTarget requestTarget = new IRequestTarget() {
-            public void respond(RequestCycle requestCycle) {
-                WebResponse r = (WebResponse) requestCycle.getResponse();
+        final IRequestTarget searchResponse = new SearchResponse(responseStr);
+        requestCycle.setRequestTarget(searchResponse);
+    }
 
-                // Determine encoding
-                final String encoding = Application.get().getRequestCycleSettings().getResponseRequestEncoding();
-                r.setCharacterEncoding(encoding);
-                r.setContentType("application/json; charset=" + encoding);
+    private static class SearchResponse implements IRequestTarget {
 
-                // Make sure it is not cached
-                r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
-                r.setHeader("Cache-Control", "no-cache, must-revalidate");
-                r.setHeader("Pragma", "no-cache");
+        private final String responseStr;
 
-                r.write(responseStr);
-            }
+        public SearchResponse(final String responseStr) {
+            this.responseStr = responseStr;
+        }
 
-            public void detach(RequestCycle requestCycle) {
-            }
+        public void respond(RequestCycle requestCycle) {
+            WebResponse r = (WebResponse) requestCycle.getResponse();
 
-        };
-        requestCycle.setRequestTarget(requestTarget);
+            // Determine encoding
+            final String encoding = Application.get().getRequestCycleSettings().getResponseRequestEncoding();
+            r.setCharacterEncoding(encoding);
+            r.setContentType("application/json; charset=" + encoding);
+
+            // Make sure it is not cached
+            r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+            r.setHeader("Cache-Control", "no-cache, must-revalidate");
+            r.setHeader("Pragma", "no-cache");
+
+            r.write(responseStr);
+        }
+
+        public void detach(RequestCycle requestCycle) {
+            // do nothing
+        }
 
     }
 
