@@ -18,10 +18,18 @@ package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -199,6 +207,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
             nameTypeMap.clear();
         }
 
+        Set<Map.Entry<String, String>> sortedEntries = new TreeSet<Map.Entry<String, String>>(new Comparator<Map.Entry<String, String>>() {
+            @Override
+            public int compare(final Map.Entry<String, String> o1, final Map.Entry<String, String> o2) {
+                return (o1.getValue() == null || o2.getValue() == null) ? -1 : o1.getValue().compareTo(o2.getValue());
+            }
+        });
+
         try {
             Node tmpImageSetNode = imageSetNode;
             if (tmpImageSetNode.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -210,12 +225,17 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                 Node childNode = childNodes.nextNode();
                 if (childNode.isNodeType("hippogallery:image")) {
                     String childNodeName = childNode.getName();
-                    nameTypeMap.put(childNodeName, typeTranslator.getPropertyName(childNodeName).getObject());
+                    sortedEntries.add(new AbstractMap.SimpleEntry<String, String>(childNodeName, typeTranslator.getPropertyName(childNodeName).getObject()));
                 }
             }
         } catch (RepositoryException repositoryException) {
             log.error("Error updating the available image variants.", repositoryException);
         }
+
+        for(Map.Entry<String, String> entry : sortedEntries){
+            nameTypeMap.put(entry.getKey(), entry.getValue());
+        }
+
         if (type != null) {
             type.setChoices(new ArrayList<String>(nameTypeMap.keySet()));
         }
