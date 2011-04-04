@@ -140,28 +140,6 @@ public class PermissionsDialog extends AbstractDialog<Node> {
         return list.toArray(new String[list.size()]);
     }
 
-    private String[] getRoles(Session session) throws RepositoryException {
-        final String queryString = "//element(*, hipposys:role)";
-        final String queryType = "xpath";
-        final List<String> list = new ArrayList<String>();
-        try {
-            Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryType);
-            NodeIterator nodeIter = query.execute().getNodes();
-            while (nodeIter.hasNext()) {
-                Node node = nodeIter.nextNode();
-                // FIXME query should not return the prototype node, or the
-                // prototype node should not exists at all
-                if (node != null && !HippoNodeType.HIPPO_PROTOTYPE.equals(node.getName())) {
-                    list.add(node.getName());
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error executing query[" + queryString + "]", e);
-        }
-        Collections.sort(list);
-        return list.toArray(new String[list.size()]);
-    }
-
     private String[] getMemberships(Session session, String username) throws RepositoryException {
         final String queryString = "//element(*, hipposys:group)[jcr:contains(@hipposysedit:members, '" + username
                 + "')]";
