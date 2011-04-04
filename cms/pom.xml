@@ -20,9 +20,9 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>4-SNAPSHOT</version>
+    <version>4</version>
   </parent>
-  
+
   <artifactId>hippo-cms</artifactId>
   <version>2.19.02-SNAPSHOT</version>
 
@@ -90,7 +90,7 @@
   </modules>
 
   <properties>
-    <repository.version>2.19.01</repository.version>
+    <repository.version>2.19.02</repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -322,7 +322,7 @@
       <dependency>
         <groupId>org.wicketstuff</groupId>
         <artifactId>wicket-extjs</artifactId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.6</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.yui</groupId>
