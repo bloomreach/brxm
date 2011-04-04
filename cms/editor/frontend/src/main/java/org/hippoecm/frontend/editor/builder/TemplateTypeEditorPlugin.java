@@ -53,25 +53,6 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateTypeEditorPlugin.class);
 
-    private class TemplateObserver implements IObserver<IObservable> {
-        private static final long serialVersionUID = 1L;
-
-        private final IObservable template;
-
-        public TemplateObserver(IObservable template) {
-            this.template = template;
-        }
-
-        public IObservable getObservable() {
-            return (IObservable) template;
-        }
-
-        public void onEvent(Iterator<? extends IEvent<IObservable>> event) {
-            modelChanged();
-        }
-
-    }
-
     private TemplateBuilder builder;
     private IClusterControl child;
     private IObserver templateObserver;
@@ -111,39 +92,8 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             TemplateEngineFactory factory = new TemplateEngineFactory(node.getParent().getName());
             context.registerService(factory, engineId);
 
-            IModel selectedExtensionPointModel = new LoadableDetachableModel() {
-                private static final long serialVersionUID = 1L;
-
-                protected Object load() {
-                    IModel upstream = selectedExtPtService.getModel();
-                    if (upstream != null) {
-                        if (upstream.getObject() != null) {
-                            return upstream.getObject();
-                        }
-                    }
-                    return "${cluster.id}.field";
-                }
-
-            };
-            IModel<String> selectedPluginModel = new IModel<String>() {
-
-                @Override
-                public String getObject() {
-                    if (selectedPluginService.getModel() != null) {
-                        return (String) selectedPluginService.getModel().getObject();
-                    }
-                    return null;
-                }
-
-                @Override
-                public void setObject(final String object) {
-                    selectedPluginService.setModel(new Model(object));
-                }
-
-                @Override
-                public void detach() {
-                }
-            };
+            final IModel selectedExtensionPointModel = new SelectedExtensionPointModel(selectedExtPtService);
+            final IModel<String> selectedPluginModel = new SelectedPluginModel(selectedPluginService);
             builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context, selectedExtensionPointModel, selectedPluginModel);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -213,22 +163,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             control.start();
 
             context.registerService(templateObserver = new TemplateObserver(builder), IObserver.class.getName());
-            child = new IClusterControl() {
-                private static final long serialVersionUID = 1L;
-
-                public void stop() {
-                    control.stop();
-                    typeService.destroy();
-                    modelService.destroy();
-                }
-
-                public IClusterConfig getClusterConfig() {
-                    return null;
-                }
-
-                public void start() {
-                }
-            };
+            child = new ChildClusterControl(control, typeService, modelService);
 
             redraw();
         } catch (BuilderException ex) {
@@ -266,6 +201,97 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             builder.detach();
         }
         super.onDetach();
+    }
+
+    private class TemplateObserver implements IObserver<IObservable> {
+        private static final long serialVersionUID = 1L;
+
+        private final IObservable template;
+
+        public TemplateObserver(IObservable template) {
+            this.template = template;
+        }
+
+        public IObservable getObservable() {
+            return template;
+        }
+
+        public void onEvent(Iterator<? extends IEvent<IObservable>> event) {
+            modelChanged();
+        }
+    }
+
+    private static class SelectedExtensionPointModel extends LoadableDetachableModel {
+        private static final long serialVersionUID = 1L;
+        private final ModelReference selectedExtPtService;
+
+        public SelectedExtensionPointModel(final ModelReference selectedExtPtService) {
+            this.selectedExtPtService = selectedExtPtService;
+        }
+
+        protected Object load() {
+            IModel upstream = selectedExtPtService.getModel();
+            if (upstream != null) {
+                if (upstream.getObject() != null) {
+                    return upstream.getObject();
+                }
+            }
+            return "${cluster.id}.field";
+        }
+    }
+
+    private static class SelectedPluginModel implements IModel<String> {
+
+        private final ModelReference selectedPluginService;
+
+        public SelectedPluginModel(final ModelReference selectedPluginService) {
+            this.selectedPluginService = selectedPluginService;
+        }
+
+        @Override
+        public String getObject() {
+            if (selectedPluginService.getModel() != null) {
+                return (String) selectedPluginService.getModel().getObject();
+            }
+            return null;
+        }
+
+        @Override
+        public void setObject(final String object) {
+            selectedPluginService.setModel(new Model(object));
+        }
+
+        @Override
+        public void detach() {
+            // do nothing
+        }
+    }
+
+    private static class ChildClusterControl implements IClusterControl {
+        private static final long serialVersionUID = 1L;
+        private final IClusterControl control;
+        private final ModelReference typeService;
+        private final ModelReference modelService;
+
+        public ChildClusterControl(final IClusterControl control, final ModelReference typeService, final ModelReference modelService) {
+            this.control = control;
+            this.typeService = typeService;
+            this.modelService = modelService;
+        }
+
+        public void start() {
+            // do nothing
+        }
+
+        public void stop() {
+            control.stop();
+            typeService.destroy();
+            modelService.destroy();
+        }
+
+        public IClusterConfig getClusterConfig() {
+            return null;
+        }
     }
 
 }
