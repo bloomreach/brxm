@@ -59,6 +59,9 @@ public class InitializationValve extends AbstractValve
                 resourceLifecycleManagement.disposeAllResources();
                 resourceLifecycleManagement.setActive(true);
             }
+            // because the requestContext can already have a jcr session at this moment which is now disposed  (returned to pool) again, we explicitly 
+            // set it to null in the HstMutableRequestContext to be sure it gets a new one when requestContext#getSession is called
+            requestContext.setSession(null);
         }
         
         // continue
