@@ -285,12 +285,6 @@
       <scope>test</scope>
     </dependency>
     
-    <!--  Gallery picker dependency -->
-    <dependency>
-        <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
-        <artifactId>gallerypicker</artifactId>
-    </dependency>
-    
   </dependencies>
   
   <build>
