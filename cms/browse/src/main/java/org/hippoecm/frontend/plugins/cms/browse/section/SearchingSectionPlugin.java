@@ -142,7 +142,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     private String rootPath;
     private FolderModelService folderService;
-    private DocumentCollection collection;
+    private final DocumentCollection collection;
 
     private IModel<Node> scopeModel;
     private String query;
@@ -203,26 +203,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         };
-        browseLink.add(new Image("search-icon", new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
-                    return "cancel.png";
-                } else {
-                    return "magnify.png";
-                }
-            }
-        }) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onDetach() {
-                setDefaultModel(getDefaultModel());
-                super.onDetach();
-            }
-        });
+        browseLink.add(new SearchIcon(collection));
         container.add(browseLink);
 
         WebMarkupContainer scopeContainer = new WebMarkupContainer("scope-container") {
@@ -252,18 +233,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         };
-        scopeContainer.add(new CssClassAppender(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                if (scopeLink.isEnabled()) {
-                    return "hippo-search-inactive-scope";
-                } else {
-                    return "hippo-search-active-scope";
-                }
-            }
-        }));
+        scopeContainer.add(new CssClassAppender(new SearchScopeModel(scopeLink)));
         scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
@@ -303,18 +273,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 return false;
             }
         };
-        allContainer.add(new CssClassAppender(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                if (allLink.isEnabled()) {
-                    return "hippo-search-inactive-scope";
-                } else {
-                    return "hippo-search-active-scope";
-                }
-            }
-        }));
+        allContainer.add(new CssClassAppender(new SearchScopeModel(allLink)));
         allContainer.add(allLink);
         container.add(allContainer);
 
@@ -455,6 +414,57 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     public ResourceReference getIcon(IconSize type) {
         return null;
+    }
+
+    private static class SearchIcon extends Image {
+        private static final long serialVersionUID = 1L;
+
+        public SearchIcon(DocumentCollection collection) {
+            super("search-icon", new SearchIconModel(collection));
+        }
+
+        @Override
+        protected void onDetach() {
+            setDefaultModel(getDefaultModel());
+            super.onDetach();
+        }
+
+    }
+
+    private static class SearchIconModel extends LoadableDetachableModel<String> {
+        private static final long serialVersionUID = 1L;
+        private final DocumentCollection collection;
+
+        public SearchIconModel(DocumentCollection collection) {
+            this.collection = collection;
+        }
+
+        @Override
+        protected String load() {
+            if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+                return "cancel.png";
+            } else {
+                return "magnify.png";
+            }
+        }
+    }
+
+    private static class SearchScopeModel extends LoadableDetachableModel<String> {
+        private static final long serialVersionUID = 1L;
+        private final AjaxLink scopeLink;
+
+        public SearchScopeModel(final AjaxLink scopeLink) {
+            this.scopeLink = scopeLink;
+        }
+
+        @Override
+        protected String load() {
+            if (scopeLink.isEnabled()) {
+                return "hippo-search-inactive-scope";
+            } else {
+                return "hippo-search-active-scope";
+            }
+        }
     }
 
 }

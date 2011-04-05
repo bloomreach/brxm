@@ -183,17 +183,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
 
                                         plugin.beforeRender();
 
-                                        plugin.visitChildren(new IVisitor() {
-
-                                            public Object component(Component component) {
-                                                if (component instanceof ActionDescription) {
-                                                    menu.put(new String[] {category, pluginRenderer, ((ActionDescription)component).getId()}, (ActionDescription)component);
-                                                } else if (component instanceof MenuDescription) {
-                                                    menu.put(category, (MenuDescription) component);
-                                                }
-                                                return IVisitor.CONTINUE_TRAVERSAL;
-                                            }
-                                        });
+                                        plugin.visitChildren(new MenuVisitor(menu, category, pluginRenderer));
                                         plugin.setVisible(false);
                                         list.add(plugin);
                                     }
@@ -217,18 +207,45 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
             }
         }
 
-        addOrReplace(view = new AbstractView<Panel>("view", new ListDataProvider<Panel>(list)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateItem(Item<Panel> item) {
-                item.add(item.getModelObject());
-            }
-        });
+        addOrReplace(view = new PanelView(list));
         view.populate();
         view.setVisible(false);
 
         return menu;
     }
 
+    private static class MenuVisitor implements IVisitor {
+
+        private final MenuHierarchy menu;
+        private final String category;
+        private final String pluginRenderer;
+
+        public MenuVisitor(final MenuHierarchy menu, final String category, final String pluginRenderer) {
+            this.menu = menu;
+            this.category = category;
+            this.pluginRenderer = pluginRenderer;
+        }
+
+        public Object component(Component component) {
+            if (component instanceof ActionDescription) {
+                menu.put(new String[] {category, pluginRenderer, ((ActionDescription)component).getId()}, (ActionDescription)component);
+            } else if (component instanceof MenuDescription) {
+                menu.put(category, (MenuDescription) component);
+            }
+            return IVisitor.CONTINUE_TRAVERSAL;
+        }
+    }
+
+    private static class PanelView extends AbstractView<Panel> {
+        private static final long serialVersionUID = 1L;
+
+        public PanelView(final List<Panel> list) {
+            super("view", new ListDataProvider<Panel>(list));
+        }
+
+        @Override
+        protected void populateItem(Item<Panel> item) {
+            item.add(item.getModelObject());
+        }
+    }
 }
