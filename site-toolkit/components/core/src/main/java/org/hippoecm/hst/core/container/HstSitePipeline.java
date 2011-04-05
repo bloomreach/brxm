@@ -45,6 +45,10 @@ public class HstSitePipeline implements Pipeline
         }
     }
     
+    public void addPreInvokingValve(Valve preInvokingValve) {
+        preInvokingValves = add(preInvokingValves, preInvokingValve);
+    }
+    
     public void setInvokingValves(Valve [] invokingValves) {
         if (invokingValves == null) {
             this.invokingValves = null;
@@ -52,6 +56,10 @@ public class HstSitePipeline implements Pipeline
             this.invokingValves = new Valve[invokingValves.length];
             System.arraycopy(invokingValves, 0, this.invokingValves, 0, invokingValves.length);
         }
+    }
+    
+    public void addInvokingValve(Valve invokingValve) {
+        invokingValves = add(invokingValves, invokingValve);
     }
     
     public void setPostInvokingValves(Valve [] postInvokingValves) {
@@ -62,7 +70,27 @@ public class HstSitePipeline implements Pipeline
             System.arraycopy(postInvokingValves, 0, this.postInvokingValves, 0, postInvokingValves.length);
         }
     }
+    
+    public void addPostInvokingValve(Valve postInvokingValve) {
+        postInvokingValves = add(postInvokingValves, postInvokingValve);
+    }
 
+    private Valve[] add(Valve[] valves, Valve valve) {
+        if(valve == null) {
+            return valves;
+        }
+        Valve[] newValves;
+        if (valves == null) {
+            newValves = new Valve[1];
+            newValves[0] = valve;
+        } else {
+            newValves =  new Valve[valves.length +1];
+            System.arraycopy(valves, 0, newValves, 0, valves.length);
+            newValves[invokingValves.length] = valve;
+        }
+        return newValves;
+    }
+    
     public void initialize() throws ContainerException {
     }
     

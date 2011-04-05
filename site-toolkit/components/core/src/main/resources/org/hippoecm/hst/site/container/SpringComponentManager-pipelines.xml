@@ -128,7 +128,7 @@
     <property name="pipelines">
       <map>
         <entry key="DefaultSitePipeline">
-          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+           <bean id="org.hippoecm.hst.core.container.HstSitePipeline.DefaultSitePipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
             <property name="preInvokingValves">
               <list>
                 <ref bean="initializationValve" />
