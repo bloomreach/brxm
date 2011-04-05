@@ -71,12 +71,12 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
         if (config.get(CATEGORIES) != null) {
             categories = config.getStringArray(CATEGORIES);
             if (log.isDebugEnabled()) {
-                StringBuffer sb = new StringBuffer();
-                sb.append("workflow showing categories");
+                final StringBuffer sb = new StringBuffer("workflow showing categories");
                 for (String category : categories) {
-                    sb.append(" " + category);
+                    sb.append(" ");
+                    sb.append(category);
                 }
-                log.debug(new String(sb));
+                log.debug(sb.toString());
             }
         } else {
             categories = new String[] {};
