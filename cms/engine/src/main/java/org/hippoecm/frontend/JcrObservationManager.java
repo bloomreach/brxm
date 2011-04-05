@@ -271,7 +271,7 @@ public class JcrObservationManager implements ObservationManager {
 
     }
 
-    private class JcrListener extends WeakReference<EventListener> implements EventListener {
+    private class JcrListener extends WeakReference<EventListener> implements EventListener, Comparable<JcrListener> {
         String path;
         int eventTypes;
         boolean isDeep;
@@ -296,6 +296,15 @@ public class JcrObservationManager implements ObservationManager {
             while (events.hasNext()) {
                 this.events.add(events.nextEvent());
             }
+        }
+
+        @Override
+        public int compareTo(final JcrListener other) {
+            int result = path.compareTo(other.path);
+            if (result == 0) {
+                return new Integer(hashCode()).compareTo(other.hashCode());
+            }
+            return result;
         }
 
         void init(int eventTypes, String absPath, boolean isDeep, String[] uuid, String[] nodeTypes, boolean noLocal)
@@ -726,17 +735,7 @@ public class JcrObservationManager implements ObservationManager {
 
             // process pending changes
             Node root = null;
-            Set<Node> nodes = new TreeSet<Node>(new Comparator<Node>() {
-
-                public int compare(Node o1, Node o2) {
-                    try {
-                        return o1.getPath().compareTo(o2.getPath());
-                    } catch (RepositoryException ex) {
-                        return 0;
-                    }
-                }
-
-            });
+            Set<Node> nodes = new TreeSet<Node>(new NodePathComparator());
             try {
                 root = getRoot();
                 if (nodeTypes == null) {
@@ -939,45 +938,7 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        return new EventListenerIterator() {
-            private final Iterator<EventListener> listenerIterator = currentListeners.iterator();
-            private final long size = currentListeners.size();
-            private long pos = 0;
-
-            public EventListener nextEventListener() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                pos++;
-                return listenerIterator.next();
-            }
-
-            public void skip(long skipNum) {
-                while (skipNum-- > 0) {
-                    next();
-                }
-            }
-
-            public long getSize() {
-                return size;
-            }
-
-            public long getPosition() {
-                return pos;
-            }
-
-            public void remove() {
-                throw new UnsupportedOperationException("EventListenerIterator.remove()");
-            }
-
-            public boolean hasNext() {
-                return listenerIterator.hasNext();
-            }
-
-            public Object next() {
-                return nextEventListener();
-            }
-        };
+        return new SimpleEventListenerIterator(currentListeners);
     }
 
     public void removeEventListener(EventListener listener) throws RepositoryException {
@@ -1121,17 +1082,7 @@ public class JcrObservationManager implements ObservationManager {
         if (session != null) {
             // copy set of listeners; don't synchronize on map while notifying observers
             // as it may need to be modified as a result of the event.
-            SortedSet<JcrListener> set = new TreeSet<JcrListener>(new Comparator<JcrListener>() {
-
-                public int compare(JcrListener o1, JcrListener o2) {
-                    int result = o1.path.compareTo(o2.path);
-                    if (result == 0) {
-                        return new Integer(o1.hashCode()).compareTo(o2.hashCode());
-                    }
-                    return result;
-                }
-
-            });
+            SortedSet<JcrListener> set = new TreeSet<JcrListener>();
 
             synchronized (listeners) {
                 for (JcrListener listener : listeners.values()) {
@@ -1156,7 +1107,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
             synchronized (states) {
-                // update cache
+                // update cache              *u
                 for (Map.Entry<String, NodeState> nodes : dirty.entrySet()) {
                     states.put(nodes.getKey(), nodes.getValue());
                 }
@@ -1192,6 +1143,64 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
         }
+    }
+
+    private static class SimpleEventListenerIterator implements EventListenerIterator {
+        private final Iterator<EventListener> listenerIterator;
+        private final long size;
+        private long pos;
+
+        public SimpleEventListenerIterator(final Set<EventListener> listeners) {
+            listenerIterator = listeners.iterator();
+            size = listeners.size();
+            pos = 0;
+        }
+
+        public EventListener nextEventListener() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            pos++;
+            return listenerIterator.next();
+        }
+
+        public void skip(long skipNum) {
+            while (skipNum-- > 0) {
+                next();
+            }
+        }
+
+        public long getSize() {
+            return size;
+        }
+
+        public long getPosition() {
+            return pos;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException("EventListenerIterator.remove()");
+        }
+
+        public boolean hasNext() {
+            return listenerIterator.hasNext();
+        }
+
+        public Object next() {
+            return nextEventListener();
+        }
+    }
+
+    private static class NodePathComparator implements Comparator<Node> {
+
+        public int compare(Node o1, Node o2) {
+            try {
+                return o1.getPath().compareTo(o2.getPath());
+            } catch (RepositoryException ex) {
+                return 0;
+            }
+        }
+
     }
 
 }
